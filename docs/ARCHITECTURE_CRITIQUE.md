@@ -129,6 +129,27 @@ Lead: docs overlay D20. No product Python. Owner locks (H3, `unchecked`, local-f
 
 should-fix (merged in docs). Extract/chunk, observation file split, and MCP retrieve remain later code.
 
+## Loop 6 — Student-facing lab UI
+
+Lead: docs overlay D21. No product Python / React. Owner locks (H3, `unchecked`, DESIGN-coinbase tokens) stay.
+
+### Accepted
+
+- Four nav pages + two overlays. Kernel files map to lab surfaces.
+- No raw `.md` / `.json` / YAML as the product. Copy dictionary in [`UI.md`](UI.md).
+- No reasoning-mode node (host reasons between verbs).
+
+### Rejected (reason)
+
+- Keep as-built `<pre>` JSON viewer — fails the student.
+- Dual “power user files” mode in v1 — owner asked for one non-technical product.
+- In-UI chat or DAG editor — H5 / host-path composition.
+- In-DAG LLM node — FR21 / H5.
+
+### Severity
+
+should-fix (merged in docs). Implementing `ui/` pages waits on a UI code plan.
+
 ## Appendix — what changed in docs vs what waits for code
 
 | Specified this pass | Waits for a code plan |
@@ -140,4 +161,5 @@ should-fix (merged in docs). Extract/chunk, observation file split, and MCP retr
 | FR20 on `check-numeric`; unmatched netlist-port predicate | Engine port checks in Python |
 | Capability registry + coverage law (D19); pack method skills | Capability→provider bind in the runner; gold per pack |
 | D20 persist/observe/hooks/spawn; BYO ingest pipeline; `hosts/adapters/` | RAG extract/chunk; `observation.json` writer; `memory write` CLI; MCP retrieve |
+| D21 lab workbook pages; no file dump; no reasoning-mode node | Implement `ui/` pages, two-pane This problem, Books/Notes |
 | Known defects remain named: `_solve_value` mint, as-built two MCP tools | Eval gold / MCP framing fixes |

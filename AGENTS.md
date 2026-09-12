@@ -11,7 +11,7 @@ A coding workspace for building and evolving that co-solver (analysis, circuits,
 
 ## Current status
 
-Product execution graph **complete through H1** on `cursor/ee-product-execution-9e9d`: CLI, YAML runner, localhost UI, MCP, recipes, eval, boot + trials. Authority remains [`docs/PID.md`](docs/PID.md), [`docs/PRD.md`](docs/PRD.md), [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). Proposed overlays **D19** (capability-first coverage) and **D20** (host loop + spawn; kernel persist/observe/hooks; local memory; BYO ingest). Providers (ngspice, YAML, FastAPI, …) are this-pass freezes, not the thesis. Do not invent EE capabilities that are not in those docs or in [`docs/CANNOT_DO.md`](docs/CANNOT_DO.md). This file is **coding SDLC**, not the student lab prompt.
+Product execution graph **complete through H1** on `cursor/ee-product-execution-9e9d`: CLI, YAML runner, localhost UI, MCP, recipes, eval, boot + trials. Authority remains [`docs/PID.md`](docs/PID.md), [`docs/PRD.md`](docs/PRD.md), [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/UI.md`](docs/UI.md). Proposed overlays **D19** (capability-first), **D20** (host loop + persist/observe/spawn), **D21** (student-facing lab workbook; no raw `.md`/`.json`; no reasoning-mode node). Providers (ngspice, YAML, FastAPI, …) are this-pass freezes, not the thesis. Do not invent EE capabilities that are not in those docs or in [`docs/CANNOT_DO.md`](docs/CANNOT_DO.md). This file is **coding SDLC**, not the student lab prompt.
 
 ---
 

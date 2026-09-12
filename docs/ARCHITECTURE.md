@@ -1,6 +1,6 @@
 # Technical architecture — Electrical Engineer
 
-**Status:** Proposed (2026-09-12) overlay on Accepted A1 (2026-09-10). Hybrid composition (D18), **capability-first domain contract (D19)**, plus **harness persist / observe / spawn (D20)**: the rented host owns the loop, compaction, and specialist spawn; the kernel owns runs, memory, RAG ingest, observation, and deterministic hooks. Aligns with Proposed [`PRD.md`](PRD.md) / [`PID.md`](PID.md).  
+**Status:** Proposed (2026-09-12) overlay on Accepted A1 (2026-09-10). Hybrid composition (D18), **capability-first domain contract (D19)**, **harness persist / observe / spawn (D20)**, plus **student-facing lab UI (D21)**: a non-technical workbook (This problem, Past work, Books, Notes) that never presents `.md`/`.json` as the product. Aligns with Proposed [`PRD.md`](PRD.md) / [`PID.md`](PID.md).  
 **Date:** 2026-09-12  
 **Authority:** [`PID.md`](PID.md) (Proposed), [`PRD.md`](PRD.md) (Proposed)
 
@@ -173,7 +173,7 @@ Canonical numbering stays **0–3**. A fifth layer is not earned (eval stays 2e;
 | 0 Host (rented) | Inner loop; compaction/continuation; **spawn** pack specialists; load **2–3** pack skills; **plan then execute**; call ACI; write `argument.md`; ask when data is missing | Kirchhoff as numeric truth; inventing capability ids; minting checked ohms; unique EE chat loop; a Python specialist orchestrator |
 | 1 Attach | CLI inner; MCP outer; **5–7 ACI verbs**; host skill files; adapter prompts under `hosts/adapters/` | 1:1 provider MCP; waiting on humans; PTC on physics writes; mega `run_workflow` as the host-path viva |
 | 2 Domain kernel | Capabilities, providers, validator, attachments, **kernel hooks**, gates, eval, RAG ingest/index, memory files, `observation.json`, `unchecked` | A unique host-incompatible chat loop (H5); long YAML as the chat brain; compaction; token billing |
-| 3 Surfaces | Localhost UI; two-band files; observation excerpt | ChatGPT-clone UI; WAN bind; KiCad clone; treating the UI stack as the domain |
+| 3 Surfaces | Localhost **lab workbook** ([`UI.md`](UI.md)); two-band files; observation mapped to sentences | ChatGPT-clone UI; WAN bind; KiCad clone; dumping `.md`/`.json` as the product; treating the UI stack as the domain |
 
 As-built sub-pieces (still true): CLI glue, pack `SKILL.md` **method** files, stdio MCP (`list_workflows` + `run_workflow` only), UI, RAG sidecar, registered **provider** nodes. Target: this section + [`PRD.md`](PRD.md) §5–§6. Capability→provider bind in the runner is a later code plan; today graphs still name provider keys.
 
@@ -258,7 +258,7 @@ apply -> ./runs/<id>/ evidentiary band
 
 ### 2.4 Layer 3 — Surfaces (main)
 
-**UI.** Persistent `127.0.0.1` workspace: run list, plots, photo confirm, compose allowlist, RAG inventory, **two-band viewer** (evidentiary vs argument). Not a ChatGPT clone. Not a video timeline. Detail: §9.
+**UI.** Persistent `127.0.0.1` **lab workbook**: This problem, Past work, Books, Notes, photo confirm. Not a ChatGPT clone, file dump, or video timeline. Detail: §9 and [`UI.md`](UI.md).
 
 **Artifacts.** Canonical files per run:
 
@@ -417,6 +417,8 @@ MCP/CLI verb. Body: a DAG whose **every node is a capability id or a registered 
 
 This is GraSP-shaped, not a skill-to-DAG compiler: the host proposes edges among **already registered** capabilities/providers; the kernel verifies types and allowlist; locality-bounded repair stays `repair_max: 2` inside simulate providers. Do not call this a GraSP compile. Large jobs should call `apply: false` first (FR23).
 
+**No reasoning-mode node.** A graph must not contain a node that yields to an LLM mid-DAG and then continues. That is `solve-explain` on the host path (FR21) and the H3/H5 falsifier. The host reasons **between** kernel verbs (staged `propose_composition` / `simulate_attachment`). Student HITL stays `ask-student` / photo confirm.
+
 ### `compose-from-parts`
 
 Listed, **`--advanced`**. Student/CLI cousin of `propose_composition`. Typed ports. Cap **16 nodes / 24 edges**. Invalid graphs fail closed before spice. May include `run-recipe` nodes. Asking to compose counts as an interrupt (see gates). Still the only **CLI** path that emits a new DAG without a host.
@@ -484,27 +486,28 @@ Each write verb returns short JSON + `run_id` + artifact **paths** (not bodies).
 
 ## 9. Persistent localhost UI (critical)
 
-The UI is a **first-class product surface**, not a fine-diagram gadget.
+The UI is a **first-class product surface**, not a fine-diagram gadget. Student-facing pages, copy, and grids: [`UI.md`](UI.md) (D21). Visual tokens: [`design/DESIGN-coinbase.md`](design/DESIGN-coinbase.md).
 
-**Why.** Cursor/Claude users (and CLI users) need a place that **stays up** so both the **student and the agent** can see and understand: current and past runs, library-rendered schematics, plots, photo-stub topology, citations, RAG inventory, and memory excerpts. Understanding is the point of the co-solver.
+**Why.** A UG EE student (and the host agent) need a place that **stays up** so they can **see the homework check** as a lab workbook: this problem, past work, books, notes, photo confirm. Understanding is the point. They must not be asked to read implementation files.
 
-**Stack (this-pass freeze, not the domain).** FastAPI serves a Vite/React CSR SPA. Zustand holds layout + current run id. A **thin in-repo slot registry** (inspire DSH named holes; **no Cordis / DSH runtime**). Visual tokens: [`design/DESIGN-coinbase.md`](design/DESIGN-coinbase.md) (Inter + JetBrains/Geist Mono; never Coinbase fonts or wordmark). Slot map: `root`, `sidebar`, `workspace`, `run.detail`, `run.artifacts`, `run.plan` (job plan), `run.bands` (two-band viewer), `run.observation` (excerpt of `observation.json`), `photo.confirm`, `rag.inventory`, `memory.excerpt`, `gates.prompt`. Layout: `src/electrical_engineer` + `ui/`. The **domain** requirement is a persistent `127.0.0.1` two-band workspace with photo confirm. Swapping the web stack later does not change Layer 3’s job.
+**Student-facing law.** The UI maps kernel files to lab surfaces. It does **not** present `.md`, `.json`, `.yaml`, or `.toml` as the product. Results are tables and figure grids; method is rendered prose; plan is Given/Find; books are quote cards; notes are forms. Exact token `unchecked` stays visible (FR2) with a plain gloss. Software words (MCP, DAG, slots, FastAPI, run UUIDs as the title) stay off the chrome. EE artifacts (circuit listing, Bode plot, phasor table) stay on.
+
+**Stack (this-pass freeze, not the domain).** FastAPI serves a Vite/React CSR SPA. Zustand holds layout + current problem id. A **thin in-repo slot registry** implements the **pages** in [`UI.md`](UI.md) (not a file browser). Slot map is an implementer name for those pages: `root`, nav, `this-problem` (results + method + plan + what-the-lab-did), `past-work`, `books`, `notes`, `photo.confirm`, `ask`. Legacy names `run.detail` / `run.bands` / `run.plan` / `run.observation` / `rag.inventory` / `memory.excerpt` / `gates.prompt` **map** to those pages — they are not student labels. Layout: `src/electrical_engineer` + `ui/`. Swapping the web stack later does not change Layer 3’s job.
 
 **Shape**
 
 - Command: `electrical-engineer ui` (optionally `--run <id>`). CLI **auto-opens** it when a recipe hits a **visual** gate.
 - Long-lived local HTTP server. Bind **`127.0.0.1` only**. No product cloud. No LAN bind by default.
-- Persistent for the working session (and may stay up across runs). Text-only recipes never **require** it; it still helps browse artifacts.
-- **Two-band viewer:** evidentiary pane (numbers, `unchecked`, verifier id, plots, citations) beside argument pane (`argument.md`). The argument pane is read-only for checked scalars — editing markdown cannot flip `unchecked`.
-- **Job plan:** `run.plan` shows `plan.md` when present. Looking at the plan is not executing spice. `plan.md` is not a third numeric band.
-- Thin viewer + confirm: render **library** SVG/PNG plus the JSON graph. If the student edits topology, the UI updates the JSON graph / netlist, then a **library re-renders**. Not a KiCad clone. Not an image-model PNG.
-- Photo stub confirm happens **here**, not as ASCII-only.
+- Persistent for the working session (and may stay up across runs). Text-only recipes never **require** it; it still helps browse the lab workbook.
+- **This problem:** results table + figure grid beside **Method** (rendered argument). Method is read-only for checked scalars — typing in the UI cannot flip `unchecked`.
+- **Plan:** Given/Find checklist when a plan exists. Looking at it is not executing spice. It is not a third numeric band.
+- Photo confirm: picture **and** library schematic side by side. If the student edits topology, the UI updates the netlist then a **library re-renders**. Not a KiCad clone. Not an image-model PNG. Not a JSON graph as the main view.
 - After photo confirm: **still no sim** in the stub (C4 sim remains later).
 - MCP does not wait; fail payload points at this UI (`ui_url` includes `run_id`).
 
-**As-built vs target.** As-built UI is a single-band viewer of `summary.json` (slots: `root`, `sidebar`, `workspace`, `run.detail`, `run.artifacts`, `photo.confirm`). That **cannot** stop `argument.md` looking like SPICE — FR18 has no UI enforcement point until `run.bands` ships. This docs pass specifies the target; filling slots is a later UI plan. Do not swap FastAPI+React for a static viewer (photo confirm and gates need HTTP). Do not grow an in-UI agent loop (H5).
+**As-built vs target.** As-built UI dumps `summary.json` in a `<pre>` and lists run ids. That fails [`UI.md`](UI.md). FR18 has no student-facing split until This problem’s two panes ship. This pass specifies the target; filling pages is a later UI **code** plan. Do not swap FastAPI+React for a static viewer (photo confirm and gates need HTTP). Do not grow an in-UI agent loop (H5).
 
-This remains **H3 glue** (a viewer/workspace). If the UI grows its own agent loop, that is the H5 falsifier.
+This remains **H3 glue** (a lab workbook). If the UI grows its own agent loop, that is the H5 falsifier.
 
 ---
 
@@ -713,6 +716,8 @@ CLI path for `solve-explain` uses a local OpenAI-compatible HTTP client (LM Stud
 - Product-cloud telemetry; silent chat-dump memory; fleet learning from other students
 - Compaction / continuation / model routing inside the CLI
 - A custom multi-agent runtime (host-native spawn only)
+- A reasoning-mode / mid-DAG LLM node (host reasons between kernel verbs)
+- Student UI that presents `.md` / `.json` / YAML as the product ([`UI.md`](UI.md))
 
 ---
 
@@ -746,3 +751,9 @@ Proposed harness overlay (D20, 2026-09-12) — same Accept sheet:
 - Host owns loop, compaction, spawn; kernel owns persist, observation, ingest hooks, memory write law
 - BYO RAG pipeline specified; extract/chunk is a later code plan (`CD-RAG-PARSE`)
 - Pack specialists are host-native adapters, not a Python orchestrator
+
+Proposed student-facing UI overlay (D21, 2026-09-12) — same Accept sheet:
+
+- Lab workbook pages: This problem, Past work, Books, Notes; Confirm / Ask overlays
+- Never present `.md` / `.json` / YAML as the product; DESIGN-coinbase grids
+- No reasoning-mode node in `propose_composition`

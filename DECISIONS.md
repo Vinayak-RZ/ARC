@@ -125,3 +125,15 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 - **Consequences:** Extract/chunk remains `CD-RAG-PARSE` until a code plan. Observation may seed on `summary.json`. Chat/Work still does not claim spawn. A Python specialist orchestrator remains the H3/H5 falsifier.
 - **Alternatives:** Python multi-agent runtime (rejected, H5); silent memory append every turn (rejected); cloud telemetry (rejected, FR6); treating host compaction as our middleware (rejected).
 - **Sources:** `docs/ARCHITECTURE.md` §0.3 §2.5 §10–§11; `docs/PRD.md` FR13/FR19/FR24; `hosts/adapters/README.md`
+
+---
+
+## ADR-0012 — Student-facing lab UI (D21)
+
+- **Status:** proposed (not owner-Accepted)
+- **Context:** As-built UI dumps `summary.json` in a `<pre>` and lists run ids. Owner asked for a non-technical workbook: UG EE students who are not software-fluent; no Markdown/JSON as the product; proper grids; DESIGN-coinbase quality. Separately confirmed: no in-DAG reasoning-mode node.
+- **Decision:** Specify pages **This problem**, **Past work**, **Books**, **Notes**, plus Confirm / Ask overlays. Kernel files stay on disk; the UI **maps** them to cards, tables, figure grids, and rendered prose. Copy dictionary hides MCP/DAG/slots. No reasoning-mode node: host reasons between kernel verbs (ADR-0009 / FR21).
+- **Consequences:** Filling `ui/` is a later code plan. Photo confirm and gates still need HTTP. No in-UI agent loop (H5). No v1 “show files” debug mode.
+- **Alternatives:** Keep the JSON viewer (rejected — fails the student); dual IDE+lab mode (rejected — owner asked for one non-technical product); in-DAG LLM node (rejected — `solve-explain` / H5).
+- **Sources:** `docs/UI.md`; `docs/ARCHITECTURE.md` §9; `docs/PRD.md` FR11; `docs/design/DESIGN-coinbase.md`
+

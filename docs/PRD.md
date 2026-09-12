@@ -128,7 +128,7 @@ No Layer 4. Eval stays in Layer 2; two-band files stay in Layer 3.
 | 0 Host | Context window, permissions, the inner loop, the viva, write `argument.md` | Kirchhoff as truth, inventing capability ids, minting checked ohms, unique EE chat loop |
 | 1 Attach | CLI, MCP verbs including `propose_composition`, skill load, optional MATLAB MCP | 1:1 wrap of every provider; PTC on physics writes; mega `run_workflow` as host-path viva |
 | 2 Kernel | Capability registry, providers, validator, RAG, short YAML replay, `unchecked` | A second host-incompatible chat loop (H5); long YAML as the chat brain; locking the thesis to one simulator |
-| 3 UI / artifacts | Confirm, plots, citations, two-band viewer | A ChatGPT-clone console; WAN bind; KiCad clone |
+| 3 UI / artifacts | Lab workbook ([`UI.md`](UI.md)): This problem, Past work, Books, Notes | A ChatGPT-clone console; WAN bind; KiCad clone; dumping `.md`/`.json` |
 
 **Falsifier for H3:** if the CLI or UI grows a custom harness that hosts cannot share, stop and return to owner (that is H5). A Python multi-turn composition dialog **or a Python specialist fan-out** is that falsifier.
 
@@ -265,7 +265,7 @@ Detail: [`hosts/README.md`](hosts/README.md).
 
 ## 7. Functional requirements
 
-FR17–FR23 are the host-path restructure. FR24 is observation (D20).
+FR17–FR23 are the host-path restructure. FR24 is observation (D20). FR11 includes the student-facing lab workbook (D21).
 
 **FR1 Co-solver.** Default behaviour is full working + final answer + assumptions. Not hint-first tutor. Not faculty mode. Mathematics in answers is valid LaTeX plus a plaintext fallback.
 
@@ -291,7 +291,7 @@ FR17–FR23 are the host-path restructure. FR24 is observation (D20).
 
 **FR10 Named workflows.** Default CLI path is a **short physics attachment** from [`WORKFLOWS.md`](WORKFLOWS.md) (`electrical-engineer run simulate-circuit`) **or** a capability graph. Explicit id skips classify. On the CLI-without-host path, if id omitted, one classifier call; if top-1 and top-2 are within 0.15, ask the student. On the **host path**, the host calls `simulate_attachment` or `propose_composition` (FR17) — it does **not** pick a mega YAML that includes `solve-explain`. Unmatched text always uses `unmatched-cosolver` (no auto-simulate; host-path unmatched has no essay node). The router **never invents capability or provider ids**. New graphs: `propose_composition` (allowlisted capabilities, kernel binds providers) or `compose-from-parts --advanced`. Missing YAML for a pack does not make an in-bound question out of product — use capabilities or `unchecked`.
 
-**FR11 Persistent UI.** `electrical-engineer ui` is a **critical** local workspace (runs, library-rendered diagrams and plots, photo confirm, citations, RAG inventory, memory excerpts, **job plan** when `plan.md` exists, **observation excerpt** when present). It stays up across a session. It is not a one-shot diagram dialog and not a second agent loop.
+**FR11 Persistent UI.** `electrical-engineer ui` is a **critical** local **lab workbook** for a UG EE student who may not be software-fluent ([`UI.md`](UI.md)). Pages: **This problem**, **Past work**, **Books**, **Notes**; overlays **Confirm diagram** and **The lab needs a value**. It shows results tables, figure grids, rendered method, Given/Find plan, book/chapter/page quotes, and notes as cards. It does **not** present `.md`, `.json`, `.yaml`, or `.toml` as the product, does not title the screen with a run UUID, and does not expose MCP/DAG/slots. Exact token `unchecked` stays visible (FR2) with a plain gloss. Visual bar: [`design/DESIGN-coinbase.md`](design/DESIGN-coinbase.md). It stays up across a session. It is not a one-shot diagram dialog, not a file browser, and not a second agent loop. As-built `ui/` still dumps `summary.json`; filling the pages is a later code plan.
 
 **FR12 Tagged RAG.** BYO PDFs and scans ingest **locally** through drop → gate → extract → chunk (book/chapter/page) → index (facade) → retrieve. Inventory (`rag list`) and filters: book, chapter, folder, domain. “Search only this book, chapter 3” is a v1 retrieval requirement. Citations include book + chapter + page. Empty retrieval is visible. Circuit-homework photos for simulation go through `photo-to-netlist`, not quiet RAG-as-netlist. BYO content cannot override gates or `unchecked` and cannot mint a capability. Host path uses `retrieve` as a read verb; `rag add` is CLI this graph. Do not dump the index into always-on context (§6.2). As-built add-without-parse is `CD-RAG-PARSE` until a code plan.
 
@@ -436,6 +436,7 @@ MATLAB if present else OSS first-class; the **entire product works without MATLA
 | [`curriculum-map.md`](curriculum-map.md) | UG bound |
 | [`../DECISIONS.md`](../DECISIONS.md) | ADRs |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Technical architecture |
+| [`UI.md`](UI.md) | Student-facing lab UI (D21) |
 | [`WORKFLOWS.md`](WORKFLOWS.md) | Named workflow catalog |
 | [`../research/notes/host-first-class-attach.md`](../research/notes/host-first-class-attach.md) | ChatGPT desktop, dual MCP, specialists |
 | [`../research/notes/domain-kernel-layering.md`](../research/notes/domain-kernel-layering.md) | Four-layer wrap |
@@ -458,5 +459,6 @@ Previous D0 (2026-09-10) remains historical. **This revision is Proposed. Do not
 - [ ] Host-path mega YAML with `solve-explain` is rollback; short attachments + validate-then-apply
 - [ ] Coverage law + capability registry (D19): any in-bound UG question has a complete path; providers are not the identity
 - [ ] D20 persist / observe / spawn: named memory files, observation FR24, host-native adapters, no Python orchestrator
+- [ ] D21 student-facing UI: lab workbook pages; no raw `.md`/`.json`; no reasoning-mode node
 - [ ] ChatGPT desktop first-class; ChatGPT web excluded; CLI-without-host complete
 - [ ] Exam-style in-scope; **no** third-party copyrighted PDFs in git
