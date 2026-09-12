@@ -1,6 +1,6 @@
 # Technical architecture — Electrical Engineer
 
-**Status:** Proposed (2026-09-12) overlay on Accepted A1 (2026-09-10). Hybrid composition (D18) plus **capability-first domain contract (D19)**: any in-bound UG EE question has a complete co-solver path; capabilities are the stable physics contract; providers (ngspice, python-control, YAML encoding, FastAPI, …) are this-pass seams, not the product identity. Aligns with Proposed [`PRD.md`](PRD.md) / [`PID.md`](PID.md).  
+**Status:** Proposed (2026-09-12) overlay on Accepted A1 (2026-09-10). Hybrid composition (D18), **capability-first domain contract (D19)**, plus **harness persist / observe / spawn (D20)**: the rented host owns the loop, compaction, and specialist spawn; the kernel owns runs, memory, RAG ingest, observation, and deterministic hooks. Aligns with Proposed [`PRD.md`](PRD.md) / [`PID.md`](PID.md).  
 **Date:** 2026-09-12  
 **Authority:** [`PID.md`](PID.md) (Proposed), [`PRD.md`](PRD.md) (Proposed)
 
@@ -93,6 +93,23 @@ Every public pack must be able to request the capabilities in this table. v1 **g
 
 Unmatched text (no pack, no typed model artifact) uses **only** retrieve-optional → `label-unverified` → summary. It must not auto-bind `lumped-circuit-sim` because the prompt “looks like a netlist.”
 
+### 0.3 Harness ownership (D20)
+
+A coding harness is prompts, tools, filesystem, orchestration, hooks, and observability. Electrical Engineer **does not reimplement** that stack. Split:
+
+| Harness part | Owner | We author | Must not |
+|--------------|-------|-----------|----------|
+| Inner loop, compaction, continuation, model routing, token/cost meters | **L0 host** | nothing | A Python chat loop, compaction middleware, or cost dashboard |
+| System / lab prompt, pack skills, specialist spawn prompts | Host **loads**; we **write** files | [`skills/SKILL.md`](../skills/SKILL.md), `skills/<pack>/`, [`hosts/adapters/`](../hosts/adapters/) | This repo’s coding [`AGENTS.md`](../AGENTS.md) as the student lab prompt; EE packs inside vendored `.cursor/skills/` |
+| Tools / MCP / CLI | **L1** | verb *kinds* + CLI `rag` / `memory` / `eval` | 1:1 provider MCP; waiting on stdio |
+| Sandbox / general browser agent | **L0 host** | localhost UI on `127.0.0.1` for confirm + artifacts | Shipping a second browser agent |
+| Spawn / handoff | **L0 host** | spawn map + adapter markdown | A custom multi-agent runtime (H5) |
+| Deterministic hooks | **L2 kernel** | ingest → validate-then-apply → repair → observe → lesson-propose → eval | Re-asking a model inside the runner |
+| Persist | **L2** | run dir, memory files, RAG index | Silent chat dumps; crash-resume; fleet learning |
+| Observe / verify | **L2 + L3** | `observation.json` (or evidentiary seed), gold, `unchecked` | LLM-as-judge; memory `errors.md` as a checked number |
+
+**Spawn map (host-native only).** The main host (Cursor / Claude Code / Codex) may start **at most two** pack specialists (maths may occupy the second slot). Each child loads one pack skill, calls the **same** EE MCP, and must not mint checked numbers or skip UI confirm. Handoff is `run_id` + file URIs under `./runs/<id>/` (or `children/` — §6), not a message bus. Parent writes `argument.md`. Chat/Work does **not** claim pack spawn until Skills-over-MCP. Adapter files: [`hosts/adapters/`](../hosts/adapters/). A Python process that interviews, plans, and fans out specialists is the H3/H5 falsifier.
+
 ---
 
 ## 1. System map
@@ -153,10 +170,10 @@ Canonical numbering stays **0–3**. A fifth layer is not earned (eval stays 2e;
 
 | Layer | Owns | Must not own |
 |-------|------|----------------|
-| 0 Host (rented) | Inner loop; load **2–3** pack skills; **plan then execute** on large jobs (`plan.md`); call ACI; write `argument.md`; ask the student when data is missing | Kirchhoff as numeric truth; inventing capability ids; minting checked ohms; unique EE chat loop |
-| 1 Attach | CLI inner; MCP outer; **5–7 ACI verbs** including `propose_composition`; host skill files | 1:1 provider MCP; waiting on humans; PTC on physics writes; mega `run_workflow` as the host-path viva |
-| 2 Domain kernel | Capability registry, provider map, validator, short physics attachments, gates, eval replay, RAG store, `unchecked` | A unique host-incompatible chat loop (H5); long YAML as the professional-workflow brain; locking the thesis to one simulator |
-| 3 Surfaces | Localhost UI; two-band files (`evidentiary.json`, `argument.md`) | ChatGPT-clone UI; WAN bind; KiCad clone; treating the UI stack as the domain |
+| 0 Host (rented) | Inner loop; compaction/continuation; **spawn** pack specialists; load **2–3** pack skills; **plan then execute**; call ACI; write `argument.md`; ask when data is missing | Kirchhoff as numeric truth; inventing capability ids; minting checked ohms; unique EE chat loop; a Python specialist orchestrator |
+| 1 Attach | CLI inner; MCP outer; **5–7 ACI verbs**; host skill files; adapter prompts under `hosts/adapters/` | 1:1 provider MCP; waiting on humans; PTC on physics writes; mega `run_workflow` as the host-path viva |
+| 2 Domain kernel | Capabilities, providers, validator, attachments, **kernel hooks**, gates, eval, RAG ingest/index, memory files, `observation.json`, `unchecked` | A unique host-incompatible chat loop (H5); long YAML as the chat brain; compaction; token billing |
+| 3 Surfaces | Localhost UI; two-band files; observation excerpt | ChatGPT-clone UI; WAN bind; KiCad clone; treating the UI stack as the domain |
 
 As-built sub-pieces (still true): CLI glue, pack `SKILL.md` **method** files, stdio MCP (`list_workflows` + `run_workflow` only), UI, RAG sidecar, registered **provider** nodes. Target: this section + [`PRD.md`](PRD.md) §5–§6. Capability→provider bind in the runner is a later code plan; today graphs still name provider keys.
 
@@ -174,6 +191,7 @@ The rented host must:
 4. Call kernel ACI instead of one mega-apply of `solve-circuit-problem`.
 5. Write the engineering-argument band to `./runs/<id>/argument.md` when a file is needed (Chat/Work may start in the transcript and copy).
 6. Treat `unchecked` as law. Stop when gates refuse.
+7. **May spawn** at most two pack specialists via the **host’s** Task/subagent feature (adapter markdown in [`hosts/adapters/`](../hosts/adapters/)). Do not spawn a second EE product. Handoff is the run dir.
 
 Student-without-host is Layer 0 *absence*: CLI + engines + UI remain a complete path for **numbers**. Viva needs a host or a configured local/BYO model. ChatGPT **web** is not a host.
 
@@ -261,9 +279,22 @@ No Layer 4: these files and the UI *are* Layer 3.
 
 Always-on: root skill (triggers, 5–7 verbs, `unchecked` law, coverage law, plan-then-execute) + MCP tool schemas + optional `./runs/<id>/` pointer. Never the textbook corpus, never every pack skill, never gold fixtures, never a `propose_composition` **graph body**.
 
-On-demand: matching `skills/<pack>/SKILL.md` (at most two packs), one-level `reference/`, RAG `retrieve` (book/chapter/page), run-dir evidentiary files.
+On-demand: matching `skills/<pack>/SKILL.md` (at most two packs), one-level `reference/`, RAG `retrieve` (book/chapter/page), run-dir evidentiary + **observation** + memory **excerpts**.
 
 ChatGPT **web** is not a host. Chat/Work: pin root skill until Skills-over-MCP is verified. Peer MATLAB MCP: untrusted until an EE engine recomputes (FR20).
+
+### 2.5 Kernel hooks (middleware we own)
+
+Not host compaction, continuation, or essay lint. Those stay Layer 0. The kernel pipeline is **deterministic** (code later; this is the contract):
+
+1. **Ingest** (`rag add` / BYO): gate ask → extract PDF/scan → chunk (`book_id` / `chapter_id` / `page`) → index via the RAG facade → inventory row. Fail closed if unreadable (`CD-RAG-PARSE`). Circuit-homework photos do **not** take this path (`ingest-figure`).
+2. **Validate-then-apply** (D18): allowlist of capability/provider ids, typed ports, unmatched predicate, 16/24 cap.
+3. **Simulate repair:** `repair_max: 2` then `label-unverified`. Never a fake pass.
+4. **Post-run observe:** write `observation.json` (or fields on the evidentiary seed until rename).
+5. **Lesson propose:** if `unchecked`, draft an 800-char `lessons.md` excerpt in the run dir. Do **not** auto-append to project memory.
+6. **Eval:** `electrical-engineer eval` reads the evidentiary band only.
+
+A Python middleware loop that re-asks a model is the H5 falsifier. Optional **host** hook snippets (Claude/Codex copy-paste) live in [`hosts/`](hosts/) and may remind the host to write `argument.md`; they are not kernel code.
 
 ---
 
@@ -457,7 +488,7 @@ The UI is a **first-class product surface**, not a fine-diagram gadget.
 
 **Why.** Cursor/Claude users (and CLI users) need a place that **stays up** so both the **student and the agent** can see and understand: current and past runs, library-rendered schematics, plots, photo-stub topology, citations, RAG inventory, and memory excerpts. Understanding is the point of the co-solver.
 
-**Stack (this-pass freeze, not the domain).** FastAPI serves a Vite/React CSR SPA. Zustand holds layout + current run id. A **thin in-repo slot registry** (inspire DSH named holes; **no Cordis / DSH runtime**). Visual tokens: [`design/DESIGN-coinbase.md`](design/DESIGN-coinbase.md) (Inter + JetBrains/Geist Mono; never Coinbase fonts or wordmark). Slot map: `root`, `sidebar`, `workspace`, `run.detail`, `run.artifacts`, `run.plan` (job plan), `run.bands` (two-band viewer), `photo.confirm`, `rag.inventory`, `memory.excerpt`, `gates.prompt`. Layout: `src/electrical_engineer` + `ui/`. The **domain** requirement is a persistent `127.0.0.1` two-band workspace with photo confirm. Swapping the web stack later does not change Layer 3’s job.
+**Stack (this-pass freeze, not the domain).** FastAPI serves a Vite/React CSR SPA. Zustand holds layout + current run id. A **thin in-repo slot registry** (inspire DSH named holes; **no Cordis / DSH runtime**). Visual tokens: [`design/DESIGN-coinbase.md`](design/DESIGN-coinbase.md) (Inter + JetBrains/Geist Mono; never Coinbase fonts or wordmark). Slot map: `root`, `sidebar`, `workspace`, `run.detail`, `run.artifacts`, `run.plan` (job plan), `run.bands` (two-band viewer), `run.observation` (excerpt of `observation.json`), `photo.confirm`, `rag.inventory`, `memory.excerpt`, `gates.prompt`. Layout: `src/electrical_engineer` + `ui/`. The **domain** requirement is a persistent `127.0.0.1` two-band workspace with photo confirm. Swapping the web stack later does not change Layer 3’s job.
 
 **Shape**
 
@@ -481,19 +512,33 @@ This remains **H3 glue** (a viewer/workspace). If the UI grows its own agent loo
 
 Do **not** lock a retrieval engine before numbers. This graph **spikes LightRAG 1.5** against Docling and BM25+dense (ADR-0004). QUALITY then SPEED. A facade exposes `retrieve-citation` / `retrieve` + inventory regardless of winner. Thin BM25 fallback is allowed if the spike fails; record that in [`CANNOT_DO.md`](CANNOT_DO.md). The architecture identity is **tagged, citable, local RAG**, not LightRAG.
 
+**Ingest pipeline** (student BYO; student machine only). Student-facing walkthrough: [`rag-byo.md`](rag-byo.md).
+
+```text
+drop .electrical-engineer/corpus/<book_id>/
+  → electrical-engineer rag add PATH --book-id --chapter-id --domain-tag --licence-tag
+  → gate (ask; persistent index)
+  → extract (PDF text and/or scan OCR; low confidence flagged)
+  → chunk (library → book → chapter → chunk; page on the chunk)
+  → index (facade: BM25 now; LightRAG 1.5 spike still ADR-0004)
+  → retrieve (filters first, then 3×1500 chars, empty visible)
+```
+
+As-built `rag add` writes **inventory metadata only** and retrieve is BM25 over a file prefix. That is a **code hole**, not an architecture hole. Until extract/chunk ship, name `CD-RAG-PARSE`.
+
 Keep an explicit source tree: **library → book → chapter → chunk**.
 
 EE metadata on top of the chunk note: `doc_id`, title, chapter, section, pages, `licence_tag`, `folder_tag`, student tags, `domain_tag`, `chunk_type`. Optional concept-graph prerequisites remain the P1 overlay in [`../research/notes/rag-chunking-and-retrieval.md`](../research/notes/rag-chunking-and-retrieval.md).
 
 | Rule | Freeze |
 |------|--------|
-| BYO ingest | PDFs **and** images (scans). Circuit-homework photos for **simulation** still go through `photo-to-netlist`, not quiet RAG-as-netlist |
-| Inventory | `electrical-engineer rag list` — every ingested source and its tags. CLI is enough this pass (no third MCP tool) |
+| BYO ingest | PDFs **and** images (scans). Circuit-homework photos for **simulation** still go through `photo-to-netlist` / `ingest-figure`, not quiet RAG-as-netlist |
+| Inventory | `electrical-engineer rag list` — every ingested source and its tags. CLI is enough this pass (MCP `retrieve` is the FR17 read verb, not a third dump of nodes) |
 | Filters (v1 retrieval) | `book_id`, `chapter_id`, `folder_tag`, `domain_tag`. “Search only this book, chapter 3” is required, not optional |
 | Hybrid | dense + BM25. Empty retrieval is **visible**, never silent |
 | Citations | book + chapter + page (+ tag if filtered) |
 | Legal | no commercial PDFs in git; BYO stays on the student’s machine |
-| Untrusted | ingest cannot override gates, `--allow-all`, or `unchecked` |
+| Untrusted | ingest cannot override gates, `--allow-all`, or `unchecked`; cannot mint a capability id |
 
 **Very good RAG** means **precision under a small context budget**, not dumping chapters.
 
@@ -501,14 +546,28 @@ EE metadata on top of the chunk note: `doc_id`, title, chapter, section, pages, 
 
 ## 11. Memory
 
-Not the RAG index. Not a chat dump.
+Not the RAG index. Not a chat dump. Not a product that learns from other students’ machines. “Improves with usage” means **this student’s** project and user files.
 
 | Scope | Path |
 |-------|------|
 | Project | `.electrical-engineer/memory/` (student may commit as a course notebook) |
 | User | `~/.local/share/electrical-engineer/memory/` (never in the project repo) |
 
-One concern per file (examples: `preferences.md`, `course.md`, `errors.md`, `facts.md`). Agent reads/writes through **explicit** nodes or CLI helpers — no silent append every turn. Untrusted (Q57). Context: **paths + short excerpt** (800-char class), never the whole folder. Cap **32 KiB per file**; over cap ⇒ summarise, do not grow forever.
+**Normative files** (one concern each; same names in both scopes):
+
+| File | Write when | Must not |
+|------|------------|----------|
+| `preferences.md` | Units, notation, “always show steps” | Checked ohms |
+| `course.md` | Course code, `book_id` filters, active pack | Invent a capability |
+| `facts.md` | Student-confirmed identities they want reused | Copy a textbook chapter |
+| `errors.md` | Recurring mistakes (forgot pu, wrong ground) | Dump SPICE logs |
+| `lessons.md` | **Explicit** post-run: what stayed `unchecked` and why | Silent append every turn |
+
+**Write law.** Host or CLI `memory write <file>` only. Kernel hook §2.5 may **propose** a lesson (run-dir path + 800-char draft) when `unchecked: true`. Applying it is an explicit write. It does **not** count toward the 2-interrupt budget. Cap **32 KiB per file**; over cap ⇒ summarise. Context: **paths + excerpt** (800-char class), never the whole folder. Untrusted: cannot override gates, `--allow-all`, or `unchecked`. A line in `errors.md` is not a verifier.
+
+**Past user input.** The assignment PDF is a host file or RAG ingest, not memory. `problem.json` in the run dir snapshots that job. Preferences / errors / lessons are how the **next** job improves.
+
+Run audit (not memory): `./runs/<id>/` — `problem.json`, node `out.json`, evidentiary seed, `plan.md`, `argument.md`, `observation.json`, artifact **paths**. Not crash-resume.
 
 ---
 
@@ -581,11 +640,27 @@ What stays unchecked
 
 Same clamp as the argument band: `plan.md` must not mint a checked scalar or flip `unchecked`.
 
+`observation.json` (kernel writes at end of run; host must not mint numbers here):
+
+```text
+run_id
+capabilities: [ ids ]
+providers: [ ids ]
+nodes: { id: { ok, unchecked } }
+unchecked_reason: no-provider | sim-exhausted | unmatched | empty-retrieve | gate-closed | null
+retrieve: { empty, filters, citations }
+# P1: wall_ms per node. Never token/cost (host).
+```
+
+Until a code plan splits the file, these fields may live on `summary.json`. **One observation writer.** A lesson in `errors.md` is not this record and is not verification.
+
 `write-run-summary` / as-built `summary.json` is the **seed** of `evidentiary.json`. **One evidentiary writer.** Until a code plan renames the file, gold/UI/MCP read `summary.json`. After the split, `evidentiary.json` is canonical and `summary.json` is either removed or a compat alias of the same bytes — **never two live writers**. A host-authored markdown file next to it **must not** flip `unchecked` to false. Displaying an unlabeled numeral in the argument band is a fail.
 
 **Run dir contents:** node JSON, two-band files, artifact paths, spice **log path** (not body). No API keys. Redact `*_KEY`, `*_TOKEN`, `*_SECRET`, `sk-`, `Bearer`, MATLAB licence strings.
 
-**Injection:** BYO PDFs, photos, folder tags, and memory files **cannot** override gates, `--allow-all`, or `unchecked`. `argument.md` cannot override them either.
+**Injection:** BYO PDFs, photos, folder tags, and memory files **cannot** override gates, `--allow-all`, or `unchecked`. `argument.md` cannot override them either. `observation.json` cannot flip `unchecked` by itself — the evidentiary `unchecked` field is the contract.
+
+Gold still scores the **evidentiary** band, not `observation.json` and not `argument.md`.
 
 ---
 
@@ -635,6 +710,9 @@ CLI path for `solve-explain` uses a local OpenAI-compatible HTTP client (LM Stud
 - Treating ngspice, MATLAB, YAML, FastAPI, or LightRAG as the product identity
 - Claiming every UG numeral is simulated; the honest path is `unchecked`
 - PG-only optimal control, live PLC, analog tape-out, commercial full-wave as a public promise
+- Product-cloud telemetry; silent chat-dump memory; fleet learning from other students
+- Compaction / continuation / model routing inside the CLI
+- A custom multi-agent runtime (host-native spawn only)
 
 ---
 
@@ -662,3 +740,9 @@ Proposed capability-first overlay (D19, 2026-09-12) — same Accept sheet:
 - Coverage law: every in-bound UG question has a complete path (check or `unchecked`)
 - Capability registry is the domain contract; providers and YAML/UI/RAG engines are this-pass freezes
 - `propose_composition` may name capability ids; kernel binds an installed provider or `CD-NO-PROVIDER`
+
+Proposed harness overlay (D20, 2026-09-12) — same Accept sheet:
+
+- Host owns loop, compaction, spawn; kernel owns persist, observation, ingest hooks, memory write law
+- BYO RAG pipeline specified; extract/chunk is a later code plan (`CD-RAG-PARSE`)
+- Pack specialists are host-native adapters, not a Python orchestrator
