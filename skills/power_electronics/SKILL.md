@@ -10,7 +10,7 @@ inverters, PWM, averaged models, duty-cycle algebra. Not HIL benches
 2. Averaged algebra via `converter-model` / `algebraic-check` first.
 3. `lumped-circuit-sim` only if a switched/averaged netlist artifact exists.
 4. Waveform plots via `render-figure` from computed points or a provider —
-   never a vision-invented switching PNG.
+   never a vision-invented switching PNG. No provider → exact token `unchecked`.
 
 ## Genres
 

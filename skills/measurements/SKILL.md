@@ -9,7 +9,7 @@ physical bench (`CD-MEAS-BENCH`).
 1. Name the measurand, instrument, range, and error model (limiting error,
    probable error, loading).
 2. Use `measurement-model` / `algebraic-check`. There is no “simulate the lab
-   bench” provider in v1.
+   bench” provider in v1 — that path is exact token `unchecked` (`CD-MEAS-BENCH`).
 3. Bridge and potentiometer circuits may use `algebraic-check`; SPICE only if
    the student supplied a netlist **and** the unknown is a circuit quantity.
 
