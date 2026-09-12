@@ -89,6 +89,46 @@ Every external or authoritative source used in research notes. Add a row when yo
 | S83 | Spatiotemporal composability note | `research/notes/spatiotemporal-composability.md` | 2026-09-10 | primary |
 | S84 | Light DAG/FSM and language note | `research/notes/light-dag-fsm-and-language.md` | 2026-09-10 | primary |
 | S85 | EE workflow catalog draft | `research/notes/ee-workflow-catalog-draft.md` | 2026-09-10 | primary |
+| S86 | OpenMontage (agentic video production system) | https://github.com/calesthio/OpenMontage | 2026-09-12 | primary |
+| S87 | OpenMontage Architecture | https://github.com/calesthio/OpenMontage/blob/main/docs/ARCHITECTURE.md | 2026-09-12 | primary |
+| S88 | anything2explainer | https://github.com/Vincentwei1021/anything2explainer | 2026-09-12 | primary |
+| S89 | video-shotcraft | https://github.com/Vincentwei1021/video-shotcraft | 2026-09-12 | primary |
+| S90 | video-talkcraft | https://github.com/Vincentwei1021/video-talkcraft | 2026-09-12 | primary |
+| S91 | karajan-code | https://github.com/manufosela/karajan-code | 2026-09-12 | primary |
+| S92 | Building effective agents (Anthropic) | https://www.anthropic.com/research/building-effective-agents | 2026-09-12 | primary |
+| S93 | Agentic AI design patterns catalog | https://www.agentpatternscatalog.org/agentic-ai-design-patterns/ | 2026-09-12 | secondary |
+| S94 | ChemCrow Nature Machine Intelligence | https://www.nature.com/articles/s42256-024-00832-8 | 2026-09-12 | paper |
+| S95 | chemcrow-public | https://github.com/ur-whitelab/chemcrow-public | 2026-09-12 | primary |
+| S96 | paper-qa / FutureHouse | https://github.com/Future-House/paper-qa | 2026-09-12 | primary |
+| S97 | AnalogCoder | https://github.com/laiyao1/AnalogCoder | 2026-09-12 | primary |
+| S98 | SPICEPilot | https://github.com/ACADLab/SPICEPilot | 2026-09-12 | primary |
+| S99 | legal-skills | https://github.com/chen-friedman/legal-skills | 2026-09-12 | primary |
+| S100 | MATLAB Copilot | https://www.mathworks.com/products/matlab-copilot.html | 2026-09-12 | vendor |
+| S101 | Siemens Eigen Engineering Agent | https://www.siemens.com/eigen-engineering-agent | 2026-09-12 | vendor |
+| S102 | Fuse (nimaibhat) | https://github.com/nimaibhat/fuse | 2026-09-12 | primary |
+| S103 | EEBench by atopile | https://eebench.org/ | 2026-09-12 | primary |
+| S104 | CircuitLab | https://www.circuitlab.com/ | 2026-09-12 | vendor |
+| S105 | circuitbench PyPI | https://pypi.org/project/circuitbench/ | 2026-09-12 | primary |
+| S106 | EEcircuit | https://github.com/eelab-dev/EEcircuit | 2026-09-12 | primary |
+| S107 | Claude Builder Club IIT Madras | https://claude-builder-clubiitm.vercel.app/ | 2026-09-12 | primary |
+| S108 | Domain-system architecture patterns note | `research/notes/domain-system-architecture-patterns.md` | 2026-09-12 | primary |
+| S109 | Sibling domain systems catalog | `research/notes/similar-agentic-domain-systems.md` | 2026-09-12 | primary |
+| S110 | Naming and positioning note | `research/notes/naming-and-positioning.md` | 2026-09-12 | primary |
+| S111 | Student GTM UG EE note | `research/notes/student-gtm-ug-ee.md` | 2026-09-12 | primary |
+| S112 | Domain-system recommendation memo | `research/synthesis/domain-system-recommendation.md` | 2026-09-12 | primary |
+| S113 | Vision lock sheet | `research/synthesis/vision-lock-sheet.md` | 2026-09-12 | primary |
+| S114 | Owner-uploaded agentic kernel 2026 memo (Stamped; harvest only) | `research/notes/agentic-kernel-2026.md` | 2026-09-12 | primary |
+| S115 | Addy Osmani — Agent Harness Engineering | https://addyosmani.com/blog/agent-harness-engineering/ | 2026-09-12 | secondary |
+| S116 | Addy Osmani — Own the Outer Loop | https://addyosmani.com/blog/own-the-outer-loop/ | 2026-09-12 | secondary |
+| S117 | Cloudflare — Code Mode | https://blog.cloudflare.com/code-mode-mcp/ | 2026-09-12 | vendor |
+| S118 | Anthropic — Code execution with MCP | https://www.anthropic.com/engineering/code-execution-with-mcp | 2026-09-12 | primary |
+| S119 | Anthropic — Programmatic tool calling | https://platform.claude.com/docs/en/agents-and-tools/tool-use/programmatic-tool-calling | 2026-09-12 | primary |
+| S120 | Firecrawl — MCP vs CLI in 2026 | https://www.firecrawl.dev/blog/mcp-vs-cli | 2026-09-12 | secondary |
+| S121 | Thoughtworks — skill is not an anti-corruption layer | https://www.thoughtworks.com/insights/blog/generative-ai/your-agent-skill-not-anti-corruption-layer | 2026-09-12 | secondary |
+| S122 | KAIJU | https://arxiv.org/abs/2604.02375 | 2026-09-12 | paper |
+| S123 | HEART / ToolFace | https://arxiv.org/abs/2609.01736 | 2026-09-12 | paper |
+| S124 | GraSP | https://arxiv.org/abs/2604.17870 | 2026-09-12 | paper |
+| S125 | Domain-kernel layering note | `research/notes/domain-kernel-layering.md` | 2026-09-12 | primary |
 
 ## Reliability tiers
 

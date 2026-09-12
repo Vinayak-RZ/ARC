@@ -115,18 +115,21 @@ for f in research/notes/*.md research/synthesis/*.md; do
 done
 ok "copyright guard (heuristic)"
 
-# 7. Anti-PRD guard on recommendation memo
-if [[ -f research/synthesis/recommendation.md ]]; then
-  if grep -nE "$PRD_RE" research/synthesis/recommendation.md >/dev/null 2>&1; then
-    fail "recommendation.md looks like PRD language: $(grep -nE "$PRD_RE" research/synthesis/recommendation.md | head -3 | tr '\n' ' ')"
-  fi
-  # also ban requirement-style headings
-  if grep -qiE '^#+ (functional )?requirements|^#+ must ship|^#+ non-functional' research/synthesis/recommendation.md; then
-    fail "recommendation.md contains requirements-style headings"
-  fi
-  ok "anti-PRD guard"
+# 7. Anti-PRD guard on all synthesis memos
+shopt -s nullglob
+SYNTH=(research/synthesis/*.md)
+if [[ ${#SYNTH[@]} -eq 0 ]]; then
+  ok "anti-PRD guard (no synthesis memos)"
 else
-  ok "anti-PRD guard (memo not yet present)"
+  for f in "${SYNTH[@]}"; do
+    if grep -nE "$PRD_RE" "$f" >/dev/null 2>&1; then
+      fail "$f looks like PRD language: $(grep -nE "$PRD_RE" "$f" | head -3 | tr '\n' ' ')"
+    fi
+    if grep -qiE '^#+ (functional )?requirements|^#+ must ship|^#+ non-functional' "$f"; then
+      fail "$f contains requirements-style headings"
+    fi
+  done
+  ok "anti-PRD guard"
 fi
 
 # 8. README guard (when both exist)

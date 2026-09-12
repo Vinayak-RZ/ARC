@@ -2,7 +2,8 @@
 
 This directory holds the **research-only** phase of Electrical-Engineer.
 Nothing here is product code. The goal is to decide *what to build* (harness base,
-EE textbook RAG, verification surface, capability framing) and write a recommendation memo.
+EE textbook RAG, verification surface, capability framing, and — in WS-G — product
+class, names, orchestrator split, and domain-kernel layering) and write recommendation memos.
 
 > Full internals of the repo (every folder and important file): see the eventual
 > companion at [`docs/EXTENSIVE.md`](../docs/EXTENSIVE.md) after Phase F.
@@ -12,8 +13,9 @@ EE textbook RAG, verification surface, capability framing) and write a recommend
 1. Start with [`question-bank.md`](question-bank.md) — every open research question.
 2. Check [`DECISION_REGISTER.md`](DECISION_REGISTER.md) — options and current stances.
 3. Read domain notes under [`notes/`](notes/).
-4. End with [`synthesis/recommendation.md`](synthesis/recommendation.md) and [`synthesis/rag-stack-recommendation.md`](synthesis/rag-stack-recommendation.md) when evaluating RAG engine choice.
-5. Sources are catalogued in [`source-ledger.md`](source-ledger.md).
+4. End with [`synthesis/recommendation.md`](synthesis/recommendation.md) (historical O1 harness) and [`synthesis/rag-stack-recommendation.md`](synthesis/rag-stack-recommendation.md) when evaluating RAG engine choice.
+5. For class, names, hybrid architecture, and layering: [`synthesis/domain-system-recommendation.md`](synthesis/domain-system-recommendation.md) then [`synthesis/vision-lock-sheet.md`](synthesis/vision-lock-sheet.md). Kernel harvest: [`notes/agentic-kernel-2026.md`](notes/agentic-kernel-2026.md), [`notes/domain-kernel-layering.md`](notes/domain-kernel-layering.md).
+6. Sources are catalogued in [`source-ledger.md`](source-ledger.md).
 
 ## Note shape
 
@@ -34,6 +36,7 @@ memo, and (heuristically) verbatim book text.
 | WS-E | Synthesis | `synthesis/option-scoring.md`, `synthesis/recommendation.md`, `synthesis/rag-stack-recommendation.md` |
 | WS-F | README compilation | root `README.md`, `docs/EXTENSIVE.md` |
 | WS-Arch | Technical architecture | `notes/spatiotemporal-composability.md`, `notes/light-dag-fsm-and-language.md`, `notes/architecture-qa-gate.md`, `docs/ARCHITECTURE.md`, `docs/WORKFLOWS.md` |
+| WS-G | Domain kernel, names, GTM | `notes/domain-system-architecture-patterns.md`, `notes/similar-agentic-domain-systems.md`, `notes/naming-and-positioning.md`, `notes/student-gtm-ug-ee.md`, `notes/agentic-kernel-2026.md`, `notes/domain-kernel-layering.md`, `synthesis/domain-system-recommendation.md`, `synthesis/vision-lock-sheet.md` |
 
 ## Assumptions while blockers are open
 
@@ -46,3 +49,4 @@ memo, and (heuristically) verbatim book text.
 - A research phase needs a failable gate, not just good intentions.
 - Separating question bank, decision register, and source ledger keeps notes from becoming the only source of truth.
 - Core-engineering AI progress is real but lives in verify-loops and vendor toolchains; an open student EE harness is still the gap.
+- OpenMontage’s class is right; “studio” is the wrong noun. Public category is **lab**; internal class is **domain kernel**; the host agent plans; code owns numbers. Mega `run_workflow` starves the viva.
