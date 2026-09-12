@@ -44,6 +44,7 @@ Every open research question for this phase. Status: `open` | `answered` | `defe
 | Q38 | Attach order: MCP-first vs CLI-first vs Code Mode first? | WS-G | answered | CLI inner, MCP outer, PTC/Code Mode later on reads only. — `notes/domain-kernel-layering.md` |
 | Q39 | Keep mega `run_workflow` (YAML DAG including `solve-explain`) as the host’s only write? | WS-G | answered | No on the host path (starves the viva). Yes as headless eval rollback and one-command CLI. — `notes/domain-kernel-layering.md` |
 | Q40 | One artifact blob vs two bands (evidentiary vs engineering argument)? | WS-G | answered | Two bands. Host explanation cannot mint checked scalars. — `notes/agentic-kernel-2026.md` |
+| Q41 | Long YAML brain vs unconstrained on-the-fly vs hybrid engines? | WS-G | answered | Hybrid quality: host + pack skills compose; typed engines; short attachments; validate-then-apply. Mega YAML with `solve-explain` retires on the host path. No new Layer 4. — `notes/hybrid-engine-composition.md` |
 
 ## Sources
 
