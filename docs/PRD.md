@@ -40,13 +40,15 @@ Rejected public nickname: “Agentic UG EE Studio”. “Bench” is not the pub
 ### Goals
 
 - Help UG students finish **and understand** EE assignments: correct enough to use, explained enough for a viva, **visible** in a local UI.
+- **Measure two axes separately:** (1) checked-correctness on Results (`eval/gold/` numbers / `unchecked`); (2) a **method checklist** on the viva text. Do not treat (2) as a human viva pass, and do not let it flip (1).
 - Run **locally** as a CLI without requiring any AI host. Capability providers (circuit sim, LTI, load-flow, algebraic-check) work with **no** model. A probeable viva on the CLI-without-host path needs a configured local model or BYO key (`solve-explain`); without a model the evidentiary band is still complete and the argument band is `unchecked` or omitted — that is honest, not a silent fail.
+- Hosts we do not control **will** skip tools. The product still tells the truth: chat-only numbers are not lab-checked; the CLI + UI remain the complete numbers path.
 - Also run **inside** Cursor, Claude Code, Codex, and **ChatGPT desktop** under the same kernel contract (MCP + CLI; skills folders where the host loads them; MCP-served or pinned root skill on Chat/Work). ChatGPT **web** is not a host.
 - Spend the host on method, viva, and missing-data interview. Clamp numbers, invented spice DAGs, and photo confirm in the kernel.
 - Invoke **named workflows** a student understands; fall through to a short co-solver that never auto-simulates.
 - Accept **BYO API keys**, **local models**, and **BYO textbooks** (tagged; inventoryable).
 - Check numbers with tools when possible; use the exact token **unchecked** when not.
-- Measure capability with `eval/gold/` tasks; GATE tags are one overlay, not the bound.
+- Measure capability with `eval/gold/` tasks on **both** axes above; GATE tags are one overlay, not the bound.
 
 ### Non-goals
 
@@ -265,7 +267,7 @@ Detail: [`hosts/README.md`](hosts/README.md).
 
 ## 7. Functional requirements
 
-FR17–FR23 are the host-path restructure. FR24 is observation (D20). FR11 includes the student-facing lab workbook (D21).
+FR17–FR23 are the host-path restructure. FR24 is observation (D20). FR11 includes the student-facing lab workbook (D21). FR25 is host-skip. FR26 is the viva checklist axis.
 
 **FR1 Co-solver.** Default behaviour is full working + final answer + assumptions. Not hint-first tutor. Not faculty mode. Mathematics in answers is valid LaTeX plus a plaintext fallback.
 
@@ -287,7 +289,7 @@ FR17–FR23 are the host-path restructure. FR24 is observation (D20). FR11 inclu
 
 **FR8 Ug policy.** Public profile is `ug-coursework`. Out-of-pack questions: try with **unchecked** or state out of enabled packs — not a silent PG mode.
 
-**FR9 Eval runner.** `electrical-engineer eval` (and `--pack`) against [`../eval/gold/`](../eval/gold/README.md). Gold items name a `recipe_id`. CI must not require MATLAB. `EE_ALLOW_ALL` may skip gates in CI; it must **not** disable `unchecked`. Gold scores the **evidentiary** band, not the essay. `unchecked: false` in gold is legal **only** when `summary.verifier` is an EE engine on the FR20 allowlist. `solve-explain` must not mint checked values (it may write the argument band). As-built gold that scores an LLM/node-minted `value` as checked is a **defect to fix in a later eval plan**, not a PRD exception.
+**FR9 Eval runner.** `electrical-engineer eval` (and `--pack`) against [`../eval/gold/`](../eval/gold/README.md). Gold items name a `recipe_id`. CI must not require MATLAB. `EE_ALLOW_ALL` may skip gates in CI; it must **not** disable `unchecked`. Gold scores the **evidentiary** band, not the essay, **for checked-correctness**. A second file `expect-viva.json` (when present) scores a **method checklist** only (FR26). `unchecked: false` in gold is legal **only** when `summary.verifier` is an EE engine on the FR20 allowlist. `solve-explain` must not mint checked values (it may write the argument band). As-built gold that scores an LLM/node-minted `value` as checked is a **defect to fix in a later eval plan**, not a PRD exception.
 
 **FR10 Named workflows.** Default CLI path is a **short physics attachment** from [`WORKFLOWS.md`](WORKFLOWS.md) (`electrical-engineer run simulate-circuit`) **or** a capability graph. Explicit id skips classify. On the CLI-without-host path, if id omitted, one classifier call; if top-1 and top-2 are within 0.15, ask the student. On the **host path**, the host calls `simulate_attachment` or `propose_composition` (FR17) — it does **not** pick a mega YAML that includes `solve-explain`. Unmatched text always uses `unmatched-cosolver` (no auto-simulate; host-path unmatched has no essay node). The router **never invents capability or provider ids**. New graphs: `propose_composition` (allowlisted capabilities, kernel binds providers) or `compose-from-parts --advanced`. Missing YAML for a pack does not make an in-bound question out of product — use capabilities or `unchecked`.
 
@@ -318,6 +320,10 @@ FR17–FR23 are the host-path restructure. FR24 is observation (D20). FR11 inclu
 **FR23 Plan then execute.** On a first-class host, a **large** job (entire assignment, worksheet, several numbered problems, more than one short attachment, more than one pack, photo + simulate, or a composition graph) **must** produce `./runs/<id>/plan.md` and show it **before** `simulate_attachment` / `propose_composition apply: true`. The plan lists Given/Find, packs, questions to ask, retrieve filters, attachment or **capability** ids, and what stays `unchecked`. Execute **only** that plan. `plan.md` must not mint a checked scalar. Small jobs (one unknown, one attachment) may skip a written plan. Planning is the **host’s** job (root skill); do not add a Python planner loop (H3 falsifier). CLI `electrical-engineer run <id>` stays one-shot. `propose_composition apply: false` may validate a physics graph into `plan.md` without running providers.
 
 **FR24 Observation.** Each run records capability ids, provider ids, node ok/fail, `unchecked_reason` (`no-provider` \| `sim-exhausted` \| `unmatched` \| `empty-retrieve` \| `gate-closed` \| none), and retrieve empty/filters/citations. Seed may live on `summary.json` until `observation.json` splits. Gold does **not** score this file as SPICE. LLM token/cost metering stays on the host. Kernel hooks: ingest, validate-then-apply, repair, post-run observe, lesson **propose** (not auto-write), eval. Compaction and continuation stay Layer 0.
+
+**FR25 Host-skip (claim boundary).** Skills cannot force Cursor / Claude Code / Codex / ChatGPT desktop to call kernel tools. A number is **lab-checked** only if it appears on kernel-written Results for that problem. Chat-only answers are outside the product claim (`CD-HOST-SKIP`). The CLI + UI remain a complete numbers path when the host freelances. Weak or missing local models on CLI-without-host must not mint checked ohms from the essay. Do not add a Python loop that nags the model until it uses tools. Eval `host-skip/` fixtures (specified) score this boundary. Student UI empty-state must say that chat numbers are not checked until they appear on **This problem**.
+
+**FR26 Viva / method signal.** “Explained enough for a viva” is a **second eval axis**, not a side effect of a correct `Vout`. Score a human-authored **checklist** on Method (`expect-viva.json`: required beats, FR18 unlabeled-numeral fail). A checklist miss must not flip Results `unchecked`. Do not use LLM-as-judge as product truth. Do not claim a human viva pass rate (`CD-VIVA-SIGNAL`) until a later eval plan fills `eval/gold/explain/` items. v1 specifies the seam; empty folders are not a hidden pass.
 
 ---
 
@@ -437,6 +443,7 @@ MATLAB if present else OSS first-class; the **entire product works without MATLA
 | [`../DECISIONS.md`](../DECISIONS.md) | ADRs |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Technical architecture |
 | [`UI.md`](UI.md) | Student-facing lab UI (D21) |
+| [`GLOSSARY.md`](GLOSSARY.md) | Contributor words (D22) |
 | [`WORKFLOWS.md`](WORKFLOWS.md) | Named workflow catalog |
 | [`../research/notes/host-first-class-attach.md`](../research/notes/host-first-class-attach.md) | ChatGPT desktop, dual MCP, specialists |
 | [`../research/notes/domain-kernel-layering.md`](../research/notes/domain-kernel-layering.md) | Four-layer wrap |
@@ -460,5 +467,6 @@ Previous D0 (2026-09-10) remains historical. **This revision is Proposed. Do not
 - [ ] Coverage law + capability registry (D19): any in-bound UG question has a complete path; providers are not the identity
 - [ ] D20 persist / observe / spawn: named memory files, observation FR24, host-native adapters, no Python orchestrator
 - [ ] D21 student-facing UI: lab workbook pages; no raw `.md`/`.json`; no reasoning-mode node
+- [ ] D22 host-skip claim boundary, glossary vs ADRs, viva checklist axis (FR25/FR26)
 - [ ] ChatGPT desktop first-class; ChatGPT web excluded; CLI-without-host complete
 - [ ] Exam-style in-scope; **no** third-party copyrighted PDFs in git

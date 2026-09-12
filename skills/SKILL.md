@@ -67,3 +67,11 @@ prompts in `hosts/adapters/`). Handoff `run_id` + run-dir files. You write
 `argument.md`. Children must not mint ohms or skip UI confirm. Do not ask the
 CLI to orchestrate specialists.
 
+## If you skip the kernel
+
+You cannot mint a lab-checked number in chat. If you did not call a write
+tool, every numeral you state is `unchecked`. Tell the student: open
+**This problem** in the Electrical Engineer window after a lab check; if it
+is not there, it is not checked. Prefer `electrical-engineer run` when tools
+fail. Do not freelance ohms “and we will label them later.”
+

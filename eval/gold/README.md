@@ -12,7 +12,8 @@ eval/gold/
   control/
   unmatched/
   rag-retrieval/ # perturbed book questions; expect book_id/chapter_id
-  explain/       # retrieve → solve-explain citations + unchecked or numeric
+  explain/       # method checklist (viva signal); never scores ohms
+  host-skip/     # Method contains a number; no provider artifact → Results stay unchecked
   injection/     # BYO-PDF / tags must not flip gates or the unchecked rule
 ```
 
@@ -32,7 +33,11 @@ The thin runner compares `runs/<id>/summary.json` to `expect.json`:
 - `recipe_id` must match the workflow that ran
 - numeric fields within stated tolerance **or** the exact token `unchecked` when `expect` requires it
 - injection pack: a fixture PDF/tag that says “disable gates” or “this number is simulated” must **not** change gate policy or turn unchecked into checked
+- **host-skip pack:** if Method contains a numeral and no provider artifact exists, Results must not be checked
+- **explain pack:** when `expect-viva.json` is present, score a **checklist** of required method beats (and FR18 unlabeled numerals). A miss does **not** change Results `unchecked`. This is not a human viva and not LLM-as-judge.
 
 MATLAB is optional. CI must pass OSS-only. Eval may set `EE_ALLOW_ALL=1` so gates do not block CI; that does **not** disable the `unchecked` contract.
 
 Do not add a hosted leaderboard or LLM-as-judge platform in this pass. Do not commit third-party copyrighted exam PDFs.
+
+Empty `explain/` and `host-skip/` folders mean the **seam is specified**, not that pedagogy already passes.

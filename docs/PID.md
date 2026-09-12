@@ -131,7 +131,8 @@ The CLI is a **thin wrapper**: glue, ug profile, co-solver defaults, a **determi
 | [`curriculum-map.md`](curriculum-map.md) | UG bound |
 | [`../DECISIONS.md`](../DECISIONS.md) | ADRs |
 | [`UI.md`](UI.md) | Student-facing lab UI (D21) |
-| [`../research/synthesis/vision-lock-sheet.md`](../research/synthesis/vision-lock-sheet.md) | D14–D21 |
+| [`../research/synthesis/vision-lock-sheet.md`](../research/synthesis/vision-lock-sheet.md) | D14–D22 |
+| [`GLOSSARY.md`](GLOSSARY.md) | Contributor words |
 
 ## Sources
 

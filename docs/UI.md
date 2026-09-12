@@ -57,7 +57,9 @@ Overlays (open from This problem when the kernel needs the student):
 | **Confirm diagram** | Photo vs library schematic, side by side. Confirm or fix. Does not simulate. | Show `confirmed.json`; auto-run SPICE |
 | **The lab needs a value** | One missing number or a yes/no (MATLAB licence, allow this check). Counts toward the two-ask budget, in human words. | MCP wait spinner; “interrupt 1/2” as the only copy |
 
-**Default route.** Open `electrical-engineer ui --run <id>` → **This problem** for that check. Open with no id → **Past work** if any exist, else an empty **This problem** with “No problem is open yet.”
+**Default route.** Open `electrical-engineer ui --run <id>` → **This problem** for that check. Open with no id → **Past work** if any exist, else an empty **This problem**.
+
+Empty **This problem** copy (host-skip): “No lab check is open. Numbers an assistant typed in chat are not checked here. Run a check, or ask it to use Electrical Engineer tools; then they appear on this page.”
 
 ### 3.1 This problem (primary)
 

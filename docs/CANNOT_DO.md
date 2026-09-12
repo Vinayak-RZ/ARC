@@ -24,6 +24,9 @@ Honest holes. Prefer a row here over fake gold. Expanded by B_NODES and later pa
 | CD-RAG-ANYTHING | RAG-Anything as locked engine | Unmaintained risk | LightRAG 1.5 spike + BM25 fallback |
 | CD-RAG-ENGINE | LightRAG/Docling not installed in CI | Missing deps; no licensed chapter in git | Thin BM25 facade; BYO ingest |
 | CD-RAG-PARSE | PDF/scan extract + page-chunk ingest | Specified D20; as-built add is inventory-only | Tag the file; retrieve prefix BM25; empty is visible |
+| CD-HOST-SKIP | Detect that a host answered only in chat | We do not read Cursor/Claude/Codex transcripts | CLI + UI; chat numbers are not lab-checked; skill + empty-state copy |
+| CD-HOST-WRITE | Host or student forges kernel Results files | No cryptographic attest this pass | Contract: only the runner writes Results; unsupported if edited |
+| CD-VIVA-SIGNAL | Measure that a student would pass a human viva | Checklist ≠ oral exam; no LLM-as-judge truth | `expect-viva.json` method beats; do not flip Results `unchecked` |
 
 
 | CD-SIGNALS-MATLAB | MATLAB-only DSP toolboxes as checked answers | UG OSS bound | OSS first; else unchecked |
