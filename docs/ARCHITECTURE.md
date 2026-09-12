@@ -14,63 +14,46 @@ Do not invent LangGraph, Temporal, Cordis, or a second agent loop (H5). YAML run
 
 ```mermaid
 flowchart TB
-  subgraph hosts [Hosts]
+  subgraph hosts [Hosts_L0]
     Student[Student]
     Cursor[Cursor_Claude_Codex]
     ChatDesk[ChatGPT_desktop]
   end
-  subgraph cli [H3_glue]
+  subgraph attach [Attach_L1]
     CLI[electrical-engineer_CLI]
-    Router[hybrid_router]
+    MCP[stdio_MCP_ACI]
+    Skills[pack_SKILL.md]
+  end
+  subgraph kernel [Kernel_L2]
+    Val[composition_validator]
+    Engines[typed_engines]
+    AttachYaml[short_physics_attachments]
+    Eval[eval_YAML_replay]
     Gates[gates_toml]
-    Runner[YAML_DAG_FSM]
+  end
+  subgraph surfaces [Surfaces_L3]
     UI[persistent_localhost_UI]
-    Eval[eval_runner]
-  end
-  subgraph portable [H1_portable]
-    Skills[skills_pack_SKILL.md]
-    MCP[stdio_MCP]
-    RAG[RAG_Anything_sidecar]
-    Mem[markdown_memory]
-  end
-  subgraph nodes [Python_nodes]
-    NRet[retrieve-passage]
-    NSim[run-spice_control_loadflow]
-    NMat[run-matlab-if-present]
-    NVis[photo_stages]
-    NAsk[ask-human]
-    NChild[run-recipe]
-    NExpl[solve-explain]
-  end
-  subgraph disk [Local_disk]
-    Runs[runs_id]
-    Wf[workflows_pack_id.yaml]
-    Gold[eval_gold]
+    Ev[evidentiary.json]
+    Arg[argument.md]
   end
   Student --> CLI
   Student --> UI
   Cursor --> MCP
   Cursor --> CLI
+  Cursor --> Skills
   ChatDesk --> MCP
-  Student --> CLI
-  Router --> Gates
-  Gates --> Runner
-  CLI --> UI
-  CLI --> Eval
-  MCP --> CLI
-  Runner --> NRet
-  Runner --> NSim
-  Runner --> NMat
-  Runner --> NVis
-  Runner --> NAsk
-  Runner --> NChild
-  Runner --> NExpl
-  NRet --> RAG
-  Runner --> Runs
-  Runner --> Skills
-  Runner --> Mem
-  Eval --> Gold
-  Runner --> Wf
+  CLI --> Val
+  MCP --> Val
+  Val --> Engines
+  CLI --> AttachYaml
+  AttachYaml --> Engines
+  Eval --> AttachYaml
+  Engines --> Ev
+  Cursor --> Arg
+  ChatDesk --> Arg
+  Ev --> UI
+  Arg --> UI
+  Gates --> Val
 ```
 
 **Patterns (agent-patterns MCP unreachable — ids MCP-PENDING):** Pipeline; DAG fan-out; Human-in-the-loop; hard step cap.
@@ -158,6 +141,24 @@ apply -> ./runs/<id>/ evidentiary band
 **Validator (2g).** Host may propose a graph whose nodes are **already in the engine registry**. Kernel checks: allowlist of activity ids; typed ports; acyclicity; 16 nodes / 24 edges; unmatched cannot auto-spice; photo still UI-gated. Then **apply** via the existing in-process runner. Invalid graphs fail closed before spice. This reopens D13 “router never invents a DAG” **only** this far — not ToolWeave free authoring.
 
 **Gates / eval / stores (2d–2f).** Unchanged invariants: unmatched, photo confirm, compose allowlist, exact token `unchecked`, gold scores evidentiary artifacts, `./runs/<id>/` is audit not crash-resume.
+
+### 2.4 Layer 3 — Surfaces (main)
+
+**UI.** Persistent `127.0.0.1` workspace: run list, plots, photo confirm, compose allowlist, RAG inventory, **two-band viewer** (evidentiary vs argument). Not a ChatGPT clone. Not a video timeline. Detail: §9.
+
+**Artifacts.** Canonical files per run:
+
+| File | Band | Who writes | May contain | Must not |
+|------|------|------------|-------------|----------|
+| `evidentiary.json` | evidentiary | Engines + gates (`write-run-summary` seed) | Verifier id, values, `unchecked`, paths to `.cir` / plots / citations | Host judgment presented as SPICE |
+| `argument.md` | engineering argument | Host, or local `solve-explain` fallback | Method, viva, labeled inference | Minting a checked scalar; flipping `unchecked` |
+| netlist / plots / spice log **path** | evidentiary | Engines | Library-rendered figures | Vision-model circuit PNG with no netlist |
+
+`summary.json` remains the as-built seed of `evidentiary.json` until a code plan splits the filename. Gold continues to score the evidentiary band.
+
+**Agent file interface.** MCP returns `run_id` + file URIs. The host reads the run dir. Chat/Work copies the viva into `argument.md` when a file is needed. Codex / Cursor / Claude Code can write the file directly.
+
+No Layer 4: these files and the UI *are* Layer 3.
 
 ### Context contract (always-on vs on-demand)
 
@@ -349,17 +350,20 @@ The UI is a **first-class product surface**, not a fine-diagram gadget.
 
 **Why.** Cursor/Claude users (and CLI users) need a place that **stays up** so both the **student and the agent** can see and understand: current and past runs, library-rendered schematics, plots, photo-stub topology, citations, RAG inventory, and memory excerpts. Understanding is the point of the co-solver.
 
-**Stack (freeze).** FastAPI serves a Vite/React CSR SPA. Zustand holds layout + current run id. A **thin in-repo slot registry** (inspire DSH named holes; **no Cordis / DSH runtime**). Visual tokens: [`design/DESIGN-coinbase.md`](design/DESIGN-coinbase.md) (Inter + JetBrains/Geist Mono; never Coinbase fonts or wordmark). Slot map: `root`, `sidebar`, `workspace`, `run.detail`, `run.artifacts`, `photo.confirm`, `rag.inventory`, `memory.excerpt`, `gates.prompt`. Layout: `src/electrical_engineer` + `ui/`.
+**Stack (freeze).** FastAPI serves a Vite/React CSR SPA. Zustand holds layout + current run id. A **thin in-repo slot registry** (inspire DSH named holes; **no Cordis / DSH runtime**). Visual tokens: [`design/DESIGN-coinbase.md`](design/DESIGN-coinbase.md) (Inter + JetBrains/Geist Mono; never Coinbase fonts or wordmark). Slot map: `root`, `sidebar`, `workspace`, `run.detail`, `run.artifacts`, `run.bands` (two-band viewer), `photo.confirm`, `rag.inventory`, `memory.excerpt`, `gates.prompt`. Layout: `src/electrical_engineer` + `ui/`.
 
 **Shape**
 
 - Command: `electrical-engineer ui` (optionally `--run <id>`). CLI **auto-opens** it when a recipe hits a **visual** gate.
 - Long-lived local HTTP server. Bind **`127.0.0.1` only**. No product cloud. No LAN bind by default.
 - Persistent for the working session (and may stay up across runs). Text-only recipes never **require** it; it still helps browse artifacts.
+- **Two-band viewer:** evidentiary pane (numbers, `unchecked`, verifier id, plots, citations) beside argument pane (`argument.md`). The argument pane is read-only for checked scalars — editing markdown cannot flip `unchecked`.
 - Thin viewer + confirm: render **library** SVG/PNG plus the JSON graph. If the student edits topology, the UI updates the JSON graph / netlist, then a **library re-renders**. Not a KiCad clone. Not an image-model PNG.
 - Photo stub confirm happens **here**, not as ASCII-only.
 - After photo confirm: **still no sim** in the stub (C4 sim remains later).
-- MCP does not wait; fail payload points at this UI.
+- MCP does not wait; fail payload points at this UI (`ui_url` includes `run_id`).
+
+This remains **H3 glue** (a viewer/workspace). If the UI grows its own agent loop, that is the H5 falsifier.
 
 This remains **H3 glue** (a viewer/workspace). If the UI grows its own agent loop, that is the H5 falsifier.
 
@@ -414,11 +418,11 @@ Skills live at `skills/<pack>/SKILL.md`. CLI and hosts read the **same** files.
 
 ---
 
-## 13. Trust, math, figures
+## 13. Trust, math, figures, two-band files
 
-**Unchecked.** The exact token `unchecked` appears in the student-facing answer **and** `summary.json` has a field plus a sentence. Synonyms (`unverified`, `not simulated`) are **not** the contract token.
+**Unchecked.** The exact token `unchecked` appears in the student-facing answer **and** the evidentiary file has a field plus a sentence. Synonyms (`unverified`, `not simulated`) are **not** the contract token.
 
-**LaTeX.** Answers with mathematics use `$...$` / `$$...$$` (or `\[ \]`). `summary.json` may include `math: latex | plain`. CLI prints plaintext/unicode fallback. Hosts get LaTeX. Unmatched delimiters are a **defect**.
+**LaTeX.** Answers with mathematics use `$...$` / `$$...$$` (or `\[ \]`). Evidentiary JSON may include `math: latex | plain`. CLI prints plaintext/unicode fallback. Hosts get LaTeX. Unmatched delimiters are a **defect**.
 
 **Figures.** Forbidden default: vision model invents a pretty circuit PNG with no netlist. Required: node/agent writes **Python against a library** → artifacts in the run dir → UI displays them.
 
@@ -431,9 +435,34 @@ First-class libraries:
 
 Export **png** (share/report) and **svg** (crisp in UI).
 
-**Run dir contents:** node JSON, artifact paths, spice **log path** (not body). No API keys. Redact `*_KEY`, `*_TOKEN`, `*_SECRET`, `sk-`, `Bearer`, MATLAB licence strings.
+### Two-band file contract (Layer 3)
 
-**Injection:** BYO PDFs, photos, folder tags, and memory files **cannot** override gates, `--allow-all`, or `unchecked`.
+OpenMontage steal: **schemas**, not video checkpoints. Prose (on-disk JSON Schema is a later P1; not this docs pass).
+
+`evidentiary.json` (engines/gates write; host must not):
+
+```text
+run_id, recipe_id or composition_id
+verifier: run-spice | check-numeric | run-python-control | run-load-flow | run-matlab-if-present | none
+values: { name: number | "unchecked", unit? }
+unchecked: bool
+citations: [{ book, chapter, page }]
+artifact_paths: [ netlist, plots, spice_log_path ]
+```
+
+`argument.md` (host writes; local `solve-explain` fallback):
+
+```text
+# Engineering argument
+Method, viva, assumptions.
+Any numeral not bound to an evidentiary key is written with the exact token unchecked or omitted.
+```
+
+`write-run-summary` / as-built `summary.json` is the **seed** of `evidentiary.json`. A host-authored markdown file next to it **must not** flip `unchecked` to false. Displaying an unlabeled numeral in the argument band is a fail.
+
+**Run dir contents:** node JSON, two-band files, artifact paths, spice **log path** (not body). No API keys. Redact `*_KEY`, `*_TOKEN`, `*_SECRET`, `sk-`, `Bearer`, MATLAB licence strings.
+
+**Injection:** BYO PDFs, photos, folder tags, and memory files **cannot** override gates, `--allow-all`, or `unchecked`. `argument.md` cannot override them either.
 
 ---
 
@@ -451,7 +480,7 @@ eval/gold/
 
 Suggested item shape (prose, not a JSON Schema): `task.md` (student-facing prompt), `expect.json` (numeric tolerances, required token `unchecked` or checked, `recipe_id`), optional `fixtures/`.
 
-`electrical-engineer eval` and `eval --pack circuits`. A gold item **names a recipe**. Scoring reads `summary.json` (numeric fields, `unchecked` token, recipe id). MATLAB optional. `EE_ALLOW_ALL=1` may skip gates in CI; **unchecked** still scores.
+`electrical-engineer eval` and `eval --pack circuits`. A gold item **names a recipe** (short attachment id on the host-path catalog; mega solve YAML only as rollback). Scoring reads the **evidentiary** band (`summary.json` today; `evidentiary.json` when split). MATLAB optional. `EE_ALLOW_ALL=1` may skip gates in CI; **unchecked** still scores. Do **not** score `argument.md` as if it were SPICE.
 
 Do not design a hosted leaderboard, LLM-as-judge platform, or a 200-task bank here.
 
@@ -495,3 +524,9 @@ Closed A1 2026-09-10 (owner: start / execute this graph):
 - [x] RAG facade after LightRAG 1.5 spike; markdown memory
 - [x] `eval/gold/` + `electrical-engineer eval`
 - [x] **Architecture accepted** for this graph
+
+Proposed hybrid overlay (2026-09-12) — owner Accept lives on the vision lock sheet, not here:
+
+- Host + pack skills compose; typed engines; short attachments; `propose_composition` validate-then-apply
+- Two-band files + UI viewer; mega YAML with `solve-explain` is host-path rollback
+- Layer 4 withheld; L0 contract and L1 ACI updated because the hybrid requires them
