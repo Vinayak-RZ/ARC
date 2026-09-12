@@ -23,6 +23,7 @@ Stances for this research phase. Status: `open` | `leaning` | `proposed` | `defe
 | D17 | Domain-kernel layers and host ACI | mega `run_workflow` / 1:1 node MCP / 5–7 verbs + two-band + spend/clamp | **proposed: four layers; CLI inner MCP outer; spend host on viva; clamp numbers; two-band artifacts** | WS-G lock sheet | `notes/domain-kernel-layering.md`. Does not ship code in this pass. |
 | D18 | Host-path composition | long YAML brain / unconstrained on-the-fly / hybrid engines | **proposed: hybrid quality** — host + pack skills compose; typed engines; short attachments; `propose_composition` validate-then-apply; no Layer 4 | WS-G lock sheet | `notes/hybrid-engine-composition.md`. Reopens D13 only into allowlisted engine graphs. |
 | D19 | Domain contract vs providers | engine-id identity / capability registry / unconstrained tools | **proposed: capability-first coverage** — 14 capabilities; providers/YAML/UI/RAG are this-pass freezes; every in-bound UG question has a complete path | WS-G lock sheet | `docs/ARCHITECTURE.md` §0; ADR-0010. Does not reopen H3 or D13 runner. |
+| D20 | Harness persist / observe / spawn | Python orchestrator / host-native adapters / silent memory | **proposed: split harness** — host loop+spawn; kernel persist+observe+hooks; local memory; BYO ingest pipeline | WS-G lock sheet | ADR-0011; `hosts/adapters/`. H5 falsifier = Python specialist fan-out. |
 
 ## Sources
 

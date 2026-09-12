@@ -87,17 +87,27 @@ Written into Proposed PRD FR17–FR22 / ARCHITECTURE §2 2026-09-12 (not owner-A
 
 Written into Proposed ARCHITECTURE §0, PRD FR10/FR19, pack `skills/` 2026-09-12 (not owner-Accepted).
 
+**D20 Harness persist, observe, spawn**
+
+- Host owns loop, compaction, continuation, and native specialist spawn. Kernel owns runs, memory files, RAG ingest pipeline, observation, deterministic hooks.
+- Memory improves **this student** only: explicit write; `lessons.md` proposed after `unchecked`, never silent.
+- Adapter prompts in `hosts/adapters/`. Not a Python multi-agent runtime (H5).
+- [ ] Accept
+- [ ] Reject
+
+Written into Proposed ARCHITECTURE §0.3/§2.5/§10–§11, PRD FR13/FR19/FR24, `hosts/adapters/` 2026-09-12 (not owner-Accepted).
+
 ### Later docs pass
 
-**Done as Proposed (2026-09-12), not Accepted:** PID category/hosts, PRD thesis + agent interaction, ARCHITECTURE four-layer map, hybrid L2/L3 composition (D18), capability-first coverage (D19) + pack method skills.
+**Done as Proposed (2026-09-12), not Accepted:** PID category/hosts, PRD thesis + agent interaction, ARCHITECTURE four-layer map, hybrid L2/L3 composition (D18), capability-first coverage (D19), harness persist/observe/spawn (D20).
 
-**Still waiting on owner Accept:** checkboxes above; then root `README.md` (product-readme) and `DECISIONS.md` ADR (ADR-0009 and ADR-0010 stay **proposed** until then).
+**Still waiting on owner Accept:** checkboxes above; then root `README.md` (product-readme) and `DECISIONS.md` ADR (ADR-0009, ADR-0010, ADR-0011 stay **proposed** until then).
 
-Would not change until a **code** plan: runner capability→provider bind, CLI binary name, PyPI, HTTP MCP, MCP verb split implementation.
+Would not change until a **code** plan: runner capability→provider bind, RAG extract/chunk, observation writer, `memory write`, MCP verb split, CLI binary name, PyPI, HTTP MCP.
 
 ### Stop line
 
-Owner checkboxes above are empty on purpose. Root README is unchanged until you Accept. This pass did not ship MCP verb splits in Python. Root `skills/SKILL.md` is the always-on coverage + plan-then-execute contract. Pack skills teach method and capability ids.
+Owner checkboxes above are empty on purpose. Root README is unchanged until you Accept. This pass did not ship MCP verb splits or ingest parsers in Python. Root `skills/SKILL.md` is coverage + plan-then-execute + memory/spawn law. Pack specialists copy from `hosts/adapters/`.
 
 ## Open questions
 

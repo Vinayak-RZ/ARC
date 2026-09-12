@@ -105,6 +105,30 @@ Lead: docs overlay D19. Critics readonly if a later pass runs them. Owner locks 
 
 should-fix (merged in docs). Code still speaks provider keys; that is named, not hidden.
 
+## Loop 5 — Persist / observe / hooks / spawn
+
+Lead: docs overlay D20. No product Python. Owner locks (H3, `unchecked`, local-first) stay.
+
+### Accepted
+
+- Harness split: host owns compaction, continuation, spawn; kernel owns ingest, validate-then-apply, observe, memory write law.
+- Named memory files including `lessons.md`; explicit write; propose-not-apply after `unchecked`.
+- `observation.json` (or summary seed) with `unchecked_reason`; gold still scores evidentiary only.
+- BYO RAG pipeline in prose; `CD-RAG-PARSE` for as-built add-without-chunk.
+- Pack specialists are **host-native** adapter markdown under `hosts/adapters/`. Handoff is the run dir. Parent writes `argument.md`.
+
+### Rejected (reason)
+
+- Python orchestrator / CLI that fans out specialists — H5.
+- Silent chat-dump memory or fleet learning — FR6 / untrusted.
+- Compaction middleware inside the runner — Layer 0.
+- Scoring `observation.json` or `errors.md` as SPICE — FR9/FR18.
+- Chat/Work pack spawn this pass — Skills-over-MCP not verified.
+
+### Severity
+
+should-fix (merged in docs). Extract/chunk, observation file split, and MCP retrieve remain later code.
+
 ## Appendix — what changed in docs vs what waits for code
 
 | Specified this pass | Waits for a code plan |
@@ -115,4 +139,5 @@ should-fix (merged in docs). Code still speaks provider keys; that is named, not
 | Host-path unmatched without essay | Split mega YAML recipes |
 | FR20 on `check-numeric`; unmatched netlist-port predicate | Engine port checks in Python |
 | Capability registry + coverage law (D19); pack method skills | Capability→provider bind in the runner; gold per pack |
+| D20 persist/observe/hooks/spawn; BYO ingest pipeline; `hosts/adapters/` | RAG extract/chunk; `observation.json` writer; `memory write` CLI; MCP retrieve |
 | Known defects remain named: `_solve_value` mint, as-built two MCP tools | Eval gold / MCP framing fixes |

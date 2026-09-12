@@ -114,3 +114,14 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 - **Consequences:** Pack skills teach method + which capability to request, not “always SPICE.” Missing YAML is `CD-YAML-GAP`, not out-of-product. Runner still uses today’s Python activity keys until a code plan maps capability→provider. Gold depth may stay circuits-first.
 - **Alternatives:** Keep engine ids as the architecture vocabulary (rejected — circuits-shaped hole); one mega “solve any EE” LLM node (rejected — FR2/`unchecked`); add a capability per GATE trick question (rejected — bound is curriculum-map); lock ngspice/MATLAB as identity (rejected).
 - **Sources:** `docs/ARCHITECTURE.md` §0; `docs/curriculum-map.md`; `research/notes/ee-task-taxonomy-draft.md`; `docs/PRD.md` FR10/FR19; `DECISIONS.md` ADR-0005/0009
+
+---
+
+## ADR-0011 — Harness persist, observe, spawn (D20)
+
+- **Status:** proposed (not owner-Accepted)
+- **Context:** Context and ACI kinds were specified; as-built persist (memory list-only, RAG inventory-only), observation (summary without reason enums), kernel hooks vs host compaction, and pack-specialist spawn files were thin. Owner asked to specify the rest of a harness without becoming H5.
+- **Decision:** **Split the harness.** Layer 0 owns loop, compaction, continuation, model routing, and **host-native** specialist spawn. Layer 2 owns run audit, named memory files (explicit write; `lessons.md` proposed not silent), BYO RAG ingest pipeline, `observation.json`, and deterministic hooks (ingest, validate-then-apply, repair, observe, lesson-propose, eval). Adapter markdown lives in `hosts/adapters/` for the student host to copy. Local-only: no fleet learning, no chat dumps.
+- **Consequences:** Extract/chunk remains `CD-RAG-PARSE` until a code plan. Observation may seed on `summary.json`. Chat/Work still does not claim spawn. A Python specialist orchestrator remains the H3/H5 falsifier.
+- **Alternatives:** Python multi-agent runtime (rejected, H5); silent memory append every turn (rejected); cloud telemetry (rejected, FR6); treating host compaction as our middleware (rejected).
+- **Sources:** `docs/ARCHITECTURE.md` §0.3 §2.5 §10–§11; `docs/PRD.md` FR13/FR19/FR24; `hosts/adapters/README.md`

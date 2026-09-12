@@ -130,7 +130,7 @@ The CLI is a **thin wrapper**: glue, ug profile, co-solver defaults, a **determi
 | [`PID_DECISION_SHEET.md`](PID_DECISION_SHEET.md) | Historical P0 answers |
 | [`curriculum-map.md`](curriculum-map.md) | UG bound |
 | [`../DECISIONS.md`](../DECISIONS.md) | ADRs |
-| [`../research/synthesis/vision-lock-sheet.md`](../research/synthesis/vision-lock-sheet.md) | D14–D17 |
+| [`../research/synthesis/vision-lock-sheet.md`](../research/synthesis/vision-lock-sheet.md) | D14–D20 |
 
 ## Sources
 
