@@ -85,6 +85,7 @@ should-fix (merged). One critic called missing UI two-band a **blocker** for FR1
 | Specified this pass | Waits for a code plan |
 |---------------------|------------------------|
 | Hybrid L2/L3, L1 ACI verbs, L0 contract, no L4 | MCP verb split, validator, `propose_composition` |
+| Plan-then-execute (FR23); `plan.md`; `apply: false` | Kernel persist of `plan.md`; UI `run.plan` slot |
 | Two-band file contract; `run.bands` target | UI two-band viewer, `argument.md` API |
 | Host-path unmatched without essay | Split mega YAML recipes; skill-body thicken |
 | FR20 on `check-numeric`; unmatched netlist-port predicate | Engine port checks in Python |

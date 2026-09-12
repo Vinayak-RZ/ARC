@@ -27,6 +27,7 @@ ChatGPT **web** is **not** a host.
 
 5. As-built tools: `list_workflows`, `run_workflow` (never waits). Target:
    [`../PRD.md`](../PRD.md) FR17 (`simulate_attachment`,
-   `propose_composition`). Host writes `argument.md`.
+   `propose_composition`). Large jobs write `plan.md` first (FR23). Host
+   writes `argument.md`.
 
 6. Peer MATLAB MCP: FR20.

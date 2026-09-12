@@ -56,11 +56,12 @@ Canonical numbering stays 0–3. Do not invent Layer 4 for taxonomy.
 | **L2 Domain kernel** | **Must rewrite.** Engines as typed tools; short attachments; validator for allowlisted graphs; YAML = replay not chat brain | Main focus. GraSP compile lives here. | Drop YAML runner; drop `unchecked`; gold as LLM-as-judge |
 | **L3 Surfaces** | **Must rewrite.** `evidentiary.json` + host `argument.md`; UI two-band viewer; MCP returns `run_id` + file URIs | Main focus. Two-band is the leave-behind. | ChatGPT-clone UI; WAN bind; KiCad clone |
 | **L1 Attach** | **Required.** ACI 5–7 verbs including `propose_composition`; `run_workflow` = short-attachment / eval rollback; host docs name the verbs | Mega `run_workflow` makes L2 fiction | 1:1 node MCP; PTC on spice writes; MCP wait |
-| **L0 Harness** | **Contract only.** Host loads 2–3 pack skills, calls ACI, writes `argument.md`, treats `unchecked` as law | Hybrid unreachable if the rented loop still “just run the YAML” | Unique Electrical Engineer chat loop (H3 falsifier). ChatGPT web as host |
+| **L0 Harness** | **Contract only.** Host loads 2–3 pack skills, **plans then executes** large jobs (`plan.md`), calls ACI, writes `argument.md`, treats `unchecked` as law | Hybrid unreachable if the rented loop still “just run the YAML” | Unique Electrical Engineer chat loop (H3 falsifier). ChatGPT web as host |
 | **L4 (new)** | **Withhold.** Eval stays L2e; pack method stays L2a | Four-layer table is not lying. Eval/governance split would be taxonomy churn | Renumber 0–3 to create an L4 |
 
 ```text
 Host (+ pack skill)                         L0 contract
+  large job? write plan.md first
   → Kernel ACI (5–7 verbs)                  L1
       retrieve | simulate_attachment
       propose_composition | label
@@ -68,7 +69,7 @@ Host (+ pack skill)                         L0 contract
   → Validator (allowlist + typed ports)     L2
   → Engine registry                         L2
   → ./runs/<id>/evidentiary.json            L3
-      + host-written argument.md            L0 writes, L3 stores
+      + plan.md + argument.md               L0 writes, L3 stores
   → localhost UI two-band viewer            L3
 ```
 
@@ -79,6 +80,7 @@ Always-on ACI stays **5–7 verbs**. `propose_composition` **replaces** “simul
 | Spend (host) | Clamp (kernel) |
 |--------------|----------------|
 | Which pack skill to load (2–3, not ten) | Engine registry; no session-defined verbs |
+| Write `plan.md` on an entire-assignment job, then execute only that plan | `plan.md` cannot mint checked ohms; no Python planner loop |
 | Method (KCL vs nodal); viva in `argument.md` | Checked scalars only from engines or `unchecked` |
 | Propose retrieve then spice, or skip retrieve | Validator; unmatched cannot auto-spice |
 | Ask the student when values are missing | MCP never waits; `open_ui` / `ui_url` |

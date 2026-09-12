@@ -6,7 +6,7 @@
 
 Do not invent LangGraph, Temporal, Cordis, or a second agent loop (H5). YAML runner, unmatched, `unchecked`, and MCP-never-waits stay.
 
-**Hybrid quality.** The host (plus 2–3 pack skills) composes the *job*. Typed **engines** own numbers. **Short** named physics attachments (`simulate-circuit` = spice + repair + label) stay as code. The host may propose an **allowlisted** engine graph; the kernel **validates then runs**. Mega YAML that includes `solve-explain` is **not** the host-path brain — it is CLI-without-host / gold rollback. Evidence: [`../research/notes/hybrid-engine-composition.md`](../research/notes/hybrid-engine-composition.md).
+**Hybrid quality.** The host (plus 2–3 pack skills) composes the *job*. On a **large** job (entire assignment, several problems, more than one attachment) the host **writes `plan.md` first**, then executes. Typed **engines** own numbers. **Short** named physics attachments (`simulate-circuit` = spice + repair + label) stay as code. The host may propose an **allowlisted** engine graph; the kernel **validates then runs**. Mega YAML that includes `solve-explain` is **not** the host-path brain — it is CLI-without-host / gold rollback. Evidence: [`../research/notes/hybrid-engine-composition.md`](../research/notes/hybrid-engine-composition.md).
 
 ---
 
@@ -66,7 +66,7 @@ Canonical numbering stays **0–3**. A fifth layer is not earned (eval stays 2e;
 
 | Layer | Owns | Must not own |
 |-------|------|----------------|
-| 0 Host (rented) | Inner loop; load **2–3** pack skills; call ACI; write `argument.md`; ask the student when data is missing | Kirchhoff as numeric truth; spice DAG invention; minting checked ohms; unique EE chat loop |
+| 0 Host (rented) | Inner loop; load **2–3** pack skills; **plan then execute** on large jobs (`plan.md`); call ACI; write `argument.md`; ask the student when data is missing | Kirchhoff as numeric truth; spice DAG invention; minting checked ohms; unique EE chat loop |
 | 1 Attach | CLI inner; MCP outer; **5–7 ACI verbs** including `propose_composition`; host skill files | 1:1 node MCP; waiting on humans; PTC on spice writes; mega `run_workflow` as the host-path viva |
 | 2 Domain kernel | Engine registry, validator, short physics attachments, gates, eval replay, RAG store, `unchecked` | A unique host-incompatible chat loop (H5); long YAML as the professional-workflow brain |
 | 3 Surfaces | Localhost UI; two-band files (`evidentiary.json`, `argument.md`) | ChatGPT-clone UI; WAN bind; KiCad clone |
@@ -81,11 +81,12 @@ As-built sub-pieces (still true): CLI glue, pack `SKILL.md` stubs, stdio MCP (`l
 
 The rented host must:
 
-1. Always-on: **root** skill (triggers, 5–7 verbs, `unchecked` law) plus MCP tool schemas. Not every pack.
+1. Always-on: **root** skill (triggers, 5–7 verbs, `unchecked` law, **plan-then-execute**) plus MCP tool schemas. Not every pack.
 2. On domain match, load **at most two** matching pack skills (GraSP 2–3 with root). Packs are **on-demand**, not always-on.
-3. Call kernel ACI instead of one mega-apply of `solve-circuit-problem`.
-4. Write the engineering-argument band to `./runs/<id>/argument.md` when a file is needed (Chat/Work may start in the transcript and copy).
-5. Treat `unchecked` as law. Stop when gates refuse.
+3. On a **large job**, write `./runs/<id>/plan.md` and show it **before** write verbs. Then execute only that plan. Small jobs (one unknown, one short attachment) may skip a written plan.
+4. Call kernel ACI instead of one mega-apply of `solve-circuit-problem`.
+5. Write the engineering-argument band to `./runs/<id>/argument.md` when a file is needed (Chat/Work may start in the transcript and copy).
+6. Treat `unchecked` as law. Stop when gates refuse.
 
 Student-without-host is Layer 0 *absence*: CLI + engines + UI remain a complete path for **numbers**. Viva needs a host or a configured local/BYO model. ChatGPT **web** is not a host.
 
@@ -99,7 +100,7 @@ Always-on ACI, **5–7 verbs** (names illustrative; implementation is a later co
 | `retrieve` | read | Tagged RAG; citations evidentiary |
 | `open_ui` / `clarify` | read (+ questions) | MCP **never waits**. Returns `ui_url` |
 | `simulate_attachment` | write | Named **short** physics id only (`simulate-circuit`, `photo-to-netlist`, …). Never `solve-explain` inside |
-| `propose_composition` | write | Graph of **registered engine ids** + typed ports. Kernel **validates then runs**. Not a 45-tool dump |
+| `propose_composition` | write | Graph of **registered engine ids** + typed ports. `apply: false` **validates and records** the plan (no spice). `apply: true` (default after a plan exists) **validates then runs**. Not a 45-tool dump |
 | `label` / `summary` | write | Gate over child EE artifacts only (FR20) |
 | `eval_run` | write | Gold replay. **CLI** on Chat/Work |
 
@@ -115,7 +116,7 @@ CLI inner, MCP outer, PTC/Code Mode later and **reads only**. Dual MATLAB MCP: p
 
 ```text
 Host (+ pack skill)
-  propose: retrieve? attach physics? ask student?
+  large job? write plan.md (Given/Find, packs, asks, attachments)
         |
         v
 Kernel ACI (Layer 1)
@@ -133,7 +134,7 @@ Engine registry (typed ports, one activity each)
 apply -> ./runs/<id>/ evidentiary band
 ```
 
-**Method (2a).** Thick pack skills teach: name the unknown, write KCL/KVL, when to simulate vs `unchecked`, when to ask, how to write the argument band without minting scalars. Skills do **not** mint checked numbers (FR19). As-built four-line stubs (`skills/circuits/SKILL.md`) are a **method hole**, not a number hole — a later skill-body plan fills circuits first. The contract is already this; do not move gates into markdown.
+**Method (2a).** Thick pack skills teach: name the unknown, write KCL/KVL, when to **plan then execute**, when to simulate vs `unchecked`, when to ask, how to write the argument band without minting scalars. Skills do **not** mint checked numbers (FR19). The root skill at `skills/SKILL.md` is always-on and names plan-then-execute. As-built four-line pack stubs (`skills/circuits/SKILL.md`) are a **method** hole — a later skill-body plan fills circuits first. Do not move gates into markdown.
 
 **Engines (2b).** Registered activities are typed tools. Capability-first provider selection stays (MATLAB if present, else ngspice / python-control). `check-numeric` is first-class on `propose_composition` (hand KCL / divider without spice). It may set `unchecked: false` **only** from its own solver over ports that are student/netlist/prior-engine artifacts — **not** from host-typed or peer MATLAB/Copilot scalars (FR20). `solve-explain` is a **fallback** when no host is configured; it must not mint `unchecked: false`; it is **not** on the host-path allowlist.
 
@@ -151,6 +152,7 @@ apply -> ./runs/<id>/ evidentiary band
 
 | File | Band | Who writes | May contain | Must not |
 |------|------|------------|-------------|----------|
+| `plan.md` | job plan (not a numeric band) | Host; optional kernel outline from `propose_composition apply: false` | Given/Find, packs, asks, retrieve filters, attachment/engine **ids**, what stays `unchecked` | Checked scalars; a spice log presented as done work |
 | `evidentiary.json` | evidentiary | Engines + gates (`write-run-summary` seed) | Verifier id, values, `unchecked`, paths to `.cir` / plots / citations | Host judgment presented as SPICE |
 | `argument.md` | engineering argument | Host, or local `solve-explain` fallback | Method, viva, labeled inference | Minting a checked scalar; flipping `unchecked` |
 | netlist / plots / spice log **path** | evidentiary | Engines | Library-rendered figures | Vision-model circuit PNG with no netlist |
@@ -163,7 +165,7 @@ No Layer 4: these files and the UI *are* Layer 3.
 
 ### Context contract (always-on vs on-demand)
 
-Always-on: root skill (triggers, 5–7 verbs, `unchecked` law) + MCP tool schemas + optional `./runs/<id>/` pointer. Never the textbook corpus, never every pack skill, never gold fixtures, never a `propose_composition` **graph body**.
+Always-on: root skill (triggers, 5–7 verbs, `unchecked` law, plan-then-execute) + MCP tool schemas + optional `./runs/<id>/` pointer. Never the textbook corpus, never every pack skill, never gold fixtures, never a `propose_composition` **graph body**.
 
 On-demand: matching `skills/<pack>/SKILL.md` (at most two packs), one-level `reference/`, RAG `retrieve` (book/chapter/page), run-dir evidentiary files.
 
@@ -190,9 +192,14 @@ Main LLM work lives in **Cursor / Claude Code / Codex / ChatGPT desktop** (or a 
 **Host path (first-class hosts).** The host does **not** pick a mega recipe that includes `solve-explain`. It:
 
 1. Loads 2–3 skills and reads the assignment.
-2. Calls `retrieve` when a citation is needed.
-3. Calls `simulate_attachment` with a **short** physics id, **or** `propose_composition` with a graph of **registered** engines.
-4. Writes `argument.md`. Calls `label` / `open_ui` / `eval_run` as needed.
+2. If the job is **large** (FR23): write `plan.md`, show it, optionally `propose_composition` with `apply: false` to validate the physics graph. Do not spice yet.
+3. Calls `retrieve` when a citation is needed.
+4. Executes **only the plan**: `simulate_attachment` and/or `propose_composition` with `apply: true`.
+5. Writes `argument.md`. Calls `label` / `open_ui` / `eval_run` as needed.
+
+A job is **large** when any of: the student asks to solve an entire assignment / worksheet / several numbered problems; more than one short attachment would run; more than one pack would match; photo + simulate in one request; the host would propose a composition graph rather than a single attachment. A job is **small** when there is one unknown and one `simulate_attachment` — a written `plan.md` is optional.
+
+Planning lives in the **rented host** (and `plan.md` on disk). It is not a Python multi-turn planner. `plan.md` cannot mint checked numbers.
 
 The kernel **validates then applies**. Unmatched text still uses **`unmatched-cosolver` only** (no auto-simulate). On the **host path**, that attachment is retrieve-optional → `label-unchecked` → summary — **no** `solve-explain`; the host writes `argument.md`. CLI-without-host / gold may keep the essay node in rollback YAML. Numerics without a verifier artifact use the exact token `unchecked`.
 
@@ -204,7 +211,7 @@ The kernel **validates then applies**. Unmatched text still uses **`unmatched-co
 
 **Validate-then-apply (D13 reopen, QUALITY).** The router still **never invents engine ids**. New graphs are either:
 
-- `propose_composition` — host-authored, **allowlisted engines only**, kernel-validated, then run; or
+- `propose_composition` — host-authored, **allowlisted engines only**, kernel-validated. `apply: false` records the validated graph into `plan.md` and does not run spice. `apply: true` then runs. Or
 - `compose-from-parts --advanced` — student CLI, human-gated, typed ports, 16/24 cap.
 
 Inside a named attachment the runner **may** branch on conditional DAG edges, pick a child via `run-recipe` when the parent declares that choice, and multi-hop RAG inside `retrieve-passage` (book → chapter → passages) with a hop cap.
@@ -270,7 +277,7 @@ Hard rules:
 
 ### `propose_composition` (host path)
 
-MCP/CLI verb. Body: a DAG whose **every node activity is in the engine registry**, plus typed port bindings. Kernel validator:
+MCP/CLI verb. Body: a DAG whose **every node activity is in the engine registry**, plus typed port bindings. Kernel validator (always, including `apply: false`):
 
 1. Unknown activity id → reject (no `lookup_vout_guess`).
 2. Activity is `solve-explain` → reject on the **host path** (FR21). CLI-without-host / gold rollback may still run that node inside named YAML.
@@ -280,9 +287,10 @@ MCP/CLI verb. Body: a DAG whose **every node activity is in the engine registry*
 6. Would attach spice without a **netlist artifact** on an incoming typed port (raw problem text, unmatched prompt, or host-typed `.cir` that did not come from `photo-to-netlist` / student file / prior engine) → reject. Unmatched is a kernel signal (no matching short attachment **and** no netlist port), not skill prose.
 7. Graph contains photo stages or MATLAB or `ask-human` → on **MCP**, do not apply; fail closed with `ui_url` (never wait). CLI may enter `waiting-human`.
 8. Would skip photo UI confirm for photo-stage graphs → fail closed with `ui_url`.
-9. Else **apply** through the in-process runner.
+9. If `apply: false`: persist the validated outline into `plan.md` (engine ids + ports, not spice logs) and return `run_id` + path. **Do not run engines.**
+10. If `apply: true`: **apply** through the in-process runner.
 
-This is GraSP-shaped, not a skill-to-DAG compiler: the host proposes edges among **already registered** engines; the kernel verifies types and allowlist; locality-bounded repair stays `repair_max: 2` inside simulate engines. Do not call this a GraSP compile.
+This is GraSP-shaped, not a skill-to-DAG compiler: the host proposes edges among **already registered** engines; the kernel verifies types and allowlist; locality-bounded repair stays `repair_max: 2` inside simulate engines. Do not call this a GraSP compile. Large jobs should call `apply: false` first (FR23).
 
 ### `compose-from-parts`
 
@@ -355,7 +363,7 @@ The UI is a **first-class product surface**, not a fine-diagram gadget.
 
 **Why.** Cursor/Claude users (and CLI users) need a place that **stays up** so both the **student and the agent** can see and understand: current and past runs, library-rendered schematics, plots, photo-stub topology, citations, RAG inventory, and memory excerpts. Understanding is the point of the co-solver.
 
-**Stack (freeze).** FastAPI serves a Vite/React CSR SPA. Zustand holds layout + current run id. A **thin in-repo slot registry** (inspire DSH named holes; **no Cordis / DSH runtime**). Visual tokens: [`design/DESIGN-coinbase.md`](design/DESIGN-coinbase.md) (Inter + JetBrains/Geist Mono; never Coinbase fonts or wordmark). Slot map: `root`, `sidebar`, `workspace`, `run.detail`, `run.artifacts`, `run.bands` (two-band viewer), `photo.confirm`, `rag.inventory`, `memory.excerpt`, `gates.prompt`. Layout: `src/electrical_engineer` + `ui/`.
+**Stack (freeze).** FastAPI serves a Vite/React CSR SPA. Zustand holds layout + current run id. A **thin in-repo slot registry** (inspire DSH named holes; **no Cordis / DSH runtime**). Visual tokens: [`design/DESIGN-coinbase.md`](design/DESIGN-coinbase.md) (Inter + JetBrains/Geist Mono; never Coinbase fonts or wordmark). Slot map: `root`, `sidebar`, `workspace`, `run.detail`, `run.artifacts`, `run.plan` (job plan), `run.bands` (two-band viewer), `photo.confirm`, `rag.inventory`, `memory.excerpt`, `gates.prompt`. Layout: `src/electrical_engineer` + `ui/`.
 
 **Shape**
 
@@ -363,6 +371,7 @@ The UI is a **first-class product surface**, not a fine-diagram gadget.
 - Long-lived local HTTP server. Bind **`127.0.0.1` only**. No product cloud. No LAN bind by default.
 - Persistent for the working session (and may stay up across runs). Text-only recipes never **require** it; it still helps browse artifacts.
 - **Two-band viewer:** evidentiary pane (numbers, `unchecked`, verifier id, plots, citations) beside argument pane (`argument.md`). The argument pane is read-only for checked scalars — editing markdown cannot flip `unchecked`.
+- **Job plan:** `run.plan` shows `plan.md` when present. Looking at the plan is not executing spice. `plan.md` is not a third numeric band.
 - Thin viewer + confirm: render **library** SVG/PNG plus the JSON graph. If the student edits topology, the UI updates the JSON graph / netlist, then a **library re-renders**. Not a KiCad clone. Not an image-model PNG.
 - Photo stub confirm happens **here**, not as ASCII-only.
 - After photo confirm: **still no sim** in the stub (C4 sim remains later).
@@ -462,6 +471,20 @@ artifact_paths: [ netlist, plots, spice_log_path ]
 Method, viva, assumptions.
 Any numeral not bound to an evidentiary key is written with the exact token unchecked or omitted.
 ```
+
+`plan.md` (host writes before large-job execute; optional kernel outline from `apply: false`):
+
+```text
+# Job plan
+Given / Find
+Packs (at most two)
+Ask the student first?
+Retrieve filters
+Attachments or engine ids (not invented verbs)
+What stays unchecked
+```
+
+Same clamp as the argument band: `plan.md` must not mint a checked scalar or flip `unchecked`.
 
 `write-run-summary` / as-built `summary.json` is the **seed** of `evidentiary.json`. **One evidentiary writer.** Until a code plan renames the file, gold/UI/MCP read `summary.json`. After the split, `evidentiary.json` is canonical and `summary.json` is either removed or a compat alias of the same bytes — **never two live writers**. A host-authored markdown file next to it **must not** flip `unchecked` to false. Displaying an unlabeled numeral in the argument band is a fail.
 

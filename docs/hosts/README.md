@@ -17,8 +17,8 @@ electrical-engineer mcp
 **As-built MCP tools:** `list_workflows`, `run_workflow` (mega-apply; photo /
 compose / control-diagram fail closed with `ui_url`). **Target:** 5–7 verbs
 in [`../PRD.md`](../PRD.md) §6.4 / FR17, including `simulate_attachment` and
-`propose_composition`. Host writes `./runs/<id>/argument.md`. Packs load
-on domain match (at most two), not always-on.
+`propose_composition`. Host writes `./runs/<id>/plan.md` on large jobs (FR23)
+then `argument.md`. Packs load on domain match (at most two), not always-on.
 
 **Not hosts (v1):** ChatGPT **web** / mobile, Claude Desktop, GitHub Copilot,
 Gemini CLI.

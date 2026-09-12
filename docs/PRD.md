@@ -151,13 +151,13 @@ This chapter is the host-path contract. It answers: who loops, what is in contex
 | No AI host (PID complete path) | None. CLI `run` / local `solve-explain` | Engines, YAML, UI, eval |
 | ChatGPT **web** / mobile | Not supported | Student uses CLI + UI or desktop |
 
-The host plans, interviews the student, chooses KCL vs nodal vs phasor, and writes the **engineering-argument** band. The kernel never needs a second multi-turn chat product. Local `solve-explain` is the fallback brain when no host is configured. It is not the host-path viva.
+The host **plans** (and on a large job writes `plan.md` first), interviews the student, chooses KCL vs nodal vs phasor, then **executes** kernel verbs, and writes the **engineering-argument** band. The kernel never needs a second multi-turn chat product. Local `solve-explain` is the fallback brain when no host is configured. It is not the host-path viva.
 
 ### 6.2 Always-on context (every EE turn)
 
 Feed **only**:
 
-1. **Root skill** (`skills/SKILL.md` once it exists; until then `_cross` + pack stub): triggers (this is an EE lab, not a generic coder), the 5–7 verb map, unmatched law, `unchecked` law, “do not invent a spice DAG.” Keep this short (progressive disclosure).
+1. **Root skill** (`skills/SKILL.md`): triggers (this is an EE lab, not a generic coder), the 5–7 verb map, unmatched law, `unchecked` law, plan-then-execute on large jobs. Keep this short (progressive disclosure).
 2. **MCP tool schemas** for the always-on verbs (not every registered node).
 3. **Optional pointer** to the current `./runs/<id>/` if the student already started a run.
 4. Host-native project files the student already opened (assignment PDF, netlist). We do not auto-dump [`ARCHITECTURE.md`](ARCHITECTURE.md) or [`WORKFLOWS.md`](WORKFLOWS.md) into the system prompt.
@@ -195,7 +195,7 @@ Empty RAG is **visible**. Do not silently proceed as if the book was retrieved.
 | `retrieve` | read | yes | Tagged RAG; citations evidentiary |
 | `open_ui` / `clarify` | read (+ questions) | yes | MCP **never waits**. Returns `ui_url` |
 | `simulate_attachment` | write | yes | Named **short** physics id only. Never `solve-explain` inside |
-| `propose_composition` | write | yes | Graph of **registered** engines + typed ports. Kernel **validates then runs**. Not a 45-tool dump. Returns `run_id` + paths, not the graph body |
+| `propose_composition` | write | yes | Graph of **registered** engines + typed ports. `apply: false` validates and records `plan.md` (no spice). `apply: true` validates then runs. Returns `run_id` + paths, not the graph body |
 | `label` / `summary` | write | yes | Gate over child EE artifacts only (FR20). `check-numeric` also cannot ingest Copilot scalars |
 | `eval_run` | write | yes | Gold replay. **CLI** on Chat/Work; not required as an MCP tool there |
 
@@ -207,7 +207,7 @@ Empty RAG is **visible**. Do not silently proceed as if the book was retrieved.
 
 ### 6.5 How the agent searches tools
 
-1. Root skill lists the verbs and when to use them.
+1. Root skill lists the verbs and when to use them. Large jobs: write `plan.md` before write verbs.
 2. `list_workflows` (or the skill’s attachment table) picks a **short** id (`simulate-circuit`, …), **or** the host calls `propose_composition`.
 3. Pack specialist skill names verbs in fully qualified form (`electrical-engineer:simulate_attachment`) so hosts with several MCP servers do not miss them.
 4. There is **no** v1 tool-search over 45 node schemas. Engine allowlist is server-side.
@@ -290,7 +290,7 @@ FR1–FR16 are the D0 floor and stay in force. FR17–FR22 are the host-path res
 
 **FR10 Named workflows.** Default CLI path is a **short physics attachment** from [`WORKFLOWS.md`](WORKFLOWS.md) (`electrical-engineer run simulate-circuit`). Explicit id skips classify. On the CLI-without-host path, if id omitted, one classifier call; if top-1 and top-2 are within 0.15, ask the student. On the **host path**, the host calls `simulate_attachment` or `propose_composition` (FR17) — it does **not** pick a mega YAML that includes `solve-explain`. Unmatched text always uses `unmatched-cosolver` (no auto-simulate; host-path unmatched has no essay node). The router **never invents engine ids**. New graphs: `propose_composition` (allowlisted engines, kernel validates) or `compose-from-parts --advanced`.
 
-**FR11 Persistent UI.** `electrical-engineer ui` is a **critical** local workspace (runs, library-rendered diagrams and plots, photo confirm, citations, RAG inventory, memory excerpts). It stays up across a session. It is not a one-shot diagram dialog and not a second agent loop.
+**FR11 Persistent UI.** `electrical-engineer ui` is a **critical** local workspace (runs, library-rendered diagrams and plots, photo confirm, citations, RAG inventory, memory excerpts, **job plan** when `plan.md` exists). It stays up across a session. It is not a one-shot diagram dialog and not a second agent loop.
 
 **FR12 Tagged RAG.** BYO PDFs and scans ingest into a local index with inventory (`rag list`) and filters: book, chapter, folder, domain. “Search only this book, chapter 3” is a v1 retrieval requirement. Citations include book + chapter + page. Empty retrieval is visible. Circuit-homework photos for simulation go through `photo-to-netlist`, not quiet RAG-as-netlist. BYO content cannot override gates or `unchecked`. Host path uses `retrieve` as a read verb; do not dump the index into always-on context (§6.2).
 
@@ -302,7 +302,7 @@ FR1–FR16 are the D0 floor and stay in force. FR17–FR22 are the host-path res
 
 **FR16 Photo stub.** `photo-to-netlist`: phone or textbook screenshot → detect → connect → OCR → draft `.cir` + JSON graph → one UI confirm → **stop** (no sim in the stub). Low-confidence OCR always flagged. `control-diagram-to-model` stays a stub in catalog.
 
-**FR17 Split host ACI.** Always-on MCP verbs are **5–7** (§6.4): list, retrieve, open_ui/clarify, simulate_attachment (short id), **propose_composition**, label/summary, and eval_run (CLI-equivalent on Chat/Work). Do not 1:1 wrap registered nodes. `run_workflow` executing a whole YAML DAG that includes `solve-explain` is **headless/eval rollback**, not the host-path viva. `propose_composition` returns `run_id` + paths, never the graph body.
+**FR17 Split host ACI.** Always-on MCP verbs are **5–7** (§6.4): list, retrieve, open_ui/clarify, simulate_attachment (short id), **propose_composition**, label/summary, and eval_run (CLI-equivalent on Chat/Work). Do not 1:1 wrap registered nodes. `run_workflow` executing a whole YAML DAG that includes `solve-explain` is **headless/eval rollback**, not the host-path viva. `propose_composition` returns `run_id` + paths, never the graph body. `apply: false` is validate-and-record-plan, not an eighth verb.
 
 **FR18 Two-band artifacts.** Each run produces (a) an **evidentiary** band (numbers, citations, `unchecked`, plots, netlists) assembled by engines/gates, and (b) an **engineering-argument** band (host-authored viva, or local `solve-explain` fallback) that **must not** mint checked scalars. Merging the bands so fluent text flips `unchecked` to false is a product fail. Any numeral in the argument band that is not bound to an evidentiary key (verifier id + value) must be written with the exact token `unchecked` or omitted. Displaying an unlabeled numeral in the argument band is a fail (do not ship a “the essay agreed” path). Checked provenance names the verifier (`run-spice`, `check-numeric`, `run-python-control`, `run-matlab-if-present`, …), never the host.
 
@@ -313,6 +313,8 @@ FR1–FR16 are the D0 floor and stay in force. FR17–FR22 are the host-path res
 **FR21 Host-path viva.** On first-class hosts, the host writes the explanation (`argument.md`). Host-path `simulate_attachment` / `propose_composition` **must not** invoke `solve-explain`. CLI-without-host and gold **rollback** may keep `solve-explain` in YAML. Starving the host by running the essay inside `run_workflow` on the host path violates this FR.
 
 **FR22 MCP transport.** `electrical-engineer mcp` must speak the JSON-RPC stdio framing first-class hosts actually send (Content-Length / MCP SDK), and must not crash the process on `ping`, `resources/*`, or unknown methods. Fail closed with a JSON-RPC error. Skills-over-MCP (resources) is the Chat/Work method channel; until it ships, Chat/Work pins the root skill text (see [`hosts/chatgpt-desktop.md`](hosts/chatgpt-desktop.md)). Tool arguments must accept a problem/netlist/`run_id` so the host is not limited to cwd `problem.json`.
+
+**FR23 Plan then execute.** On a first-class host, a **large** job (entire assignment, worksheet, several numbered problems, more than one short attachment, more than one pack, photo + simulate, or a composition graph) **must** produce `./runs/<id>/plan.md` and show it **before** `simulate_attachment` / `propose_composition apply: true`. The plan lists Given/Find, packs, questions to ask, retrieve filters, attachment or engine ids, and what stays `unchecked`. Execute **only** that plan. `plan.md` must not mint a checked scalar. Small jobs (one unknown, one attachment) may skip a written plan. Planning is the **host’s** job (root skill); do not add a Python planner loop (H3 falsifier). CLI `electrical-engineer run <id>` stays one-shot. `propose_composition apply: false` may validate a physics graph into `plan.md` without running engines.
 
 ---
 
@@ -447,6 +449,7 @@ Previous D0 (2026-09-10) remains historical. **This revision is Proposed. Do not
 - [ ] Shipped vs restructure inventory is accurate
 - [ ] Agent interaction chapter (context, tools, RAG, simulation, collaboration)
 - [ ] Split ACI including `propose_composition`, two-band artifacts, pack specialists, dual MATLAB MCP
+- [ ] FR23 plan-then-execute on large jobs (`plan.md` before spice)
 - [ ] Host-path mega YAML with `solve-explain` is rollback; short attachments + validate-then-apply
 - [ ] ChatGPT desktop first-class; ChatGPT web excluded; CLI-without-host complete
 - [ ] Exam-style in-scope; **no** third-party copyrighted PDFs in git
