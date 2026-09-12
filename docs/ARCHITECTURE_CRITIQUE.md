@@ -150,6 +150,27 @@ Lead: docs overlay D21. No product Python / React. Owner locks (H3, `unchecked`,
 
 should-fix (merged in docs). Implementing `ui/` pages waits on a UI code plan.
 
+## Loop 7 — Host-skip, readable architecture, viva axis
+
+Lead: docs overlay D22. No product Python. Owner locks (H3, `unchecked`) stay.
+
+### Accepted
+
+- Claim boundary: chat-only is not lab-checked; CLI+UI backstop; `CD-HOST-SKIP` / `CD-HOST-WRITE`.
+- Glossary + architecture preamble; why stays in ADRs.
+- Second eval axis: method checklist; `CD-VIVA-SIGNAL`.
+
+### Rejected (reason)
+
+- Scan host transcripts — we do not control the host.
+- Python loop that re-asks until tools are used — H5.
+- LLM-as-judge viva as product truth — FR9 / gold non-goal.
+- Pretend empty `explain/` already measures pedagogy.
+
+### Severity
+
+should-fix (merged in docs). Filling gold items and UI empty-state copy in React wait on code plans.
+
 ## Appendix — what changed in docs vs what waits for code
 
 | Specified this pass | Waits for a code plan |
@@ -162,4 +183,5 @@ should-fix (merged in docs). Implementing `ui/` pages waits on a UI code plan.
 | Capability registry + coverage law (D19); pack method skills | Capability→provider bind in the runner; gold per pack |
 | D20 persist/observe/hooks/spawn; BYO ingest pipeline; `hosts/adapters/` | RAG extract/chunk; `observation.json` writer; `memory write` CLI; MCP retrieve |
 | D21 lab workbook pages; no file dump; no reasoning-mode node | Implement `ui/` pages, two-pane This problem, Books/Notes |
+| D22 host-skip claim; glossary; viva checklist seam | `expect-viva.json` scorer; host-skip gold items |
 | Known defects remain named: `_solve_value` mint, as-built two MCP tools | Eval gold / MCP framing fixes |

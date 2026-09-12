@@ -107,13 +107,23 @@ Written into Proposed ARCHITECTURE §0.3/§2.5/§10–§11, PRD FR13/FR19/FR24, 
 
 Written into Proposed [`docs/UI.md`](../../docs/UI.md), ARCHITECTURE §9, PRD FR11, ADR-0012 2026-09-12 (not owner-Accepted).
 
+**D22 Host-skip, glossary, viva axis**
+
+- Lab-checked = kernel Results only. Chat freelance is `CD-HOST-SKIP`. CLI+UI backstop. No Python nag-loop.
+- How vs why: architecture preamble + [`docs/GLOSSARY.md`](../../docs/GLOSSARY.md); ADRs stay dense.
+- Eval two axes: numbers vs method checklist. Not a human viva (`CD-VIVA-SIGNAL`).
+- [ ] Accept
+- [ ] Reject
+
+Written into Proposed ARCHITECTURE (How the lab works; When the host does not comply; §14), PRD FR25/FR26, ADR-0013 2026-09-12 (not owner-Accepted).
+
 ### Later docs pass
 
-**Done as Proposed (2026-09-12), not Accepted:** PID category/hosts, PRD thesis + agent interaction, ARCHITECTURE four-layer map, hybrid L2/L3 composition (D18), capability-first coverage (D19), harness persist/observe/spawn (D20), student-facing lab UI (D21).
+**Done as Proposed (2026-09-12), not Accepted:** PID category/hosts, PRD thesis + agent interaction, ARCHITECTURE four-layer map, hybrid L2/L3 composition (D18), capability-first coverage (D19), harness persist/observe/spawn (D20), student-facing lab UI (D21), critic follow-up host-skip/glossary/viva (D22).
 
-**Still waiting on owner Accept:** checkboxes above; then root `README.md` (product-readme) and `DECISIONS.md` ADR (ADR-0009, ADR-0010, ADR-0011, ADR-0012 stay **proposed** until then).
+**Still waiting on owner Accept:** checkboxes above; then root `README.md` (product-readme) and `DECISIONS.md` ADR (ADR-0009 through ADR-0013 stay **proposed** until then).
 
-Would not change until a **code** plan: runner capability→provider bind, RAG extract/chunk, observation writer, `memory write`, MCP verb split, **UI pages in `ui/`**, CLI binary name, PyPI, HTTP MCP.
+Would not change until a **code** plan: runner capability→provider bind, RAG extract/chunk, observation writer, `memory write`, MCP verb split, **UI pages in `ui/`**, `expect-viva.json` scorer, CLI binary name, PyPI, HTTP MCP.
 
 ### Stop line
 
@@ -134,6 +144,7 @@ Owner checkboxes above are empty on purpose. Root README is unchanged until you 
 - [`research/notes/hybrid-engine-composition.md`](../notes/hybrid-engine-composition.md) — retrieved 2026-09-12 — reliability: primary
 - [`docs/PID.md`](../../docs/PID.md) — retrieved 2026-09-12 — reliability: primary
 - [`docs/UI.md`](../../docs/UI.md) — retrieved 2026-09-12 — reliability: primary
+- [`docs/GLOSSARY.md`](../../docs/GLOSSARY.md) — retrieved 2026-09-12 — reliability: primary
 
 ## Confidence
 

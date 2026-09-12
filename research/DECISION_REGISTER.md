@@ -25,6 +25,7 @@ Stances for this research phase. Status: `open` | `leaning` | `proposed` | `defe
 | D19 | Domain contract vs providers | engine-id identity / capability registry / unconstrained tools | **proposed: capability-first coverage** — 14 capabilities; providers/YAML/UI/RAG are this-pass freezes; every in-bound UG question has a complete path | WS-G lock sheet | `docs/ARCHITECTURE.md` §0; ADR-0010. Does not reopen H3 or D13 runner. |
 | D20 | Harness persist / observe / spawn | Python orchestrator / host-native adapters / silent memory | **proposed: split harness** — host loop+spawn; kernel persist+observe+hooks; local memory; BYO ingest pipeline | WS-G lock sheet | ADR-0011; `hosts/adapters/`. H5 falsifier = Python specialist fan-out. |
 | D21 | Student-facing lab UI | JSON/Markdown viewer / lab workbook / in-DAG reasoning node | **proposed: lab workbook** — This problem, Past work, Books, Notes; map files to grids; no reasoning-mode node | WS-G lock sheet | ADR-0012; `docs/UI.md`. Filling `ui/` is a later code plan. |
+| D22 | Host-skip / glossary / viva axis | transcript scanner / LLM-as-judge / ignore critics | **proposed:** claim boundary + CLI backstop; how vs why split; method checklist not a human viva | WS-G lock sheet | ADR-0013; `docs/GLOSSARY.md`; FR25/FR26 |
 
 ## Sources
 

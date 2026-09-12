@@ -137,3 +137,15 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 - **Alternatives:** Keep the JSON viewer (rejected — fails the student); dual IDE+lab mode (rejected — owner asked for one non-technical product); in-DAG LLM node (rejected — `solve-explain` / H5).
 - **Sources:** `docs/UI.md`; `docs/ARCHITECTURE.md` §9; `docs/PRD.md` FR11; `docs/design/DESIGN-coinbase.md`
 
+---
+
+## ADR-0013 — Host-skip, readable architecture, viva signal (D22)
+
+- **Status:** proposed (not owner-Accepted)
+- **Context:** Critics: (2) hosts we do not control may ignore skills; (3) architecture reads as an internal decision log; (5) we measure checked ohms, not “enough for a viva.”
+- **Decision:** **Claim boundary** — lab-checked means kernel-written Results; chat-only is `CD-HOST-SKIP`; CLI+UI is the backstop; no Python nag-loop. **Readable how** — [`docs/GLOSSARY.md`](docs/GLOSSARY.md) + architecture preamble; **why** stays in this file. **Two eval axes** — Results gold vs Method checklist (`expect-viva.json`); checklist never flips `unchecked`; not a human viva (`CD-VIVA-SIGNAL`).
+- **Consequences:** Empty `eval/gold/explain/` and `host-skip/` are specified seams, not a pass. Forged Results files remain `CD-HOST-WRITE`.
+- **Alternatives:** Kernel reads host transcripts (rejected — we cannot); LLM-as-judge viva (rejected — FR9 / non-goal); merge why into architecture (rejected — contributor cost).
+- **Sources:** `docs/ARCHITECTURE.md` How the lab works + When the host does not comply + §14; `docs/PRD.md` FR25/FR26; `docs/GLOSSARY.md`
+
+

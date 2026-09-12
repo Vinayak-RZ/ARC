@@ -19,10 +19,11 @@ Live status. Research phase completed on `cursor/ee-research-phase-7e0c`. Produc
 | Curriculum map | done | `docs/curriculum-map.md` — UG India+global; GATE = eval overlay |
 | PRD | **accepted (this graph)** | FR10–FR16; §10/§11 closed D0 |
 | Architecture research | done | composability, DAG/language, catalog draft |
-| Technical architecture | **accepted (this graph) + Proposed D19/D20/D21 overlays** | `docs/ARCHITECTURE.md` §0 capabilities; §0.3 harness; §9 + [`docs/UI.md`](docs/UI.md); ADR-0010/0011/0012 |
+| Technical architecture | **accepted (this graph) + Proposed D19–D22 overlays** | `docs/ARCHITECTURE.md` how-it-works; [`docs/GLOSSARY.md`](docs/GLOSSARY.md); ADR-0010–0013 |
 | Pack skills | **Proposed D19 method bodies** | `skills/<pack>/SKILL.md` — UG method + capability ids |
 | Harness persist/observe/spawn | **Proposed D20** | named memory, `observation.json`, kernel hooks, `hosts/adapters/` |
 | Student-facing UI IA | **Proposed D21** | lab workbook pages; no file dump; no reasoning-mode node |
+| Host-skip / glossary / viva | **Proposed D22** | claim boundary; `docs/GLOSSARY.md`; FR25/FR26 |
 | Product execution plan | **graph complete (H1)** | owner start 2026-09-10; T1+R1 logged |
 | UI design lock | **closed** | DESIGN-coinbase; ADR-0008 accepted |
 | Validator | PASS | `./scripts/research/validate-research.sh --full` |
@@ -55,14 +56,16 @@ Live status. Research phase completed on `cursor/ee-research-phase-7e0c`. Produc
 | 2026-09-12 | D19 capability-first overlay: coverage law, 14 capabilities, pack method skills; providers/YAML/UI are this-pass freezes |
 | 2026-09-12 | D20 harness overlay: persist/observe/hooks local; host-native spawn adapters; no Python orchestrator |
 | 2026-09-12 | D21 student-facing UI: lab workbook pages; no raw `.md`/`.json`; no reasoning-mode node |
+| 2026-09-12 | D22 host-skip claim boundary, contributor glossary, viva checklist axis |
 
 ## Handoff
 
 PID: [`docs/PID.md`](docs/PID.md) (Accepted)  
 PRD: [`docs/PRD.md`](docs/PRD.md) (Accepted for this graph)  
-Architecture: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (Accepted A1 + **Proposed D19/D20/D21** overlays)  
+Architecture: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (Accepted A1 + **Proposed D19–D22** overlays)  
 UI IA: [`docs/UI.md`](docs/UI.md) (Proposed D21)  
-ADRs: [`DECISIONS.md`](DECISIONS.md) (ADR-0010, ADR-0011, ADR-0012 proposed)  
+Glossary: [`docs/GLOSSARY.md`](docs/GLOSSARY.md) (Proposed D22)  
+ADRs: [`DECISIONS.md`](DECISIONS.md) (ADR-0010 through ADR-0013 proposed)  
 Curriculum: [`docs/curriculum-map.md`](docs/curriculum-map.md)
 
-**Next:** owner Accept of D19–D21; then a code plan for capability→provider bind, RAG extract/chunk, observation writer, **UI pages**. No README rewrite until Accept.
+**Next:** owner Accept of D19–D22; then a code plan for capability→provider bind, RAG extract/chunk, observation writer, **UI pages**, `expect-viva.json` scorer. No README rewrite until Accept.
