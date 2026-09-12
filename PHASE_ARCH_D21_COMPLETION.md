@@ -1,5 +1,7 @@
 # PHASE_ARCH_D21_COMPLETION — Student-facing lab UI
 
+> **Historical completion log.** Student IA is now Accepted in [`docs/UI.md`](docs/UI.md). As-built `ui/` still dumps JSON.
+
 ## Completed work
 
 Specified the localhost UI as a UG EE lab workbook (docs only). Named four pages and two overlays. Locked: no raw Markdown/JSON as the product; no in-DAG reasoning-mode node. No React or Python.

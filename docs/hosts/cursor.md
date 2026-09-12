@@ -4,18 +4,19 @@ First-class host. Same kernel contract as Claude Code, Codex, and ChatGPT deskto
 
 1. Copy or symlink pack skills from `skills/*/SKILL.md` into `.cursor/skills/`
    (or the Cursor skills path you already use). Prefer the **root** skill plus
-   the pack you are working in (progressive disclosure; FR19).
+   the pack you are working in (progressive disclosure).
 2. Add a project or user MCP stdio server in `.cursor/mcp.json` whose command
    is `electrical-engineer mcp` (from a venv where the package is installed).
-3. As-built tools: `list_workflows`, `run_workflow`. Photo / compose / C5 ids
+3. As-built tools: `list_workflows`, `run_workflow`. Photo / compose / control-diagram ids
    **fail closed** and return a `ui_url` — they never wait on stdio. Target
-   verbs: [`../PRD.md`](../PRD.md) FR17 (`simulate_attachment`,
-   `propose_composition`, …). Host writes `plan.md` on large jobs (FR23) then
-   `argument.md`; do not mega-apply `solve-circuit-problem`.
-4. Persistent UI is `electrical-engineer ui` on `127.0.0.1:8765`.
+   verbs: [`../PRD.md`](../PRD.md) (`simulate_attachment`,
+   `propose_composition`, …). Host writes `plan.md` on large jobs then
+   `argument.md`; do not mega-apply `solve-circuit-problem`. Skills cannot force
+   Cursor to call tools; lab-checked means kernel Results.
+4. Persistent UI is `electrical-engineer ui` on `127.0.0.1:8765`. Target pages: [`../UI.md`](../UI.md).
 5. Cursor is optional. CLI + UI without Cursor is a complete v1 path.
 6. If you also enable MathWorks MCP, do not treat its scalars as checked
-   until an EE engine recomputes them (FR20). `label` cannot ingest Copilot
+   until an EE engine recomputes them. `label` cannot ingest Copilot
    numbers.
 7. Do **not** copy EE packs into this product repo’s `.cursor/skills/`
    (that tree is coding SDLC). Symlink root + active pack into **your**

@@ -26,11 +26,11 @@ ChatGPT **web** is **not** a host.
    require every student to subscribe to Codex. CLI + UI remains complete.
 
 5. As-built tools: `list_workflows`, `run_workflow` (never waits). Target:
-   [`../PRD.md`](../PRD.md) FR17 (`simulate_attachment`,
-   `propose_composition`). Large jobs write `plan.md` first (FR23). Host
-   writes `argument.md`.
+   [`../PRD.md`](../PRD.md) (`simulate_attachment`,
+   `propose_composition`). Large jobs write `plan.md` first. Host
+   writes `argument.md`. Skills cannot force Codex to call tools.
 6. Optional pack specialist: copy
    [`../../hosts/adapters/codex/pack-specialist.md`](../../hosts/adapters/codex/pack-specialist.md)
    into the student’s Codex spawn path. At most two packs; same MCP; parent
    writes the viva. Not a second product.
-7. Peer MATLAB MCP: FR20.
+7. Peer MATLAB MCP: EE owns checked numbers.

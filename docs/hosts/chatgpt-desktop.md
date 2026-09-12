@@ -28,14 +28,14 @@ configuration. Configure once.
 
 Until Skills-over-MCP is implemented **and verified** on desktop Chat, paste
 or pin the **root** skill text once per project (verb map + `unchecked` law +
-plan-then-execute only). That pin is **not** FR19 pack-on-demand and **not**
+plan-then-execute only). That pin is **not** pack-on-demand and **not**
 pack-specialist spawn. Do not paste textbooks. Chat/Work must not be used as
 the gold runner (`eval` stays CLI).
 
-The argument band (FR21) on Chat/Work may live in the transcript; copy or
+The argument band on Chat/Work may live in the transcript; copy or
 write it to `./runs/<id>/argument.md` when the student needs a file. Codex view
 can write the run dir directly. Do not mega-apply `solve-circuit-problem`.
-Target verbs: [`../PRD.md`](../PRD.md) FR17.
+Target verbs: [`../PRD.md`](../PRD.md). Skills cannot force Chat to call tools.
 
 ## Must not
 

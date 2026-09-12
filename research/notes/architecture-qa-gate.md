@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Record the owner’s answers that authorize **Proposed** [`docs/ARCHITECTURE.md`](../../docs/ARCHITECTURE.md) and [`docs/WORKFLOWS.md`](../../docs/WORKFLOWS.md). This sheet replaces earlier working picks. Status of those docs is **Proposed** until the owner says accepted (same ritual as the PRD). These answers do **not** authorize CLI/MCP product code until the PRD is accepted.
+Record the owner’s answers that authorized [`docs/ARCHITECTURE.md`](../../docs/ARCHITECTURE.md) and [`docs/WORKFLOWS.md`](../../docs/WORKFLOWS.md). Those docs are now **Accepted**. This sheet is historical.
 
 ## Findings
 
@@ -91,7 +91,7 @@ The localhost UI is a **critical** part of the product. It is a **persistent** l
 
 ## Open questions
 
-None remaining for the Proposed architecture draft. Owner review may still reject or edit the docs. PRD accept remains a separate checkpoint and still blocks product code.
+None remaining for the architecture answers on this sheet. Product code for MCP verb splits, UI pages, and RAG extract/chunk is a later plan, not a reopen of this Q&A.
 
 ## Sources
 

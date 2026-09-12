@@ -1,5 +1,7 @@
 # Execution graph
 
+> **Historical.** H1 graph complete. Live architecture: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). Student window: [`docs/UI.md`](docs/UI.md).
+
 > **This is the plan you read.** Every node has a markdown link in [Node plans](#node-plans).  
 > Scope: [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md). Index: [`plans/README.md`](plans/README.md).
 

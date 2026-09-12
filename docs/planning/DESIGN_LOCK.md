@@ -1,6 +1,6 @@
 # Design lock — closed
 
-Status: **closed** (2026-09-10). Visual authority for the persistent localhost UI.
+Status: **closed** (2026-09-10). Visual authority for the persistent localhost UI. **Student pages:** [`docs/UI.md`](../UI.md). This lock is tokens only; it does not define information architecture.
 
 **Source of tokens:** [`docs/design/DESIGN-coinbase.md`](../design/DESIGN-coinbase.md) (vendored analysis; EE front-matter).  
 **ADR seed:** [`DECISIONS.md`](../../DECISIONS.md) ADR-0008 (proposed; A1 accepts on Wave 0).  

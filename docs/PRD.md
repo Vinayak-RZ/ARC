@@ -1,10 +1,10 @@
 # Product Requirements Document — Electrical Engineer
 
-**Status:** Proposed (2026-09-12). Supersedes Accepted D0 (2026-09-10) pending owner review.  
+**Status:** Accepted (2026-09-12). Supersedes D0 (2026-09-10).  
 **Date:** 2026-09-12  
 **Licence of this product’s code:** Apache License 2.0  
-**Identity:** [`PID.md`](PID.md) (Proposed, same pass).  
-**This pass does not implement MCP/skill code.** As-built vs target is explicit in §4.
+**Identity:** [`PID.md`](PID.md).  
+**As-built vs target is explicit in §4.** Filling MCP verb splits, RAG extract/chunk, observation, workbook pages, and the viva scorer is a later code plan.
 
 ---
 
@@ -437,7 +437,7 @@ MATLAB if present else OSS first-class; the **entire product works without MATLA
 
 | Doc | Role |
 |-----|------|
-| [`PID.md`](PID.md) | Identity (Accepted until Proposed PID commit) |
+| [`PID.md`](PID.md) | Identity |
 | [`PID_DECISION_SHEET.md`](PID_DECISION_SHEET.md) | P0 answers |
 | [`curriculum-map.md`](curriculum-map.md) | UG bound |
 | [`../DECISIONS.md`](../DECISIONS.md) | ADRs |
@@ -454,19 +454,19 @@ MATLAB if present else OSS first-class; the **entire product works without MATLA
 
 ## Owner review checkpoint
 
-Previous D0 (2026-09-10) remains historical. **This revision is Proposed. Do not treat it as Accepted until the owner checks below.**
+Previous D0 (2026-09-10) remains historical. **Accepted 2026-09-12.**
 
-- [ ] Thesis: lab + domain kernel + thin CLI around existing coding agents; Apache-2.0; India-first global UG
-- [ ] GATE is eval only; bound = [`curriculum-map.md`](curriculum-map.md)
-- [ ] Co-solver default; exact token **unchecked**; no faculty v1
-- [ ] Shipped vs restructure inventory is accurate
-- [ ] Agent interaction chapter (context, tools, RAG, simulation, collaboration)
-- [ ] Split host tools including `propose_composition`, Results vs Method, pack specialists, dual MATLAB MCP
-- [ ] FR23 plan-then-execute on large jobs (`plan.md` before spice)
-- [ ] Host-path mega YAML with `solve-explain` is rollback; short attachments + validate-then-apply
-- [ ] Coverage law + capability list: any in-bound UG question has a complete path; providers are not the identity
-- [ ] Persist / observe / spawn: named memory files, observation requirement, host-native adapters, no Python orchestrator
-- [ ] Student-facing UI: lab workbook pages; no raw `.md`/`.json`; no reasoning-mode node
-- [ ] Host-skip claim boundary, glossary vs decision records, viva checklist axis
-- [ ] ChatGPT desktop first-class; ChatGPT web excluded; CLI-without-host complete
-- [ ] Exam-style in-scope; **no** third-party copyrighted PDFs in git
+- [x] Thesis: lab + domain kernel + thin CLI around existing coding agents; Apache-2.0; India-first global UG
+- [x] GATE is eval only; bound = [`curriculum-map.md`](curriculum-map.md)
+- [x] Co-solver default; exact token **unchecked**; no faculty v1
+- [x] Shipped vs restructure inventory is accurate
+- [x] Agent interaction chapter (context, tools, RAG, simulation, collaboration)
+- [x] Split host tools including `propose_composition`, Results vs Method, pack specialists, dual MATLAB MCP
+- [x] Plan-then-execute on large jobs (`plan.md` before spice)
+- [x] Host-path mega YAML with `solve-explain` is rollback; short attachments + validate-then-apply
+- [x] Coverage law + capability list: any in-bound UG question has a complete path; providers are not the identity
+- [x] Persist / observe / spawn: named memory files, observation requirement, host-native adapters, no Python orchestrator
+- [x] Student-facing UI: lab workbook pages; no raw `.md`/`.json`; no reasoning-mode node
+- [x] Host-skip claim boundary, glossary vs decision records, viva checklist axis
+- [x] ChatGPT desktop first-class; ChatGPT web excluded; CLI-without-host complete
+- [x] Exam-style in-scope; **no** third-party copyrighted PDFs in git

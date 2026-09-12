@@ -9,14 +9,15 @@ First-class host. Same kernel contract as Cursor, Codex, and ChatGPT desktop.
 3. Use fully qualified tool names when several MCP servers are present
    (`electrical-engineer:list_workflows`).
 4. `run_workflow` never blocks on a human gate. Use the localhost UI for
-   confirm. Target split tools: [`../PRD.md`](../PRD.md) requirement 17
+   confirm. Target split tools: [`../PRD.md`](../PRD.md)
    (`simulate_attachment`, `propose_composition`). Large jobs: `plan.md`
-   first (FR23). Do not run mega YAML that includes `solve-explain` on this
-   host path.
+   first. Do not run mega YAML that includes `solve-explain` on this
+   host path. Skills cannot force Claude to call tools; lab-checked means
+   kernel Results.
 5. Host-native subagents (Task) may call the same EE MCP. We do not ship a
-   custom multi-agent runtime (FR19). Copy
+   custom multi-agent runtime. Copy
    [`../../hosts/adapters/claude/pack-specialist.md`](../../hosts/adapters/claude/pack-specialist.md)
    into the student’s Claude agents. At most two pack specialists. Handoff is
    `run_id` + `./runs/<id>/`. Parent writes `argument.md`.
 6. Claude Code is optional. The CLI works without it.
-7. Peer MATLAB MCP: FR20 — EE owns checked numbers.
+7. Peer MATLAB MCP: EE owns checked numbers.

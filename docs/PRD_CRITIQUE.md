@@ -1,4 +1,6 @@
-# PRD critique log (Proposed)
+# PRD critique log (historical)
+
+Live requirements: [`PRD.md`](PRD.md).
 
 Lead merges. Critics were readonly. Owner intake (ChatGPT desktop first-class, dual MATLAB MCP, split ACI, no ChatGPT web) is not overturned by a critic.
 

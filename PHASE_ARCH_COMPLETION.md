@@ -1,4 +1,6 @@
-# PHASE_ARCH_COMPLETION — Proposed technical architecture
+# PHASE_ARCH_COMPLETION — technical architecture (historical)
+
+> **Historical.** Live architecture: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (Accepted).
 
 ## Completed work
 

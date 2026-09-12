@@ -1,5 +1,9 @@
 # PHASE_ARCH_D20_COMPLETION — Harness persist, observe, spawn
 
+> **Historical completion log.** Architecture is now Accepted in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
+## Completed work
+
 ## Completed work
 
 Specified the undergraduate EE lab harness as Proposed docs: the rented host still owns the loop, compaction, and specialist spawn; the kernel owns runs, named memory files, BYO RAG ingest, observation, and deterministic hooks. No product Python.

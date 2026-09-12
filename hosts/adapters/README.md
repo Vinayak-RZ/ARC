@@ -2,7 +2,7 @@
 
 Copy these **into the student’s host**, not into this repo’s coding `.cursor/`.
 The main host (Claude Code / Codex / Cursor) owns spawn. Electrical Engineer
-does **not** ship a multi-agent runtime (FR19, H5).
+does **not** ship a multi-agent runtime.
 
 | Host | Copy to (student machine) | File |
 |------|---------------------------|------|

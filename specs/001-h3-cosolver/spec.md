@@ -1,5 +1,7 @@
 # Feature Specification: H3 UG EE co-solver
 
+> **Historical.** Spec Kit artifact for the H1 execution graph. Live contract: [`docs/ARCHITECTURE.md`](../../docs/ARCHITECTURE.md), [`docs/UI.md`](../../docs/UI.md), [`docs/PRD.md`](../../docs/PRD.md).
+
 **Feature Branch**: `cursor/ee-product-execution-9e9d`  
 **Created**: 2026-09-10  
 **Status**: Specified (D0)  

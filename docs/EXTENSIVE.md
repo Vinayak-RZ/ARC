@@ -3,6 +3,8 @@
 Companion to the main [README](../README.md). Concepts first, then how the repo
 runs, then every first-party package. Do not invent paths.
 
+**How the lab is specified:** [`ARCHITECTURE.md`](ARCHITECTURE.md) §0. **Student pages:** [`UI.md`](UI.md). This file maps **as-built** packages. YAML recipes and the slot JSON viewer are this-pass encodings, not the domain.
+
 ## Table of contents
 
 - [1. Domain concepts](#1-domain-concepts)
@@ -16,31 +18,28 @@ runs, then every first-party package. Do not invent paths.
 
 ## 1. Domain concepts
 
-- **Named recipe.** A checked-in YAML DAG (`workflows/**/*.yaml`) with `id` and `nodes.{id}.{activity,needs}`. YAML is **replay of a capability binding**, not the domain. The router picks a row; it does not invent edges or capability ids.
+- **Named recipe.** A checked-in YAML DAG (`workflows/**/*.yaml`) with `id` and `nodes.{id}.{activity,needs}`. YAML is **replay of a capability binding**, not the domain. The router picks a row; it does not invent edges or capability ids. Host path prefers short attachments or `propose_composition`.
 - **Capability.** Domain name for what kind of check is allowed (`algebraic-check`, `lumped-circuit-sim`, …). Providers (`run-spice`, …) are this-pass keys. See [`ARCHITECTURE.md`](ARCHITECTURE.md) §0.
-- **unchecked.** Exact token from `electrical_engineer.unchecked.UNCHECKED`. Used when a verifier is missing or a numeric check fails. `EE_ALLOW_ALL` skips *asks*, not this token.
-- **Run dir.** `runs/<4char>-<UTC>/` holds `summary.json`, `nodes/<id>/out.json`, optional `confirmed.json`. Audit only — no crash-resume.
+- **unchecked.** Exact token from `electrical_engineer.unchecked.UNCHECKED`. Used when a verifier is missing or a numeric check fails. `EE_ALLOW_ALL` skips *asks*, not this token. Chat answers that never called the kernel are not lab-checked.
+- **Run dir.** `runs/<4char>-<UTC>/` holds `summary.json`, `nodes/<id>/out.json`, optional `confirmed.json`, `argument.md`, `plan.md`. Audit only — no crash-resume.
 - **Gate.** TOML most-restrictive merge; third interrupt aborts. MCP never waits: fail-closed with `ui_url`.
 - **Confirm ≠ simulate.** Photo and C5 stop after `confirm-topology`. C4 `simulate-after-confirm` requires `confirmed.json` before `run-spice`.
-- **Slot UI.** React `register(name, Component)`; shell renders `root` only. No LLM client in the browser. `?run=` selects a run; CLI `ui --run` opens that URL. The `unchecked` pill is `summary.unchecked === true`, not a substring match on JSON.
-- **RAG facade.** EE owns `book_id` / `chapter_id` / `folder_tag` / `domain_tag`. Empty retrieval is a first-class `empty: true`. Engine after spike: thin bm25.
+- **Lab window (target).** Pages This problem / Past work / Books / Notes ([`UI.md`](UI.md)). **As-built:** React `register(name, Component)` slot shell dumping `summary.json`. No LLM client in the browser. `?run=` selects a run; CLI `ui --run` opens that URL. The `unchecked` pill is `summary.unchecked === true`, not a substring match on JSON.
+- **RAG facade.** EE owns `book_id` / `chapter_id` / `folder_tag` / `domain_tag`. Empty retrieval is a first-class `empty: true`. Engine after spike: thin bm25. Extract/chunk is specified (`CD-RAG-PARSE`), as-built add is inventory-only.
 
 ## 2. How this repository runs
 
 ```mermaid
 sequenceDiagram
   participant S as Student or host
-  participant CLI as electrical-engineer
-  participant FSM as YAML FSM
-  participant N as REGISTRY nodes
+  participant T as CLI or MCP tools
+  participant K as Kernel (YAML replay today)
   participant UI as FastAPI 127.0.0.1:8765
-  S->>CLI: run RECIPE | mcp run_workflow | ui
-  CLI->>FSM: load YAML, new run dir
-  FSM->>N: ready-set, sorted ids
-  N-->>FSM: dict (value or unchecked)
-  FSM-->>CLI: summary.json
-  CLI-->>UI: GET /api/runs
-  UI-->>S: slots + confirm POST
+  S->>T: run RECIPE | mcp | ui
+  T->>K: validate, then providers
+  K-->>T: Results and Method files
+  T-->>UI: GET /api/runs
+  UI-->>S: as-built slots; target is UI.md pages
 ```
 
 Install with `uv sync --extra dev`. Entry: `electrical-engineer` → `electrical_engineer.cli:main`. UI auto-opens unless `EE_NO_BROWSER=1`. MCP is line-delimited JSON-RPC on stdio.
@@ -94,7 +93,7 @@ Vendored Cursor config (`.cursor/`) is not a product package; see `.cursor/VENDO
 
 ### 4.2 `electrical-engineer-ui`
 
-**What it is for.** Persistent workspace chrome.
+**What it is for.** Persistent workspace chrome. **Target pages:** [`UI.md`](UI.md). **As-built:** slot shell + JSON dump.
 
 **How it is used.** `electrical-engineer ui` serves `ui/dist` when built; Vite `server.host` is 127.0.0.1.
 
@@ -114,7 +113,7 @@ Vendored Cursor config (`.cursor/`) is not a product package; see `.cursor/VENDO
 
 ### 4.3 recipes (`workflows/`)
 
-**What it is for.** The catalog students actually run.
+**What it is for.** This-pass replay catalog. Domain names live in [`ARCHITECTURE.md`](ARCHITECTURE.md) §0.
 
 **How it is used.** `electrical-engineer run <id>`.
 
@@ -154,7 +153,7 @@ Python 3.11+, `uv`, hatchling. Optional tools (PySpice, python-control, pandapow
 
 ## 7. Further reading
 
-- [`docs/PID.md`](PID.md), [`docs/PRD.md`](PRD.md), [`docs/ARCHITECTURE.md`](ARCHITECTURE.md)
+- [`docs/PID.md`](PID.md), [`docs/PRD.md`](PRD.md), [`docs/ARCHITECTURE.md`](ARCHITECTURE.md), [`docs/UI.md`](UI.md), [`docs/GLOSSARY.md`](GLOSSARY.md)
 - [`docs/WORKFLOWS.md`](WORKFLOWS.md), [`docs/CANNOT_DO.md`](CANNOT_DO.md)
 - [`docs/design/DESIGN-coinbase.md`](design/DESIGN-coinbase.md)
 - [`docs/planning/R1_BOOT.md`](planning/R1_BOOT.md), [`docs/planning/T1_TRIALS.md`](planning/T1_TRIALS.md)
@@ -162,6 +161,9 @@ Python 3.11+, `uv`, hatchling. Optional tools (PySpice, python-control, pandapow
 
 ## 8. Future advancements
 
-1. Re-run the RAG spike on a licensed chapter with LightRAG 1.5 numbers before swapping engines.
-2. Optional MATLAB and ngspice in non-Ubuntu CI; keep skip-if-missing.
-3. BYOK / HTTP MCP / PyPI — explicitly later-graph in PID; do not pretend they shipped.
+1. Fill [`UI.md`](UI.md) pages in `ui/` (as-built is a JSON dump).
+2. Bind capability ids to providers in the runner; split MCP tools including `propose_composition`.
+3. RAG extract/chunk (`CD-RAG-PARSE`); observation writer; `expect-viva.json` scorer.
+4. Re-run the RAG spike on a licensed chapter with LightRAG 1.5 numbers before swapping engines.
+5. Optional MATLAB and ngspice in non-Ubuntu CI; keep skip-if-missing.
+6. BYOK / HTTP MCP / PyPI — explicitly later-graph in PID; do not pretend they shipped.

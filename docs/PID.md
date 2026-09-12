@@ -1,11 +1,11 @@
 # Product Identity Document (PID) — Electrical Engineer
 
-**Status:** Proposed (2026-09-12). Aligns with Proposed [`PRD.md`](PRD.md). Previous Accepted P0 (2026-09-09) stands until the owner Accepts this revision.  
+**Status:** Accepted (2026-09-12). Aligns with Accepted [`PRD.md`](PRD.md). P0 locks (2026-09-09) still hold; this revision adds lab / domain kernel / ChatGPT desktop / capability coverage.  
 **Date:** 2026-09-12  
-**Requirements authority after this:** [`PRD.md`](PRD.md) (Proposed)  
+**Requirements authority after this:** [`PRD.md`](PRD.md)  
 **How it is built:** [`ARCHITECTURE.md`](ARCHITECTURE.md)
 
-Thin CLI around existing coding agents, Apache-2.0, UG vs PG, one repo, and the exact token `unchecked` are **not** reopened. Category, host list, and “who writes the viva” are.
+Thin CLI around existing coding agents, Apache-2.0, UG vs PG, one repo, and the exact token `unchecked` are **not** reopened.
 
 ---
 
@@ -13,7 +13,7 @@ Thin CLI around existing coding agents, Apache-2.0, UG vs PG, one repo, and the 
 
 Electrical Engineer is an Apache-2.0, forever-open-source undergraduate electrical-engineering **lab**: a **domain kernel** that wraps a rented frontier agent loop (Cursor, Claude Code, Codex, ChatGPT desktop) so the student gets a checked assignment without us becoming a new harness. A branded **local CLI** plus a **persistent localhost UI** are a complete path with no AI host. The kernel’s identity is **coverage of UG EE coursework** (every in-bound pack × genre has a complete co-solver path) via a **capability registry**; simulators, YAML attachments, and the UI stack are swappable providers. Named **short physics attachments** attach simulators; they are not the chat brain. On a large job the host **plans then executes**. The host may propose an allowlisted capability graph; the kernel validates then runs. The product checks numbers with whatever installed provider can honour the capability and labels unverified numbers with the exact token **unchecked**. It is shaped by **real UG coursework** at Indian and global institutes. GATE is an eval instrument, not the product bound. PG, civil, and mechanical are out of the public promise.
 
-## 2. Identity (Proposed)
+## 2. Identity
 
 | Field | Value |
 |-------|--------|
@@ -61,7 +61,7 @@ Public promise = **union of representative UG EE programmes** (Indian institutes
 
 Same IDs as `README.md`. Claimable bar: on a published UG task set, with tools on, match gold **or label unchecked**. Fluent wrong numbers presented as checked fail the product. v1 vs later is in the PRD.
 
-## 6. Thin CLI around existing coding agents (Proposed)
+## 6. Thin CLI around existing coding agents
 
 ```text
 Student
@@ -104,9 +104,9 @@ The CLI is a **thin wrapper**: glue, ug profile, co-solver defaults, a **determi
 - Shipping copyrighted textbooks or live exam PDFs in git
 - ChatGPT web/mobile, Claude Desktop, GitHub Copilot, Gemini CLI as v1 hosts
 
-## 9. P1 proposed (not a P0 lock)
+## 9. P1 (accepted with architecture)
 
-| Topic | Proposed |
+| Topic | Stance |
 |-------|----------|
 | MATLAB vs OSS | MATLAB if present (EE node and/or peer MCP); OSS first-class otherwise; **product works without MATLAB** |
 | RAG | Local store; BYO drop → gate → extract → chunk → index → retrieve; inventory + book/chapter/folder tags; no commercial books in git |
@@ -121,7 +121,7 @@ The CLI is a **thin wrapper**: glue, ug profile, co-solver defaults, a **determi
 
 | Doc | Role |
 |-----|------|
-| [`PRD.md`](PRD.md) | Requirements (Proposed) |
+| [`PRD.md`](PRD.md) | Requirements |
 | [`PRD_CRITIQUE.md`](PRD_CRITIQUE.md) | Four critique loops |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Technical architecture |
 | [`ARCHITECTURE_CRITIQUE.md`](ARCHITECTURE_CRITIQUE.md) | Hybrid architecture critique |
@@ -138,9 +138,9 @@ The CLI is a **thin wrapper**: glue, ug profile, co-solver defaults, a **determi
 
 - Owner P0 answers (2026-09-09) — reliability: primary
 - [`PID_DECISION_SHEET.md`](PID_DECISION_SHEET.md) — reliability: primary
-- Proposed [`PRD.md`](PRD.md) (2026-09-12) — reliability: primary
+- [`PRD.md`](PRD.md) (2026-09-12) — reliability: primary
 
 ## Confidence
 
 Overall confidence that **licence, thin CLI around existing agents, UG bound, and `unchecked` stay locked:** high.  
-Overall confidence that **lab / domain kernel / ChatGPT desktop** match owner intake: high, pending owner Accept of this Proposed PID.
+Overall confidence that **lab / domain kernel / ChatGPT desktop** match owner intake: high.

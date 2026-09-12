@@ -1,6 +1,6 @@
 # Technical architecture — Electrical Engineer
 
-**Status:** Proposed (2026-09-12). This file is **how the lab works**. Why a lock exists: [`../DECISIONS.md`](../DECISIONS.md). Words: [`GLOSSARY.md`](GLOSSARY.md). Student screens: [`UI.md`](UI.md). Requirements: [`PRD.md`](PRD.md).  
+**Status:** Accepted (2026-09-12). This file is **how the lab works**. Why a lock exists: [`../DECISIONS.md`](../DECISIONS.md). Words: [`GLOSSARY.md`](GLOSSARY.md). Student screens: [`UI.md`](UI.md). Requirements: [`PRD.md`](PRD.md).  
 **Date:** 2026-09-12
 
 You do not need [`PID.md`](PID.md) to implement a provider, a gold item, or a UI page. Why a lock exists is in [`../DECISIONS.md`](../DECISIONS.md), not in the next section.
@@ -342,7 +342,7 @@ A Python middleware loop that re-asks a model is a **second chat product** — d
 | Install | `pip` (and equivalent) on **Linux, macOS, and Windows** |
 | Offline | Required: with a configured local model, CLI-only is a complete path. Model-free providers (circuit sim, LTI, load-flow, algebraic-check) work with **no** model |
 | MATLAB | **Optional provider.** Product and CI must work with OSS only |
-| Later CLI skin | Owner also allowed a Go or Rust CLI wrapping this Python runner. Not the Proposed freeze. Revisit after PRD accept if a static binary is needed |
+| Later CLI skin | Owner also allowed a Go or Rust CLI wrapping this Python runner. Not this-pass freeze. Revisit if a static binary is needed |
 
 This table is **how this graph ships**, not what the lab *is*. A later pass may wrap the same capability registry in another language. Main LLM work lives in **Cursor / Claude Code / Codex / ChatGPT desktop** (or a local/BYO model). The CLI is deterministic glue: YAML replay, Python providers, files, UI, eval. ChatGPT web is not a host.
 
@@ -783,7 +783,7 @@ Closed A1 2026-09-10 (owner: start / execute this graph):
 - [x] `eval/gold/` + `electrical-engineer eval`
 - [x] **Architecture accepted** for this graph
 
-Proposed changes (2026-09-12) — owner Accept lives on the vision lock sheet. Decision records: [`../DECISIONS.md`](../DECISIONS.md).
+Accepted with architecture (2026-09-12). Decision records: [`../DECISIONS.md`](../DECISIONS.md).
 
 - Host + pack skills compose; typed engines; short attachments; `propose_composition` validate-then-apply
 - Results and Method files + lab window; mega YAML with `solve-explain` is CLI/eval rollback

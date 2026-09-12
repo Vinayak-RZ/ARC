@@ -1,6 +1,6 @@
 # Student-facing lab UI
 
-**Status:** Proposed (2026-09-12). No product code in this pass.  
+**Status:** Accepted (2026-09-12) as the student information architecture. As-built `ui/` still fails this doc (JSON dump). Filling the pages is a later UI code plan.  
 **Audience of this doc:** implementers. **Audience of the product:** a UG electrical-engineering student who may not be software-fluent.  
 **Visual tokens:** [`design/DESIGN-coinbase.md`](design/DESIGN-coinbase.md) (Inter + JetBrains/Geist Mono; never Coinbase fonts or wordmark).  
 **Authority:** [`PID.md`](PID.md), [`PRD.md`](PRD.md) FR11, [`ARCHITECTURE.md`](ARCHITECTURE.md) §9.
@@ -140,11 +140,11 @@ Do not ship Coinbase wordmarks or licensed Coinbase fonts.
 
 ## 7. As-built vs this target
 
-As-built `ui/` is a single-band viewer: run ids in a sidebar, `<pre>` of `summary.json`, a bare SVG, a Confirm button that prints JSON. That **fails** this doc. Filling the pages above is a **later UI code plan**. This overlay specifies the product; it does not implement React.
+As-built `ui/` is a single-band viewer: run ids in a sidebar, `<pre>` of `summary.json`, a bare SVG, a Confirm button that prints JSON. That **fails** this doc. Filling the pages above is a **later UI code plan**. This spec is the product; it does not implement React.
 
 Photo confirm and gates still need the HTTP UI (do not replace the SPA with a static file dump). Do not grow an in-UI agent loop.
 
-## 8. Non-goals (this overlay)
+## 8. Non-goals (this spec)
 
 - Implementing the pages in `ui/`.
 - A marketing landing page.

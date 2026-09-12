@@ -13,7 +13,7 @@ Honest holes. Prefer a row here over fake gold. Expanded by B_NODES and later pa
 | CD-HTTP-MCP | HTTP/SSE MCP | Later graph | stdio MCP now |
 | CD-BYOK | Hosted API keys in-product | Later graph | Host subscription or local OpenAI-compat |
 | CD-CRASH | Resume a dead run from `out.json` | No crash-resume | Start a new run |
-| CD-KICAD | Full schematic editor | UI is a slot viewer | Library SVG/PNG + JSON graph |
+| CD-KICAD | Full schematic editor | UI is a lab workbook, not KiCad | Library SVG/PNG + JSON graph |
 | CD-IMG-GEN | Image generation of circuits | Forbidden default | schemdraw / matplotlib |
 | CD-SIMULINK-PLANT | MATLAB-only Simulink plant models | Optional MATLAB; CI has none | OSS python-control / cannot-do |
 | CD-TAPEOUT | Analog tape-out / PDK flows | Not UG coursework promise | None |

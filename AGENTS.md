@@ -2,16 +2,16 @@
 
 This repository vendors [cursor-config-coding](https://github.com/Vinayak-RZ/cursor-config-coding) at `.cursor/` (rules, skills, MCP). Pin: see [`.cursor/VENDOR.md`](.cursor/VENDOR.md). Do not duplicate the shared SDLC in this file — point at skills by name.
 
-Product: **Electrical-Engineer** — a UG EE co-solver (named workflows, simulators, persistent local UI) that can do the coursework an undergrad electrical engineer is asked to do.
+Product: **Electrical-Engineer** — a UG EE lab (capability-first domain kernel, thin CLI around rented coding agents, persistent local UI) that can do the coursework an undergrad electrical engineer is asked to do.
 GitHub: [`Vinayak-RZ/Electrical-Engineer`](https://github.com/Vinayak-RZ/Electrical-Engineer).
 
 ## What this repo is
 
-A coding workspace for building and evolving that co-solver (analysis, circuits, signals, power, labs, and related undergrad EE workflows). Prefer deterministic tools and verified calculations over free-form LLM guesses when correctness matters. Authority: [`docs/PID.md`](docs/PID.md), [`docs/PRD.md`](docs/PRD.md), [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). Do not invent capability ids; use the registry in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) §0 or add a [`docs/CANNOT_DO.md`](docs/CANNOT_DO.md) row.
+A coding workspace for building and evolving that lab (analysis, circuits, signals, power, and related undergrad EE workflows). Prefer deterministic tools and verified calculations over free-form LLM guesses when correctness matters. Authority: [`docs/PID.md`](docs/PID.md), [`docs/PRD.md`](docs/PRD.md), [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/UI.md`](docs/UI.md). Do not invent capability ids; use the registry in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) §0 or add a [`docs/CANNOT_DO.md`](docs/CANNOT_DO.md) row.
 
 ## Current status
 
-Product execution graph **complete through H1** on `cursor/ee-product-execution-9e9d`: CLI, YAML runner, localhost UI, MCP, recipes, eval, boot + trials. Authority remains [`docs/PID.md`](docs/PID.md), [`docs/PRD.md`](docs/PRD.md), [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/UI.md`](docs/UI.md), [`docs/GLOSSARY.md`](docs/GLOSSARY.md). Proposed docs: capability list, harness split, lab window, host-skip and viva checklist. Providers (ngspice, YAML, FastAPI, …) are this-pass freezes, not the thesis. Do not invent EE capabilities that are not in those docs or in [`docs/CANNOT_DO.md`](docs/CANNOT_DO.md). This file is **coding SDLC**, not the student lab prompt. Use [`docs/GLOSSARY.md`](docs/GLOSSARY.md) for words; do not add new letter-codes.
+Product execution graph **complete through H1** on `cursor/ee-product-execution-9e9d`: CLI, YAML runner, localhost UI, MCP, recipes, eval, boot + trials. Architecture **accepted**: capability registry, host vs kernel split, lab workbook, host-skip and viva checklist. Authority: [`docs/PID.md`](docs/PID.md), [`docs/PRD.md`](docs/PRD.md), [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/UI.md`](docs/UI.md), [`docs/GLOSSARY.md`](docs/GLOSSARY.md). Providers (ngspice, YAML, FastAPI, …) are this-pass freezes, not the thesis. Do not invent EE capabilities that are not in those docs or in [`docs/CANNOT_DO.md`](docs/CANNOT_DO.md). This file is **coding SDLC**, not the student lab prompt. Use [`docs/GLOSSARY.md`](docs/GLOSSARY.md) for words; do not add new letter-codes. Next code: capability→provider bind, RAG extract/chunk, observation writer, UI pages, viva checklist scorer.
 
 ---
 

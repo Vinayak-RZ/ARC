@@ -1,5 +1,7 @@
 # Glossary (for contributors)
 
+**Status:** Accepted (2026-09-12).
+
 Plain words. [`ARCHITECTURE.md`](ARCHITECTURE.md) is how the lab works. [`../DECISIONS.md`](../DECISIONS.md) is why a lock exists. You do not need [`PID.md`](PID.md) to send a first PR.
 
 | Term | Meaning |

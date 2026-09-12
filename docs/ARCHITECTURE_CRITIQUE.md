@@ -1,6 +1,6 @@
-# Architecture critique log (Proposed hybrid)
+# Architecture critique log (historical)
 
-Lead merges. Critics were readonly. Owner locks (H3, QUALITY hybrid, ChatGPT desktop first-class, dual MATLAB MCP, no ChatGPT web, no unconstrained spice) are not overturned by a critic.
+Lead merges. Critics were readonly. Owner locks (thin CLI around existing agents, QUALITY hybrid, ChatGPT desktop first-class, dual MATLAB MCP, no ChatGPT web, no unconstrained spice) are not overturned by a critic. Live architecture: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## Loop 1 — EE capability / GraSP / ChemCrow
 

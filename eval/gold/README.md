@@ -1,6 +1,6 @@
 # Eval gold tasks
 
-**Status:** Layout specified for the Proposed architecture. No runner shipped. Do not treat empty pack folders as a gold set.
+**Status:** Layout + thin runner shipped. Gold **depth** is circuits-first; empty pack folders are not a gold set. Spec: [`docs/ARCHITECTURE.md`](../../docs/ARCHITECTURE.md) §14.
 
 Gold tasks live here so `electrical-engineer eval` (and `eval --pack circuits`) has a home. See [`docs/ARCHITECTURE.md`](../../docs/ARCHITECTURE.md) §14 and [`docs/WORKFLOWS.md`](../../docs/WORKFLOWS.md) §7.
 
@@ -17,7 +17,7 @@ eval/gold/
   injection/     # BYO-PDF / tags must not flip gates or the unchecked rule
 ```
 
-Each item (when authored after PRD accept) is a directory:
+Each item is a directory:
 
 ```text
 thevenin-dc-01/
