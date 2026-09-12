@@ -23,6 +23,7 @@ Honest holes. Prefer a row here over fake gold. Expanded by B_NODES and later pa
 | CD-PYPI | Publish to PyPI | This graph | uv/pip from git |
 | CD-RAG-ANYTHING | RAG-Anything as locked engine | Unmaintained risk | LightRAG 1.5 spike + BM25 fallback |
 | CD-RAG-ENGINE | LightRAG/Docling not installed in CI | Missing deps; no licensed chapter in git | Thin BM25 facade; BYO ingest |
+| CD-RAG-PARSE | PDF/scan extract + page-chunk ingest | Specified D20; as-built add is inventory-only | Tag the file; retrieve prefix BM25; empty is visible |
 
 
 | CD-SIGNALS-MATLAB | MATLAB-only DSP toolboxes as checked answers | UG OSS bound | OSS first; else unchecked |
