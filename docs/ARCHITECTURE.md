@@ -177,7 +177,7 @@ Canonical numbering stays **0–3**. A fifth layer is not earned (eval stays 2e;
 
 As-built sub-pieces (still true): CLI glue, pack `SKILL.md` **method** files, stdio MCP (`list_workflows` + `run_workflow` only), UI, RAG sidecar, registered **provider** nodes. Target: this section + [`PRD.md`](PRD.md) §5–§6. Capability→provider bind in the runner is a later code plan; today graphs still name provider keys.
 
-**H3 falsifier:** if the CLI grows a custom harness hosts cannot share, stop and return to the owner. Layer 0 stays rented. A **Python multi-turn composition dialog** (interview/plan loop inside the CLI) is that falsifier. `propose_composition` is one write verb, not a chat product.
+**H3 falsifier:** if the CLI grows a custom harness hosts cannot share, stop and return to the owner. Layer 0 stays rented. A **Python multi-turn composition dialog** (interview/plan loop inside the CLI) **or a Python specialist fan-out** is that falsifier. `propose_composition` is one write verb, not a chat product.
 
 **Runner law:** no model calls inside the DAG runner except through **registered providers**, plus one **pre-runner** classifier when the workflow id is omitted **and no host is driving**. The DAG runner itself is deterministic. Host-path attachments **must not** invoke `solve-explain` (FR21). `solve-explain` must not mint checked numbers (FR9). Composition graphs name **capability ids** and/or **registered provider ids** — never a new activity invented in the session.
 
