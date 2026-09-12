@@ -26,6 +26,8 @@ ChatGPT **web** is **not** a host.
    require every student to subscribe to Codex. CLI + UI remains complete.
 
 5. As-built tools: `list_workflows`, `run_workflow` (never waits). Target:
-   [`../PRD.md`](../PRD.md) FR17.
+   [`../PRD.md`](../PRD.md) FR17 (`simulate_attachment`,
+   `propose_composition`). Large jobs write `plan.md` first (FR23). Host
+   writes `argument.md`.
 
 6. Peer MATLAB MCP: FR20.

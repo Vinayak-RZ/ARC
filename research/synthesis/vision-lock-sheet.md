@@ -67,17 +67,29 @@ Written into Proposed PID/PRD/ARCHITECTURE 2026-09-12 (not owner-Accepted).
 
 Written into Proposed PRD FR17–FR22 / ARCHITECTURE §2 2026-09-12 (not owner-Accepted).
 
+**D18 Host-path composition (hybrid quality)**
+
+- Host + 2–3 pack skills (on-demand) compose the job. Typed engines own numbers. Short physics attachments stay as YAML replay. Host may `propose_composition` of **allowlisted** engines; kernel **validates then runs**.
+- Mega YAML including `solve-explain` retires on the **host path** (CLI/gold rollback only).
+- Reopens D13 “router never invents a DAG” **only** this far — not ToolWeave free spice, not session-invented `lookup_vout_guess`.
+- L0 contract and L1 ACI updated because the hybrid requires them. **No Layer 4.**
+- Large jobs **plan then execute** (`plan.md` before spice). `propose_composition apply: false` validates without running. Not an eighth verb. Not a Python planner (H3).
+- [ ] Accept
+- [ ] Reject
+
+Written into Proposed ARCHITECTURE / PRD FR10/FR17/FR23 2026-09-12 (not owner-Accepted).
+
 ### Later docs pass
 
-**Done as Proposed (2026-09-12), not Accepted:** PID category/hosts, PRD thesis + agent interaction, ARCHITECTURE four-layer map.
+**Done as Proposed (2026-09-12), not Accepted:** PID category/hosts, PRD thesis + agent interaction, ARCHITECTURE four-layer map, hybrid L2/L3 composition (D18).
 
-**Still waiting on owner Accept:** checkboxes above; then root `README.md` (product-readme) and `DECISIONS.md` ADR.
+**Still waiting on owner Accept:** checkboxes above; then root `README.md` (product-readme) and `DECISIONS.md` ADR (ADR-0009 stays **proposed** until then).
 
 Would not change until a **code** plan: runner, CLI binary name, skill-pack rewrite, PyPI, HTTP MCP, MCP verb split implementation.
 
 ### Stop line
 
-Owner checkboxes above are empty on purpose. Root README is unchanged until you Accept. This pass did not ship MCP verb splits or skill rewrites in Python.
+Owner checkboxes above are empty on purpose. Root README is unchanged until you Accept. This pass did not ship MCP verb splits in Python. Root `skills/SKILL.md` is the always-on plan-then-execute contract (stub).
 
 ## Open questions
 
@@ -91,6 +103,7 @@ Owner checkboxes above are empty on purpose. Root README is unchanged until you 
 - [`research/DECISION_REGISTER.md`](../DECISION_REGISTER.md) — retrieved 2026-09-12 — reliability: primary
 - [`research/notes/agentic-kernel-2026.md`](../notes/agentic-kernel-2026.md) — retrieved 2026-09-12 — reliability: primary
 - [`research/notes/domain-kernel-layering.md`](../notes/domain-kernel-layering.md) — retrieved 2026-09-12 — reliability: primary
+- [`research/notes/hybrid-engine-composition.md`](../notes/hybrid-engine-composition.md) — retrieved 2026-09-12 — reliability: primary
 - [`docs/PID.md`](../../docs/PID.md) — retrieved 2026-09-12 — reliability: primary
 
 ## Confidence

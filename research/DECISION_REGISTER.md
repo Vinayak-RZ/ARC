@@ -21,6 +21,7 @@ Stances for this research phase. Status: `open` | `leaning` | `proposed` | `defe
 | D15 | Category noun | studio / lab / bench / system / co-solver / MCP / domain kernel | **proposed: lab (public); domain kernel (internal); co-solver (mode)** | WS-G lock sheet | Reject “Agentic UG EE Studio”. Kill bench (EEBench.org). Domain kernel supersedes “harness-native domain system” as the internal name. |
 | D16 | Who orchestrates the professional workflow | A markdown control plane / B YAML FSM as brain / C hybrid | **proposed: C hybrid** | WS-G lock sheet | Host agent plans and explains; Python owns verifiers, gates, eval. Does not reopen H4/H5. Does not supersede D13’s YAML runner as the physics backbone. |
 | D17 | Domain-kernel layers and host ACI | mega `run_workflow` / 1:1 node MCP / 5–7 verbs + two-band + spend/clamp | **proposed: four layers; CLI inner MCP outer; spend host on viva; clamp numbers; two-band artifacts** | WS-G lock sheet | `notes/domain-kernel-layering.md`. Does not ship code in this pass. |
+| D18 | Host-path composition | long YAML brain / unconstrained on-the-fly / hybrid engines | **proposed: hybrid quality** — host + pack skills compose; typed engines; short attachments; `propose_composition` validate-then-apply; no Layer 4 | WS-G lock sheet | `notes/hybrid-engine-composition.md`. Reopens D13 only into allowlisted engine graphs. |
 
 ## Sources
 

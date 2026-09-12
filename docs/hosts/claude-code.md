@@ -9,7 +9,10 @@ First-class host. Same kernel contract as Cursor, Codex, and ChatGPT desktop.
 3. Use fully qualified tool names when several MCP servers are present
    (`electrical-engineer:list_workflows`).
 4. `run_workflow` never blocks on a human gate. Use the localhost UI for
-   confirm. Target split ACI: [`../PRD.md`](../PRD.md) FR17.
+   confirm. Target split ACI: [`../PRD.md`](../PRD.md) FR17
+   (`simulate_attachment`, `propose_composition`). Large jobs: `plan.md`
+   first (FR23). Do not run mega YAML that includes `solve-explain` on this
+   host path.
 5. Host-native subagents (Task) may call the same EE MCP. We do not ship a
    custom multi-agent runtime (FR19).
 6. Claude Code is optional. The CLI works without it.

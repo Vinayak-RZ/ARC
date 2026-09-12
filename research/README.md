@@ -14,7 +14,7 @@ class, names, orchestrator split, and domain-kernel layering) and write recommen
 2. Check [`DECISION_REGISTER.md`](DECISION_REGISTER.md) — options and current stances.
 3. Read domain notes under [`notes/`](notes/).
 4. End with [`synthesis/recommendation.md`](synthesis/recommendation.md) (historical O1 harness) and [`synthesis/rag-stack-recommendation.md`](synthesis/rag-stack-recommendation.md) when evaluating RAG engine choice.
-5. For class, names, hybrid architecture, and layering: [`synthesis/domain-system-recommendation.md`](synthesis/domain-system-recommendation.md) then [`synthesis/vision-lock-sheet.md`](synthesis/vision-lock-sheet.md). Kernel harvest: [`notes/agentic-kernel-2026.md`](notes/agentic-kernel-2026.md), [`notes/domain-kernel-layering.md`](notes/domain-kernel-layering.md), [`notes/host-first-class-attach.md`](notes/host-first-class-attach.md). Proposed product docs: [`docs/PRD.md`](../docs/PRD.md).
+5. For class, names, hybrid architecture, and layering: [`synthesis/domain-system-recommendation.md`](synthesis/domain-system-recommendation.md) then [`synthesis/vision-lock-sheet.md`](synthesis/vision-lock-sheet.md). Kernel harvest: [`notes/agentic-kernel-2026.md`](notes/agentic-kernel-2026.md), [`notes/domain-kernel-layering.md`](notes/domain-kernel-layering.md), [`notes/host-first-class-attach.md`](notes/host-first-class-attach.md), [`notes/hybrid-engine-composition.md`](notes/hybrid-engine-composition.md). Proposed product docs: [`docs/PRD.md`](../docs/PRD.md).
 6. Sources are catalogued in [`source-ledger.md`](source-ledger.md).
 
 ## Note shape
@@ -36,7 +36,7 @@ memo, and (heuristically) verbatim book text.
 | WS-E | Synthesis | `synthesis/option-scoring.md`, `synthesis/recommendation.md`, `synthesis/rag-stack-recommendation.md` |
 | WS-F | README compilation | root `README.md`, `docs/EXTENSIVE.md` |
 | WS-Arch | Technical architecture | `notes/spatiotemporal-composability.md`, `notes/light-dag-fsm-and-language.md`, `notes/architecture-qa-gate.md`, `docs/ARCHITECTURE.md`, `docs/WORKFLOWS.md` |
-| WS-G | Domain kernel, names, GTM | `notes/domain-system-architecture-patterns.md`, `notes/similar-agentic-domain-systems.md`, `notes/naming-and-positioning.md`, `notes/student-gtm-ug-ee.md`, `notes/agentic-kernel-2026.md`, `notes/domain-kernel-layering.md`, `notes/host-first-class-attach.md`, `synthesis/domain-system-recommendation.md`, `synthesis/vision-lock-sheet.md` |
+| WS-G | Domain kernel, names, GTM | `notes/domain-system-architecture-patterns.md`, `notes/similar-agentic-domain-systems.md`, `notes/naming-and-positioning.md`, `notes/student-gtm-ug-ee.md`, `notes/agentic-kernel-2026.md`, `notes/domain-kernel-layering.md`, `notes/host-first-class-attach.md`, `notes/hybrid-engine-composition.md`, `synthesis/domain-system-recommendation.md`, `synthesis/vision-lock-sheet.md` |
 
 ## Assumptions while blockers are open
 
