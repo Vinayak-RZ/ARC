@@ -1,12 +1,24 @@
 # Technical architecture — Electrical Engineer
 
-**Status:** Proposed (2026-09-12) overlay on Accepted A1 (2026-09-10). Hybrid composition (D18), **capability-first domain contract (D19)**, **harness persist / observe / spawn (D20)**, plus **student-facing lab UI (D21)**: a non-technical workbook (This problem, Past work, Books, Notes) that never presents `.md`/`.json` as the product. Aligns with Proposed [`PRD.md`](PRD.md) / [`PID.md`](PID.md).  
-**Date:** 2026-09-12  
-**Authority:** [`PID.md`](PID.md) (Proposed), [`PRD.md`](PRD.md) (Proposed)
+**Status:** Proposed (2026-09-12). This file is **how the lab works**. Why a lock exists: [`../DECISIONS.md`](../DECISIONS.md). Words: [`GLOSSARY.md`](GLOSSARY.md). Student screens: [`UI.md`](UI.md). Requirements: [`PRD.md`](PRD.md).  
+**Date:** 2026-09-12
 
-Do not invent LangGraph, Temporal, Cordis, or a second agent loop (H5). YAML runner, unmatched, `unchecked`, and MCP-never-waits stay.
+You do not need [`PID.md`](PID.md) to implement a provider, a gold item, or a UI page. Overlay ids (D18–D22) and harness shorthand (H3, H5) are in the [glossary](GLOSSARY.md) and in ADRs — not required to understand the next section.
 
-**Hybrid quality.** The host (plus 2–3 pack skills) composes the *job*. On a **large** job (entire assignment, several problems, more than one attachment) the host **writes `plan.md` first**, then executes. **Capabilities** own what kind of check is allowed; **providers** (typed engines) produce numbers. **Short** named physics attachments stay as replayable bindings (this-pass example: `simulate-circuit` = lumped-circuit-sim + repair + label). The host may propose an **allowlisted** capability/provider graph; the kernel **validates then runs**. Mega YAML that includes `solve-explain` is **not** the host-path brain — it is CLI-without-host / gold rollback. Evidence: [`../research/notes/hybrid-engine-composition.md`](../research/notes/hybrid-engine-composition.md).
+---
+
+## How the lab works
+
+A student has an undergraduate EE question. Two complete paths:
+
+1. **With a host** (Cursor, Claude Code, Codex, ChatGPT desktop). The host loads our skill files and should call our tools. Tools run the kernel (simulators, sympy, retrieve). The localhost UI shows **Results** and **Method**. The host writes the viva (method).
+2. **Without a host.** `electrical-engineer run …` runs the same kernel. The UI still shows Results. Method exists only if a local model is configured; otherwise Results stand alone. That is honest, not a silent fail.
+
+**Guarantee:** a number this product marks **checked** was written by a kernel provider in a kernel run. **Not a guarantee:** that a host will call our tools instead of answering in chat. Skills are policy. See [When the host does not comply](#when-the-host-does-not-comply).
+
+**Coverage:** every in-bound UG question has a path: a provider checks the unknown, or the exact token `unchecked`. Simulators, YAML, FastAPI, and the RAG engine are **this-pass implementations**, not the identity. Registry: §0.
+
+Do not add a second Electrical Engineer chat product. Do not put an LLM node in the middle of a physics graph. YAML replay, `unchecked`, and “MCP writes never wait” stay.
 
 ---
 
@@ -183,17 +195,41 @@ As-built sub-pieces (still true): CLI glue, pack `SKILL.md` **method** files, st
 
 ### 2.1 Layer 0 — Host contract (not a new harness)
 
-The rented host must:
+The following is **skill policy** for a well-behaved host. The kernel cannot sandbox Cursor. If the host ignores it, [When the host does not comply](#when-the-host-does-not-comply) still keeps **checked** numbers honest.
+
+The rented host **should**:
 
 1. Always-on: **root** skill (triggers, 5–7 verbs, `unchecked` law, **plan-then-execute**) plus MCP tool schemas. Not every pack.
-2. On domain match, load **at most two** matching pack skills (GraSP 2–3 with root). Packs are **on-demand**, not always-on.
+2. On domain match, load **at most two** matching pack skills (2–3 with root). Packs are **on-demand**, not always-on.
 3. On a **large job**, write `./runs/<id>/plan.md` and show it **before** write verbs. Then execute only that plan. Small jobs (one unknown, one short attachment) may skip a written plan.
-4. Call kernel ACI instead of one mega-apply of `solve-circuit-problem`.
+4. Call kernel tools instead of one mega-apply of `solve-circuit-problem`.
 5. Write the engineering-argument band to `./runs/<id>/argument.md` when a file is needed (Chat/Work may start in the transcript and copy).
 6. Treat `unchecked` as law. Stop when gates refuse.
 7. **May spawn** at most two pack specialists via the **host’s** Task/subagent feature (adapter markdown in [`hosts/adapters/`](../hosts/adapters/)). The CLI, MCP, and UI never start those children. Do not spawn a second EE product. Handoff is the run dir.
 
-Student-without-host is Layer 0 *absence*: CLI + engines + UI remain a complete path for **numbers**. Viva needs a host or a configured local/BYO model. ChatGPT **web** is not a host.
+Student-without-host is Layer 0 *absence*: CLI + engines + UI remain a complete path for **numbers**. Viva needs a host or a configured local/BYO model. ChatGPT **web** is not a host. Weaker local models on that path still must not mint checked ohms from the essay node.
+
+### When the host does not comply
+
+Skills cannot force a host to call `propose_composition`. A weaker local model on the CLI-without-host path will skip tools too. Design for that.
+
+| What happened | What the product does | What we do not claim |
+|---------------|----------------------|----------------------|
+| Host never calls write tools; answers only in chat | Chat is **outside** the lab. UI empty-state: numbers in chat are not checked unless they appear on **This problem**. Root skill must say the same. | We scanned the host transcript (`CD-HOST-SKIP`) |
+| Host calls tools; extra fluent numbers only in Method | Results band stays the source of **checked**. Method numerals must be `unchecked` or bound (FR18). | Method is a viva score |
+| Host or student overwrites kernel `summary.json` | Contract: only the runner writes Results. Forged files are unsupported (`CD-HOST-WRITE`). No cryptographic attest this pass. | Tamper-proof run dirs |
+| CLI-without-host, weak or missing local model | Providers still run. Skip the essay or keep it `unchecked` for numbers. | A probeable viva without a model |
+| Host proposes a bad graph | Validator rejects; no physics. | The host will retry |
+
+**Graceful degradation (normative).**
+
+1. **Claim boundary.** “Checked” means kernel-written Results for that problem. It does not mean “whatever Cursor said.”
+2. **CLI is the backstop.** Student can always `electrical-engineer run` and open the UI. Host skip does not remove the complete numbers path.
+3. **Weak model.** Pre-runner classifier and `solve-explain` must not mint `unchecked: false`. Prefer short attachments that need no model for ohms.
+4. **Eval.** Gold may include a **host-skip** fixture: Method file contains a number, no provider artifact → Results must not be checked. That scores the claim boundary, not Cursor.
+5. **Do not** add a Python loop that re-asks the model until it calls tools (that is a second agent product).
+
+Anchor: [`GLOSSARY.md`](GLOSSARY.md) “What the kernel can and cannot enforce.”
 
 ### 2.2 Layer 1 — Attach (required for hybrid)
 
@@ -663,7 +699,7 @@ Until a code plan splits the file, these fields may live on `summary.json`. **On
 
 **Injection:** BYO PDFs, photos, folder tags, and memory files **cannot** override gates, `--allow-all`, or `unchecked`. `argument.md` cannot override them either. `observation.json` cannot flip `unchecked` by itself — the evidentiary `unchecked` field is the contract.
 
-Gold still scores the **evidentiary** band, not `observation.json` and not `argument.md`.
+Gold still scores the **Results** band, not `observation.json`. Method is a **separate** checklist (below), never a second way to mark ohms checked.
 
 ---
 
@@ -677,13 +713,26 @@ eval/gold/
   control/
   unmatched/
   injection/          # BYO-PDF must not flip gates
+  host-skip/          # Method has a number; no provider → Results stay unchecked
+  explain/            # method checklist (viva signal), not LLM-as-judge
 ```
 
-Suggested item shape (prose, not a JSON Schema): `task.md` (student-facing prompt), `expect.json` (numeric tolerances, required token `unchecked` or checked, `recipe_id`), optional `fixtures/`.
+Suggested item shape (prose, not a JSON Schema): `task.md` (student-facing prompt), `expect.json` (numeric tolerances, required token `unchecked` or checked, `recipe_id`), optional `expect-viva.json` (required method beats), optional `fixtures/`.
 
-`electrical-engineer eval` and `eval --pack circuits`. A gold item **names a recipe** (short attachment id on the host-path catalog; mega solve YAML only as rollback) **or**, later, a capability graph id. Scoring reads the **evidentiary** band (`summary.json` today; `evidentiary.json` when split). MATLAB optional. `EE_ALLOW_ALL=1` may skip gates in CI; **unchecked** still scores. Do **not** score `argument.md` as if it were a simulator. Gold may tag GATE sections; missing a curriculum pack is still a product gap.
+`electrical-engineer eval` and `eval --pack circuits`. A gold item **names a recipe** (short attachment id; mega solve YAML only as rollback) **or**, later, a capability graph id.
 
-Do not design a hosted leaderboard, LLM-as-judge platform, or a 200-task bank here.
+**Two axes — do not mix them.**
+
+| Axis | What it scores | Must not |
+|------|----------------|----------|
+| **Checked-correctness** | Results band vs `expect.json` (number within tolerance, or exact token `unchecked`) | Treat Method as SPICE |
+| **Instructional / viva signal** | Deterministic **checklist** on Method: required beats (e.g. names voltage divider, cites book+page if `retrieve` ran), every numeral bound or `unchecked` (FR18) | LLM-as-judge of “good explanation”; a checklist fail flipping `unchecked` on Results; claiming the student would pass a human viva (`CD-VIVA-SIGNAL`) |
+
+v1 ships the **shape** of `expect-viva.json` and the `explain/` + `host-skip/` folders. Filling items is a later eval plan. Absence of a viva score today is honest: we have been rigorous on numbers and had **no** signal on method. This overlay names the second axis so it cannot stay invisible.
+
+MATLAB optional. `EE_ALLOW_ALL=1` may skip gates in CI; **unchecked** still scores. Gold may tag GATE sections; missing a curriculum pack is still a product gap.
+
+Do not design a hosted leaderboard, an LLM-as-judge platform, or a 200-task bank here.
 
 ---
 
@@ -757,3 +806,9 @@ Proposed student-facing UI overlay (D21, 2026-09-12) — same Accept sheet:
 - Lab workbook pages: This problem, Past work, Books, Notes; Confirm / Ask overlays
 - Never present `.md` / `.json` / YAML as the product; DESIGN-coinbase grids
 - No reasoning-mode node in `propose_composition`
+
+Proposed critic follow-up (D22, 2026-09-12) — same Accept sheet:
+
+- Host-skip is a claim boundary, not a transcript scanner; CLI backstop; weak-model essay cannot mint ohms
+- Architecture is how; ADRs/glossary are why and words
+- Eval has two axes: Results gold vs Method checklist; no LLM-as-judge viva
