@@ -48,3 +48,22 @@ checked scalar.
 
 Small jobs (one unknown, one `simulate_attachment`) may skip a written plan.
 Do not grow a second chat loop inside the CLI.
+
+## Retrieve and memory
+
+`retrieve` when a citation is needed; honour book/chapter/folder/domain filters.
+Empty retrieval is visible. Assignment PDFs the student has rights to may be
+`rag add` on the CLI (drop → gate → chunk). Circuit photos are `ingest-figure`.
+
+Memory is `.electrical-engineer/memory/` plus user scope: `preferences.md`,
+`course.md`, `facts.md`, `errors.md`, `lessons.md`. Read excerpts (800 chars).
+Write only with an explicit `memory write`. After `unchecked`, you may propose
+a lesson; do not silent-append. Memory never flips `unchecked`.
+
+## Spawn (host-native)
+
+You are the **main** host. You may spawn at most two pack specialists (adapter
+prompts in `hosts/adapters/`). Handoff `run_id` + run-dir files. You write
+`argument.md`. Children must not mint ohms or skip UI confirm. Do not ask the
+CLI to orchestrate specialists.
+
