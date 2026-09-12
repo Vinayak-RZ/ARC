@@ -5,7 +5,7 @@
 <h1 align="center">Electrical Engineer</h1>
 
 <p align="center">
-  <strong>The first open-source electrical domain kernel.</strong>
+  <strong>The first open-source, agentic electrical-engineering lab.</strong>
 </p>
 
 <p align="center">
@@ -16,6 +16,7 @@
 
 <p align="center">
   <a href="#quick-start"><b>Quick start</b></a> ·
+  <a href="#domain-kernel"><b>Domain kernel</b></a> ·
   <a href="#try-these-prompts"><b>Try these prompts</b></a> ·
   <a href="#the-workspace"><b>Workspace</b></a> ·
   <a href="docs/EXTENSIVE.md"><b>Internals</b></a> ·
@@ -29,7 +30,7 @@ Turn your AI coding assistant into an undergraduate EE lab. 10 undergraduate pac
 
 Describe the circuit, viva, or assignment in plain language. Electrical Engineer retrieves, checks, and explains. Simulators run when they exist. Everything else is the exact token `unchecked`.
 
-> **Electrical Engineer is a local domain kernel you clone and run.** It is not a general coding agent that also does circuits.
+> **Electrical Engineer is a local lab you clone and run.** It is not a general coding agent that also does circuits.
 > Primary interface: paste a prompt into Cursor, Claude Code, Codex, or ChatGPT desktop, or run `electrical-engineer`.
 > Invariant: **unverified numbers use the exact token `unchecked`.**
 
@@ -40,6 +41,12 @@ PASS divider-dc-01 recipe=solve-circuit-problem
 ```
 
 That eval is the product check. Gold `eval/gold/circuits/divider-dc-01` expects divider `Vout = 5.0` from `Vin=10`, `R1=R2=1k`.
+
+## Domain kernel
+
+A **domain kernel** is what enables a general agentic harness to have expertise in a specific domain.
+
+Electrical Engineer is the local domain kernel for undergraduate electrical engineering. Cursor, Claude Code, Codex, and ChatGPT desktop stay general harnesses. This kernel holds the expertise they load: named workflows, simulators when they exist, and the exact token `unchecked` when they do not.
 
 ## Try these prompts
 
