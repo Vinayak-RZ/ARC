@@ -81,10 +81,11 @@ As-built sub-pieces (still true): CLI glue, pack `SKILL.md` stubs, stdio MCP (`l
 
 The rented host must:
 
-1. Load the **root** skill plus **at most two** matching pack skills (GraSP 2–3), not every pack.
-2. Call kernel ACI instead of one mega-apply of `solve-circuit-problem`.
-3. Write the engineering-argument band to `./runs/<id>/argument.md` when a file is needed (Chat/Work may start in the transcript and copy).
-4. Treat `unchecked` as law. Stop when gates refuse.
+1. Always-on: **root** skill (triggers, 5–7 verbs, `unchecked` law) plus MCP tool schemas. Not every pack.
+2. On domain match, load **at most two** matching pack skills (GraSP 2–3 with root). Packs are **on-demand**, not always-on.
+3. Call kernel ACI instead of one mega-apply of `solve-circuit-problem`.
+4. Write the engineering-argument band to `./runs/<id>/argument.md` when a file is needed (Chat/Work may start in the transcript and copy).
+5. Treat `unchecked` as law. Stop when gates refuse.
 
 Student-without-host is Layer 0 *absence*: CLI + engines + UI remain a complete path for **numbers**. Viva needs a host or a configured local/BYO model. ChatGPT **web** is not a host.
 
@@ -162,9 +163,9 @@ No Layer 4: these files and the UI *are* Layer 3.
 
 ### Context contract (always-on vs on-demand)
 
-Always-on: root skill (triggers, 5–7 verbs, `unchecked` law) + MCP tool schemas + optional `./runs/<id>/` pointer. Never the textbook corpus, never every pack skill, never gold fixtures.
+Always-on: root skill (triggers, 5–7 verbs, `unchecked` law) + MCP tool schemas + optional `./runs/<id>/` pointer. Never the textbook corpus, never every pack skill, never gold fixtures, never a `propose_composition` **graph body**.
 
-On-demand: matching `skills/<pack>/SKILL.md`, one-level `reference/`, RAG `retrieve` (book/chapter/page), run-dir evidentiary files.
+On-demand: matching `skills/<pack>/SKILL.md` (at most two packs), one-level `reference/`, RAG `retrieve` (book/chapter/page), run-dir evidentiary files.
 
 ChatGPT **web** is not a host. Chat/Work: pin root skill until Skills-over-MCP is verified. Peer MATLAB MCP: untrusted until an EE engine recomputes (FR20).
 
@@ -344,7 +345,7 @@ MCP **as-built** (stateless stdio): `list_workflows`, `run_workflow` (mega-apply
 
 MCP **target** (same 5–7 always-on verbs as §2.2): `list_workflows`, `retrieve`, `open_ui`/`clarify`, `simulate_attachment`, `propose_composition`, `label`/`summary`; `eval_run` is CLI-equivalent on Chat/Work. HTTP/SSE **later**. `resume_workflow` / `list_runs` / `get_run` **later**.
 
-Each write verb returns short JSON + `run_id` + artifact **paths** (not bodies). The **host** reads `./runs/<id>/` and writes `argument.md`. The CLI assembles context for the **local-model** path. Do not build a second hidden prompt loop inside MCP. `run_workflow` remains an alias for headless apply of a **short** attachment id.
+Each write verb returns short JSON + `run_id` + artifact **paths** (not bodies). **`propose_composition` returns `composition_id` / `run_id` + paths — never the accepted graph JSON** (that would blow the 800-char after-each-node budget). The **host** reads `./runs/<id>/` and writes `argument.md`. The CLI assembles context for the **local-model** path. Do not build a second hidden prompt loop inside MCP. `run_workflow` remains an alias for headless apply of a **short** attachment id. Engine allowlist is enforced **server-side**; always-on `inputSchema` must not enumerate every registered activity.
 
 ---
 
@@ -367,7 +368,7 @@ The UI is a **first-class product surface**, not a fine-diagram gadget.
 - After photo confirm: **still no sim** in the stub (C4 sim remains later).
 - MCP does not wait; fail payload points at this UI (`ui_url` includes `run_id`).
 
-This remains **H3 glue** (a viewer/workspace). If the UI grows its own agent loop, that is the H5 falsifier.
+**As-built vs target.** As-built UI is a single-band viewer of `summary.json` (slots: `root`, `sidebar`, `workspace`, `run.detail`, `run.artifacts`, `photo.confirm`). That **cannot** stop `argument.md` looking like SPICE — FR18 has no UI enforcement point until `run.bands` ships. This docs pass specifies the target; filling slots is a later UI plan. Do not swap FastAPI+React for a static viewer (photo confirm and gates need HTTP). Do not grow an in-UI agent loop (H5).
 
 This remains **H3 glue** (a viewer/workspace). If the UI grows its own agent loop, that is the H5 falsifier.
 
@@ -462,7 +463,7 @@ Method, viva, assumptions.
 Any numeral not bound to an evidentiary key is written with the exact token unchecked or omitted.
 ```
 
-`write-run-summary` / as-built `summary.json` is the **seed** of `evidentiary.json`. A host-authored markdown file next to it **must not** flip `unchecked` to false. Displaying an unlabeled numeral in the argument band is a fail.
+`write-run-summary` / as-built `summary.json` is the **seed** of `evidentiary.json`. **One evidentiary writer.** Until a code plan renames the file, gold/UI/MCP read `summary.json`. After the split, `evidentiary.json` is canonical and `summary.json` is either removed or a compat alias of the same bytes — **never two live writers**. A host-authored markdown file next to it **must not** flip `unchecked` to false. Displaying an unlabeled numeral in the argument band is a fail.
 
 **Run dir contents:** node JSON, two-band files, artifact paths, spice **log path** (not body). No API keys. Redact `*_KEY`, `*_TOKEN`, `*_SECRET`, `sk-`, `Bearer`, MATLAB licence strings.
 

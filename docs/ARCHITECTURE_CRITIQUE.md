@@ -55,8 +55,37 @@ should-fix (merged: unmatched predicate, check-numeric FR20, MCP preflight). L4 
 
 ## Loop 3 — UI / artifacts / token budget
 
-(pending)
+### Accepted
 
-## Loop 3 — UI / artifacts / token budget
+- Two-band viewer is **specified, not coded**. As-built UI dumps `summary.json` in one pane. ARCHITECTURE now names that gap; filling `run.bands` is a later UI plan, not this docs pass.
+- FastAPI+React freeze stays. A static viewer cannot do photo confirm / gates (FR11).
+- Always-on is **root skill + 5–7 verb schemas**, not 2–3 packs. Packs load on domain match. Layer 0 contract updated.
+- MCP must not return the `propose_composition` graph body; allowlist is server-side so always-on schema stays small.
+- Chat/Work pin of root skill stays; do not paste every pack.
+- Prose two-band contract is enough this pass. On-disk JSON Schema stays a later P1 (§17 non-goal). Reconcile: §13 names keys; §17 bans Draft-07 files this architecture.
+- `summary.json` / `evidentiary.json`: one writer. After rename, alias or replace — never dual live files.
 
-(pending)
+### Rejected (reason)
+
+- Replace FastAPI+React with a static viewer — breaks FR11.
+- Merge bands into one “answer” chrome — FR18 product fail.
+- In-browser LLM to author `argument.md` — H5.
+- Block the architecture on renaming `summary.json` this pass — seed/alias is enough.
+- Raise the 800-char budget so MCP can return the DAG — paths-not-bodies dies next.
+- Always-on every pack on Chat/Work — contradicts pin-root.
+- Ship `schemas/*.json` because OpenMontage has them — YAGNI this docs pass.
+- Dual-write summary + evidentiary for compat — two sources of truth.
+
+### Severity
+
+should-fix (merged). One critic called missing UI two-band a **blocker** for FR18 student-facing split. Lead: that is a **code/UI** blocker for a later plan; this pass is docs. The architecture now states the as-built hole so it cannot be mistaken for shipped.
+
+## Appendix — what changed in docs vs what waits for code
+
+| Specified this pass | Waits for a code plan |
+|---------------------|------------------------|
+| Hybrid L2/L3, L1 ACI verbs, L0 contract, no L4 | MCP verb split, validator, `propose_composition` |
+| Two-band file contract; `run.bands` target | UI two-band viewer, `argument.md` API |
+| Host-path unmatched without essay | Split mega YAML recipes; skill-body thicken |
+| FR20 on `check-numeric`; unmatched netlist-port predicate | Engine port checks in Python |
+| Known defects remain named: `_solve_value` mint, as-built two MCP tools | Eval gold / MCP framing fixes |
