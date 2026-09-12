@@ -1,12 +1,12 @@
 # Technical architecture — Electrical Engineer
 
-**Status:** Proposed (2026-09-12) overlay on Accepted A1 (2026-09-10). Aligns with Proposed [`PRD.md`](PRD.md) / [`PID.md`](PID.md).  
+**Status:** Proposed (2026-09-12) overlay on Accepted A1 (2026-09-10). Hybrid composition (2026-09-12): host + pack skills compose; typed engines; short attachments; validate-then-apply. Aligns with Proposed [`PRD.md`](PRD.md) / [`PID.md`](PID.md).  
 **Date:** 2026-09-12  
 **Authority:** [`PID.md`](PID.md) (Proposed), [`PRD.md`](PRD.md) (Proposed)
 
 Do not invent LangGraph, Temporal, Cordis, or a second agent loop (H5). YAML runner, unmatched, `unchecked`, and MCP-never-waits stay.
 
-Recipes attach physics so answers are retrieved, cited, and checked. They are **genre contracts** and **eval rollback**, not the host’s chat brain.
+**Hybrid quality.** The host (plus 2–3 pack skills) composes the *job*. Typed **engines** own numbers. **Short** named physics attachments (`simulate-circuit` = spice + repair + label) stay as code. The host may propose an **allowlisted** engine graph; the kernel **validates then runs**. Mega YAML that includes `solve-explain` is **not** the host-path brain — it is CLI-without-host / gold rollback. Evidence: [`../research/notes/hybrid-engine-composition.md`](../research/notes/hybrid-engine-composition.md).
 
 ---
 
@@ -79,18 +79,85 @@ flowchart TB
 
 ## 2. Layers (four-layer domain kernel)
 
+Canonical numbering stays **0–3**. A fifth layer is not earned (eval stays 2e; pack method stays 2a). See [`../research/notes/hybrid-engine-composition.md`](../research/notes/hybrid-engine-composition.md).
+
 | Layer | Owns | Must not own |
 |-------|------|----------------|
-| 0 Host (rented) | Inner loop, viva / argument band, permissions | Kirchhoff as numeric truth; spice DAG invention; `unchecked` |
-| 1 Attach | CLI inner; MCP outer (as-built: `list_workflows`, `run_workflow`; target: 5–7 verbs, FR17); skills progressive disclosure | 1:1 node MCP; waiting on humans; PTC on spice writes |
-| 2 Domain kernel | Engines, YAML genre contracts, gates, eval rollback, RAG store, `unchecked` | A unique host-incompatible chat loop (H5) |
-| 3 Surfaces | Localhost UI; two-band artifacts (evidentiary vs argument) | ChatGPT-clone UI; WAN bind; KiCad clone |
+| 0 Host (rented) | Inner loop; load **2–3** pack skills; call ACI; write `argument.md`; ask the student when data is missing | Kirchhoff as numeric truth; spice DAG invention; minting checked ohms; unique EE chat loop |
+| 1 Attach | CLI inner; MCP outer; **5–7 ACI verbs** including `propose_composition`; host skill files | 1:1 node MCP; waiting on humans; PTC on spice writes; mega `run_workflow` as the host-path viva |
+| 2 Domain kernel | Engine registry, validator, short physics attachments, gates, eval replay, RAG store, `unchecked` | A unique host-incompatible chat loop (H5); long YAML as the professional-workflow brain |
+| 3 Surfaces | Localhost UI; two-band files (`evidentiary.json`, `argument.md`) | ChatGPT-clone UI; WAN bind; KiCad clone |
 
-As-built sub-pieces (still true): CLI glue, pack `SKILL.md` stubs, stdio MCP, UI, RAG sidecar, registered nodes. Target attach and two-band: [`PRD.md`](PRD.md) §5–§6.
+As-built sub-pieces (still true): CLI glue, pack `SKILL.md` stubs, stdio MCP (`list_workflows` + `run_workflow` only), UI, RAG sidecar, registered nodes. Target: this section + [`PRD.md`](PRD.md) §5–§6.
 
-**H3 falsifier:** if the CLI grows a custom harness hosts cannot share, stop and return to the owner.
+**H3 falsifier:** if the CLI grows a custom harness hosts cannot share, stop and return to the owner. Layer 0 stays rented.
 
-**Runner law:** no model calls inside the DAG runner except through **registered nodes**, plus one **pre-runner** classifier when the workflow id is omitted **and no host is driving**. The DAG runner itself is deterministic. Host-path recipes **must not** invoke `solve-explain` (FR21). `solve-explain` must not mint checked numbers (FR9).
+**Runner law:** no model calls inside the DAG runner except through **registered nodes**, plus one **pre-runner** classifier when the workflow id is omitted **and no host is driving**. The DAG runner itself is deterministic. Host-path attachments **must not** invoke `solve-explain` (FR21). `solve-explain` must not mint checked numbers (FR9).
+
+### 2.1 Layer 0 — Host contract (not a new harness)
+
+The rented host must:
+
+1. Load the **root** skill plus **at most two** matching pack skills (GraSP 2–3), not every pack.
+2. Call kernel ACI instead of one mega-apply of `solve-circuit-problem`.
+3. Write the engineering-argument band to `./runs/<id>/argument.md` when a file is needed (Chat/Work may start in the transcript and copy).
+4. Treat `unchecked` as law. Stop when gates refuse.
+
+Student-without-host is Layer 0 *absence*: CLI + engines + UI remain a complete path for **numbers**. Viva needs a host or a configured local/BYO model. ChatGPT **web** is not a host.
+
+### 2.2 Layer 1 — Attach (required for hybrid)
+
+Always-on ACI, **5–7 verbs** (names illustrative; implementation is a later code plan). As-built today is `list_workflows` + `run_workflow`.
+
+| Verb | Kind | Notes |
+|------|------|--------|
+| `list_workflows` | read | Catalog. Host-path rows are **short attachments**; mega `solve-*`/`explain-*` marked rollback |
+| `retrieve` | read | Tagged RAG; citations evidentiary |
+| `open_ui` / `clarify` | read (+ questions) | MCP **never waits**. Returns `ui_url` |
+| `simulate_attachment` | write | Named **short** physics id only (`simulate-circuit`, `photo-to-netlist`, …). Never `solve-explain` inside |
+| `propose_composition` | write | Graph of **registered engine ids** + typed ports. Kernel **validates then runs**. Not a 45-tool dump |
+| `label` / `summary` | write | Gate over child EE artifacts only (FR20) |
+| `eval_run` | write | Gold replay. **CLI** on Chat/Work |
+
+`run_workflow` / `electrical-engineer run <id>` remain **headless/eval rollback** and student one-command for **short** attachments. On the **host path** they must not own `solve-explain`.
+
+**Never a host tool:** invent a new engine id; confirm photo without UI; present fluent `Vout` as checked; session-defined `lookup_vout_guess`; PTC on spice/MATLAB/load-flow writes.
+
+Do **not** wrap `run-spice`, `run-matlab-if-present`, `run-load-flow`, `retrieve-passage`, `solve-explain` as extra MCP tools. Engines are reached through the verbs above.
+
+CLI inner, MCP outer, PTC/Code Mode later and **reads only**. Dual MATLAB MCP: peer scalars untrusted until an EE engine recomputes (FR20).
+
+### 2.3 Layer 2 — Domain kernel (main)
+
+```text
+Host (+ pack skill)
+  propose: retrieve? attach physics? ask student?
+        |
+        v
+Kernel ACI (Layer 1)
+  retrieve | simulate_attachment | propose_composition | label | open_ui | eval
+        |
+        v
+Validator (allowlist + port types + unmatched/photo/unchecked)
+        |
+        v
+Engine registry (typed ports, one activity each)
+  check-numeric | run-spice | run-python-control | run-load-flow
+  run-matlab-if-present | retrieve-passage | label-unchecked
+        |
+        v
+apply -> ./runs/<id>/ evidentiary band
+```
+
+**Method (2a).** Thick pack skills teach: name the unknown, write KCL/KVL, when to simulate vs `unchecked`, when to ask, how to write the argument band without minting scalars. Skills do **not** mint checked numbers (FR19). As-built four-line stubs are a later skill-body plan; the contract is already this.
+
+**Engines (2b).** Registered activities are typed tools. Capability-first provider selection stays (MATLAB if present, else ngspice / python-control). `solve-explain` is a **fallback** when no host is configured; it must not mint `unchecked: false`.
+
+**Short attachments (2c).** Named YAML pipelines that attach physics only. Example: `simulate-circuit` = load netlist → `run-spice` (`repair_max: 2`) → `label-unchecked` → `write-run-summary`. **No** retrieve/explain inside the attachment. YAML is the **eval/CLI replay** catalog of those attachments, not the chat brain.
+
+**Validator (2g).** Host may propose a graph whose nodes are **already in the engine registry**. Kernel checks: allowlist of activity ids; typed ports; acyclicity; 16 nodes / 24 edges; unmatched cannot auto-spice; photo still UI-gated. Then **apply** via the existing in-process runner. Invalid graphs fail closed before spice. This reopens D13 “router never invents a DAG” **only** this far — not ToolWeave free authoring.
+
+**Gates / eval / stores (2d–2f).** Unchanged invariants: unmatched, photo confirm, compose allowlist, exact token `unchecked`, gold scores evidentiary artifacts, `./runs/<id>/` is audit not crash-resume.
 
 ### Context contract (always-on vs on-demand)
 
@@ -116,19 +183,31 @@ Main LLM work lives in **Cursor / Claude Code / Codex / ChatGPT desktop** (or a 
 
 ---
 
-## 4. Hybrid router
+## 4. Composition (host path vs CLI)
 
-1. If the user passes an explicit workflow id (`electrical-engineer run solve-circuit-problem`), **skip** classify.
-2. If the id is omitted **and no host is driving**, one **small classifier LLM** call ranks named recipes. If a first-class host is driving, the **host** picks the named id (FR10/FR17); do not also classify.
-3. If top-1 and top-2 scores differ by **less than 0.15**, **ask the student** (counts as an interrupt).
-4. Otherwise run that named YAML recipe.
-5. If nothing matches: **`unmatched-cosolver` only**. No auto-simulate. Numerics that lack a verifier artifact use the exact token `unchecked`.
+**Host path (first-class hosts).** The host does **not** pick a mega recipe that includes `solve-explain`. It:
 
-The router **never invents a DAG**. New graphs only from `compose-from-parts --advanced`.
+1. Loads 2–3 skills and reads the assignment.
+2. Calls `retrieve` when a citation is needed.
+3. Calls `simulate_attachment` with a **short** physics id, **or** `propose_composition` with a graph of **registered** engines.
+4. Writes `argument.md`. Calls `label` / `open_ui` / `eval_run` as needed.
 
-Inside a named recipe the agent **may** branch on conditional DAG edges, pick a child via `run-recipe` when the parent declares that choice, and multi-hop RAG inside `retrieve-passage` (book → chapter → passages) with a hop cap.
+The kernel **validates then applies**. Unmatched text still uses **`unmatched-cosolver` only** (no auto-simulate). Numerics without a verifier artifact use the exact token `unchecked`.
 
-**Forbidden:** unmatched path attaching `run-spice` because text “looks like a netlist”; memory or a BYO PDF instructing a new workflow into existence.
+**CLI-without-host.**
+
+1. Explicit id (`electrical-engineer run simulate-circuit`) **skips** classify.
+2. If the id is omitted **and no host is driving**, one **small classifier LLM** call ranks named **attachments**. If top-1 and top-2 scores differ by **less than 0.15**, **ask the student** (interrupt).
+3. Mega `solve-*` YAML that still contains `solve-explain` is **rollback** for gold and for students who want one command until those recipes are split. Prefer short attachments.
+
+**Validate-then-apply (D13 reopen, QUALITY).** The router still **never invents engine ids**. New graphs are either:
+
+- `propose_composition` — host-authored, **allowlisted engines only**, kernel-validated, then run; or
+- `compose-from-parts --advanced` — student CLI, human-gated, typed ports, 16/24 cap.
+
+Inside a named attachment the runner **may** branch on conditional DAG edges, pick a child via `run-recipe` when the parent declares that choice, and multi-hop RAG inside `retrieve-passage` (book → chapter → passages) with a hop cap.
+
+**Forbidden:** unmatched path attaching `run-spice` because text “looks like a netlist”; memory or a BYO PDF instructing a new **engine** into existence; session-defined `lookup_vout_guess`; host-path YAML invoking `solve-explain`.
 
 ---
 
@@ -136,12 +215,12 @@ Inside a named recipe the agent **may** branch on conditional DAG edges, pick a 
 
 Custom **in-process** runner. No LangGraph, Temporal, Treadle, Ordius, or Tasked.
 
-- Recipes: YAML at `workflows/<pack>/<id>.yaml`.
-- Nodes: registered Python functions.
+- Recipes: YAML at `workflows/<pack>/<id>.yaml`. **Host path** uses **short physics attachments** (no `solve-explain`). Mega `solve-*` / `explain-*` YAML is eval/CLI rollback.
+- Nodes: registered Python functions (the **engine registry**). `propose_composition` may name only these ids.
 - A node is **ready** when every incoming typed port is satisfied.
 - All ready nodes **may run concurrently** (threads or asyncio in **one** process for **one** run).
 - **Start order** among simultaneously ready nodes: sorted `node id` (evals replay the same start sequence even if wall clocks overlap).
-- Isolation: `runs/<id>/nodes/<node-id>/`. Shared mutable files at the run root are forbidden except `summary.json` written at the end.
+- Isolation: `runs/<id>/nodes/<node-id>/`. Shared mutable files at the run root are forbidden except the evidentiary band (`summary.json` / `evidentiary.json`) written at the end and host-authored `argument.md`.
 - FSM states: `running`, `waiting-human` (live TTY or UI, not crash-resume), `failed`, `done`.
 - Timeouts: **2 min** default, recipe override allowed, **10 min** hard ceiling.
 - Sim-repair: `repair_max: 2` on named simulate nodes. Automatic. **Does not** count toward human interrupts. After exhaustion: `label-unchecked` or `ask-human`, never a fake pass.
@@ -169,15 +248,15 @@ MATLAB: if a single-seat licence errors on a second engine, fail that node clear
 
 ---
 
-## 6. Composition and `run-recipe`
+## 6. Composition, `run-recipe`, and `propose_composition`
 
 **Space (plugins):** swap backends behind seams (`run-spice` vs `run-matlab-if-present`) without a second CLI.
 
-**Time (recipes):** a workflow is a small DAG of nodes, including nested recipes.
+**Time (attachments):** a short YAML DAG of engines, including nested recipes. Not retrieve+essay+spice in one host-path file.
 
-Activity **`run-recipe`**: input `recipe_id` plus a small map matching the child’s declared ports. Allowed in checked-in YAML **and** in DAGs emitted by `compose-from-parts`.
+Activity **`run-recipe`**: input `recipe_id` plus a small map matching the child’s declared ports. Allowed in checked-in YAML **and** in DAGs emitted by `compose-from-parts` **or** accepted by `propose_composition`.
 
-Child run dir: `runs/<parent-id>/children/<child-suffix>-<timestamp>/` (same id rules). Child `summary.json` is the parent node’s output (short JSON + **paths**, not bodies).
+Child run dir: `runs/<parent-id>/children/<child-suffix>-<timestamp>/` (same id rules). Child evidentiary summary is the parent node’s output (short JSON + **paths**, not bodies).
 
 Hard rules:
 
@@ -187,9 +266,22 @@ Hard rules:
 - Child interrupts count toward the parent’s **2-interrupt** budget.
 - Child gates use the same policy. MCP still does not wait.
 
+### `propose_composition` (host path)
+
+MCP/CLI verb. Body: a DAG whose **every node activity is in the engine registry**, plus typed port bindings. Kernel validator:
+
+1. Unknown activity id → reject (no `lookup_vout_guess`).
+2. Port type mismatch or cycle → reject.
+3. Over 16 nodes / 24 edges → reject.
+4. Would attach spice on the unmatched path → reject.
+5. Would skip photo UI confirm → fail closed with `ui_url`.
+6. Else **apply** through the in-process runner.
+
+This is GraSP compilation for EE: the host proposes; code verifies; repair stays `repair_max: 2` inside simulate engines.
+
 ### `compose-from-parts`
 
-Listed, **`--advanced`**. Only this path may **emit** a new DAG. Typed ports. Cap **16 nodes / 24 edges** on the composed graph. Invalid graphs fail closed before spice. May include `run-recipe` nodes. Asking to compose counts as an interrupt (see gates).
+Listed, **`--advanced`**. Student/CLI cousin of `propose_composition`. Typed ports. Cap **16 nodes / 24 edges**. Invalid graphs fail closed before spice. May include `run-recipe` nodes. Asking to compose counts as an interrupt (see gates). Still the only **CLI** path that emits a new DAG without a host.
 
 ---
 
@@ -221,7 +313,7 @@ Files:
 
 Configured host / BYO / local **LLM** is allowed without a gate. “Network” ≠ that model.
 
-**MCP:** `run_workflow` **never waits**. If a gate would fire: fail closed with a structured error, a `ui_url` when the UI is up, or the exact command `electrical-engineer ui --run <id>`, plus a CLI hint. Host UI is **not** allow-all.
+**MCP:** write verbs (`run_workflow`, `simulate_attachment`, `propose_composition`, `label`) **never wait**. If a gate would fire: fail closed with a structured error, a `ui_url` when the UI is up, or the exact command `electrical-engineer ui --run <id>`, plus a CLI hint. Host UI is **not** allow-all.
 
 Eval may set `EE_ALLOW_ALL=1` so gates do not block CI. That does **not** disable the `unchecked` contract.
 
@@ -243,9 +335,11 @@ Specified, not shipped.
 | `electrical-engineer resume` | **later** |
 | Faculty / LMS | **never** |
 
-MCP **now** (stateless stdio): `list_workflows`, `run_workflow`. HTTP/SSE **later**. `resume_workflow` / `list_runs` / `get_run` **later**.
+MCP **as-built** (stateless stdio): `list_workflows`, `run_workflow` (mega-apply; photo/compose/control-diagram fail closed with `ui_url`).
 
-`run_workflow` returns short JSON + artifact **paths**. The **host** assembles the next model context. The CLI assembles context for the **local-model** path. Do not build a second hidden prompt loop inside MCP.
+MCP **target** (same 5–7 always-on verbs as §2.2): `list_workflows`, `retrieve`, `open_ui`/`clarify`, `simulate_attachment`, `propose_composition`, `label`/`summary`; `eval_run` is CLI-equivalent on Chat/Work. HTTP/SSE **later**. `resume_workflow` / `list_runs` / `get_run` **later**.
+
+Each write verb returns short JSON + `run_id` + artifact **paths** (not bodies). The **host** reads `./runs/<id>/` and writes `argument.md`. The CLI assembles context for the **local-model** path. Do not build a second hidden prompt loop inside MCP. `run_workflow` remains an alias for headless apply of a **short** attachment id.
 
 ---
 
