@@ -16,7 +16,8 @@ runs, then every first-party package. Do not invent paths.
 
 ## 1. Domain concepts
 
-- **Named recipe.** A checked-in YAML DAG (`workflows/**/*.yaml`) with `id` and `nodes.{id}.{activity,needs}`. The router picks a row; it does not invent edges.
+- **Named recipe.** A checked-in YAML DAG (`workflows/**/*.yaml`) with `id` and `nodes.{id}.{activity,needs}`. YAML is **replay of a capability binding**, not the domain. The router picks a row; it does not invent edges or capability ids.
+- **Capability.** Domain name for what kind of check is allowed (`algebraic-check`, `lumped-circuit-sim`, …). Providers (`run-spice`, …) are this-pass keys. See [`ARCHITECTURE.md`](ARCHITECTURE.md) §0.
 - **unchecked.** Exact token from `electrical_engineer.unchecked.UNCHECKED`. Used when a verifier is missing or a numeric check fails. `EE_ALLOW_ALL` skips *asks*, not this token.
 - **Run dir.** `runs/<4char>-<UTC>/` holds `summary.json`, `nodes/<id>/out.json`, optional `confirmed.json`. Audit only — no crash-resume.
 - **Gate.** TOML most-restrictive merge; third interrupt aborts. MCP never waits: fail-closed with `ui_url`.

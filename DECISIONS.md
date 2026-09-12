@@ -103,3 +103,25 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 - **Consequences:** Reopens D13 only into allowlisted engine graphs. MCP target verbs include `propose_composition` (still 5–7). `solve-explain` is not on the host-path allowlist. Unmatched still cannot auto-spice (netlist-port predicate). Files: `plan.md` + `evidentiary.json` seed + `argument.md`. Root skill `skills/SKILL.md` teaches plan-then-execute.
 - **Alternatives:** Keep long YAML as the host-path brain (rejected); OpenMontage markdown-physics (rejected); unconstrained on-the-fly spice (rejected); add Layer 4 (rejected); eighth MCP `plan` verb (rejected — `apply: false` on the same verb).
 - **Sources:** `research/notes/hybrid-engine-composition.md`; `docs/ARCHITECTURE.md`; `docs/ARCHITECTURE_CRITIQUE.md`; `docs/PRD.md` FR10/FR17/FR21/FR23
+
+---
+
+## ADR-0010 — Capability-first domain kernel (D19)
+
+- **Status:** proposed (not owner-Accepted)
+- **Context:** Hybrid composition (ADR-0009) still named *providers* (`run-spice`, YAML, FastAPI, LightRAG) as if they were the product. That cannot express “any in-bound UG EE question”: signals/EM/measurements look like missing SPICE recipes. The owner asked to refine architecture so it is general enough for the UG bound and not heavily reliant on one stack, while staying domain-specific.
+- **Decision:** **Capability registry is the domain contract.** Fourteen allowlisted capabilities cover the curriculum-map packs and seven task genres. Providers (ngspice, python-control, pandapower, sympy, MATLAB-if-present, RAG facade, figure libraries) and encodings (YAML attachments, Python CLI, FastAPI+React) are **this-pass freezes**. Coverage law: every in-bound question has a complete path (provider check **or** exact token `unchecked` + cannot-do). `propose_composition` may name capability ids; the kernel binds an installed provider or `CD-NO-PROVIDER`. Does not reopen H3/H5, `unchecked`, UG bound, or validate-then-apply.
+- **Consequences:** Pack skills teach method + which capability to request, not “always SPICE.” Missing YAML is `CD-YAML-GAP`, not out-of-product. Runner still uses today’s Python activity keys until a code plan maps capability→provider. Gold depth may stay circuits-first.
+- **Alternatives:** Keep engine ids as the architecture vocabulary (rejected — circuits-shaped hole); one mega “solve any EE” LLM node (rejected — FR2/`unchecked`); add a capability per GATE trick question (rejected — bound is curriculum-map); lock ngspice/MATLAB as identity (rejected).
+- **Sources:** `docs/ARCHITECTURE.md` §0; `docs/curriculum-map.md`; `research/notes/ee-task-taxonomy-draft.md`; `docs/PRD.md` FR10/FR19; `DECISIONS.md` ADR-0005/0009
+
+---
+
+## ADR-0011 — Harness persist, observe, spawn (D20)
+
+- **Status:** proposed (not owner-Accepted)
+- **Context:** Context and ACI kinds were specified; as-built persist (memory list-only, RAG inventory-only), observation (summary without reason enums), kernel hooks vs host compaction, and pack-specialist spawn files were thin. Owner asked to specify the rest of a harness without becoming H5.
+- **Decision:** **Split the harness.** Layer 0 owns loop, compaction, continuation, model routing, and **host-native** specialist spawn. Layer 2 owns run audit, named memory files (explicit write; `lessons.md` proposed not silent), BYO RAG ingest pipeline, `observation.json`, and deterministic hooks (ingest, validate-then-apply, repair, observe, lesson-propose, eval). Adapter markdown lives in `hosts/adapters/` for the student host to copy. Local-only: no fleet learning, no chat dumps.
+- **Consequences:** Extract/chunk remains `CD-RAG-PARSE` until a code plan. Observation may seed on `summary.json`. Chat/Work still does not claim spawn. A Python specialist orchestrator remains the H3/H5 falsifier.
+- **Alternatives:** Python multi-agent runtime (rejected, H5); silent memory append every turn (rejected); cloud telemetry (rejected, FR6); treating host compaction as our middleware (rejected).
+- **Sources:** `docs/ARCHITECTURE.md` §0.3 §2.5 §10–§11; `docs/PRD.md` FR13/FR19/FR24; `hosts/adapters/README.md`

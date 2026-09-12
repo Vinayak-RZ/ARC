@@ -23,6 +23,10 @@ then `argument.md`. Packs load on domain match (at most two), not always-on.
 **Not hosts (v1):** ChatGPT **web** / mobile, Claude Desktop, GitHub Copilot,
 Gemini CLI.
 
+**Pack specialists:** copy [`../../hosts/adapters/`](../../hosts/adapters/README.md)
+into the **student** host (Claude Task / Codex / Cursor). At most two packs.
+Handoff is the run dir. We do not ship a Python orchestrator.
+
 Optional: MathWorks MATLAB MCP **beside** EE MCP. MATLAB numbers are untrusted
 until EE `simulate` / `label` accepts them ([`../PRD.md`](../PRD.md) FR20).
 
