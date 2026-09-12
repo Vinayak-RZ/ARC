@@ -28,7 +28,7 @@ Electrical Engineer is an Apache-2.0, forever-open-source undergraduate electric
 | Commercial | Forever OSS in this repo; no paid tier |
 | Locality | Local-first CLI + persistent UI on `127.0.0.1`; optional Cursor / Claude Code / Codex / ChatGPT desktop; BYO API key; local models |
 | Harness | **H3** — branded CLI wrapping portable skills + MCP + local RAG. Deterministic YAML workflow runner as physics/eval backbone. Hosts own the inner loop and the viva. Not a Pi fork (H4). Not a greenfield harness (H5). |
-| Surfaces | CLI `electrical-engineer`, stdio MCP, **persistent localhost UI** |
+| Surfaces | CLI `electrical-engineer`, stdio MCP, **persistent localhost UI** as a **lab workbook** (not a file dump): [`UI.md`](UI.md) |
 | Hosts (first-class) | Cursor; Claude Code; Codex (CLI / IDE / desktop Codex view); ChatGPT desktop Chat/Work (**contract**, weaker editor). ChatGPT **web**/mobile are not hosts. |
 | Workflows | Short physics attachments **bind** capabilities; host `simulate_attachment` or `propose_composition` of capability ids; CLI-without-host may classify; unmatched co-solver (no essay on host path); does not invent capability or provider ids |
 | Repo copies | **One repo only** |
@@ -130,7 +130,8 @@ The CLI is a **thin wrapper**: glue, ug profile, co-solver defaults, a **determi
 | [`PID_DECISION_SHEET.md`](PID_DECISION_SHEET.md) | Historical P0 answers |
 | [`curriculum-map.md`](curriculum-map.md) | UG bound |
 | [`../DECISIONS.md`](../DECISIONS.md) | ADRs |
-| [`../research/synthesis/vision-lock-sheet.md`](../research/synthesis/vision-lock-sheet.md) | D14–D20 |
+| [`UI.md`](UI.md) | Student-facing lab UI (D21) |
+| [`../research/synthesis/vision-lock-sheet.md`](../research/synthesis/vision-lock-sheet.md) | D14–D21 |
 
 ## Sources
 
