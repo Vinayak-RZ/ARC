@@ -61,7 +61,7 @@ Vendored Cursor config (`.cursor/`) is not a product package; see `.cursor/VENDO
 
 ### 4.1 `electrical_engineer`
 
-**What it is for.** The installable H3 co-solver: parse YAML, run nodes, score gold, serve localhost HTTP, speak MCP.
+**What it is for.** The installable co-solver: parse YAML, run nodes, score gold, serve localhost HTTP, speak MCP.
 
 **How it is used.** `uv run electrical-engineer <cmd>` or `python -m electrical_engineer`.
 

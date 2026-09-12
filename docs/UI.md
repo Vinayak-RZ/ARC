@@ -1,6 +1,6 @@
 # Student-facing lab UI
 
-**Status:** Proposed (2026-09-12). Overlay **D21**. No product code in this pass.  
+**Status:** Proposed (2026-09-12). No product code in this pass.  
 **Audience of this doc:** implementers. **Audience of the product:** a UG electrical-engineering student who may not be software-fluent.  
 **Visual tokens:** [`design/DESIGN-coinbase.md`](design/DESIGN-coinbase.md) (Inter + JetBrains/Geist Mono; never Coinbase fonts or wordmark).  
 **Authority:** [`PID.md`](PID.md), [`PRD.md`](PRD.md) FR11, [`ARCHITECTURE.md`](ARCHITECTURE.md) §9.
@@ -99,7 +99,7 @@ Edit = the same explicit write law (FR13). Do not silent-append. A proposed less
 
 | Idea | Why not |
 |------|---------|
-| Chat / prompt box | H5 — the UI is not an agent loop |
+| Chat / prompt box | The UI is not an agent loop |
 | DAG / workflow editor | Host composes; student sees results |
 | Eval / gold dashboard | Implementer surface, not UG homework |
 | MCP / CLI status / “slots” | How we were built |
@@ -142,7 +142,7 @@ Do not ship Coinbase wordmarks or licensed Coinbase fonts.
 
 As-built `ui/` is a single-band viewer: run ids in a sidebar, `<pre>` of `summary.json`, a bare SVG, a Confirm button that prints JSON. That **fails** this doc. Filling the pages above is a **later UI code plan**. This overlay specifies the product; it does not implement React.
 
-Photo confirm and gates still need the HTTP UI (do not replace the SPA with a static file dump). Do not grow an in-UI agent loop (H5).
+Photo confirm and gates still need the HTTP UI (do not replace the SPA with a static file dump). Do not grow an in-UI agent loop.
 
 ## 8. Non-goals (this overlay)
 

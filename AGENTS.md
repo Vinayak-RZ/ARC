@@ -11,7 +11,7 @@ A coding workspace for building and evolving that co-solver (analysis, circuits,
 
 ## Current status
 
-Product execution graph **complete through H1** on `cursor/ee-product-execution-9e9d`: CLI, YAML runner, localhost UI, MCP, recipes, eval, boot + trials. Authority remains [`docs/PID.md`](docs/PID.md), [`docs/PRD.md`](docs/PRD.md), [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/UI.md`](docs/UI.md), [`docs/GLOSSARY.md`](docs/GLOSSARY.md). Proposed overlays **D19–D22** (capabilities, harness, lab UI, host-skip/glossary/viva axis). Providers (ngspice, YAML, FastAPI, …) are this-pass freezes, not the thesis. Do not invent EE capabilities that are not in those docs or in [`docs/CANNOT_DO.md`](docs/CANNOT_DO.md). This file is **coding SDLC**, not the student lab prompt.
+Product execution graph **complete through H1** on `cursor/ee-product-execution-9e9d`: CLI, YAML runner, localhost UI, MCP, recipes, eval, boot + trials. Authority remains [`docs/PID.md`](docs/PID.md), [`docs/PRD.md`](docs/PRD.md), [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/UI.md`](docs/UI.md), [`docs/GLOSSARY.md`](docs/GLOSSARY.md). Proposed docs: capability list, harness split, lab window, host-skip and viva checklist. Providers (ngspice, YAML, FastAPI, …) are this-pass freezes, not the thesis. Do not invent EE capabilities that are not in those docs or in [`docs/CANNOT_DO.md`](docs/CANNOT_DO.md). This file is **coding SDLC**, not the student lab prompt. Use [`docs/GLOSSARY.md`](docs/GLOSSARY.md) for words; do not add new letter-codes.
 
 ---
 

@@ -7,7 +7,7 @@ Honest holes. Prefer a row here over fake gold. Expanded by B_NODES and later pa
 | CD-PLC | Live PLC / plant actuation | Out of product (PID) | None |
 | CD-CIVIL | Civil / mechanical / manufacturing | Never this product | None |
 | CD-PG | Graduate-only optimal control as a public promise | UG bound | Later unpublished `--profile` |
-| CD-H4 | Electric Pi / Cordis / DSH as runtime | H4/H5 falsifier | H3 CLI + hosts |
+| CD-H4 | Electric Pi / Cordis / DSH as runtime | Would become a different product | Thin CLI + existing coding agents |
 | CD-BOOKS | Commercial textbooks in git | Copyright | BYO on the student machine |
 | CD-EXAM-PDF | Third-party exam PDFs in git | Copyright | BYO; licence-clean reconstructions |
 | CD-HTTP-MCP | HTTP/SSE MCP | Later graph | stdio MCP now |
@@ -23,7 +23,7 @@ Honest holes. Prefer a row here over fake gold. Expanded by B_NODES and later pa
 | CD-PYPI | Publish to PyPI | This graph | uv/pip from git |
 | CD-RAG-ANYTHING | RAG-Anything as locked engine | Unmaintained risk | LightRAG 1.5 spike + BM25 fallback |
 | CD-RAG-ENGINE | LightRAG/Docling not installed in CI | Missing deps; no licensed chapter in git | Thin BM25 facade; BYO ingest |
-| CD-RAG-PARSE | PDF/scan extract + page-chunk ingest | Specified D20; as-built add is inventory-only | Tag the file; retrieve prefix BM25; empty is visible |
+| CD-RAG-PARSE | PDF/scan extract + page-chunk ingest | Specified; as-built add is inventory-only | Tag the file; retrieve prefix BM25; empty is visible |
 | CD-HOST-SKIP | Detect that a host answered only in chat | We do not read Cursor/Claude/Codex transcripts | CLI + UI; chat numbers are not lab-checked; skill + empty-state copy |
 | CD-HOST-WRITE | Host or student forges kernel Results files | No cryptographic attest this pass | Contract: only the runner writes Results; unsupported if edited |
 | CD-VIVA-SIGNAL | Measure that a student would pass a human viva | Checklist ≠ oral exam; no LLM-as-judge truth | `expect-viva.json` method beats; do not flip Results `unchecked` |
