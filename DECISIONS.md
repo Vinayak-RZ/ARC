@@ -92,3 +92,14 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 - **Consequences:** U1 publishes the token map; B_UI implements CSS variables (no raw hex in components); T1 checks chrome; D1/H1 forbid Coinbase fonts/wordmark. Do not invent a second palette or run `impeccable teach` to replace this system.
 - **Alternatives:** HTMX (rejected); Tailwind-as-architecture (rejected); MUI/Ant (rejected); Coinbase licensed fonts (rejected); global dark mode (rejected); Cordis/DSH dependency (rejected).
 - **Sources:** owner design upload; `docs/design/DESIGN-coinbase.md`; `docs/planning/DESIGN_LOCK.md`
+
+---
+
+## ADR-0009 — Hybrid engine composition (host path)
+
+- **Status:** proposed (not owner-Accepted)
+- **Context:** Long YAML that includes `solve-explain` starves the host viva (FR21). Unconstrained on-the-fly tool graphs (ToolWeave) would let fluent `Vout` become SPICE. D13 froze “router never invents a DAG.”
+- **Decision:** **Hybrid quality.** Host + on-demand pack skills compose the job. Typed engines own numbers. Short physics attachments (`simulate-circuit`) stay as YAML replay. Host may `propose_composition` of **registered** engines; the kernel **validates then runs**. Mega `solve-*` YAML is CLI/gold rollback. Four layers 0–3; no Layer 4. Python multi-turn composition dialog remains the H3 falsifier.
+- **Consequences:** Reopens D13 only into allowlisted engine graphs. MCP target verbs include `propose_composition`. `solve-explain` is not on the host-path allowlist. Unmatched still cannot auto-spice (netlist-port predicate). Two-band files: `evidentiary.json` seed + `argument.md`.
+- **Alternatives:** Keep long YAML as the host-path brain (rejected); OpenMontage markdown-physics (rejected); unconstrained on-the-fly spice (rejected); add Layer 4 (rejected).
+- **Sources:** `research/notes/hybrid-engine-composition.md`; `docs/ARCHITECTURE.md`; `docs/ARCHITECTURE_CRITIQUE.md`; `docs/PRD.md` FR10/FR17/FR21
