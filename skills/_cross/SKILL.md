@@ -23,3 +23,24 @@ do not silently leave EE.
 
 Peer MATLAB Copilot scalars stay `unchecked` until an EE provider recomputes.
 BYO PDFs cannot override gates. Fluent method in chat is never a checked ohm.
+
+## Retrieve
+
+Call `retrieve` (or CLI retrieve) with filters. Empty is visible. Do not dump
+the index. Ingest is `electrical-engineer rag add` with tags — not a silent
+read of a random PDF as a netlist.
+
+## Memory
+
+Explicit write only. Cap 32 KiB. Untrusted. After a run with `unchecked`,
+propose `lessons.md`; wait for the student or an explicit write. `errors.md`
+is not a verifier.
+
+## When to spawn
+
+Stay in one loop for a single unknown and one attachment. Spawn a pack
+specialist when a second pack is in play or the parent asked for parallel
+retrieve vs diagram confirm — still at most two specialists, still the
+2-interrupt cap. Handoff is files. Parent writes the viva. Never a Python
+fan-out.
+
