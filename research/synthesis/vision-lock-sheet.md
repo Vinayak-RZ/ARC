@@ -2,7 +2,9 @@
 
 ## Purpose
 
-Owner accept/reject for class, names, orchestrator split, and layering. This sheet is **not** a PID edit. Accepting it authorizes a *later* docs pass. Rejecting it leaves `docs/PID.md` as the public identity.
+Owner accept/reject for class, names, orchestrator split, and layering.
+
+**2026-09-12:** D14–D17 are written into **Proposed** [`docs/PRD.md`](../../docs/PRD.md), [`docs/PID.md`](../../docs/PID.md), and [`docs/ARCHITECTURE.md`](../../docs/ARCHITECTURE.md). Owner checkboxes below stay empty until you Accept. Root `README.md` is **not** rewritten this pass.
 
 ## Findings
 
@@ -29,6 +31,8 @@ H3, UG bound, `unchecked`, co-solver mode, student-without-Cursor, Apache-2.0, n
 - [ ] Accept
 - [ ] Reject — write the alternative here only after a new naming note
 
+Written into Proposed PID/PRD 2026-09-12 (not owner-Accepted).
+
 **D15 Category noun**
 
 - Public: **lab** (undergraduate electrical-engineering lab).
@@ -39,6 +43,8 @@ H3, UG bound, `unchecked`, co-solver mode, student-without-Cursor, Apache-2.0, n
 - [ ] Accept
 - [ ] Reject
 
+Written into Proposed PID/PRD 2026-09-12 (not owner-Accepted).
+
 **D16 Orchestrator split**
 
 - Topology C: host agent orchestrates the *work*; Python owns verifiers, gates, eval, UI.
@@ -47,30 +53,43 @@ H3, UG bound, `unchecked`, co-solver mode, student-without-Cursor, Apache-2.0, n
 - [ ] Accept
 - [ ] Reject (A markdown control plane / B YAML-as-brain)
 
+Written into Proposed PID/PRD/ARCHITECTURE 2026-09-12 (not owner-Accepted).
+
 **D17 Domain-kernel layering**
 
-- Four layers: (0) rented host harness, (1) attach (CLI inner, MCP outer, PTC later on reads only), (2) domain kernel (skills method, engines physics, YAML genre contracts, gates no-bypass, eval rollback, local stores), (3) UI + two-band artifacts.
+- Four layers: (0) rented host harness, (1) attach (CLI inner, MCP outer; Chat/Work pin until Skills-over-MCP), (2) domain kernel, (3) UI + two-band artifacts.
 - Spend the host on method, viva, student interview. Clamp numbers, invented spice DAGs, photo confirm, and `unchecked` in code.
 - Host-path ACI: 5–7 verbs; mega `run_workflow` that includes `solve-explain` is headless/eval rollback, not the only chat path.
+- Dual MATLAB MCP allowed; EE is the only checked-number authority.
 - Steal no-bypass writes from executive kernels. Do not steal their loop (H5). Do not steal studio timeline UI.
 - [ ] Accept
 - [ ] Reject
 
-### Later docs pass (only if D14–D17 accepted)
+Written into Proposed PRD FR17–FR22 / ARCHITECTURE §2 2026-09-12 (not owner-Accepted).
 
-Would change, in a **second** plan, not this one:
+**D18 Host-path composition (hybrid quality)**
 
-- `docs/PID.md` Category field (today: “UG EE co-solver with simulators and host adapters”) toward: undergraduate electrical-engineering **lab** (public), **domain kernel** on frontier hosts (internal), co-solver mode, deterministic verifiers
-- `docs/PRD.md` thesis sentence to match
-- `docs/ARCHITECTURE.md` emphasis: host is the work loop; CLI is glue plus physics backbone; four-layer kernel map and two-band artifacts
-- Root `README.md` one-liner and “why it exists” (product-readme density; still no landing-page theatre)
-- `DECISIONS.md` ADR for D14–D17
+- Host + 2–3 pack skills (on-demand) compose the job. Typed engines own numbers. Short physics attachments stay as YAML replay. Host may `propose_composition` of **allowlisted** engines; kernel **validates then runs**.
+- Mega YAML including `solve-explain` retires on the **host path** (CLI/gold rollback only).
+- Reopens D13 “router never invents a DAG” **only** this far — not ToolWeave free spice, not session-invented `lookup_vout_guess`.
+- L0 contract and L1 ACI updated because the hybrid requires them. **No Layer 4.**
+- Large jobs **plan then execute** (`plan.md` before spice). `propose_composition apply: false` validates without running. Not an eighth verb. Not a Python planner (H3).
+- [ ] Accept
+- [ ] Reject
 
-Would not change in that pass unless separately asked: runner code, CLI binary name, skill-pack rewrite, PyPI, HTTP MCP, MCP verb split (D17 names the split; a later implementation plan ships it).
+Written into Proposed ARCHITECTURE / PRD FR10/FR17/FR23 2026-09-12 (not owner-Accepted).
+
+### Later docs pass
+
+**Done as Proposed (2026-09-12), not Accepted:** PID category/hosts, PRD thesis + agent interaction, ARCHITECTURE four-layer map, hybrid L2/L3 composition (D18).
+
+**Still waiting on owner Accept:** checkboxes above; then root `README.md` (product-readme) and `DECISIONS.md` ADR (ADR-0009 stays **proposed** until then).
+
+Would not change until a **code** plan: runner, CLI binary name, skill-pack rewrite, PyPI, HTTP MCP, MCP verb split implementation.
 
 ### Stop line
 
-Do not edit PID, PRD, ARCHITECTURE, or README until this sheet is accepted. D17 does not ship MCP verb splits or skill rewrites in this pass.
+Owner checkboxes above are empty on purpose. Root README is unchanged until you Accept. This pass did not ship MCP verb splits in Python. Root `skills/SKILL.md` is the always-on plan-then-execute contract (stub).
 
 ## Open questions
 
@@ -84,6 +103,7 @@ Do not edit PID, PRD, ARCHITECTURE, or README until this sheet is accepted. D17 
 - [`research/DECISION_REGISTER.md`](../DECISION_REGISTER.md) — retrieved 2026-09-12 — reliability: primary
 - [`research/notes/agentic-kernel-2026.md`](../notes/agentic-kernel-2026.md) — retrieved 2026-09-12 — reliability: primary
 - [`research/notes/domain-kernel-layering.md`](../notes/domain-kernel-layering.md) — retrieved 2026-09-12 — reliability: primary
+- [`research/notes/hybrid-engine-composition.md`](../notes/hybrid-engine-composition.md) — retrieved 2026-09-12 — reliability: primary
 - [`docs/PID.md`](../../docs/PID.md) — retrieved 2026-09-12 — reliability: primary
 
 ## Confidence

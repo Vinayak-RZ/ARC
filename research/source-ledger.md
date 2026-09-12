@@ -129,6 +129,8 @@ Every external or authoritative source used in research notes. Add a row when yo
 | S123 | HEART / ToolFace | https://arxiv.org/abs/2609.01736 | 2026-09-12 | paper |
 | S124 | GraSP | https://arxiv.org/abs/2604.17870 | 2026-09-12 | paper |
 | S125 | Domain-kernel layering note | `research/notes/domain-kernel-layering.md` | 2026-09-12 | primary |
+| S126 | ToolWeave dynamic tool composition (clawrXiv 2026.00002) | https://clawrxiv.org/papers/2026.00002 | 2026-09-12 | paper |
+| S127 | Hybrid engine composition note | `research/notes/hybrid-engine-composition.md` | 2026-09-12 | primary |
 
 ## Reliability tiers
 
