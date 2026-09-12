@@ -5,7 +5,7 @@
 
 Recipes live at `workflows/<pack>/<id>.yaml`. Discovery is `electrical-engineer workflows` / MCP `list_workflows` — **not** a runnable recipe.
 
-Purpose: named DAGs so the agent retrieves, cites, verifies, and explains **better**. The router only **picks** a row (or asks, or `unmatched-cosolver`). New DAGs only via `compose-from-parts --advanced`.
+Purpose: named DAGs so the agent retrieves, cites, verifies, and explains **better**. **Host path** uses **short physics attachments** (`simulate-circuit`, `photo-to-netlist`, …) or `propose_composition`. Mega `solve-*` / `explain-*` YAML that include `solve-explain` are **CLI-without-host / gold rollback**, not the host’s chat brain. The router only **picks** a short row (or asks, or `unmatched-cosolver`). New DAGs via `propose_composition` (allowlisted engines) or `compose-from-parts --advanced`.
 
 Marks: **v1** = specified now. **stub** = contract only (confirm, no silent sim).
 

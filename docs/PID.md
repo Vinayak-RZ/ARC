@@ -11,7 +11,7 @@ H3, Apache-2.0, UG vs PG, one repo, and the exact token `unchecked` are **not** 
 
 ## 1. Thesis
 
-Electrical Engineer is an Apache-2.0, forever-open-source undergraduate electrical-engineering **lab**: a **domain kernel** that wraps a rented frontier agent loop (Cursor, Claude Code, Codex, ChatGPT desktop) so the student gets a checked assignment without us becoming a new harness. A branded **local CLI** plus a **persistent localhost UI** are a complete path with no AI host. Named **workflows** attach physics; they are not the chat brain. The product checks numbers with simulators when it can and labels unverified numbers with the exact token **unchecked**. It is shaped by **real UG coursework** at Indian and global institutes. GATE is an eval instrument, not the product bound. PG, civil, and mechanical are out of the public promise.
+Electrical Engineer is an Apache-2.0, forever-open-source undergraduate electrical-engineering **lab**: a **domain kernel** that wraps a rented frontier agent loop (Cursor, Claude Code, Codex, ChatGPT desktop) so the student gets a checked assignment without us becoming a new harness. A branded **local CLI** plus a **persistent localhost UI** are a complete path with no AI host. Named **short physics attachments** attach simulators; they are not the chat brain. The host may propose an allowlisted engine graph; the kernel validates then runs. The product checks numbers with simulators when it can and labels unverified numbers with the exact token **unchecked**. It is shaped by **real UG coursework** at Indian and global institutes. GATE is an eval instrument, not the product bound. PG, civil, and mechanical are out of the public promise.
 
 ## 2. Identity (Proposed)
 
@@ -30,7 +30,7 @@ Electrical Engineer is an Apache-2.0, forever-open-source undergraduate electric
 | Harness | **H3** — branded CLI wrapping portable skills + MCP + local RAG. Deterministic YAML workflow runner as physics/eval backbone. Hosts own the inner loop and the viva. Not a Pi fork (H4). Not a greenfield harness (H5). |
 | Surfaces | CLI `electrical-engineer`, stdio MCP, **persistent localhost UI** |
 | Hosts (first-class) | Cursor; Claude Code; Codex (CLI / IDE / desktop Codex view); ChatGPT desktop Chat/Work (**contract**, weaker editor). ChatGPT **web**/mobile are not hosts. |
-| Workflows | Named recipes; host picks the id when a host is present; CLI-without-host may classify; unmatched co-solver; does not invent a new graph |
+| Workflows | Short physics attachments; host `simulate_attachment` or `propose_composition`; CLI-without-host may classify; unmatched co-solver (no essay on host path); does not invent engine ids |
 | Repo copies | **One repo only** |
 | Unverified numbers | Exact token **unchecked**; never presented as simulation; EE kernel is the only checked-number authority |
 | Faculty / TA | None in v1 |
@@ -69,7 +69,7 @@ Student
   ├─ persistent localhost UI   (127.0.0.1; shared understanding)
   └─ Cursor / Claude Code / Codex / ChatGPT desktop
            │
-     skills + MCP (5–7 target verbs; as-built: list + run_workflow)
+     skills + MCP (5–7 target verbs including propose_composition; as-built: list + run_workflow)
            │
      models: host subscription | BYO API key | local LLM
            │
@@ -78,7 +78,7 @@ Student
 
 Four layers: (0) rented host harness, (1) attach, (2) domain kernel, (3) UI + two-band artifacts. Detail: [`ARCHITECTURE.md`](ARCHITECTURE.md), [`PRD.md`](PRD.md) §5–§6.
 
-The CLI is a **thin wrapper**: glue, ug profile, co-solver defaults, a **deterministic YAML DAG runner**, eval, and the local UI. It must not grow into a unique agent loop (H5). Hosts keep their own loops and write the viva.
+The CLI is a **thin wrapper**: glue, ug profile, co-solver defaults, a **deterministic YAML DAG runner** (short attachments + eval replay), eval, and the local UI. It must not grow into a unique agent loop (H5), including a Python multi-turn composition dialog. Hosts keep their own loops and write the viva (`argument.md`).
 
 ## 7. Trust (locked)
 
@@ -113,7 +113,7 @@ The CLI is a **thin wrapper**: glue, ug profile, co-solver defaults, a **determi
 | Persistent UI | First-class local workspace (`electrical-engineer ui`) |
 | v1 slice | C1–C3, C6–C7 plus UI + eval layout; C4 photo stub; C5 after C4 |
 | First pack | Circuits first, then control ([`WORKFLOWS.md`](WORKFLOWS.md)) |
-| Host ACI | 5–7 verbs; `run_workflow` = headless/eval rollback ([`PRD.md`](PRD.md) FR17) |
+| Host ACI | 5–7 verbs including `propose_composition`; `run_workflow` = short-attachment / eval rollback ([`PRD.md`](PRD.md) FR17) |
 
 ## 10. Related artifacts
 
@@ -122,6 +122,7 @@ The CLI is a **thin wrapper**: glue, ug profile, co-solver defaults, a **determi
 | [`PRD.md`](PRD.md) | Requirements (Proposed) |
 | [`PRD_CRITIQUE.md`](PRD_CRITIQUE.md) | Four critique loops |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Technical architecture |
+| [`ARCHITECTURE_CRITIQUE.md`](ARCHITECTURE_CRITIQUE.md) | Hybrid architecture critique |
 | [`WORKFLOWS.md`](WORKFLOWS.md) | Named workflow catalog |
 | [`hosts/README.md`](hosts/README.md) | Host install |
 | [`PID_DECISION_SHEET.md`](PID_DECISION_SHEET.md) | Historical P0 answers |

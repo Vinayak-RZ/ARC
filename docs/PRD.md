@@ -10,7 +10,7 @@
 
 ## 1. Thesis, name, licence
 
-**Thesis.** Electrical Engineer is an Apache-2.0, forever-open-source undergraduate electrical-engineering **lab**: a **domain kernel** that wraps a rented frontier agent loop (Cursor, Claude Code, Codex, ChatGPT desktop) so the student gets a checked assignment — method, numbers, viva — without us becoming a new harness. A branded **local CLI** and **persistent localhost UI** are a complete path with no AI host. Named YAML recipes attach physics; they are not the chat brain. The product checks numbers with simulators when it can and labels unverified numbers with the exact token **unchecked**. It is shaped by **real UG coursework** at Indian and global institutes. GATE is an eval instrument, not the product bound. PG, civil, and mechanical are out of the public promise.
+**Thesis.** Electrical Engineer is an Apache-2.0, forever-open-source undergraduate electrical-engineering **lab**: a **domain kernel** that wraps a rented frontier agent loop (Cursor, Claude Code, Codex, ChatGPT desktop) so the student gets a checked assignment — method, numbers, viva — without us becoming a new harness. A branded **local CLI** and **persistent localhost UI** are a complete path with no AI host. The host plus pack skills compose the job; typed engines own numbers; **short** physics attachments stay as code; allowlisted engine graphs are **validated then run**. Mega YAML that includes `solve-explain` is not the host-path brain. The product checks numbers with simulators when it can and labels unverified numbers with the exact token **unchecked**. It is shaped by **real UG coursework** at Indian and global institutes. GATE is an eval instrument, not the product bound. PG, civil, and mechanical are out of the public promise.
 
 | Field | Requirement |
 |-------|-------------|
@@ -66,7 +66,7 @@ Rejected public nickname: “Agentic UG EE Studio”. “Bench” is not the pub
 |----------------------|-----------------------------------------------|
 | UG coursework **lab** (domain kernel) | Optional `--profile` for PG; not advertised |
 | H3 CLI + MCP + **persistent localhost UI**; Cursor, Claude Code, Codex inner-loop, Chat/Work contract | HTTP MCP |
-| Split host ACI (5–7 verbs); `run_workflow` as eval/headless rollback | Code Mode / PTC on **reads** only if retrieve tools proliferate |
+| Split host ACI (5–7 verbs including `propose_composition`); `run_workflow` as short-attachment / eval rollback | Code Mode / PTC on **reads** only if retrieve tools proliferate |
 | Chat/Work method: pin root skill (pack-on-demand not claimed) | Skills-over-MCP implemented and verified on a desktop Chat install |
 | Named circuits + control + **solve+explain for every curriculum pack** | Deeper gold / BYOK |
 | OSS verifiers first-class; MATLAB optional **engine** and optional **peer MCP** | Deeper Simulink when licence exists |
@@ -84,7 +84,7 @@ The kernel spine already exists. This PRD mostly **restructures** how the host t
 |-------|--------|
 | H3: hosts own the LLM loop; CLI is not a unique harness | [`PID.md`](PID.md), [`ARCHITECTURE.md`](ARCHITECTURE.md) |
 | Python 3.11+ CLI: `run`, `workflows`, `mcp`, `eval`, `ui`, `rag`, `memory` | `src/electrical_engineer/` |
-| YAML DAG runner, hybrid router, unmatched → `unmatched-cosolver`, never invent a spice DAG | runner + [`WORKFLOWS.md`](WORKFLOWS.md) |
+| YAML DAG runner, short attachments, unmatched → `unmatched-cosolver`, never invent **engine ids** | runner + [`WORKFLOWS.md`](WORKFLOWS.md) |
 | Exact token `unchecked`; `label-unchecked` in code | `nodes/registry.py` |
 | Photo/compose/control-diagram fail closed on MCP with `ui_url` | `mcp/server.py` |
 | Persistent UI on `127.0.0.1`; student need not use Cursor | `electrical-engineer ui` |
@@ -100,14 +100,15 @@ Honesty about seams (keep the **contracts**, do not advertise them as proven gol
 
 | As-built | Target |
 |----------|--------|
-| MCP tools: `list_workflows`, `run_workflow` (whole DAG including `solve-explain`) | 5–7 always-on verbs; host writes the viva; `run_workflow` = headless/eval rollback |
-| Pack `SKILL.md` files are four-line stubs | Root skill + pack specialists with one-level `reference/` |
+| MCP tools: `list_workflows`, `run_workflow` (whole DAG including `solve-explain`) | 5–7 always-on verbs including `propose_composition`; host writes the viva; `run_workflow` = short-attachment / eval rollback |
+| Pack `SKILL.md` files are four-line stubs | Root skill + pack specialists with one-level `reference/` (on-demand, not always-on) |
 | `solve-explain` LLM **and** `_solve_value` minting checked ohms/divider | Host-path argument band; node must not mint checked; CLI-without-host essay only |
-| Hybrid classifier specified; CLI omitted-id not wired | Wire classifier on CLI-without-host only; host picks the id |
+| Hybrid classifier specified; CLI omitted-id not wired | Wire classifier on CLI-without-host only; host composes via ACI |
 | ChatGPT / OpenAI documented as Codex-shaped only; completeness “does not require this host” | ChatGPT **desktop** first-class; ChatGPT **web** excluded |
 | MATLAB only as `run-matlab-if-present` | Also allow MathWorks MCP as a **peer**; EE still owns checked numbers |
-| `summary.json` folds numbers + citations | Two bands: evidentiary vs engineering argument |
+| `summary.json` folds numbers + citations | Two bands: `evidentiary.json` seed (`summary.json` today) vs `argument.md` |
 | Pre-runner classifier when id omitted | Host classifies when a host is present; small classifier stays for CLI-without-host |
+| Router never invents a DAG; new graphs only `compose-from-parts` | Host may **propose** allowlisted engines; kernel validates then runs; unmatched still cannot auto-spice |
 
 ## 5. Four-layer architecture (H3)
 
@@ -115,23 +116,25 @@ Normative detail: [`ARCHITECTURE.md`](ARCHITECTURE.md). Catalog: [`WORKFLOWS.md`
 
 ```text
 Layer 0  Rented harness     Cursor / Claude Code / Codex / ChatGPT desktop
-Layer 1  Attach             CLI inner · MCP outer · served skills on Chat/Work
-Layer 2  Domain kernel      skills · engines · YAML genre · gates · eval · stores
-Layer 3  Surfaces           localhost UI · two-band artifacts
+Layer 1  Attach             CLI inner · MCP outer · 5–7 ACI verbs · served skills on Chat/Work
+Layer 2  Domain kernel      skills · engines · short attachments · validator · gates · eval · stores
+Layer 3  Surfaces           localhost UI · evidentiary.json · argument.md
 ```
+
+No Layer 4. Eval stays in Layer 2; two-band files stay in Layer 3.
 
 | Layer | Owns | Must not own |
 |-------|------|----------------|
-| 0 Host | Context window, permissions, the inner loop, the viva | Kirchhoff as truth, spice DAG invention, `unchecked` |
-| 1 Attach | CLI, MCP verbs, skill load, optional MATLAB MCP | 1:1 wrap of every node; PTC on spice writes |
-| 2 Kernel | Simulators, RAG, gates, YAML replay, `unchecked` | A second host-incompatible chat loop (H5) |
-| 3 UI / artifacts | Confirm, plots, citations, argument band | A ChatGPT-clone console; WAN bind; KiCad clone |
+| 0 Host | Context window, permissions, the inner loop, the viva, write `argument.md` | Kirchhoff as truth, spice DAG invention, minting checked ohms, unique EE chat loop |
+| 1 Attach | CLI, MCP verbs including `propose_composition`, skill load, optional MATLAB MCP | 1:1 wrap of every node; PTC on spice writes; mega `run_workflow` as host-path viva |
+| 2 Kernel | Simulators, validator, RAG, short YAML replay, `unchecked` | A second host-incompatible chat loop (H5); long YAML as the chat brain |
+| 3 UI / artifacts | Confirm, plots, citations, two-band viewer | A ChatGPT-clone console; WAN bind; KiCad clone |
 
-**Falsifier for H3:** if the CLI or UI grows a custom harness that hosts cannot share, stop and return to owner (that is H5).
+**Falsifier for H3:** if the CLI or UI grows a custom harness that hosts cannot share, stop and return to owner (that is H5). A Python multi-turn composition dialog is that falsifier.
 
-**Runner law (kept):** no model calls inside the DAG runner except through **registered nodes**, plus one **pre-runner** classifier when the workflow id is omitted **and no host is driving**. The DAG runner itself is deterministic. YAML recipes are **genre contracts** and **eval rollback**, not the professional-workflow brain.
+**Runner law (kept):** no model calls inside the DAG runner except through **registered nodes**, plus one **pre-runner** classifier when the workflow id is omitted **and no host is driving**. The DAG runner itself is deterministic. Short YAML attachments are **genre contracts** and **eval rollback**, not the professional-workflow brain.
 
-**Spend / clamp.** Spend the frontier host on method, viva, and student interview. Clamp checked `Vout`, invented spice DAGs, photo topology, and MATLAB scalars unless they passed an EE engine.
+**Spend / clamp.** Spend the frontier host on method, viva, and student interview. Clamp checked `Vout`, invented spice DAGs, photo topology, and MATLAB scalars unless they passed an EE engine. Host may propose an allowlisted engine graph; the kernel validates then runs.
 
 ---
 
@@ -162,8 +165,9 @@ Feed **only**:
 Never always-on:
 
 - The textbook corpus or the vector index
-- Every pack `SKILL.md`
+- Every pack `SKILL.md` (packs load on domain match, at most two)
 - Full YAML of every recipe
+- A `propose_composition` **graph body** in tool **results** (returns `run_id` + paths)
 - Gold eval fixtures
 - MATLAB Copilot system prompts
 
@@ -176,7 +180,7 @@ Token intent: root skill plus the always-on tool schemas stay small. Do not enum
 | Domain match (circuits, control, …) | `skills/<pack>/SKILL.md` | Host skill loader, or MCP resource (Chat/Work) |
 | Specialist chapter | `skills/<pack>/reference/*.md` (one level deep from the pack skill) | Host reads the linked file; do not nest |
 | Needs a citation or formula from a book the student has rights to | RAG `retrieve` with book/chapter/folder/domain filters | MCP read verb; max passages as today (3) |
-| Continuing a run | `./runs/<id>/summary.json`, netlist, plots | Host or CLI reads files |
+| Continuing a run | `./runs/<id>/` evidentiary file + `argument.md` + netlist/plots | Host or CLI reads files |
 | Eval | gold item + recipe id | `eval_run` / CLI `eval`, not chat paste of gold |
 
 Empty RAG is **visible**. Do not silently proceed as if the book was retrieved.
@@ -187,14 +191,15 @@ Empty RAG is **visible**. Do not silently proceed as if the book was retrieved.
 
 | Verb | Kind | Direct | Notes |
 |------|------|--------|-------|
-| `list_workflows` | read | yes | Catalog of named recipe ids |
+| `list_workflows` | read | yes | Catalog. Host-path rows are **short attachments**; mega `solve-*`/`explain-*` marked rollback |
 | `retrieve` | read | yes | Tagged RAG; citations evidentiary |
 | `open_ui` / `clarify` | read (+ questions) | yes | MCP **never waits**. Returns `ui_url` |
-| `simulate` | write | yes | **Named recipe id only.** Never a session-invented DAG |
-| `label` / `summary` | write | yes | Gate over child EE artifacts only (FR20) |
+| `simulate_attachment` | write | yes | Named **short** physics id only. Never `solve-explain` inside |
+| `propose_composition` | write | yes | Graph of **registered** engines + typed ports. Kernel **validates then runs**. Not a 45-tool dump. Returns `run_id` + paths, not the graph body |
+| `label` / `summary` | write | yes | Gate over child EE artifacts only (FR20). `check-numeric` also cannot ingest Copilot scalars |
 | `eval_run` | write | yes | Gold replay. **CLI** on Chat/Work; not required as an MCP tool there |
 
-`run_workflow` (as-built mega-apply) remains valid as **headless/eval rollback** and as `electrical-engineer run <id>` for students who want one command. On the **host path** it must not own `solve-explain`.
+`run_workflow` (as-built mega-apply) remains valid as **headless/eval rollback** and as `electrical-engineer run <id>` for **short** attachments. On the **host path** it must not own `solve-explain`.
 
 **Never a host tool:** invent spice DAG; confirm photo topology without UI; present fluent `Vout` as checked; session-defined `lookup_vout_guess`; PTC on spice/MATLAB/load-flow writes.
 
@@ -202,18 +207,18 @@ Empty RAG is **visible**. Do not silently proceed as if the book was retrieved.
 
 ### 6.5 How the agent searches tools
 
-1. Root skill lists the six verbs and when to use them.
-2. `list_workflows` (or the skill’s recipe table) picks a **named** id (`simulate-circuit`, `solve-control-problem`, …).
-3. Pack specialist skill names the id in fully qualified form (`electrical-engineer:simulate` with `workflow_id=…`) so hosts with several MCP servers do not miss it.
-4. There is **no** v1 tool-search over 45 node schemas.
+1. Root skill lists the verbs and when to use them.
+2. `list_workflows` (or the skill’s attachment table) picks a **short** id (`simulate-circuit`, …), **or** the host calls `propose_composition`.
+3. Pack specialist skill names verbs in fully qualified form (`electrical-engineer:simulate_attachment`) so hosts with several MCP servers do not miss them.
+4. There is **no** v1 tool-search over 45 node schemas. Engine allowlist is server-side.
 
 ### 6.6 Simulation
 
-- Physics attaches through **named YAML genre contracts** ([`WORKFLOWS.md`](WORKFLOWS.md)).
-- Router **never invents** a DAG. Unmatched → `unmatched-cosolver` only (no auto-simulate).
-- New graphs only via `compose-from-parts --advanced` (typed ports, 16 nodes / 24 edges) with a human gate.
+- Physics attaches through **short named YAML attachments** or a **validated** graph of registered engines ([`ARCHITECTURE.md`](ARCHITECTURE.md) §4–§6).
+- Router **never invents engine ids**. Unmatched → `unmatched-cosolver` only (no auto-simulate). Host-path unmatched has **no** `solve-explain`.
+- New graphs: `propose_composition` (host; allowlisted engines; kernel validates) **or** `compose-from-parts --advanced` (CLI; human-gated). Caps 16 nodes / 24 edges. `solve-explain` is not on the host-path allowlist. Spice requires a **netlist artifact** on a typed port.
 - `repair_max: 2` then `label-unchecked` or ask-human — never a fake pass.
-- MCP simulation that would wait on a human **fails closed** with `ui_url`.
+- MCP simulation that would wait on a human **fails closed** with `ui_url` (preflight MATLAB / photo / `ask-human` on proposed graphs).
 - Gold eval scores **evidentiary** artifacts (example: `Vout = 5.0` on divider-dc-01), not the essay.
 
 ### 6.7 RAG
@@ -240,7 +245,7 @@ Empty RAG is **visible**. Do not silently proceed as if the book was retrieved.
 | Evidentiary | Engines + gates | Numbers, `.cir`, plots, citations, `unchecked`, gold diffs | Host judgment presented as SPICE |
 | Engineering argument | Host, or local `solve-explain` fallback | Method, viva, labeled inference | Minting a checked scalar |
 
-`write-run-summary` / `summary.json` is the seed of the evidentiary band. A host-authored markdown file next to it must not flip `unchecked` to false.
+`write-run-summary` / `summary.json` is the seed of `evidentiary.json` (**one writer**; after rename, alias or replace — never dual live files). A host-authored `argument.md` next to it must not flip `unchecked` to false.
 
 ### 6.10 Per-host attach (summary)
 
@@ -283,7 +288,7 @@ FR1–FR16 are the D0 floor and stay in force. FR17–FR22 are the host-path res
 
 **FR9 Eval runner.** `electrical-engineer eval` (and `--pack`) against [`../eval/gold/`](../eval/gold/README.md). Gold items name a `recipe_id`. CI must not require MATLAB. `EE_ALLOW_ALL` may skip gates in CI; it must **not** disable `unchecked`. Gold scores the **evidentiary** band, not the essay. `unchecked: false` in gold is legal **only** when `summary.verifier` is an EE engine on the FR20 allowlist. `solve-explain` must not mint checked values (it may write the argument band). As-built gold that scores an LLM/node-minted `value` as checked is a **defect to fix in a later eval plan**, not a PRD exception.
 
-**FR10 Named workflows.** Default CLI path is a named recipe from [`WORKFLOWS.md`](WORKFLOWS.md) (`electrical-engineer run <id>`). Explicit id skips classify. On the CLI-without-host path, if id omitted, one classifier call; if top-1 and top-2 are within 0.15, ask the student. On the **host path**, the host picks the named id (FR17). Unmatched text always uses `unmatched-cosolver` (no auto-simulate). The router **never invents** a new DAG. New graphs only via `compose-from-parts --advanced`.
+**FR10 Named workflows.** Default CLI path is a **short physics attachment** from [`WORKFLOWS.md`](WORKFLOWS.md) (`electrical-engineer run simulate-circuit`). Explicit id skips classify. On the CLI-without-host path, if id omitted, one classifier call; if top-1 and top-2 are within 0.15, ask the student. On the **host path**, the host calls `simulate_attachment` or `propose_composition` (FR17) — it does **not** pick a mega YAML that includes `solve-explain`. Unmatched text always uses `unmatched-cosolver` (no auto-simulate; host-path unmatched has no essay node). The router **never invents engine ids**. New graphs: `propose_composition` (allowlisted engines, kernel validates) or `compose-from-parts --advanced`.
 
 **FR11 Persistent UI.** `electrical-engineer ui` is a **critical** local workspace (runs, library-rendered diagrams and plots, photo confirm, citations, RAG inventory, memory excerpts). It stays up across a session. It is not a one-shot diagram dialog and not a second agent loop.
 
@@ -297,15 +302,15 @@ FR1–FR16 are the D0 floor and stay in force. FR17–FR22 are the host-path res
 
 **FR16 Photo stub.** `photo-to-netlist`: phone or textbook screenshot → detect → connect → OCR → draft `.cir` + JSON graph → one UI confirm → **stop** (no sim in the stub). Low-confidence OCR always flagged. `control-diagram-to-model` stays a stub in catalog.
 
-**FR17 Split host ACI.** Always-on MCP verbs are **5–7** (§6.4): list, retrieve, open_ui/clarify, simulate (named id only), label/summary, and eval_run (CLI-equivalent on Chat/Work). Do not 1:1 wrap registered nodes. `run_workflow` executing a whole YAML DAG that includes `solve-explain` is **headless/eval rollback**, not the host-path viva.
+**FR17 Split host ACI.** Always-on MCP verbs are **5–7** (§6.4): list, retrieve, open_ui/clarify, simulate_attachment (short id), **propose_composition**, label/summary, and eval_run (CLI-equivalent on Chat/Work). Do not 1:1 wrap registered nodes. `run_workflow` executing a whole YAML DAG that includes `solve-explain` is **headless/eval rollback**, not the host-path viva. `propose_composition` returns `run_id` + paths, never the graph body.
 
 **FR18 Two-band artifacts.** Each run produces (a) an **evidentiary** band (numbers, citations, `unchecked`, plots, netlists) assembled by engines/gates, and (b) an **engineering-argument** band (host-authored viva, or local `solve-explain` fallback) that **must not** mint checked scalars. Merging the bands so fluent text flips `unchecked` to false is a product fail. Any numeral in the argument band that is not bound to an evidentiary key (verifier id + value) must be written with the exact token `unchecked` or omitted. Displaying an unlabeled numeral in the argument band is a fail (do not ship a “the essay agreed” path). Checked provenance names the verifier (`run-spice`, `check-numeric`, `run-python-control`, `run-matlab-if-present`, …), never the host.
 
 **FR19 Pack specialists.** Ship a short **root** skill plus per-pack specialist skills (`skills/<pack>/SKILL.md`) with optional one-level `reference/` files. Load pack chapters on domain match only. Skills **teach** method (including Kirchhoff-before-SPICE); they **do not enforce** FR2. A fluent KCL paragraph in a skill or chat is never a checked number. v1 promise is the skill pack, not a custom multi-agent orchestrator. Host-native subagents may call the same EE MCP.
 
-**FR20 Dual MATLAB MCP.** When a MathWorks licence exists, the host **may** run MATLAB MCP / Copilot **and** Electrical Engineer MCP together. EE is the only authority for checked numbers. `label` / `summary` may set `unchecked: false` **only** when a **child EE verifier artifact** exists (`run-spice`, `check-numeric`, `run-python-control`, `run-load-flow`, `run-matlab-if-present`). Host-typed and peer-MCP/Copilot scalars are **not ingest**; they stay `unchecked` until an EE engine recomputes them. Provenance must not name Copilot or the host as verifier. Peer MATLAB MCP is for tools we do not wrap (Simulink editor, live scripts), not a second sim that satisfies FR2. The entire product and CI **work without MATLAB**. MATLAB Copilot is not the product identity.
+**FR20 Dual MATLAB MCP.** When a MathWorks licence exists, the host **may** run MATLAB MCP / Copilot **and** Electrical Engineer MCP together. EE is the only authority for checked numbers. `label` / `summary` / `check-numeric` may set `unchecked: false` **only** when a **child EE verifier artifact** exists (`run-spice`, `check-numeric`’s own solver over student/netlist/prior-engine ports, `run-python-control`, `run-load-flow`, `run-matlab-if-present`). Host-typed and peer-MCP/Copilot scalars are **not ingest**; they stay `unchecked` until an EE engine recomputes them. Provenance must not name Copilot or the host as verifier. Peer MATLAB MCP is for tools we do not wrap (Simulink editor, live scripts), not a second sim that satisfies FR2. The entire product and CI **work without MATLAB**. MATLAB Copilot is not the product identity.
 
-**FR21 Host-path viva.** On first-class hosts, the host writes the explanation. Host-path `simulate` / named recipes **must not** invoke `solve-explain`. CLI-without-host and gold **rollback** may keep `solve-explain` in the YAML. Starving the host by running the essay inside `run_workflow` on the host path violates this FR.
+**FR21 Host-path viva.** On first-class hosts, the host writes the explanation (`argument.md`). Host-path `simulate_attachment` / `propose_composition` **must not** invoke `solve-explain`. CLI-without-host and gold **rollback** may keep `solve-explain` in YAML. Starving the host by running the essay inside `run_workflow` on the host path violates this FR.
 
 **FR22 MCP transport.** `electrical-engineer mcp` must speak the JSON-RPC stdio framing first-class hosts actually send (Content-Length / MCP SDK), and must not crash the process on `ping`, `resources/*`, or unknown methods. Fail closed with a JSON-RPC error. Skills-over-MCP (resources) is the Chat/Work method channel; until it ships, Chat/Work pins the root skill text (see [`hosts/chatgpt-desktop.md`](hosts/chatgpt-desktop.md)). Tool arguments must accept a problem/netlist/`run_id` so the host is not limited to cwd `problem.json`.
 
@@ -428,6 +433,8 @@ MATLAB if present else OSS first-class; the **entire product works without MATLA
 | [`../research/notes/host-first-class-attach.md`](../research/notes/host-first-class-attach.md) | ChatGPT desktop, dual MCP, specialists |
 | [`../research/notes/domain-kernel-layering.md`](../research/notes/domain-kernel-layering.md) | Four-layer wrap |
 | [`../research/synthesis/vision-lock-sheet.md`](../research/synthesis/vision-lock-sheet.md) | D14–D17 (owner checkboxes) |
+| [`../research/notes/hybrid-engine-composition.md`](../research/notes/hybrid-engine-composition.md) | Hybrid vs long YAML vs on-the-fly |
+| [`ARCHITECTURE_CRITIQUE.md`](ARCHITECTURE_CRITIQUE.md) | Three architecture critique loops |
 | [`PRD_CRITIQUE.md`](PRD_CRITIQUE.md) | Four critique loops; accepted vs rejected |
 
 ## Owner review checkpoint
@@ -439,6 +446,7 @@ Previous D0 (2026-09-10) remains historical. **This revision is Proposed. Do not
 - [ ] Co-solver default; exact token **unchecked**; no faculty v1
 - [ ] Shipped vs restructure inventory is accurate
 - [ ] Agent interaction chapter (context, tools, RAG, simulation, collaboration)
-- [ ] Split ACI, two-band artifacts, pack specialists, dual MATLAB MCP
+- [ ] Split ACI including `propose_composition`, two-band artifacts, pack specialists, dual MATLAB MCP
+- [ ] Host-path mega YAML with `solve-explain` is rollback; short attachments + validate-then-apply
 - [ ] ChatGPT desktop first-class; ChatGPT web excluded; CLI-without-host complete
 - [ ] Exam-style in-scope; **no** third-party copyrighted PDFs in git
