@@ -1,5 +1,7 @@
 # Plans index
 
+> **Historical.** Graph-engineering artifact set for the H1 execution. Current contract: [`docs/ARCHITECTURE.md`](../docs/ARCHITECTURE.md), [`docs/UI.md`](../docs/UI.md).
+
 This directory is the **graph-engineering** artifact set for Electrical Engineer.
 
 | Read this | Role |

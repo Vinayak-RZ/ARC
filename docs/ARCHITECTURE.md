@@ -1,9 +1,9 @@
 # Technical architecture — Electrical Engineer
 
-**Status:** Proposed (2026-09-12). This file is **how the lab works**. Why a lock exists: [`../DECISIONS.md`](../DECISIONS.md). Words: [`GLOSSARY.md`](GLOSSARY.md). Student screens: [`UI.md`](UI.md). Requirements: [`PRD.md`](PRD.md).  
+**Status:** Accepted (2026-09-12). This file is **how the lab works**. Why a lock exists: [`../DECISIONS.md`](../DECISIONS.md). Words: [`GLOSSARY.md`](GLOSSARY.md). Student screens: [`UI.md`](UI.md). Requirements: [`PRD.md`](PRD.md).  
 **Date:** 2026-09-12
 
-You do not need [`PID.md`](PID.md) to implement a provider, a gold item, or a UI page. Overlay ids (D18–D22) and harness shorthand (H3, H5) are in the [glossary](GLOSSARY.md) and in ADRs — not required to understand the next section.
+You do not need [`PID.md`](PID.md) to implement a provider, a gold item, or a UI page. Why a lock exists is in [`../DECISIONS.md`](../DECISIONS.md), not in the next section.
 
 ---
 
@@ -22,7 +22,7 @@ Do not add a second Electrical Engineer chat product. Do not put an LLM node in 
 
 ---
 
-## 0. Domain contract (D19) — any UG EE question
+## 0. Domain contract — any UG EE question
 
 This kernel is an **undergraduate electrical-engineering co-solver**, not an ngspice product, not a MATLAB product, not a YAML catalog, and not a FastAPI app. Those are **providers** and **this-pass freezes**. The domain contract is: every question that is in-bound on [`curriculum-map.md`](curriculum-map.md) has a complete path.
 
@@ -52,13 +52,13 @@ This kernel is an **undergraduate electrical-engineering co-solver**, not an ngs
 
 | Identity (do not silently drop) | This-pass freeze (a provider or encoding, not the thesis) |
 |---------------------------------|----------------------------------------------------------|
-| H3; four layers 0–3; no H5 loop | Python 3.11+ CLI wrapping the kernel |
+| Thin CLI around the student’s coding agent; four parts (host, tools, kernel, screens); no second Electrical Engineer chat app | Python 3.11+ CLI wrapping the kernel |
 | UG bound = curriculum-map union; GATE = eval overlay | Named YAML files under `workflows/` as **replay** of short attachments |
 | Exact token `unchecked`; EE kernel is the only checked-number authority | Default providers: ngspice, python-control, pandapower, sympy, MATLAB-if-present |
 | Validate-then-apply; never invent capability or provider ids | Activity function names (`run-spice`, …) as the Python registry keys |
 | Two-band artifacts + localhost workspace on `127.0.0.1` | FastAPI + Vite/React + Zustand + DESIGN-coinbase tokens |
 | Pack skills teach method; gates stay in code | LightRAG 1.5 spike behind a RAG **facade** |
-| MCP never waits; photo/compose confirm in the UI | Specific ACI **names** (`simulate_attachment`, …) — kinds stay: catalog, retrieve, attach-physics, propose-graph, label, clarify |
+| MCP never waits; photo/compose confirm in the UI | Specific **tool names** (`simulate_attachment`, …) — kinds stay: catalog, retrieve, attach-physics, propose-graph, label, clarify |
 | OSS path complete without MATLAB | MATLAB as optional provider of several capabilities |
 
 ### 0.1 Capability registry (stable)
@@ -105,7 +105,7 @@ Every public pack must be able to request the capabilities in this table. v1 **g
 
 Unmatched text (no pack, no typed model artifact) uses **only** retrieve-optional → `label-unverified` → summary. It must not auto-bind `lumped-circuit-sim` because the prompt “looks like a netlist.”
 
-### 0.3 Harness ownership (D20)
+### 0.3 Who owns which harness part
 
 A coding harness is prompts, tools, filesystem, orchestration, hooks, and observability. Electrical Engineer **does not reimplement** that stack. Split:
 
@@ -115,12 +115,12 @@ A coding harness is prompts, tools, filesystem, orchestration, hooks, and observ
 | System / lab prompt, pack skills, specialist spawn prompts | Host **loads**; we **write** files | [`skills/SKILL.md`](../skills/SKILL.md), `skills/<pack>/`, [`hosts/adapters/`](../hosts/adapters/) | This repo’s coding [`AGENTS.md`](../AGENTS.md) as the student lab prompt; EE packs inside vendored `.cursor/skills/` |
 | Tools / MCP / CLI | **L1** | verb *kinds* + CLI `rag` / `memory` / `eval` | 1:1 provider MCP; waiting on stdio |
 | Sandbox / general browser agent | **L0 host** | localhost UI on `127.0.0.1` for confirm + artifacts | Shipping a second browser agent |
-| Spawn / handoff | **L0 host** | spawn map + adapter markdown | A custom multi-agent runtime (H5) |
+| Spawn / handoff | **Host** | spawn map + adapter markdown | A custom multi-agent runtime (a second chat product) |
 | Deterministic hooks | **L2 kernel** | ingest → validate-then-apply → repair → observe → lesson-propose → eval | Re-asking a model inside the runner |
 | Persist | **L2** | run dir, memory files, RAG index | Silent chat dumps; crash-resume; fleet learning |
 | Observe / verify | **L2 + L3** | `observation.json` (or evidentiary seed), gold, `unchecked` | LLM-as-judge; memory `errors.md` as a checked number |
 
-**Spawn map (host-native only).** The main rented host (Cursor / Claude Code / Codex) may start **at most two** pack specialists (maths may occupy the second slot) using **that host’s** Task/subagent UI. Each child loads one pack skill, calls the **same** EE MCP, and must not mint checked numbers or skip UI confirm. Handoff is `run_id` + file URIs under `./runs/<id>/` (or `children/` — §6), not a message bus. Parent writes `argument.md`. Chat/Work does **not** claim pack spawn until Skills-over-MCP. Adapter files: [`hosts/adapters/`](../hosts/adapters/). The CLI, MCP server, and UI **never** start specialists. A Python process that interviews, plans, and fans out specialists is the H3/H5 falsifier.
+**Spawn map (host-native only).** The main rented host (Cursor / Claude Code / Codex) may start **at most two** pack specialists (maths may occupy the second slot) using **that host’s** Task/subagent UI. Each child loads one pack skill, calls the **same** EE MCP, and must not mint checked numbers or skip UI confirm. Handoff is `run_id` + file URIs under `./runs/<id>/` (or `children/` — §6), not a message bus. Parent writes `argument.md`. Chat/Work does **not** claim pack spawn until Skills-over-MCP. Adapter files: [`hosts/adapters/`](../hosts/adapters/). The CLI, MCP server, and UI **never** start specialists. A Python process that interviews, plans, and fans out specialists is the **stop condition**: we would have become a second chat product.
 
 ---
 
@@ -135,7 +135,7 @@ flowchart TB
   end
   subgraph attach [Attach_L1]
     CLI[electrical-engineer_CLI]
-    MCP[stdio_MCP_ACI]
+    MCP[stdio_MCP_tools]
     Skills[pack_SKILL.md]
   end
   subgraph kernel [Kernel_L2]
@@ -178,28 +178,28 @@ flowchart TB
 
 ## 2. Layers (four-layer domain kernel)
 
-Canonical numbering stays **0–3**. A fifth layer is not earned (eval stays 2e; pack method stays 2a). See [`../research/notes/hybrid-engine-composition.md`](../research/notes/hybrid-engine-composition.md).
+Four parts: host, tools, kernel, screens. Do not add a fifth product layer (eval stays in the kernel; pack method stays in skills). See [`../research/notes/hybrid-engine-composition.md`](../research/notes/hybrid-engine-composition.md).
 
 | Layer | Owns | Must not own |
 |-------|------|----------------|
-| 0 Host (rented) | Inner loop; compaction/continuation; **spawn** pack specialists; load **2–3** pack skills; **plan then execute**; call ACI; write `argument.md`; ask when data is missing | Kirchhoff as numeric truth; inventing capability ids; minting checked ohms; unique EE chat loop; a Python specialist orchestrator |
-| 1 Attach | CLI inner; MCP outer; **5–7 ACI verbs**; host skill files; adapter prompts under `hosts/adapters/` | 1:1 provider MCP; waiting on humans; PTC on physics writes; mega `run_workflow` as the host-path viva |
-| 2 Domain kernel | Capabilities, providers, validator, attachments, **kernel hooks**, gates, eval, RAG ingest/index, memory files, `observation.json`, `unchecked` | A unique host-incompatible chat loop (H5); long YAML as the chat brain; compaction; token billing |
-| 3 Surfaces | Localhost **lab workbook** ([`UI.md`](UI.md)); two-band files; observation mapped to sentences | ChatGPT-clone UI; WAN bind; KiCad clone; dumping `.md`/`.json` as the product; treating the UI stack as the domain |
+| Host (rented coding agent) | Inner loop; compaction/continuation; **spawn** pack specialists; load **2–3** pack skills; **plan then execute**; call our tools; write `argument.md`; ask when data is missing | Kirchhoff as numeric truth; inventing capability ids; minting checked ohms; unique EE chat loop; a Python specialist orchestrator |
+| Tools (CLI + MCP) | CLI inner; MCP outer; **5–7 tools**; host skill files; adapter prompts under `hosts/adapters/` | One MCP tool per provider; waiting on humans; extra permission prompts on physics writes; mega `run_workflow` as the host-path viva |
+| Domain kernel | Capabilities, providers, validator, attachments, **kernel hooks**, gates, eval, RAG ingest/index, memory files, `observation.json`, `unchecked` | A unique chat loop hosts cannot share; long YAML as the chat brain; compaction; token billing |
+| Screens and files | Localhost **lab workbook** ([`UI.md`](UI.md)); Results and Method files; observation mapped to sentences | ChatGPT-clone UI; WAN bind; KiCad clone; dumping `.md`/`.json` as the product; treating the UI stack as the domain |
 
 As-built sub-pieces (still true): CLI glue, pack `SKILL.md` **method** files, stdio MCP (`list_workflows` + `run_workflow` only), UI, RAG sidecar, registered **provider** nodes. Target: this section + [`PRD.md`](PRD.md) §5–§6. Capability→provider bind in the runner is a later code plan; today graphs still name provider keys.
 
-**H3 falsifier:** if the CLI grows a custom harness hosts cannot share, stop and return to the owner. Layer 0 stays rented. A **Python multi-turn composition dialog** (interview/plan loop inside the CLI) **or a Python specialist fan-out** is that falsifier. `propose_composition` is one write verb, not a chat product.
+**Stop condition:** if the CLI grows a custom loop that hosts cannot share, stop. The host stays rented. A **Python multi-turn composition dialog** (interview/plan loop inside the CLI) **or a Python specialist fan-out** is that fail. `propose_composition` is one write tool, not a chat product.
 
 **Runner law:** no model calls inside the DAG runner except through **registered providers**, plus one **pre-runner** classifier when the workflow id is omitted **and no host is driving**. The DAG runner itself is deterministic. Host-path attachments **must not** invoke `solve-explain` (FR21). `solve-explain` must not mint checked numbers (FR9). Composition graphs name **capability ids** and/or **registered provider ids** — never a new activity invented in the session.
 
-### 2.1 Layer 0 — Host contract (not a new harness)
+### 2.1 Host contract (not a new harness)
 
 The following is **skill policy** for a well-behaved host. The kernel cannot sandbox Cursor. If the host ignores it, [When the host does not comply](#when-the-host-does-not-comply) still keeps **checked** numbers honest.
 
 The rented host **should**:
 
-1. Always-on: **root** skill (triggers, 5–7 verbs, `unchecked` law, **plan-then-execute**) plus MCP tool schemas. Not every pack.
+1. Always-on: **root** skill (triggers, the 5–7 tools, `unchecked` law, **plan-then-execute**) plus MCP tool schemas. Not every pack.
 2. On domain match, load **at most two** matching pack skills (2–3 with root). Packs are **on-demand**, not always-on.
 3. On a **large job**, write `./runs/<id>/plan.md` and show it **before** write verbs. Then execute only that plan. Small jobs (one unknown, one short attachment) may skip a written plan.
 4. Call kernel tools instead of one mega-apply of `solve-circuit-problem`.
@@ -207,7 +207,7 @@ The rented host **should**:
 6. Treat `unchecked` as law. Stop when gates refuse.
 7. **May spawn** at most two pack specialists via the **host’s** Task/subagent feature (adapter markdown in [`hosts/adapters/`](../hosts/adapters/)). The CLI, MCP, and UI never start those children. Do not spawn a second EE product. Handoff is the run dir.
 
-Student-without-host is Layer 0 *absence*: CLI + engines + UI remain a complete path for **numbers**. Viva needs a host or a configured local/BYO model. ChatGPT **web** is not a host. Weaker local models on that path still must not mint checked ohms from the essay node.
+Student-without-host is the host **absent**: CLI + engines + UI remain a complete path for **numbers**. Viva needs a host or a configured local/BYO model. ChatGPT **web** is not a host. Weaker local models on that path still must not mint checked ohms from the essay node.
 
 ### When the host does not comply
 
@@ -231,9 +231,9 @@ Skills cannot force a host to call `propose_composition`. A weaker local model o
 
 Anchor: [`GLOSSARY.md`](GLOSSARY.md) “What the kernel can and cannot enforce.”
 
-### 2.2 Layer 1 — Attach (required for hybrid)
+### 2.2 Tools (CLI and MCP)
 
-Always-on ACI, **5–7 verbs** (names illustrative; implementation is a later code plan). As-built today is `list_workflows` + `run_workflow`.
+Always-on tools, **5–7** (names illustrative; implementation is a later code plan). As-built today is `list_workflows` + `run_workflow`.
 
 | Verb | Kind | Notes |
 |------|------|--------|
@@ -247,20 +247,20 @@ Always-on ACI, **5–7 verbs** (names illustrative; implementation is a later co
 
 `run_workflow` / `electrical-engineer run <id>` remain **headless/eval rollback** and student one-command for **short** attachments. On the **host path** they must not own `solve-explain`.
 
-**Never a host tool:** invent a new capability or provider id; confirm photo without UI; present fluent `Vout` as checked; session-defined `lookup_vout_guess`; PTC on physics-write providers.
+**Never a host tool:** invent a new capability or provider id; confirm photo without UI; present fluent `Vout` as checked; session-defined `lookup_vout_guess`; extra permission prompts on physics-write tools.
 
 Do **not** wrap individual providers (`run-spice`, `run-matlab-if-present`, `run-load-flow`, `retrieve-passage`, `solve-explain`) as extra MCP tools. Capabilities are reached through the verbs above. The host names `lumped-circuit-sim`, not a new `run_ngspice` MCP tool.
 
-CLI inner, MCP outer, PTC/Code Mode later and **reads only**. Dual MATLAB MCP: peer scalars untrusted until an EE engine recomputes (FR20).
+CLI inner, MCP outer. Extra host permission prompts, if ever, on **reads only**. Dual MATLAB MCP: peer scalars untrusted until an EE engine recomputes (see PRD: peer MATLAB is not a checked verifier).
 
-### 2.3 Layer 2 — Domain kernel (main)
+### 2.3 Domain kernel
 
 ```text
 Host (+ pack skill)
   large job? write plan.md (Given/Find, packs, asks, capabilities)
         |
         v
-Kernel ACI (Layer 1)
+Our tools
   retrieve | simulate_attachment | propose_composition | label | open_ui | eval
         |
         v
@@ -292,7 +292,7 @@ apply -> ./runs/<id>/ evidentiary band
 
 **Gates / eval / stores (2d–2f).** Unchanged invariants: unmatched, photo confirm, compose allowlist, exact token `unchecked`, gold scores evidentiary artifacts, `./runs/<id>/` is audit not crash-resume.
 
-### 2.4 Layer 3 — Surfaces (main)
+### 2.4 Screens and files
 
 **UI.** Persistent `127.0.0.1` **lab workbook**: This problem, Past work, Books, Notes, photo confirm. Not a ChatGPT clone, file dump, or video timeline. Detail: §9 and [`UI.md`](UI.md).
 
@@ -309,7 +309,7 @@ apply -> ./runs/<id>/ evidentiary band
 
 **Agent file interface.** MCP returns `run_id` + file URIs. The host reads the run dir. Chat/Work copies the viva into `argument.md` when a file is needed. Codex / Cursor / Claude Code can write the file directly.
 
-No Layer 4: these files and the UI *are* Layer 3.
+These files and the UI **are** the screens-and-files part. Do not add another product layer.
 
 ### Context contract (always-on vs on-demand)
 
@@ -321,16 +321,16 @@ ChatGPT **web** is not a host. Chat/Work: pin root skill until Skills-over-MCP i
 
 ### 2.5 Kernel hooks (middleware we own)
 
-Not host compaction, continuation, or essay lint. Those stay Layer 0. The kernel pipeline is **deterministic** (code later; this is the contract):
+Not host compaction, continuation, or essay lint. Those stay on the **host**. The kernel pipeline is **deterministic** (code later; this is the contract):
 
 1. **Ingest** (`rag add` / BYO): gate ask → extract PDF/scan → chunk (`book_id` / `chapter_id` / `page`) → index via the RAG facade → inventory row. Fail closed if unreadable (`CD-RAG-PARSE`). Circuit-homework photos do **not** take this path (`ingest-figure`).
-2. **Validate-then-apply** (D18): allowlist of capability/provider ids, typed ports, unmatched predicate, 16/24 cap.
+2. **Validate-then-apply:** allowlist of capability/provider ids, typed ports, unmatched predicate, 16/24 cap.
 3. **Simulate repair:** `repair_max: 2` then `label-unverified`. Never a fake pass.
 4. **Post-run observe:** write `observation.json` (or fields on the evidentiary seed until rename).
 5. **Lesson propose:** if `unchecked`, draft an 800-char `lessons.md` excerpt in the run dir. Do **not** auto-append to project memory.
 6. **Eval:** `electrical-engineer eval` reads the evidentiary band only.
 
-A Python middleware loop that re-asks a model is the H5 falsifier. Optional **host** hook snippets (Claude/Codex copy-paste) live in [`hosts/`](hosts/) and may remind the host to write `argument.md`; they are not kernel code.
+A Python middleware loop that re-asks a model is a **second chat product** — do not ship it. Optional **host** hook snippets (Claude/Codex copy-paste) live in [`hosts/`](hosts/) and may remind the host to write `argument.md`; they are not kernel code.
 
 ---
 
@@ -342,7 +342,7 @@ A Python middleware loop that re-asks a model is the H5 falsifier. Optional **ho
 | Install | `pip` (and equivalent) on **Linux, macOS, and Windows** |
 | Offline | Required: with a configured local model, CLI-only is a complete path. Model-free providers (circuit sim, LTI, load-flow, algebraic-check) work with **no** model |
 | MATLAB | **Optional provider.** Product and CI must work with OSS only |
-| Later CLI skin | Owner also allowed a Go or Rust CLI wrapping this Python runner. Not the Proposed freeze. Revisit after PRD accept if a static binary is needed |
+| Later CLI skin | Owner also allowed a Go or Rust CLI wrapping this Python runner. Not this-pass freeze. Revisit if a static binary is needed |
 
 This table is **how this graph ships**, not what the lab *is*. A later pass may wrap the same capability registry in another language. Main LLM work lives in **Cursor / Claude Code / Codex / ChatGPT desktop** (or a local/BYO model). The CLI is deterministic glue: YAML replay, Python providers, files, UI, eval. ChatGPT web is not a host.
 
@@ -451,9 +451,9 @@ MCP/CLI verb. Body: a DAG whose **every node is a capability id or a registered 
 9. If `apply: false`: persist the validated outline into `plan.md` (capability/provider ids + ports, not physics logs) and return `run_id` + path. **Do not run providers.**
 10. If `apply: true`: **apply** through the in-process runner.
 
-This is GraSP-shaped, not a skill-to-DAG compiler: the host proposes edges among **already registered** capabilities/providers; the kernel verifies types and allowlist; locality-bounded repair stays `repair_max: 2` inside simulate providers. Do not call this a GraSP compile. Large jobs should call `apply: false` first (FR23).
+The host proposes edges among **already registered** capabilities/providers; the kernel verifies types and allowlist; locality-bounded repair stays `repair_max: 2` inside simulate providers. This is not a compiler that turns a skill into a graph. Large jobs should call `apply: false` first (write the plan, then run).
 
-**No reasoning-mode node.** A graph must not contain a node that yields to an LLM mid-DAG and then continues. That is `solve-explain` on the host path (FR21) and the H3/H5 falsifier. The host reasons **between** kernel verbs (staged `propose_composition` / `simulate_attachment`). Student HITL stays `ask-student` / photo confirm.
+**No reasoning-mode node.** A graph must not contain a node that yields to an LLM mid-run and then continues. That is the host-path essay node (`solve-explain`) and the stop condition (a second chat product). The host reasons **between** kernel tools (staged `propose_composition` / `simulate_attachment`). The student is asked via `ask-student` or photo confirm — not via an in-graph model turn.
 
 ### `compose-from-parts`
 
@@ -522,13 +522,13 @@ Each write verb returns short JSON + `run_id` + artifact **paths** (not bodies).
 
 ## 9. Persistent localhost UI (critical)
 
-The UI is a **first-class product surface**, not a fine-diagram gadget. Student-facing pages, copy, and grids: [`UI.md`](UI.md) (D21). Visual tokens: [`design/DESIGN-coinbase.md`](design/DESIGN-coinbase.md).
+The UI is a **first-class product surface**, not a fine-diagram gadget. Student-facing pages, copy, and grids: [`UI.md`](UI.md). Visual tokens: [`design/DESIGN-coinbase.md`](design/DESIGN-coinbase.md).
 
 **Why.** A UG EE student (and the host agent) need a place that **stays up** so they can **see the homework check** as a lab workbook: this problem, past work, books, notes, photo confirm. Understanding is the point. They must not be asked to read implementation files.
 
 **Student-facing law.** The UI maps kernel files to lab surfaces. It does **not** present `.md`, `.json`, `.yaml`, or `.toml` as the product. Results are tables and figure grids; method is rendered prose; plan is Given/Find; books are quote cards; notes are forms. Exact token `unchecked` stays visible (FR2) with a plain gloss. Software words (MCP, DAG, slots, FastAPI, run UUIDs as the title) stay off the chrome. EE artifacts (circuit listing, Bode plot, phasor table) stay on.
 
-**Stack (this-pass freeze, not the domain).** FastAPI serves a Vite/React CSR SPA. Zustand holds layout + current problem id. A **thin in-repo slot registry** implements the **pages** in [`UI.md`](UI.md) (not a file browser). Slot map is an implementer name for those pages: `root`, nav, `this-problem` (results + method + plan + what-the-lab-did), `past-work`, `books`, `notes`, `photo.confirm`, `ask`. Legacy names `run.detail` / `run.bands` / `run.plan` / `run.observation` / `rag.inventory` / `memory.excerpt` / `gates.prompt` **map** to those pages — they are not student labels. Layout: `src/electrical_engineer` + `ui/`. Swapping the web stack later does not change Layer 3’s job.
+**Stack (this-pass freeze, not the domain).** FastAPI serves a Vite/React CSR SPA. Zustand holds layout + current problem id. A **thin in-repo slot registry** implements the **pages** in [`UI.md`](UI.md) (not a file browser). Slot map is an implementer name for those pages: `root`, nav, `this-problem` (results + method + plan + what-the-lab-did), `past-work`, `books`, `notes`, `photo.confirm`, `ask`. Legacy names `run.detail` / `run.bands` / `run.plan` / `run.observation` / `rag.inventory` / `memory.excerpt` / `gates.prompt` **map** to those pages — they are not student labels. Layout: `src/electrical_engineer` + `ui/`. Swapping the web stack later does not change the lab window’s job.
 
 **Shape**
 
@@ -541,9 +541,9 @@ The UI is a **first-class product surface**, not a fine-diagram gadget. Student-
 - After photo confirm: **still no sim** in the stub (C4 sim remains later).
 - MCP does not wait; fail payload points at this UI (`ui_url` includes `run_id`).
 
-**As-built vs target.** As-built UI dumps `summary.json` in a `<pre>` and lists run ids. That fails [`UI.md`](UI.md). FR18 has no student-facing split until This problem’s two panes ship. This pass specifies the target; filling pages is a later UI **code** plan. Do not swap FastAPI+React for a static viewer (photo confirm and gates need HTTP). Do not grow an in-UI agent loop (H5).
+**As-built vs target.** As-built UI dumps `summary.json` in a `<pre>` and lists run ids. That fails [`UI.md`](UI.md). Results vs Method has no student-facing split until This problem’s two panes ship. This pass specifies the target; filling pages is a later UI **code** plan. Do not swap FastAPI+React for a static viewer (photo confirm and gates need HTTP). Do not grow an in-UI agent loop.
 
-This remains **H3 glue** (a lab workbook). If the UI grows its own agent loop, that is the H5 falsifier.
+This remains a **lab workbook** (thin glue, not a new chat app). If the UI grows its own agent loop, stop.
 
 ---
 
@@ -641,7 +641,7 @@ First-class **this-pass** libraries (swap behind `render-figure` if a later pass
 
 Export **png** (share/report) and **svg** (crisp in UI).
 
-### Two-band file contract (Layer 3)
+### Results and Method files
 
 OpenMontage steal: **schemas**, not video checkpoints. Prose (on-disk JSON Schema is a later P1; not this docs pass).
 
@@ -758,7 +758,7 @@ CLI path for `solve-explain` uses a local OpenAI-compatible HTTP client (LM Stud
 - Crash-resume, HTTP MCP, `resume` CLI, BYOK
 - Hosted eval, full schematic editor, locking a RAG engine before the spike
 - Per-field JSON Schema
-- Faculty/LMS, H4/H5, second git repo, civil/mechanical packs
+- Faculty/LMS; Electric Pi as the runtime; a second Electrical Engineer chat app; second git repo; civil/mechanical packs
 - Treating ngspice, MATLAB, YAML, FastAPI, or LightRAG as the product identity
 - Claiming every UG numeral is simulated; the honest path is `unchecked`
 - PG-only optimal control, live PLC, analog tape-out, commercial full-wave as a public promise
@@ -783,32 +783,20 @@ Closed A1 2026-09-10 (owner: start / execute this graph):
 - [x] `eval/gold/` + `electrical-engineer eval`
 - [x] **Architecture accepted** for this graph
 
-Proposed hybrid overlay (2026-09-12) — owner Accept lives on the vision lock sheet, not here:
+Accepted with architecture (2026-09-12). Decision records: [`../DECISIONS.md`](../DECISIONS.md).
 
 - Host + pack skills compose; typed engines; short attachments; `propose_composition` validate-then-apply
-- Two-band files + UI viewer; mega YAML with `solve-explain` is host-path rollback
-- Layer 4 withheld; L0 contract and L1 ACI updated because the hybrid requires them
-
-Proposed capability-first overlay (D19, 2026-09-12) — same Accept sheet:
-
+- Results and Method files + lab window; mega YAML with `solve-explain` is CLI/eval rollback
+- No fifth product layer; host contract and the 5–7 tools updated because the hybrid needs them
 - Coverage law: every in-bound UG question has a complete path (check or `unchecked`)
-- Capability registry is the domain contract; providers and YAML/UI/RAG engines are this-pass freezes
+- Capability list is the domain contract; providers and YAML/UI/RAG engines are this-pass freezes
 - `propose_composition` may name capability ids; kernel binds an installed provider or `CD-NO-PROVIDER`
-
-Proposed harness overlay (D20, 2026-09-12) — same Accept sheet:
-
 - Host owns loop, compaction, spawn; kernel owns persist, observation, ingest hooks, memory write law
 - BYO RAG pipeline specified; extract/chunk is a later code plan (`CD-RAG-PARSE`)
 - Pack specialists are host-native adapters, not a Python orchestrator
-
-Proposed student-facing UI overlay (D21, 2026-09-12) — same Accept sheet:
-
 - Lab workbook pages: This problem, Past work, Books, Notes; Confirm / Ask overlays
 - Never present `.md` / `.json` / YAML as the product; DESIGN-coinbase grids
 - No reasoning-mode node in `propose_composition`
-
-Proposed critic follow-up (D22, 2026-09-12) — same Accept sheet:
-
 - Host-skip is a claim boundary, not a transcript scanner; CLI backstop; weak-model essay cannot mint ohms
-- Architecture is how; ADRs/glossary are why and words
+- Architecture is how; decision records are why; glossary is words
 - Eval has two axes: Results gold vs Method checklist; no LLM-as-judge viva

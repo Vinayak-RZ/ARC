@@ -2,7 +2,7 @@
 
 ADR seeds from the research phase, plus owner-accepted product locks (2026-09-09). Status values: `proposed` | `accepted` | `superseded`.
 
-Research memo [`research/synthesis/recommendation.md`](research/synthesis/recommendation.md) remains **historical advice**. Product identity is [`docs/PID.md`](docs/PID.md) (Accepted). Requirements: [`docs/PRD.md`](docs/PRD.md).
+Research memo [`research/synthesis/recommendation.md`](research/synthesis/recommendation.md) remains **historical advice**. Product identity is [`docs/PID.md`](docs/PID.md) (Accepted). Requirements: [`docs/PRD.md`](docs/PRD.md) (Accepted). How: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (Accepted).
 
 ---
 
@@ -20,7 +20,7 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 
 ## ADR-0002 — Knowledge grounding (RAG spine)
 
-- **Status:** proposed
+- **Status:** accepted (BYO pipeline; engine still ADR-0004)
 - **Context:** Undergrad EE knowledge is dense with formulae and worked examples; model priors alone are insufficient.
 - **Decision:** Ground concepts via **BYO textbook RAG** (MCP tools + structure-aware hybrid retrieval); use skills for pedagogy; never commit commercial book text.
 - **Consequences:** Ingestion quality becomes a core engineering problem; licence-safe by default.
@@ -31,7 +31,7 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 
 ## ADR-0003 — Verification tier
 
-- **Status:** proposed
+- **Status:** accepted (MATLAB if present; OSS first-class; product works without MATLAB)
 - **Context:** Numeric EE answers must not be invented.
 - **Decision:** **MATLAB/Simulink MCP when a licence is present**; OSS SPICE/Python stack is **first-class** otherwise (P1 default in the PRD, not a PID lock).
 - **Consequences:** Mixed-licence audience. Unverified numbers are **labelled unchecked** — they are allowed, but must never be presented as simulation or lab results. (Research-era “refuse unverified simulation” is replaced by this label policy.)
@@ -97,7 +97,7 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 
 ## ADR-0009 — Hybrid engine composition (host path)
 
-- **Status:** proposed (not owner-Accepted)
+- **Status:** accepted (2026-09-12)
 - **Context:** Long YAML that includes `solve-explain` starves the host viva (FR21). Unconstrained on-the-fly tool graphs (ToolWeave) would let fluent `Vout` become SPICE. D13 froze “router never invents a DAG.”
 - **Decision:** **Hybrid quality.** Host + on-demand pack skills compose the job. Large jobs **write `plan.md` then execute**. Typed engines own numbers. Short physics attachments (`simulate-circuit`) stay as YAML replay. Host may `propose_composition` of **registered** engines (`apply: false` validates; `apply: true` runs). Mega `solve-*` YAML is CLI/gold rollback. Four layers 0–3; no Layer 4. Python multi-turn composition dialog remains the H3 falsifier.
 - **Consequences:** Reopens D13 only into allowlisted engine graphs. MCP target verbs include `propose_composition` (still 5–7). `solve-explain` is not on the host-path allowlist. Unmatched still cannot auto-spice (netlist-port predicate). Files: `plan.md` + `evidentiary.json` seed + `argument.md`. Root skill `skills/SKILL.md` teaches plan-then-execute.
@@ -108,7 +108,7 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 
 ## ADR-0010 — Capability-first domain kernel (D19)
 
-- **Status:** proposed (not owner-Accepted)
+- **Status:** accepted (2026-09-12)
 - **Context:** Hybrid composition (ADR-0009) still named *providers* (`run-spice`, YAML, FastAPI, LightRAG) as if they were the product. That cannot express “any in-bound UG EE question”: signals/EM/measurements look like missing SPICE recipes. The owner asked to refine architecture so it is general enough for the UG bound and not heavily reliant on one stack, while staying domain-specific.
 - **Decision:** **Capability registry is the domain contract.** Fourteen allowlisted capabilities cover the curriculum-map packs and seven task genres. Providers (ngspice, python-control, pandapower, sympy, MATLAB-if-present, RAG facade, figure libraries) and encodings (YAML attachments, Python CLI, FastAPI+React) are **this-pass freezes**. Coverage law: every in-bound question has a complete path (provider check **or** exact token `unchecked` + cannot-do). `propose_composition` may name capability ids; the kernel binds an installed provider or `CD-NO-PROVIDER`. Does not reopen H3/H5, `unchecked`, UG bound, or validate-then-apply.
 - **Consequences:** Pack skills teach method + which capability to request, not “always SPICE.” Missing YAML is `CD-YAML-GAP`, not out-of-product. Runner still uses today’s Python activity keys until a code plan maps capability→provider. Gold depth may stay circuits-first.
@@ -119,7 +119,7 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 
 ## ADR-0011 — Harness persist, observe, spawn (D20)
 
-- **Status:** proposed (not owner-Accepted)
+- **Status:** accepted (2026-09-12)
 - **Context:** Context and ACI kinds were specified; as-built persist (memory list-only, RAG inventory-only), observation (summary without reason enums), kernel hooks vs host compaction, and pack-specialist spawn files were thin. Owner asked to specify the rest of a harness without becoming H5.
 - **Decision:** **Split the harness.** Layer 0 owns loop, compaction, continuation, model routing, and **host-native** specialist spawn. Layer 2 owns run audit, named memory files (explicit write; `lessons.md` proposed not silent), BYO RAG ingest pipeline, `observation.json`, and deterministic hooks (ingest, validate-then-apply, repair, observe, lesson-propose, eval). Adapter markdown lives in `hosts/adapters/` for the student host to copy. Local-only: no fleet learning, no chat dumps.
 - **Consequences:** Extract/chunk remains `CD-RAG-PARSE` until a code plan. Observation may seed on `summary.json`. Chat/Work still does not claim spawn. A Python specialist orchestrator remains the H3/H5 falsifier.
@@ -130,7 +130,7 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 
 ## ADR-0012 — Student-facing lab UI (D21)
 
-- **Status:** proposed (not owner-Accepted)
+- **Status:** accepted (2026-09-12)
 - **Context:** As-built UI dumps `summary.json` in a `<pre>` and lists run ids. Owner asked for a non-technical workbook: UG EE students who are not software-fluent; no Markdown/JSON as the product; proper grids; DESIGN-coinbase quality. Separately confirmed: no in-DAG reasoning-mode node.
 - **Decision:** Specify pages **This problem**, **Past work**, **Books**, **Notes**, plus Confirm / Ask overlays. Kernel files stay on disk; the UI **maps** them to cards, tables, figure grids, and rendered prose. Copy dictionary hides MCP/DAG/slots. No reasoning-mode node: host reasons between kernel verbs (ADR-0009 / FR21).
 - **Consequences:** Filling `ui/` is a later code plan. Photo confirm and gates still need HTTP. No in-UI agent loop (H5). No v1 “show files” debug mode.
@@ -141,7 +141,7 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 
 ## ADR-0013 — Host-skip, readable architecture, viva signal (D22)
 
-- **Status:** proposed (not owner-Accepted)
+- **Status:** accepted (2026-09-12)
 - **Context:** Critics: (2) hosts we do not control may ignore skills; (3) architecture reads as an internal decision log; (5) we measure checked ohms, not “enough for a viva.”
 - **Decision:** **Claim boundary** — lab-checked means kernel-written Results; chat-only is `CD-HOST-SKIP`; CLI+UI is the backstop; no Python nag-loop. **Readable how** — [`docs/GLOSSARY.md`](docs/GLOSSARY.md) + architecture preamble; **why** stays in this file. **Two eval axes** — Results gold vs Method checklist (`expect-viva.json`); checklist never flips `unchecked`; not a human viva (`CD-VIVA-SIGNAL`).
 - **Consequences:** Empty `eval/gold/explain/` and `host-skip/` are specified seams, not a pass. Forged Results files remain `CD-HOST-WRITE`.

@@ -1,5 +1,7 @@
 # PHASE_ARCH_D22_COMPLETION — Host-skip, glossary, viva axis
 
+> **Historical completion log.** Host-skip, glossary, and viva axis are Accepted in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) and [`docs/GLOSSARY.md`](docs/GLOSSARY.md).
+
 ## Completed work
 
 Docs-only response to three critics: host non-compliance, terminology density, missing pedagogical signal. No product code.

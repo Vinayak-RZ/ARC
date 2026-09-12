@@ -1,4 +1,6 @@
-# Phase P completion — Accepted PID + PRD draft
+# Phase P completion — PID + PRD (historical)
+
+> **Historical.** Live identity and requirements: [`docs/PID.md`](docs/PID.md), [`docs/PRD.md`](docs/PRD.md) (Accepted 2026-09-12).
 
 ## Gate
 

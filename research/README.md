@@ -1,5 +1,7 @@
 # Research phase — map
 
+> **Historical.** These notes decided what to build. Current authority is [`docs/PID.md`](../docs/PID.md), [`docs/PRD.md`](../docs/PRD.md), [`docs/ARCHITECTURE.md`](../docs/ARCHITECTURE.md), [`docs/UI.md`](../docs/UI.md), [`docs/GLOSSARY.md`](../docs/GLOSSARY.md). Do not treat this directory as the live product contract.
+
 This directory holds the **research-only** phase of Electrical-Engineer.
 Nothing here is product code. The goal is to decide *what to build* (harness base,
 EE textbook RAG, verification surface, capability framing, and — in WS-G — product
@@ -14,7 +16,7 @@ class, names, orchestrator split, and domain-kernel layering) and write recommen
 2. Check [`DECISION_REGISTER.md`](DECISION_REGISTER.md) — options and current stances.
 3. Read domain notes under [`notes/`](notes/).
 4. End with [`synthesis/recommendation.md`](synthesis/recommendation.md) (historical O1 harness) and [`synthesis/rag-stack-recommendation.md`](synthesis/rag-stack-recommendation.md) when evaluating RAG engine choice.
-5. For class, names, hybrid architecture, and layering: [`synthesis/domain-system-recommendation.md`](synthesis/domain-system-recommendation.md) then [`synthesis/vision-lock-sheet.md`](synthesis/vision-lock-sheet.md). Kernel harvest: [`notes/agentic-kernel-2026.md`](notes/agentic-kernel-2026.md), [`notes/domain-kernel-layering.md`](notes/domain-kernel-layering.md), [`notes/host-first-class-attach.md`](notes/host-first-class-attach.md), [`notes/hybrid-engine-composition.md`](notes/hybrid-engine-composition.md). Proposed product docs: [`docs/PRD.md`](../docs/PRD.md).
+5. For class, names, hybrid architecture, and layering: [`synthesis/domain-system-recommendation.md`](synthesis/domain-system-recommendation.md) then [`synthesis/vision-lock-sheet.md`](synthesis/vision-lock-sheet.md). Kernel harvest: [`notes/agentic-kernel-2026.md`](notes/agentic-kernel-2026.md), [`notes/domain-kernel-layering.md`](notes/domain-kernel-layering.md), [`notes/host-first-class-attach.md`](notes/host-first-class-attach.md), [`notes/hybrid-engine-composition.md`](notes/hybrid-engine-composition.md). Product docs: [`docs/PRD.md`](../docs/PRD.md).
 6. Sources are catalogued in [`source-ledger.md`](source-ledger.md).
 
 ## Note shape

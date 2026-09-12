@@ -1,5 +1,7 @@
 # Electrical Engineer — Master Execution Plan
 
+> **Historical.** This graph shipped H1 (CLI, YAML runner, localhost UI, MCP, eval). Current product contract: [`docs/PID.md`](docs/PID.md), [`docs/PRD.md`](docs/PRD.md), [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/UI.md`](docs/UI.md). Do not treat YAML recipes or slot UI as the identity.
+
 > Nawab **project** profile + graph-engineering §19.  
 > **The graph you run:** [`EXECUTION_GRAPH.md`](EXECUTION_GRAPH.md)  
 > **Node plans (all linked):** [`plans/nodes/`](plans/nodes/) · index [`plans/README.md`](plans/README.md)  

@@ -1,5 +1,7 @@
 # PHASE_ARCH_D19_COMPLETION — Capability-first architecture overlay
 
+> **Historical completion log.** Architecture is now Accepted in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
 ## Completed work
 
 Refined Proposed architecture so the kernel is a UG EE co-solver, not an ngspice/YAML/FastAPI product. Added coverage law, capability registry, pack method skills, ADR-0010, D19 lock-sheet row.

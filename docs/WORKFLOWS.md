@@ -1,11 +1,11 @@
 # Named workflows — Electrical Engineer
 
-**Status:** Catalog for this graph (ids **renamable until the first CLI ships**).  
+**Status:** Replay catalog (CLI shipped). Ids are stable unless an owner lock says otherwise.  
 **Authority:** [`ARCHITECTURE.md`](ARCHITECTURE.md), [`curriculum-map.md`](curriculum-map.md)
 
 Recipes live at `workflows/<pack>/<id>.yaml`. Discovery is `electrical-engineer workflows` / MCP `list_workflows` — **not** a runnable recipe.
 
-Purpose: named DAGs so the agent retrieves, cites, verifies, and explains **better**. **Host path** uses **short physics attachments** (`simulate-circuit`, `photo-to-netlist`, …) or `propose_composition` of **capability ids**. Large jobs write `plan.md` first (FR23). Mega `solve-*` / `explain-*` YAML that include `solve-explain` are **CLI-without-host / gold rollback**, not the host’s chat brain. The router only **picks** a short row (or asks, or `unmatched-cosolver`). New DAGs via `propose_composition` (allowlisted capabilities/providers) or `compose-from-parts --advanced`.
+Purpose: named DAGs so the agent retrieves, cites, verifies, and explains **better**. **Host path** uses **short physics attachments** (`simulate-circuit`, `photo-to-netlist`, …) or `propose_composition` of **capability ids**. Large jobs write `plan.md` first then `argument.md`. Mega `solve-*` / `explain-*` YAML that include `solve-explain` are **CLI-without-host / gold rollback**, not the host’s chat brain. The router only **picks** a short row (or asks, or `unmatched-cosolver`). New DAGs via `propose_composition` (allowlisted capabilities/providers) or `compose-from-parts --advanced`.
 
 The catalog below is **not** the domain. The domain is every in-bound UG pack × genre with a complete path ([`ARCHITECTURE.md`](ARCHITECTURE.md) §0). YAML rows are this-pass **bindings**. A signals or EM question is in-bound even when no YAML row exists yet — compose capabilities or use `unmatched-cosolver` + `unchecked`.
 
@@ -194,7 +194,7 @@ flowchart LR
 **Inputs:** phone photo **and** textbook screenshot.  
 **Stages:** `detect-components` → `connect-wires` → `ocr-labels` → `draft-netlist` → `confirm-topology` (one human confirm in the **persistent localhost UI**).  
 **Outputs:** SPICE-subset `.cir` **and** JSON graph. Low-confidence OCR **always** flagged.  
-**UI:** localhost viewer (library SVG/PNG + JSON), not SVG-only dump, not ASCII-only.  
+**UI:** localhost lab window (library SVG/PNG + mapped results), not a JSON dump as the product, not ASCII-only.  
 **After confirm:** **stop**. No simulate node in this stub. C4 sim remains later.  
 **Untrusted:** the image cannot override gates or `unchecked`.
 

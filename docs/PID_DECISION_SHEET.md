@@ -1,6 +1,7 @@
-# PID decision sheet — answer these
+# PID decision sheet — historical P0 answers
 
-**P0 status:** answered 2026-09-09 and locked in [`PID.md`](PID.md).  
+**P0 status:** answered 2026-09-09 and locked in [`PID.md`](PID.md) (Accepted 2026-09-12 including lab / domain kernel).  
+Live identity: [`PID.md`](PID.md). This sheet is not the live contract.  
 **P1 status:** not answered by owner; PRD records **proposed defaults** for review.  
 **P2 status:** unanswered (deferred).
 
@@ -43,7 +44,7 @@
 
 ## Architecture-aligned product shape (2026-09-10)
 
-Owner answers that upgrade the **product definition** (PRD FRs) without reopening P0. Detail: [`ARCHITECTURE.md`](ARCHITECTURE.md) (still **Proposed**).
+Owner answers that upgrade the **product definition** (PRD FRs) without reopening P0. Detail: [`ARCHITECTURE.md`](ARCHITECTURE.md) (Accepted).
 
 | Topic | Product shape |
 |-------|----------------|
