@@ -108,7 +108,7 @@ A coding harness is prompts, tools, filesystem, orchestration, hooks, and observ
 | Persist | **L2** | run dir, memory files, RAG index | Silent chat dumps; crash-resume; fleet learning |
 | Observe / verify | **L2 + L3** | `observation.json` (or evidentiary seed), gold, `unchecked` | LLM-as-judge; memory `errors.md` as a checked number |
 
-**Spawn map (host-native only).** The main host (Cursor / Claude Code / Codex) may start **at most two** pack specialists (maths may occupy the second slot). Each child loads one pack skill, calls the **same** EE MCP, and must not mint checked numbers or skip UI confirm. Handoff is `run_id` + file URIs under `./runs/<id>/` (or `children/` — §6), not a message bus. Parent writes `argument.md`. Chat/Work does **not** claim pack spawn until Skills-over-MCP. Adapter files: [`hosts/adapters/`](../hosts/adapters/). A Python process that interviews, plans, and fans out specialists is the H3/H5 falsifier.
+**Spawn map (host-native only).** The main rented host (Cursor / Claude Code / Codex) may start **at most two** pack specialists (maths may occupy the second slot) using **that host’s** Task/subagent UI. Each child loads one pack skill, calls the **same** EE MCP, and must not mint checked numbers or skip UI confirm. Handoff is `run_id` + file URIs under `./runs/<id>/` (or `children/` — §6), not a message bus. Parent writes `argument.md`. Chat/Work does **not** claim pack spawn until Skills-over-MCP. Adapter files: [`hosts/adapters/`](../hosts/adapters/). The CLI, MCP server, and UI **never** start specialists. A Python process that interviews, plans, and fans out specialists is the H3/H5 falsifier.
 
 ---
 
@@ -191,7 +191,7 @@ The rented host must:
 4. Call kernel ACI instead of one mega-apply of `solve-circuit-problem`.
 5. Write the engineering-argument band to `./runs/<id>/argument.md` when a file is needed (Chat/Work may start in the transcript and copy).
 6. Treat `unchecked` as law. Stop when gates refuse.
-7. **May spawn** at most two pack specialists via the **host’s** Task/subagent feature (adapter markdown in [`hosts/adapters/`](../hosts/adapters/)). Do not spawn a second EE product. Handoff is the run dir.
+7. **May spawn** at most two pack specialists via the **host’s** Task/subagent feature (adapter markdown in [`hosts/adapters/`](../hosts/adapters/)). The CLI, MCP, and UI never start those children. Do not spawn a second EE product. Handoff is the run dir.
 
 Student-without-host is Layer 0 *absence*: CLI + engines + UI remain a complete path for **numbers**. Viva needs a host or a configured local/BYO model. ChatGPT **web** is not a host.
 
