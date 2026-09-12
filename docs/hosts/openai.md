@@ -29,5 +29,8 @@ ChatGPT **web** is **not** a host.
    [`../PRD.md`](../PRD.md) FR17 (`simulate_attachment`,
    `propose_composition`). Large jobs write `plan.md` first (FR23). Host
    writes `argument.md`.
-
-6. Peer MATLAB MCP: FR20.
+6. Optional pack specialist: copy
+   [`../../hosts/adapters/codex/pack-specialist.md`](../../hosts/adapters/codex/pack-specialist.md)
+   into the student’s Codex spawn path. At most two packs; same MCP; parent
+   writes the viva. Not a second product.
+7. Peer MATLAB MCP: FR20.

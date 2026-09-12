@@ -14,6 +14,9 @@ First-class host. Same kernel contract as Cursor, Codex, and ChatGPT desktop.
    first (FR23). Do not run mega YAML that includes `solve-explain` on this
    host path.
 5. Host-native subagents (Task) may call the same EE MCP. We do not ship a
-   custom multi-agent runtime (FR19).
+   custom multi-agent runtime (FR19). Copy
+   [`../../hosts/adapters/claude/pack-specialist.md`](../../hosts/adapters/claude/pack-specialist.md)
+   into the student’s Claude agents. At most two pack specialists. Handoff is
+   `run_id` + `./runs/<id>/`. Parent writes `argument.md`.
 6. Claude Code is optional. The CLI works without it.
 7. Peer MATLAB MCP: FR20 — EE owns checked numbers.

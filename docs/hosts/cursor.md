@@ -23,3 +23,7 @@ First-class host. Same kernel contract as Claude Code, Codex, and ChatGPT deskto
 8. Optional student `AGENTS.md` (homework repo, not this repo): ≤10 lines —
    this is an EE lab; load the root skill; large jobs plan then execute;
    host writes the viva; numbers only via EE MCP or `unchecked`.
+9. Optional pack specialist: copy
+   [`../../hosts/adapters/cursor/pack-specialist.md`](../../hosts/adapters/cursor/pack-specialist.md)
+   into the **homework** project Task/skills path. Never into this product
+   repo’s `.cursor/skills/`. At most two packs. Handoff is the run dir.
