@@ -19,7 +19,8 @@ Live status. Research phase completed on `cursor/ee-research-phase-7e0c`. Produc
 | Curriculum map | done | `docs/curriculum-map.md` — UG India+global; GATE = eval overlay |
 | PRD | **accepted (this graph)** | FR10–FR16; §10/§11 closed D0 |
 | Architecture research | done | composability, DAG/language, catalog draft |
-| Technical architecture | **accepted (this graph)** | `docs/ARCHITECTURE.md`, ADR-0007/0008 |
+| Technical architecture | **accepted (this graph) + Proposed D19 overlay** | `docs/ARCHITECTURE.md` §0 capability registry; ADR-0010 |
+| Pack skills | **Proposed D19 method bodies** | `skills/<pack>/SKILL.md` — UG method + capability ids |
 | Product execution plan | **graph complete (H1)** | owner start 2026-09-10; T1+R1 logged |
 | UI design lock | **closed** | DESIGN-coinbase; ADR-0008 accepted |
 | Validator | PASS | `./scripts/research/validate-research.sh --full` |
@@ -49,14 +50,14 @@ Live status. Research phase completed on `cursor/ee-research-phase-7e0c`. Produc
 | 2026-09-10 | Compiled nawab project plan + execution graph + 25 node plans; Gate 0 closed |
 | 2026-09-10 | DESIGN-coinbase locked as UI visual system; ADR-0008 seeded; Wave 0 waits on owner start |
 | 2026-09-10 | Owner start: D0+A1 executed; Spec Kit scaffolded; product `src/` begins Wave 1 |
-| 2026-09-11 | IITR EE book catalog + CC-BY Kuphaldt seed; retrieve ranks chapter; explain/Q&A gold |
+| 2026-09-12 | D19 capability-first overlay: coverage law, 14 capabilities, pack method skills; providers/YAML/UI are this-pass freezes |
 
 ## Handoff
 
 PID: [`docs/PID.md`](docs/PID.md) (Accepted)  
 PRD: [`docs/PRD.md`](docs/PRD.md) (Accepted for this graph)  
-Architecture: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (Accepted for this graph)  
-ADRs: [`DECISIONS.md`](DECISIONS.md)  
+Architecture: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (Accepted A1 + **Proposed D19** capability-first overlay)  
+ADRs: [`DECISIONS.md`](DECISIONS.md) (ADR-0010 proposed)  
 Curriculum: [`docs/curriculum-map.md`](docs/curriculum-map.md)
 
-**Next:** maintain on `main` after PR review. No further graph waves in this plan.
+**Next:** owner Accept of D19; then a code plan for capability→provider bind. No README rewrite until Accept.

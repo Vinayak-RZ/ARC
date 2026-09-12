@@ -27,7 +27,7 @@ AICTE also announced a newer UG EE model curriculum (late 2024 news). The **down
 
 ## Union of core subjects (product bound)
 
-These packs are in the public UG promise. Depth order for implementation is a P1 default (circuits, then control), not a claim that other packs are out of the product.
+These packs are in the public UG promise. Depth order for implementation is a P1 default (circuits, then control), not a claim that other packs are out of the product. Architecture coverage: every pack × genre has a complete path ([`ARCHITECTURE.md`](ARCHITECTURE.md) §0).
 
 | Pack | What UG students actually take (union) | Present in |
 |------|----------------------------------------|------------|

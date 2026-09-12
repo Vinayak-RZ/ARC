@@ -33,3 +33,5 @@ Honest holes. Prefer a row here over fake gold. Expanded by B_NODES and later pa
 | CD-EM-HFSS | Commercial full-wave solvers as the product path | UG OSS bound | Analytic UG identities |
 | CD-PE-HIL | Hardware-in-the-loop converter benches | UG OSS bound | Averaged models / unchecked |
 | CD-MATHS-CAS | A full CAS replacement for every exam identity | UG OSS bound | sympy when present else unchecked |
+| CD-NO-PROVIDER | A requested capability has no installed provider | Honest hole, not a fake number | Exact token `unchecked`; later install/register a provider for that capability |
+| CD-YAML-GAP | No named YAML row for this pack/genre | YAML is replay, not the bound | `propose_composition` of capability ids, or unmatched + `unchecked` |

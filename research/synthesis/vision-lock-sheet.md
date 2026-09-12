@@ -77,19 +77,27 @@ Written into Proposed PRD FR17–FR22 / ARCHITECTURE §2 2026-09-12 (not owner-A
 - [ ] Accept
 - [ ] Reject
 
-Written into Proposed ARCHITECTURE / PRD FR10/FR17/FR23 2026-09-12 (not owner-Accepted).
+**D19 Capability-first coverage (any UG EE question)**
+
+- Capability registry is the domain contract; providers and YAML/UI/RAG engines are this-pass freezes.
+- Coverage law: every in-bound pack × genre has a complete path (check or `unchecked`).
+- `propose_composition` may name capability ids; kernel binds providers. Pack skills teach method, not a single simulator.
+- [ ] Accept
+- [ ] Reject
+
+Written into Proposed ARCHITECTURE §0, PRD FR10/FR19, pack `skills/` 2026-09-12 (not owner-Accepted).
 
 ### Later docs pass
 
-**Done as Proposed (2026-09-12), not Accepted:** PID category/hosts, PRD thesis + agent interaction, ARCHITECTURE four-layer map, hybrid L2/L3 composition (D18).
+**Done as Proposed (2026-09-12), not Accepted:** PID category/hosts, PRD thesis + agent interaction, ARCHITECTURE four-layer map, hybrid L2/L3 composition (D18), capability-first coverage (D19) + pack method skills.
 
-**Still waiting on owner Accept:** checkboxes above; then root `README.md` (product-readme) and `DECISIONS.md` ADR (ADR-0009 stays **proposed** until then).
+**Still waiting on owner Accept:** checkboxes above; then root `README.md` (product-readme) and `DECISIONS.md` ADR (ADR-0009 and ADR-0010 stay **proposed** until then).
 
-Would not change until a **code** plan: runner, CLI binary name, skill-pack rewrite, PyPI, HTTP MCP, MCP verb split implementation.
+Would not change until a **code** plan: runner capability→provider bind, CLI binary name, PyPI, HTTP MCP, MCP verb split implementation.
 
 ### Stop line
 
-Owner checkboxes above are empty on purpose. Root README is unchanged until you Accept. This pass did not ship MCP verb splits in Python. Root `skills/SKILL.md` is the always-on plan-then-execute contract (stub).
+Owner checkboxes above are empty on purpose. Root README is unchanged until you Accept. This pass did not ship MCP verb splits in Python. Root `skills/SKILL.md` is the always-on coverage + plan-then-execute contract. Pack skills teach method and capability ids.
 
 ## Open questions
 

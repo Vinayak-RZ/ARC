@@ -80,6 +80,31 @@ should-fix (merged: unmatched predicate, check-numeric FR20, MCP preflight). L4 
 
 should-fix (merged). One critic called missing UI two-band a **blocker** for FR18 student-facing split. Lead: that is a **code/UI** blocker for a later plan; this pass is docs. The architecture now states the as-built hole so it cannot be mistaken for shipped.
 
+## Loop 4 — Capability-first / any UG question / stack independence
+
+Lead: docs overlay D19. Critics readonly if a later pass runs them. Owner locks (H3, `unchecked`, UG bound, QUALITY hybrid, ChatGPT desktop, no unconstrained spice) stay.
+
+### Accepted
+
+- Architecture identity is **UG coverage**, not ngspice / YAML / FastAPI / LightRAG. Those remain this-pass freezes (§0 identity table).
+- Fourteen **capability ids** are the allowlist for `propose_composition`. Provider keys (`run-spice`, …) remain the Python registry until a code plan binds capability→provider.
+- **Coverage law:** every curriculum-map pack × seven genres has a complete path. “Solve any UG EE question” = that path, not omniscience and not PG/plant/tape-out.
+- Pack `SKILL.md` bodies are method (Given/Find, capabilities, honest holes), not four-line spice pointers. Gates stay in code (FR19).
+- `CD-NO-PROVIDER` and `CD-YAML-GAP` are successful co-solver outcomes, not architecture bugs.
+- Do not add Layer 4 for the capability table. It lives in L2 next to the provider map.
+
+### Rejected (reason)
+
+- Delete YAML / Python runner so the kernel is “just skills” — student-without-host and eval still need replay (FR3/FR9).
+- One unconstrained “run whatever tool the host names” capability — unmatched and `unchecked` die (same as ToolWeave).
+- Make FastAPI+React or LightRAG the domain — Layer 3/RAG already had facades; D19 only says so in the identity table.
+- Claim v1 gold already covers ten packs equally — depth ≠ bound (PRD §8).
+- Rename every as-built activity in Python this pass — docs overlay; code plan later.
+
+### Severity
+
+should-fix (merged in docs). Code still speaks provider keys; that is named, not hidden.
+
 ## Appendix — what changed in docs vs what waits for code
 
 | Specified this pass | Waits for a code plan |
@@ -87,6 +112,7 @@ should-fix (merged). One critic called missing UI two-band a **blocker** for FR1
 | Hybrid L2/L3, L1 ACI verbs, L0 contract, no L4 | MCP verb split, validator, `propose_composition` |
 | Plan-then-execute (FR23); `plan.md`; `apply: false` | Kernel persist of `plan.md`; UI `run.plan` slot |
 | Two-band file contract; `run.bands` target | UI two-band viewer, `argument.md` API |
-| Host-path unmatched without essay | Split mega YAML recipes; skill-body thicken |
+| Host-path unmatched without essay | Split mega YAML recipes |
 | FR20 on `check-numeric`; unmatched netlist-port predicate | Engine port checks in Python |
+| Capability registry + coverage law (D19); pack method skills | Capability→provider bind in the runner; gold per pack |
 | Known defects remain named: `_solve_value` mint, as-built two MCP tools | Eval gold / MCP framing fixes |

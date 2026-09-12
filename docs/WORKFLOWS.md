@@ -5,9 +5,36 @@
 
 Recipes live at `workflows/<pack>/<id>.yaml`. Discovery is `electrical-engineer workflows` / MCP `list_workflows` — **not** a runnable recipe.
 
-Purpose: named DAGs so the agent retrieves, cites, verifies, and explains **better**. **Host path** uses **short physics attachments** (`simulate-circuit`, `photo-to-netlist`, …) or `propose_composition`. Large jobs write `plan.md` first (FR23). Mega `solve-*` / `explain-*` YAML that include `solve-explain` are **CLI-without-host / gold rollback**, not the host’s chat brain. The router only **picks** a short row (or asks, or `unmatched-cosolver`). New DAGs via `propose_composition` (allowlisted engines) or `compose-from-parts --advanced`.
+Purpose: named DAGs so the agent retrieves, cites, verifies, and explains **better**. **Host path** uses **short physics attachments** (`simulate-circuit`, `photo-to-netlist`, …) or `propose_composition` of **capability ids**. Large jobs write `plan.md` first (FR23). Mega `solve-*` / `explain-*` YAML that include `solve-explain` are **CLI-without-host / gold rollback**, not the host’s chat brain. The router only **picks** a short row (or asks, or `unmatched-cosolver`). New DAGs via `propose_composition` (allowlisted capabilities/providers) or `compose-from-parts --advanced`.
+
+The catalog below is **not** the domain. The domain is every in-bound UG pack × genre with a complete path ([`ARCHITECTURE.md`](ARCHITECTURE.md) §0). YAML rows are this-pass **bindings**. A signals or EM question is in-bound even when no YAML row exists yet — compose capabilities or use `unmatched-cosolver` + `unchecked`.
 
 Marks: **v1** = specified now. **stub** = contract only (confirm, no silent sim).
+
+---
+
+## 0. Capabilities (domain names)
+
+Normative table: [`ARCHITECTURE.md`](ARCHITECTURE.md) §0.1. Host `propose_composition` should prefer these ids.
+
+| Capability | This-pass provider key |
+|------------|------------------------|
+| `algebraic-check` | `check-numeric` |
+| `lumped-circuit-sim` | `run-spice` (or `run-matlab-if-present`) |
+| `lti-analysis` | `run-python-control` (or MATLAB) |
+| `power-network-study` | `run-load-flow` |
+| `machine-model` | `check-numeric` (+ optional numeric) |
+| `converter-model` | `check-numeric` (+ optional lumped sim) |
+| `signal-analysis` | `check-numeric` / scipy when present |
+| `fields-analytic` | `check-numeric` |
+| `measurement-model` | `check-numeric` |
+| `retrieve-citation` | `retrieve-passage` |
+| `render-figure` | library plot/schematic nodes |
+| `ingest-figure` | photo / control-diagram stages |
+| `label-unverified` | `label-unchecked` |
+| `ask-student` | `ask-human` / UI |
+
+Every pack owns genres solve, derive, design, simulate, review, explain, report. Mega `solve-<pack>-problem` / `explain-<pack>` YAML remain rollback until split; they do **not** limit which questions the kernel may take.
 
 ---
 
@@ -61,7 +88,7 @@ Marks: **v1** = specified now. **stub** = contract only (confirm, no silent sim)
 | solve-maths-for-ee | Solve a maths-for-EE problem | maths | v1 |
 | explain-maths-for-ee | Explain maths-for-EE (ODE, Fourier, complex) | maths | v1 |
 
-Each `solve-*` follows the unmatched/check-numeric pattern: retrieve → solve-explain → check-numeric or `label-unchecked` → write-run-summary. Each `explain-*` is retrieve → solve-explain → citations → write-run-summary. Honest holes go in [`CANNOT_DO.md`](CANNOT_DO.md), not fake gold.
+Each `solve-*` follows the unmatched/`algebraic-check` pattern: retrieve → solve-explain → check-numeric or `label-unchecked` → write-run-summary. Each `explain-*` is retrieve → solve-explain → citations → write-run-summary. On the **host path**, skip the essay node; the host writes `argument.md` and requests pack capabilities instead of mega YAML. Honest holes go in [`CANNOT_DO.md`](CANNOT_DO.md), not fake gold. Missing YAML for a pack does **not** make the question out of architecture.
 
 The research draft [`../research/notes/ee-workflow-catalog-draft.md`](../research/notes/ee-workflow-catalog-draft.md) is **historical naming**, not the frozen API.
 
@@ -71,24 +98,24 @@ The research draft [`../research/notes/ee-workflow-catalog-draft.md`](../researc
 
 Not student-facing. Classifier is **not** a node.
 
-| id | Role |
-|----|------|
-| retrieve-passage | Hybrid RAG; honour `book_id` / `chapter_id` / `folder_tag` / `domain_tag`; max 3 passages |
-| check-numeric | sympy / hand check |
-| run-spice | ngspice/PySpice; writes only under this run dir |
-| run-python-control | LTI, Bode, step, root locus |
-| run-matlab-if-present | Optional; ask gate; fail clearly if busy/missing |
-| run-load-flow | pandapower study-level |
-| ask-human | TTY or UI; counts toward the 2-interrupt budget |
-| label-unchecked | Exact token `unchecked` + `summary.json` field |
-| write-run-summary | Final `summary.json` only at end of run |
-| solve-explain | LLM **node** (hosts may skip and do this in their loop; CLI local-model path uses this) |
-| detect-components | Photo stub |
-| connect-wires | Photo stub |
-| ocr-labels | Photo stub; low confidence **always** flagged |
-| draft-netlist | Writes `.cir` + JSON graph |
-| confirm-topology | UI confirm (one interrupt) |
-| run-recipe | Nested named YAML; see ARCHITECTURE §6 |
+| id | Role | Capability |
+|----|------|------------|
+| retrieve-passage | Hybrid RAG; honour `book_id` / `chapter_id` / `folder_tag` / `domain_tag`; max 3 passages | `retrieve-citation` |
+| check-numeric | sympy / hand check | `algebraic-check` (and model caps with no dedicated sim) |
+| run-spice | ngspice/PySpice; writes only under this run dir | `lumped-circuit-sim` |
+| run-python-control | LTI, Bode, step, root locus | `lti-analysis` |
+| run-matlab-if-present | Optional; ask gate; fail clearly if busy/missing | several caps, MATLAB-if-present |
+| run-load-flow | pandapower study-level | `power-network-study` |
+| ask-human | TTY or UI; counts toward the 2-interrupt budget | `ask-student` |
+| label-unchecked | Exact token `unchecked` + `summary.json` field | `label-unverified` |
+| write-run-summary | Final `summary.json` only at end of run | — |
+| solve-explain | LLM **node** (hosts may skip and do this in their loop; CLI local-model path uses this) | not a physics capability; host-path forbidden |
+| detect-components | Photo stub | `ingest-figure` |
+| connect-wires | Photo stub | `ingest-figure` |
+| ocr-labels | Photo stub; low confidence **always** flagged | `ingest-figure` |
+| draft-netlist | Writes `.cir` + JSON graph | `ingest-figure` |
+| confirm-topology | UI confirm (one interrupt) | `ingest-figure` |
+| run-recipe | Nested named YAML; see ARCHITECTURE §6 | — |
 
 Typed ports (prose): `Text`, `Passages`, `Netlist`, `GraphJson`, `Numeric`, `PlotPaths`, `HumanDecision`, `Summary`, `RecipeRef`. Edges that mismatch are rejected before run.
 

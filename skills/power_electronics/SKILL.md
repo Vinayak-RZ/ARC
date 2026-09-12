@@ -1,3 +1,18 @@
-# power_electronics — pedagogy only
+# Power electronics pack
 
-Power electronics pack. Converter averages and duty-cycle algebra. No hardware-in-loop.
+Load for UG converters and drives-adjacent courses: rectifiers, buck/boost/buck-boost,
+inverters, PWM, averaged models, duty-cycle algebra. Not HIL benches
+(`CD-PE-HIL`).
+
+## Any question in this pack
+
+1. Name topology, CCM/DCM, ideal vs ESR, the unknown (V, I, duty, ripple).
+2. Averaged algebra via `converter-model` / `algebraic-check` first.
+3. `lumped-circuit-sim` only if a switched/averaged netlist artifact exists.
+4. Waveform plots via `render-figure` from computed points or a provider —
+   never a vision-invented switching PNG.
+
+## Genres
+
+Design-to-spec (L, C, duty for a UG spec) is in-bound. Hardware-in-the-loop
+and thermal FEA are cannot-do.

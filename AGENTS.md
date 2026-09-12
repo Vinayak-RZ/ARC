@@ -7,11 +7,11 @@ GitHub: [`Vinayak-RZ/Electrical-Engineer`](https://github.com/Vinayak-RZ/Electri
 
 ## What this repo is
 
-A coding workspace for building and evolving that co-solver (analysis, circuits, signals, power, labs, and related undergrad EE workflows). Prefer deterministic tools and verified calculations over free-form LLM guesses when correctness matters. Authority: [`docs/PID.md`](docs/PID.md), [`docs/PRD.md`](docs/PRD.md), [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+A coding workspace for building and evolving that co-solver (analysis, circuits, signals, power, labs, and related undergrad EE workflows). Prefer deterministic tools and verified calculations over free-form LLM guesses when correctness matters. Authority: [`docs/PID.md`](docs/PID.md), [`docs/PRD.md`](docs/PRD.md), [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). Do not invent capability ids; use the registry in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) §0 or add a [`docs/CANNOT_DO.md`](docs/CANNOT_DO.md) row.
 
 ## Current status
 
-Product execution graph **complete through H1** on `cursor/ee-product-execution-9e9d`: CLI, YAML runner, localhost UI, MCP, recipes, eval, boot + trials. Authority remains [`docs/PID.md`](docs/PID.md), [`docs/PRD.md`](docs/PRD.md), [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). Do not invent EE capabilities that are not in those docs or in [`docs/CANNOT_DO.md`](docs/CANNOT_DO.md).
+Product execution graph **complete through H1** on `cursor/ee-product-execution-9e9d`: CLI, YAML runner, localhost UI, MCP, recipes, eval, boot + trials. Authority remains [`docs/PID.md`](docs/PID.md), [`docs/PRD.md`](docs/PRD.md), [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). Proposed overlay **D19**: capability-first coverage of every in-bound UG pack × genre; providers (ngspice, YAML, FastAPI, …) are this-pass freezes, not the thesis. Do not invent EE capabilities that are not in those docs or in [`docs/CANNOT_DO.md`](docs/CANNOT_DO.md).
 
 ---
 
