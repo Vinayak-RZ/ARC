@@ -73,7 +73,7 @@ Canonical numbering stays **0–3**. A fifth layer is not earned (eval stays 2e;
 
 As-built sub-pieces (still true): CLI glue, pack `SKILL.md` stubs, stdio MCP (`list_workflows` + `run_workflow` only), UI, RAG sidecar, registered nodes. Target: this section + [`PRD.md`](PRD.md) §5–§6.
 
-**H3 falsifier:** if the CLI grows a custom harness hosts cannot share, stop and return to the owner. Layer 0 stays rented.
+**H3 falsifier:** if the CLI grows a custom harness hosts cannot share, stop and return to the owner. Layer 0 stays rented. A **Python multi-turn composition dialog** (interview/plan loop inside the CLI) is that falsifier. `propose_composition` is one write verb, not a chat product.
 
 **Runner law:** no model calls inside the DAG runner except through **registered nodes**, plus one **pre-runner** classifier when the workflow id is omitted **and no host is driving**. The DAG runner itself is deterministic. Host-path attachments **must not** invoke `solve-explain` (FR21). `solve-explain` must not mint checked numbers (FR9).
 
@@ -134,7 +134,7 @@ apply -> ./runs/<id>/ evidentiary band
 
 **Method (2a).** Thick pack skills teach: name the unknown, write KCL/KVL, when to simulate vs `unchecked`, when to ask, how to write the argument band without minting scalars. Skills do **not** mint checked numbers (FR19). As-built four-line stubs (`skills/circuits/SKILL.md`) are a **method hole**, not a number hole — a later skill-body plan fills circuits first. The contract is already this; do not move gates into markdown.
 
-**Engines (2b).** Registered activities are typed tools. Capability-first provider selection stays (MATLAB if present, else ngspice / python-control). `check-numeric` is first-class on `propose_composition` (hand KCL / divider without spice). `solve-explain` is a **fallback** when no host is configured; it must not mint `unchecked: false`; it is **not** on the host-path allowlist.
+**Engines (2b).** Registered activities are typed tools. Capability-first provider selection stays (MATLAB if present, else ngspice / python-control). `check-numeric` is first-class on `propose_composition` (hand KCL / divider without spice). It may set `unchecked: false` **only** from its own solver over ports that are student/netlist/prior-engine artifacts — **not** from host-typed or peer MATLAB/Copilot scalars (FR20). `solve-explain` is a **fallback** when no host is configured; it must not mint `unchecked: false`; it is **not** on the host-path allowlist.
 
 **Short attachments (2c).** Named YAML pipelines that attach physics only. Example: `simulate-circuit` = load netlist → `run-spice` (`repair_max: 2`) → `label-unchecked` → `write-run-summary`. **No** retrieve/explain inside the attachment. YAML is the **eval/CLI replay** catalog of those attachments, not the chat brain.
 
@@ -276,9 +276,10 @@ MCP/CLI verb. Body: a DAG whose **every node activity is in the engine registry*
 3. `run-recipe` child must be a **short attachment** (no `solve-explain` in the child YAML). Nesting mega `solve-*` is reject.
 4. Port type mismatch or cycle → reject.
 5. Over 16 nodes / 24 edges → reject.
-6. Would attach spice on the unmatched path → reject.
-7. Would skip photo UI confirm → fail closed with `ui_url`.
-8. Else **apply** through the in-process runner.
+6. Would attach spice without a **netlist artifact** on an incoming typed port (raw problem text, unmatched prompt, or host-typed `.cir` that did not come from `photo-to-netlist` / student file / prior engine) → reject. Unmatched is a kernel signal (no matching short attachment **and** no netlist port), not skill prose.
+7. Graph contains photo stages or MATLAB or `ask-human` → on **MCP**, do not apply; fail closed with `ui_url` (never wait). CLI may enter `waiting-human`.
+8. Would skip photo UI confirm for photo-stage graphs → fail closed with `ui_url`.
+9. Else **apply** through the in-process runner.
 
 This is GraSP-shaped, not a skill-to-DAG compiler: the host proposes edges among **already registered** engines; the kernel verifies types and allowlist; locality-bounded repair stays `repair_max: 2` inside simulate engines. Do not call this a GraSP compile.
 
@@ -310,6 +311,7 @@ Files:
 | Extra network / API from a node (not the student’s configured LLM) | ask |
 | Installing packages | deny-by-default |
 | `compose-from-parts` | ask |
+| `propose_composition` | MCP: **never wait** — preflight MATLAB / photo / `ask-human`; if any would ask, fail closed with `ui_url`. CLI: same ask policy as those child engines |
 | `run-recipe` | inherits child gates; no extra ask just for nesting |
 | Memory file write | auto-run inside the two memory dirs; deny anywhere else |
 | RAG ingest (BYO add) | ask (persistent index) |

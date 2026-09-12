@@ -32,6 +32,29 @@ should-fix (merged). One critic said blocker on as-built `_solve_value` mint and
 
 ## Loop 2 — H3 / unmatched / dual-MCP / student-without-host / L4
 
+### Accepted
+
+- H3 holds. `propose_composition` is one write verb on a rented loop. A Python multi-turn composition dialog would be the H3/H5 falsifier — named as such in ARCHITECTURE.
+- Student-without-host remains complete for **numbers**. Viva is Layer 0 or `solve-explain` fallback.
+- Unmatched auto-spice needs a **machine** predicate: spice requires a netlist artifact on a typed port; unmatched is a kernel signal, not skill prose.
+- FR20 applies to `check-numeric` as well as `label`: no host/peer Copilot scalars as checked ingest.
+- `propose_composition` on MCP must **preflight** ask gates (MATLAB, photo, `ask-human`) and fail closed. Named in the gates table. Do not implement MCP wait.
+- Layer 4 **withheld**. Eval stays 2e; pack method stays 2a; two-band stays L3. Four-layer table is not lying.
+
+### Rejected (reason)
+
+- Equating `propose_composition` with a new EE agent product — it is validate-then-apply, not a chat loop.
+- Claiming student-without-host is incomplete because the host writes viva — numbers stay complete.
+- Dual MATLAB MCP can mint checked through `label` by design — FR20 already closes peer ingest; hole was underspecified `check-numeric`.
+- Revert to named-id-only to save unmatched — clamps belong in the validator.
+- Add Layer 4 for eval, pack-method, host skills, or two-band — each already has a home.
+
+### Severity
+
+should-fix (merged: unmatched predicate, check-numeric FR20, MCP preflight). L4 verdict: withhold.
+
+## Loop 3 — UI / artifacts / token budget
+
 (pending)
 
 ## Loop 3 — UI / artifacts / token budget
