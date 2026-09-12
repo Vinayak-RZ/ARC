@@ -78,7 +78,7 @@ Student
 
 Four layers: (0) rented host harness, (1) attach, (2) domain kernel, (3) UI + two-band artifacts. Detail: [`ARCHITECTURE.md`](ARCHITECTURE.md), [`PRD.md`](PRD.md) §5–§6.
 
-The CLI is a **thin wrapper**: glue, ug profile, co-solver defaults, a **deterministic YAML DAG runner** (short attachments + eval replay), eval, and the local UI. It must not grow into a unique agent loop (H5), including a Python multi-turn composition dialog. Hosts keep their own loops and write the viva (`argument.md`).
+The CLI is a **thin wrapper**: glue, ug profile, co-solver defaults, a **deterministic YAML DAG runner** (short attachments + eval replay), eval, and the local UI. It must not grow into a unique agent loop (H5), including a Python multi-turn composition dialog **or a Python specialist orchestrator**. Hosts keep their own loops, may spawn pack specialists, and write the viva (`argument.md`). The kernel persists runs, memory, and the RAG index and writes observation; it does not compact context or bill tokens.
 
 ## 7. Trust (locked)
 
@@ -109,10 +109,12 @@ The CLI is a **thin wrapper**: glue, ug profile, co-solver defaults, a **determi
 | Topic | Proposed |
 |-------|----------|
 | MATLAB vs OSS | MATLAB if present (EE node and/or peer MCP); OSS first-class otherwise; **product works without MATLAB** |
-| RAG | Local store; BYO PDFs and scans; inventory + book/chapter/folder tags; no commercial books in git |
+| RAG | Local store; BYO drop → gate → extract → chunk → index → retrieve; inventory + book/chapter/folder tags; no commercial books in git |
+| Memory | Project + user markdown; explicit write; `lessons.md` not silent; local-only |
 | Persistent UI | First-class local workspace (`electrical-engineer ui`) |
 | v1 slice | C1–C3, C6–C7 plus UI + eval layout; C4 photo stub; C5 after C4 |
 | First pack | Circuits first, then control ([`WORKFLOWS.md`](WORKFLOWS.md)) |
+| Host spawn | Host-native pack specialists (`hosts/adapters/`); not a Python orchestrator |
 | Host ACI | 5–7 verbs including `propose_composition` of **capability ids**; large jobs write `plan.md` first (FR23); `run_workflow` = short-attachment / eval rollback ([`PRD.md`](PRD.md) FR17) |
 
 ## 10. Related artifacts

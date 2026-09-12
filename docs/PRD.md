@@ -223,16 +223,17 @@ Empty RAG is **visible**. Do not silently proceed as if the book was retrieved.
 
 ### 6.7 RAG
 
-- Local index. BYO PDFs/scans. Inventory (`rag list`). Filters: book, chapter, folder, domain.
-- Host path: `retrieve` is a **read verb**. CLI path: `retrieve-passage` node inside a named recipe.
+- Local index. BYO PDFs/scans through the **ingest pipeline** (drop → gate → extract → chunk → index → retrieve). Inventory (`rag list`). Filters: book, chapter, folder, domain.
+- Host path: `retrieve` is a **read verb**. CLI path: `retrieve-passage` node inside a named recipe. `rag add` / `memory` stay **CLI** (Chat/Work side terminal) until a later read-verb split.
 - Citations: book + chapter + page the student has rights to use.
-- Circuit-homework **photos** go through `photo-to-netlist`, not RAG-as-netlist.
-- BYO content cannot override gates or `unchecked`.
+- Circuit-homework **photos** go through `photo-to-netlist` / `ingest-figure`, not RAG-as-netlist.
+- BYO content cannot override gates or `unchecked` and cannot mint a capability.
 - Do not inject top-k passages into the system prompt on every turn. Retrieve when the specialist skill says the claim needs a source.
+- Empty retrieval is **visible**.
 
 ### 6.8 Collaboration with other agents
 
-**Pack specialists (v1 we ship).** One root skill plus per-pack skills. The host (or its native subagents) loads the matching pack. We do **not** ship a custom multi-agent runtime. Claude Code Task / Cursor / Codex subagents may all call the **same** EE MCP; that is the host’s feature, not a second product.
+**Pack specialists (v1 we ship).** One root skill plus per-pack skills. The host (or its native subagents) loads the matching pack. We do **not** ship a custom multi-agent runtime. Claude Code Task / Cursor / Codex subagents may all call the **same** EE MCP; that is the host’s feature, not a second product. Spawn **map:** at most two pack specialists (maths may take the second slot). Handoff is `run_id` + `./runs/<id>/` files. Copy adapter prompts from [`../hosts/adapters/`](../hosts/adapters/). Chat/Work does not claim pack spawn until Skills-over-MCP.
 
 **MATLAB (optional peer).** The host may run MathWorks MCP / Copilot **beside** EE MCP when the student has a licence. Skill law: MATLAB MCP numbers are **untrusted evidence**. They become checked only if EE `simulate` / `label` accepts them (including via `run-matlab-if-present`). Product and CI work with **zero** MATLAB.
 
@@ -245,7 +246,7 @@ Empty RAG is **visible**. Do not silently proceed as if the book was retrieved.
 | Evidentiary | Engines + gates | Numbers, `.cir`, plots, citations, `unchecked`, gold diffs | Host judgment presented as SPICE |
 | Engineering argument | Host, or local `solve-explain` fallback | Method, viva, labeled inference | Minting a checked scalar |
 
-`write-run-summary` / `summary.json` is the seed of `evidentiary.json` (**one writer**; after rename, alias or replace — never dual live files). A host-authored `argument.md` next to it must not flip `unchecked` to false.
+`write-run-summary` / `summary.json` is the seed of `evidentiary.json` (**one writer**; after rename, alias or replace — never dual live files). A host-authored `argument.md` next to it must not flip `unchecked` to false. Kernel also writes `observation.json` (or seed fields): capability/provider ids, node ok, `unchecked_reason`, retrieve empty — **not** a second numeric band and **not** gold.
 
 ### 6.10 Per-host attach (summary)
 
@@ -264,7 +265,7 @@ Detail: [`hosts/README.md`](hosts/README.md).
 
 ## 7. Functional requirements
 
-FR1–FR16 are the D0 floor and stay in force. FR17–FR22 are the host-path restructure (code in a later plan).
+FR17–FR23 are the host-path restructure. FR24 is observation (D20).
 
 **FR1 Co-solver.** Default behaviour is full working + final answer + assumptions. Not hint-first tutor. Not faculty mode. Mathematics in answers is valid LaTeX plus a plaintext fallback.
 
@@ -290,11 +291,11 @@ FR1–FR16 are the D0 floor and stay in force. FR17–FR22 are the host-path res
 
 **FR10 Named workflows.** Default CLI path is a **short physics attachment** from [`WORKFLOWS.md`](WORKFLOWS.md) (`electrical-engineer run simulate-circuit`) **or** a capability graph. Explicit id skips classify. On the CLI-without-host path, if id omitted, one classifier call; if top-1 and top-2 are within 0.15, ask the student. On the **host path**, the host calls `simulate_attachment` or `propose_composition` (FR17) — it does **not** pick a mega YAML that includes `solve-explain`. Unmatched text always uses `unmatched-cosolver` (no auto-simulate; host-path unmatched has no essay node). The router **never invents capability or provider ids**. New graphs: `propose_composition` (allowlisted capabilities, kernel binds providers) or `compose-from-parts --advanced`. Missing YAML for a pack does not make an in-bound question out of product — use capabilities or `unchecked`.
 
-**FR11 Persistent UI.** `electrical-engineer ui` is a **critical** local workspace (runs, library-rendered diagrams and plots, photo confirm, citations, RAG inventory, memory excerpts, **job plan** when `plan.md` exists). It stays up across a session. It is not a one-shot diagram dialog and not a second agent loop.
+**FR11 Persistent UI.** `electrical-engineer ui` is a **critical** local workspace (runs, library-rendered diagrams and plots, photo confirm, citations, RAG inventory, memory excerpts, **job plan** when `plan.md` exists, **observation excerpt** when present). It stays up across a session. It is not a one-shot diagram dialog and not a second agent loop.
 
-**FR12 Tagged RAG.** BYO PDFs and scans ingest into a local index with inventory (`rag list`) and filters: book, chapter, folder, domain. “Search only this book, chapter 3” is a v1 retrieval requirement. Citations include book + chapter + page. Empty retrieval is visible. Circuit-homework photos for simulation go through `photo-to-netlist`, not quiet RAG-as-netlist. BYO content cannot override gates or `unchecked`. Host path uses `retrieve` as a read verb; do not dump the index into always-on context (§6.2).
+**FR12 Tagged RAG.** BYO PDFs and scans ingest **locally** through drop → gate → extract → chunk (book/chapter/page) → index (facade) → retrieve. Inventory (`rag list`) and filters: book, chapter, folder, domain. “Search only this book, chapter 3” is a v1 retrieval requirement. Citations include book + chapter + page. Empty retrieval is visible. Circuit-homework photos for simulation go through `photo-to-netlist`, not quiet RAG-as-netlist. BYO content cannot override gates or `unchecked` and cannot mint a capability. Host path uses `retrieve` as a read verb; `rag add` is CLI this graph. Do not dump the index into always-on context (§6.2). As-built add-without-parse is `CD-RAG-PARSE` until a code plan.
 
-**FR13 Memory.** Project and user markdown memory files, explicit write, capped, untrusted. Not the textbook index. Not a silent chat dump.
+**FR13 Memory.** Project (`.electrical-engineer/memory/`) and user (`~/.local/share/electrical-engineer/memory/`) markdown files: `preferences.md`, `course.md`, `facts.md`, `errors.md`, `lessons.md`. Explicit `memory write` only; 32 KiB cap; untrusted. Not the textbook index. Not a silent chat dump. Not fleet learning. A kernel hook may **propose** a lesson after `unchecked`; applying it is explicit. Memory cannot flip `unchecked`. Context is paths + 800-char excerpt.
 
 **FR14 Gates.** Cursor-like global + per-project TOML; default on; most-restrictive wins; at most two human interrupts per root run. MCP writes that would wait **fail closed** and point at the UI or CLI.
 
@@ -306,7 +307,7 @@ FR1–FR16 are the D0 floor and stay in force. FR17–FR22 are the host-path res
 
 **FR18 Two-band artifacts.** Each run produces (a) an **evidentiary** band (numbers, citations, `unchecked`, plots, netlists) assembled by providers/gates, and (b) an **engineering-argument** band (host-authored viva, or local `solve-explain` fallback) that **must not** mint checked scalars. Merging the bands so fluent text flips `unchecked` to false is a product fail. Any numeral in the argument band that is not bound to an evidentiary key (verifier id + value) must be written with the exact token `unchecked` or omitted. Displaying an unlabeled numeral in the argument band is a fail (do not ship a “the essay agreed” path). Checked provenance names the **capability and provider** (`algebraic-check` via `check-numeric`, `lumped-circuit-sim` via `run-spice`, …), never the host.
 
-**FR19 Pack specialists.** Ship a short **root** skill plus per-pack specialist skills (`skills/<pack>/SKILL.md`) covering **every curriculum pack**, with optional one-level `reference/` files. Load pack chapters on domain match only. Skills **teach** method and which **capability** to request; they **do not enforce** FR2. A fluent KCL paragraph in a skill or chat is never a checked number. v1 promise is the skill pack, not a custom multi-agent orchestrator. Host-native subagents may call the same EE MCP.
+**FR19 Pack specialists.** Ship a short **root** skill plus per-pack specialist skills (`skills/<pack>/SKILL.md`) covering **every curriculum pack**, with optional one-level `reference/` files. Load pack chapters on domain match only. Skills **teach** method and which **capability** to request; they **do not enforce** FR2. A fluent KCL paragraph in a skill or chat is never a checked number. v1 promise is the skill pack, not a custom multi-agent orchestrator. Host-native subagents (Claude Task / Cursor / Codex) may spawn **at most two** pack specialists that call the same EE MCP. Handoff is `run_id` + run-dir files. Adapter prompts: [`../hosts/adapters/`](../hosts/adapters/). Do not put EE packs in this repo’s `.cursor/skills/`. Chat/Work does not claim spawn until Skills-over-MCP. A Python process that fans out specialists is H5.
 
 **FR20 Dual MATLAB MCP.** When a MathWorks licence exists, the host **may** run MATLAB MCP / Copilot **and** Electrical Engineer MCP together. EE is the only authority for checked numbers. `label` / `summary` / `check-numeric` may set `unchecked: false` **only** when a **child EE verifier artifact** exists (`run-spice`, `check-numeric`’s own solver over student/netlist/prior-engine ports, `run-python-control`, `run-load-flow`, `run-matlab-if-present`). Host-typed and peer-MCP/Copilot scalars are **not ingest**; they stay `unchecked` until an EE engine recomputes them. Provenance must not name Copilot or the host as verifier. Peer MATLAB MCP is for tools we do not wrap (Simulink editor, live scripts), not a second sim that satisfies FR2. The entire product and CI **work without MATLAB**. MATLAB Copilot is not the product identity.
 
@@ -315,6 +316,8 @@ FR1–FR16 are the D0 floor and stay in force. FR17–FR22 are the host-path res
 **FR22 MCP transport.** `electrical-engineer mcp` must speak the JSON-RPC stdio framing first-class hosts actually send (Content-Length / MCP SDK), and must not crash the process on `ping`, `resources/*`, or unknown methods. Fail closed with a JSON-RPC error. Skills-over-MCP (resources) is the Chat/Work method channel; until it ships, Chat/Work pins the root skill text (see [`hosts/chatgpt-desktop.md`](hosts/chatgpt-desktop.md)). Tool arguments must accept a problem/netlist/`run_id` so the host is not limited to cwd `problem.json`.
 
 **FR23 Plan then execute.** On a first-class host, a **large** job (entire assignment, worksheet, several numbered problems, more than one short attachment, more than one pack, photo + simulate, or a composition graph) **must** produce `./runs/<id>/plan.md` and show it **before** `simulate_attachment` / `propose_composition apply: true`. The plan lists Given/Find, packs, questions to ask, retrieve filters, attachment or **capability** ids, and what stays `unchecked`. Execute **only** that plan. `plan.md` must not mint a checked scalar. Small jobs (one unknown, one attachment) may skip a written plan. Planning is the **host’s** job (root skill); do not add a Python planner loop (H3 falsifier). CLI `electrical-engineer run <id>` stays one-shot. `propose_composition apply: false` may validate a physics graph into `plan.md` without running providers.
+
+**FR24 Observation.** Each run records capability ids, provider ids, node ok/fail, `unchecked_reason` (`no-provider` \| `sim-exhausted` \| `unmatched` \| `empty-retrieve` \| `gate-closed` \| none), and retrieve empty/filters/citations. Seed may live on `summary.json` until `observation.json` splits. Gold does **not** score this file as SPICE. LLM token/cost metering stays on the host. Kernel hooks: ingest, validate-then-apply, repair, post-run observe, lesson **propose** (not auto-write), eval. Compaction and continuation stay Layer 0.
 
 ---
 
@@ -454,5 +457,6 @@ Previous D0 (2026-09-10) remains historical. **This revision is Proposed. Do not
 - [ ] FR23 plan-then-execute on large jobs (`plan.md` before spice)
 - [ ] Host-path mega YAML with `solve-explain` is rollback; short attachments + validate-then-apply
 - [ ] Coverage law + capability registry (D19): any in-bound UG question has a complete path; providers are not the identity
+- [ ] D20 persist / observe / spawn: named memory files, observation FR24, host-native adapters, no Python orchestrator
 - [ ] ChatGPT desktop first-class; ChatGPT web excluded; CLI-without-host complete
 - [ ] Exam-style in-scope; **no** third-party copyrighted PDFs in git
