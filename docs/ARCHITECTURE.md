@@ -132,9 +132,9 @@ Engine registry (typed ports, one activity each)
 apply -> ./runs/<id>/ evidentiary band
 ```
 
-**Method (2a).** Thick pack skills teach: name the unknown, write KCL/KVL, when to simulate vs `unchecked`, when to ask, how to write the argument band without minting scalars. Skills do **not** mint checked numbers (FR19). As-built four-line stubs are a later skill-body plan; the contract is already this.
+**Method (2a).** Thick pack skills teach: name the unknown, write KCL/KVL, when to simulate vs `unchecked`, when to ask, how to write the argument band without minting scalars. Skills do **not** mint checked numbers (FR19). As-built four-line stubs (`skills/circuits/SKILL.md`) are a **method hole**, not a number hole — a later skill-body plan fills circuits first. The contract is already this; do not move gates into markdown.
 
-**Engines (2b).** Registered activities are typed tools. Capability-first provider selection stays (MATLAB if present, else ngspice / python-control). `solve-explain` is a **fallback** when no host is configured; it must not mint `unchecked: false`.
+**Engines (2b).** Registered activities are typed tools. Capability-first provider selection stays (MATLAB if present, else ngspice / python-control). `check-numeric` is first-class on `propose_composition` (hand KCL / divider without spice). `solve-explain` is a **fallback** when no host is configured; it must not mint `unchecked: false`; it is **not** on the host-path allowlist.
 
 **Short attachments (2c).** Named YAML pipelines that attach physics only. Example: `simulate-circuit` = load netlist → `run-spice` (`repair_max: 2`) → `label-unchecked` → `write-run-summary`. **No** retrieve/explain inside the attachment. YAML is the **eval/CLI replay** catalog of those attachments, not the chat brain.
 
@@ -193,7 +193,7 @@ Main LLM work lives in **Cursor / Claude Code / Codex / ChatGPT desktop** (or a 
 3. Calls `simulate_attachment` with a **short** physics id, **or** `propose_composition` with a graph of **registered** engines.
 4. Writes `argument.md`. Calls `label` / `open_ui` / `eval_run` as needed.
 
-The kernel **validates then applies**. Unmatched text still uses **`unmatched-cosolver` only** (no auto-simulate). Numerics without a verifier artifact use the exact token `unchecked`.
+The kernel **validates then applies**. Unmatched text still uses **`unmatched-cosolver` only** (no auto-simulate). On the **host path**, that attachment is retrieve-optional → `label-unchecked` → summary — **no** `solve-explain`; the host writes `argument.md`. CLI-without-host / gold may keep the essay node in rollback YAML. Numerics without a verifier artifact use the exact token `unchecked`.
 
 **CLI-without-host.**
 
@@ -272,13 +272,15 @@ Hard rules:
 MCP/CLI verb. Body: a DAG whose **every node activity is in the engine registry**, plus typed port bindings. Kernel validator:
 
 1. Unknown activity id → reject (no `lookup_vout_guess`).
-2. Port type mismatch or cycle → reject.
-3. Over 16 nodes / 24 edges → reject.
-4. Would attach spice on the unmatched path → reject.
-5. Would skip photo UI confirm → fail closed with `ui_url`.
-6. Else **apply** through the in-process runner.
+2. Activity is `solve-explain` → reject on the **host path** (FR21). CLI-without-host / gold rollback may still run that node inside named YAML.
+3. `run-recipe` child must be a **short attachment** (no `solve-explain` in the child YAML). Nesting mega `solve-*` is reject.
+4. Port type mismatch or cycle → reject.
+5. Over 16 nodes / 24 edges → reject.
+6. Would attach spice on the unmatched path → reject.
+7. Would skip photo UI confirm → fail closed with `ui_url`.
+8. Else **apply** through the in-process runner.
 
-This is GraSP compilation for EE: the host proposes; code verifies; repair stays `repair_max: 2` inside simulate engines.
+This is GraSP-shaped, not a skill-to-DAG compiler: the host proposes edges among **already registered** engines; the kernel verifies types and allowlist; locality-bounded repair stays `repair_max: 2` inside simulate engines. Do not call this a GraSP compile.
 
 ### `compose-from-parts`
 
