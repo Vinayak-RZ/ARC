@@ -1,10 +1,10 @@
 # Product Requirements Document — Arc
 
-**Status:** Proposed (2026-09-12). Supersedes Accepted D0 (2026-09-10) pending owner review.  
+**Status:** Accepted for this graph (D19/D20 graph-of-loops, 2026-09-13). Supersedes Accepted D0 (2026-09-10) for this execution.  
 **Date:** 2026-09-12  
 **Licence of this product’s code:** Apache License 2.0  
 **Identity:** [`PID.md`](PID.md) (Proposed, same pass).  
-**This pass does not implement MCP/skill code.** As-built vs target is explicit in §4.
+**This graph implements the restructure in §4.** As-built vs target is explicit in §4 until waves pass.
 
 ---
 
@@ -447,17 +447,17 @@ MATLAB if present else OSS first-class; the **entire product works without MATLA
 
 ## Owner review checkpoint
 
-Previous D0 (2026-09-10) remains historical. **This revision is Proposed. Do not treat it as Accepted until the owner checks below.**
+Previous D0 (2026-09-10) remains historical. **Accepted for this graph** (D19/D20 graph-of-loops, 2026-09-13). Owner Gate 0 answers are in [`../docs/planning/GATE_0.md`](../planning/GATE_0.md).
 
-- [ ] Thesis: lab + domain kernel + H3; Apache-2.0; India-first global UG
-- [ ] GATE is eval only; bound = [`curriculum-map.md`](curriculum-map.md)
-- [ ] Co-solver default; exact token **unchecked**; no faculty v1
-- [ ] Shipped vs restructure inventory is accurate
-- [ ] Agent interaction chapter (context, tools, RAG, simulation, collaboration)
-- [ ] Split ACI including `propose_composition`, two-band artifacts, pack specialists, dual MATLAB MCP
-- [ ] FR23 plan-then-execute on large jobs (`plan.md` before spice)
-- [ ] Host-path mega YAML with `solve-explain` is rollback; short attachments + validate-then-apply
-- [ ] Coverage law + capability registry (D19): any in-bound UG question has a complete path; providers are not the identity
-- [ ] D20 persist / observe / spawn: named memory files, observation FR24, host-native adapters, no Python orchestrator
-- [ ] ChatGPT desktop first-class; ChatGPT web excluded; CLI-without-host complete
-- [ ] Exam-style in-scope; **no** third-party copyrighted PDFs in git
+- [x] Thesis: lab + domain kernel + H3; Apache-2.0; India-first global UG
+- [x] GATE is eval only; bound = [`curriculum-map.md`](curriculum-map.md)
+- [x] Co-solver default; exact token **unchecked**; no faculty v1
+- [x] Shipped vs restructure inventory is accurate
+- [x] Agent interaction chapter (context, tools, RAG, simulation, collaboration)
+- [x] Split ACI including `propose_composition`, two-band artifacts, pack specialists, dual MATLAB MCP
+- [x] FR23 plan-then-execute on large jobs (`plan.md` before spice)
+- [x] Host-path mega YAML with `solve-explain` is rollback; short attachments + validate-then-apply
+- [x] Coverage law + capability registry (D19): any in-bound UG question has a complete path; providers are not the identity
+- [x] D20 persist / observe / spawn: named memory files, observation FR24, host-native adapters, no Python orchestrator
+- [x] ChatGPT desktop first-class; ChatGPT web excluded; CLI-without-host complete
+- [x] Exam-style in-scope; **no** third-party copyrighted PDFs in git

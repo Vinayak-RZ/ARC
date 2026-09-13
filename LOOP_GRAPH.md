@@ -28,7 +28,7 @@
 | ID | Name | Plan | Stop | Max rounds | Status |
 |----|------|------|------|------------|--------|
 | P0 | product lock | [plans/loops/P0.md](plans/loops/P0.md) | grep PRODUCT headings | 3 | passed |
-| D0 | docs-in | [plans/loops/D0.md](plans/loops/D0.md) | D0_GAPS + FR_TRACE | 3 | pending |
+| D0 | docs-in | [plans/loops/D0.md](plans/loops/D0.md) | D0_GAPS + FR_TRACE | 3 | passed |
 | A1 | ADRs | [plans/loops/A1.md](plans/loops/A1.md) | ADR-0012 + trust | 3 | pending |
 | U1 | UX IA a11y | [plans/loops/U1.md](plans/loops/U1.md) | evidentiary/argument/WCAG/keyboard | 3 | pending |
 | B_KERNEL | capability kernel | [plans/loops/B_KERNEL.md](plans/loops/B_KERNEL.md) | pytest capabilities/composition/observation/fr9 | 3 | pending |
@@ -145,7 +145,7 @@ flowchart TB
 | Wave | Nodes | Fan-out? | Barrier? | Status |
 |------|-------|----------|----------|--------|
 | 0 | [P0](plans/loops/P0.md) | no | no | done |
-| 1 | [D0](plans/loops/D0.md) | no | no | pending |
+| 1 | [D0](plans/loops/D0.md) | no | no | done |
 | 2 | [A1](plans/loops/A1.md) | no | no | pending |
 | 3 | [U1](plans/loops/U1.md), [B_KERNEL](plans/loops/B_KERNEL.md), [B_RAG](plans/loops/B_RAG.md), [B_HOST](plans/loops/B_HOST.md) | yes | no | pending |
 | 4 | [B_ACI](plans/loops/B_ACI.md), [B_WF](plans/loops/B_WF.md), [B_UI](plans/loops/B_UI.md), [B_PACKS](plans/loops/B_PACKS.md) | yes | no | pending |
