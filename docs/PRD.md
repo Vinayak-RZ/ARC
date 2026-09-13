@@ -19,7 +19,7 @@
 | CLI | `electrical-engineer` (`run`, `workflows`, `mcp`, `eval`, `ui`, `rag`, `memory`) |
 | UI | Persistent localhost workspace on `127.0.0.1` (critical surface). Chrome identity is the Arc icon (`assets/brand/arc-icon.png`). |
 | Public one-liner | Turn your AI coding assistant into an undergraduate electrical engineer |
-| Public category | Undergraduate electrical-engineering co-solver |
+| Public category | Undergraduate electrical-engineering **lab** (not the README first line) |
 | Internal class | **domain kernel** (host owns the loop; we own capabilities, providers, skills, gates) |
 | Mode | Co-solver (full working + answer + evidence, or exact token `unchecked`) |
 | Licence | Apache-2.0 for *our* code; textbooks never redistributed in git |
