@@ -41,6 +41,8 @@ A **domain kernel** is what enables a general agentic harness to have expertise 
 
 Arc is the local domain kernel for undergraduate electrical engineering. Cursor, Claude Code, Codex, and ChatGPT desktop stay general harnesses. This kernel holds the expertise they load: named workflows, simulators when they exist, and the exact token `unchecked` when they do not.
 
+Arc is a working example of a domain kernel. It is what enables a general agent to have expertise in the electrical engineering domain.
+
 ## Try these prompts
 
 Open this repo in Cursor, Claude Code, Codex, or ChatGPT desktop and paste:
