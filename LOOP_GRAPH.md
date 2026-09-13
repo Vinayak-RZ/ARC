@@ -29,7 +29,7 @@
 |----|------|------|------|------------|--------|
 | P0 | product lock | [plans/loops/P0.md](plans/loops/P0.md) | grep PRODUCT headings | 3 | passed |
 | D0 | docs-in | [plans/loops/D0.md](plans/loops/D0.md) | D0_GAPS + FR_TRACE | 3 | passed |
-| A1 | ADRs | [plans/loops/A1.md](plans/loops/A1.md) | ADR-0012 + trust | 3 | pending |
+| A1 | ADRs | [plans/loops/A1.md](plans/loops/A1.md) | ADR-0012 + trust | 3 | passed |
 | U1 | UX IA a11y | [plans/loops/U1.md](plans/loops/U1.md) | evidentiary/argument/WCAG/keyboard | 3 | pending |
 | B_KERNEL | capability kernel | [plans/loops/B_KERNEL.md](plans/loops/B_KERNEL.md) | pytest capabilities/composition/observation/fr9 | 3 | pending |
 | B_RAG | RAG ingest | [plans/loops/B_RAG.md](plans/loops/B_RAG.md) | pytest test_rag_ingest | 3 | pending |

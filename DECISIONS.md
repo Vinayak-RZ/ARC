@@ -97,7 +97,7 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 
 ## ADR-0009 — Hybrid engine composition (host path)
 
-- **Status:** proposed (not owner-Accepted)
+- **Status:** accepted (this graph, 2026-09-13)
 - **Context:** Long YAML that includes `solve-explain` starves the host viva (FR21). Unconstrained on-the-fly tool graphs (ToolWeave) would let fluent `Vout` become SPICE. D13 froze “router never invents a DAG.”
 - **Decision:** **Hybrid quality.** Host + on-demand pack skills compose the job. Large jobs **write `plan.md` then execute**. Typed engines own numbers. Short physics attachments (`simulate-circuit`) stay as YAML replay. Host may `propose_composition` of **registered** engines (`apply: false` validates; `apply: true` runs). Mega `solve-*` YAML is CLI/gold rollback. Four layers 0–3; no Layer 4. Python multi-turn composition dialog remains the H3 falsifier.
 - **Consequences:** Reopens D13 only into allowlisted engine graphs. MCP target verbs include `propose_composition` (still 5–7). `solve-explain` is not on the host-path allowlist. Unmatched still cannot auto-spice (netlist-port predicate). Files: `plan.md` + `evidentiary.json` seed + `argument.md`. Root skill `skills/SKILL.md` teaches plan-then-execute.
@@ -108,7 +108,7 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 
 ## ADR-0010 — Capability-first domain kernel (D19)
 
-- **Status:** proposed (not owner-Accepted)
+- **Status:** accepted (this graph, 2026-09-13)
 - **Context:** Hybrid composition (ADR-0009) still named *providers* (`run-spice`, YAML, FastAPI, LightRAG) as if they were the product. That cannot express “any in-bound UG EE question”: signals/EM/measurements look like missing SPICE recipes. The owner asked to refine architecture so it is general enough for the UG bound and not heavily reliant on one stack, while staying domain-specific.
 - **Decision:** **Capability registry is the domain contract.** Fourteen allowlisted capabilities cover the curriculum-map packs and seven task genres. Providers (ngspice, python-control, pandapower, sympy, MATLAB-if-present, RAG facade, figure libraries) and encodings (YAML attachments, Python CLI, FastAPI+React) are **this-pass freezes**. Coverage law: every in-bound question has a complete path (provider check **or** exact token `unchecked` + cannot-do). `propose_composition` may name capability ids; the kernel binds an installed provider or `CD-NO-PROVIDER`. Does not reopen H3/H5, `unchecked`, UG bound, or validate-then-apply.
 - **Consequences:** Pack skills teach method + which capability to request, not “always SPICE.” Missing YAML is `CD-YAML-GAP`, not out-of-product. Runner still uses today’s Python activity keys until a code plan maps capability→provider. Gold depth may stay circuits-first.
@@ -119,7 +119,7 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 
 ## ADR-0011 — Harness persist, observe, spawn (D20)
 
-- **Status:** proposed (not owner-Accepted)
+- **Status:** accepted (this graph, 2026-09-13)
 - **Context:** Context and ACI kinds were specified; as-built persist (memory list-only, RAG inventory-only), observation (summary without reason enums), kernel hooks vs host compaction, and pack-specialist spawn files were thin. Owner asked to specify the rest of a harness without becoming H5.
 - **Decision:** **Split the harness.** Layer 0 owns loop, compaction, continuation, model routing, and **host-native** specialist spawn. Layer 2 owns run audit, named memory files (explicit write; `lessons.md` proposed not silent), BYO RAG ingest pipeline, `observation.json`, and deterministic hooks (ingest, validate-then-apply, repair, observe, lesson-propose, eval). Adapter markdown lives in `hosts/adapters/` for the student host to copy. Local-only: no fleet learning, no chat dumps.
 - **Consequences:** Extract/chunk remains `CD-RAG-PARSE` until a code plan. Observation may seed on `summary.json`. Chat/Work still does not claim spawn. A Python specialist orchestrator remains the H3/H5 falsifier.
@@ -136,3 +136,44 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 - **Consequences:** Product docs (README, PID, PRD, AGENTS, extensive, design lock) say Arc. Python package and binary names are unchanged this pass. UI topbar already shows the Arc icon from main.
 - **Alternatives:** Keep Electrical Engineer (research default, rejected by owner); “an UG Electrical Engineer” (rejected — jargon + grammar); coined lab/bench names (still collided).
 - **Sources:** owner request 2026-09-13; `research/notes/naming-and-positioning.md`; `README.md`; `docs/PID.md`
+
+---
+
+## ADR-0013 — Artifact names, ACI, src ownership, run, fail-closed
+
+- **Status:** accepted (this graph)
+- **Context:** D19/D20 code waves need frozen file names, MCP verbs, and write-path ownership so parallel makers do not collide. Stack change is not required (system-design-tradeoffs default: SIMPLICITY). Host owns the inner loop (`agentic-system-design`); kernel is tools + gates. Source of truth is run-dir files, not a new database (`backend-architecture`).
+
+### Trust
+
+- UI binds `127.0.0.1` only. No product cloud. Secrets via env / host stores. MCP never waits. Peer MATLAB/Copilot scalars are not providers. Unverified numbers use the exact token `unchecked`. Student data stays local.
+
+### Fail closed
+
+- Unknown capability or provider id → reject
+- No installed provider → `CD-NO-PROVIDER` + `unchecked`
+- Photo / compose / control-diagram on MCP → fail with `ui_url`, never hang
+- Invented session verbs (`lookup_vout_guess`) → reject
+- Missing spice/tool → `unchecked`, never a fake pass
+
+### Decision
+
+**Artifacts** under `./runs/<id>/`: `evidentiary.json` (seed/alias `summary.json`), `argument.md`, `observation.json`, `plan.md` (large host jobs).
+
+**ACI (5–7):** `list_workflows`, `retrieve`, `open_ui`/`clarify`, `simulate_attachment`, `propose_composition` (`apply: false|true`), `label`/`summary`. `run_workflow` = short-attachment / eval rollback. `eval_run` is CLI-equivalent.
+
+**Src ownership (this graph):**
+
+- Kernel: `nodes/`, `runner/`, `compose/`, `gates/`, `unchecked.py`, `capabilities.py`
+- ACI: `mcp/`, `cli.py`, `router/`
+- RAG: `rag/`
+- UI: `ui/`, `ui_server/`
+- Host docs: `docs/hosts/`, `hosts/`, `skills/SKILL.md`
+- Workflows: `workflows/`
+- Packs: `skills/<pack>/`
+
+**Run:** `electrical-engineer --help`; `electrical-engineer run simulate-circuit`; `electrical-engineer ui` (127.0.0.1); `electrical-engineer mcp`.
+
+- **Consequences:** B* makers must not write outside those globs. No H5 Python orchestrator. No new DB.
+- **Alternatives:** HTTP MCP this graph (rejected — Later); Next.js SSR (rejected — keep Vite CSR); extra MCP tools per provider (rejected — FR17).
+- **Sources:** `docs/ARCHITECTURE.md` §0–§2; `docs/PRODUCT.md`; `LOOP_GRAPH.md`
