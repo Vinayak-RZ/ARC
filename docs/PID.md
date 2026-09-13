@@ -17,11 +17,12 @@ H3, Apache-2.0, UG vs PG, one repo, and the exact token `unchecked` are **not** 
 
 | Field | Value |
 |-------|--------|
-| Public name | **Arc** |
-| GitHub repo | `Electrical-Engineer` (unchanged this pass) |
-| CLI (default) | `electrical-engineer` (unchanged this pass) |
+| Public name | Arc |
+| Public subtitle | AI Electrical Engineer |
+| GitHub repo | `Electrical-Engineer` |
+| CLI (default) | `electrical-engineer` |
 | Public one-liner | Turn your AI coding assistant into an undergraduate electrical engineer |
-| Public category | Undergraduate electrical-engineering co-solver (internal noun **lab** is not the README first line) |
+| Public category | Undergraduate electrical-engineering **lab** (not the README first line) |
 | Internal class | **domain kernel** (host owns the loop; we own **capabilities**, providers, skills, gates) |
 | Mode | Co-solver (full working + answer + evidence, or exact token `unchecked`) |
 | Geography | India first; must not be weak for global UG EE |
@@ -29,7 +30,7 @@ H3, Apache-2.0, UG vs PG, one repo, and the exact token `unchecked` are **not** 
 | Commercial | Forever OSS in this repo; no paid tier |
 | Locality | Local-first CLI + persistent UI on `127.0.0.1`; optional Cursor / Claude Code / Codex / ChatGPT desktop; BYO API key; local models |
 | Harness | **H3** — branded CLI wrapping portable skills + MCP + local RAG. Deterministic YAML workflow runner as physics/eval backbone. Hosts own the inner loop and the viva. Not a Pi fork (H4). Not a greenfield harness (H5). |
-| Surfaces | CLI `electrical-engineer`, stdio MCP, **persistent localhost UI** (chrome identity: Arc logo from `assets/electrical-engineer-logo.svg`) |
+| Surfaces | CLI `electrical-engineer`, stdio MCP, **persistent localhost UI** (chrome identity: Arc icon from `assets/brand/arc-icon.png`) |
 | Hosts (first-class) | Cursor; Claude Code; Codex (CLI / IDE / desktop Codex view); ChatGPT desktop Chat/Work (**contract**, weaker editor). ChatGPT **web**/mobile are not hosts. |
 | Workflows | Short physics attachments **bind** capabilities; host `simulate_attachment` or `propose_composition` of capability ids; CLI-without-host may classify; unmatched co-solver (no essay on host path); does not invent capability or provider ids |
 | Repo copies | **One repo only** |

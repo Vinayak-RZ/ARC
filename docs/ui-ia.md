@@ -6,7 +6,7 @@ Persistent localhost workspace. Not KiCad. Not a second agent. WCAG AA.
 
 | Slot | Role |
 |------|------|
-| `root` | Shell: skip-link, header with **Arc logo** (`assets/electrical-engineer-logo.svg`), live region |
+| `root` | Shell: skip-link, header with **Arc icon** (`assets/brand/arc-icon.png` → `/arc-icon.png`), live region |
 | `sidebar` | Run list (`asset-row`) |
 | `workspace` | Current view |
 | `run.detail` | Recipe id, state, `unchecked` badge-pill |

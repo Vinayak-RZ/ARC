@@ -110,7 +110,8 @@ Vendored Cursor config (`.cursor/`) is not a product package; see `.cursor/VENDO
 | `ui/src/store.js` | Layout | zustand |
 | `ui/vite.config.js` | Dev server | loopback |
 | `ui/package-lock.json` | Reproducible npm | lockfile for `npm run build` |
-| `assets/electrical-engineer-logo.svg` | Arc mark | flat README + UI chrome logo (filename kept this pass; wordmark is Arc; no Coinbase wordmark). Header in `ui/` must render this SVG — as-built is still plaintext. |
+| `assets/brand/arc-icon.png` | Product mark | master app icon (transparent); copy at `ui/public/arc-icon.png` for `/arc-icon.png` |
+| `assets/brand/arc-lockup.png` | README lockup | icon + ARC + AI Electrical Engineer |
 
 ### 4.3 recipes (`workflows/`)
 
@@ -150,7 +151,7 @@ Python 3.11+, `uv`, hatchling. Optional tools (PySpice, python-control, pandapow
 - `./scripts/validate.sh` — lint, pytest, eval circuits, refuse `0.0.0.0`
 - `.github/workflows/ci.yml` — Ubuntu only; tests use the checkout cwd (not a Cloud Agent `/workspace` path)
 - Layout: `tests/unit/`, `tests/integration/`, `eval/gold/`
-- README screenshots: `docs/media/ui-empty.png`, `docs/media/ui-checked-run.png`, `docs/media/ui-unchecked-confirm.png` from live `127.0.0.1:8765`
+- Brand: `assets/brand/arc-icon.png`, `assets/brand/arc-lockup.png`, `ui/public/arc-icon.png`
 
 ## 7. Further reading
 
