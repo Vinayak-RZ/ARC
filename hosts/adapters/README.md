@@ -12,6 +12,7 @@ does **not** ship a multi-agent runtime (FR19, H5).
 
 **Spawn map:** at most two pack specialists. Maths may occupy the second slot.
 Handoff is `run_id` plus `./runs/<id>/` (or `children/`). Parent writes `argument.md`.
-Same EE MCP. Same `unchecked` law. Chat/Work: do not claim this spawn.
+Same EE MCP. Same `unchecked` law. Live verbs include `propose_composition`.
+Chat/Work: do not claim this spawn.
 
 Optional host-side reminder (compaction stays the host): [`hooks.md`](hooks.md).

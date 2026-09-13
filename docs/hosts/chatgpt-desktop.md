@@ -35,7 +35,15 @@ the gold runner (`eval` stays CLI).
 The argument band (FR21) on Chat/Work may live in the transcript; copy or
 write it to `./runs/<id>/argument.md` when the student needs a file. Codex view
 can write the run dir directly. Do not mega-apply `solve-circuit-problem`.
-Target verbs: [`../PRD.md`](../PRD.md) FR17.
+
+**Live ACI verbs (5–7):** `list_workflows`, `retrieve`, `open_ui` / `clarify`,
+`simulate_attachment`, `propose_composition` (`apply: false` records `plan.md`;
+`apply: true` returns `run_id` + artifact paths, never a graph body),
+`label` / `summary`. `run_workflow` remains a short-attachment / eval rollback.
+Photo / compose / control-diagram still fail closed with `ui_url`. MCP never
+waits. Pack skills stay out of this product repo’s `.cursor/skills/`.
+
+Target contract: [`../PRD.md`](../PRD.md) FR17.
 
 ## Must not
 

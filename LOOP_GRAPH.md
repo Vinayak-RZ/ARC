@@ -30,10 +30,10 @@
 | P0 | product lock | [plans/loops/P0.md](plans/loops/P0.md) | grep PRODUCT headings | 3 | passed |
 | D0 | docs-in | [plans/loops/D0.md](plans/loops/D0.md) | D0_GAPS + FR_TRACE | 3 | passed |
 | A1 | ADRs | [plans/loops/A1.md](plans/loops/A1.md) | ADR-0012 + trust | 3 | passed |
-| U1 | UX IA a11y | [plans/loops/U1.md](plans/loops/U1.md) | evidentiary/argument/WCAG/keyboard | 3 | pending |
-| B_KERNEL | capability kernel | [plans/loops/B_KERNEL.md](plans/loops/B_KERNEL.md) | pytest capabilities/composition/observation/fr9 | 3 | pending |
-| B_RAG | RAG ingest | [plans/loops/B_RAG.md](plans/loops/B_RAG.md) | pytest test_rag_ingest | 3 | pending |
-| B_HOST | host contract | [plans/loops/B_HOST.md](plans/loops/B_HOST.md) | pytest test_host_docs | 3 | pending |
+| U1 | UX IA a11y | [plans/loops/U1.md](plans/loops/U1.md) | evidentiary/argument/WCAG/keyboard | 3 | passed |
+| B_KERNEL | capability kernel | [plans/loops/B_KERNEL.md](plans/loops/B_KERNEL.md) | pytest capabilities/composition/observation/fr9 | 3 | passed |
+| B_RAG | RAG ingest | [plans/loops/B_RAG.md](plans/loops/B_RAG.md) | pytest test_rag_ingest | 3 | passed |
+| B_HOST | host contract | [plans/loops/B_HOST.md](plans/loops/B_HOST.md) | pytest test_host_docs | 3 | passed |
 | B_ACI | MCP ACI | [plans/loops/B_ACI.md](plans/loops/B_ACI.md) | pytest mcp_aci + classifier + fail_closed | 3 | pending |
 | B_WF | attachments | [plans/loops/B_WF.md](plans/loops/B_WF.md) | unmatched + host_path tests | 3 | pending |
 | B_UI | two-band UI | [plans/loops/B_UI.md](plans/loops/B_UI.md) | slots + artifacts + bind + a11y | 3 | pending |
@@ -146,8 +146,8 @@ flowchart TB
 |------|-------|----------|----------|--------|
 | 0 | [P0](plans/loops/P0.md) | no | no | done |
 | 1 | [D0](plans/loops/D0.md) | no | no | done |
-| 2 | [A1](plans/loops/A1.md) | no | no | pending |
-| 3 | [U1](plans/loops/U1.md), [B_KERNEL](plans/loops/B_KERNEL.md), [B_RAG](plans/loops/B_RAG.md), [B_HOST](plans/loops/B_HOST.md) | yes | no | pending |
+| 2 | [A1](plans/loops/A1.md) | no | no | done |
+| 3 | [U1](plans/loops/U1.md), [B_KERNEL](plans/loops/B_KERNEL.md), [B_RAG](plans/loops/B_RAG.md), [B_HOST](plans/loops/B_HOST.md) | yes | no | done |
 | 4 | [B_ACI](plans/loops/B_ACI.md), [B_WF](plans/loops/B_WF.md), [B_UI](plans/loops/B_UI.md), [B_PACKS](plans/loops/B_PACKS.md) | yes | no | pending |
 | 5 | [V_PONY](plans/loops/V_PONY.md) then [M1](plans/loops/M1.md) | no | yes after B* | pending |
 | 6 | [B_EVAL](plans/loops/B_EVAL.md) | no | no | pending |

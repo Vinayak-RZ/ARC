@@ -14,11 +14,12 @@ electrical-engineer mcp
 **Kernel contract (all first-class hosts):** same verbs, gates, exact token
 `unchecked`. First-class does **not** mean identical IDE UX.
 
-**As-built MCP tools:** `list_workflows`, `run_workflow` (mega-apply; photo /
-compose / control-diagram fail closed with `ui_url`). **Target:** 5–7 verbs
-in [`../PRD.md`](../PRD.md) §6.4 / FR17, including `simulate_attachment` and
-`propose_composition`. Host writes `./runs/<id>/plan.md` on large jobs (FR23)
-then `argument.md`. Packs load on domain match (at most two), not always-on.
+**Live ACI verbs (5–7):** `list_workflows`, `retrieve`, `open_ui` / `clarify`,
+`simulate_attachment`, `propose_composition`, `label` / `summary`.
+`run_workflow` is short-attachment / eval rollback. Photo / compose /
+control-diagram fail closed with `ui_url`. Host writes `./runs/<id>/plan.md`
+on large jobs (FR23) then `argument.md`. Packs load on domain match (at most
+two), not always-on. Do not copy EE packs into this repo’s `.cursor/skills/`.
 
 **Not hosts (v1):** ChatGPT **web** / mobile, Claude Desktop, GitHub Copilot,
 Gemini CLI.
