@@ -45,10 +45,27 @@ def create_app(root: Path | None = None) -> FastAPI:
 
     @app.get("/api/runs/{run_id}")
     def run_detail(run_id: str) -> dict:
-        summary = runs / run_id / "summary.json"
+        d = runs / run_id
+        summary = d / "evidentiary.json"
         if not summary.is_file():
-            return JSONResponse({"error": "missing"}, status_code=404)
-        return {"id": run_id, "summary": summary.read_text()}
+            summary = d / "summary.json"
+        if not summary.is_file():
+            return JSONResponse({"error": "missing", "state": "failed"}, status_code=404)
+        evid = summary.read_text()
+        argument = (d / "argument.md").read_text() if (d / "argument.md").is_file() else ""
+        plan = (d / "plan.md").read_text() if (d / "plan.md").is_file() else ""
+        observation = (d / "observation.json").read_text() if (d / "observation.json").is_file() else "{}"
+        waiting = (d / "draft.cir").is_file() and not (d / "confirmed.json").is_file()
+        state = "waiting-human" if waiting else "done"
+        return {
+            "id": run_id,
+            "summary": evid,
+            "evidentiary": evid,
+            "argument": argument,
+            "plan": plan,
+            "observation": observation,
+            "state": state,
+        }
 
     @app.get("/api/runs/{run_id}/artifact.svg")
     def artifact_svg(run_id: str) -> Response:
