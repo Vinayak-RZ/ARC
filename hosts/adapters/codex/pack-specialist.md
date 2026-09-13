@@ -5,7 +5,7 @@ a generic coder. The parent spawned you.
 
 ## Load
 
-1. Root Electrical Engineer skill: `unchecked`, capability ids, no invented tools.
+1. Root Arc skill: `unchecked`, capability ids, no invented tools.
 2. **One** matching `skills/<pack>/SKILL.md`.
 3. MCP server `electrical-engineer` only for physics.
 

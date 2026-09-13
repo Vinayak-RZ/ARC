@@ -1,8 +1,8 @@
-# Electrical-Engineer — Agent instructions
+# Arc — Agent instructions
 
 This repository vendors [cursor-config-coding](https://github.com/Vinayak-RZ/cursor-config-coding) at `.cursor/` (rules, skills, MCP). Pin: see [`.cursor/VENDOR.md`](.cursor/VENDOR.md). Do not duplicate the shared SDLC in this file — point at skills by name.
 
-Product: **Electrical-Engineer** — a UG EE co-solver (named workflows, simulators, persistent local UI) that can do the coursework an undergrad electrical engineer is asked to do.
+Product: **Arc** — a UG EE co-solver (named workflows, simulators, persistent local UI) that can do the coursework an undergrad electrical engineer is asked to do. Public name is Arc; CLI remains `electrical-engineer` until a code rename.
 GitHub: [`Vinayak-RZ/Electrical-Engineer`](https://github.com/Vinayak-RZ/Electrical-Engineer).
 
 ## What this repo is

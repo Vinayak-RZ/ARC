@@ -6,13 +6,13 @@ Advise the owner on product *class*, *name*, and *orchestrator split* after comp
 
 ## Recommendation
 
-**Class.** Electrical Engineer is a **domain kernel** — the same class as OpenMontage (a harness-native domain system), not an MCP, CLI, plugin, skill pack, harness, executive kernel, or studio.
+**Class.** Arc is a **domain kernel** — the same class as OpenMontage (a harness-native domain system), not an MCP, CLI, plugin, skill pack, harness, executive kernel, or studio.
 
 **Vertical.** An undergraduate electrical-engineering **lab** that inhabits Claude Code, Codex, and Cursor, with a local CLI for students who do not use those hosts.
 
 **Names (pair).**
 
-- Product name: **Electrical Engineer** (keep PID Q1; do not rename the CLI or repo).
+- Product name: **Arc** (owner 2026-09-13; CLI/repo stay `electrical-engineer` / `Electrical-Engineer` this pass).
 - Public category: **lab**.
 - Internal class: **domain kernel** (harness-native; host owns the loop).
 - Mode: **co-solver** (full working + answer + evidence, or the exact token `unchecked`).
@@ -25,9 +25,9 @@ Rejected: “Agentic UG EE Studio” (jargon, acronym soup, video metaphor).
 
 **Spend / clamp.** Spend the frontier host on method, viva, and student interview. Clamp numbers, spice DAGs, photo confirm, and `unchecked` in engines. Two-band artifacts: evidentiary (simulators, citations, `unchecked`) versus engineering argument (host-authored, cannot mint scalars).
 
-**Analog.** OpenMontage turns a coding assistant into a video production studio. Electrical Engineer turns a coding assistant into an undergraduate electrical-engineering lab. Physics is the difference: OpenMontage can put method in markdown; EE puts method in skills *and* numbers in code (ChemCrow / Karajan pattern).
+**Analog.** OpenMontage turns a coding assistant into a video production studio. Arc turns a coding assistant into an undergraduate electrical engineer. Physics is the difference: OpenMontage can put method in markdown; EE puts method in skills *and* numbers in code (ChemCrow / Karajan pattern).
 
-**Marketing.** GitHub one-liner: Electrical Engineer is an Apache-2.0 lab for undergraduate electrical engineering. It sits on Claude Code, Codex, or Cursor, checks numbers with simulators when it can, and labels the rest `unchecked`. GTM: host clubs (Claude Builder Club exists at IIT Madras), divider eval as the demo, GATE remains an eval overlay.
+**Marketing.** GitHub one-liner: **Arc** turns your AI coding assistant into an undergraduate electrical engineer. It sits on Claude Code, Codex, or Cursor, checks numbers with simulators when it can, and labels the rest `unchecked`. GTM: host clubs (Claude Builder Club exists at IIT Madras), divider eval as the demo, GATE remains an eval overlay.
 
 ## Why this path
 

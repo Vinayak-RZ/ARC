@@ -1,6 +1,6 @@
 # Host adapters
 
-Electrical Engineer is a **domain kernel**: local CLI + stdio MCP + skills.
+Arc is a **domain kernel**: local CLI + stdio MCP + skills.
 Cursor, Claude Code, Codex, and **ChatGPT desktop** are **first-class hosts**.
 They are not the only way to run it. `electrical-engineer` CLI + localhost UI
 is a complete path with no AI host.

@@ -1,6 +1,6 @@
 # Plans index
 
-This directory is the **graph-engineering** artifact set for Electrical Engineer.
+This directory is the **graph-engineering** artifact set for Arc.
 
 | Read this | Role |
 |-----------|------|

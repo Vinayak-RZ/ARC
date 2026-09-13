@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/electrical-engineer-logo.svg" width="420" alt="Electrical Engineer — undergraduate EE co-solver">
+  <img src="assets/electrical-engineer-logo.svg" width="420" alt="Arc — turn your AI coding assistant into an undergraduate electrical engineer">
 </p>
 
 <p align="center">
@@ -17,9 +17,9 @@
 
 > Full internals (every package, file map, how the repo runs): [Extensive README](docs/EXTENSIVE.md)
 
-**Electrical Engineer** is an Apache-2.0 **undergraduate electrical-engineering co-solver**. It runs named YAML workflows so a student (or a host agent) can retrieve, check, and explain coursework with simulators when they exist, and with the exact token **unchecked** when they do not.
+**Arc** turns your AI coding assistant into an undergraduate electrical engineer. It is an Apache-2.0 co-solver: named YAML workflows retrieve, check, and explain coursework with simulators when they exist, and with the exact token **unchecked** when they do not.
 
-> **Electrical Engineer is a local CLI + persistent localhost UI you can run today.** It is not Electric Pi, not a Cordis/DSH agent loop, and not a PyPI release or BYOK cloud.
+> **Arc is a local CLI + persistent localhost UI you can run today.** It is not Electric Pi, not a Cordis/DSH agent loop, and not a PyPI release or BYOK cloud.
 > Primary interface: `electrical-engineer`.
 > Invariant: **unverified numbers use the exact token `unchecked`** — never a silent fake SPICE pass.
 
@@ -39,7 +39,7 @@ That eval is the product check: gold `eval/gold/circuits/divider-dc-01` expects 
 
 ## The workspace you actually open
 
-`electrical-engineer ui` binds **127.0.0.1:8765** only. Pass `--run <id>` to open `/?run=<id>`. White canvas, scarce `#0052ff` pills, Inter + JetBrains Mono — **not** Coinbase fonts or wordmark. Tokens: [`ui/src/tokens.css`](ui/src/tokens.css) from [`docs/design/DESIGN-coinbase.md`](docs/design/DESIGN-coinbase.md).
+`electrical-engineer ui` binds **127.0.0.1:8765** only. Pass `--run <id>` to open `/?run=<id>`. White canvas, scarce `#0052ff` pills, Inter + JetBrains Mono — **not** Coinbase fonts or wordmark. Header identity is the Arc logo ([`assets/electrical-engineer-logo.svg`](assets/electrical-engineer-logo.svg)), the same mark as this README — not plaintext-only chrome. Wiring that SVG into `ui/` is a later UI pass. Tokens: [`ui/src/tokens.css`](ui/src/tokens.css) from [`docs/design/DESIGN-coinbase.md`](docs/design/DESIGN-coinbase.md).
 
 ![Empty localhost workspace](docs/media/ui-empty.png)
 
@@ -65,7 +65,7 @@ Nearby-wrong products (MATLAB Copilot, a general coding agent that “also does 
 
 - **Named YAML DAGs.** Recipes under `workflows/` run in-process (`repair_max`, 16-node cap). Limit: the router never invents a graph; unmatched work uses `unmatched-cosolver` and stays unchecked. [`docs/WORKFLOWS.md`](docs/WORKFLOWS.md)
 - **Label-unchecked.** If ngspice, python-control, or pandapower is missing, the run fails closed with token `unchecked`. `EE_ALLOW_ALL` skips *asks*, not this token. Limit: a checked number requires a tool or a numeric check, not a fluent paragraph. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
-- **Localhost slot UI.** FastAPI on `127.0.0.1:8765`, Vite React slots, DESIGN-coinbase tokens. Limit: no WAN bind, no agent loop in the browser, library SVG/PNG only.
+- **Localhost slot UI.** FastAPI on `127.0.0.1:8765`, Vite React slots, DESIGN-coinbase tokens, Arc logo in the header. Limit: no WAN bind, no agent loop in the browser, library SVG/PNG only. As-built header is still plaintext; FR11 is the logo contract.
 - **stdio MCP.** `list_workflows` / `run_workflow`. Photo, compose, and control-diagram ids fail closed with a `ui_url` (`/?run=` when an id exists). Limit: MCP never waits on a human. [`docs/hosts/README.md`](docs/hosts/README.md)
 - **Thin RAG facade.** Book/chapter/folder/domain filters; empty retrieval is visible (`empty: true`). Spike picked **bm25** until LightRAG 1.5 has numbers on a licensed chapter. Limit: no commercial PDFs in git. [`research/notes/rag-spike-results-2026-09.md`](research/notes/rag-spike-results-2026-09.md)
 

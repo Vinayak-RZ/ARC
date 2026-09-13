@@ -2,7 +2,7 @@
 
 ## Purpose
 
-**Electrical-Engineer** is an Apache-2.0 **UG electrical engineering co-solver**: CLI `electrical-engineer`, persistent localhost UI, and stdio MCP. Named workflows check numbers when tools exist and otherwise emit the exact token **unchecked**.
+**Arc** is an Apache-2.0 **UG electrical engineering co-solver**: CLI `electrical-engineer`, persistent localhost UI, and stdio MCP. Named workflows check numbers when tools exist and otherwise emit the exact token **unchecked**. Public name is Arc; the CLI name is unchanged this pass.
 
 ## System overview (today)
 

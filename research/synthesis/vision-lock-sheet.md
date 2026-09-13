@@ -4,13 +4,13 @@
 
 Owner accept/reject for class, names, orchestrator split, and layering.
 
-**2026-09-12:** D14–D17 are written into **Proposed** [`docs/PRD.md`](../../docs/PRD.md), [`docs/PID.md`](../../docs/PID.md), and [`docs/ARCHITECTURE.md`](../../docs/ARCHITECTURE.md). Owner checkboxes below stay empty until you Accept. Root `README.md` is **not** rewritten this pass.
+**2026-09-12:** D14–D17 are written into **Proposed** [`docs/PRD.md`](../../docs/PRD.md), [`docs/PID.md`](../../docs/PID.md), and [`docs/ARCHITECTURE.md`](../../docs/ARCHITECTURE.md). **2026-09-13:** public name **Arc**; README first line is the analog without “lab”. Root `README.md` is rewritten this docs pass.
 
 ## Findings
 
 Claim | Evidence | Confidence
 --- | --- | ---
-Research recommends: keep product name Electrical Engineer; public category **lab**; internal class **domain kernel**; topology **C** plus CLI-inner/MCP-outer layering | `synthesis/domain-system-recommendation.md`; `notes/domain-kernel-layering.md` | high
+Research recommended (2026-09-12): keep product name Electrical Engineer; public category **lab**. **Owner (2026-09-13):** public name **Arc**; analog without “lab” in the first line. Internal class **domain kernel**; topology **C** plus CLI-inner/MCP-outer layering | `synthesis/domain-system-recommendation.md`; `notes/domain-kernel-layering.md` | high
 H3, UG bound, `unchecked`, co-solver mode, student-without-Cursor, Apache-2.0, no plant-floor stay frozen even if this sheet is accepted | `docs/PID.md` | high
 
 ### Frozen (do not reopen here)
@@ -27,8 +27,8 @@ H3, UG bound, `unchecked`, co-solver mode, student-without-Cursor, Apache-2.0, n
 
 **D14 Product name**
 
-- Keep **Electrical Engineer** (repo `Electrical-Engineer`, CLI `electrical-engineer`).
-- [ ] Accept
+- Public name **Arc**. Repo `Electrical-Engineer`, CLI `electrical-engineer` unchanged this pass.
+- [x] Accept as **Arc** (owner, 2026-09-13) — supersedes “keep Electrical Engineer”
 - [ ] Reject — write the alternative here only after a new naming note
 
 Written into Proposed PID/PRD 2026-09-12 (not owner-Accepted).
@@ -39,7 +39,7 @@ Written into Proposed PID/PRD 2026-09-12 (not owner-Accepted).
 - Internal: **domain kernel** (harness-native; same class as OpenMontage).
 - Mode: co-solver (unchanged).
 - Named reject: “Agentic UG EE Studio”.
-- Analog: turn your AI coding assistant into an undergraduate electrical-engineering lab.
+- Analog: turn your AI coding assistant into an undergraduate electrical engineer (not “lab” in the first line).
 - [ ] Accept
 - [ ] Reject
 

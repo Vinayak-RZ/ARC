@@ -88,7 +88,7 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 
 - **Status:** accepted (design lock 2026-09-10; A1)
 - **Context:** The student and the host agent share a persistent localhost workspace. Slots may *inspire* DeepSeek Harness register-into-named-holes, but Cordis/DSH as a runtime is H4/H5. The owner supplied a Coinbase marketing-surface analysis as the visual system.
-- **Decision:** FastAPI + Vite/React + Zustand + a **thin** in-repo slot registry. Bind `127.0.0.1` only. Visual tokens come only from [`docs/design/DESIGN-coinbase.md`](docs/design/DESIGN-coinbase.md). Fonts: Inter + JetBrains Mono or Geist Mono. Product name remains Electrical Engineer. Exact token `unchecked` is a `badge-pill`. Semantic green/red are text-only. Styling is CSS variables + CSS modules. Closed log: [`docs/planning/DESIGN_LOCK.md`](docs/planning/DESIGN_LOCK.md).
+- **Decision:** FastAPI + Vite/React + Zustand + a **thin** in-repo slot registry. Bind `127.0.0.1` only. Visual tokens come only from [`docs/design/DESIGN-coinbase.md`](docs/design/DESIGN-coinbase.md). Fonts: Inter + JetBrains Mono or Geist Mono. Product name is **Arc**. Header chrome uses the Arc logo (`assets/electrical-engineer-logo.svg`). Exact token `unchecked` is a `badge-pill`. Semantic green/red are text-only. Styling is CSS variables + CSS modules. Closed log: [`docs/planning/DESIGN_LOCK.md`](docs/planning/DESIGN_LOCK.md).
 - **Consequences:** U1 publishes the token map; B_UI implements CSS variables (no raw hex in components); T1 checks chrome; D1/H1 forbid Coinbase fonts/wordmark. Do not invent a second palette or run `impeccable teach` to replace this system.
 - **Alternatives:** HTMX (rejected); Tailwind-as-architecture (rejected); MUI/Ant (rejected); Coinbase licensed fonts (rejected); global dark mode (rejected); Cordis/DSH dependency (rejected).
 - **Sources:** owner design upload; `docs/design/DESIGN-coinbase.md`; `docs/planning/DESIGN_LOCK.md`
@@ -125,3 +125,14 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 - **Consequences:** Extract/chunk remains `CD-RAG-PARSE` until a code plan. Observation may seed on `summary.json`. Chat/Work still does not claim spawn. A Python specialist orchestrator remains the H3/H5 falsifier.
 - **Alternatives:** Python multi-agent runtime (rejected, H5); silent memory append every turn (rejected); cloud telemetry (rejected, FR6); treating host compaction as our middleware (rejected).
 - **Sources:** `docs/ARCHITECTURE.md` §0.3 §2.5 §10–§11; `docs/PRD.md` FR13/FR19/FR24; `hosts/adapters/README.md`
+
+---
+
+## ADR-0012 — Public name Arc
+
+- **Status:** accepted (owner 2026-09-13, docs pass)
+- **Context:** PID Q1 and research D14 kept the job title **Electrical Engineer** as the product name, with public category **lab** and analog “turn your AI coding assistant into an undergraduate electrical-engineering lab.” The owner asked for a short public name **Arc**, a README first line without “lab,” and the same logo in UI chrome.
+- **Decision:** Public name is **Arc**. README first line: **turn your AI coding assistant into an undergraduate electrical engineer** (not “UG Electrical Engineer” — UG is insider; “an UG” is ungrammatical). CLI `electrical-engineer` and GitHub repo `Electrical-Engineer` stay until a code rename. Header chrome must show `assets/electrical-engineer-logo.svg` (as-built `ui/` is still plaintext; wiring is a later UI pass). “Lab” is not the README first line.
+- **Consequences:** Product docs (README, PID, PRD, AGENTS, extensive, design lock) say Arc. Python package and binary names are unchanged this pass. Screenshots may still show old header text until the UI pass.
+- **Alternatives:** Keep Electrical Engineer (research default, rejected by owner); “an UG Electrical Engineer” (rejected — jargon + grammar); coined lab/bench names (still collided).
+- **Sources:** owner request 2026-09-13; `research/notes/naming-and-positioning.md`; `README.md`; `docs/PID.md`

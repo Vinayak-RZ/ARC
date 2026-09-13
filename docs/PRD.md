@@ -1,4 +1,4 @@
-# Product Requirements Document — Electrical Engineer
+# Product Requirements Document — Arc
 
 **Status:** Proposed (2026-09-12). Supersedes Accepted D0 (2026-09-10) pending owner review.  
 **Date:** 2026-09-12  
@@ -10,15 +10,16 @@
 
 ## 1. Thesis, name, licence
 
-**Thesis.** Electrical Engineer is an Apache-2.0, forever-open-source undergraduate electrical-engineering **lab**: a **domain kernel** that wraps a rented frontier agent loop (Cursor, Claude Code, Codex, ChatGPT desktop) so the student gets a checked assignment — method, numbers, viva — without us becoming a new harness. A branded **local CLI** and **persistent localhost UI** are a complete path with no AI host. The host plus pack skills compose the job; a **capability registry** is the physics contract; **providers** (simulators, sympy, RAG facade) are swappable; **short** physics attachments stay as replay; allowlisted capability graphs are **validated then run**. Mega YAML that includes `solve-explain` is not the host-path brain. Every in-bound UG question has a complete path: a provider checks the unknown, or the exact token **unchecked**. It is shaped by **real UG coursework** at Indian and global institutes. GATE is an eval instrument, not the product bound. PG, civil, and mechanical are out of the public promise.
+**Thesis.** **Arc** turns a coding assistant into an undergraduate electrical engineer. It is an Apache-2.0, forever-open-source **domain kernel** that wraps a rented frontier agent loop (Cursor, Claude Code, Codex, ChatGPT desktop) so the student gets a checked assignment — method, numbers, viva — without us becoming a new harness. A branded **local CLI** and **persistent localhost UI** are a complete path with no AI host. The host plus pack skills compose the job; a **capability registry** is the physics contract; **providers** (simulators, sympy, RAG facade) are swappable; **short** physics attachments stay as replay; allowlisted capability graphs are **validated then run**. Mega YAML that includes `solve-explain` is not the host-path brain. Every in-bound UG question has a complete path: a provider checks the unknown, or the exact token **unchecked**. It is shaped by **real UG coursework** at Indian and global institutes. GATE is an eval instrument, not the product bound. PG, civil, and mechanical are out of the public promise.
 
 | Field | Requirement |
 |-------|-------------|
-| Name | Electrical Engineer |
+| Name | **Arc** (CLI/repo stay `electrical-engineer` / `Electrical-Engineer` this pass) |
 | Repo | `Electrical-Engineer` |
 | CLI | `electrical-engineer` (`run`, `workflows`, `mcp`, `eval`, `ui`, `rag`, `memory`) |
-| UI | Persistent localhost workspace on `127.0.0.1` (critical surface) |
-| Public category | **lab** (undergraduate electrical-engineering lab) |
+| UI | Persistent localhost workspace on `127.0.0.1` (critical surface). Chrome identity is the Arc logo (`assets/electrical-engineer-logo.svg`). |
+| Public one-liner | Turn your AI coding assistant into an undergraduate electrical engineer |
+| Public category | Undergraduate electrical-engineering co-solver |
 | Internal class | **domain kernel** (host owns the loop; we own capabilities, providers, skills, gates) |
 | Mode | Co-solver (full working + answer + evidence, or exact token `unchecked`) |
 | Licence | Apache-2.0 for *our* code; textbooks never redistributed in git |
@@ -277,7 +278,7 @@ FR17–FR23 are the host-path restructure. FR24 is observation (D20).
 
 - Codex view is the OpenAI **inner-loop** host (skill folders + MCP + CLI), same shape as Cursor / Claude Code.
 - Chat/Work is first-class **contract** with a weaker editor: MCP STDIO + pinned root skill until Skills-over-MCP is verified on that app; `ui` / `eval` in a side terminal. Pack-on-demand (FR19) on Chat/Work is not claimed until resources work. Do not count ChatGPT desktop as a fifth harness separate from Codex view — they share `~/.codex/config.toml`.
-- This **repo’s** root `AGENTS.md` is the Electrical-Engineer **coding** SDLC. Do not overload it with student lab instructions. Student Cursor attach is [`hosts/cursor.md`](hosts/cursor.md): symlink **root + active pack** into the **student’s** `~/.cursor/skills` or their homework repo, never into this repo’s `.cursor/skills/` (vendored coding skills).
+- This **repo’s** root `AGENTS.md` is the Arc **coding** SDLC. Do not overload it with student lab instructions. Student Cursor attach is [`hosts/cursor.md`](hosts/cursor.md): symlink **root + active pack** into the **student’s** `~/.cursor/skills` or their homework repo, never into this repo’s `.cursor/skills/` (vendored coding skills).
 
 **FR5 Model adapters.** Support (a) the host’s subscription model, (b) user API keys, (c) local models. Architecture must not lock a single vendor. The DAG **runner** does not own a hidden LLM loop.
 
@@ -291,7 +292,7 @@ FR17–FR23 are the host-path restructure. FR24 is observation (D20).
 
 **FR10 Named workflows.** Default CLI path is a **short physics attachment** from [`WORKFLOWS.md`](WORKFLOWS.md) (`electrical-engineer run simulate-circuit`) **or** a capability graph. Explicit id skips classify. On the CLI-without-host path, if id omitted, one classifier call; if top-1 and top-2 are within 0.15, ask the student. On the **host path**, the host calls `simulate_attachment` or `propose_composition` (FR17) — it does **not** pick a mega YAML that includes `solve-explain`. Unmatched text always uses `unmatched-cosolver` (no auto-simulate; host-path unmatched has no essay node). The router **never invents capability or provider ids**. New graphs: `propose_composition` (allowlisted capabilities, kernel binds providers) or `compose-from-parts --advanced`. Missing YAML for a pack does not make an in-bound question out of product — use capabilities or `unchecked`.
 
-**FR11 Persistent UI.** `electrical-engineer ui` is a **critical** local workspace (runs, library-rendered diagrams and plots, photo confirm, citations, RAG inventory, memory excerpts, **job plan** when `plan.md` exists, **observation excerpt** when present). It stays up across a session. It is not a one-shot diagram dialog and not a second agent loop.
+**FR11 Persistent UI.** `electrical-engineer ui` is a **critical** local workspace (runs, library-rendered diagrams and plots, photo confirm, citations, RAG inventory, memory excerpts, **job plan** when `plan.md` exists, **observation excerpt** when present). It stays up across a session. It is not a one-shot diagram dialog and not a second agent loop. Header chrome **must** render the Arc logo from [`../assets/electrical-engineer-logo.svg`](../assets/electrical-engineer-logo.svg) (mark + wordmark, `alt` naming Arc). Do not use a Coinbase wordmark. Do not ship plaintext-only “Electrical Engineer” as the only identity. As-built `ui/` still uses header text; wiring the SVG is a later UI pass.
 
 **FR12 Tagged RAG.** BYO PDFs and scans ingest **locally** through drop → gate → extract → chunk (book/chapter/page) → index (facade) → retrieve. Inventory (`rag list`) and filters: book, chapter, folder, domain. “Search only this book, chapter 3” is a v1 retrieval requirement. Citations include book + chapter + page. Empty retrieval is visible. Circuit-homework photos for simulation go through `photo-to-netlist`, not quiet RAG-as-netlist. BYO content cannot override gates or `unchecked` and cannot mint a capability. Host path uses `retrieve` as a read verb; `rag add` is CLI this graph. Do not dump the index into always-on context (§6.2). As-built add-without-parse is `CD-RAG-PARSE` until a code plan.
 
@@ -309,7 +310,7 @@ FR17–FR23 are the host-path restructure. FR24 is observation (D20).
 
 **FR19 Pack specialists.** Ship a short **root** skill plus per-pack specialist skills (`skills/<pack>/SKILL.md`) covering **every curriculum pack**, with optional one-level `reference/` files. Load pack chapters on domain match only. Skills **teach** method and which **capability** to request; they **do not enforce** FR2. A fluent KCL paragraph in a skill or chat is never a checked number. v1 promise is the skill pack, not a custom multi-agent orchestrator. Host-native subagents (Claude Task / Cursor / Codex) may spawn **at most two** pack specialists that call the same EE MCP. The CLI, MCP, and UI never start those children. Handoff is `run_id` + run-dir files. Adapter prompts: [`../hosts/adapters/`](../hosts/adapters/). Do not put EE packs in this repo’s `.cursor/skills/`. Chat/Work does not claim spawn until Skills-over-MCP. A Python process that fans out specialists is H5.
 
-**FR20 Dual MATLAB MCP.** When a MathWorks licence exists, the host **may** run MATLAB MCP / Copilot **and** Electrical Engineer MCP together. EE is the only authority for checked numbers. `label` / `summary` / `check-numeric` may set `unchecked: false` **only** when a **child EE verifier artifact** exists (`run-spice`, `check-numeric`’s own solver over student/netlist/prior-engine ports, `run-python-control`, `run-load-flow`, `run-matlab-if-present`). Host-typed and peer-MCP/Copilot scalars are **not ingest**; they stay `unchecked` until an EE engine recomputes them. Provenance must not name Copilot or the host as verifier. Peer MATLAB MCP is for tools we do not wrap (Simulink editor, live scripts), not a second sim that satisfies FR2. The entire product and CI **work without MATLAB**. MATLAB Copilot is not the product identity.
+**FR20 Dual MATLAB MCP.** When a MathWorks licence exists, the host **may** run MATLAB MCP / Copilot **and** Arc MCP together. EE is the only authority for checked numbers. `label` / `summary` / `check-numeric` may set `unchecked: false` **only** when a **child EE verifier artifact** exists (`run-spice`, `check-numeric`’s own solver over student/netlist/prior-engine ports, `run-python-control`, `run-load-flow`, `run-matlab-if-present`). Host-typed and peer-MCP/Copilot scalars are **not ingest**; they stay `unchecked` until an EE engine recomputes them. Provenance must not name Copilot or the host as verifier. Peer MATLAB MCP is for tools we do not wrap (Simulink editor, live scripts), not a second sim that satisfies FR2. The entire product and CI **work without MATLAB**. MATLAB Copilot is not the product identity.
 
 **FR21 Host-path viva.** On first-class hosts, the host writes the explanation (`argument.md`). Host-path `simulate_attachment` / `propose_composition` **must not** invoke `solve-explain`. CLI-without-host and gold **rollback** may keep `solve-explain` in YAML. Starving the host by running the essay inside `run_workflow` on the host path violates this FR.
 

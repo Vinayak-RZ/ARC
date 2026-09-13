@@ -18,6 +18,7 @@ This lock does **not** start product `ui/` or Wave 0. Execution starts only when
 - Workspace uses the token spacing scale. Do not apply 96px marketing section padding to chrome rows.
 - CSS variables + CSS modules. No MUI/Ant/Tailwind-as-architecture. No GSAP marketing scroll.
 - Treat DESIGN-coinbase as the DESIGN.md equivalent. Do not run `impeccable teach` to invent a second system.
+- Header chrome identity is the Arc logo (`assets/electrical-engineer-logo.svg`). Do not use Coinbase wordmark. Do not leave plaintext-only “Electrical Engineer” as the shipped chrome identity.
 
 ## Non-goals
 

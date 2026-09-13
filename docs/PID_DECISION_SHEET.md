@@ -8,7 +8,7 @@
 
 | ID | Answer |
 |----|--------|
-| Q1 | Electrical Engineer (repo `Electrical-Engineer`; CLI default `electrical-engineer`) |
+| Q1 | **Arc** (public name, 2026-09-13). Repo stays `Electrical-Engineer`; CLI stays `electrical-engineer` until a code rename. |
 | Q2 | India first; must not lack globally |
 | Q3 | Apache License 2.0 (owner said 2.2; 2.0 is the current Apache licence, confirmed) |
 | Q4 | Local-first CLI; also Cursor / Claude Code / OpenAI; BYO API key; local models |
@@ -82,6 +82,8 @@ A. Keep `Electrical-Engineer`
 B. `Electric Pi` (or similar) even if we do not fork Pi  
 C. A student-facing name (write it)  
 D. CLI name different from GitHub name (write both)
+
+**2026-09-13 amendment:** public name is **Arc** (C + D). GitHub repo and CLI binary stay `Electrical-Engineer` / `electrical-engineer` until a code rename. README one-liner: turn your AI coding assistant into an undergraduate electrical engineer (not “lab”).
 
 **Q2. Primary audience geography**  
 A. India UG/PG first, English UI, international welcome  

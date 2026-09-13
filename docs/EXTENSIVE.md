@@ -1,4 +1,4 @@
-# Electrical Engineer — extensive internals
+# Arc — extensive internals
 
 Companion to the main [README](../README.md). Concepts first, then how the repo
 runs, then every first-party package. Do not invent paths.
@@ -110,7 +110,7 @@ Vendored Cursor config (`.cursor/`) is not a product package; see `.cursor/VENDO
 | `ui/src/store.js` | Layout | zustand |
 | `ui/vite.config.js` | Dev server | loopback |
 | `ui/package-lock.json` | Reproducible npm | lockfile for `npm run build` |
-| `assets/electrical-engineer-logo.svg` | Product mark | flat README logo (no Coinbase wordmark) |
+| `assets/electrical-engineer-logo.svg` | Arc mark | flat README + UI chrome logo (filename kept this pass; wordmark is Arc; no Coinbase wordmark). Header in `ui/` must render this SVG — as-built is still plaintext. |
 
 ### 4.3 recipes (`workflows/`)
 

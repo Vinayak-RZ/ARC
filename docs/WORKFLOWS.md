@@ -1,4 +1,4 @@
-# Named workflows — Electrical Engineer
+# Named workflows — Arc
 
 **Status:** Catalog for this graph (ids **renamable until the first CLI ships**).  
 **Authority:** [`ARCHITECTURE.md`](ARCHITECTURE.md), [`curriculum-map.md`](curriculum-map.md)

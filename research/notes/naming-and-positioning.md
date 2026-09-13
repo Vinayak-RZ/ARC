@@ -1,5 +1,11 @@
 # Naming and positioning
 
+## Owner lock (2026-09-13)
+
+Public product name is **Arc**. CLI `electrical-engineer` and repo `Electrical-Engineer` stay until a code rename. Public one-liner: **turn your AI coding assistant into an undergraduate electrical engineer** — not “lab” in the first line. “Lab” may still appear as an internal category noun.
+
+Research below recommended keeping Electrical Engineer + category **lab**. That recommendation is **superseded** for the public name and README first line. Collision notes and rejected coined names remain useful.
+
 ## Purpose
 
 Score a **product name** (PID Q1) and a **category noun** (what kind of thing this is vs MCP / CLI / plugin / harness / OpenMontage). Reject the working label “Agentic UG EE Studio.” Recommend one pair for the synthesis memo.
@@ -74,14 +80,16 @@ Mode (unchanged): **co-solver**.
 - **Category noun:** lab
 - **Internal class:** harness-native domain system
 
-**Analog sentence** (OpenMontage → EE):
+**Analog sentence** (OpenMontage → Arc):
 
 - OpenMontage: turn your AI coding assistant into a full video production studio.
-- Electrical Engineer: **turn your AI coding assistant into an undergraduate electrical-engineering lab.**
+- Arc: **turn your AI coding assistant into an undergraduate electrical engineer.**
+
+(The 2026-09-12 draft used “undergraduate electrical-engineering lab.” Owner rejected “lab” in the first line.)
 
 **GitHub one-liner:**
 
-Electrical Engineer is an Apache-2.0 **lab** for undergraduate electrical engineering. It sits on Claude Code, Codex, or Cursor, checks numbers with simulators when it can, and labels the rest with the exact token `unchecked`.
+**Arc** turns your AI coding assistant into an undergraduate electrical engineer. It sits on Claude Code, Codex, or Cursor, checks numbers with simulators when it can, and labels the rest with the exact token `unchecked`.
 
 **Spoken:** “It’s a lab for electrical, for Claude and Codex — not MATLAB Copilot, not a new ChatGPT.”
 
@@ -102,9 +110,9 @@ Electrical Engineer is an Apache-2.0 **lab** for undergraduate electrical engine
 
 ### README above-fold (proposal only — do not apply this phase)
 
-H1: Electrical Engineer
+H1: Arc
 
-One-liner: Apache-2.0 undergraduate electrical-engineering **lab** for Claude Code, Codex, and Cursor (and a local CLI).
+One-liner: Turn your AI coding assistant into an undergraduate electrical engineer.
 
 Invariant: unverified numbers use the exact token `unchecked`.
 
