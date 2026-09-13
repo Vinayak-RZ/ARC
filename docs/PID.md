@@ -17,7 +17,8 @@ Electrical Engineer is an Apache-2.0, forever-open-source undergraduate electric
 
 | Field | Value |
 |-------|--------|
-| Public name | Electrical Engineer |
+| Public name | Arc |
+| Public subtitle | AI Electrical Engineer |
 | GitHub repo | `Electrical-Engineer` |
 | CLI (default) | `electrical-engineer` |
 | Public category | Undergraduate electrical-engineering **lab** |

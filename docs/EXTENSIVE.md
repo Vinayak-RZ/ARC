@@ -110,7 +110,8 @@ Vendored Cursor config (`.cursor/`) is not a product package; see `.cursor/VENDO
 | `ui/src/store.js` | Layout | zustand |
 | `ui/vite.config.js` | Dev server | loopback |
 | `ui/package-lock.json` | Reproducible npm | lockfile for `npm run build` |
-| `assets/electrical-engineer-logo.svg` | Product mark | flat README logo (no Coinbase wordmark) |
+| `assets/arc-icon.png` | Product mark | rounded-square helper (README) |
+| `assets/arc-wordmark.png` | Wordmark | ARC / AI Electrical Engineer |
 
 ### 4.3 recipes (`workflows/`)
 

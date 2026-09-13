@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="assets/electrical-engineer-logo.png" width="168" alt="Electrical Engineer helper">
+  <img src="assets/arc-icon.png" width="168" alt="Arc">
 </p>
 
 <h1 align="center">
-  <img src="assets/electrical-engineer-wordmark.png" width="380" alt="Electrical Engineer">
+  <img src="assets/arc-wordmark.png" width="280" alt="Arc, AI Electrical Engineer">
 </h1>
 
 <p align="center">
@@ -30,9 +30,9 @@
 
 Turn your AI coding assistant into an undergraduate EE lab. 10 undergraduate packs, 27 named workflows, 14 capabilities.
 
-Describe the circuit, viva, or assignment in plain language. Electrical Engineer retrieves, checks, and explains. Simulators run when they exist. Everything else is the exact token `unchecked`.
+Describe the circuit, viva, or assignment in plain language. Arc retrieves, checks, and explains. Simulators run when they exist. Everything else is the exact token `unchecked`.
 
-> **Electrical Engineer is a local lab you clone and run.** It is not a general coding agent that also does circuits.
+> **Arc is a local lab you clone and run.** It is not a general coding agent that also does circuits.
 > Primary interface: paste a prompt into Cursor, Claude Code, Codex, or ChatGPT desktop, or run `electrical-engineer`.
 > Invariant: **unverified numbers use the exact token `unchecked`.**
 
@@ -48,7 +48,7 @@ That eval is the product check. Gold `eval/gold/circuits/divider-dc-01` expects 
 
 A **domain kernel** is what enables a general agentic harness to have expertise in a specific domain.
 
-Electrical Engineer is the local domain kernel for undergraduate electrical engineering. Cursor, Claude Code, Codex, and ChatGPT desktop stay general harnesses. This kernel holds the expertise they load: named workflows, simulators when they exist, and the exact token `unchecked` when they do not.
+Arc is the local domain kernel for undergraduate electrical engineering. Cursor, Claude Code, Codex, and ChatGPT desktop stay general harnesses. This kernel holds the expertise they load: named workflows, simulators when they exist, and the exact token `unchecked` when they do not.
 
 ## Try these prompts
 
