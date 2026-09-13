@@ -1,12 +1,9 @@
 id: derive-circuit
 nodes:
-  solve:
-    activity: solve-explain
   check:
-    activity: check-numeric
-    needs: [solve]
+    activity: algebraic-check
   label:
-    activity: label-unchecked
+    activity: label-unverified
     needs: [check]
   summary:
     activity: write-run-summary
