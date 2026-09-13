@@ -1,8 +1,10 @@
 <p align="center">
-  <img src="assets/electrical-engineer-logo.svg" width="200" alt="Electrical Engineer helper bot">
+  <img src="assets/electrical-engineer-logo.png" width="168" alt="Electrical Engineer helper">
 </p>
 
-<h1 align="center">Electrical Engineer</h1>
+<h1 align="center">
+  <img src="assets/electrical-engineer-wordmark.png" width="380" alt="Electrical Engineer">
+</h1>
 
 <p align="center">
   <strong>The first open-source, agentic electrical-engineering lab.</strong>
