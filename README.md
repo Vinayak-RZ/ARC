@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <strong>The first open-source, agentic electrical-engineering lab.</strong>
+  <strong>The first open-source, agentic electrical engineer.</strong>
 </p>
 
 <p align="center">
