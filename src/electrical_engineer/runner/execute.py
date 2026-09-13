@@ -10,7 +10,7 @@ import electrical_engineer.nodes  # noqa: F401  register activities
 from electrical_engineer.capabilities import DEFAULT_BIND, rebind_recipe
 from electrical_engineer.catalog import load_recipe
 from electrical_engineer.nodes.registry import REGISTRY
-from electrical_engineer.runner.fsm import run_fsm
+from electrical_engineer.runner.fsm import Recipe, run_fsm
 from electrical_engineer.runner.runs import create_run_dir, new_run_id, node_dir, project_root
 from electrical_engineer.unchecked import UNCHECKED
 
@@ -31,10 +31,12 @@ def execute(
     run_root: Path | None = None,
     problem: dict[str, Any] | None = None,
     allow_all: bool = False,
+    recipe: Recipe | None = None,
 ) -> dict[str, Any]:
     del allow_all  # gates still apply inside nodes; EE_ALLOW_ALL is env-only
     root = project_root(cwd)
-    recipe = rebind_recipe(load_recipe(recipe_id, cwd))
+    loaded = recipe if recipe is not None else load_recipe(recipe_id, cwd)
+    recipe = rebind_recipe(loaded)
     run_id = new_run_id()
     run_dir = create_run_dir(run_root or root, run_id)
     if problem:
