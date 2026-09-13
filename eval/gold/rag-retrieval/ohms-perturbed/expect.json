@@ -1,7 +1,6 @@
 {
   "recipe_id": "explain-circuits",
-  "value": 3.0,
-  "tol": 1e-6,
-  "unchecked": false,
+  "token": "unchecked",
+  "unchecked": true,
   "citations": [{"book_id": "kuphaldt-dc", "chapter_id": "2"}]
 }

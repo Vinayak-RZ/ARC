@@ -27,7 +27,7 @@ thevenin-dc-01/
 
 ## Scoring seam
 
-The thin runner compares `runs/<id>/summary.json` to `expect.json`:
+The thin runner compares `runs/<id>/evidentiary.json` (alias `summary.json`) to `expect.json`:
 
 - `recipe_id` must match the workflow that ran
 - numeric fields within stated tolerance **or** the exact token `unchecked` when `expect` requires it

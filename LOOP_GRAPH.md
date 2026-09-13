@@ -40,7 +40,7 @@
 | B_PACKS | pack coverage | [plans/loops/B_PACKS.md](plans/loops/B_PACKS.md) | pytest test_pack_coverage | 3 | passed |
 | V_PONY | ponytail-review | [plans/loops/V_PONY.md](plans/loops/V_PONY.md) | PONYTAIL_REVIEW.md Findings | 3 | passed |
 | M1 | integrate | [plans/loops/M1.md](plans/loops/M1.md) | pytest test_wiring | 3 | passed |
-| B_EVAL | gold FR9 | [plans/loops/B_EVAL.md](plans/loops/B_EVAL.md) | eval --pack circuits + scoring | 3 | pending |
+| B_EVAL | gold FR9 | [plans/loops/B_EVAL.md](plans/loops/B_EVAL.md) | eval --pack circuits + scoring | 3 | passed |
 | E1 | evaluate | [plans/loops/E1.md](plans/loops/E1.md) | ./scripts/validate.sh | 3 | pending |
 | V_SEC | security | [plans/loops/V_SEC.md](plans/loops/V_SEC.md) | SECURITY_REVIEW.md 127.0.0.1 + secret | 3 | pending |
 | R1 | boot | [plans/loops/R1.md](plans/loops/R1.md) | R1_BOOT.md names electrical-engineer | 3 | pending |
@@ -150,7 +150,7 @@ flowchart TB
 | 3 | [U1](plans/loops/U1.md), [B_KERNEL](plans/loops/B_KERNEL.md), [B_RAG](plans/loops/B_RAG.md), [B_HOST](plans/loops/B_HOST.md) | yes | no | done |
 | 4 | [B_ACI](plans/loops/B_ACI.md), [B_WF](plans/loops/B_WF.md), [B_UI](plans/loops/B_UI.md), [B_PACKS](plans/loops/B_PACKS.md) | yes | no | done |
 | 5 | [V_PONY](plans/loops/V_PONY.md) then [M1](plans/loops/M1.md) | no | yes after B* | done |
-| 6 | [B_EVAL](plans/loops/B_EVAL.md) | no | no | pending |
+| 6 | [B_EVAL](plans/loops/B_EVAL.md) | no | no | done |
 | 7 | [E1](plans/loops/E1.md), [V_SEC](plans/loops/V_SEC.md) | yes (disjoint) | no | pending |
 | 8 | [R1](plans/loops/R1.md) | no | no | pending |
 | 9 | [T1](plans/loops/T1.md) | no | no | pending |
