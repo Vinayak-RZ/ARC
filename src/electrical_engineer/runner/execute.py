@@ -151,4 +151,5 @@ def _unchecked_reason(recipe_id: str, completed: dict[str, Any], payload: dict[s
     for v in completed.values():
         if isinstance(v, dict) and v.get("error") in {"unconfirmed", "gate"}:
             return "gate-closed"
-    return "unmatched"
+    fallback = "unmatched"
+    return fallback if fallback in _UNCHECKED_REASONS else None

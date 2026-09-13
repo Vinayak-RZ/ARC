@@ -127,7 +127,7 @@ function RunDetail({ id }) {
   );
 }
 
-function Band({ id, title, field, json }) {
+function Band({ id, title, field }) {
   const { data, error } = useRun(id);
   let body = data?.[field] || "";
   if (error) body = "";
@@ -136,13 +136,13 @@ function Band({ id, title, field, json }) {
       <h2>{title}</h2>
       {error ? <p className="failed">unavailable</p> : null}
       {!error && !body ? <p className="empty">No {title.toLowerCase()} yet.</p> : null}
-      {body ? <pre className="number-display">{json ? body : body}</pre> : null}
+      {body ? <pre className="number-display">{body}</pre> : null}
     </section>
   );
 }
 
 function Evidentiary({ id }) {
-  return <Band id={id} title="Evidentiary" field="evidentiary" json />;
+  return <Band id={id} title="Evidentiary" field="evidentiary" />;
 }
 
 function Argument({ id }) {
@@ -154,7 +154,7 @@ function Plan({ id }) {
 }
 
 function Observation({ id }) {
-  return <Band id={id} title="Observation" field="observation" json />;
+  return <Band id={id} title="Observation" field="observation" />;
 }
 
 function Artifacts({ id }) {
