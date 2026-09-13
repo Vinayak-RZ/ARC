@@ -9,7 +9,8 @@ function Root() {
         Skip to workspace
       </a>
       <header className="topbar">
-        <strong>Electrical Engineer</strong>
+        <img className="brand-mark" src="/arc-icon.png" width="32" height="32" alt="" />
+        <strong>Arc</strong>
         <span className="hint">127.0.0.1 · named runs · exact token unchecked</span>
       </header>
       <div className="layout">

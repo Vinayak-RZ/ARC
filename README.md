@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/arc-icon.png" width="168" alt="Arc">
+  <img src="assets/brand/arc-icon.png" width="168" alt="Arc">
 </p>
 
 <h1 align="center">
