@@ -151,7 +151,7 @@ Python 3.11+, `uv`, hatchling. Optional tools (PySpice, python-control, pandapow
 - `./scripts/validate.sh` — lint, pytest, eval circuits, refuse `0.0.0.0`
 - `.github/workflows/ci.yml` — Ubuntu only; tests use the checkout cwd (not a Cloud Agent `/workspace` path)
 - Layout: `tests/unit/`, `tests/integration/`, `eval/gold/`
-- README screenshots: `docs/media/ui-empty.png`, `docs/media/ui-checked-run.png`, `docs/media/ui-unchecked-confirm.png` from live `127.0.0.1:8765`
+- Brand: `assets/brand/arc-icon.png`, `assets/brand/arc-lockup.png`, `ui/public/arc-icon.png`
 
 ## 7. Further reading
 
