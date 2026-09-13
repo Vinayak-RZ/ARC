@@ -36,13 +36,18 @@ def _walk_checked(inputs: Mapping[str, Any]) -> bool:
 
 @register("label-unchecked")
 def label_unchecked(_spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
+    extra = {}
+    if _spec.get("cannot_do"):
+        extra["cannot_do"] = _spec["cannot_do"]
+    if _spec.get("capability"):
+        extra["capability"] = _spec["capability"]
     if _walk_checked(inputs):
         value = None
         for v in inputs.values():
             if isinstance(v, dict) and v.get("value") is not None:
                 value = v.get("value")
-        return {"unchecked": False, "token": None, "value": value, "inputs": inputs}
-    return {"unchecked": True, "token": UNCHECKED, "inputs": inputs}
+        return {"unchecked": False, "token": None, "value": value, "inputs": inputs, **extra}
+    return {"unchecked": True, "token": UNCHECKED, "inputs": inputs, **extra}
 
 
 @register("write-run-summary")

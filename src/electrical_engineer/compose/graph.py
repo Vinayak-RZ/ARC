@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from electrical_engineer.capabilities import CapabilityError, bind
 from electrical_engineer.runner.fsm import RunnerError, parse_recipe
 
 MAX_NODES = 16
@@ -23,10 +24,17 @@ def compose(data: dict) -> dict:
     recipe_nodes = {}
     for nid, body in nodes.items():
         needs = [e["from"] for e in edges if e.get("to") == nid]
-        recipe_nodes[nid] = {
-            "activity": body.get("activity") or body.get("uses"),
-            "needs": needs,
-        }
+        raw = body.get("activity") or body.get("uses") or body.get("capability")
+        try:
+            bound = bind(str(raw))
+        except CapabilityError as exc:
+            raise ComposeError(str(exc)) from exc
+        node = {"activity": bound.provider, "needs": needs}
+        if bound.capability:
+            node["capability"] = bound.capability
+        if bound.no_provider:
+            node["cannot_do"] = bound.cannot_do
+        recipe_nodes[nid] = node
     try:
         parse_recipe({"id": data.get("id", "composed"), "nodes": recipe_nodes})
     except RunnerError as exc:

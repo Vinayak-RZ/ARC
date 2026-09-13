@@ -91,10 +91,12 @@ def solve_explain(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any
     bits = [p.get("text", "")[:400] for p in passages[:3]]
     cited = " ".join(bits)
     if value is not None:
+        # FR9: argument-band fallback must never mint unchecked: false.
         return {
             "text": f"value={value}\n{cited}",
             "value": value,
-            "unchecked": False,
+            "unchecked": True,
+            "token": UNCHECKED,
             "law": problem.get("kind") or "numeric",
             "citations": citations,
         }
