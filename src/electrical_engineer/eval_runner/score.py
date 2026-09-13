@@ -1,4 +1,4 @@
-"""Gold eval: compare summary.json to expect.json. No LLM-as-judge."""
+"""Gold eval: compare evidentiary band to expect.json. No LLM-as-judge."""
 
 from __future__ import annotations
 
@@ -57,7 +57,9 @@ def run_item(item: Path, *, run_root: Path | None = None) -> dict[str, Any]:
         if path.is_file():
             problem.update(json.loads(path.read_text()))
     result = execute(expect["recipe_id"], run_root=run_root, problem=problem or None)
-    scored = score(result["summary"], expect)
+    evid_path = Path(result["run_dir"]) / "evidentiary.json"
+    summary = json.loads(evid_path.read_text()) if evid_path.is_file() else result["summary"]
+    scored = score(summary, expect)
     scored["item"] = str(item)
     scored["run_id"] = result["run_id"]
     return scored

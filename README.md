@@ -70,7 +70,14 @@ uv sync --extra dev
 uv run electrical-engineer workflows
 ```
 
-Then paste a prompt above, or:
+Then paste a prompt above, or boot the same commands recorded in [`docs/planning/R1_BOOT.md`](docs/planning/R1_BOOT.md):
+
+```text
+uv run electrical-engineer --help
+uv run electrical-engineer run solve-circuit-problem
+uv run electrical-engineer mcp
+EE_NO_BROWSER=1 uv run electrical-engineer ui
+```
 
 ```text
 uv run electrical-engineer run solve-circuit-problem
@@ -97,14 +104,14 @@ sequenceDiagram
   H->>K: prompt or run RECIPE
   K->>P: capability from the registry
   P-->>K: value or unchecked
-  K-->>UI: summary.json
-  UI-->>H: slots + confirm
+  K-->>UI: evidentiary.json
+  UI-->>H: two-band slots + confirm
 ```
 
 - **Named workflows.** 27 YAML recipes under `workflows/`. Limit: the router never invents a graph; unmatched work uses `unmatched-cosolver` and stays unchecked. [`docs/WORKFLOWS.md`](docs/WORKFLOWS.md)
 - **Label-unchecked.** If ngspice, python-control, or pandapower is missing, the run fails closed with token `unchecked`. Limit: a checked number requires a tool or a numeric check, not a fluent paragraph. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - **Loopback workspace.** FastAPI on `127.0.0.1:8765`. Limit: no WAN bind, no agent loop in the browser.
-- **stdio MCP.** As-built: `list_workflows` / `run_workflow`. Limit: MCP never waits on a human.
+- **stdio MCP.** Always-on: `list_workflows`, `retrieve`, `open_ui`, `simulate_attachment`, `propose_composition`, `label` (plus `run_workflow` rollback). Limit: MCP never waits on a human.
 
 ## Go deeper
 

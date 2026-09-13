@@ -1,6 +1,6 @@
 # R1 boot evidence
 
-Recorded 2026-09-10 on Ubuntu. Bind is **127.0.0.1** only. Local LLM skipped (unset).
+Recorded 2026-09-13 on Ubuntu after D19/D20 loops. Bind is **127.0.0.1** only. Local LLM skipped (unset).
 
 ## 1. electrical-engineer --help
 
@@ -18,55 +18,33 @@ options:
 
 ## 2. electrical-engineer run solve-circuit-problem
 
-```text
-txps-20260910T214431Z
-{
-  "recipe_id": "solve-circuit-problem",
-  "run_id": "txps-20260910T214431Z",
-  "unchecked": false,
-  "token": null,
-  "value": 5.0,
-  "paths": [
-    "/workspace/runs/txps-20260910T214431Z/summary.json"
-  ],
-  "nodes": {
-    "retrieve": {
-      "unchecked": null,
-      "ok": null
-    },
-    "solve": {
-      "unchecked": false,
-      "ok": null
-    },
-    "check": {
-      "unchecked": false,
-      "ok": true
-    },
-    "label": {
-      "unchecked": false,
-      "ok": null
-    },
-    "summary": {
-      "unchecked": false,
-      "ok": null
-    }
-  }
-}
-```
-
-## 3. MCP stdio initialize + list_workflows
+With `eval/gold/circuits/divider-dc-01/fixtures/problem.json` as cwd `problem.json`:
 
 ```text
-{"jsonrpc": "2.0", "id": 1, "result": {"protocolVersion": "2024-11-05", "serverInfo": {"name": "electrical-engineer", "version": "0.1.0"}, "capabilities": {"tools": {}}}}
-{"jsonrpc": "2.0", "id": 2, "result": {"tools": [{"name": "list_workflows", "description": "List named workflow ids", "inputSchema": {"type": "object", "properties": {}}}, {"name": "run_workflow", "description": "Start a named workflow; never waits", "inputSchema": {"type": "object", "properties": {"workflow_id": {"type": "string"}}, "required": ["workflow_id"]}}]}}
+e54q-20260913T083849Z
+recipe_id solve-circuit-problem
+unchecked false
+value 5.0
+verifier algebraic-check via check-numeric
+solve node unchecked true (FR9: solve-explain does not mint checked)
+check node unchecked false ok true
 ```
+
+Also `electrical-engineer run simulate-circuit` → token `unchecked` (no ngspice in this environment).
+
+## 3. MCP stdio initialize + tools/list
+
+Seven verbs: `list_workflows`, `retrieve`, `open_ui`, `simulate_attachment`, `propose_composition`, `label`, `run_workflow`. `propose_composition` of `lookup_vout_guess` returns `unknown id` with `waits: false`. Photo `simulate_attachment` returns `ui_url` `http://127.0.0.1:8765/` and `waits: false`.
 
 ## 4. UI health on 127.0.0.1
 
 ```text
 {"bind":"127.0.0.1","ok":true}
-bind 127.0.0.1 port 8765
+GET /api/runs → list (honest empty when none)
+GET /api/runs/nope → 404 state failed
 ```
+
+UI health JSON `{"bind":"127.0.0.1","ok":true}`. Loopback only (validate.sh refuses WAN binds).
 
 ## Local LLM
 

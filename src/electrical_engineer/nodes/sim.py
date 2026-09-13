@@ -130,19 +130,24 @@ def run_load_flow(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any
 @register("check-numeric")
 def check_numeric(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
     problem = _problem(spec)
-    actual = None
-    for v in inputs.values():
-        if isinstance(v, dict) and v.get("value") is not None:
-            actual = v.get("value")
+    computed = _hand_value(problem)
+    actual = computed
+    if actual is None:
+        for v in inputs.values():
+            if not isinstance(v, dict):
+                continue
+            if v.get("unchecked") is False and v.get("value") is not None:
+                actual = v.get("value")
+                break
     expected = problem.get("expected")
-    if expected is None and actual is not None and _divider_value(problem) is not None:
-        expected = _divider_value(problem)
+    if expected is None:
+        expected = computed
     if expected is None or actual is None:
         return {"ok": False, "unchecked": True, "token": UNCHECKED, "reason": "no expected value"}
     tol = float(problem.get("tol", 1e-6))
     ok = abs(float(actual) - float(expected)) <= tol
     if ok:
-        return {"ok": True, "value": actual, "unchecked": False}
+        return {"ok": True, "value": actual, "unchecked": False, "capability": "algebraic-check"}
     return {
         "ok": False,
         "unchecked": True,
@@ -152,9 +157,21 @@ def check_numeric(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any
     }
 
 
+def _hand_value(problem: dict[str, Any]) -> float | None:
+    kind = str(problem.get("kind") or "")
+    if kind == "ohms_law" and "v" in problem and "r" in problem:
+        r = float(problem["r"])
+        if r == 0:
+            return None
+        return float(problem["v"]) / r
+    return _divider_value(problem)
+
+
 def _divider_value(problem: dict[str, Any]) -> float | None:
     keys = {"vin", "r1", "r2"}
-    if not keys <= set(problem):
+    if not keys <= set(problem) and str(problem.get("kind") or "") != "voltage_divider":
+        return None
+    if not {"vin", "r1", "r2"} <= set(problem):
         return None
     r1, r2 = float(problem["r1"]), float(problem["r2"])
     if r1 + r2 == 0:

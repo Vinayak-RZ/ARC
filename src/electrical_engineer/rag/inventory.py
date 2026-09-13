@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from electrical_engineer.rag.ingest import chunk_text, extract, write_index
 from electrical_engineer.runner.runs import project_root
 
 
@@ -43,25 +44,49 @@ def save_inventory(items: list[dict], cwd: Path | None = None) -> None:
 
 def add_doc(path: str, *, tags: dict | None = None, cwd: Path | None = None) -> dict:
     items = load_inventory(cwd)
-    rec = {
-        "path": path,
+    src = Path(path)
+    if not src.is_file():
+        for cand in (project_root(cwd) / path, rag_root(cwd) / path):
+            if cand.is_file():
+                src = cand
+                break
+    text = extract(src)
+    chunks = chunk_text(text)
+    root = rag_root(cwd)
+    chunk_dir = root / "chunks"
+    chunk_dir.mkdir(parents=True, exist_ok=True)
+    base = {
         "book_id": (tags or {}).get("book_id"),
         "chapter_id": (tags or {}).get("chapter_id"),
         "folder_tag": (tags or {}).get("folder_tag"),
         "domain_tag": (tags or {}).get("domain_tag"),
         "licence_tag": (tags or {}).get("licence_tag"),
         "untrusted": True,
+        "source": path,
     }
-    items.append(rec)
+    index_recs: list[dict] = []
+    last: dict | None = None
+    bodies = chunks or [text]
+    for i, body in enumerate(bodies):
+        dest = chunk_dir / f"{src.stem}-{i}.txt"
+        dest.write_text(body)
+        rec = {**base, "path": str(dest), "page": i + 1, "chunk_id": i}
+        items.append(rec)
+        index_recs.append({"path": str(dest), "page": i + 1, "source": path})
+        last = rec
     save_inventory(items, cwd)
-    return rec
+    write_index(root, index_recs)
+    assert last is not None
+    return last
 
 
 def tag_doc(path: str, tags: dict, cwd: Path | None = None) -> dict | None:
     items = load_inventory(cwd)
+    hit = None
     for rec in items:
-        if rec.get("path") == path:
+        if rec.get("path") == path or rec.get("source") == path:
             rec.update({k: v for k, v in tags.items() if v is not None})
-            save_inventory(items, cwd)
-            return rec
-    return None
+            hit = rec
+    if hit is not None:
+        save_inventory(items, cwd)
+    return hit

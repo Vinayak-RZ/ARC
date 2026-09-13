@@ -1,16 +1,18 @@
 # Plans index
 
-This directory is the **graph-engineering** artifact set for Arc.
+H1 (historical, complete): graph-engineering [`EXECUTION_GRAPH.md`](../EXECUTION_GRAPH.md) + [`nodes/`](nodes/).
+
+**Live execution (this graph):** graph-of-loops.
 
 | Read this | Role |
 |-----------|------|
 | [`../IMPLEMENTATION_PLAN.md`](../IMPLEMENTATION_PLAN.md) | Nawab project plan (§0–§18) |
-| [`../EXECUTION_GRAPH.md`](../EXECUTION_GRAPH.md) | The graph you execute (waves, edges, links) |
-| [`nodes/`](nodes/) | One collapsed plan per node |
-| [`../docs/planning/GATE_0_RESEARCH.md`](../docs/planning/GATE_0_RESEARCH.md) | Gate 0 research (closed) |
-| [`../docs/design/DESIGN-coinbase.md`](../docs/design/DESIGN-coinbase.md) | Persistent UI visual system (tokens; Inter/mono substitutes) |
-| [`../docs/planning/DESIGN_LOCK.md`](../docs/planning/DESIGN_LOCK.md) | Closed visual contract (does not start Wave 0) |
+| [`../LOOP_GRAPH.md`](../LOOP_GRAPH.md) | The graph you execute |
+| [`loops/`](loops/) | One collapsed plan + `state.json` per loop |
+| [`../docs/planning/GATE_0.md`](../docs/planning/GATE_0.md) | Gate 0 closed 2026-09-13 |
+| [`../docs/planning/FR_TRACE.md`](../docs/planning/FR_TRACE.md) | FR1–FR24 → loop |
+| [`../docs/planning/IMPLEMENTATION_PLAN_H1.md`](../docs/planning/IMPLEMENTATION_PLAN_H1.md) | Archived H1 nawab |
 
-**Depth 2 only.** A node plan does not spawn another graph.
+**XOR:** do not run graph-engineering execute on these loops.
 
-**On owner start / build / implement:** run waves in [`EXECUTION_GRAPH.md`](../EXECUTION_GRAPH.md). Reviewing the graph does not start Wave 0. Lead commits. Subagents do not commit.
+Depth 2 only. Lead commits. Subagents do not commit.

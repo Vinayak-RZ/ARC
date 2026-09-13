@@ -10,6 +10,10 @@ Persistent localhost workspace. Not KiCad. Not a second agent. WCAG AA.
 | `sidebar` | Run list (`asset-row`) |
 | `workspace` | Current view |
 | `run.detail` | Recipe id, state, `unchecked` badge-pill |
+| `run.evidentiary` | `evidentiary.json` (alias `summary.json`): values, verifier, citations, artifact paths |
+| `run.argument` | Host (or local fallback) `argument.md`. Must not flip `unchecked`. |
+| `run.plan` | Large-job `plan.md` (Given/Find, packs, capability ids). Not a numeric band. |
+| `run.observation` | Kernel `observation.json`: capability/provider ids, node ok, `unchecked_reason` |
 | `run.artifacts` | Library SVG/PNG + paths |
 | `photo.confirm` | Draft netlist + confirm (no sim) |
 | `rag.inventory` | Book/chapter/folder tags |
@@ -19,6 +23,14 @@ Persistent localhost workspace. Not KiCad. Not a second agent. WCAG AA.
 ## States
 
 `empty` · `running` · `waiting-human` · `failed` · `done`
+
+| State | Slot behaviour |
+|-------|----------------|
+| `empty` | Run list and bands show an honest empty message; no fake numbers |
+| `running` | Live region announces progress; bands stay previous-or-empty |
+| `waiting-human` | Photo confirm / gate prompt; MCP never waits here |
+| `failed` | Error text in `run.detail`; evidentiary `unchecked` stays honest |
+| `done` | Two bands + plan + observation readable |
 
 ## Token map (DESIGN-coinbase)
 
@@ -36,7 +48,7 @@ Persistent localhost workspace. Not KiCad. Not a second agent. WCAG AA.
 
 ## A11y
 
-Keyboard, visible focus (2px primary), skip link, `aria-live` for run state, contrast AA on blue-on-white and white-on-blue. Logo `alt` is “Arc” (or the README alt); decorative parts of the SVG use the SVG `<title>`.
+Keyboard operable (tab order: skip-link → sidebar → workspace bands → photo confirm). Visible focus (2px primary). Skip link. `aria-live` for run state including `waiting-human`. Contrast **WCAG AA** on blue-on-white and white-on-blue. Logo `alt` is “Arc” (or the README alt); decorative parts of the SVG use the SVG `<title>`. Empty and failed states are text, not colour-only.
 
 ## Must not
 

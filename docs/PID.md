@@ -1,6 +1,6 @@
 # Product Identity Document (PID) — Arc
 
-**Status:** Proposed (2026-09-12). Public name **Arc** locked 2026-09-13 (docs pass; CLI/repo unchanged). Aligns with Proposed [`PRD.md`](PRD.md). Previous Accepted P0 (2026-09-09) stands until the owner Accepts this revision.  
+**Status:** Accepted for this graph (D19/D20 graph-of-loops, 2026-09-13). Public name **Arc** locked 2026-09-13 (docs pass; CLI/repo unchanged). Aligns with [`PRD.md`](PRD.md). Previous Accepted P0 (2026-09-09) stands.  
 **Date:** 2026-09-12  
 **Requirements authority after this:** [`PRD.md`](PRD.md) (Proposed)  
 **How it is built:** [`ARCHITECTURE.md`](ARCHITECTURE.md)

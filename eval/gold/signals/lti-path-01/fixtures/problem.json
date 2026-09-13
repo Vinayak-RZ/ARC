@@ -1,0 +1,5 @@
+{
+  "kind": "symbolic",
+  "query": "convolution of finite sequences; no netlist",
+  "filters": {"domain_tag": "signals"}
+}

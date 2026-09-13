@@ -121,6 +121,10 @@ body { margin: 0; background: var(--ee-color-canvas); }
   max-width: 36rem;
   line-height: 1.5;
 }
+.failed {
+  color: var(--ee-semantic-down);
+  font-size: var(--ee-type-body);
+}
 .skip { position: absolute; left: -999px; }
 .skip:focus { left: var(--ee-space-m); top: var(--ee-space-m); background: var(--ee-color-canvas); padding: 8px; }
 a { color: var(--ee-color-primary); }

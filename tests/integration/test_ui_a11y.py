@@ -9,6 +9,9 @@ def test_skip_link_and_no_wan() -> None:
     assert "aria-live" in root
     assert "obj.unchecked === true" in root
     assert 'String(summary).includes("unchecked")' not in root
+    assert "run.evidentiary" in root
+    assert "waiting-human" in root
+    assert 'alt="Arc"' in root
     assert BIND_HOST == "127.0.0.1"
 
 

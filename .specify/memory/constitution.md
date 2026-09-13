@@ -63,3 +63,5 @@ MUST be flagged.
   PATCH = wording.
 - Compliance: `scripts/validate.sh` and eval injection tests enforce II, III, VI
   where automated.
+- This graph's leftover is P0 only. Later items (HTTP MCP, BYOK, PyPI, C5
+  sim-after-confirm, large gold) stay out of `.specify` until a new owner lock.

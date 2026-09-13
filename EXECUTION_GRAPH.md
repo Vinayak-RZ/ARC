@@ -1,7 +1,8 @@
 # Execution graph
 
-> **This is the plan you read.** Every node has a markdown link in [Node plans](#node-plans).  
-> Scope: [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md). Index: [`plans/README.md`](plans/README.md).
+> **Historical H1 graph (complete).** Live execution is graph-of-loops:
+> [`LOOP_GRAPH.md`](LOOP_GRAPH.md). Do not run this graph-engineering execute
+> protocol. Scope archive: [`docs/planning/IMPLEMENTATION_PLAN_H1.md`](docs/planning/IMPLEMENTATION_PLAN_H1.md).
 
 ---
 

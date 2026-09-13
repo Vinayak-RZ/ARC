@@ -19,10 +19,10 @@ runs, then every first-party package. Do not invent paths.
 - **Named recipe.** A checked-in YAML DAG (`workflows/**/*.yaml`) with `id` and `nodes.{id}.{activity,needs}`. YAML is **replay of a capability binding**, not the domain. The router picks a row; it does not invent edges or capability ids.
 - **Capability.** Domain name for what kind of check is allowed (`algebraic-check`, `lumped-circuit-sim`, …). Providers (`run-spice`, …) are this-pass keys. See [`ARCHITECTURE.md`](ARCHITECTURE.md) §0.
 - **unchecked.** Exact token from `electrical_engineer.unchecked.UNCHECKED`. Used when a verifier is missing or a numeric check fails. `EE_ALLOW_ALL` skips *asks*, not this token.
-- **Run dir.** `runs/<4char>-<UTC>/` holds `summary.json`, `nodes/<id>/out.json`, optional `confirmed.json`. Audit only — no crash-resume.
+- **Run dir.** `runs/<4char>-<UTC>/` holds `evidentiary.json` (alias `summary.json`), `observation.json`, optional `plan.md` / `argument.md`, `nodes/<id>/out.json`, optional `confirmed.json`. Audit only — no crash-resume.
 - **Gate.** TOML most-restrictive merge; third interrupt aborts. MCP never waits: fail-closed with `ui_url`.
 - **Confirm ≠ simulate.** Photo and C5 stop after `confirm-topology`. C4 `simulate-after-confirm` requires `confirmed.json` before `run-spice`.
-- **Slot UI.** React `register(name, Component)`; shell renders `root` only. No LLM client in the browser. `?run=` selects a run; CLI `ui --run` opens that URL. The `unchecked` pill is `summary.unchecked === true`, not a substring match on JSON.
+- **Slot UI.** React `register(name, Component)`; shell renders `root` only. No LLM client in the browser. `?run=` selects a run; CLI `ui --run` opens that URL. The `unchecked` pill is `summary.unchecked === true`, not a substring match on JSON. Bands: `run.evidentiary`, `run.argument`, `run.plan`, `run.observation`.
 - **RAG facade.** EE owns `book_id` / `chapter_id` / `folder_tag` / `domain_tag`. Empty retrieval is a first-class `empty: true`. Engine after spike: thin bm25.
 
 ## 2. How this repository runs

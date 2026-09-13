@@ -22,7 +22,7 @@ Live status. Research phase completed on `cursor/ee-research-phase-7e0c`. Produc
 | Technical architecture | **accepted (this graph) + Proposed D19/D20 overlays** | `docs/ARCHITECTURE.md` §0 capabilities; §0.3 harness; ADR-0010/0011 |
 | Pack skills | **Proposed D19 method bodies** | `skills/<pack>/SKILL.md` — UG method + capability ids |
 | Harness persist/observe/spawn | **Proposed D20** | named memory, `observation.json`, kernel hooks, `hosts/adapters/` |
-| Product execution plan | **graph complete (H1)** | owner start 2026-09-10; T1+R1 logged |
+| Product execution plan | **H1 complete; D19/D20 graph-of-loops live** | [`LOOP_GRAPH.md`](LOOP_GRAPH.md); H1 archive [`EXECUTION_GRAPH.md`](EXECUTION_GRAPH.md) |
 | UI design lock | **closed** | DESIGN-coinbase; ADR-0008 accepted |
 | Validator | PASS | `./scripts/research/validate-research.sh --full` |
 
@@ -52,7 +52,7 @@ Live status. Research phase completed on `cursor/ee-research-phase-7e0c`. Produc
 | 2026-09-10 | DESIGN-coinbase locked as UI visual system; ADR-0008 seeded; Wave 0 waits on owner start |
 | 2026-09-10 | Owner start: D0+A1 executed; Spec Kit scaffolded; product `src/` begins Wave 1 |
 | 2026-09-12 | D19 capability-first overlay: coverage law, 14 capabilities, pack method skills; providers/YAML/UI are this-pass freezes |
-| 2026-09-12 | D20 harness overlay: persist/observe/hooks local; host-native spawn adapters; no Python orchestrator |
+| 2026-09-13 | D19/D20 graph-of-loops compiled: `LOOP_GRAPH.md` + `plans/loops/`; XOR graph-engineering |
 
 ## Handoff
 
@@ -62,4 +62,4 @@ Architecture: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (Accepted A1 + **Pr
 ADRs: [`DECISIONS.md`](DECISIONS.md) (ADR-0010, ADR-0011 proposed)  
 Curriculum: [`docs/curriculum-map.md`](docs/curriculum-map.md)
 
-**Next:** owner Accept of D19/D20; then a code plan for capability→provider bind, RAG extract/chunk, observation writer. No README rewrite until Accept.
+**Next:** execute [`LOOP_GRAPH.md`](LOOP_GRAPH.md) waves (P0 onward). Resume at first non-`done` wave.

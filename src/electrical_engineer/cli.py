@@ -49,8 +49,26 @@ def main(argv: list[str] | None = None) -> int:
         from electrical_engineer.runner.execute import execute
 
         if not args.workflow_id:
-            print("usage: electrical-engineer run <workflow_id>", file=sys.stderr)
-            return 2
+            from electrical_engineer.router.classify import scores_from_text
+            from electrical_engineer.router.hybrid import route
+
+            problem = None
+            problem_path = Path("problem.json")
+            if problem_path.is_file():
+                problem = json.loads(problem_path.read_text())
+            text = ""
+            if isinstance(problem, dict):
+                text = str(
+                    problem.get("task")
+                    or problem.get("query")
+                    or problem.get("kind")
+                    or ""
+                )
+            decided = route(None, scores_from_text(text))
+            if decided.kind == "ask":
+                print("ask: ambiguous workflow; pass an explicit id", file=sys.stderr)
+                return 2
+            args.workflow_id = decided.recipe_id
         problem = None
         problem_path = Path("problem.json")
         if problem_path.is_file():

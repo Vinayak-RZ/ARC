@@ -1,0 +1,39 @@
+import json
+from pathlib import Path
+
+from electrical_engineer.runner.execute import execute
+
+
+def test_execute_writes_evidentiary_and_observation(tmp_path) -> None:
+    out = execute(
+        "solve-circuit-problem",
+        run_root=tmp_path,
+        problem={"kind": "voltage_divider", "vin": 10, "r1": 1000, "r2": 1000, "expected": 5.0},
+    )
+    run = Path(out["run_dir"])
+    evidentiary = json.loads((run / "evidentiary.json").read_text())
+    summary = json.loads((run / "summary.json").read_text())
+    observation = json.loads((run / "observation.json").read_text())
+    assert evidentiary == summary
+    assert evidentiary["unchecked"] is False
+    assert observation["run_id"] == out["run_id"]
+    assert observation["unchecked_reason"] is None
+    assert "no-provider" in (
+        "no-provider",
+        "sim-exhausted",
+        "unmatched",
+        "empty-retrieve",
+        "gate-closed",
+        None,
+    )
+
+
+def test_unmatched_observation_reason(tmp_path) -> None:
+    out = execute("unmatched-cosolver", run_root=tmp_path)
+    observation = json.loads((Path(out["run_dir"]) / "observation.json").read_text())
+    assert out["summary"]["unchecked"] is True
+    assert observation["unchecked_reason"] in {
+        "unmatched",
+        "empty-retrieve",
+        "no-provider",
+    }

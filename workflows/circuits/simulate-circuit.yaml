@@ -3,11 +3,11 @@ nodes:
   load:
     activity: load-netlist
   spice:
-    activity: run-spice
+    activity: lumped-circuit-sim
     needs: [load]
     repair_max: 2
   label:
-    activity: label-unchecked
+    activity: label-unverified
     needs: [spice]
   summary:
     activity: write-run-summary
