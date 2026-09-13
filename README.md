@@ -19,7 +19,7 @@
   <a href="LICENSE"><b>License</b></a>
 </p>
 
-Turn your AI coding assistant into an undergraduate EE lab. 10 undergraduate packs, 27 named workflows, 14 capabilities.
+Turn your AI coding assistant into an undergraduate electrical engineer. 10 undergraduate packs, 27 named workflows, 14 capabilities.
 
 Describe the circuit, viva, or assignment in plain language. Arc retrieves, checks, and explains. Simulators run when they exist. Everything else is the exact token `unchecked`.
 

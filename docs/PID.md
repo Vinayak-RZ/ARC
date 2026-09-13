@@ -1,6 +1,6 @@
-# Product Identity Document (PID) — Electrical Engineer
+# Product Identity Document (PID) — Arc
 
-**Status:** Proposed (2026-09-12). Aligns with Proposed [`PRD.md`](PRD.md). Previous Accepted P0 (2026-09-09) stands until the owner Accepts this revision.  
+**Status:** Proposed (2026-09-12). Public name **Arc** locked 2026-09-13 (docs pass; CLI/repo unchanged). Aligns with Proposed [`PRD.md`](PRD.md). Previous Accepted P0 (2026-09-09) stands until the owner Accepts this revision.  
 **Date:** 2026-09-12  
 **Requirements authority after this:** [`PRD.md`](PRD.md) (Proposed)  
 **How it is built:** [`ARCHITECTURE.md`](ARCHITECTURE.md)
@@ -11,7 +11,7 @@ H3, Apache-2.0, UG vs PG, one repo, and the exact token `unchecked` are **not** 
 
 ## 1. Thesis
 
-Electrical Engineer is an Apache-2.0, forever-open-source undergraduate electrical-engineering **lab**: a **domain kernel** that wraps a rented frontier agent loop (Cursor, Claude Code, Codex, ChatGPT desktop) so the student gets a checked assignment without us becoming a new harness. A branded **local CLI** plus a **persistent localhost UI** are a complete path with no AI host. The kernel’s identity is **coverage of UG EE coursework** (every in-bound pack × genre has a complete co-solver path) via a **capability registry**; simulators, YAML attachments, and the UI stack are swappable providers. Named **short physics attachments** attach simulators; they are not the chat brain. On a large job the host **plans then executes**. The host may propose an allowlisted capability graph; the kernel validates then runs. The product checks numbers with whatever installed provider can honour the capability and labels unverified numbers with the exact token **unchecked**. It is shaped by **real UG coursework** at Indian and global institutes. GATE is an eval instrument, not the product bound. PG, civil, and mechanical are out of the public promise.
+**Arc** turns a coding assistant into an undergraduate electrical engineer. It is an Apache-2.0, forever-open-source **domain kernel** that wraps a rented frontier agent loop (Cursor, Claude Code, Codex, ChatGPT desktop) so the student gets a checked assignment without us becoming a new harness. A branded **local CLI** plus a **persistent localhost UI** are a complete path with no AI host. The kernel’s identity is **coverage of UG EE coursework** (every in-bound pack × genre has a complete co-solver path) via a **capability registry**; simulators, YAML attachments, and the UI stack are swappable providers. Named **short physics attachments** attach simulators; they are not the chat brain. On a large job the host **plans then executes**. The host may propose an allowlisted capability graph; the kernel validates then runs. The product checks numbers with whatever installed provider can honour the capability and labels unverified numbers with the exact token **unchecked**. It is shaped by **real UG coursework** at Indian and global institutes. GATE is an eval instrument, not the product bound. PG, civil, and mechanical are out of the public promise.
 
 ## 2. Identity (Proposed)
 
@@ -21,7 +21,8 @@ Electrical Engineer is an Apache-2.0, forever-open-source undergraduate electric
 | Public subtitle | AI Electrical Engineer |
 | GitHub repo | `Electrical-Engineer` |
 | CLI (default) | `electrical-engineer` |
-| Public category | Undergraduate electrical-engineering **lab** |
+| Public one-liner | Turn your AI coding assistant into an undergraduate electrical engineer |
+| Public category | Undergraduate electrical-engineering **lab** (not the README first line) |
 | Internal class | **domain kernel** (host owns the loop; we own **capabilities**, providers, skills, gates) |
 | Mode | Co-solver (full working + answer + evidence, or exact token `unchecked`) |
 | Geography | India first; must not be weak for global UG EE |
@@ -29,7 +30,7 @@ Electrical Engineer is an Apache-2.0, forever-open-source undergraduate electric
 | Commercial | Forever OSS in this repo; no paid tier |
 | Locality | Local-first CLI + persistent UI on `127.0.0.1`; optional Cursor / Claude Code / Codex / ChatGPT desktop; BYO API key; local models |
 | Harness | **H3** — branded CLI wrapping portable skills + MCP + local RAG. Deterministic YAML workflow runner as physics/eval backbone. Hosts own the inner loop and the viva. Not a Pi fork (H4). Not a greenfield harness (H5). |
-| Surfaces | CLI `electrical-engineer`, stdio MCP, **persistent localhost UI** |
+| Surfaces | CLI `electrical-engineer`, stdio MCP, **persistent localhost UI** (chrome identity: Arc icon from `assets/brand/arc-icon.png`) |
 | Hosts (first-class) | Cursor; Claude Code; Codex (CLI / IDE / desktop Codex view); ChatGPT desktop Chat/Work (**contract**, weaker editor). ChatGPT **web**/mobile are not hosts. |
 | Workflows | Short physics attachments **bind** capabilities; host `simulate_attachment` or `propose_composition` of capability ids; CLI-without-host may classify; unmatched co-solver (no essay on host path); does not invent capability or provider ids |
 | Repo copies | **One repo only** |
@@ -38,7 +39,7 @@ Electrical Engineer is an Apache-2.0, forever-open-source undergraduate electric
 | PG | Not a public promise |
 | Civil / mechanical / manufacturing | Never in this product |
 
-**Is:** a student-facing, open, checkable UG electrical-engineering **lab** (domain kernel) that can take **any in-bound UG EE question** (method + checked number or exact token `unchecked`), with named workflows, swappable simulators, tagged local RAG, and a persistent local UI so the student and the host agent can **see** the work.  
+**Is:** a student-facing, open, checkable UG electrical-engineering co-solver (domain kernel) named **Arc** that can take **any in-bound UG EE question** (method + checked number or exact token `unchecked`), with named workflows, swappable simulators, tagged local RAG, and a persistent local UI so the student and the host agent can **see** the work.  
 **Is not:** Siemens Eigen, MATLAB Copilot, Cadence Cerebrus, an ngspice wrapper, a YAML catalog, a plant-floor controller, a faculty LMS, a GATE-only drill app, a general coding agent with “also do circuits,” a video studio, or a unique agent harness that hosts cannot share.  
 **Invariant:** EE tools own checked numbers; unverified numbers use the exact token **unchecked**; diagrams are drafts until the student confirms in the UI; no commercial textbooks in git; peer MATLAB MCP cannot mint checked numbers.
 

@@ -1,7 +1,7 @@
 # Host adapters — pack specialists
 
 Copy these **into the student’s host**, not into this repo’s coding `.cursor/`.
-The main host (Claude Code / Codex / Cursor) owns spawn. Electrical Engineer
+The main host (Claude Code / Codex / Cursor) owns spawn. Arc
 does **not** ship a multi-agent runtime (FR19, H5).
 
 | Host | Copy to (student machine) | File |

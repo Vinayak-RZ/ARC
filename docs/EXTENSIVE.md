@@ -1,4 +1,4 @@
-# Electrical Engineer — extensive internals
+# Arc — extensive internals
 
 Companion to the main [README](../README.md). Concepts first, then how the repo
 runs, then every first-party package. Do not invent paths.

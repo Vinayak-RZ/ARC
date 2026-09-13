@@ -1,4 +1,4 @@
-# Frontend architecture — Electrical Engineer
+# Frontend architecture — Arc
 
 **Status:** Layout contract (A1). IA detail: [`ui-ia.md`](ui-ia.md) (U1).  
 **Visual:** [`design/DESIGN-coinbase.md`](design/DESIGN-coinbase.md).
@@ -16,6 +16,7 @@ ui/                          # Vite React CSR (slots, zustand, CSS variables)
 - Vite + React + Zustand (layout + current run). No Cordis, no DSH runtime.
 - Thin slot registry (~50 lines): `root`, `sidebar`, `workspace`, `run.detail`, `run.artifacts`, `photo.confirm`, `rag.inventory`, `memory.excerpt`, `gates.prompt`.
 - CSS variables + CSS modules. Inter + JetBrains Mono (or Geist Mono). Never Coinbase fonts/wordmark.
+- Header identity is the Arc icon at `assets/brand/arc-icon.png` (served as `/arc-icon.png`). README lockup is `assets/brand/arc-lockup.png`. Do not ship Coinbase wordmark.
 
 ## Slot register API (ours, ~50 lines)
 

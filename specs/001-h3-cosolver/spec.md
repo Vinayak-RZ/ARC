@@ -3,7 +3,7 @@
 **Feature Branch**: `cursor/ee-product-execution-9e9d`  
 **Created**: 2026-09-10  
 **Status**: Specified (D0)  
-**Input**: Ship Electrical Engineer end-to-end: named workflows, localhost UI, stdio MCP, checked numbers or exact token `unchecked`.
+**Input**: Ship Arc end-to-end: named workflows, localhost UI, stdio MCP, checked numbers or exact token `unchecked`.
 
 ## User Scenarios & Testing
 

@@ -1,8 +1,8 @@
-# Electrical Engineer Constitution
+# Arc Constitution
 
 **Version:** 1.0.0  
 **Ratified:** 2026-09-09 (PID P0)  
-**Last amended:** 2026-09-10 (D0 Spec Kit scaffold)
+**Last amended:** 2026-09-13 (public name Arc; README analog without “lab”)
 
 Non-negotiable product law. Feature specs, architecture, and code MUST comply.
 Amendments require an owner decision recorded in `DECISIONS.md`.

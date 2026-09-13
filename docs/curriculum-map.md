@@ -1,6 +1,6 @@
 # UG electrical engineering curriculum map
 
-**Role:** Defines the **product bound** for Electrical Engineer. Not an eval gold set.  
+**Role:** Defines the **product bound** for Arc. Not an eval gold set.  
 **Rule:** GATE EE is an **eval overlay** (a check that we can see capability). It is **not** the syllabus ceiling and not the only source of tasks.  
 **Date:** 2026-09-09
 

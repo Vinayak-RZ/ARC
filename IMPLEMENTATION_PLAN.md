@@ -1,4 +1,4 @@
-# Electrical Engineer — Master Execution Plan
+# Arc — Master Execution Plan
 
 > Nawab **project** profile + graph-engineering §19.  
 > **The graph you run:** [`EXECUTION_GRAPH.md`](EXECUTION_GRAPH.md)  

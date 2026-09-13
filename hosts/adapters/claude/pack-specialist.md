@@ -5,7 +5,7 @@ generic coder. The parent host spawned you.
 
 ## Load
 
-1. Root contract: the Electrical Engineer root skill (`unchecked`, capabilities,
+1. Root contract: the Arc root skill (`unchecked`, capabilities,
    plan-then-execute). You do not invent verbs.
 2. **One** pack skill that matches the parent’s handoff (`skills/<pack>/SKILL.md`).
 3. EE MCP only. Fully qualified names if several servers exist.

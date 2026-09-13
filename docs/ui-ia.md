@@ -6,7 +6,7 @@ Persistent localhost workspace. Not KiCad. Not a second agent. WCAG AA.
 
 | Slot | Role |
 |------|------|
-| `root` | Shell: header, skip-link, live region |
+| `root` | Shell: skip-link, header with **Arc icon** (`assets/brand/arc-icon.png` → `/arc-icon.png`), live region |
 | `sidebar` | Run list (`asset-row`) |
 | `workspace` | Current view |
 | `run.detail` | Recipe id, state, `unchecked` badge-pill |
@@ -36,8 +36,8 @@ Persistent localhost workspace. Not KiCad. Not a second agent. WCAG AA.
 
 ## A11y
 
-Keyboard, visible focus (2px primary), skip link, `aria-live` for run state, contrast AA on blue-on-white and white-on-blue.
+Keyboard, visible focus (2px primary), skip link, `aria-live` for run state, contrast AA on blue-on-white and white-on-blue. Logo `alt` is “Arc” (or the README alt); decorative parts of the SVG use the SVG `<title>`.
 
 ## Must not
 
-Cordis/DSH dependency, `0.0.0.0`, image generation, LLM client in the browser.
+Cordis/DSH dependency, `0.0.0.0`, image generation, LLM client in the browser, Coinbase wordmark, plaintext-only product identity in the header.

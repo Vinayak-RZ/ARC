@@ -10,7 +10,7 @@
 | Field | Value |
 |-------|-------|
 | **Scope plan** | [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) |
-| **Objective** | Ship H3 Electrical Engineer end-to-end (P0–P2 in this graph), proven by boot + Cursor trials + docs-out |
+| **Objective** | Ship H3 Arc end-to-end (P0–P2 in this graph), proven by boot + Cursor trials + docs-out |
 | **Topology mix** | chain (docs) + fan-out (surfaces) + diamond (M1) |
 | **Depth** | 2 |
 | **Graph-engineering** | named — owner review now; execute only on explicit start / build / implement |

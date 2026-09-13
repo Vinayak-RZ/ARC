@@ -1,4 +1,4 @@
-# Technical architecture — Electrical Engineer
+# Technical architecture — Arc
 
 **Status:** Proposed (2026-09-12) overlay on Accepted A1 (2026-09-10). Hybrid composition (D18), **capability-first domain contract (D19)**, plus **harness persist / observe / spawn (D20)**: the rented host owns the loop, compaction, and specialist spawn; the kernel owns runs, memory, RAG ingest, observation, and deterministic hooks. Aligns with Proposed [`PRD.md`](PRD.md) / [`PID.md`](PID.md).  
 **Date:** 2026-09-12  
@@ -95,7 +95,7 @@ Unmatched text (no pack, no typed model artifact) uses **only** retrieve-optiona
 
 ### 0.3 Harness ownership (D20)
 
-A coding harness is prompts, tools, filesystem, orchestration, hooks, and observability. Electrical Engineer **does not reimplement** that stack. Split:
+A coding harness is prompts, tools, filesystem, orchestration, hooks, and observability. Arc **does not reimplement** that stack. Split:
 
 | Harness part | Owner | We author | Must not |
 |--------------|-------|-----------|----------|
