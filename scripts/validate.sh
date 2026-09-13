@@ -9,6 +9,7 @@ uv run electrical-engineer eval --pack circuits
 uv run electrical-engineer eval --pack rag-retrieval
 uv run electrical-engineer eval --pack explain
 uv run electrical-engineer eval --pack unmatched
+uv run electrical-engineer eval --pack signals
 # Bind must never be 0.0.0.0 in product code.
 if grep -R --include='*.py' --include='*.js' --include='*.jsx' --include='*.ts' --include='*.tsx' --exclude-dir=node_modules --exclude-dir=dist -n '0.0.0.0' src ui 2>/dev/null | grep -v test; then
   echo "refusing 0.0.0.0 bind" >&2
