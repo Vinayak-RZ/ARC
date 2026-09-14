@@ -110,7 +110,7 @@ A coding harness is prompts, tools, filesystem, orchestration, hooks, and observ
 | Persist | **L2** | run dir, memory files, RAG index | Silent chat dumps; crash-resume; fleet learning |
 | Observe / verify | **L2 + L3** | `observation.json` (or evidentiary seed), gold, `unchecked` | LLM-as-judge; memory `errors.md` as a checked number |
 
-**Spawn map (host-native only).** The main rented host (Cursor / Claude Code / Codex) may start **at most two** pack specialists (maths may occupy the second slot) using **that host’s** Task/subagent UI. Each child loads one pack skill, calls the **same** EE MCP, and must not mint checked numbers or skip UI confirm. Handoff is `run_id` + file URIs under `./runs/<id>/` (or `children/` — §6), not a message bus. Parent writes `argument.md`. Chat/Work does **not** claim pack spawn until Skills-over-MCP. Adapter files: [`hosts/adapters/`](../hosts/adapters/). The CLI, MCP server, and UI **never** start specialists. A Python process that interviews, plans, and fans out specialists is the H3/H5 falsifier.
+**Spawn map (host-native only).** The main rented host (Cursor / Claude Code / Codex) may start **at most two** pack specialists (maths may occupy the second slot) using **that host’s** Task/subagent UI. Each child loads one pack skill, calls the **same** EE MCP, and must not mint checked numbers or skip UI confirm. Handoff is `run_id` + file URIs under `./runs/<id>/` (or `children/` — §6), not a message bus. Parent writes `argument.md`. Chat/Work does **not** claim pack spawn until Skills-over-MCP. Adapter files: [`hosts/adapters/`](../hosts/adapters/). Catalog: [`hosts/agents/INDEX.md`](../hosts/agents/INDEX.md) (12 cards). The CLI, MCP server, and UI **never** start specialists. A Python process that interviews, plans, and fans out specialists is the H3/H5 falsifier.
 
 ---
 
@@ -215,7 +215,7 @@ Always-on ACI, **5–7 verbs** (names illustrative; implementation is a later co
 
 **Never a host tool:** invent a new capability or provider id; confirm photo without UI; present fluent `Vout` as checked; session-defined `lookup_vout_guess`; PTC on physics-write providers.
 
-Do **not** wrap individual providers (`run-spice`, `run-matlab-if-present`, `run-load-flow`, `retrieve-passage`, `solve-explain`) as extra MCP tools. Capabilities are reached through the verbs above. The host names `lumped-circuit-sim`, not a new `run_ngspice` MCP tool.
+Do **not** wrap individual providers (`run-spice`, `run-matlab-if-present`, `run-simulink-if-present`, `run-load-flow`, `retrieve-passage`, `solve-explain`) as extra MCP tools. Capabilities are reached through the verbs above. The host names `lumped-circuit-sim`, not a new `run_ngspice` MCP tool.
 
 CLI inner, MCP outer, PTC/Code Mode later and **reads only**. Dual MATLAB MCP: peer scalars untrusted until an EE engine recomputes (FR20).
 
@@ -690,7 +690,7 @@ Do not design a hosted leaderboard, LLM-as-judge platform, or a 200-task bank he
 
 Student-facing names live in [`WORKFLOWS.md`](WORKFLOWS.md). Domain names live in §0.1. Activities below are **provider keys** (not a classifier):
 
-`retrieve-passage` (`retrieve-citation`), `check-numeric` (`algebraic-check` and several model capabilities when no dedicated sim is installed), `run-spice` (`lumped-circuit-sim`), `run-python-control` (`lti-analysis`), `run-matlab-if-present` (optional provider of several capabilities), `run-load-flow` (`power-network-study`), `ask-human` (`ask-student`), `label-unchecked` (`label-unverified`), `write-run-summary`, `solve-explain`, photo stages `detect-components`, `connect-wires`, `ocr-labels`, `draft-netlist`, `confirm-topology` (`ingest-figure`), `run-recipe`.
+`retrieve-passage` (`retrieve-citation`), `check-numeric` (`algebraic-check` and several model capabilities when no dedicated sim is installed), `run-spice` (`lumped-circuit-sim`), `run-python-control` (`lti-analysis`), `run-matlab-if-present` (optional provider of several capabilities), `run-simulink-if-present` (optional Simulink toolkit; fail closed to `CD-SIMULINK-PLANT`), `run-load-flow` (`power-network-study`), `ask-human` (`ask-student`), `label-unchecked` (`label-unverified`), `write-run-summary`, `solve-explain`, photo stages `detect-components`, `connect-wires`, `ocr-labels`, `draft-netlist`, `confirm-topology` (`ingest-figure`), `run-recipe`.
 
 Simulate seam: **separate** providers per capability. MATLAB if present else OSS (PRD P1). Do not invent a third rule. Do not add a new MCP tool per provider.
 

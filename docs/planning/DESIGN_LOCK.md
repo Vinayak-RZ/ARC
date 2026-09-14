@@ -18,7 +18,7 @@ This lock does **not** start product `ui/` or Wave 0. Execution starts only when
 - Semantic lock: up `#05b169`, down `#cf202f`, **text only**.
 - `unchecked` → `badge-pill` on `surface-strong` + ink. Never primary fill (CTA blue). Confirm → `button-primary`. Run list → `asset-row` with `focus-visible` 2px primary.
 - Canvas is a capped confirm surface (`run.canvas` + inspector), not schemdraw-primary, not a schematic editor. Confirm does not simulate.
-- MATLAB engines chip: "Coming next: Arc will call it." Do not document adding MATLAB MCP beside the host as the happy path.
+- MATLAB engines chip: "MATLAB · via Arc". Do not document adding MATLAB MCP beside the host as the happy path.
 - Workspace uses the token spacing scale. Do not apply 96px marketing section padding to chrome rows.
 - CSS variables + CSS modules. No MUI/Ant/Tailwind-as-architecture. No GSAP marketing scroll.
 - Treat DESIGN-coinbase as the DESIGN.md equivalent. Do not run `impeccable teach` to invent a second system.

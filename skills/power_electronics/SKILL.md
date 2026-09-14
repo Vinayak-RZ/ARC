@@ -16,3 +16,21 @@ inverters, PWM, averaged models, duty-cycle algebra. Not HIL benches
 
 Design-to-spec (L, C, duty for a UG spec) is in-bound. Hardware-in-the-loop
 and thermal FEA are cannot-do.
+
+## Spawn
+
+Host-native name: `ee-power-electronics`. At most two live children. CLI/MCP/UI never spawn.
+Never call `evaluate_matlab_code`. Host talks only to Arc MCP.
+
+## Retrieve (scaffold)
+
+When: a citation, page, or handbook claim is needed.
+Filters: book_id, chapter_id, domain_tag, folder_tag.
+Index: TBD (empty this graph). Call `retrieve` anyway. Empty is visible. Do not
+dump `knowledge/`.
+
+## Knowledge
+
+- `knowledge/ug-ee/power-electronics/INDEX.md`
+- Coverage units: `knowledge/COVERAGE.yaml` pack `power-electronics`
+- Sibling packs: electronics (devices), machines (drives), power (grid interface)

@@ -23,7 +23,9 @@ Live status. Research phase completed on `cursor/ee-research-phase-7e0c`. Produc
 | Pack skills | **Proposed D19 method bodies** | `skills/<pack>/SKILL.md` — UG method + capability ids |
 | Harness persist/observe/spawn | **Proposed D20** | named memory, `observation.json`, kernel hooks, `hosts/adapters/` |
 | Product execution plan | **H1 complete; D19/D20 complete (archived)** | D19 archive [`docs/planning/LOOP_GRAPH_D19.md`](docs/planning/LOOP_GRAPH_D19.md); H1 [`EXECUTION_GRAPH.md`](EXECUTION_GRAPH.md) |
-| UG EE knowledge corpus | **live graph-of-loops — packs filled** | [`LOOP_GRAPH.md`](LOOP_GRAPH.md); inventory `python scripts/check_knowledge_tree.py` |
+| UG EE knowledge corpus | **archived** | [`docs/planning/LOOP_GRAPH_KNOWLEDGE.md`](docs/planning/LOOP_GRAPH_KNOWLEDGE.md) |
+| Pack skills + MATLAB MCP | **complete (archived)** | [`docs/planning/LOOP_GRAPH_SKILLS_MATLAB.md`](docs/planning/LOOP_GRAPH_SKILLS_MATLAB.md) |
+| Simulink + host-agent catalog | **this graph** | [`LOOP_GRAPH.md`](LOOP_GRAPH.md); branch `cursor/ee-simulink-host-agents-37b3` |
 | UI design lock | **closed** | DESIGN-coinbase; ADR-0008 accepted |
 | Validator | PASS | `./scripts/research/validate-research.sh --full` |
 
@@ -63,4 +65,4 @@ Architecture: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (Accepted A1 + **Pr
 ADRs: [`DECISIONS.md`](DECISIONS.md) (ADR-0010, ADR-0011 proposed)  
 Curriculum: [`docs/curriculum-map.md`](docs/curriculum-map.md)
 
-**Next:** execute [`LOOP_GRAPH.md`](LOOP_GRAPH.md) waves (P0 onward). Resume at first non-`done` wave.
+**Next:** none on this graph. PR `cursor/ee-simulink-host-agents-37b3`.

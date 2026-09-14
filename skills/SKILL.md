@@ -62,8 +62,26 @@ a lesson; do not silent-append. Memory never flips `unchecked`.
 
 ## Spawn (host-native)
 
-You are the **main** host. You may spawn at most two pack specialists (adapter
-prompts in `hosts/adapters/`). Handoff `run_id` + run-dir files. You write
-`argument.md`. Children must not mint ohms or skip UI confirm. Do not ask the
-CLI to orchestrate specialists.
+You are the **main** host. You may spawn at most two pack specialists
+(`electrical-engineer hosts install` into the **homework** `.cursor/agents/`,
+`.codex/agents/`, `.claude/agents/` — never this product `.cursor/`). Handoff
+`run_id` + run-dir files. You write `argument.md`. Children must not mint ohms
+or skip UI confirm. Do not ask the CLI to orchestrate specialists.
+
+Do not attach MATLAB MCP. Never call `evaluate_matlab_code`. Arc may run MATLAB
+only inside `run-matlab-if-present`.
+
+## Retrieve (scaffold)
+
+When: a citation, page, or handbook claim is needed.
+Filters: book_id, chapter_id, domain_tag, folder_tag.
+Index: TBD (empty this graph). Call `retrieve` anyway. Empty is visible. Do not
+dump `knowledge/ug-ee/**`. Link `knowledge/ug-ee/INDEX.md` instead.
+
+## Knowledge
+
+- Tree: `knowledge/ug-ee/INDEX.md`
+- Coverage: `knowledge/COVERAGE.yaml`
+- Pack skills: `skills/<pack>/SKILL.md` (at most two)
+
 

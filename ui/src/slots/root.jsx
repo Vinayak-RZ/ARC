@@ -18,9 +18,17 @@ function Root() {
           <span className="chip">SPICE</span>
           <span
             className="chip"
-            title="The coding assistant will keep talking only to Arc. Arc will call MATLAB and return a short labeled result. A MATLAB Copilot scalar is not a check until Arc recomputes it. OSS simulators stay first-class."
+            title="Optional. Arc calls MATLAB MCP when the binary is installed. The coding assistant does not attach MATLAB MCP. Missing MATLAB stays unchecked. OSS simulators stay first-class."
+            aria-label="MATLAB optional via Arc"
           >
-            MATLAB · coming next
+            MATLAB · via Arc
+          </span>
+          <span
+            className="chip"
+            title="Optional. Arc calls Simulink Agentic Toolkit tools inside the kernel when tools.json is installed. The coding assistant does not attach the toolkit. Missing Simulink stays unchecked (CD-SIMULINK-PLANT). OSS simulators stay first-class."
+            aria-label="Simulink optional via Arc"
+          >
+            Simulink · via Arc
           </span>
         </div>
       </header>
@@ -96,7 +104,7 @@ function Sidebar() {
 function Workspace() {
   const id = useLayout((s) => s.currentRunId);
   if (!id) {
-    return <p className="empty">Select a run from the list.</p>;
+    return <p className="empty">No run selected. Open one from the list, or type electrical-engineer run simulate-circuit.</p>;
   }
   return (
     <div className="lab">

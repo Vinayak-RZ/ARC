@@ -29,10 +29,11 @@ ChatGPT **web** is **not** a host.
    [`../PRD.md`](../PRD.md) FR17 (`simulate_attachment`,
    `propose_composition`). Large jobs write `plan.md` first (FR23). Host
    writes `argument.md`.
-6. Optional pack specialist: copy
-   [`../../hosts/adapters/codex/pack-specialist.md`](../../hosts/adapters/codex/pack-specialist.md)
-   into the student’s Codex spawn path. At most two packs; same MCP; parent
-   writes the viva. Not a second product.
-7. Peer MATLAB MCP: numbers stay unverified until Arc recomputes them (FR20).
-   Coming next: Arc mediates MATLAB so the assistant does not ingest the
-   huge tool list ([`../ON_THE_HARNESS.md`](../ON_THE_HARNESS.md)).
+6. Optional pack specialist: `electrical-engineer hosts install --into <homework> --host codex`
+   (or copy
+   [`../../hosts/adapters/codex/pack-specialist.md`](../../hosts/adapters/codex/pack-specialist.md)).
+   At most two packs; same MCP; parent writes the viva. Not a second product.
+7. Do **not** add MATLAB MCP or Simulink Agentic Toolkit in `config.toml`.
+   Arc mediates MATLAB and Simulink toolkit tools when installed. Peer
+   scalars stay unverified until Arc recomputes them (FR20).
+   [`../ON_THE_HARNESS.md`](../ON_THE_HARNESS.md).

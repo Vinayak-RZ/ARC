@@ -4,6 +4,17 @@ Copy these **into the student’s host**, not into this repo’s coding `.cursor
 The main host (Claude Code / Codex / Cursor) owns spawn. Arc
 does **not** ship a multi-agent runtime (FR19, H5).
 
+Install per-pack wrappers into a **homework** tree:
+
+```text
+electrical-engineer hosts install --into /path/to/homework --host all
+```
+
+Canonical cards: [`../agents/INDEX.md`](../agents/INDEX.md) (12 specialists).
+That writes `.cursor/agents/ee-*.md`, `.codex/agents/ee_*.toml`,
+`.claude/agents/ee-*.md`. Law: [`specialist-body.md`](specialist-body.md).
+Do not run this against this product repo’s `.cursor/`.
+
 | Host | Copy to (student machine) | File |
 |------|---------------------------|------|
 | Claude Code | project or user agents (Task) | [`claude/pack-specialist.md`](claude/pack-specialist.md) |

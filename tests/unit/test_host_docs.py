@@ -43,3 +43,21 @@ def test_ee_packs_not_in_cursor_skills() -> None:
     for pack in PACKS:
         assert not (root / pack).exists(), pack
 
+
+def test_host_docs_forbid_peer_matlab_mcp() -> None:
+    base = Path("docs/hosts")
+    for name in ("README.md", "cursor.md", "claude-code.md", "openai.md", "chatgpt-desktop.md"):
+        text = (base / name).read_text()
+        assert "Coming next" not in text, name
+        assert "do **not**" in text.lower(), name
+    cursor = Path("docs/hosts/cursor.md").read_text()
+    assert "Do **not** add MATLAB MCP" in cursor
+    assert "Simulink" in cursor
+    assert "hosts install" in cursor
+    harness = Path("docs/ON_THE_HARNESS.md").read_text()
+    assert "How Arc mediates MATLAB" in harness
+    assert "This is not shipped" not in harness
+    assert "hosts" in Path("docs/ON_THE_HARNESS.md").read_text()
+    assert "Simulink" in harness
+
+

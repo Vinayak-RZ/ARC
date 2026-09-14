@@ -1,20 +1,15 @@
 # R1 boot evidence
 
-Recorded 2026-09-13 on Ubuntu after D19/D20 loops. Bind is **127.0.0.1** only. Local LLM skipped (unset).
+Recorded 2026-09-13 on Ubuntu after D19/D20 loops. Re-run **2026-09-14** on this skills/MATLAB graph. Bind is **127.0.0.1** only. Local LLM skipped (unset).
 
 ## 1. electrical-engineer --help
 
 ```text
 usage: electrical-engineer [-h] [--version]
-                           {run,workflows,mcp,eval,ui,rag,memory} ...
-
-positional arguments:
-  {run,workflows,mcp,eval,ui,rag,memory}
-
-options:
-  -h, --help            show this help message and exit
-  --version             show program's version number and exit
+                           {run,workflows,mcp,eval,ui,rag,memory,hosts} ...
 ```
+
+`hosts` is the specialist install command. `electrical-engineer --version` → `electrical-engineer 0.1.0`.
 
 ## 2. electrical-engineer run solve-circuit-problem
 
@@ -34,17 +29,27 @@ Also `electrical-engineer run simulate-circuit` → token `unchecked` (no ngspic
 
 ## 3. MCP stdio initialize + tools/list
 
-Seven verbs: `list_workflows`, `retrieve`, `open_ui`, `simulate_attachment`, `propose_composition`, `label`, `run_workflow`. `propose_composition` of `lookup_vout_guess` returns `unknown id` with `waits: false`. Photo `simulate_attachment` returns `ui_url` `http://127.0.0.1:8765/` and `waits: false`.
+Seven verbs: `list_workflows`, `retrieve`, `open_ui`, `simulate_attachment`, `propose_composition`, `label`, `run_workflow`. **No MATLAB tool names.** `propose_composition` of `lookup_vout_guess` returns `unknown id` with `waits: false`. Photo `simulate_attachment` returns `ui_url` `http://127.0.0.1:8765/` and `waits: false`.
+
+2026-09-14 live `tools/list` names: `list_workflows`, `retrieve`, `open_ui`, `simulate_attachment`, `propose_composition`, `label`, `run_workflow`. MATLAB_TOOLS = [].
 
 ## 4. UI health on 127.0.0.1
 
 ```text
 {"bind":"127.0.0.1","ok":true}
+GET / → 200 (Vite SPA)
 GET /api/runs → list (honest empty when none)
-GET /api/runs/nope → 404 state failed
 ```
 
 UI health JSON `{"bind":"127.0.0.1","ok":true}`. Loopback only (validate.sh refuses WAN binds).
+
+## 5. hosts install
+
+```text
+electrical-engineer hosts install --into /tmp/ee-hw --host cursor
+```
+
+Writes 11 files under `.cursor/agents/ee-*.md` (10 cores + maths + cross). Not this product `.cursor/`.
 
 ## Local LLM
 
