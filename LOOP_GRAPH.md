@@ -40,9 +40,9 @@
 | B_POWER | power systems | [plans/knowledge-loops/B_POWER.md](plans/knowledge-loops/B_POWER.md) | --pack power | 3 | passed |
 | B_CONTROL | control | [plans/knowledge-loops/B_CONTROL.md](plans/knowledge-loops/B_CONTROL.md) | --pack control | 3 | passed |
 | B_PE | power electronics | [plans/knowledge-loops/B_PE.md](plans/knowledge-loops/B_PE.md) | --pack power-electronics | 3 | passed |
-| B_MEAS_EM | measurements + EM | [plans/knowledge-loops/B_MEAS_EM.md](plans/knowledge-loops/B_MEAS_EM.md) | --pack measurements and em | 3 | pending |
-| B_EL_POWER | power-side electives | [plans/knowledge-loops/B_EL_POWER.md](plans/knowledge-loops/B_EL_POWER.md) | --pack electives-power | 3 | pending |
-| B_EL_EMBED | embedded/comms electives | [plans/knowledge-loops/B_EL_EMBED.md](plans/knowledge-loops/B_EL_EMBED.md) | --pack electives-embed | 3 | pending |
+| B_MEAS_EM | measurements + EM | [plans/knowledge-loops/B_MEAS_EM.md](plans/knowledge-loops/B_MEAS_EM.md) | --pack measurements and em | 3 | passed |
+| B_EL_POWER | power-side electives | [plans/knowledge-loops/B_EL_POWER.md](plans/knowledge-loops/B_EL_POWER.md) | --pack electives-power | 3 | passed |
+| B_EL_EMBED | embedded/comms electives | [plans/knowledge-loops/B_EL_EMBED.md](plans/knowledge-loops/B_EL_EMBED.md) | --pack electives-embed | 3 | passed |
 | M1 | cross-index | [plans/knowledge-loops/M1.md](plans/knowledge-loops/M1.md) | checker + GLOSSARY.md | 3 | pending |
 | E1 | evaluate | [plans/knowledge-loops/E1.md](plans/knowledge-loops/E1.md) | pytest test_knowledge_tree | 3 | pending |
 | R1 | inventory boot | [plans/knowledge-loops/R1.md](plans/knowledge-loops/R1.md) | R1_BOOT_KNOWLEDGE.md | 3 | pending |
@@ -142,7 +142,7 @@ See loop-plans table. Maker inherit. Checker composer-2.5-fast else inherit. Max
 | 0 | P0, D0, A1, B_SCAFFOLD | no | serial | done | archive D19 already done |
 | 1 | B_CIRCUITS, B_SIGNALS, B_ELECTRONICS, B_MATHS | yes | no | done | — |
 | 2 | B_MACHINES, B_POWER, B_CONTROL, B_PE | yes | no | done | — |
-| 3 | B_MEAS_EM, B_EL_POWER, B_EL_EMBED | yes | no | pending | — |
+| 3 | B_MEAS_EM, B_EL_POWER, B_EL_EMBED | yes | no | done | — |
 | 4 | M1 | no | yes — whole set | pending | flatten indexes |
 | 5 | E1, R1, T1, D1 | no | serial tail | pending | git + README |
 
