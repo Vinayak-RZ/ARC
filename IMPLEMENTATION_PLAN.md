@@ -1,10 +1,10 @@
-# Arc — D19/D20 Master Execution Plan
+# UG EE knowledge corpus — Master Execution Plan
 
-> Nawab **project** profile + **graph-of-loops** §19.  
-> **The graph you run:** [`LOOP_GRAPH.md`](LOOP_GRAPH.md)  
-> **Loop plans:** [`plans/loops/`](plans/loops/) · index [`plans/README.md`](plans/README.md)  
-> Gate 0: [`docs/planning/GATE_0.md`](docs/planning/GATE_0.md)  
-> H1 archive: [`docs/planning/IMPLEMENTATION_PLAN_H1.md`](docs/planning/IMPLEMENTATION_PLAN_H1.md)
+> Nawab **project** profile + **graph-of-loops** §19.
+> **The graph you run:** [`LOOP_GRAPH.md`](LOOP_GRAPH.md)
+> **Loop plans:** [`plans/knowledge-loops/`](plans/knowledge-loops/)
+> Gate 0: [`docs/planning/GATE_0_UG_EE_KNOWLEDGE.md`](docs/planning/GATE_0_UG_EE_KNOWLEDGE.md)
+> D19 archive: [`docs/planning/LOOP_GRAPH_D19.md`](docs/planning/LOOP_GRAPH_D19.md), [`docs/planning/IMPLEMENTATION_PLAN_D19.md`](docs/planning/IMPLEMENTATION_PLAN_D19.md)
 
 XOR: `graph-engineering` is not loaded. [`EXECUTION_GRAPH.md`](EXECUTION_GRAPH.md) is historical.
 
@@ -16,65 +16,207 @@ XOR: `graph-engineering` is not loaded. [`EXECUTION_GRAPH.md`](EXECUTION_GRAPH.m
 |-------|-------|
 | **Profile** | project |
 | **Mode** | project |
-| **Stack** | Python 3.11+ `uv`/hatchling; FastAPI + Vite/React + Zustand + DESIGN-coinbase; stdio MCP; RAG facade |
+| **Stack** | markdown + stdlib Python checker |
 | **Base branch** | `main` |
-| **Feature branch** | `cursor/d19-loop-graph-572f` |
-| **User commit budget** | no cap (coalesce; ~44) |
-| **Delivery** | repo IMPLEMENTATION_PLAN + LOOP_GRAPH + plans/loops |
-| **Supersedes** | H1 EXECUTION_GRAPH **for execution** |
-| **Authority** | PID / PRD / ARCHITECTURE (accepted for this graph at D0) |
+| **Feature branch** | `cursor/ug-ee-knowledge-corpus-0daa` |
+| **User commit budget** | no cap (coalesce ~17) |
+| **Delivery** | repo IMPLEMENTATION_PLAN + LOOP_GRAPH + plans/knowledge-loops |
+| **Supersedes** | none for product; replaces **live execution pointer** (D19 archived) |
+| **Authority** | Gate 0 knowledge; curriculum-map; constitution V |
 | **Lead** | git, gates, PR; subagents do not commit |
 
 ---
 
-## §1 North star
+## §1 North star & scope boundary
 
-**Objective:** Any in-bound UG EE question has a complete co-solver path (capability check or exact `unchecked`), visible in a two-band localhost UI, driveable via 5–7 MCP verbs — proven by boot, queued trials, and a README that names the boot command.
+### Objective
 
-**P0:** capability bind; 5–7 ACI including `propose_composition`; two-band + observation; FR9 no mint; CLI classifier without host; every pack path (not gold depth); RAG ingest; ChatGPT desktop contract; C4 stub kept; UX empty/error/a11y.
+Licence-clean encyclopedic UG EE markdown corpus in `knowledge/`, proven by checker + inventory boot + trials + README.
 
-**Later:** HTTP MCP, BYOK, C5 sim, large gold, PyPI.
+### Deliverables
 
-**Non-goals:** H4/H5, Python specialist fan-out, Python composition chat, faculty LMS, PG, civil/mech, ChatGPT web, `0.0.0.0`, Cordis, copyrighted books in git, inventing capability ids, visual rebrand.
+- Nested tree `knowledge/ug-ee/**` (10 packs + listed electives)
+- `scripts/check_knowledge_tree.py` + pytest
+- ADR-0014, Gate 0, R1/T1 logs, `knowledge/README.md`
+
+### Non-goals
+
+- RAG ingest, MCP, CLI, UI, product `src/`
+- Commercial textbooks, GATE/university exam PDFs, NC-licensed OER in git
+- PG, civil/mechanical, live PLC, inventing capability ids
+
+### Priority
+
+| Priority | Items |
+|----------|-------|
+| **P0** | Full encyclopedic tree; SPDX on `oer/`; original worked sets; inventory test |
+| **P1** | Retrieval, chunking, gold promotion, Hindi, video |
 
 ---
 
-## §2 Prerequisites
+## §2 Prerequisites & blockers
 
-Gate 0 closed. H1 on `main`. `graph-of-loops` vendored (V0). `.specify/` exists (analyze/converge only). MATLAB optional.
-
----
-
-## §3 Authority
-
-PID, PRD, ARCHITECTURE, WORKFLOWS, curriculum-map, CANNOT_DO, `docs/PRODUCT.md`, `docs/planning/FR_TRACE.md`, `DECISIONS.md`, this file (§0–§18), `LOOP_GRAPH.md` (execute).
+| Item | Status | Blocks | Resolution |
+|------|--------|--------|------------|
+| D19 graph complete | done | overwrite risk | archive first commit |
+| Licence matrix | done | illegal copies | reuse ee-corpus-and-licensing |
+| OER fetch | optional | `oer/` files | original notes still required |
 
 ---
 
-## §4–§8
+## §3 Authority & artifact map
 
-Architecture, workstreams, spawns, waves, and todos: **[`LOOP_GRAPH.md`](LOOP_GRAPH.md)**. File ownership is per loop write paths. Parallel makers 2–4, disjoint.
+| Document | Path | Role |
+|----------|------|------|
+| Gate 0 | `docs/planning/GATE_0_UG_EE_KNOWLEDGE.md` | owner answers |
+| Corpus product lock | `knowledge/PRODUCT.md` | P0 for this graph |
+| Coverage | `knowledge/COVERAGE.yaml` | checker truth |
+| ADR | `DECISIONS.md` ADR-0014 | layout/trust |
+| This plan | `IMPLEMENTATION_PLAN.md` | nawab §0–§18 |
+| Loop graph | `LOOP_GRAPH.md` | execute |
+
+---
+
+## §4 Architecture & system map
+
+See mermaid in `LOOP_GRAPH.md`. Truth is git markdown. Checker is stdlib Python. Not wired to RAG.
+
+### Target layout
+
+```text
+knowledge/ug-ee/{pack}/{unit}/{notes,questions,sources}.md
+knowledge/ug-ee/{pack}/{unit}/oer/   # SPDX only
+scripts/check_knowledge_tree.py
+```
+
+### Trust boundaries
+
+No auth. Git may hold original pedagogical text and SPDX-clean OER only. `oer/` without SPDX fails the checker.
+
+---
+
+## §5 Workstreams
+
+| ID | Name | Owns paths | Depends on | Lead / subagent |
+|----|------|------------|------------|-----------------|
+| WS-SCAFFOLD | schema + checker | `knowledge/SCHEMA.md`, `COVERAGE.yaml`, `scripts/check_knowledge_tree.py` | P0 D0 A1 | lead |
+| WS-PACKS | encyclopedic units | `knowledge/ug-ee/<pack>/**` | scaffold | makers, cap 4 |
+| WS-TAIL | index, tests, boot, docs | glossary, tests, planning logs, README | all packs | lead |
+
+---
+
+## §6 Agent orchestration & subagent spawn map
+
+Makers: `generalPurpose`, inherit, disjoint pack write paths, **Do NOT commit**.
+Checkers: different Task, readonly, `composer-2.5-fast` else `inherit`.
+Parallel limit: 4 writers.
+
+---
+
+## §7 Phase map & dependencies
+
+Wave 0 serial P0→D0→A1→B_SCAFFOLD. Waves 1–3 pack fan-out. Wave 4 M1 barrier. Wave 5 E1→R1→T1→D1.
+
+---
+
+## §8 Todo registry
+
+See Cursor todos: archive-d19-gate0, p0-d0-a1-scaffold, wave1–3 packs, m1-e1-r1-t1-d1.
 
 ---
 
 ## §9 Commit matrix
 
-One conventional commit per passed loop slice (tests in the same commit). See loop plans’ Commits tables. Coalesce inside a loop; do not nest a second graph.
+User budget: **no cap**, coalesce **17**. One row = one commit. See `LOOP_GRAPH.md` commit mapping.
 
 ---
 
-## §10–§17
+## §10 Test & CI strategy
 
-Fast CI: `uv run ruff check . && uv run pytest -q`. Stops in loop plans. Orchestrator: `./scripts/validate.sh`. Rollout N/A (local). Exit: LOOP_GRAPH lifecycle + FR_TRACE + T1 queue. Risks: scope creep via speckit-converge (escalate); write-path overlap; impeccable teach vs DESIGN-coinbase.
+| Tier | Purpose | Command |
+|------|---------|---------|
+| Fast | tree contract | `python scripts/check_knowledge_tree.py` |
+| Fast | pytest | `pytest tests/unit/test_knowledge_tree.py` |
+| Validate | include pytest in `scripts/validate.sh` | `./scripts/validate.sh` |
+
+---
+
+## §11 Research log & decisions
+
+| Topic | Choice | Record in |
+|-------|--------|-----------|
+| Source model | original + CC BY/SA copies | Gate 0, ADR-0014 |
+| Depth | encyclopedic including electives | Gate 0 |
+| Location | `knowledge/` | ADR-0014 |
+| FBS / DSP Guide | link only | Gate 0 |
+
+---
+
+## §12 Documentation & artifact sync
+
+Gate 0, PRODUCT, ADR, PROGRESS, R1/T1 knowledge logs, `knowledge/README.md`.
+
+---
+
+## §13 Quality gates & checkpoints
+
+Checker exit 0. T1 ≥5 rows. No human freeze except licence escalate.
+
+---
+
+## §14 Validation & hardening
+
+`scripts/check_knowledge_tree.py` then pytest. Ponytail: no product-code drive-bys.
+
+---
+
+## §15 Rollout & cutover
+
+N/A — documentation tree, no deploy.
+
+---
+
+## §16 Exit criteria
+
+- Checker exit 0 on full tree
+- T1 log ≥5 pass rows
+- `knowledge/README.md` names inventory command
+- Product `src/` diff empty
+- Thin root README pointer
+
+---
+
+## §17 Risks & contingencies
+
+| Risk | Mitigation |
+|------|------------|
+| Volume vs quality | checker floors; escalate pack |
+| Copyright slip | original reconstructions; SPDX on oer |
+| OER fetch fail | original notes still ship |
+| Overwrite D19 | archive first commit |
 
 ---
 
 ## §18 Execution protocol
 
-Do **not** run linear nawab §18. Run `.cursor/skills/graph-of-loops/EXECUTE.md`. Resume from `LOOP_GRAPH.md` wave status + `plans/loops/<id>.state.json`. Never re-ask Gate 0. Never redo `passed`.
+If **§19 is filled**, do not run this linear protocol as the primary loop.
+On approval: the graph is the plan you read. Execute [`.cursor/skills/graph-of-loops/EXECUTE.md`](.cursor/skills/graph-of-loops/EXECUTE.md). Keep §9 commits, gates, and lead-owned git.
 
 ---
 
 ## §19 Execution graph
 
-**Filled:** [`LOOP_GRAPH.md`](LOOP_GRAPH.md) (graph-of-loops). Graph-engineering `EXECUTION_GRAPH.md` is not live.
+Filled as **graph-of-loops**: [`LOOP_GRAPH.md`](LOOP_GRAPH.md). Loop plans in [`plans/knowledge-loops/`](plans/knowledge-loops/). Approving started execution immediately.
+
+---
+
+## Open questions
+
+None blocking. Gate 0 closed.
+
+---
+
+## Approval
+
+**Mode:** project.
+Approving this plan started graph execution. Lead follows graph-of-loops EXECUTE, not linear §18.
