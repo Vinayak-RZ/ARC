@@ -1,0 +1,8 @@
+{
+  "tools": [
+    {
+      "name": "model_read",
+      "description": "CI fixture only. Not MathWorks toolkit schema."
+    }
+  ]
+}

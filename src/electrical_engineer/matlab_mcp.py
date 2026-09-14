@@ -56,10 +56,25 @@ def spawn_cmd(run_dir: str | None = None) -> list[str]:
         cmd.append(f"--matlab-root={root}")
     if run_dir:
         cmd.append(f"--initial-working-folder={run_dir}")
+    ext = simulink_extension()
+    if ext:
+        cmd.append(f"--extension-file={ext}")
     if binary.endswith(".py"):
         # ponytail: CI stub is a Python file; real binary is a Go executable
         cmd.insert(0, sys.executable)
     return cmd
+
+
+def simulink_extension() -> str | None:
+    raw = os.environ.get("EE_SIMULINK_TOOLS_JSON") or os.environ.get(
+        "MW_MCP_SERVER_EXTENSION_FILE"
+    )
+    if not raw:
+        return None
+    path = raw.split(":")[0].split(";")[0].strip()
+    if path and Path(path).is_file():
+        return path
+    return None
 
 
 def _readline(proc: subprocess.Popen[str], timeout: float) -> dict[str, Any]:

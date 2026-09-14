@@ -9,5 +9,6 @@ def test_unmatched_has_no_sim() -> None:
     acts = {n["activity"] for n in data["nodes"].values()}
     assert "run-spice" not in acts
     assert "run-matlab-if-present" not in acts
+    assert "run-simulink-if-present" not in acts
     assert "run-load-flow" not in acts
     assert "unmatched-cosolver" == data["id"]

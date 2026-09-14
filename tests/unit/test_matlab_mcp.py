@@ -4,7 +4,15 @@ from pathlib import Path
 
 import pytest
 
-from electrical_engineer.matlab_mcp import MatlabMissing, call_tool, matlab_bin, result_text
+from electrical_engineer.matlab_mcp import (
+    MatlabMissing,
+    call_tool,
+    matlab_bin,
+    result_text,
+    simulink_extension,
+    spawn_cmd,
+)
+from electrical_engineer.nodes import sim as _sim  # noqa: F401
 from electrical_engineer.nodes.registry import get
 
 FIXTURE = Path(__file__).resolve().parents[1] / "fixtures" / "fake_matlab_mcp.py"
@@ -65,3 +73,44 @@ def test_stub_error_is_unchecked(monkeypatch: pytest.MonkeyPatch, tmp_path: Path
     )
     assert out["ok"] is False
     assert out["unchecked"] is True
+
+
+FIXTURE_TOOLS = Path(__file__).resolve().parents[1] / "fixtures" / "fake_simulink_tools.json"
+
+
+def test_simulink_missing_json_is_cannot_do(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("EE_SIMULINK_TOOLS_JSON", raising=False)
+    monkeypatch.delenv("MW_MCP_SERVER_EXTENSION_FILE", raising=False)
+    assert simulink_extension() is None
+    out = get("run-simulink-if-present")({"id": "s"}, {})
+    assert out["ok"] is False
+    assert out["unchecked"] is True
+    assert out["cannot_do"] == "CD-SIMULINK-PLANT"
+    assert "simulink" in out["error"].lower()
+
+
+def test_spawn_cmd_passes_extension_file(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("EE_MATLAB_MCP_BIN", str(FIXTURE))
+    monkeypatch.setenv("EE_SIMULINK_TOOLS_JSON", str(FIXTURE_TOOLS))
+    cmd = spawn_cmd(str(tmp_path))
+    assert any(p.startswith("--extension-file=") and p.endswith("fake_simulink_tools.json") for p in cmd)
+
+
+def test_run_simulink_stub_not_checked(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("EE_MATLAB_MCP_BIN", str(FIXTURE))
+    monkeypatch.setenv("EE_MATLAB_MCP_TIMEOUT", "10")
+    monkeypatch.setenv("EE_SIMULINK_TOOLS_JSON", str(FIXTURE_TOOLS))
+    FIXTURE.chmod(0o755)
+    out = get("run-simulink-if-present")(
+        {
+            "id": "s",
+            "run_dir": str(tmp_path),
+            "problem": {"model_path": str(tmp_path / "plant.slx")},
+        },
+        {},
+    )
+    assert out["ok"] is False
+    assert out["unchecked"] is True
+    assert out["cannot_do"] == "CD-SIMULINK-PLANT"
+    assert "5.0" not in str(out.get("output") or "")
+

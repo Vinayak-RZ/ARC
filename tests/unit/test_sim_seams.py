@@ -12,3 +12,10 @@ def test_missing_spice_is_clear() -> None:
 def test_matlab_missing_clear() -> None:
     out = get("run-matlab-if-present")({"id": "m"}, {})
     assert "matlab" in out["error"].lower()
+
+
+def test_simulink_missing_clear() -> None:
+    out = get("run-simulink-if-present")({"id": "s"}, {})
+    assert out["ok"] is False
+    assert out["cannot_do"] == "CD-SIMULINK-PLANT"
+    assert "simulink" in out["error"].lower()

@@ -8,6 +8,8 @@ import sys
 
 
 def main() -> None:
+    argv = " ".join(sys.argv)
+    simulink = "--extension-file=" in argv
     for line in sys.stdin:
         line = line.strip()
         if not line:
@@ -25,25 +27,41 @@ def main() -> None:
                 "capabilities": {"tools": {}},
             }
         elif method == "tools/list":
-            result = {
-                "tools": [
-                    {"name": "detect_matlab_toolboxes", "inputSchema": {"type": "object"}},
-                    {"name": "check_matlab_code", "inputSchema": {"type": "object"}},
-                    {"name": "evaluate_matlab_code", "inputSchema": {"type": "object"}},
-                    {"name": "run_matlab_file", "inputSchema": {"type": "object"}},
-                    {"name": "run_matlab_test_file", "inputSchema": {"type": "object"}},
-                ]
-            }
+            tools = [
+                {"name": "detect_matlab_toolboxes", "inputSchema": {"type": "object"}},
+                {"name": "check_matlab_code", "inputSchema": {"type": "object"}},
+                {"name": "evaluate_matlab_code", "inputSchema": {"type": "object"}},
+                {"name": "run_matlab_file", "inputSchema": {"type": "object"}},
+                {"name": "run_matlab_test_file", "inputSchema": {"type": "object"}},
+            ]
+            if simulink:
+                tools.extend(
+                    [
+                        {"name": "model_read", "inputSchema": {"type": "object"}},
+                        {"name": "model_check", "inputSchema": {"type": "object"}},
+                        {"name": "model_scan", "inputSchema": {"type": "object"}},
+                    ]
+                )
+            result = {"tools": tools}
         elif method == "tools/call":
             params = msg.get("params") or {}
             name = params.get("name")
             if name == "evaluate_matlab_code":
                 text = "ans =\n    42"
+                err = False
             elif name == "run_matlab_file":
                 text = "file ok"
+                err = False
+            elif name in ("model_read", "model_check", "model_scan", "model_edit", "model_test"):
+                # ponytail: stub is not a plant result
+                text = "simulink stub: not a plant number"
+                err = True
             else:
                 text = str(name)
+                err = False
             result = {"content": [{"type": "text", "text": text}]}
+            if err:
+                result["isError"] = True
         else:
             sys.stdout.write(
                 json.dumps(

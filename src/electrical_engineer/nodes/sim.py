@@ -151,6 +151,50 @@ def run_matlab_if_present(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[
     }
 
 
+@register("run-simulink-if-present")
+def run_simulink_if_present(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
+    from electrical_engineer.matlab_mcp import (
+        MatlabMcpError,
+        MatlabMissing,
+        call_tool,
+        result_text,
+        simulink_extension,
+    )
+
+    def _plant_missing() -> dict[str, Any]:
+        miss = _missing("simulink", spec, inputs)
+        miss["cannot_do"] = "CD-SIMULINK-PLANT"
+        return miss
+
+    if not simulink_extension():
+        return _plant_missing()
+    problem = _problem(spec)
+    model = problem.get("model_path") or inputs.get("model_path")
+    if not model:
+        return _plant_missing()
+    run_dir = spec.get("run_dir")
+    try:
+        raw = call_tool(
+            "model_read",
+            {"model_path": str(model)},
+            run_dir=str(run_dir) if run_dir else None,
+        )
+    except (MatlabMissing, MatlabMcpError):
+        return _plant_missing()
+    if raw.get("isError"):
+        miss = _plant_missing()
+        miss["output"] = result_text(raw)
+        return miss
+    return {
+        "ok": True,
+        "tool": "simulink-mcp",
+        "unchecked": False,
+        "output": result_text(raw),
+        "node": spec.get("id"),
+        "cannot_do": None,
+    }
+
+
 @register("run-load-flow")
 def run_load_flow(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
     try:

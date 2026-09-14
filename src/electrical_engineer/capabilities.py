@@ -33,6 +33,7 @@ PROVIDERS = frozenset(
         "run-spice",
         "run-python-control",
         "run-matlab-if-present",
+        "run-simulink-if-present",
         "run-load-flow",
         "ask-human",
         "label-unchecked",
@@ -72,7 +73,10 @@ _OPTIONAL_IMPORT = {
     "run-load-flow": "pandapower",
 }
 
-ALWAYS_INSTALLED = PROVIDERS - frozenset(_OPTIONAL_IMPORT) - {"run-matlab-if-present"}
+ALWAYS_INSTALLED = PROVIDERS - frozenset(_OPTIONAL_IMPORT) - {
+    "run-matlab-if-present",
+    "run-simulink-if-present",
+}
 
 CD_NO_PROVIDER = "CD-NO-PROVIDER"
 
