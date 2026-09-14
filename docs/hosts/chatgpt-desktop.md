@@ -36,12 +36,14 @@ The argument band (FR21) on Chat/Work may live in the transcript; copy or
 write it to `./runs/<id>/argument.md` when the student needs a file. Codex view
 can write the run dir directly. Do not mega-apply `solve-circuit-problem`.
 
-**Tools the assistant can call:** list recipes, look up a citation, open the
-local window, run a short simulation, propose allowed checks (`apply: false`
-records `plan.md`; `apply: true` returns the saved run, never a graph body),
-read the labeled result. Replay a named recipe is the command-line / test
-path. Photo / compose / control-diagram still return a window link. The chat
-never waits. Pack skills stay out of this product repo’s `.cursor/skills/`.
+**Tools the assistant can call** (live MCP names): `list_workflows` (list recipes),
+`retrieve` (look up a citation), `open_ui` (open the local window),
+`simulate_attachment` (run a short simulation), `propose_composition`
+(`apply: false` records `plan.md`; `apply: true` returns the saved run, never
+a graph body), `label` (read the labeled result). Replay a named recipe is
+`run_workflow` on the command-line / test path. Photo / compose /
+control-diagram still return a window link. The chat never waits. Pack skills
+stay out of this product repo’s `.cursor/skills/`.
 
 Target contract: [`../PRD.md`](../PRD.md) FR17.
 

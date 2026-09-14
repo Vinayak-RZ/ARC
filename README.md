@@ -22,7 +22,7 @@
 
 Turn your AI coding assistant into an undergraduate electrical engineer. 10 undergraduate packs, 27 named lab recipes, 14 kinds of check.
 
-Describe the circuit, viva, or assignment in plain language. Arc retrieves, checks, and explains. Simulators run when they exist. If Arc did not verify a number, it labels that number unverified. It never presents a guess as a lab result.
+Describe the circuit, viva, or assignment in plain language. Arc retrieves, checks, and explains. Simulators run when they exist. If Arc did not verify a number, it labels that number unverified. In the saved run that label is the word `unchecked`. It never presents a guess as a lab result.
 
 > **Arc is a local lab you clone and run.** It is not a general coding agent that also does circuits.
 > Primary interface: paste a prompt into Cursor, Claude Code, Codex, or ChatGPT desktop, or run `electrical-engineer`.
