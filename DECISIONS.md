@@ -217,8 +217,8 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 
 ## ADR-0015 — Pack specialists as host-native wrappers
 
-- **Status:** accepted (this graph, 2026-09-14)
-- **Context:** D20 left generic adapter markdown. The owner asked for spawnable specialists over the 10 curriculum cores + maths + `_cross`, using `knowledge/ug-ee/` as links, not a dump. H5 Python fan-out remains forbidden. Product `.cursor/` is coding SDLC.
+- **Status:** accepted (amended 2026-09-14 — catalog in `hosts/agents/`, Cloud spawn law, `ee-simulink`)
+- **Context:** D20 left generic adapter markdown. The owner asked for spawnable specialists over the 10 curriculum cores + maths + `_cross`, using `knowledge/ug-ee/` as links, not a dump. H5 Python fan-out remains forbidden. Product `.cursor/` is coding SDLC. Follow-up: put those specialists **in the repo** the way OpenMontage keeps domain instructions in-tree; the rented host (Cursor / Codex / Claude) still owns spawn.
 
 ### Trust
 
@@ -226,6 +226,7 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 - Children share the parent EE MCP. They must not mint checked ohms or skip UI confirm.
 - Retrieve scaffold is empty this graph: call it; a miss is visible; do not paste `knowledge/`.
 - At most two live pack children. CLI / MCP / UI never spawn.
+- Children stay on the **parent checkout**. Cursor Cloud `/in-cloud` and isolated worktrees are off (stdio MCP and `./runs/<id>/` would miss).
 
 ### Fail closed
 
@@ -235,13 +236,15 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 
 ### Decision
 
-Canonical specialist law lives in `hosts/adapters/`. `electrical-engineer hosts install --into <dir>` emits thin per-pack wrappers:
+Canonical cards live in [`hosts/agents/`](hosts/agents/) (Cursor-format markdown + [`INDEX.md`](hosts/agents/INDEX.md)). Shared law: [`hosts/adapters/specialist-body.md`](hosts/adapters/specialist-body.md). Inventory is **12**: eleven pack specialists plus `ee-simulink`. Do not copy 48–88 SDLC role agents.
 
-- Cursor: `.cursor/agents/ee-<pack>.md`
-- Codex: `.codex/agents/ee_<pack>.toml`
-- Claude Code: `.claude/agents/ee-<pack>.md`
+`electrical-engineer hosts install --into <dir>` **copies** those cards into the homework tree:
 
-Skills stay short (`skills/<pack>/SKILL.md`) and link `knowledge/ug-ee/<pack>/INDEX.md` plus `COVERAGE.yaml` unit ids. Skills-only (root + ≤2 packs, no spawn) remains the default path. Spawn is for large or parallel pack work.
+- Cursor: `.cursor/agents/ee-*.md`
+- Codex: `.codex/agents/ee_*.toml`
+- Claude Code: `.claude/agents/ee-*.md`
+
+Never this product repo’s `.cursor/agents/`. Skills stay short (`skills/<pack>/SKILL.md`) and link `knowledge/ug-ee/<pack>/INDEX.md` plus `COVERAGE.yaml` unit ids. Skills-only (root + ≤2 packs, no spawn) remains the default path. Spawn is for large or parallel pack work. Host Task `description` is how auto-delegate works; `model: inherit`; inherit parent EE MCP.
 
 ## Trade-off: specialist shape
 
@@ -257,9 +260,9 @@ Skills stay short (`skills/<pack>/SKILL.md`) and link `knowledge/ug-ee/<pack>/IN
 
 **Override:** Set PRIORITY = SIMPLICITY to skip install and stay skills-only.
 
-- **Consequences:** Tests install into a temp dir, not this repo’s `.cursor/`. Chat/Work pack spawn still waits on Skills-over-MCP (Later).
-- **Alternatives:** One generic agent + pack argument (fallback only); plugin marketplaces (Later); electives (out).
-- **Sources:** [`docs/planning/R0_SOLUTIONS.md`](docs/planning/R0_SOLUTIONS.md); `research/notes/pack-specialist-spawn-landscape.md`; ADR-0011
+- **Consequences:** Tests install into a temp dir, not this repo’s `.cursor/`. Clone search finds `hosts/agents/ee-*.md`. Chat/Work pack spawn still waits on Skills-over-MCP (Later).
+- **Alternatives:** One generic agent + pack argument (fallback only); plugin marketplaces (Later); electives (out); product `.cursor/agents/` (rejected); SDLC orchestrator fleets (rejected).
+- **Sources:** [`docs/planning/R0_SOLUTIONS_SIMULINK.md`](docs/planning/R0_SOLUTIONS_SIMULINK.md); `research/notes/host-agent-catalog-landscape.md`; ADR-0011
 
 ---
 
@@ -279,7 +282,7 @@ Skills stay short (`skills/<pack>/SKILL.md`) and link `knowledge/ug-ee/<pack>/IN
 
 - Missing binary, spawn fail, licence error, timeout → same `_missing("matlab")` dict (`ok: false`, `unchecked: true`)
 - Stub must not mint a checked scalar
-- Simulink `--extension-file` is Later
+- Simulink `--extension-file` is ADR-0017 (this graph); live licensed desktop stays Later
 
 ### Decision
 
@@ -300,5 +303,56 @@ Kernel stdio NDJSON JSON-RPC client behind existing `run-matlab-if-present`. Spa
 **Override:** Set PRIORITY = SPEED only if a licensed desktop already has MATLAB MCP on the host — still `unchecked` until Arc recomputes.
 
 - **Consequences:** `docs/hosts/` must stop recommending peer MATLAB MCP. UI chip: optional, via Arc when installed. `matlab.engine` / MPS / Jupyter / COM are not P0.
-- **Alternatives:** Filtered proxy (mcp-proxy does not filter; ToolHive still exposes verbs to the host); Simulink toolkit this graph (rejected — Later).
+- **Alternatives:** Filtered proxy (mcp-proxy does not filter; ToolHive still exposes verbs to the host); host-attached Simulink toolkit (rejected — see ADR-0017).
 - **Sources:** [`docs/planning/R0_SOLUTIONS.md`](docs/planning/R0_SOLUTIONS.md); `research/notes/matlab-mcp-mediation-landscape.md`; FR20; ADR-0003
+
+---
+
+## ADR-0017 — Arc-mediated Simulink Agentic Toolkit
+
+- **Status:** accepted (this graph, 2026-09-14)
+- **Context:** MATLAB MCP is already kernel-mediated (ADR-0016). MathWorks Simulink Agentic Toolkit adds `model_read` / `model_edit` / … via the same Go binary plus `--extension-file=…/tools/tools.json` and MATLAB-side `satk_initialize`. Attaching that to the homework host dumps another ~5–6k schema tokens. Owner asked to introduce the toolkit now; live licensed MATLAB stays Later. Do not invent a capability id; MATLAB-only plants stay `CD-SIMULINK-PLANT`.
+
+### Trust
+
+- Host talks only to Arc. Host `tools/list` must not include `model_*` or MATLAB tool names.
+- Single-seat: kernel spawn on the student desktop. Not a multi-user shared MATLAB.
+- Never store MathWorks passwords. `satk_initialize` is a student-session step, not CI.
+- Children (`ee-simulink` included) call EE MCP only. They never attach the toolkit.
+
+### Fail closed
+
+- Missing `EE_SIMULINK_TOOLS_JSON` / missing binary / spawn fail / `isError` stub → `ok: false`, `unchecked: true`, `cannot_do: CD-SIMULINK-PLANT`
+- Stub must not mint a checked plant number
+- No YAML workflow in CI binds this provider
+
+### Decision
+
+Reuse [`src/electrical_engineer/matlab_mcp.py`](src/electrical_engineer/matlab_mcp.py). When `EE_SIMULINK_TOOLS_JSON` (or `MW_MCP_SERVER_EXTENSION_FILE`) points at a file, append `--extension-file`. New provider activity `run-simulink-if-present` (read/check first; `model_edit` not P0). No new host MCP verb. ACI stays 5–7.
+
+## Trade-off: Simulink attach
+
+**Decision:** Kernel mediates the toolkit; host never lists those tools.
+
+**Option A:** Host-attached Simulink MCP — Pros: vendor default. Cons: token dump; host can edit `.slx` behind Arc.
+
+**Option B:** Kernel `--extension-file` (chosen) — Pros: same mediation as MATLAB; fail-closed in CI. Cons: `satk_initialize` still required on a licensed desktop.
+
+**Option C:** Docs-only — Pros: zero code. Cons: owner asked to introduce the toolkit.
+
+**Default:** B because PRIORITY = SAFETY then CONSISTENCY with ADR-0016.
+
+**Override:** PRIORITY = SPEED only on a licensed desktop that already has the toolkit — still `unchecked` until Arc recomputes.
+
+- **Consequences:** UI chip `Simulink · via Arc`. OSS python-control stays first-class for LTI. Live `.slx` gold is Later.
+- **Alternatives:** New `simulink_*` host verbs (breaks ACI); inventing a capability id (forbidden).
+- **Sources:** [`docs/planning/R0_SOLUTIONS_SIMULINK.md`](docs/planning/R0_SOLUTIONS_SIMULINK.md); `research/notes/simulink-toolkit-mediation.md`; https://github.com/matlab/simulink-agentic-toolkit; MCP-PENDING (agent-patterns catalog unreachable)
+
+### Agentic system design note
+
+```text
+Student → L0 host (spawn ≤2) → pack skill and/or child card → EE MCP
+                                 → L2 kernel → MATLAB/Simulink MCP subprocess
+```
+
+Autonomy: host-in-loop; no nested spawn; no `/in-cloud` EE children. Tools: children = EE MCP; Simulink tools = kernel only. Context: pack SKILL + run dir; no `knowledge/` dump. Model: inherit. Failure: `unchecked` / `CD-SIMULINK-PLANT`. Eval: install inventory + fail-closed node + host tools/list. Not ≥20 live `.slx` cases (no MATLAB here).
