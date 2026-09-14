@@ -31,7 +31,7 @@ def to_unagent_custom(events: list[dict[str, Any]]) -> dict[str, Any]:
                 "trace_id": ev.get("trace_id"),
                 "parent_id": ev.get("parent_span_id"),
                 "name": ev.get("name"),
-                "start_time_unix_nano": int(ev.get("ts_ms") or 0) * 1_000_000,
+                "start_time_unix_nano": int(ev.get("ts_ms") or 0) * 1000000,
                 "duration_ms": ev.get("duration_ms"),
                 "attributes": ev.get("attrs") or {},
             }

@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
-from electrical_engineer.runner.execute import execute  # noqa: E402
+from electrical_engineer.runner.execute import execute
 
 
 def load_scenario(path: Path) -> dict:
