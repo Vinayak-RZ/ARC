@@ -27,26 +27,28 @@ A **domain kernel** is what enables a general agentic harness to have expertise 
 
 ```mermaid
 flowchart TB
-  subgraph rent["Rented harness (we do not write this)"]
+  Student[Student]
+  subgraph L0["Layer 0 rented harness"]
     Host["Cursor / Claude Code / Codex / ChatGPT desktop"]
-    Loop["Inner loop, compaction, model routing, spawn UI"]
-    Host --- Loop
   end
-  subgraph attach["Attach (we write the files)"]
-    Skills["Root skill + pack skills"]
+  subgraph L1["Layer 1 attach"]
+    Skills["Root skill plus pack skills"]
     MCP["stdio MCP, 7 verbs"]
     CLI["electrical-engineer CLI"]
   end
-  subgraph kernel["Domain kernel (we own the check)"]
+  subgraph L2["Layer 2 domain kernel"]
     Caps["14 capabilities"]
-    Prov["Installed providers or unchecked"]
-    Runs["./runs/id/ files"]
+    Prov["Installed provider or unchecked"]
   end
-  subgraph see["Surfaces"]
-    UI["localhost UI on 127.0.0.1:8765"]
-    Arg["argument.md written by the host"]
+  subgraph L3["Layer 3 surfaces"]
+    Runs["./runs/id/"]
+    UI["localhost UI 127.0.0.1:8765"]
+    Arg["argument.md from the host"]
   end
-  Host -->|"loads"| Skills
+  Student --> Host
+  Student --> CLI
+  Student --> UI
+  Host --> Skills
   Host --> MCP
   Host --> CLI
   MCP --> Caps
@@ -54,7 +56,7 @@ flowchart TB
   Caps --> Prov
   Prov --> Runs
   Runs --> UI
-  Host -->|"viva"| Arg
+  Host --> Arg
   Arg --> UI
 ```
 
@@ -82,12 +84,12 @@ flowchart LR
   subgraph arcway["Arc MCP"]
     A1["simulate_attachment"]
     A2["propose_composition"]
-    A3["label"]
     A1 --> Val["Validator"]
     A2 --> Val
     Val --> Cap["Capability registry"]
     Cap --> Out["evidentiary.json: value or unchecked"]
   end
+  generic ~~~ arcway
 ```
 
 Layer 1 does not wrap each simulator as its own MCP tool. The host names `lumped-circuit-sim`, not a new `run_ngspice` verb. The kernel binds an installed provider or fails closed. Peer MATLAB MCP scalars stay untrusted until an EE provider recomputes them.
@@ -147,7 +149,7 @@ sequenceDiagram
   Host->>MCP: retrieve, simulate_attachment, or propose_composition
   MCP->>Kernel: validate ids, bind provider
   Kernel-->>MCP: run_id plus evidentiary.json
-  MCP-->>Host: paths; never wait
+  MCP-->>Host: paths, never wait
   Host->>UI: student confirms topology if needed
   Host->>Kernel: write argument.md
   Kernel-->>Student: checked number or exact token unchecked
