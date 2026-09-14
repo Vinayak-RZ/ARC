@@ -20,7 +20,7 @@
   <a href="LICENSE"><b>License</b></a>
 </p>
 
-Turn your AI coding assistant into an undergraduate electrical engineer. 10 undergraduate packs, 27 named lab recipes, 14 kinds of check.
+Turn your AI coding assistant into an undergraduate electrical engineer. 10 undergraduate packs, 12 host-spawned specialists, 27 named lab recipes.
 
 Describe the circuit, viva, or assignment in plain language. Arc retrieves, checks, and explains. Simulators run when they exist. If Arc did not verify a number, it labels that number unverified. In the saved run that label is the word `unchecked`. It never presents a guess as a lab result.
 
@@ -62,7 +62,7 @@ Explain Thevenin as if I have a viva in ten minutes. Cite the book chapter you r
 This isn't a named lab recipe. Still answer, and label anything you did not check.
 ```
 
-Works with those hosts, or with the CLI alone (`electrical-engineer run solve-circuit-problem`). Host adapters: [`docs/hosts/README.md`](docs/hosts/README.md). Pack specialists: `electrical-engineer hosts install --into <homework>`. Do not add MATLAB MCP on the host; Arc mediates it.
+Works with those hosts, or with the CLI alone (`electrical-engineer run solve-circuit-problem`). Host adapters: [`docs/hosts/README.md`](docs/hosts/README.md). **12 EE specialists** live in [`hosts/agents/`](hosts/agents/INDEX.md); the **host** (Cursor, Codex, Claude) spawns at most two after `electrical-engineer hosts install --into <homework>`. Do not add MATLAB MCP or Simulink Agentic Toolkit on the host; Arc mediates both.
 
 ## Quick start
 
@@ -115,6 +115,7 @@ sequenceDiagram
 ```
 
 - **Named lab recipes.** 27 saved workflows. The assistant picks one (or proposes an allowed graph). Arc runs it. A free agent loop can skip the simulator. Limit: Arc never invents a new recipe in chat. [`docs/WORKFLOWS.md`](docs/WORKFLOWS.md)
+- **Host-spawned specialists.** 12 cards in [`hosts/agents/`](hosts/agents/INDEX.md). Cursor, Codex, or Claude starts at most two on a large assignment. Limit: Arc never starts those children. Cloud `/in-cloud` spawn is off.
 - **Deterministic checks.** The recipe runner and the simulators do not sample. Same netlist, same `Vout`. Limit: the explanation can still vary. The ohms cannot, unless they are labeled unverified. [`docs/ON_THE_HARNESS.md`](docs/ON_THE_HARNESS.md)
 - **Unverified numbers are labeled.** If SPICE, python-control, or pandapower is missing, Arc does not guess. Limit: a verified number needs a simulator or a numeric check, not a fluent paragraph.
 - **Local window.** On `127.0.0.1:8765` only. Limit: not on the internet, no chat loop in the browser.

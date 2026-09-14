@@ -330,6 +330,7 @@ Counts you can reproduce from the files.
 | What | Count | In plain language |
 |------|-------|-------------------|
 | Undergraduate packs | 10 | Circuits, signals, electronics, machines, power, control, power electronics, measurements, electromagnetic fields, maths-for-EE |
+| Spawnable EE specialists | 12 | Host Task/subagent cards in `hosts/agents/` (11 packs + `ee-simulink`). Install into homework; never this product `.cursor/` |
 | Named lab recipes | 27 | Saved workflows under `workflows/` |
 | Kinds of check | 14 | Algebra, lumped-circuit sim, LTI, power network, machines, converters, signals, fields, measurements, citations, figures, photo ingest, unverified label, ask you |
 | Tools the assistant can call | 7 | List, look up, open window, simulate, propose checks, read result, replay recipe |

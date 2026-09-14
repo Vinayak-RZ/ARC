@@ -132,6 +132,14 @@ Vendored Cursor config (`.cursor/`) is not a product package; see `.cursor/VENDO
 
 **How it is used.** Copy/symlink per [`docs/hosts/README.md`](hosts/README.md), or `electrical-engineer hosts install --into <homework>`.
 
+### 4.4b specialists (`hosts/agents/`)
+
+**What it is for.** 12 spawnable EE child agents the **rented host** starts. Not a Python loop.
+
+**How it is used.** Cards live in git. `hosts install` copies them into homework `.cursor/agents/`, `.codex/agents/`, `.claude/agents/`. Never this product `.cursor/`.
+
+**How it works.** Shared law in `hosts/adapters/specialist-body.md`. At most two live. Same EE MCP. `ee-simulink` still must not call `model_*` host tools.
+
 ### 4.5 gold (`eval/gold/`)
 
 **What it is for.** OSS eval. Circuits divider, unmatched, injection.
@@ -148,7 +156,8 @@ Vendored Cursor config (`.cursor/`) is not a product package; see `.cursor/VENDO
 | `EE_LOCAL_LLM_MODEL` | optional model name |
 | `EE_MATLAB_MCP_BIN` | path to `matlab-mcp-server` or CI stub |
 | `EE_MATLAB_MCP_TIMEOUT` | seconds; default 120 |
-| `MW_MCP_SERVER_MATLAB_ROOT` | MATLAB install dir without `/bin` |
+| `EE_SIMULINK_TOOLS_JSON` | path to Simulink Agentic Toolkit `tools.json`; unset = fail closed |
+| `MW_MCP_SERVER_EXTENSION_FILE` | alternate `:`/`;`-separated extension files |
 | `problem.json` | cwd payload for `run` |
 
 Python 3.11+, `uv`, hatchling. Optional tools (PySpice, python-control, pandapower, sympy) are imported if present.
@@ -167,11 +176,11 @@ Python 3.11+, `uv`, hatchling. Optional tools (PySpice, python-control, pandapow
 - [`docs/PID.md`](PID.md), [`docs/PRD.md`](PRD.md), [`docs/ARCHITECTURE.md`](ARCHITECTURE.md)
 - [`docs/WORKFLOWS.md`](WORKFLOWS.md), [`docs/CANNOT_DO.md`](CANNOT_DO.md)
 - [`docs/design/DESIGN-coinbase.md`](design/DESIGN-coinbase.md)
-- [`docs/planning/R1_BOOT.md`](planning/R1_BOOT.md), [`docs/planning/T1_TRIALS.md`](planning/T1_TRIALS.md), [`docs/planning/T1_HOST.md`](planning/T1_HOST.md)
+- [`docs/planning/R1_BOOT.md`](planning/R1_BOOT.md), [`docs/planning/R1_BOOT_SIMULINK.md`](planning/R1_BOOT_SIMULINK.md), [`docs/planning/T1_TRIALS.md`](planning/T1_TRIALS.md), [`docs/planning/T1_HOST.md`](planning/T1_HOST.md), [`docs/planning/T1_SIMULINK_AGENTS.md`](planning/T1_SIMULINK_AGENTS.md)
 - Spike: [`research/notes/rag-spike-results-2026-09.md`](../research/notes/rag-spike-results-2026-09.md)
 
 ## 8. Future advancements
 
 1. Re-run the RAG spike on a licensed chapter with LightRAG 1.5 numbers before swapping engines.
-2. Live licensed MATLAB on a student desktop; CI keeps the fake stdio stub. Simulink Agentic Toolkit later.
+2. Live licensed MATLAB on a student desktop; CI keeps the fake stdio stub. Simulink toolkit is kernel-mediated (`run-simulink-if-present`); live `.slx` gold is later.
 3. BYOK / HTTP MCP / PyPI — explicitly later-graph in PID; do not pretend they shipped.
