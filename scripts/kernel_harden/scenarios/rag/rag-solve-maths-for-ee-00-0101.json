@@ -1,0 +1,13 @@
+{
+  "id": "rag-solve-maths-for-ee-00-0101",
+  "pack": "rag",
+  "recipe_id": "solve-maths-for-ee",
+  "category": "rag",
+  "problem": {
+    "prompt": "ug ee scenario",
+    "variant": 0,
+    "n": 101
+  },
+  "host_path": "cli",
+  "notes": "auto scenario 101"
+}

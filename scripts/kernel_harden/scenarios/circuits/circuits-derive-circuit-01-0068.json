@@ -1,0 +1,13 @@
+{
+  "id": "circuits-derive-circuit-01-0068",
+  "pack": "circuits",
+  "recipe_id": "derive-circuit",
+  "category": "circuits",
+  "problem": {
+    "prompt": "ug ee scenario",
+    "variant": 1,
+    "n": 68
+  },
+  "host_path": "cli",
+  "notes": "auto scenario 68"
+}

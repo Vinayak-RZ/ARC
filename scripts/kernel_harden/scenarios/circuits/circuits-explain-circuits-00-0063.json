@@ -1,0 +1,13 @@
+{
+  "id": "circuits-explain-circuits-00-0063",
+  "pack": "circuits",
+  "recipe_id": "explain-circuits",
+  "category": "circuits",
+  "problem": {
+    "prompt": "ug ee scenario",
+    "variant": 0,
+    "n": 63
+  },
+  "host_path": "cli",
+  "notes": "auto scenario 63"
+}

@@ -1,0 +1,13 @@
+{
+  "id": "control-control-diagram-to-model-00-0021",
+  "pack": "control",
+  "recipe_id": "control-diagram-to-model",
+  "category": "control",
+  "problem": {
+    "prompt": "ug ee scenario",
+    "variant": 0,
+    "n": 21
+  },
+  "host_path": "cli",
+  "notes": "auto scenario 21"
+}

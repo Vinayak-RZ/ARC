@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import time
 from pathlib import Path
 from typing import Any
 
@@ -14,6 +15,7 @@ from electrical_engineer.circuit.title import run_title
 from electrical_engineer.nodes.registry import REGISTRY
 from electrical_engineer.runner.fsm import Recipe, run_fsm
 from electrical_engineer.runner.runs import create_run_dir, new_run_id, node_dir, project_root
+from electrical_engineer.runner.trace import TraceWriter
 from electrical_engineer.unchecked import UNCHECKED
 
 _UNCHECKED_REASONS = (
@@ -47,17 +49,50 @@ def execute(
         problem = json.loads((Path.cwd() / "problem.json").read_text())
         (run_dir / "problem.json").write_text(json.dumps(problem))
 
+    tracer = TraceWriter(run_dir, run_id)
+    run_span = tracer.run_start(recipe_id=recipe.id)
+
     def wrap(fn):
         def inner(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
+            activity = str(spec.get("activity") or "")
+            node_id = str(spec.get("id") or "")
+            t0 = time.perf_counter()
+            parent = tracer.node_start(
+                node_id=node_id,
+                activity=activity,
+                recipe_id=recipe.id,
+                parent_span_id=run_span,
+            )
             payload = {
                 **spec,
                 "run_dir": str(run_dir),
                 "recipe_id": recipe.id,
                 "problem": problem or {},
             }
-            out = fn(payload, inputs)
+            try:
+                out = fn(payload, inputs)
+            except Exception:
+                tracer.node_end(
+                    node_id=node_id,
+                    activity=activity,
+                    recipe_id=recipe.id,
+                    parent_span_id=parent,
+                    duration_ms=(time.perf_counter() - t0) * 1000.0,
+                    ok=False,
+                    unchecked=True,
+                )
+                raise
             nd = node_dir(run_dir, spec["id"])
             (nd / "out.json").write_text(json.dumps(out, default=str))
+            tracer.node_end(
+                node_id=node_id,
+                activity=activity,
+                recipe_id=recipe.id,
+                parent_span_id=parent,
+                duration_ms=(time.perf_counter() - t0) * 1000.0,
+                ok=bool(out.get("ok")) if isinstance(out, dict) else None,
+                unchecked=bool(out.get("unchecked")) if isinstance(out, dict) else False,
+            )
             return out
 
         return inner
@@ -103,6 +138,12 @@ def execute(
     (run_dir / "evidentiary.json").write_text(blob)
     (run_dir / "summary.json").write_text(blob)
     (run_dir / "observation.json").write_text(json.dumps(observation, indent=2))
+    tracer.run_end(
+        recipe_id=recipe.id,
+        unchecked=bool(payload["unchecked"]),
+        unchecked_reason=reason,
+        parent_span_id=run_span,
+    )
     seed = default_graph_for(problem)
     if seed is not None and not (run_dir / "graph.json").is_file():
         write_graph(run_dir, seed)

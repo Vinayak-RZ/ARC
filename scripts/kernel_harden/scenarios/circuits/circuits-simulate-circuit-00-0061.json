@@ -1,0 +1,16 @@
+{
+  "id": "circuits-simulate-circuit-00-0061",
+  "pack": "circuits",
+  "recipe_id": "simulate-circuit",
+  "category": "circuits",
+  "problem": {
+    "kind": "voltage_divider",
+    "vin": 12,
+    "r1": 2000,
+    "r2": 2000,
+    "variant": 0,
+    "n": 61
+  },
+  "host_path": "cli",
+  "notes": "auto scenario 61"
+}

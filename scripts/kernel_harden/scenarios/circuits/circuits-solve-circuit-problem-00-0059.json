@@ -1,0 +1,17 @@
+{
+  "id": "circuits-solve-circuit-problem-00-0059",
+  "pack": "circuits",
+  "recipe_id": "solve-circuit-problem",
+  "category": "circuits",
+  "problem": {
+    "kind": "voltage_divider",
+    "vin": 10,
+    "r1": 1000,
+    "r2": 1000,
+    "expected": 5.0,
+    "variant": 0,
+    "n": 59
+  },
+  "host_path": "cli",
+  "notes": "auto scenario 59"
+}

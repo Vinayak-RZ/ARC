@@ -1,0 +1,13 @@
+{
+  "id": "explain-explain-em-01-0090",
+  "pack": "explain",
+  "recipe_id": "explain-em",
+  "category": "explain",
+  "problem": {
+    "prompt": "ug ee scenario",
+    "variant": 1,
+    "n": 90
+  },
+  "host_path": "cli",
+  "notes": "auto scenario 90"
+}

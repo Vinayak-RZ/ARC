@@ -1,0 +1,13 @@
+{
+  "id": "injection-unmatched-cosolver-00-0053",
+  "pack": "injection",
+  "recipe_id": "unmatched-cosolver",
+  "category": "injection",
+  "problem": {
+    "prompt": "ug ee scenario",
+    "variant": 0,
+    "n": 53
+  },
+  "host_path": "cli",
+  "notes": "auto scenario 53"
+}

@@ -1,0 +1,13 @@
+{
+  "id": "explain-explain-maths-for-ee-00-0091",
+  "pack": "explain",
+  "recipe_id": "explain-maths-for-ee",
+  "category": "explain",
+  "problem": {
+    "prompt": "ug ee scenario",
+    "variant": 0,
+    "n": 91
+  },
+  "host_path": "cli",
+  "notes": "auto scenario 91"
+}

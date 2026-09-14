@@ -1,0 +1,13 @@
+{
+  "id": "injection-simulate-after-confirm-00-0055",
+  "pack": "injection",
+  "recipe_id": "simulate-after-confirm",
+  "category": "injection",
+  "problem": {
+    "prompt": "ug ee scenario",
+    "variant": 0,
+    "n": 55
+  },
+  "host_path": "cli",
+  "notes": "auto scenario 55"
+}

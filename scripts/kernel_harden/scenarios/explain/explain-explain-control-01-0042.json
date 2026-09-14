@@ -1,0 +1,13 @@
+{
+  "id": "explain-explain-control-01-0042",
+  "pack": "explain",
+  "recipe_id": "explain-control",
+  "category": "explain",
+  "problem": {
+    "prompt": "ug ee scenario",
+    "variant": 1,
+    "n": 42
+  },
+  "host_path": "cli",
+  "notes": "auto scenario 42"
+}

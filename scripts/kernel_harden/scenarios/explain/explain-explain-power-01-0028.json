@@ -1,0 +1,13 @@
+{
+  "id": "explain-explain-power-01-0028",
+  "pack": "explain",
+  "recipe_id": "explain-power",
+  "category": "explain",
+  "problem": {
+    "prompt": "ug ee scenario",
+    "variant": 1,
+    "n": 28
+  },
+  "host_path": "cli",
+  "notes": "auto scenario 28"
+}

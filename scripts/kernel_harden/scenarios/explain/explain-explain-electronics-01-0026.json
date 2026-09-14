@@ -1,0 +1,13 @@
+{
+  "id": "explain-explain-electronics-01-0026",
+  "pack": "explain",
+  "recipe_id": "explain-electronics",
+  "category": "explain",
+  "problem": {
+    "prompt": "ug ee scenario",
+    "variant": 1,
+    "n": 26
+  },
+  "host_path": "cli",
+  "notes": "auto scenario 26"
+}

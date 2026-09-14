@@ -1,0 +1,13 @@
+{
+  "id": "control-solve-control-problem-00-0017",
+  "pack": "control",
+  "recipe_id": "solve-control-problem",
+  "category": "control",
+  "problem": {
+    "prompt": "ug ee scenario",
+    "variant": 0,
+    "n": 17
+  },
+  "host_path": "cli",
+  "notes": "auto scenario 17"
+}

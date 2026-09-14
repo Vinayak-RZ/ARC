@@ -1,0 +1,13 @@
+{
+  "id": "circuits-review-circuit-solution-00-0007",
+  "pack": "circuits",
+  "recipe_id": "review-circuit-solution",
+  "category": "circuits",
+  "problem": {
+    "prompt": "ug ee scenario",
+    "variant": 0,
+    "n": 7
+  },
+  "host_path": "cli",
+  "notes": "auto scenario 7"
+}
