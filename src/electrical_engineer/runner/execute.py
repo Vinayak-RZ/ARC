@@ -197,18 +197,9 @@ def _unchecked_reason(recipe_id: str, completed: dict[str, Any], payload: dict[s
         if isinstance(v, dict) and v.get("empty") is True:
             return "empty-retrieve"
     for v in completed.values():
-        if isinstance(v, dict) and v.get("error") in {"unconfirmed", "gate"}:
+        if isinstance(v, dict) and (
+            v.get("error") in {"unconfirmed", "gate"} or v.get("confirmed") is False
+        ):
             return "gate-closed"
-    # Honest label-unverified path (explain / cannot-check) — do not pretend this is a router miss.
-    for v in completed.values():
-        if not isinstance(v, dict):
-            continue
-        labeled = v.get("token") == UNCHECKED or v.get("unchecked") is True
-        cap_ok = v.get("capability") in {"label-unverified", None} or "label" in str(
-            v.get("activity") or ""
-        )
-        if labeled and cap_ok:
-            return "labeled"
-    if payload.get("token") == UNCHECKED:
-        return "labeled"
-    return "labeled" if "labeled" in _UNCHECKED_REASONS else None
+    # Nothing blocked the run: the kernel produced prose it cannot verify and said so.
+    return "labeled"
