@@ -23,7 +23,7 @@
 | **Graph-engineering** | not loaded (XOR) |
 | **Branch** | `cursor/ee-skills-matlab-mcp-37b3` |
 | **Cheap checker** | `composer-2.5-fast` else `inherit` |
-| **Wave status** | 0 looping |
+| **Wave status** | 1 looping |
 
 ---
 
@@ -31,7 +31,7 @@
 
 | ID | Name | Plan | Stop | Max rounds | Status |
 |----|------|------|------|------------|--------|
-| R_SURVEY | solution landscape | [plans/skills-matlab-loops/R_SURVEY.md](plans/skills-matlab-loops/R_SURVEY.md) | landscape files + R0_SOLUTIONS headings | 3 | pending |
+| R_SURVEY | solution landscape | [plans/skills-matlab-loops/R_SURVEY.md](plans/skills-matlab-loops/R_SURVEY.md) | landscape files + R0_SOLUTIONS headings | 3 | passed |
 | P0 | product lock | [plans/skills-matlab-loops/P0.md](plans/skills-matlab-loops/P0.md) | grep PRODUCT headings + mediat | 3 | pending |
 | D0 | docs-in | [plans/skills-matlab-loops/D0.md](plans/skills-matlab-loops/D0.md) | D0_GAPS_SKILLS_MATLAB.md | 3 | pending |
 | A1 | ADRs | [plans/skills-matlab-loops/A1.md](plans/skills-matlab-loops/A1.md) | ADR-0015 + ADR-0016 + R0_SOLUTIONS | 3 | pending |
