@@ -17,3 +17,21 @@ Not FEA / Ansys Maxwell (`CD-MACHINES-FEA`). Not plant actuation.
 Lab-report OC/SC is in-bound (report genre). Starting transients without a
 provider stay `unchecked`. Do not route a transformer homework through
 `lumped-circuit-sim` unless the student supplied a lumped netlist.
+
+## Spawn
+
+Host-native name: `ee-machines`. At most two live children. CLI/MCP/UI never spawn.
+Never call `evaluate_matlab_code`. Host talks only to Arc MCP.
+
+## Retrieve (scaffold)
+
+When: a citation, page, or handbook claim is needed.
+Filters: book_id, chapter_id, domain_tag, folder_tag.
+Index: TBD (empty this graph). Call `retrieve` anyway. Empty is visible. Do not
+dump `knowledge/`.
+
+## Knowledge
+
+- `knowledge/ug-ee/machines/INDEX.md`
+- Coverage units: `knowledge/COVERAGE.yaml` pack `machines`
+- Sibling packs: power (network vs machine), power_electronics (drives), maths (phasors)

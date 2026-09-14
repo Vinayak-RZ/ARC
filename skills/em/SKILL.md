@@ -17,3 +17,21 @@ research EM programme. Not CST/HFSS as the product path (`CD-EM-HFSS`).
 
 Derive and explain are common. Simulate means analytic/numeric identity, not
 SPICE, unless the problem reduced to a lumped model the student stated.
+
+## Spawn
+
+Host-native name: `ee-em`. At most two live children. CLI/MCP/UI never spawn.
+Never call `evaluate_matlab_code`. Host talks only to Arc MCP.
+
+## Retrieve (scaffold)
+
+When: a citation, page, or handbook claim is needed.
+Filters: book_id, chapter_id, domain_tag, folder_tag.
+Index: TBD (empty this graph). Call `retrieve` anyway. Empty is visible. Do not
+dump `knowledge/`.
+
+## Knowledge
+
+- `knowledge/ug-ee/em/INDEX.md`
+- Coverage units: `knowledge/COVERAGE.yaml` pack `em`
+- Sibling packs: circuits (lumped vs field), power (lines at study level), maths (vector calculus)

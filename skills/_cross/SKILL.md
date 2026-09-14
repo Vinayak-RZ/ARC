@@ -39,8 +39,21 @@ is not a verifier.
 ## When to spawn
 
 Stay in one loop for a single unknown and one attachment. Spawn a pack
-specialist when a second pack is in play or the parent asked for parallel
-retrieve vs diagram confirm — still at most two specialists, still the
-2-interrupt cap. Handoff is files. Parent writes the viva. Never a Python
-fan-out.
+specialist (`ee-<pack>` / `ee-cross`) when a second pack is in play or the
+parent asked for parallel retrieve vs diagram confirm — still at most two
+specialists, still the 2-interrupt cap. Handoff is files. Parent writes the
+viva. Never a Python fan-out. Never `evaluate_matlab_code`.
+
+## Retrieve (scaffold)
+
+When: citation needed across packs or unmatched text.
+Filters: book_id, chapter_id, domain_tag, folder_tag.
+Index: TBD. Call `retrieve`. Empty is visible. Do not dump `knowledge/`.
+
+## Knowledge
+
+- `knowledge/ug-ee/INDEX.md`
+- Coverage: `knowledge/COVERAGE.yaml`
+- Sibling: any two cores; maths may occupy the second slot
+
 
