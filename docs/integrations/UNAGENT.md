@@ -7,21 +7,23 @@
 ## Export
 
 ```bash
-uv run python -c "from pathlib import Path; from electrical_engineer.export import write_export, load_jsonl, to_unagent_events; \
-print(write_export(Path('runs/<id>')))"
+uv run python scripts/kernel_harden/export_unagent.py
+# writes artifacts/kernel-harden/unagent_events.json
 ```
 
-- `write_export` → span document (`adapter: custom`)
-- `to_unagent_events` → `{events:[...]}` for `--adapter custom` (honest `unchecked` ≠ `error`)
+- `write_export` → span document (`adapter: custom`) for one run dir
+- `to_unagent_events` → `{events:[...]}` for `--adapter custom`
+- Honest `unchecked` is **not** `error`. A node that never reports `ok` is not a crash (`ok: null`).
 
 ## Recommend (offline)
 
 ```bash
 uv pip install -e ../unagent   # sibling clone
-uv run python -m superdeterminism recommend artifacts/kernel-harden/unagent_events_v2.json \
+uv run python -m superdeterminism recommend artifacts/kernel-harden/unagent_events.json \
   --adapter custom --stdout md --n-min 1 --md artifacts/kernel-harden/unagent-report.md
 ```
 
 ## This graph’s result
 
 ABSTAIN on FlipToDet for tool nodes — expected for Arc. Report: `artifacts/kernel-harden/unagent-report.md`.
+The first export overstated `failure_rate` because missing `ok` was coerced to `False` (I3).

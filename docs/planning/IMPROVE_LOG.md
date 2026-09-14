@@ -15,3 +15,14 @@
 - **Artifacts:** `artifacts/kernel-harden/unagent-report.md`, `improveness-notes.md`
 - **Improveness:** frozen physics / held-out / grader≠improver documented; no DeepSeek Harness mount
 
+## I3 — Self-audit of the harden graph (2026-09-14)
+
+- **Class:** F6 labeled masking provider-absent; F7 labeled masking awaiting-confirm; F8 `bool(ok)` poisoning traces; F9 ungraded corpus
+- **Change:**
+  - `nodes.sim._missing` stamps `cannot_do: CD-NO-PROVIDER` so recipes that name a provider id (`run-python-control`) report `no-provider` the same way capability-bound ones do.
+  - `_unchecked_reason` treats `confirmed is False` as `gate-closed`; `labeled` is only the residual after those detectors.
+  - Trace `ok` is tri-state (`True` / `False` / `None`); a node that never reports `ok` is not a tool crash.
+  - Corpus scenarios carry an `expect` block derived from the recipe YAML; `trial_driver` grades PASS/FAIL.
+- **Tests:** `tests/unit/test_unchecked_reason.py`, `tests/unit/test_scenario_bank.py`, `tests/unit/test_unagent_export.py`, `tests/integration/test_ui_artifacts.py`
+- **Validate:** `./scripts/validate.sh` after commit
+
