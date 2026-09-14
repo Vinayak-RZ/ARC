@@ -3,6 +3,8 @@
 Companion to the main [README](../README.md). Concepts first, then how the repo
 runs, then every first-party package. Do not invent paths.
 
+Human walkthrough of harness vs kernel: [`ON_THE_HARNESS.md`](ON_THE_HARNESS.md).
+
 ## Table of contents
 
 - [1. Domain concepts](#1-domain-concepts)
@@ -155,6 +157,7 @@ Python 3.11+, `uv`, hatchling. Optional tools (PySpice, python-control, pandapow
 
 ## 7. Further reading
 
+- [`ON_THE_HARNESS.md`](ON_THE_HARNESS.md): what Arc puts on a rented harness
 - [`docs/PID.md`](PID.md), [`docs/PRD.md`](PRD.md), [`docs/ARCHITECTURE.md`](ARCHITECTURE.md)
 - [`docs/WORKFLOWS.md`](WORKFLOWS.md), [`docs/CANNOT_DO.md`](CANNOT_DO.md)
 - [`docs/design/DESIGN-coinbase.md`](design/DESIGN-coinbase.md)

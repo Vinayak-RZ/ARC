@@ -14,6 +14,7 @@
 <p align="center">
   <a href="#quick-start"><b>Quick start</b></a> ·
   <a href="#domain-kernel"><b>Domain kernel</b></a> ·
+  <a href="docs/ON_THE_HARNESS.md"><b>On the harness</b></a> ·
   <a href="#try-these-prompts"><b>Try these prompts</b></a> ·
   <a href="docs/CANNOT_DO.md"><b>Cannot-do</b></a> ·
   <a href="LICENSE"><b>License</b></a>
@@ -42,6 +43,8 @@ A **domain kernel** is what enables a general agentic harness to have expertise 
 Arc is the local domain kernel for undergraduate electrical engineering. Cursor, Claude Code, Codex, and ChatGPT desktop stay general harnesses. This kernel holds the expertise they load: named workflows, simulators when they exist, and the exact token `unchecked` when they do not.
 
 Arc is a working example of a domain kernel. It is what enables a general agent to have expertise in the electrical engineering domain.
+
+Human walkthrough of what Arc adds on a rented harness: [`docs/ON_THE_HARNESS.md`](docs/ON_THE_HARNESS.md).
 
 ## Try these prompts
 
@@ -117,6 +120,7 @@ sequenceDiagram
 
 | Doc | What it is |
 |-----|------------|
+| [`docs/ON_THE_HARNESS.md`](docs/ON_THE_HARNESS.md) | What Arc puts on a rented harness, with diagrams |
 | [`docs/EXTENSIVE.md`](docs/EXTENSIVE.md) | Concepts, runtime path, every package |
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Kernel, capabilities, seams |
 | [`docs/WORKFLOWS.md`](docs/WORKFLOWS.md) | Named recipe catalog |

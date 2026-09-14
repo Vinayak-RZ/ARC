@@ -3,7 +3,8 @@
 Arc is a **domain kernel**: local CLI + stdio MCP + skills.
 Cursor, Claude Code, Codex, and **ChatGPT desktop** are **first-class hosts**.
 They are not the only way to run it. `electrical-engineer` CLI + localhost UI
-is a complete path with no AI host.
+is a complete path with no AI host. Why this is not a generic CLI or MCP:
+[`ON_THE_HARNESS.md`](../ON_THE_HARNESS.md).
 
 There is no `init-host` helper (ponytail). Copy or symlink skills; point MCP at:
 

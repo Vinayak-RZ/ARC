@@ -1,5 +1,7 @@
 # Technical architecture — Arc
 
+Human walkthrough (harness vs kernel, CLI/MCP/API, diagrams): [`ON_THE_HARNESS.md`](ON_THE_HARNESS.md).
+
 **Status:** Accepted for this graph (D19/D20 graph-of-loops, 2026-09-13) overlay on Accepted A1 (2026-09-10). Hybrid composition (D18), **capability-first domain contract (D19)**, plus **harness persist / observe / spawn (D20)**: the rented host owns the loop, compaction, and specialist spawn; the kernel owns runs, memory, RAG ingest, observation, and deterministic hooks. Aligns with [`PRD.md`](PRD.md) / [`PID.md`](PID.md).  
 **Date:** 2026-09-12  
 **Authority:** [`PID.md`](PID.md) (accepted this graph), [`PRD.md`](PRD.md) (accepted this graph)
