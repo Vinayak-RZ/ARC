@@ -19,4 +19,6 @@ First-class host. Same kernel contract as Cursor, Codex, and ChatGPT desktop.
    into the student’s Claude agents. At most two pack specialists. Handoff is
    `run_id` + `./runs/<id>/`. Parent writes `argument.md`.
 6. Claude Code is optional. The CLI works without it.
-7. Peer MATLAB MCP: FR20 — EE owns checked numbers.
+7. Peer MATLAB MCP: numbers stay unverified until Arc recomputes them (FR20).
+   Coming next: Arc mediates MATLAB so the assistant does not ingest the
+   huge tool list ([`../ON_THE_HARNESS.md`](../ON_THE_HARNESS.md)).

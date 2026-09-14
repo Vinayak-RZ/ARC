@@ -3,7 +3,7 @@
 Companion to the main [README](../README.md). Concepts first, then how the repo
 runs, then every first-party package. Do not invent paths.
 
-Human walkthrough of harness vs kernel: [`ON_THE_HARNESS.md`](ON_THE_HARNESS.md).
+Human walkthrough of harness vs kernel, in plain language: [`ON_THE_HARNESS.md`](ON_THE_HARNESS.md).
 
 ## Table of contents
 
@@ -20,7 +20,8 @@ Human walkthrough of harness vs kernel: [`ON_THE_HARNESS.md`](ON_THE_HARNESS.md)
 
 - **Named recipe.** A checked-in YAML DAG (`workflows/**/*.yaml`) with `id` and `nodes.{id}.{activity,needs}`. YAML is **replay of a capability binding**, not the domain. The router picks a row; it does not invent edges or capability ids.
 - **Capability.** Domain name for what kind of check is allowed (`algebraic-check`, `lumped-circuit-sim`, …). Providers (`run-spice`, …) are this-pass keys. See [`ARCHITECTURE.md`](ARCHITECTURE.md) §0.
-- **unchecked.** Exact token from `electrical_engineer.unchecked.UNCHECKED`. Used when a verifier is missing or a numeric check fails. `EE_ALLOW_ALL` skips *asks*, not this token.
+- **unchecked.** The word written in run files when a number was not verified. Used when a simulator is missing or a numeric check fails. `EE_ALLOW_ALL` skips *asks*, not this label.
+- **Deterministic runner.** The YAML DAG has no model inside it. Same recipe plus same inputs, same path. Chat prose can still vary.
 - **Run dir.** `runs/<4char>-<UTC>/` holds `evidentiary.json` (alias `summary.json`), `observation.json`, optional `plan.md` / `argument.md`, `nodes/<id>/out.json`, optional `confirmed.json`. Audit only — no crash-resume.
 - **Gate.** TOML most-restrictive merge; third interrupt aborts. MCP never waits: fail-closed with `ui_url`.
 - **Confirm ≠ simulate.** Photo and C5 stop after `confirm-topology`. C4 `simulate-after-confirm` requires `confirmed.json` before `run-spice`.

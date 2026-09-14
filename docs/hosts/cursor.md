@@ -14,9 +14,10 @@ First-class host. Same kernel contract as Claude Code, Codex, and ChatGPT deskto
    `argument.md`; do not mega-apply `solve-circuit-problem`.
 4. Persistent UI is `electrical-engineer ui` on `127.0.0.1:8765`.
 5. Cursor is optional. CLI + UI without Cursor is a complete v1 path.
-6. If you also enable MathWorks MCP, do not treat its scalars as checked
-   until an EE engine recomputes them (FR20). `label` cannot ingest Copilot
-   numbers.
+6. If you also enable MathWorks MCP, do not treat its numbers as verified
+   until Arc recomputes them (FR20). Coming next: Arc will call MATLAB
+   itself so the assistant does not ingest that huge tool list
+   ([`../ON_THE_HARNESS.md`](../ON_THE_HARNESS.md)).
 7. Do **not** copy EE packs into this product repo’s `.cursor/skills/`
    (that tree is coding SDLC). Symlink root + active pack into **your**
    homework project or `~/.cursor/skills`.

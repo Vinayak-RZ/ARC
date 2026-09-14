@@ -33,4 +33,6 @@ ChatGPT **web** is **not** a host.
    [`../../hosts/adapters/codex/pack-specialist.md`](../../hosts/adapters/codex/pack-specialist.md)
    into the student’s Codex spawn path. At most two packs; same MCP; parent
    writes the viva. Not a second product.
-7. Peer MATLAB MCP: FR20.
+7. Peer MATLAB MCP: numbers stay unverified until Arc recomputes them (FR20).
+   Coming next: Arc mediates MATLAB so the assistant does not ingest the
+   huge tool list ([`../ON_THE_HARNESS.md`](../ON_THE_HARNESS.md)).

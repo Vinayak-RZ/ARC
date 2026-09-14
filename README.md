@@ -20,13 +20,13 @@
   <a href="LICENSE"><b>License</b></a>
 </p>
 
-Turn your AI coding assistant into an undergraduate electrical engineer. 10 undergraduate packs, 27 named workflows, 14 capabilities.
+Turn your AI coding assistant into an undergraduate electrical engineer. 10 undergraduate packs, 27 named lab recipes, 14 kinds of check.
 
-Describe the circuit, viva, or assignment in plain language. Arc retrieves, checks, and explains. Simulators run when they exist. Everything else is the exact token `unchecked`.
+Describe the circuit, viva, or assignment in plain language. Arc retrieves, checks, and explains. Simulators run when they exist. If Arc did not verify a number, it labels that number unverified. It never presents a guess as a lab result.
 
 > **Arc is a local lab you clone and run.** It is not a general coding agent that also does circuits.
 > Primary interface: paste a prompt into Cursor, Claude Code, Codex, or ChatGPT desktop, or run `electrical-engineer`.
-> Invariant: **unverified numbers use the exact token `unchecked`.**
+> Rule: **if a number was not verified, Arc labels it unverified.**
 
 ```text
 $ uv run electrical-engineer eval --pack circuits
@@ -38,13 +38,13 @@ That eval is the product check. Gold `eval/gold/circuits/divider-dc-01` expects 
 
 ## Domain kernel
 
-A **domain kernel** is what enables a general agentic harness to have expertise in a specific domain.
+A **domain kernel** is the expertise a general coding assistant loads so it can do one subject well.
 
-Arc is the local domain kernel for undergraduate electrical engineering. Cursor, Claude Code, Codex, and ChatGPT desktop stay general harnesses. This kernel holds the expertise they load: named workflows, simulators when they exist, and the exact token `unchecked` when they do not.
+Arc is that kernel for undergraduate electrical engineering. Cursor, Claude Code, Codex, and ChatGPT desktop stay general assistants. This kernel holds what they load: named lab recipes, simulators when they exist, gates, saved runs, and an unverified label when a number was not checked. The assistant still writes the viva. The ohms come from a deterministic check, or they are labeled unverified.
 
-Arc is a working example of a domain kernel. It is what enables a general agent to have expertise in the electrical engineering domain.
+Arc is a working example of a domain kernel. It is what enables a general assistant to have expertise in electrical engineering, including the determinism a chat loop does not have on its own.
 
-Human walkthrough of what Arc adds on a rented harness: [`docs/ON_THE_HARNESS.md`](docs/ON_THE_HARNESS.md).
+Plain-language walkthrough (what Arc adds, why numbers stay deterministic, MATLAB coming next): [`docs/ON_THE_HARNESS.md`](docs/ON_THE_HARNESS.md).
 
 ## Try these prompts
 
@@ -92,7 +92,7 @@ uv run electrical-engineer eval --pack circuits
 
 Put a `problem.json` in the working directory for numeric tasks (see `eval/gold/circuits/divider-dc-01/fixtures/problem.json`).
 
-If you are an agent reading this: load [`skills/SKILL.md`](skills/SKILL.md), then [`docs/hosts/README.md`](docs/hosts/README.md). Do not invent a capability id. Do not present a fluent number as checked.
+If you are an agent reading this: load [`skills/SKILL.md`](skills/SKILL.md), then [`docs/hosts/README.md`](docs/hosts/README.md). Do not invent a kind of check. Do not present a fluent number as verified.
 
 The workspace is `electrical-engineer ui` on **127.0.0.1:8765** only.
 
@@ -100,27 +100,28 @@ The workspace is `electrical-engineer ui` on **127.0.0.1:8765** only.
 
 ```mermaid
 sequenceDiagram
-  participant H as Host or student
-  participant K as electrical-engineer
-  participant P as Providers
-  participant UI as 127.0.0.1:8765
-  H->>K: prompt or run RECIPE
-  K->>P: capability from the registry
-  P-->>K: value or unchecked
-  K-->>UI: evidentiary.json
-  UI-->>H: two-band slots + confirm
+  participant H as You or coding assistant
+  participant K as Arc
+  participant P as Simulators
+  participant UI as Local window
+  H->>K: homework in plain language
+  K->>P: run an allowed check
+  P-->>K: a number, or labeled unverified
+  K-->>UI: saved evidence
+  UI-->>H: numbers plus explanation, confirm photos
 ```
 
-- **Named workflows.** 27 YAML recipes under `workflows/`. Limit: the router never invents a graph; unmatched work uses `unmatched-cosolver` and stays unchecked. [`docs/WORKFLOWS.md`](docs/WORKFLOWS.md)
-- **Label-unchecked.** If ngspice, python-control, or pandapower is missing, the run fails closed with token `unchecked`. Limit: a checked number requires a tool or a numeric check, not a fluent paragraph. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
-- **Loopback workspace.** FastAPI on `127.0.0.1:8765`. Limit: no WAN bind, no agent loop in the browser.
-- **stdio MCP.** Always-on: `list_workflows`, `retrieve`, `open_ui`, `simulate_attachment`, `propose_composition`, `label` (plus `run_workflow` rollback). Limit: MCP never waits on a human.
+- **Named lab recipes.** 27 saved workflows under `workflows/`. Limit: Arc never invents a new graph in chat. Unmatched homework still gets an answer, labeled unverified. [`docs/WORKFLOWS.md`](docs/WORKFLOWS.md)
+- **Deterministic checks.** The recipe runner and the simulators do not sample. Same netlist, same `Vout`. Limit: the explanation can still vary. The ohms cannot, unless they are labeled unverified. [`docs/ON_THE_HARNESS.md`](docs/ON_THE_HARNESS.md)
+- **Unverified numbers are labeled.** If SPICE, python-control, or pandapower is missing, Arc does not guess. Limit: a verified number needs a simulator or a numeric check, not a fluent paragraph.
+- **Local window.** On `127.0.0.1:8765` only. Limit: not on the internet, no chat loop in the browser.
+- **Tools for the coding assistant.** List recipes, look up a citation, open the window, run a short simulation, propose allowed checks, read the labeled result, replay a recipe. Limit: the chat never waits on you.
 
 ## Go deeper
 
 | Doc | What it is |
 |-----|------------|
-| [`docs/ON_THE_HARNESS.md`](docs/ON_THE_HARNESS.md) | What Arc puts on a rented harness, with diagrams |
+| [`docs/ON_THE_HARNESS.md`](docs/ON_THE_HARNESS.md) | What Arc adds on a coding assistant, in plain language |
 | [`docs/EXTENSIVE.md`](docs/EXTENSIVE.md) | Concepts, runtime path, every package |
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Kernel, capabilities, seams |
 | [`docs/WORKFLOWS.md`](docs/WORKFLOWS.md) | Named recipe catalog |

@@ -1,36 +1,44 @@
 # Host adapters
 
-Arc is a **domain kernel**: local CLI + stdio MCP + skills.
-Cursor, Claude Code, Codex, and **ChatGPT desktop** are **first-class hosts**.
-They are not the only way to run it. `electrical-engineer` CLI + localhost UI
-is a complete path with no AI host. Why this is not a generic CLI or MCP:
+Arc is the electrical-engineering lab your coding assistant loads: a local
+command line, a local MCP connection, and course-method files.
+
+Cursor, Claude Code, Codex, and **ChatGPT desktop** are supported assistants.
+They are not the only way to run it. `electrical-engineer` plus the local
+window is a complete path with no assistant. Why Arc is not a generic command
+line or MCP, and why the numbers stay deterministic:
 [`ON_THE_HARNESS.md`](../ON_THE_HARNESS.md).
 
-There is no `init-host` helper (ponytail). Copy or symlink skills; point MCP at:
+There is no `init-host` helper. Copy or symlink skills. Point the assistant at:
 
 ```text
 electrical-engineer mcp
 ```
 
-**Kernel contract (all first-class hosts):** same verbs, gates, exact token
-`unchecked`. First-class does **not** mean identical IDE UX.
+**Same lab on every assistant:** same tools, same gates, unverified numbers
+labeled. Same lab does not mean identical IDE screens.
 
-**Live ACI verbs (5–7):** `list_workflows`, `retrieve`, `open_ui` / `clarify`,
-`simulate_attachment`, `propose_composition`, `label` / `summary`.
-`run_workflow` is short-attachment / eval rollback. Photo / compose /
-control-diagram fail closed with `ui_url`. Host writes `./runs/<id>/plan.md`
-on large jobs (FR23) then `argument.md`. Packs load on domain match (at most
-two), not always-on. Do not copy EE packs into this repo’s `.cursor/skills/`.
+**Tools the assistant can call:** list lab recipes, look up a citation, open
+the local window, run a short simulation, propose a combination of allowed
+checks, read the labeled result. Replay a named recipe is the command-line /
+test path. Photo / compose / control-diagram never wait in chat: you get a
+link to the local window. On a large assignment the assistant writes
+`./runs/<id>/plan.md` first, then the explanation. Load at most two packs for
+the homework, not every pack. Do not copy EE packs into this repo’s
+`.cursor/skills/`.
 
-**Not hosts (v1):** ChatGPT **web** / mobile, Claude Desktop, GitHub Copilot,
-Gemini CLI.
+**Not supported as v1 assistants:** ChatGPT in the browser or on a phone,
+Claude Desktop, GitHub Copilot, Gemini CLI.
 
-**Pack specialists:** copy [`../../hosts/adapters/`](../../hosts/adapters/README.md)
-into the **student** host (Claude Task / Codex / Cursor). At most two packs.
-Handoff is the run dir. We do not ship a Python orchestrator.
+**Pack helpers:** copy [`../../hosts/adapters/`](../../hosts/adapters/README.md)
+into *your* homework project (Claude Task / Codex / Cursor). At most two
+packs. They share the saved run folder. Arc does not start those helpers.
 
-Optional: MathWorks MATLAB MCP **beside** EE MCP. MATLAB numbers are untrusted
-until EE `simulate` / `label` accepts them ([`../PRD.md`](../PRD.md) FR20).
+**MATLAB today:** you may enable MathWorks MCP next to Arc. Those numbers stay
+unverified until Arc recomputes them ([`../PRD.md`](../PRD.md) FR20).
+**Coming next:** Arc will call MATLAB (and other agents) itself so the
+assistant does not ingest MATLAB's huge tool list. See
+[`ON_THE_HARNESS.md`](../ON_THE_HARNESS.md).
 
 - [Cursor](cursor.md)
 - [Claude Code](claude-code.md)
