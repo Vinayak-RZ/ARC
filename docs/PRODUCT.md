@@ -30,6 +30,10 @@ Finish and understand a UG EE assignment: method, a verified number or an unveri
 - Arc mediates Simulink Agentic Toolkit the same way: kernel `--extension-file` behind `run-simulink-if-present`; missing toolkit → `unchecked` + `CD-SIMULINK-PLANT`; host never lists `model_*`
 - Host-harness trials across cores; UI MATLAB and Simulink chips honesty; impeccable critique without `teach`; whole-tree harden
 
+## Kernel harden graph (live overlay)
+
+Active execution overlay: [`docs/planning/PRODUCT_KERNEL_HARDEN.md`](planning/PRODUCT_KERNEL_HARDEN.md) (JSONL tracing, host-heavy corpus, Unagent/Improveness critique). Base user/job above still hold.
+
 ## Later (not this graph)
 
 - HTTP MCP

@@ -14,3 +14,8 @@ dist/
 .electrical-engineer/rag/
 .electrical-engineer/rag_storage/
 
+
+# Kernel-harden corpus bulk (index + samples may be committed elsewhere)
+artifacts/kernel-harden/raw/
+artifacts/kernel-harden/**/*.jsonl
+!artifacts/kernel-harden/**/*sample*.jsonl
