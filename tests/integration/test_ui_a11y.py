@@ -6,7 +6,7 @@ from electrical_engineer.ui_server.app import BIND_HOST, create_app, should_open
 
 
 def test_skip_link_and_no_wan() -> None:
-    root = Path("ui/src/slots/root.jsx").read_text()
+    root = Path("ui/src/slots/root.jsx").read_text(encoding="utf-8")
     assert "Skip to workspace" in root
     assert "aria-live" in root
     assert "obj.unchecked === true" in root
@@ -14,6 +14,11 @@ def test_skip_link_and_no_wan() -> None:
     assert "run.evidentiary" in root
     assert "waiting-human" in root
     assert 'alt="Arc"' in root
+    assert "MATLAB · coming next" in root
+    assert "No saved runs yet" in root
+    assert "electrical-engineer run" in root
+    assert "named runs · exact token unchecked" not in root
+    assert "nav-toggle" in root
     assert BIND_HOST == "127.0.0.1"
 
 

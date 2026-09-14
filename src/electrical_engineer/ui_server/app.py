@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 from pathlib import Path
 
@@ -44,6 +45,26 @@ def _icon_path() -> Path | None:
     return None
 
 
+def _read_json(path: Path) -> dict:
+    if not path.is_file():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def _run_list_item(folder: Path) -> dict:
+    evid = _read_json(folder / "evidentiary.json") or _read_json(folder / "summary.json")
+    return {
+        "id": folder.name,
+        "title": str(evid.get("title") or folder.name),
+        "unchecked": bool(evid.get("unchecked")),
+        "recipe_id": str(evid.get("recipe_id") or ""),
+    }
+
+
 def create_app(root: Path | None = None) -> FastAPI:
     app = FastAPI()
     runs = (root or Path.cwd()) / "runs"
@@ -63,7 +84,7 @@ def create_app(root: Path | None = None) -> FastAPI:
     def list_runs() -> dict:
         items = []
         if runs.is_dir():
-            items = sorted(p.name for p in runs.iterdir() if p.is_dir())
+            items = [_run_list_item(p) for p in sorted(runs.iterdir()) if p.is_dir()]
         return {"runs": items}
 
     @app.get("/api/runs/{run_id}")
@@ -74,19 +95,23 @@ def create_app(root: Path | None = None) -> FastAPI:
             summary = d / "summary.json"
         if not summary.is_file():
             return JSONResponse({"error": "missing", "state": "failed"}, status_code=404)
-        evid = summary.read_text()
-        argument = (d / "argument.md").read_text() if (d / "argument.md").is_file() else ""
-        plan = (d / "plan.md").read_text() if (d / "plan.md").is_file() else ""
-        observation = (d / "observation.json").read_text() if (d / "observation.json").is_file() else "{}"
+        evid_text = summary.read_text(encoding="utf-8")
+        evid_obj = _read_json(summary)
+        argument = (d / "argument.md").read_text(encoding="utf-8") if (d / "argument.md").is_file() else ""
+        plan = (d / "plan.md").read_text(encoding="utf-8") if (d / "plan.md").is_file() else ""
+        observation = (d / "observation.json").read_text(encoding="utf-8") if (d / "observation.json").is_file() else "{}"
         waiting = (d / "draft.cir").is_file() and not (d / "confirmed.json").is_file()
         state = "waiting-human" if waiting else "done"
+        graph = _read_json(d / "graph.json")
         return {
             "id": run_id,
-            "summary": evid,
-            "evidentiary": evid,
+            "title": str(evid_obj.get("title") or run_id),
+            "summary": evid_text,
+            "evidentiary": evid_text,
             "argument": argument,
             "plan": plan,
             "observation": observation,
+            "graph": graph,
             "state": state,
         }
 

@@ -11,7 +11,16 @@ function Root() {
       <header className="topbar">
         <img className="brand-mark" src="/arc-icon.png" width="32" height="32" alt="Arc" />
         <strong>Arc</strong>
-        <span className="hint">127.0.0.1 · named runs · exact token unchecked</span>
+        <div className="engines" aria-label="Engines">
+          <span className="chip">Numeric</span>
+          <span className="chip">SPICE</span>
+          <span
+            className="chip"
+            title="The coding assistant will keep talking only to Arc. Arc will call MATLAB and return a short labeled result. A MATLAB Copilot scalar is not a check until Arc recomputes it. OSS simulators stay first-class."
+          >
+            MATLAB · coming next
+          </span>
+        </div>
       </header>
       <div className="layout">
         {renderSlot("sidebar")}
@@ -25,6 +34,7 @@ function Root() {
 
 function Sidebar() {
   const [runs, setRuns] = useState([]);
+  const [open, setOpen] = useState(false);
   const current = useLayout((s) => s.currentRunId);
   const setRun = useLayout((s) => s.setRun);
   useEffect(() => {
@@ -38,20 +48,46 @@ function Sidebar() {
       .catch(() => setRuns([]));
   }, []);
   return (
-    <nav className="sidebar" aria-label="Runs">
-      <h2>Runs</h2>
-      {runs.length === 0 ? <p className="hint">No runs yet. Use the CLI.</p> : null}
-      {runs.map((id) => (
-        <button
-          key={id}
-          className="asset-row"
-          aria-current={current === id ? "true" : undefined}
-          onClick={() => setRun(id)}
-        >
-          {id}
-        </button>
-      ))}
-    </nav>
+    <>
+      <button
+        className="nav-toggle"
+        type="button"
+        aria-expanded={open}
+        aria-controls="run-list"
+        onClick={() => setOpen(!open)}
+      >
+        Runs
+      </button>
+      <nav id="run-list" className={open ? "sidebar is-open" : "sidebar"} aria-label="Runs">
+        <h2>Runs</h2>
+        {runs.length === 0 ? (
+          <p className="hint">
+            No saved runs yet. Ask the coding assistant, or type electrical-engineer run
+            solve-circuit-problem.
+          </p>
+        ) : null}
+        {runs.map((run) => {
+          const id = run.id || run;
+          const title = run.title || id;
+          return (
+            <button
+              key={id}
+              className="asset-row"
+              aria-current={current === id ? "true" : undefined}
+              onClick={() => {
+                setRun(id);
+                setOpen(false);
+              }}
+            >
+              <span className="asset-title">{title}</span>
+              {run.recipe_id ? <span className="hint">{run.recipe_id}</span> : null}
+              <span className="hint">{id}</span>
+              {run.unchecked ? <span className="badge-pill">unchecked</span> : null}
+            </button>
+          );
+        })}
+      </nav>
+    </>
   );
 }
 
@@ -60,9 +96,8 @@ function Workspace() {
   if (!id) {
     return (
       <p className="empty">
-        Select a run. Summaries show a checked number or the exact token{" "}
-        <span className="badge-pill">unchecked</span>. Photo confirm never
-        simulates by itself. Empty list is honest — no invented ohms.
+        No saved runs yet. Ask the coding assistant, or type electrical-engineer run
+        solve-circuit-problem.
       </p>
     );
   }
