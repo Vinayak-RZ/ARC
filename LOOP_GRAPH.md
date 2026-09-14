@@ -3,9 +3,11 @@
 > **This is the plan you read.** Loop plans are separate files; every one
 > appears as a markdown link below.
 >
-> XOR: do not treat [`EXECUTION_GRAPH.md`](EXECUTION_GRAPH.md) or
-> [`docs/planning/LOOP_GRAPH_D19.md`](docs/planning/LOOP_GRAPH_D19.md) as live.
+> XOR: do not treat [`EXECUTION_GRAPH.md`](EXECUTION_GRAPH.md),
+> [`docs/planning/LOOP_GRAPH_D19.md`](docs/planning/LOOP_GRAPH_D19.md), or
+> [`docs/planning/LOOP_GRAPH_KNOWLEDGE.md`](docs/planning/LOOP_GRAPH_KNOWLEDGE.md) as live.
 > Scope: [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md).
+> Gate 0: [`docs/planning/GATE_0_SKILLS_MATLAB.md`](docs/planning/GATE_0_SKILLS_MATLAB.md).
 
 ---
 
@@ -14,13 +16,14 @@
 | Field | Value |
 |-------|-------|
 | **Scope plan** | [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) |
-| **Objective** | Licence-clean encyclopedic UG EE markdown corpus in `knowledge/`, proven by checker + inventory boot + trials + README |
-| **Topology mix** | chain (P0–B_SCAFFOLD) + fan-out (B_* packs) + diamond (M1) + tail (E1–D1) |
+| **Objective** | Knowledge-linked pack skills + host-native specialists; Arc-mediated MATLAB MCP; proven by research, boot, host-harness trials, UI critique, harden |
+| **Topology mix** | chain (R_SURVEY→A1) + fan-out (B_PACKS ∥ B_MATLAB ∥ U1) + diamond (M1) + tail (E1–H1) |
 | **Depth** | 2 |
 | **Graph-of-loops** | named — this graph is live |
 | **Graph-engineering** | not loaded (XOR) |
-| **Branch** | `cursor/ug-ee-knowledge-corpus-0daa` |
+| **Branch** | `cursor/ee-skills-matlab-mcp-37b3` |
 | **Cheap checker** | `composer-2.5-fast` else `inherit` |
+| **Wave status** | 0 looping |
 
 ---
 
@@ -28,30 +31,22 @@
 
 | ID | Name | Plan | Stop | Max rounds | Status |
 |----|------|------|------|------------|--------|
-| P0 | product lock | [plans/knowledge-loops/P0.md](plans/knowledge-loops/P0.md) | grep PRODUCT headings | 3 | passed |
-| D0 | coverage manifest | [plans/knowledge-loops/D0.md](plans/knowledge-loops/D0.md) | COVERAGE.yaml pack/unit floors | 3 | passed |
-| A1 | ADR-0014 | [plans/knowledge-loops/A1.md](plans/knowledge-loops/A1.md) | grep ADR-0014 | 3 | passed |
-| B_SCAFFOLD | schema and checker | [plans/knowledge-loops/B_SCAFFOLD.md](plans/knowledge-loops/B_SCAFFOLD.md) | check_knowledge_tree.py --allow-empty | 3 | passed |
-| B_CIRCUITS | circuits handbook | [plans/knowledge-loops/B_CIRCUITS.md](plans/knowledge-loops/B_CIRCUITS.md) | --pack circuits | 3 | passed |
-| B_SIGNALS | signals handbook | [plans/knowledge-loops/B_SIGNALS.md](plans/knowledge-loops/B_SIGNALS.md) | --pack signals | 3 | passed |
-| B_ELECTRONICS | electronics handbook | [plans/knowledge-loops/B_ELECTRONICS.md](plans/knowledge-loops/B_ELECTRONICS.md) | --pack electronics | 3 | passed |
-| B_MATHS | maths-for-EE | [plans/knowledge-loops/B_MATHS.md](plans/knowledge-loops/B_MATHS.md) | --pack maths | 3 | passed |
-| B_MACHINES | machines | [plans/knowledge-loops/B_MACHINES.md](plans/knowledge-loops/B_MACHINES.md) | --pack machines | 3 | passed |
-| B_POWER | power systems | [plans/knowledge-loops/B_POWER.md](plans/knowledge-loops/B_POWER.md) | --pack power | 3 | passed |
-| B_CONTROL | control | [plans/knowledge-loops/B_CONTROL.md](plans/knowledge-loops/B_CONTROL.md) | --pack control | 3 | passed |
-| B_PE | power electronics | [plans/knowledge-loops/B_PE.md](plans/knowledge-loops/B_PE.md) | --pack power-electronics | 3 | passed |
-| B_MEAS_EM | measurements + EM | [plans/knowledge-loops/B_MEAS_EM.md](plans/knowledge-loops/B_MEAS_EM.md) | --pack measurements and em | 3 | passed |
-| B_EL_POWER | power-side electives | [plans/knowledge-loops/B_EL_POWER.md](plans/knowledge-loops/B_EL_POWER.md) | --pack electives-power | 3 | passed |
-| B_EL_EMBED | embedded/comms electives | [plans/knowledge-loops/B_EL_EMBED.md](plans/knowledge-loops/B_EL_EMBED.md) | --pack electives-embed | 3 | passed |
-| M1 | cross-index | [plans/knowledge-loops/M1.md](plans/knowledge-loops/M1.md) | checker + GLOSSARY.md | 3 | passed |
-| E1 | evaluate | [plans/knowledge-loops/E1.md](plans/knowledge-loops/E1.md) | pytest test_knowledge_tree | 3 | passed |
-| R1 | inventory boot | [plans/knowledge-loops/R1.md](plans/knowledge-loops/R1.md) | R1_BOOT_KNOWLEDGE.md | 3 | passed |
-| T1 | trials | [plans/knowledge-loops/T1.md](plans/knowledge-loops/T1.md) | T1_TRIALS_KNOWLEDGE.md ≥5 pass | 3 | passed |
-| D1 | docs-out | [plans/knowledge-loops/D1.md](plans/knowledge-loops/D1.md) | README names checker | 3 | passed |
+| R_SURVEY | solution landscape | [plans/skills-matlab-loops/R_SURVEY.md](plans/skills-matlab-loops/R_SURVEY.md) | landscape files + R0_SOLUTIONS headings | 3 | pending |
+| P0 | product lock | [plans/skills-matlab-loops/P0.md](plans/skills-matlab-loops/P0.md) | grep PRODUCT headings + mediat | 3 | pending |
+| D0 | docs-in | [plans/skills-matlab-loops/D0.md](plans/skills-matlab-loops/D0.md) | D0_GAPS_SKILLS_MATLAB.md | 3 | pending |
+| A1 | ADRs | [plans/skills-matlab-loops/A1.md](plans/skills-matlab-loops/A1.md) | ADR-0015 + ADR-0016 + R0_SOLUTIONS | 3 | pending |
+| U1 | MATLAB chip | [plans/skills-matlab-loops/U1.md](plans/skills-matlab-loops/U1.md) | pytest test_ui_a11y | 3 | pending |
+| B_PACKS | skills and adapters | [plans/skills-matlab-loops/B_PACKS.md](plans/skills-matlab-loops/B_PACKS.md) | pytest host_adapters + pack_skills | 3 | pending |
+| B_MATLAB | MATLAB MCP client | [plans/skills-matlab-loops/B_MATLAB.md](plans/skills-matlab-loops/B_MATLAB.md) | pytest matlab_mcp + sim_seams | 3 | pending |
+| M1 | integrate | [plans/skills-matlab-loops/M1.md](plans/skills-matlab-loops/M1.md) | pytest test_host_docs | 3 | pending |
+| E1 | evaluate | [plans/skills-matlab-loops/E1.md](plans/skills-matlab-loops/E1.md) | ./scripts/validate.sh | 3 | pending |
+| R1 | boot | [plans/skills-matlab-loops/R1.md](plans/skills-matlab-loops/R1.md) | R1_BOOT.md names commands | 3 | pending |
+| T1 | kernel and host trials | [plans/skills-matlab-loops/T1.md](plans/skills-matlab-loops/T1.md) | T1_HOST ≥10 pack rows | 3 | pending |
+| U_POLISH | impeccable UI | [plans/skills-matlab-loops/U_POLISH.md](plans/skills-matlab-loops/U_POLISH.md) | a11y + U_CRITIQUE changelog | 3 | pending |
+| D1 | docs-out | [plans/skills-matlab-loops/D1.md](plans/skills-matlab-loops/D1.md) | README hosts install + MATLAB | 3 | pending |
+| H1 | whole-tree harden | [plans/skills-matlab-loops/H1.md](plans/skills-matlab-loops/H1.md) | validate.sh + ponytail Findings | 3 | pending |
 
-State: `plans/knowledge-loops/<id>.state.json`.
-
-N/A: U1 (no user-facing UI), H1 (no new bind/secret surface; licence test is E1), deploy, auth, graph-engineering.
+State: `plans/skills-matlab-loops/<id>.state.json`.
 
 ---
 
@@ -59,18 +54,19 @@ N/A: U1 (no user-facing UI), H1 (no new bind/secret surface; licence test is E1)
 
 | Stage | Node id(s) | Plan |
 |-------|------------|------|
-| Research + questions | R0 | [GATE_0_UG_EE_KNOWLEDGE.md](docs/planning/GATE_0_UG_EE_KNOWLEDGE.md) — done |
-| Product lock | P0 | [P0](plans/knowledge-loops/P0.md) |
-| Docs-in | D0 | [D0](plans/knowledge-loops/D0.md) |
-| Architecture | A1 | [A1](plans/knowledge-loops/A1.md) |
-| Design / UI UX | U1 | N/A — no user-facing UI this graph |
-| Build | B_SCAFFOLD, B_* | links above |
-| Integrate | M1 | [M1](plans/knowledge-loops/M1.md) |
-| Evaluate | E1 | [E1](plans/knowledge-loops/E1.md) |
-| Run | R1 | [R1](plans/knowledge-loops/R1.md) |
-| Trials | T1 | [T1](plans/knowledge-loops/T1.md) |
-| Docs-out | D1 | [D1](plans/knowledge-loops/D1.md) |
-| Harden | H1 | N/A — none this graph |
+| Research + questions | R0 | [GATE_0_SKILLS_MATLAB.md](docs/planning/GATE_0_SKILLS_MATLAB.md) — done |
+| Solution landscape | R_SURVEY | [R_SURVEY](plans/skills-matlab-loops/R_SURVEY.md) |
+| Product lock | P0 | [P0](plans/skills-matlab-loops/P0.md) |
+| Docs-in | D0 | [D0](plans/skills-matlab-loops/D0.md) |
+| Architecture | A1 | [A1](plans/skills-matlab-loops/A1.md) |
+| Design / UI UX | U1 + U_POLISH | chip then post-boot critique |
+| Build | B_PACKS, B_MATLAB | links above |
+| Integrate | M1 | [M1](plans/skills-matlab-loops/M1.md) |
+| Evaluate | E1 | [E1](plans/skills-matlab-loops/E1.md) |
+| Run | R1 | [R1](plans/skills-matlab-loops/R1.md) |
+| Trials | T1 | [T1](plans/skills-matlab-loops/T1.md) |
+| Docs-out | D1 | [D1](plans/skills-matlab-loops/D1.md) |
+| Harden | H1 | [H1](plans/skills-matlab-loops/H1.md) |
 
 ---
 
@@ -78,100 +74,42 @@ N/A: U1 (no user-facing UI), H1 (no new bind/secret surface; licence test is E1)
 
 ```mermaid
 flowchart TB
-  P0[P0_product] --> D0[D0_coverage]
-  D0 --> A1[A1_ADR]
-  A1 --> Sc[B_SCAFFOLD]
-  Sc --> Ckt[B_CIRCUITS]
-  Sc --> Sig[B_SIGNALS]
-  Sc --> Elx[B_ELECTRONICS]
-  Sc --> Math[B_MATHS]
-  Sc --> Mac[B_MACHINES]
-  Sc --> Pwr[B_POWER]
-  Sc --> Ctrl[B_CONTROL]
-  Sc --> PE[B_PE]
-  Sc --> Meas[B_MEAS_EM]
-  Sc --> ElP[B_EL_POWER]
-  Sc --> ElE[B_EL_EMBED]
-  Ckt --> M1[M1_index]
-  Sig --> M1
-  Elx --> M1
-  Math --> M1
-  Mac --> M1
-  Pwr --> M1
-  Ctrl --> M1
-  PE --> M1
-  Meas --> M1
-  ElP --> M1
-  ElE --> M1
-  M1 --> E1[E1_checker]
-  E1 --> R1[R1_inventory]
-  R1 --> T1[T1_spotchecks]
-  T1 --> D1[D1_readme]
+  R_SURVEY[R_SURVEY_solutions]
+  R_SURVEY --> P0[P0_product]
+  P0 --> D0[D0_docs_in]
+  D0 --> A1[A1_ADRs]
+  A1 --> B_PACKS[B_PACKS_skills_adapters]
+  A1 --> B_MATLAB[B_MATLAB_mcp_client]
+  A1 --> U1[U1_matlab_chip]
+  B_PACKS --> M1[M1_integrate]
+  B_MATLAB --> M1
+  U1 --> M1
+  M1 --> E1[E1_validate]
+  E1 --> R1[R1_boot]
+  R1 --> T1[T1_kernel_and_host]
+  T1 --> U_POLISH[U_POLISH_impeccable]
+  U_POLISH --> D1[D1_docs_out]
+  D1 --> H1[H1_whole_tree]
 ```
-
-**Edges cut:** packs do not wait on each other; D1 after T1; no RAG node; no UI node.
-
----
-
-## Nodes
-
-See loop-plans table. Maker inherit. Checker composer-2.5-fast else inherit. Max rounds 3. Write paths in each loop plan.
-
----
-
-## Edges
-
-| From | To | Data name | Kind |
-|------|----|-----------|------|
-| P0 | D0 | product lock | verify |
-| D0 | A1 | COVERAGE.yaml | plumbing |
-| A1 | B_SCAFFOLD | ADR-0014 | plumbing |
-| B_SCAFFOLD | each B_* pack | schema+checker | verify |
-| all B_* | M1 | filled units | verify |
-| M1 | E1 | tree | verify |
-| E1 | R1 | pytest green | verify |
-| R1 | T1 | boot log | plumbing |
-| T1 | D1 | trial log | verify |
 
 ---
 
 ## Waves
 
-| Wave | Nodes | Fan-out? | Barrier? | Status | Lead plumbing |
-|------|-------|----------|----------|--------|---------------|
-| 0 | P0, D0, A1, B_SCAFFOLD | no | serial | done | archive D19 already done |
-| 1 | B_CIRCUITS, B_SIGNALS, B_ELECTRONICS, B_MATHS | yes | no | done | — |
-| 2 | B_MACHINES, B_POWER, B_CONTROL, B_PE | yes | no | done | — |
-| 3 | B_MEAS_EM, B_EL_POWER, B_EL_EMBED | yes | no | done | — |
-| 4 | M1 | no | yes — whole set | done | flatten indexes |
-| 5 | E1, R1, T1, D1 | no | serial tail | done | git + README |
+| Wave | Nodes | Barrier |
+|------|-------|---------|
+| 0 | R_SURVEY | yes — P0/A1 need synthesis |
+| 1 | P0, D0, A1 | yes — B* need ADRs |
+| 2 | B_PACKS, B_MATLAB, U1 | yes — M1 needs the set |
+| 3 | M1 | yes |
+| 4 | E1, R1 | yes |
+| 5 | T1 | yes |
+| 6 | U_POLISH | yes |
+| 7 | D1 | yes |
+| 8 | H1 | done |
 
 ---
 
-## Failure
+## Escalate
 
-- Checker fail + rounds left → next maker round with findings only.
-- `max_rounds` exhausted → `escalated`, wait for human.
-- Required pack nodes are not optional.
-
----
-
-## Commit mapping
-
-| Node | Plan | §9 rows | Gate |
-|------|------|---------|------|
-| archive + Gate 0 | this file | #1 | loop-plan links resolve |
-| P0 | [P0](plans/knowledge-loops/P0.md) | #2 | grep headings |
-| A1 | [A1](plans/knowledge-loops/A1.md) | #3 | grep ADR-0014 |
-| D0 + B_SCAFFOLD | [D0](plans/knowledge-loops/D0.md), [B_SCAFFOLD](plans/knowledge-loops/B_SCAFFOLD.md) | #4 | `--allow-empty` |
-| B_CIRCUITS … B_EL_EMBED | pack plans | #5–#15 | `--pack` |
-| M1 | [M1](plans/knowledge-loops/M1.md) | #16 | GLOSSARY.md |
-| E1 R1 T1 D1 | tail plans | #17 | pytest + boot + trials + README |
-
-Lead commits after the loop **passed**. Ponytail on every write. Subagents do not commit.
-
----
-
-## Approval implication
-
-Approving this loop graph started execution immediately. No second wait per node unless a loop **escalates**.
+Max rounds 3. Escalated node waits for the human. Do not start dependents.
