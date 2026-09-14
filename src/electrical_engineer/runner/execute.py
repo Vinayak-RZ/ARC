@@ -91,7 +91,7 @@ def execute(
                 recipe_id=recipe.id,
                 parent_span_id=parent,
                 duration_ms=(time.perf_counter() - t0) * 1000.0,
-                ok=bool(out.get("ok")) if isinstance(out, dict) else None,
+                ok=_node_ok(out),
                 unchecked=bool(out.get("unchecked")) if isinstance(out, dict) else False,
             )
             return out
@@ -149,6 +149,14 @@ def execute(
     if seed is not None and not (run_dir / "graph.json").is_file():
         write_graph(run_dir, seed)
     return {"run_id": run_id, "run_dir": str(run_dir), "summary": payload, "observation": observation}
+
+
+def _node_ok(out: Any) -> bool | None:
+    """Tri-state ``ok``. Nodes that never report ``ok`` are not failures."""
+    if not isinstance(out, dict):
+        return None
+    value = out.get("ok")
+    return bool(value) if value is not None else None
 
 
 def _ids(recipe, completed: dict[str, Any]) -> tuple[list[str], list[str], str]:
