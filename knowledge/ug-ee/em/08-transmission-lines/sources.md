@@ -1,4 +1,8 @@
 # Sources — Telegrapher, VSWR, reflection
 
-- Syllabus union: see pack SYLLABUS.md and docs/curriculum-map.md
-- OER: see knowledge/SOURCE_LEDGER.md
+- Syllabus union: [`docs/curriculum-map.md`](../../../../docs/curriculum-map.md) (IITR, NITT, AICTE-family, MIT/Berkeley; GATE overlay Electromagnetics / transmission lines).
+- Pack bound: [`SYLLABUS.md`](../SYLLABUS.md) and [`INDEX.md`](../INDEX.md).
+- Original notes and worked items in this folder (not a third-party exam paper).
+- OER ledger: [`knowledge/SOURCE_LEDGER.md`](../../../SOURCE_LEDGER.md) **K7** [Ellingson *Electromagnetics* Vol. 1](https://doi.org/10.21061/electromagnetics-vol-1) (CC BY-SA 4.0); pack excerpt in `06-maxwell-equations/oer/`. Ellingson is a transmission-lines-first text.
+- NPTEL (link only): [Electromagnetic Theory, IIT Kharagpur](https://nptel.ac.in/courses/108106073); microwave engineering courses (link only).
+- MIT OCW (link only, typically CC BY-NC-SA): cite URL only; do not copy NC text.
