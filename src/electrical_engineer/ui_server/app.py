@@ -6,7 +6,7 @@ import json
 import os
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 
@@ -131,11 +131,45 @@ def create_app(root: Path | None = None) -> FastAPI:
         body = path.read_bytes() if path.is_file() else _PNG
         return Response(body, media_type="image/png")
 
-    @app.post("/api/runs/{run_id}/confirm")
-    def confirm(run_id: str) -> dict:
+    @app.put("/api/runs/{run_id}/graph", response_model=None)
+    async def put_graph(run_id: str, request: Request):
+        from electrical_engineer.circuit.graph import GraphError, write_graph
+
         d = runs / run_id
         d.mkdir(parents=True, exist_ok=True)
-        (d / "confirmed.json").write_text('{"confirmed": true, "simulate": false}')
+        try:
+            body = await request.json()
+            out = write_graph(d, body if isinstance(body, dict) else {})
+        except GraphError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=400)
+        return {"id": run_id, **out}
+
+    @app.post("/api/runs/{run_id}/confirm")
+    async def confirm(run_id: str, request: Request) -> dict:
+        from electrical_engineer.circuit.graph import GraphError, write_graph
+
+        d = runs / run_id
+        d.mkdir(parents=True, exist_ok=True)
+        raw = await request.body()
+        payload: dict = {}
+        if raw:
+            try:
+                loaded = json.loads(raw)
+            except json.JSONDecodeError:
+                loaded = {}
+            if isinstance(loaded, dict):
+                payload = loaded
+        graph = payload.get("graph") if "graph" in payload else None
+        if graph is None and (payload.get("schema") or payload.get("nodes")):
+            graph = payload
+        if graph is not None:
+            try:
+                write_graph(d, graph if isinstance(graph, dict) else {})
+            except GraphError:
+                pass
+        (d / "confirmed.json").write_text(
+            '{"confirmed": true, "simulate": false}', encoding="utf-8"
+        )
         return {"id": run_id, "confirmed": True, "simulate": False}
 
     @app.get("/api/rag/inventory")
