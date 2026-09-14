@@ -21,3 +21,15 @@ Recorded 2026-09-13 after [R1_BOOT.md](R1_BOOT.md). Live runs plus locked tests.
 | 15 | badge | `unchecked` exact token in UI or CLI JSON | pass | **PASS** pill `unchecked`; CLI simulate-circuit `"token": "unchecked"` |
 
 MCP-as-agent: #3, #4, #10. Student CLI/UI: the rest. Auth is N/A.
+
+## Kernel queue (2026-09-14 skills/MATLAB graph)
+
+| # | Role | Scenario | Result | Evidence |
+|---|------|----------|--------|----------|
+| K1 | kernel | Stub MATLAB MCP returns ok evidentiary | pass | **PASS** fake stdio `evaluate_matlab_code` → `ans = 42`; `unchecked: false` |
+| K2 | kernel | Missing MATLAB fail-closed | pass | **PASS** `_missing("matlab")` `unchecked: true` |
+| K3 | kernel | MATLAB stub error / no code | pass | **PASS** no `code`/`script_path` → still missing, never a fake pass |
+| K4 | regression | SPICE missing still unchecked | pass | **PASS** `ngspice/PySpice not available` |
+| K5 | MCP | tools/list has no MATLAB tools | pass | **PASS** seven Arc verbs only |
+| K6 | retrieve | Scaffold empty is visible | pass | **PASS** `retrieve({book_id:no-such-book}).empty true` |
+
