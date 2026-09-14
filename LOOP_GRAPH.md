@@ -23,7 +23,7 @@
 | **Graph-engineering** | not loaded (XOR) |
 | **Branch** | `cursor/ee-skills-matlab-mcp-37b3` |
 | **Cheap checker** | `composer-2.5-fast` else `inherit` |
-| **Wave status** | 3 looping |
+| **Wave status** | 4 looping |
 
 ---
 
@@ -35,10 +35,10 @@
 | P0 | product lock | [plans/skills-matlab-loops/P0.md](plans/skills-matlab-loops/P0.md) | grep PRODUCT headings + mediat | 3 | passed |
 | D0 | docs-in | [plans/skills-matlab-loops/D0.md](plans/skills-matlab-loops/D0.md) | D0_GAPS_SKILLS_MATLAB.md | 3 | passed |
 | A1 | ADRs | [plans/skills-matlab-loops/A1.md](plans/skills-matlab-loops/A1.md) | ADR-0015 + ADR-0016 + R0_SOLUTIONS | 3 | passed |
-| U1 | MATLAB chip | [plans/skills-matlab-loops/U1.md](plans/skills-matlab-loops/U1.md) | pytest test_ui_a11y | 3 | pending |
-| B_PACKS | skills and adapters | [plans/skills-matlab-loops/B_PACKS.md](plans/skills-matlab-loops/B_PACKS.md) | pytest host_adapters + pack_skills | 3 | pending |
-| B_MATLAB | MATLAB MCP client | [plans/skills-matlab-loops/B_MATLAB.md](plans/skills-matlab-loops/B_MATLAB.md) | pytest matlab_mcp + sim_seams | 3 | pending |
-| M1 | integrate | [plans/skills-matlab-loops/M1.md](plans/skills-matlab-loops/M1.md) | pytest test_host_docs | 3 | pending |
+| U1 | MATLAB chip | [plans/skills-matlab-loops/U1.md](plans/skills-matlab-loops/U1.md) | pytest test_ui_a11y | 3 | passed |
+| B_PACKS | skills and adapters | [plans/skills-matlab-loops/B_PACKS.md](plans/skills-matlab-loops/B_PACKS.md) | pytest host_adapters + pack_skills | 3 | passed |
+| B_MATLAB | MATLAB MCP client | [plans/skills-matlab-loops/B_MATLAB.md](plans/skills-matlab-loops/B_MATLAB.md) | pytest matlab_mcp + sim_seams | 3 | passed |
+| M1 | integrate | [plans/skills-matlab-loops/M1.md](plans/skills-matlab-loops/M1.md) | pytest test_host_docs | 3 | passed |
 | E1 | evaluate | [plans/skills-matlab-loops/E1.md](plans/skills-matlab-loops/E1.md) | ./scripts/validate.sh | 3 | pending |
 | R1 | boot | [plans/skills-matlab-loops/R1.md](plans/skills-matlab-loops/R1.md) | R1_BOOT.md names commands | 3 | pending |
 | T1 | kernel and host trials | [plans/skills-matlab-loops/T1.md](plans/skills-matlab-loops/T1.md) | T1_HOST ≥10 pack rows | 3 | pending |

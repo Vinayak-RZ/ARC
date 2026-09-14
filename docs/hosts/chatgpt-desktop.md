@@ -51,6 +51,6 @@ Target contract: [`../PRD.md`](../PRD.md) FR17.
 
 - Promise chatgpt.com in a browser as a simulator host.
 - Let MATLAB Copilot (if also connected) mint a verified `Vout` (FR20).
-  Coming next: Arc will call MATLAB itself
+  Do **not** attach MATLAB MCP on Chat/Work. Arc mediates MATLAB internally
   ([`../ON_THE_HARNESS.md`](../ON_THE_HARNESS.md)).
 - Wait on a human inside MCP (fail closed, `ui_url`).

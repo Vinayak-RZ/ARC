@@ -22,7 +22,7 @@ File maps: [`EXTENSIVE.md`](EXTENSIVE.md). Engineer contract: [`ARCHITECTURE.md`
 - [What Arc already does](#what-arc-already-does)
 - [When a number was not verified](#when-a-number-was-not-verified)
 - [How homework actually runs](#how-homework-actually-runs)
-- [Coming next: Arc talks to MATLAB and other agents](#coming-next-arc-talks-to-matlab-and-other-agents)
+- [How Arc mediates MATLAB](#how-arc-mediates-matlab)
 - [What ships in this checkout](#what-ships-in-this-checkout)
 - [What we do not ship](#what-we-do-not-ship)
 - [Where to go next](#where-to-go-next)
@@ -67,8 +67,8 @@ flowchart TB
     Folder[Saved run folder]
     Window[Local window on 127.0.0.1]
   end
-  subgraph soon["Coming next"]
-    Other[Arc talks to MATLAB and other agents]
+  subgraph matlab["Shipped: Arc mediates MATLAB"]
+    Other[Arc calls MATLAB MCP when installed]
   end
   You --> Loop
   You --> Window
@@ -212,7 +212,7 @@ Your coding assistant talks to Arc through a local MCP connection (`electrical-e
 | Read the labeled result | What was verified vs unverified |
 | Replay a named recipe | The command-line / test path |
 
-You can do the same jobs without an assistant: `electrical-engineer run`, `workflows`, `eval`, `ui`, `rag`, `memory`.
+You can do the same jobs without an assistant: `electrical-engineer run`, `workflows`, `eval`, `ui`, `rag`, `memory`, `hosts install`.
 
 Limit: Arc does not wrap each simulator as its own MCP tool. Confirming a photo happens in the local window, not inside the chat.
 
@@ -292,15 +292,17 @@ flowchart LR
 
 **Without a coding assistant.** `electrical-engineer run` plus the local window is enough for numbers. A viva still needs an assistant or a local model you configure. ChatGPT in the browser is not a supported assistant.
 
-## Coming next: Arc talks to MATLAB and other agents
+## How Arc mediates MATLAB
 
-Today, if you also turn on MathWorks' MATLAB MCP next to Arc, the coding assistant sees both. MATLAB numbers stay unverified until Arc recomputes them. That side-by-side setup is clumsy: MATLAB's own MCP tends to dump on the order of 10,000 tokens of tool description into the assistant's context window. The chat gets slower and noisier, and it is still allowed to treat a MATLAB scalar as if it were a lab result unless Arc stops it.
+Do **not** turn on MathWorks' MATLAB MCP next to Arc. That side-by-side setup dumps on the order of 10,000 tokens of tool description into the assistant's context window. The chat gets slower and noisier, and it is still allowed to treat a MATLAB scalar as if it were a lab result unless Arc stops it.
 
-**Coming next:** Arc will call MATLAB (and, later, other MCPs or agents) itself. The coding assistant talks only to Arc. Arc decides when MATLAB is needed, runs that call, and returns a short labeled result: verified, or unverified, with the observation log. The 10k-token tool dump never lands in your homework chat.
+**Shipped path:** Arc calls MATLAB MCP itself when `matlab-mcp-server` is on the machine (`run-matlab-if-present`). The coding assistant talks only to Arc. Arc decides when MATLAB is needed, runs that call, and returns a short labeled result: verified, or unverified, with the observation log. The 10k-token tool dump never lands in your homework chat.
+
+If a student attaches MATLAB MCP anyway, those peer scalars stay unverified until Arc recomputes them (FR20 clamp). That is not the install.
 
 ```mermaid
 flowchart TB
-  subgraph today["Today, if you enable both"]
+  subgraph wrong["Do not: peer MATLAB MCP"]
     H1[Coding assistant]
     M1[MATLAB MCP]
     A1[Arc]
@@ -308,10 +310,10 @@ flowchart TB
     H1 --> A1
     M1 -->|"huge tool list into context"| H1
   end
-  subgraph next["Coming next"]
+  subgraph shipped["Shipped"]
     H2[Coding assistant]
     A2[Arc]
-    M2[MATLAB and other agents]
+    M2[MATLAB MCP]
     H2 -->|"one lab connection"| A2
     A2 -->|"Arc calls them"| M2
     M2 -->|"short result"| A2
@@ -319,7 +321,7 @@ flowchart TB
   end
 ```
 
-This is not shipped in this checkout. The product and CI already work with zero MATLAB. OSS simulators stay first-class.
+The product and CI already work with zero MATLAB. OSS simulators stay first-class. Simulink Agentic Toolkit is later.
 
 ## What ships in this checkout
 
@@ -331,7 +333,7 @@ Counts you can reproduce from the files.
 | Named lab recipes | 27 | Saved workflows under `workflows/` |
 | Kinds of check | 14 | Algebra, lumped-circuit sim, LTI, power network, machines, converters, signals, fields, measurements, citations, figures, photo ingest, unverified label, ask you |
 | Tools the assistant can call | 7 | List, look up, open window, simulate, propose checks, read result, replay recipe |
-| Commands you can type | 7 | `run`, `workflows`, `mcp`, `eval`, `ui`, `rag`, `memory` |
+| Commands you can type | 8 | `run`, `workflows`, `mcp`, `eval`, `ui`, `rag`, `memory`, `hosts` |
 | Supported assistants | 4 | Cursor, Claude Code, Codex, ChatGPT desktop |
 
 Every pack covers seven homework shapes: solve, derive, design, simulate, review, explain, report. Known-answer tests are still deepest on circuits. Other packs may finish with an unverified label. That is a legal outcome.
