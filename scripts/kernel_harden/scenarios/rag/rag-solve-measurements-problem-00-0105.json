@@ -4,10 +4,15 @@
   "recipe_id": "solve-measurements-problem",
   "category": "rag",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Explain loading error when a 1 Mohm meter measures across a 470k resistor.",
     "variant": 0,
     "n": 105
   },
   "host_path": "cli",
-  "notes": "auto scenario 105"
+  "notes": "auto scenario 105",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

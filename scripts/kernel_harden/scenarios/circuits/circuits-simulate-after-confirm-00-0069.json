@@ -4,10 +4,16 @@
   "recipe_id": "simulate-after-confirm",
   "category": "circuits",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Use nodal analysis on a two-node resistive network and name the reference node.",
     "variant": 0,
-    "n": 69
+    "n": 69,
+    "cir": "* divider\nV1 in 0 10\nR1 in out 1k\nR2 out 0 1k\n.op\n.end\n"
   },
   "host_path": "cli",
-  "notes": "auto scenario 69"
+  "notes": "auto scenario 69",
+  "expect": {
+    "unchecked": true,
+    "reason": "gate-closed",
+    "requires": []
+  }
 }

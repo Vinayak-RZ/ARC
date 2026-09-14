@@ -4,14 +4,18 @@
   "recipe_id": "solve-circuit-problem",
   "category": "circuits",
   "problem": {
-    "kind": "voltage_divider",
-    "vin": 10,
-    "r1": 1000,
-    "r2": 1000,
-    "expected": 5.0,
+    "kind": "ohms_law",
+    "v": 9,
+    "r": 3,
+    "expected": 3.0,
     "variant": 1,
     "n": 2
   },
   "host_path": "cli",
-  "notes": "auto scenario 2"
+  "notes": "auto scenario 2",
+  "expect": {
+    "unchecked": false,
+    "reason": null,
+    "requires": []
+  }
 }

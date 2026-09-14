@@ -4,10 +4,15 @@
   "recipe_id": "explain-power",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "A load draws 5 kW at 0.8 lagging power factor on 400 V. Find the line current.",
     "variant": 1,
     "n": 28
   },
   "host_path": "cli",
-  "notes": "auto scenario 28"
+  "notes": "auto scenario 28",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

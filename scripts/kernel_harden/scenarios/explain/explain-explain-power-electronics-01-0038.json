@@ -4,10 +4,15 @@
   "recipe_id": "explain-power-electronics",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "State the ripple current in an inductor for a 100 kHz buck at 50% duty.",
     "variant": 1,
     "n": 38
   },
   "host_path": "cli",
-  "notes": "auto scenario 38"
+  "notes": "auto scenario 38",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

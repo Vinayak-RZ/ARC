@@ -4,10 +4,15 @@
   "recipe_id": "explain-em",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Apply Gauss's law to an infinite line charge and give the field.",
     "variant": 1,
     "n": 32
   },
   "host_path": "cli",
-  "notes": "auto scenario 32"
+  "notes": "auto scenario 32",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

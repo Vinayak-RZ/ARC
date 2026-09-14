@@ -4,10 +4,17 @@
   "recipe_id": "explain-control",
   "category": "control",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Give the phase margin of 10/(s(s+2)) and say how you read it off a Bode plot.",
     "variant": 0,
     "n": 77
   },
   "host_path": "cli",
-  "notes": "auto scenario 77"
+  "notes": "auto scenario 77",
+  "expect": {
+    "unchecked": true,
+    "reason": "no-provider",
+    "requires": [
+      "run-python-control"
+    ]
+  }
 }

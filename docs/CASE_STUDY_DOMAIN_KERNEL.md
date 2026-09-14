@@ -28,9 +28,11 @@ This graph added:
 
 **Before:** `_unchecked_reason` fell through to `unmatched`, so explain/pack runs looked like router misses.
 
-**After:** `labeled` for honest label-unverified paths; `unmatched` only for unmatched recipes. Locked by unit tests + retest table.
+**After I1:** `labeled` for honest label-unverified paths; `unmatched` only for unmatched recipes.
 
-Unagent recommended **no FlipToDet** on SPICE/check/label nodes — confirmation that the kernel is already tool-shaped.
+**After I3 (self-audit):** `labeled` is residual. A missing tool is `no-provider` even when the recipe names the provider id directly; an unconfirmed draft is `gate-closed`; a node that never reports `ok` is not a tool crash. The 120-run corpus is now graded (120/120 PASS on this machine).
+
+Unagent recommended **no FlipToDet** on SPICE/check/label nodes — confirmation that the kernel is already tool-shaped. The first advisor export overstated failure_rate because `bool(None)` made label/explain nodes look crashed; I3 closed that.
 
 ## How to design domain kernels (takeaways)
 
@@ -52,4 +54,4 @@ uv run electrical-engineer run solve-circuit-problem
 
 ## Corpus
 
-See `artifacts/kernel-harden/CORPUS_INDEX.md` (120 completed with traces).
+See `artifacts/kernel-harden/CORPUS_INDEX.md` (120 completed with traces, graded). Audit of the canes: [`docs/planning/AUDIT_KERNEL_HARDEN.md`](planning/AUDIT_KERNEL_HARDEN.md).

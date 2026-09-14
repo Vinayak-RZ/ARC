@@ -4,10 +4,17 @@
   "recipe_id": "explain-control",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Reduce a unity-feedback loop with G = 5/(s+3) to a closed-loop transfer function.",
     "variant": 0,
     "n": 99
   },
   "host_path": "cli",
-  "notes": "auto scenario 99"
+  "notes": "auto scenario 99",
+  "expect": {
+    "unchecked": true,
+    "reason": "no-provider",
+    "requires": [
+      "run-python-control"
+    ]
+  }
 }

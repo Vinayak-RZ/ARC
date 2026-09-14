@@ -4,10 +4,15 @@
   "recipe_id": "explain-circuits",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Find the Thevenin equivalent seen by the load in a two-resistor bridge leg.",
     "variant": 0,
     "n": 23
   },
   "host_path": "cli",
-  "notes": "auto scenario 23"
+  "notes": "auto scenario 23",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

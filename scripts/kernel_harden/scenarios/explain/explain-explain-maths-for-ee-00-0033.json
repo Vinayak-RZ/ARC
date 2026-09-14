@@ -4,10 +4,15 @@
   "recipe_id": "explain-maths-for-ee",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Take the Laplace transform of a unit step delayed by 2 seconds.",
     "variant": 0,
     "n": 33
   },
   "host_path": "cli",
-  "notes": "auto scenario 33"
+  "notes": "auto scenario 33",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

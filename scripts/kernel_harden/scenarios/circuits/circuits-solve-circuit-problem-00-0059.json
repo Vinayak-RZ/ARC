@@ -5,13 +5,18 @@
   "category": "circuits",
   "problem": {
     "kind": "voltage_divider",
-    "vin": 10,
+    "vin": 15,
     "r1": 1000,
-    "r2": 1000,
-    "expected": 5.0,
+    "r2": 2000,
+    "expected": 10.0,
     "variant": 0,
     "n": 59
   },
   "host_path": "cli",
-  "notes": "auto scenario 59"
+  "notes": "auto scenario 59",
+  "expect": {
+    "unchecked": false,
+    "reason": null,
+    "requires": []
+  }
 }

@@ -4,10 +4,15 @@
   "recipe_id": "explain-machines",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "A 4-pole induction motor runs at 1440 rpm on 50 Hz. Find the slip.",
     "variant": 1,
     "n": 88
   },
   "host_path": "cli",
-  "notes": "auto scenario 88"
+  "notes": "auto scenario 88",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

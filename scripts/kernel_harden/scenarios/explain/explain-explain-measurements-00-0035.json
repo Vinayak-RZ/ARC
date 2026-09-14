@@ -4,10 +4,15 @@
   "recipe_id": "explain-measurements",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "State how a shunt resistor turns an ammeter into a current-sense measurement.",
     "variant": 0,
     "n": 35
   },
   "host_path": "cli",
-  "notes": "auto scenario 35"
+  "notes": "auto scenario 35",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

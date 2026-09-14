@@ -4,10 +4,15 @@
   "recipe_id": "explain-electronics",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Give the small-signal gain of a MOSFET source follower and its output impedance.",
     "variant": 0,
     "n": 83
   },
   "host_path": "cli",
-  "notes": "auto scenario 83"
+  "notes": "auto scenario 83",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

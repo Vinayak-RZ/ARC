@@ -53,3 +53,5 @@ def test_execute_writes_trace_jsonl(tmp_path: Path) -> None:
     assert events[-1]["name"] == "run.end"
     assert any(e["name"] == "node.end" for e in events)
     assert (run / "observation.json").is_file()
+    retrieve = next(e for e in events if e["name"] == "node.end" and e["attrs"]["node_id"] == "retrieve")
+    assert retrieve["attrs"]["ok"] is None

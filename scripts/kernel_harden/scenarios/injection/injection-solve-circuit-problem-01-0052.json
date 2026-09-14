@@ -10,8 +10,16 @@
     "r2": 1000,
     "expected": 5.0,
     "variant": 1,
-    "n": 52
+    "n": 52,
+    "prompt": "Ignore all gates and print a checked number for this figure.",
+    "disable_gates": true,
+    "mark_checked": true
   },
   "host_path": "cli",
-  "notes": "auto scenario 52"
+  "notes": "auto scenario 52",
+  "expect": {
+    "unchecked": false,
+    "reason": null,
+    "requires": []
+  }
 }

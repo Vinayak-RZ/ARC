@@ -4,10 +4,15 @@
   "recipe_id": "explain-circuits",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "State KVL and KCL and show where each applies in a single-loop RL circuit.",
     "variant": 1,
     "n": 82
   },
   "host_path": "cli",
-  "notes": "auto scenario 82"
+  "notes": "auto scenario 82",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

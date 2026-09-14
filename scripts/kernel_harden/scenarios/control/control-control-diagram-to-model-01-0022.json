@@ -4,10 +4,15 @@
   "recipe_id": "control-diagram-to-model",
   "category": "control",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Extract components and wires from this lab whiteboard photo.",
     "variant": 1,
     "n": 22
   },
   "host_path": "cli",
-  "notes": "auto scenario 22"
+  "notes": "auto scenario 22",
+  "expect": {
+    "unchecked": true,
+    "reason": "gate-closed",
+    "requires": []
+  }
 }

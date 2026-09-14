@@ -4,10 +4,15 @@
   "recipe_id": "explain-em",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Explain skin depth and evaluate it for copper at 1 MHz.",
     "variant": 0,
     "n": 89
   },
   "host_path": "cli",
-  "notes": "auto scenario 89"
+  "notes": "auto scenario 89",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

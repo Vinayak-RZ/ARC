@@ -4,10 +4,15 @@
   "recipe_id": "explain-machines",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Explain why transformer core loss is treated as a shunt branch.",
     "variant": 0,
     "n": 87
   },
   "host_path": "cli",
-  "notes": "auto scenario 87"
+  "notes": "auto scenario 87",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

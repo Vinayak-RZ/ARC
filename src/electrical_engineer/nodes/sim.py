@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+from electrical_engineer.capabilities import CD_NO_PROVIDER
 from electrical_engineer.nodes.registry import register
 from electrical_engineer.unchecked import UNCHECKED
 
@@ -16,6 +17,7 @@ def _missing(tool: str, spec: dict[str, Any], inputs: dict[str, Any]) -> dict[st
         "error": f"{tool} not available",
         "unchecked": True,
         "token": UNCHECKED,
+        "cannot_do": CD_NO_PROVIDER,
         "inputs": inputs,
         "node": spec.get("id"),
     }

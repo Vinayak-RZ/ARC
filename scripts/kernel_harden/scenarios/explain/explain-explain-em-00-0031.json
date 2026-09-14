@@ -4,10 +4,15 @@
   "recipe_id": "explain-em",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Give the characteristic impedance of a lossless line from L and C.",
     "variant": 0,
     "n": 31
   },
   "host_path": "cli",
-  "notes": "auto scenario 31"
+  "notes": "auto scenario 31",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

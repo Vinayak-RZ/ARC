@@ -4,10 +4,15 @@
   "recipe_id": "derive-circuit",
   "category": "circuits",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Use nodal analysis on a two-node resistive network and name the reference node.",
     "variant": 0,
     "n": 9
   },
   "host_path": "cli",
-  "notes": "auto scenario 9"
+  "notes": "auto scenario 9",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

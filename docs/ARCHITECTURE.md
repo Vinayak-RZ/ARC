@@ -650,6 +650,9 @@ capabilities: [ ids ]
 providers: [ ids ]
 nodes: { id: { ok, unchecked } }
 unchecked_reason: no-provider | sim-exhausted | unmatched | empty-retrieve | gate-closed | labeled | null
+# labeled is residual: answered, unverified, nothing for the host to act on.
+# Prefer a more specific reason when one applies: no-provider (install a tool),
+# gate-closed (confirm a draft), unmatched (router miss), empty-retrieve, sim-exhausted.
 retrieve: { empty, filters, citations }
 # P1: wall_ms per node. Never token/cost (host).
 ```

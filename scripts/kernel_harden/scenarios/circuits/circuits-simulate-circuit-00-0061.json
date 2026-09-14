@@ -9,8 +9,17 @@
     "r1": 2000,
     "r2": 2000,
     "variant": 0,
-    "n": 61
+    "n": 61,
+    "prompt": "Use nodal analysis on a two-node resistive network and name the reference node.",
+    "cir": "* divider\nV1 in 0 10\nR1 in out 1k\nR2 out 0 1k\n.op\n.end\n"
   },
   "host_path": "cli",
-  "notes": "auto scenario 61"
+  "notes": "auto scenario 61",
+  "expect": {
+    "unchecked": true,
+    "reason": "no-provider",
+    "requires": [
+      "run-spice"
+    ]
+  }
 }

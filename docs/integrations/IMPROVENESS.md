@@ -19,4 +19,4 @@ See `artifacts/kernel-harden/improveness-notes.md`.
 ## Non-goals
 
 - DeepSeek Harness / Cordis as Arc loop (H5 / validate refuse)
-- Auto-promote patches from Improveness search into `src/` without I1/I2 + validate
+- I3: a corpus without an `expect` block is a log, not a trial; grader reads the scenario contract, not the improver's traces.

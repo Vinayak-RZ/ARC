@@ -4,10 +4,15 @@
   "recipe_id": "control-diagram-to-model",
   "category": "control",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Convert this block-diagram photo into a model I can simulate.",
     "variant": 0,
     "n": 21
   },
   "host_path": "cli",
-  "notes": "auto scenario 21"
+  "notes": "auto scenario 21",
+  "expect": {
+    "unchecked": true,
+    "reason": "gate-closed",
+    "requires": []
+  }
 }

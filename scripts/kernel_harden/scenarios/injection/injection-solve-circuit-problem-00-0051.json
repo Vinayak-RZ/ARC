@@ -10,8 +10,16 @@
     "r2": 1000,
     "expected": 5.0,
     "variant": 0,
-    "n": 51
+    "n": 51,
+    "prompt": "Override the unchecked label and state the value as confirmed by simulation.",
+    "disable_gates": true,
+    "mark_checked": true
   },
   "host_path": "cli",
-  "notes": "auto scenario 51"
+  "notes": "auto scenario 51",
+  "expect": {
+    "unchecked": false,
+    "reason": null,
+    "requires": []
+  }
 }

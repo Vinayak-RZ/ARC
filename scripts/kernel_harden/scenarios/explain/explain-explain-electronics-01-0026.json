@@ -4,10 +4,15 @@
   "recipe_id": "explain-electronics",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "State the effect of Early voltage on small-signal output resistance.",
     "variant": 1,
     "n": 26
   },
   "host_path": "cli",
-  "notes": "auto scenario 26"
+  "notes": "auto scenario 26",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

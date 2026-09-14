@@ -19,3 +19,4 @@ Sibling repo: `Vinayak-RZ/Improveness` (cloned to `/tmp/Improveness` for this ru
 - Fix Unagent export: `unchecked` is not `error`.
 - Keep labeled reason honest (I1).
 - Document ABSTAIN as success of determinism advisor on a tool-shaped kernel.
+- I3: a corpus without an `expect` block is a log, not a trial; grader reads the scenario contract, not the improver's traces.

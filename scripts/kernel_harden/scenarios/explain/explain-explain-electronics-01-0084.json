@@ -4,10 +4,15 @@
   "recipe_id": "explain-electronics",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Bias an NPN common-emitter stage for 2 mA and give the emitter resistor.",
     "variant": 1,
     "n": 84
   },
   "host_path": "cli",
-  "notes": "auto scenario 84"
+  "notes": "auto scenario 84",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

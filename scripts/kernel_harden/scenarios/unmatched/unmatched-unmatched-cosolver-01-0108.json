@@ -4,10 +4,15 @@
   "recipe_id": "unmatched-cosolver",
   "category": "unmatched",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Design and certify a 400 kV substation protection scheme for utility sign-off.",
     "variant": 1,
     "n": 108
   },
   "host_path": "cli",
-  "notes": "auto scenario 108"
+  "notes": "auto scenario 108",
+  "expect": {
+    "unchecked": true,
+    "reason": "unmatched",
+    "requires": []
+  }
 }

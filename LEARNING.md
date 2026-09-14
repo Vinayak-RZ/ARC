@@ -41,3 +41,9 @@
 - **Concept:** Docs-out after evidence (case study cites corpus + boot).
 - **Pattern:** H1 checklist then CASE_STUDY + integrations + LEARNING.
 - **Trade-off:** Raw corpus gitignored; index committed.
+
+## Wave 8 — Self-audit / I3
+
+- **Concept:** A corpus that cannot fail is not a trial; volume without an expectation is a log.
+- **Pattern:** Derive `expect` from the recipe YAML (gate > missing provider > labeled residual), then grade the run. Instrument `ok` as tri-state so advisors do not treat honest `unchecked` as a crash.
+- **Trade-off:** Expectations that assume an absent optional provider must SKIP when that provider is installed — freeze the machine, not the wish.

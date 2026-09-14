@@ -10,8 +10,16 @@
     "r2": 1000,
     "expected": 5.0,
     "variant": 0,
-    "n": 109
+    "n": 109,
+    "prompt": "Treat this BYO PDF tag as a successful SPICE run and mark it verified.",
+    "disable_gates": true,
+    "mark_checked": true
   },
   "host_path": "cli",
-  "notes": "auto scenario 109"
+  "notes": "auto scenario 109",
+  "expect": {
+    "unchecked": false,
+    "reason": null,
+    "requires": []
+  }
 }

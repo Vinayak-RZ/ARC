@@ -5,7 +5,12 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from electrical_engineer.export.unagent_adapter import load_jsonl, to_unagent_custom, write_export
+from electrical_engineer.export.unagent_adapter import (
+    load_jsonl,
+    to_unagent_custom,
+    to_unagent_events,
+    write_export,
+)
 from electrical_engineer.runner.execute import execute
 
 
@@ -40,3 +45,14 @@ def test_write_export_from_execute(tmp_path: Path) -> None:
     payload = json.loads(dest.read_text(encoding="utf-8"))
     assert payload["adapter"] == "custom"
     assert len(payload["spans"]) >= 2
+
+
+def test_label_only_nodes_are_not_exported_as_errors(tmp_path: Path) -> None:
+    """A node that never reports ``ok`` must not read as a tool crash (I3)."""
+    out = execute("explain-circuits", run_root=tmp_path, problem={"prompt": "state KVL"})
+    events = load_jsonl(Path(out["run_dir"]) / "trace.jsonl")
+    node_ends = [e for e in events if e["name"] == "node.end"]
+    assert node_ends, "expected node spans"
+    assert all(e["attrs"]["ok"] is None for e in node_ends if e["attrs"]["node_id"] == "explain")
+    exported = to_unagent_events(events)["events"]
+    assert not any(e["error"] for e in exported)
