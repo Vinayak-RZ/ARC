@@ -1,0 +1,376 @@
+# Checker truth. Do not invent packs outside this file.
+min_units:
+  circuits: 16
+  signals: 12
+  electronics: 14
+  maths: 10
+  machines: 11
+  power: 12
+  control: 12
+  power-electronics: 12
+  measurements: 7
+  em: 10
+packs:
+  circuits:
+    path: ug-ee/circuits
+    title: Circuits (BES + network theory)
+    group: core
+    units:
+      - id: 01-charge-current-voltage-power
+        title: Charge, current, voltage, power, energy
+      - id: 02-kcl-kvl-ohms-law
+        title: KCL, KVL, Ohm's law, independent sources
+      - id: 03-series-parallel-dividers
+        title: Series-parallel reduction and dividers
+      - id: 04-nodal-mesh
+        title: Nodal and mesh analysis
+      - id: 05-network-theorems
+        title: Thevenin, Norton, superposition, max power, Millman, reciprocity
+      - id: 06-first-order-transients
+        title: RC and RL first-order transients
+      - id: 07-second-order-transients
+        title: RLC second-order transients
+      - id: 08-phasors-ac-steady-state
+        title: Phasors and AC steady state
+      - id: 09-ac-power-rms
+        title: RMS, average and complex power, pf
+      - id: 10-resonance
+        title: Series and parallel resonance, Q and bandwidth
+      - id: 11-magnetically-coupled-circuits
+        title: Mutual inductance and coupled coils
+      - id: 12-three-phase
+        title: Balanced and unbalanced three-phase
+      - id: 13-two-port-networks
+        title: z, y, h, ABCD parameters
+      - id: 14-laplace-network-analysis
+        title: Laplace-domain networks and initial conditions
+      - id: 15-frequency-response-filters
+        title: Network frequency response and passive filters
+      - id: 16-graph-theory-tellegen
+        title: Graph theory, Tellegen, duality
+  signals:
+    path: ug-ee/signals
+    title: Signals and systems
+    group: core
+    units:
+      - id: 01-signal-classifications
+        title: Continuous/discrete, energy/power, even/odd, periodic
+      - id: 02-lti-systems-properties
+        title: Linearity, time-invariance, memory, invertibility
+      - id: 03-convolution
+        title: Continuous and discrete convolution
+      - id: 04-fourier-series
+        title: CTFS/DTFS and properties
+      - id: 05-fourier-transform
+        title: CTFT and properties, Parseval
+      - id: 06-laplace-transform-signals
+        title: ROC, unilateral Laplace, system functions
+      - id: 07-sampling-reconstruction
+        title: Nyquist, aliasing, reconstruction
+      - id: 08-z-transform
+        title: ROC, inverse Z, discrete LTI
+      - id: 09-dft-dfs-dtft
+        title: DTFT, DFS, DFT relations
+      - id: 10-filters-as-systems
+        title: Ideal filters, distortion, group delay
+      - id: 11-bibo-stability-causality
+        title: BIBO, causality, ROC implications
+      - id: 12-modulation-intro
+        title: AM/complex exponential modulation for signals courses
+  electronics:
+    path: ug-ee/electronics
+    title: Analog and digital electronics
+    group: core
+    units:
+      - id: 01-semiconductor-diodes
+        title: Diodes, rectifiers, clippers, clampers
+      - id: 02-bjt-biasing-small-signal
+        title: BJT regions, bias, hybrid-pi
+      - id: 03-fet-mosfet
+        title: JFET/MOSFET characteristics and bias
+      - id: 04-opamp-linear
+        title: Ideal op-amp, inverting/noninverting, instrumentation
+      - id: 05-opamp-nonlinear-applications
+        title: Comparators, Schmitt, precision rectifiers
+      - id: 06-feedback-amplifiers
+        title: Four feedback topologies, desensitivity
+      - id: 07-oscillators
+        title: Barkhausen, RC, LC, crystal
+      - id: 08-voltage-regulators-power-amps
+        title: Series regulators, class A/B/AB
+      - id: 09-number-systems-boolean
+        title: Number systems, codes, Boolean algebra
+      - id: 10-combinational-logic
+        title: Gates, mux, decoder, adder, hazards
+      - id: 11-sequential-logic-fsm
+        title: Latches, flip-flops, counters, FSM
+      - id: 12-adc-dac-logic-families
+        title: DAC/ADC, TTL/CMOS levels
+      - id: 13-memory-hdl-intro
+        title: ROM/RAM, PLA, Verilog/VHDL intro
+      - id: 14-cmos-inverter-timing
+        title: CMOS inverter, delay, power
+  maths:
+    path: ug-ee/maths
+    title: Mathematics for EE
+    group: core
+    units:
+      - id: 01-complex-numbers-phasors-math
+        title: Complex arithmetic and Euler
+      - id: 02-ode-linear-systems
+        title: Linear ODEs and constant-coefficient systems
+      - id: 03-laplace-transforms
+        title: Laplace tables, theorems, inverse
+      - id: 04-fourier-series-transform-math
+        title: Fourier analysis as maths
+      - id: 05-linear-algebra-ee
+        title: Matrices, eigenvalues, quadratic forms
+      - id: 06-vector-calculus
+        title: grad, div, curl, integral theorems
+      - id: 07-probability-random-variables
+        title: RV, expectation, Gaussian noise intro
+      - id: 08-numerical-methods-ee
+        title: Root finding, integration, linear solves
+      - id: 09-z-transform-math
+        title: Z as a transform pair
+      - id: 10-partial-fractions-residues
+        title: Partial fractions and residues
+  machines:
+    path: ug-ee/machines
+    title: Electrical machines
+    group: core
+    units:
+      - id: 01-magnetic-circuits
+        title: B-H, reluctance, inductance from energy
+      - id: 02-transformers-equivalent-circuit
+        title: Ideal and practical single-phase transformer
+      - id: 03-transformer-tests-three-phase
+        title: OC/SC, regulation, three-phase connections
+      - id: 04-dc-generators
+        title: Generated emf, types, characteristics
+      - id: 05-dc-motors
+        title: Torque, speed control, starters
+      - id: 06-induction-machines
+        title: Equivalent circuit, torque-slip
+      - id: 07-induction-starting-speed-control
+        title: Starting, cascade, V/f intro
+      - id: 08-synchronous-generators
+        title: Pitch, winding factor, OCC/SCC, regulation
+      - id: 09-synchronous-motors
+        title: V-curves, hunting, starting
+      - id: 10-special-machines
+        title: Stepper, BLDC, reluctance, servo intro
+      - id: 11-per-unit-machine-tests
+        title: Per-unit machines and standard tests
+  power:
+    path: ug-ee/power
+    title: Power systems
+    group: core
+    units:
+      - id: 01-per-unit-system
+        title: Base change, single-line diagrams
+      - id: 02-transmission-line-models
+        title: Short/medium/long lines, ABCD
+      - id: 03-load-flow
+        title: Ybus, Gauss-Seidel, Newton-Raphson intro
+      - id: 04-symmetrical-faults
+        title: Zbus, bolted three-phase faults
+      - id: 05-unsymmetrical-faults-sequence
+        title: Sequence networks, LG/LL/LLG
+      - id: 06-power-system-stability
+        title: Swing equation, equal-area
+      - id: 07-economic-operation
+        title: IC, B-coefficients, penalty factor
+      - id: 08-cables-insulators-grounding
+        title: Cables, string efficiency, grounding
+      - id: 09-distribution-systems
+        title: Feeders, radial vs ring, voltage drop
+      - id: 10-protection-overview
+        title: Zones, CTs/VTs, overcurrent intro
+      - id: 11-hvdc-facts-intro
+        title: HVDC and FACTS at UG level
+      - id: 12-reactive-power-voltage-control
+        title: Q-V, shunt/series compensation
+  control:
+    path: ug-ee/control
+    title: Control systems
+    group: core
+    units:
+      - id: 01-modeling-tf-ss
+        title: TF, SS, linearization
+      - id: 02-block-diagrams-sfg
+        title: Block reduction, Mason gain
+      - id: 03-time-response
+        title: 1st/2nd order, error constants
+      - id: 04-routh-hurwitz
+        title: Routh array, parameter range
+      - id: 05-root-locus
+        title: Rules, departure, design sketch
+      - id: 06-bode-plots
+        title: Asymptotes, gain/phase margins
+      - id: 07-nyquist-stability
+        title: Nyquist, N=Z-P, encirclements
+      - id: 08-lead-lag-pid
+        title: Lead/lag, PID, Ziegler-Nichols intro
+      - id: 09-state-space-ug
+        title: Diagonalization, solution of xdot=Ax
+      - id: 10-controllability-observability
+        title: PBH, canonical forms
+      - id: 11-digital-control-intro
+        title: Sampling, hold, discrete equivalents
+      - id: 12-nonlinear-describing-function
+        title: Describing function, limit cycles intro
+  power-electronics:
+    path: ug-ee/power-electronics
+    title: Power electronics
+    group: core
+    units:
+      - id: 01-power-semiconductor-switches
+        title: Diode, SCR, MOSFET, IGBT, SOA
+      - id: 02-uncontrolled-rectifiers
+        title: 1ph/3ph diode bridges, overlap
+      - id: 03-controlled-rectifiers
+        title: Phase-controlled converters
+      - id: 04-dc-dc-choppers
+        title: Buck, boost, buck-boost, duty
+      - id: 05-inverters
+        title: VSI, CSI, 1ph/3ph, harmonic
+      - id: 06-ac-voltage-controllers
+        title: Integral cycle, phase AC control
+      - id: 07-pwm-techniques
+        title: SPWM, hysteresis, unipolar/bipolar
+      - id: 08-commutation-snubbers
+        title: Natural/forced commutation, snubbers
+      - id: 09-dc-drives
+        title: 1Q-4Q DC drives
+      - id: 10-ac-drives
+        title: V/f, CSI, cyclo intro
+      - id: 11-converter-magnetics-thermal
+        title: Inductors, transformers, heatsinks
+      - id: 12-cyclo-dual-converters
+        title: Cycloconverter and dual converter
+  measurements:
+    path: ug-ee/measurements
+    title: Electrical measurements
+    group: core
+    units:
+      - id: 01-errors-uncertainty
+        title: Gross/systematic/random, limiting error
+      - id: 02-dc-ac-bridges
+        title: Wheatstone, Kelvin, Maxwell, Schering, Wien
+      - id: 03-electromechanical-instruments
+        title: PMMC, MI, electrodynamometer
+      - id: 04-instrument-transformers
+        title: CT/PT ratio and phase errors
+      - id: 05-digital-instruments-cro
+        title: DMM, CRO/DSO, Lissajous
+      - id: 06-transducers-energy-meters
+        title: Strain, RTD, induction energy meter
+      - id: 07-magnetic-measurements-calibration
+        title: Fluxmeter, B-H, calibration chain
+  em:
+    path: ug-ee/em
+    title: Electromagnetic fields
+    group: core
+    units:
+      - id: 01-vector-analysis-coords
+        title: Coordinate systems, vector identities
+      - id: 02-electrostatics
+        title: Coulomb, Gauss, potential, Poisson
+      - id: 03-conductors-dielectrics-capacitance
+        title: Boundary conditions, capacitance
+      - id: 04-magnetostatics
+        title: Biot-Savart, Ampere, vector potential
+      - id: 05-faraday-inductance
+        title: Faraday, Lenz, inductance
+      - id: 06-maxwell-equations
+        title: Displacement current, Maxwell set
+      - id: 07-plane-waves
+        title: Uniform plane wave, Poynting, polarization
+      - id: 08-transmission-lines
+        title: Telegrapher, VSWR, reflection
+      - id: 09-smith-chart-stub-matching
+        title: Smith chart, single-stub matching
+      - id: 10-waveguides-radiation-intro
+        title: Rectangular waveguide cutoff, Hertzian dipole intro
+  protection-switchgear:
+    path: ug-ee/electives/protection-switchgear
+    title: Power system protection and switchgear
+    group: electives-power
+    units:
+      - id: 01-relays-schemes
+        title: Overcurrent, differential, distance schemes
+      - id: 02-circuit-breakers-switchgear
+        title: Arc interruption, CB types, GIS intro
+  high-voltage:
+    path: ug-ee/electives/high-voltage
+    title: High voltage engineering
+    group: electives-power
+    units:
+      - id: 01-breakdown-testing
+        title: Gaseous/liquid/solid breakdown, HV testing
+      - id: 02-overvoltages-insulation
+        title: Lightning, switching, insulation coordination
+  utilization:
+    path: ug-ee/electives/utilization
+    title: Utilization of electrical energy
+    group: electives-power
+    units:
+      - id: 01-illumination-heating
+        title: Laws of illumination, electric heating
+      - id: 02-electric-traction
+        title: Speed-time curves, mechanics of train
+  electric-drives:
+    path: ug-ee/electives/electric-drives
+    title: Electric drives
+    group: electives-power
+    units:
+      - id: 01-drive-dynamics
+        title: Load torque, stability of equilibrium
+      - id: 02-four-quadrant-braking
+        title: Plugging, regenerative, dynamic braking
+  renewables-intro:
+    path: ug-ee/electives/renewables-intro
+    title: Renewable energy intro
+    group: electives-power
+    units:
+      - id: 01-solar-wind-dg
+        title: PV I-V, wind Cp, DG
+      - id: 02-grid-integration-ug
+        title: Inverter interface, islanding intro
+  microprocessors:
+    path: ug-ee/electives/microprocessors
+    title: Microprocessors and microcontrollers
+    group: electives-embed
+    units:
+      - id: 01-8085-architecture-timing
+        title: 8085 architecture, timing, interrupts
+      - id: 02-interfacing-8051-intro
+        title: Memory/IO interfacing, 8051 intro
+  dsp:
+    path: ug-ee/electives/dsp
+    title: Digital signal processing
+    group: electives-embed
+    units:
+      - id: 01-dft-fft-filters
+        title: DFT/FFT, FIR/IIR design intro
+      - id: 02-multirate-finite-wordlength
+        title: Decimation, quantization effects
+  communication-eee:
+    path: ug-ee/electives/communication-eee
+    title: Communication systems for EEE
+    group: electives-embed
+    units:
+      - id: 01-analog-modulation
+        title: AM, DSB, SSB, FM, SNR intro
+      - id: 02-digital-pcm-line-codes
+        title: Sampling, PCM, line codes, ISI intro
+  plc-industrial:
+    path: ug-ee/electives/plc-industrial
+    title: PLC and industrial automation (UG)
+    group: electives-embed
+    units:
+      - id: 01-ladder-scan-cycle
+        title: Scan cycle, ladder, timers/counters
+      - id: 02-sensors-actuators-ug
+        title: Digital/analog IO, interlocks (study-level)

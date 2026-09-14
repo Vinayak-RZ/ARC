@@ -177,3 +177,38 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 - **Consequences:** B* makers must not write outside those globs. No H5 Python orchestrator. No new DB.
 - **Alternatives:** HTTP MCP this graph (rejected — Later); Next.js SSR (rejected — keep Vite CSR); extra MCP tools per provider (rejected — FR17).
 - **Sources:** `docs/ARCHITECTURE.md` §0–§2; `docs/PRODUCT.md`; `LOOP_GRAPH.md`
+
+---
+
+## ADR-0014 — UG EE knowledge corpus layout (not RAG)
+
+- **Status:** accepted (this graph)
+- **Context:** Maintainers need a licence-clean, nested teaching corpus for later retrieval. ADR-0002 already forbids commercial book bytes in git and keeps BYO RAG on the student machine. Dumping notes into `research/` or auto-ingesting into the RAG facade would mix product ingest with authorial handbooks.
+
+### Trust
+
+- Git may hold original pedagogical text and SPDX-clean CC BY / CC BY-SA / CC0 files only.
+- No commercial textbooks, no third-party exam PDFs, no NC licences (`CC-BY-NC`).
+- This tree is untrusted as a number authority: it does not mint checked ohms; `unchecked` and providers stay in the kernel.
+- No auth, no secrets, no product cloud.
+
+### Fail closed
+
+- `oer/` file without `SPDX-License-Identifier: CC-BY-4.0` or `CC-BY-SA-4.0` or `CC0-1.0` → checker fail
+- NC or commercial-book verbatim markers → checker fail
+- Missing COVERAGE unit path → checker fail
+- Stub unit (under word/question floors) → checker fail unless `--allow-empty` (scaffold only)
+
+### Decision
+
+**Layout:** `knowledge/ug-ee/<pack>/<unit>/{notes,questions,sources}.md` plus optional `oer/`. Manifest `knowledge/COVERAGE.yaml` is checker truth. Run: `python scripts/check_knowledge_tree.py`.
+
+**Not wired to RAG.** `electrical-engineer rag add` is not pointed at `knowledge/` this graph.
+
+**Exam items:** original reconstructions (exam-*style*). Never GATE or university paper text.
+
+**D19 graph:** archived at `docs/planning/LOOP_GRAPH_D19.md`; this graph’s loop plans live in `plans/knowledge-loops/`.
+
+- **Consequences:** Pack makers write only their glob. Retrieval is a later graph. Product `src/` stays untouched.
+- **Alternatives:** Link-only syllabus map (rejected — owner chose original+CC-BY); store under `.electrical-engineer/corpus/` (rejected — that path is gitignored BYO); auto-ingest into LightRAG (rejected — Later).
+- **Sources:** `docs/planning/GATE_0_UG_EE_KNOWLEDGE.md`; `knowledge/PRODUCT.md`; `research/notes/ee-corpus-and-licensing.md`; constitution V
