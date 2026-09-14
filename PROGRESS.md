@@ -24,7 +24,7 @@ Live status. Research phase completed on `cursor/ee-research-phase-7e0c`. Produc
 | Harness persist/observe/spawn | **Proposed D20** | named memory, `observation.json`, kernel hooks, `hosts/adapters/` |
 | Product execution plan | **H1 complete; D19/D20 complete (archived)** | D19 archive [`docs/planning/LOOP_GRAPH_D19.md`](docs/planning/LOOP_GRAPH_D19.md); H1 [`EXECUTION_GRAPH.md`](EXECUTION_GRAPH.md) |
 | UG EE knowledge corpus | **archived** | [`docs/planning/LOOP_GRAPH_KNOWLEDGE.md`](docs/planning/LOOP_GRAPH_KNOWLEDGE.md) |
-| Pack skills + MATLAB MCP | **live graph-of-loops — wave 3** | B_PACKS/B_MATLAB/U1 passed; [`LOOP_GRAPH.md`](LOOP_GRAPH.md) |
+| Pack skills + MATLAB MCP | **complete (H1)** | [`LOOP_GRAPH.md`](LOOP_GRAPH.md); branch `cursor/ee-skills-matlab-mcp-37b3` |
 | UI design lock | **closed** | DESIGN-coinbase; ADR-0008 accepted |
 | Validator | PASS | `./scripts/research/validate-research.sh --full` |
 
@@ -64,4 +64,4 @@ Architecture: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (Accepted A1 + **Pr
 ADRs: [`DECISIONS.md`](DECISIONS.md) (ADR-0010, ADR-0011 proposed)  
 Curriculum: [`docs/curriculum-map.md`](docs/curriculum-map.md)
 
-**Next:** wave 2 — B_PACKS ∥ B_MATLAB ∥ U1. Resume at first non-`passed` node.
+**Next:** none on this graph. PR `cursor/ee-skills-matlab-mcp-37b3`.

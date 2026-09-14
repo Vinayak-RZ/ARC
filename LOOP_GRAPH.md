@@ -23,7 +23,7 @@
 | **Graph-engineering** | not loaded (XOR) |
 | **Branch** | `cursor/ee-skills-matlab-mcp-37b3` |
 | **Cheap checker** | `composer-2.5-fast` else `inherit` |
-| **Wave status** | 4 looping |
+| **Wave status** | 8 done |
 
 ---
 
@@ -39,12 +39,12 @@
 | B_PACKS | skills and adapters | [plans/skills-matlab-loops/B_PACKS.md](plans/skills-matlab-loops/B_PACKS.md) | pytest host_adapters + pack_skills | 3 | passed |
 | B_MATLAB | MATLAB MCP client | [plans/skills-matlab-loops/B_MATLAB.md](plans/skills-matlab-loops/B_MATLAB.md) | pytest matlab_mcp + sim_seams | 3 | passed |
 | M1 | integrate | [plans/skills-matlab-loops/M1.md](plans/skills-matlab-loops/M1.md) | pytest test_host_docs | 3 | passed |
-| E1 | evaluate | [plans/skills-matlab-loops/E1.md](plans/skills-matlab-loops/E1.md) | ./scripts/validate.sh | 3 | pending |
-| R1 | boot | [plans/skills-matlab-loops/R1.md](plans/skills-matlab-loops/R1.md) | R1_BOOT.md names commands | 3 | pending |
-| T1 | kernel and host trials | [plans/skills-matlab-loops/T1.md](plans/skills-matlab-loops/T1.md) | T1_HOST ≥10 pack rows | 3 | pending |
-| U_POLISH | impeccable UI | [plans/skills-matlab-loops/U_POLISH.md](plans/skills-matlab-loops/U_POLISH.md) | a11y + U_CRITIQUE changelog | 3 | pending |
-| D1 | docs-out | [plans/skills-matlab-loops/D1.md](plans/skills-matlab-loops/D1.md) | README hosts install + MATLAB | 3 | pending |
-| H1 | whole-tree harden | [plans/skills-matlab-loops/H1.md](plans/skills-matlab-loops/H1.md) | validate.sh + ponytail Findings | 3 | pending |
+| E1 | evaluate | [plans/skills-matlab-loops/E1.md](plans/skills-matlab-loops/E1.md) | ./scripts/validate.sh | 3 | passed |
+| R1 | boot | [plans/skills-matlab-loops/R1.md](plans/skills-matlab-loops/R1.md) | R1_BOOT.md names commands | 3 | passed |
+| T1 | kernel and host trials | [plans/skills-matlab-loops/T1.md](plans/skills-matlab-loops/T1.md) | T1_HOST ≥10 pack rows | 3 | passed |
+| U_POLISH | impeccable UI | [plans/skills-matlab-loops/U_POLISH.md](plans/skills-matlab-loops/U_POLISH.md) | a11y + U_CRITIQUE changelog | 3 | passed |
+| D1 | docs-out | [plans/skills-matlab-loops/D1.md](plans/skills-matlab-loops/D1.md) | README hosts install + MATLAB | 3 | passed |
+| H1 | whole-tree harden | [plans/skills-matlab-loops/H1.md](plans/skills-matlab-loops/H1.md) | validate.sh + ponytail Findings | 3 | passed |
 
 State: `plans/skills-matlab-loops/<id>.state.json`.
 

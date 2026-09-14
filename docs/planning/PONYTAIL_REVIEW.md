@@ -13,3 +13,22 @@ Readonly over-engineering review of `cursor/d19-loop-graph-572f` vs H1 freeze. C
 P0-blocking for M1: none. Public bind export is the integrate seam, not a deletion.
 
 `net: ~40 lines possible.`
+
+---
+
+# Ponytail review — skills / MATLAB graph
+
+Scope: `cursor/ee-skills-matlab-mcp-37b3` vs `main`. Complexity only.
+
+## Findings
+
+- `src/electrical_engineer/matlab_mcp.py`: keep NDJSON stdio. Do not add the `mcp` PyPI SDK (stdlib `json` + `subprocess` is the stop).
+- `src/electrical_engineer/hosts_install.py`: keep one body + per-pack files. Do not grow a Python specialist runtime.
+- `tests/fixtures/fake_matlab_mcp.py`: keep. A live MATLAB binary is not a CI dep.
+- `skills/<pack>/SKILL.md` retrieve scaffold: keep headings empty. Do not dump `knowledge/` chapters into skills.
+
+No extra abstraction to delete this pass. HINTS in `hosts_install.py` exist so Task pickers see pack keywords.
+
+Lean already. Ship.
+
+net: -0 lines possible without dropping a Gate 0 requirement.
