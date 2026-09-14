@@ -53,3 +53,26 @@ def write_export(run_dir: Path, dest: Path | None = None) -> Path:
     out = Path(dest) if dest else Path(run_dir) / "unagent_custom.json"
     out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     return out
+
+
+def to_unagent_events(events: list[dict[str, Any]], *, recipe_id: str | None = None) -> dict[str, Any]:
+    """House JSON ``{events:[...]}`` for Unagent ``--adapter custom``.
+
+    Honest ``unchecked`` is **not** a hard error. Only explicit ``ok is False``
+    counts as ``error`` (I2 — Improveness/Unagent export hygiene).
+    """
+    out_events: list[dict[str, Any]] = []
+    for ev in events:
+        attrs = ev.get("attrs") or {}
+        hard_error = attrs.get("ok") is False
+        out_events.append(
+            {
+                "name": ev.get("name"),
+                "node": attrs.get("node_id") or attrs.get("activity") or ev.get("name"),
+                "op": "execute_tool" if str(ev.get("name") or "").startswith("node.") else "invoke_workflow",
+                "input": {"recipe_id": attrs.get("recipe_id") or recipe_id},
+                "output": {"ok": attrs.get("ok"), "unchecked": attrs.get("unchecked")},
+                "error": hard_error,
+            }
+        )
+    return {"events": out_events}

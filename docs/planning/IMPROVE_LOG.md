@@ -8,6 +8,10 @@
 - **Tests:** `tests/unit/test_unchecked_reason.py`
 - **Validate:** required after commit
 
-## I2 — (pending advisors)
+## I2 — Unagent export hygiene + advisor reports
 
-- Placeholder for Unagent FlipToDet / Improveness notes.
+- **Class:** advisor false “failure_rate” from treating `unchecked` as tool error
+- **Change:** `to_unagent_events()` — only `ok is False` sets `error`; Unagent run ABSTAINs on FlipToDet (tool-shaped kernel)
+- **Artifacts:** `artifacts/kernel-harden/unagent-report.md`, `improveness-notes.md`
+- **Improveness:** frozen physics / held-out / grader≠improver documented; no DeepSeek Harness mount
+

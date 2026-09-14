@@ -26,7 +26,7 @@
 | **Graph-of-loops** | named — live |
 | **Branch** | `cursor/ee-kernel-harden-trace-8db3` |
 | **Commit budget** | 40 (cap 42) |
-| **Wave status** | W0 in progress |
+| **Wave status** | W0–W7 done |
 
 ---
 

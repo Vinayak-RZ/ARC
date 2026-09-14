@@ -1,0 +1,171 @@
+{
+  "adapter": "custom",
+  "source": "electrical_engineer.trace_jsonl",
+  "schema_version": "1",
+  "spans": [
+    {
+      "id": "8fch-20260914T193937Z-1",
+      "trace_id": "8fch-20260914T193937Z",
+      "parent_id": null,
+      "name": "run.start",
+      "start_time_unix_nano": 1789414777060000000,
+      "duration_ms": null,
+      "attributes": {
+        "recipe_id": "review-circuit-solution"
+      }
+    },
+    {
+      "id": "8fch-20260914T193937Z-2",
+      "trace_id": "8fch-20260914T193937Z",
+      "parent_id": "8fch-20260914T193937Z-1",
+      "name": "node.start",
+      "start_time_unix_nano": 1789414777060000000,
+      "duration_ms": null,
+      "attributes": {
+        "node_id": "retrieve",
+        "activity": "",
+        "recipe_id": "review-circuit-solution"
+      }
+    },
+    {
+      "id": "8fch-20260914T193937Z-3",
+      "trace_id": "8fch-20260914T193937Z",
+      "parent_id": "8fch-20260914T193937Z-2",
+      "name": "node.end",
+      "start_time_unix_nano": 1789414777061000000,
+      "duration_ms": 0.5987320000713225,
+      "attributes": {
+        "node_id": "retrieve",
+        "activity": "",
+        "recipe_id": "review-circuit-solution",
+        "ok": false,
+        "unchecked": false
+      }
+    },
+    {
+      "id": "8fch-20260914T193937Z-4",
+      "trace_id": "8fch-20260914T193937Z",
+      "parent_id": "8fch-20260914T193937Z-1",
+      "name": "node.start",
+      "start_time_unix_nano": 1789414777061000000,
+      "duration_ms": null,
+      "attributes": {
+        "node_id": "solve",
+        "activity": "",
+        "recipe_id": "review-circuit-solution"
+      }
+    },
+    {
+      "id": "8fch-20260914T193937Z-5",
+      "trace_id": "8fch-20260914T193937Z",
+      "parent_id": "8fch-20260914T193937Z-4",
+      "name": "node.end",
+      "start_time_unix_nano": 1789414777062000000,
+      "duration_ms": 0.3082010002799507,
+      "attributes": {
+        "node_id": "solve",
+        "activity": "",
+        "recipe_id": "review-circuit-solution",
+        "ok": false,
+        "unchecked": true
+      }
+    },
+    {
+      "id": "8fch-20260914T193937Z-6",
+      "trace_id": "8fch-20260914T193937Z",
+      "parent_id": "8fch-20260914T193937Z-1",
+      "name": "node.start",
+      "start_time_unix_nano": 1789414777062000000,
+      "duration_ms": null,
+      "attributes": {
+        "node_id": "check",
+        "activity": "",
+        "recipe_id": "review-circuit-solution"
+      }
+    },
+    {
+      "id": "8fch-20260914T193937Z-7",
+      "trace_id": "8fch-20260914T193937Z",
+      "parent_id": "8fch-20260914T193937Z-6",
+      "name": "node.end",
+      "start_time_unix_nano": 1789414777062000000,
+      "duration_ms": 0.26595700001053046,
+      "attributes": {
+        "node_id": "check",
+        "activity": "",
+        "recipe_id": "review-circuit-solution",
+        "ok": false,
+        "unchecked": true
+      }
+    },
+    {
+      "id": "8fch-20260914T193937Z-8",
+      "trace_id": "8fch-20260914T193937Z",
+      "parent_id": "8fch-20260914T193937Z-1",
+      "name": "node.start",
+      "start_time_unix_nano": 1789414777063000000,
+      "duration_ms": null,
+      "attributes": {
+        "node_id": "label",
+        "activity": "",
+        "recipe_id": "review-circuit-solution"
+      }
+    },
+    {
+      "id": "8fch-20260914T193937Z-9",
+      "trace_id": "8fch-20260914T193937Z",
+      "parent_id": "8fch-20260914T193937Z-8",
+      "name": "node.end",
+      "start_time_unix_nano": 1789414777063000000,
+      "duration_ms": 0.19777799980147392,
+      "attributes": {
+        "node_id": "label",
+        "activity": "",
+        "recipe_id": "review-circuit-solution",
+        "ok": false,
+        "unchecked": true
+      }
+    },
+    {
+      "id": "8fch-20260914T193937Z-10",
+      "trace_id": "8fch-20260914T193937Z",
+      "parent_id": "8fch-20260914T193937Z-1",
+      "name": "node.start",
+      "start_time_unix_nano": 1789414777063000000,
+      "duration_ms": null,
+      "attributes": {
+        "node_id": "summary",
+        "activity": "",
+        "recipe_id": "review-circuit-solution"
+      }
+    },
+    {
+      "id": "8fch-20260914T193937Z-11",
+      "trace_id": "8fch-20260914T193937Z",
+      "parent_id": "8fch-20260914T193937Z-10",
+      "name": "node.end",
+      "start_time_unix_nano": 1789414777063000000,
+      "duration_ms": 0.19823299999188748,
+      "attributes": {
+        "node_id": "summary",
+        "activity": "",
+        "recipe_id": "review-circuit-solution",
+        "ok": false,
+        "unchecked": true
+      }
+    },
+    {
+      "id": "8fch-20260914T193937Z-12",
+      "trace_id": "8fch-20260914T193937Z",
+      "parent_id": "8fch-20260914T193937Z-1",
+      "name": "run.end",
+      "start_time_unix_nano": 1789414777064000000,
+      "duration_ms": null,
+      "attributes": {
+        "recipe_id": "review-circuit-solution",
+        "unchecked": true,
+        "unchecked_reason": "unmatched"
+      }
+    }
+  ]
+}

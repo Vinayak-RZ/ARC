@@ -63,6 +63,9 @@ Active execution overlay: [`docs/planning/PRODUCT_KERNEL_HARDEN.md`](planning/PR
 
 ## Honest holes
 
+- Observation `unchecked_reason` may be `labeled` when the label-unverified path produced an honest unchecked (kernel-harden graph).
+
+
 - Missing provider → exact token `unchecked` and `CD-NO-PROVIDER`
 - Missing YAML row → `CD-YAML-GAP`; use `propose_composition` of capability ids
 - Photo stub does not simulate
