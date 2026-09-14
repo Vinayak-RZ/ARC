@@ -1,6 +1,6 @@
-from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -14,7 +14,7 @@ def test_coverage_floors() -> None:
     assert r.returncode == 0
 
 
-def test_allow_empty_or_strict_tree() -> None:
+def test_strict_knowledge_tree() -> None:
     r = subprocess.run(
         [sys.executable, str(ROOT / "scripts" / "check_knowledge_tree.py")],
         cwd=ROOT,
@@ -22,18 +22,9 @@ def test_allow_empty_or_strict_tree() -> None:
         capture_output=True,
         text=True,
     )
-    if r.returncode != 0:
-        r2 = subprocess.run(
-            [
-                sys.executable,
-                str(ROOT / "scripts" / "check_knowledge_tree.py"),
-                "--allow-empty",
-            ],
-            cwd=ROOT,
-            check=False,
-            capture_output=True,
-            text=True,
-        )
-        assert r2.returncode == 0, r2.stderr
-    else:
-        assert "units=" in r.stdout
+    assert r.returncode == 0, r.stderr
+    assert "units=" in r.stdout
+
+
+def test_glossary_exists() -> None:
+    assert (ROOT / "knowledge" / "GLOSSARY.md").is_file()

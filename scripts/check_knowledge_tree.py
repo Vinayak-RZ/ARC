@@ -25,7 +25,7 @@ FORBIDDEN = (
     "BEGIN COMMERCIAL TEXTBOOK DUMP",
     "GATE EE previous year paper verbatim",
 )
-Q_RE = re.compile(r"^## Q(\d+)\s*$", re.M)
+Q_RE = re.compile(r"^## Q(\d+)\s*$", re.MULTILINE)
 
 
 def load_coverage() -> dict:

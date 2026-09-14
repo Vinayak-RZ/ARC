@@ -94,6 +94,8 @@ Put a `problem.json` in the working directory for numeric tasks (see `eval/gold/
 
 If you are an agent reading this: load [`skills/SKILL.md`](skills/SKILL.md), then [`docs/hosts/README.md`](docs/hosts/README.md). Do not invent a kind of check. Do not present a fluent number as verified.
 
+Maintainers compiling UG method notes (not the RAG index): [`knowledge/README.md`](knowledge/README.md). Inventory: `python scripts/check_knowledge_tree.py`.
+
 The workspace is `electrical-engineer ui` on **127.0.0.1:8765** only.
 
 ## How it works
