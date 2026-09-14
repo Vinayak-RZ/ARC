@@ -106,13 +106,95 @@ body { margin: 0; background: var(--ee-color-canvas); }
 .lab-surface {
   display: flex;
   gap: var(--ee-space-m);
-  min-height: 120px;
+  min-height: 360px;
   border: 1px solid var(--ee-color-hairline);
   border-radius: 12px;
   background: var(--ee-color-canvas);
   padding: var(--ee-space-m);
 }
-.inspector { min-width: 200px; }
+.canvas-lab {
+  display: flex;
+  flex: 1;
+  gap: var(--ee-space-m);
+  min-width: 0;
+  flex-wrap: wrap;
+}
+.palette {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ee-space-s);
+  min-width: 120px;
+}
+.palette-btn {
+  min-height: 44px;
+  border: 1px solid var(--ee-color-hairline);
+  border-radius: 12px;
+  background: var(--ee-color-surface-soft);
+  color: var(--ee-color-ink);
+  font: inherit;
+  cursor: pointer;
+  padding: 0 12px;
+}
+.palette-btn:focus-visible, .button-secondary:focus-visible, .field input:focus-visible {
+  outline: 2px solid var(--ee-color-primary);
+  outline-offset: 2px;
+}
+.flow-wrap {
+  flex: 1;
+  min-width: 200px;
+  min-height: 280px;
+}
+.flow-wrap .react-flow { height: 320px; width: 100%; }
+.part-node {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: var(--ee-color-canvas);
+  border: 1px solid var(--ee-color-hairline);
+  border-radius: 8px;
+  color: var(--ee-color-ink);
+  font-size: var(--ee-type-caption);
+}
+.part-node.is-selected {
+  outline: 2px solid var(--ee-color-primary);
+}
+.inspector {
+  min-width: 200px;
+  max-width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ee-space-s);
+}
+.inspector h2 { margin: 0; font-size: var(--ee-type-title); font-weight: 500; }
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: var(--ee-type-caption);
+  color: var(--ee-color-ink);
+}
+.field input {
+  min-height: 44px;
+  border: 1px solid var(--ee-color-hairline);
+  border-radius: 8px;
+  padding: 0 10px;
+  font: inherit;
+}
+.button-secondary {
+  min-height: 44px;
+  border-radius: var(--ee-radius-pill);
+  border: 1px solid var(--ee-color-hairline);
+  background: var(--ee-color-canvas);
+  color: var(--ee-color-ink);
+  padding: 0 20px;
+  font: inherit;
+  cursor: pointer;
+}
+.button-primary:disabled {
+  background: var(--ee-color-primary-disabled);
+  cursor: not-allowed;
+}
 .canvas-hint { margin: 0; }
 .result-strip {
   display: flex;

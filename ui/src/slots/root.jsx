@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { register, renderSlot } from "./registry.js";
-import { useLayout } from "../store.js";
+import { Canvas } from "./canvas/Canvas.jsx";
+import { Inspector } from "./canvas/Inspector.jsx";
 
 function Root() {
   return (
@@ -105,7 +106,6 @@ function Workspace() {
       </div>
       {renderSlot("run.argument", { id })}
       {renderSlot("run.more", { id })}
-      {renderSlot("photo.confirm", { id })}
     </div>
   );
 }
@@ -168,16 +168,12 @@ function Result({ id }) {
   );
 }
 
-function CanvasStub() {
-  return (
-    <p className="hint canvas-hint">
-      Place parts from the palette. Confirm writes topology. It does not simulate.
-    </p>
-  );
+function CanvasStub({ id }) {
+  return <Canvas id={id} />;
 }
 
-function InspectorStub() {
-  return <aside className="inspector" aria-label="Inspector" />;
+function InspectorSlot() {
+  return <Inspector />;
 }
 
 function Argument({ id }) {
@@ -223,36 +219,15 @@ function More({ id }) {
   );
 }
 
-function PhotoConfirm({ id }) {
-  const { data } = useRun(id);
-  const [msg, setMsg] = useState("");
-  const waiting = data?.state === "waiting-human";
-  return (
-    <section className="confirm-row">
-      {waiting ? <p className="hint">Waiting for topology confirm</p> : null}
-      <button
-        className="button-primary"
-        type="button"
-        aria-label="Confirm topology"
-        onClick={() =>
-          fetch(`/api/runs/${id}/confirm`, { method: "POST" })
-            .then((r) => r.json())
-            .then((d) => setMsg(JSON.stringify(d)))
-        }
-      >
-        Confirm topology
-      </button>
-      {msg ? <pre className="number-display">{msg}</pre> : null}
-    </section>
-  );
-}
-
 register("root", Root);
 register("sidebar", Sidebar);
 register("workspace", Workspace);
 register("run.result", Result);
 register("run.canvas", CanvasStub);
-register("run.inspector", InspectorStub);
+register("run.inspector", InspectorSlot);
 register("run.argument", Argument);
 register("run.more", More);
-register("photo.confirm", PhotoConfirm);
+register("photo.confirm", function PhotoConfirm() {
+  return null;
+});
+

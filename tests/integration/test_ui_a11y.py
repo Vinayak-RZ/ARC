@@ -13,7 +13,12 @@ def test_skip_link_and_no_wan() -> None:
     assert 'String(summary).includes("unchecked")' not in root
     assert "run.result" in root
     assert "run.canvas" in root
-    assert "Confirm topology" in root
+    canvas = Path("ui/src/slots/canvas/Canvas.jsx").read_text(encoding="utf-8")
+    inspector = Path("ui/src/slots/canvas/Inspector.jsx").read_text(encoding="utf-8")
+    assert "Confirm topology" in canvas
+    assert "Save graph" in canvas
+    assert ">Refdes<" in inspector.replace(" ", "") or "Refdes" in inspector
+    assert "palette-btn" in Path("ui/src/slots/canvas/Palette.jsx").read_text(encoding="utf-8")
     assert "Waiting for topology confirm" in root
     assert "waiting-human" in root
     assert 'alt="Arc"' in root
