@@ -10,7 +10,7 @@ Finish and understand a UG EE assignment: method, a verified number or an unveri
 
 ## Done looks like
 
-`electrical-engineer --help`; `electrical-engineer run simulate-circuit`; omitted-id classifier; `electrical-engineer mcp` `tools/list` shows 5–7 verbs including `propose_composition`; `electrical-engineer ui` on `127.0.0.1` shows evidentiary + argument; a non-circuits pack question takes a capability path or `unchecked` without auto-SPICE.
+`electrical-engineer --help`; `electrical-engineer run simulate-circuit`; omitted-id classifier; `electrical-engineer mcp` `tools/list` shows 5–7 verbs including `propose_composition` and **no MATLAB tools**; `electrical-engineer ui` on `127.0.0.1` shows evidentiary + argument; a non-circuits pack question takes a capability path or `unchecked` without auto-SPICE; host can spawn at most two pack specialists from homework adapters.
 
 ## P0 (this graph)
 
@@ -24,6 +24,10 @@ Finish and understand a UG EE assignment: method, a verified number or an unveri
 - Document ChatGPT desktop against the live verbs
 - Keep photo confirm-then-stop
 - Show empty, error, and waiting-human UI states without minting numbers
+- Knowledge-link 10 core packs + maths + `_cross` (no electives); retrieve heading scaffold stays empty
+- Host-native specialists: `electrical-engineer hosts install` into the **homework** Cursor/Codex/Claude agent dirs; never this product repo’s coding `.cursor/`
+- Arc mediates MATLAB MCP: kernel stdio client behind `run-matlab-if-present`; host talks only to Arc; product and CI work with zero MATLAB
+- Host-harness trials across cores; UI MATLAB chip honesty; impeccable critique without `teach`; whole-tree harden
 
 ## Later (not this graph)
 
@@ -32,7 +36,9 @@ Finish and understand a UG EE assignment: method, a verified number or an unveri
 - C5 simulate-after-confirm
 - Large gold bank
 - PyPI publish
-- Arc mediates MATLAB MCP and other agents so the assistant does not ingest a huge tool list
+- Real retrieval over `knowledge/`
+- Simulink Agentic Toolkit
+- Electives as first-class packs
 
 ## Non-goals
 
@@ -44,6 +50,9 @@ Finish and understand a UG EE assignment: method, a verified number or an unveri
 - Shipping copyrighted textbooks in git
 - Inventing capability or provider ids
 - Replacing DESIGN-coinbase
+- Host-attached MATLAB MCP as the recommended path
+- EE pack agents inside this product’s `.cursor/agents/`
+- Storing MathWorks passwords
 
 ## Honest holes
 
@@ -52,3 +61,4 @@ Finish and understand a UG EE assignment: method, a verified number or an unveri
 - Photo stub does not simulate
 - Peer MATLAB / Copilot scalars stay `unchecked` until an EE provider recomputes them
 - Gold depth stays circuits-first; other packs may legally pass as `unchecked`
+- Retrieve scaffold is empty this graph: call it; a miss is visible; do not dump `knowledge/`
