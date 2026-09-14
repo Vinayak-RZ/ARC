@@ -4,10 +4,15 @@
   "recipe_id": "explain-em",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "State the boundary conditions on E and H at a perfect conductor.",
     "variant": 1,
     "n": 90
   },
   "host_path": "cli",
-  "notes": "auto scenario 90"
+  "notes": "auto scenario 90",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

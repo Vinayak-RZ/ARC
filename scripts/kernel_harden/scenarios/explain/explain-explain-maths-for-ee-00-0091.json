@@ -4,10 +4,15 @@
   "recipe_id": "explain-maths-for-ee",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Expand a periodic ramp as a Fourier series and state its convergence.",
     "variant": 0,
     "n": 91
   },
   "host_path": "cli",
-  "notes": "auto scenario 91"
+  "notes": "auto scenario 91",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

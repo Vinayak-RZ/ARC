@@ -4,10 +4,15 @@
   "recipe_id": "explain-power",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Give the symmetrical-component decomposition of an unbalanced three-phase set.",
     "variant": 1,
     "n": 86
   },
   "host_path": "cli",
-  "notes": "auto scenario 86"
+  "notes": "auto scenario 86",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

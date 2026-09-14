@@ -4,10 +4,15 @@
   "recipe_id": "explain-machines",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Explain the no-load and blocked-rotor tests and what each parameter gives.",
     "variant": 0,
     "n": 29
   },
   "host_path": "cli",
-  "notes": "auto scenario 29"
+  "notes": "auto scenario 29",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

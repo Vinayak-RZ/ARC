@@ -4,10 +4,15 @@
   "recipe_id": "explain-maths-for-ee",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Diagonalise a 2x2 matrix with distinct eigenvalues and say when you cannot.",
     "variant": 1,
     "n": 34
   },
   "host_path": "cli",
-  "notes": "auto scenario 34"
+  "notes": "auto scenario 34",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

@@ -4,10 +4,15 @@
   "recipe_id": "explain-machines",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "State the torque-speed shape of a DC shunt motor and why it is nearly flat.",
     "variant": 1,
     "n": 30
   },
   "host_path": "cli",
-  "notes": "auto scenario 30"
+  "notes": "auto scenario 30",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

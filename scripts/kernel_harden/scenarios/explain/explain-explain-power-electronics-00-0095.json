@@ -4,10 +4,15 @@
   "recipe_id": "explain-power-electronics",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Explain why a diode bridge draws non-sinusoidal current from the mains.",
     "variant": 0,
     "n": 95
   },
   "host_path": "cli",
-  "notes": "auto scenario 95"
+  "notes": "auto scenario 95",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

@@ -4,10 +4,15 @@
   "recipe_id": "explain-power",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Explain per-unit normalisation and why it simplifies transformer studies.",
     "variant": 0,
     "n": 85
   },
   "host_path": "cli",
-  "notes": "auto scenario 85"
+  "notes": "auto scenario 85",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

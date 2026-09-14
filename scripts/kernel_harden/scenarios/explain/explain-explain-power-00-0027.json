@@ -4,10 +4,15 @@
   "recipe_id": "explain-power",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "State why series capacitors raise the power factor of an inductive feeder.",
     "variant": 0,
     "n": 27
   },
   "host_path": "cli",
-  "notes": "auto scenario 27"
+  "notes": "auto scenario 27",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

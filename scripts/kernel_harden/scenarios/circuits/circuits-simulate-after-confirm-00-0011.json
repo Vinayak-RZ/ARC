@@ -4,10 +4,16 @@
   "recipe_id": "simulate-after-confirm",
   "category": "circuits",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Find the Thevenin equivalent seen by the load in a two-resistor bridge leg.",
     "variant": 0,
-    "n": 11
+    "n": 11,
+    "cir": "* divider\nV1 in 0 10\nR1 in out 1k\nR2 out 0 1k\n.op\n.end\n"
   },
   "host_path": "cli",
-  "notes": "auto scenario 11"
+  "notes": "auto scenario 11",
+  "expect": {
+    "unchecked": true,
+    "reason": "gate-closed",
+    "requires": []
+  }
 }

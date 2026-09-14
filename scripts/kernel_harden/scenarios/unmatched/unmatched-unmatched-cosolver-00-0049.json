@@ -4,10 +4,15 @@
   "recipe_id": "unmatched-cosolver",
   "category": "unmatched",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Produce a tape-out-ready analogue layout with DRC sign-off for 7 nm.",
     "variant": 0,
     "n": 49
   },
   "host_path": "cli",
-  "notes": "auto scenario 49"
+  "notes": "auto scenario 49",
+  "expect": {
+    "unchecked": true,
+    "reason": "unmatched",
+    "requires": []
+  }
 }

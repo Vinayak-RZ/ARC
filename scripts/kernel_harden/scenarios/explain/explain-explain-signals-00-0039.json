@@ -4,10 +4,15 @@
   "recipe_id": "explain-signals",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Explain the difference between the DTFT and the DFT for a finite record.",
     "variant": 0,
     "n": 39
   },
   "host_path": "cli",
-  "notes": "auto scenario 39"
+  "notes": "auto scenario 39",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

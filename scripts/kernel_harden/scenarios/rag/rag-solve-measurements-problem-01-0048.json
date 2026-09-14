@@ -4,10 +4,15 @@
   "recipe_id": "solve-measurements-problem",
   "category": "rag",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "A 4.5-digit DMM reads 2.0000 V with +/-(0.02% + 3 counts). Give the uncertainty.",
     "variant": 1,
     "n": 48
   },
   "host_path": "cli",
-  "notes": "auto scenario 48"
+  "notes": "auto scenario 48",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

@@ -4,10 +4,15 @@
   "recipe_id": "derive-circuit",
   "category": "circuits",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "State KVL and KCL and show where each applies in a single-loop RL circuit.",
     "variant": 1,
     "n": 10
   },
   "host_path": "cli",
-  "notes": "auto scenario 10"
+  "notes": "auto scenario 10",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

@@ -9,8 +9,17 @@
     "r1": 2000,
     "r2": 2000,
     "variant": 0,
-    "n": 3
+    "n": 3,
+    "prompt": "Find the Thevenin equivalent seen by the load in a two-resistor bridge leg.",
+    "cir": "* divider\nV1 in 0 10\nR1 in out 1k\nR2 out 0 1k\n.op\n.end\n"
   },
   "host_path": "cli",
-  "notes": "auto scenario 3"
+  "notes": "auto scenario 3",
+  "expect": {
+    "unchecked": true,
+    "reason": "no-provider",
+    "requires": [
+      "run-spice"
+    ]
+  }
 }

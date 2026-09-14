@@ -4,10 +4,15 @@
   "recipe_id": "review-circuit-solution",
   "category": "circuits",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Use nodal analysis on a two-node resistive network and name the reference node.",
     "variant": 0,
     "n": 65
   },
   "host_path": "cli",
-  "notes": "auto scenario 65"
+  "notes": "auto scenario 65",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

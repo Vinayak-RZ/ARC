@@ -9,8 +9,17 @@
     "r1": 2000,
     "r2": 2000,
     "variant": 1,
-    "n": 120
+    "n": 120,
+    "prompt": "Find Vout of a 10 V source across a 1k-1k divider and state the assumption.",
+    "cir": "* divider\nV1 in 0 10\nR1 in out 1k\nR2 out 0 1k\n.op\n.end\n"
   },
   "host_path": "cli",
-  "notes": "auto scenario 120"
+  "notes": "auto scenario 120",
+  "expect": {
+    "unchecked": true,
+    "reason": "no-provider",
+    "requires": [
+      "run-spice"
+    ]
+  }
 }

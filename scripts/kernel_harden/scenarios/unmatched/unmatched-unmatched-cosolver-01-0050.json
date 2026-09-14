@@ -4,10 +4,15 @@
   "recipe_id": "unmatched-cosolver",
   "category": "unmatched",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Give the graded exam answer that my professor will accept without review.",
     "variant": 1,
     "n": 50
   },
   "host_path": "cli",
-  "notes": "auto scenario 50"
+  "notes": "auto scenario 50",
+  "expect": {
+    "unchecked": true,
+    "reason": "unmatched",
+    "requires": []
+  }
 }

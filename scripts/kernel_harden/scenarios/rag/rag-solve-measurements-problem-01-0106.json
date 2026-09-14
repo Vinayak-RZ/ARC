@@ -4,10 +4,15 @@
   "recipe_id": "solve-measurements-problem",
   "category": "rag",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Give the bandwidth needed to see the rise time of a 1 us pulse on a scope.",
     "variant": 1,
     "n": 106
   },
   "host_path": "cli",
-  "notes": "auto scenario 106"
+  "notes": "auto scenario 106",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

@@ -13,5 +13,10 @@
     "n": 60
   },
   "host_path": "cli",
-  "notes": "auto scenario 60"
+  "notes": "auto scenario 60",
+  "expect": {
+    "unchecked": false,
+    "reason": null,
+    "requires": []
+  }
 }

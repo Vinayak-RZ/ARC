@@ -4,10 +4,15 @@
   "recipe_id": "explain-circuits",
   "category": "circuits",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Find Vout of a 10 V source across a 1k-1k divider and state the assumption.",
     "variant": 1,
     "n": 64
   },
   "host_path": "cli",
-  "notes": "auto scenario 64"
+  "notes": "auto scenario 64",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

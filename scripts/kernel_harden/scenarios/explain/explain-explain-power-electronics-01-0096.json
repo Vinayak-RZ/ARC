@@ -4,10 +4,15 @@
   "recipe_id": "explain-power-electronics",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Give the output voltage of a buck converter at 40% duty from 24 V input.",
     "variant": 1,
     "n": 96
   },
   "host_path": "cli",
-  "notes": "auto scenario 96"
+  "notes": "auto scenario 96",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

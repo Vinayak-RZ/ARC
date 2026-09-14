@@ -4,10 +4,15 @@
   "recipe_id": "explain-signals",
   "category": "signals",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Convolve a unit step with a one-sample delay and show the result.",
     "variant": 1,
     "n": 74
   },
   "host_path": "cli",
-  "notes": "auto scenario 74"
+  "notes": "auto scenario 74",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

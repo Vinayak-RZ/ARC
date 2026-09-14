@@ -4,10 +4,15 @@
   "recipe_id": "control-diagram-to-model",
   "category": "control",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Read this hand-drawn schematic photo and build the netlist.",
     "variant": 1,
     "n": 80
   },
   "host_path": "cli",
-  "notes": "auto scenario 80"
+  "notes": "auto scenario 80",
+  "expect": {
+    "unchecked": true,
+    "reason": "gate-closed",
+    "requires": []
+  }
 }

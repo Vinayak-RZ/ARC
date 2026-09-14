@@ -4,10 +4,15 @@
   "recipe_id": "solve-measurements-problem",
   "category": "rag",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "State how a shunt resistor turns an ammeter into a current-sense measurement.",
     "variant": 0,
     "n": 47
   },
   "host_path": "cli",
-  "notes": "auto scenario 47"
+  "notes": "auto scenario 47",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

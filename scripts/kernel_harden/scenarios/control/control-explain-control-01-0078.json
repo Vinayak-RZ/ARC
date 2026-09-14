@@ -4,10 +4,17 @@
   "recipe_id": "explain-control",
   "category": "control",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Explain why a pole at the origin forces zero steady-state error to a step.",
     "variant": 1,
     "n": 78
   },
   "host_path": "cli",
-  "notes": "auto scenario 78"
+  "notes": "auto scenario 78",
+  "expect": {
+    "unchecked": true,
+    "reason": "no-provider",
+    "requires": [
+      "run-python-control"
+    ]
+  }
 }

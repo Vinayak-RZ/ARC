@@ -4,10 +4,15 @@
   "recipe_id": "explain-signals",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Give the Fourier series coefficients of a 50% duty square wave.",
     "variant": 1,
     "n": 40
   },
   "host_path": "cli",
-  "notes": "auto scenario 40"
+  "notes": "auto scenario 40",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

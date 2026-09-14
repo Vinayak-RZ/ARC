@@ -4,10 +4,15 @@
   "recipe_id": "solve-maths-for-ee",
   "category": "rag",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Diagonalise a 2x2 matrix with distinct eigenvalues and say when you cannot.",
     "variant": 1,
     "n": 102
   },
   "host_path": "cli",
-  "notes": "auto scenario 102"
+  "notes": "auto scenario 102",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

@@ -4,10 +4,15 @@
   "recipe_id": "explain-signals",
   "category": "signals",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "State the Nyquist rate for a signal band-limited to 4 kHz and why aliasing folds.",
     "variant": 0,
     "n": 73
   },
   "host_path": "cli",
-  "notes": "auto scenario 73"
+  "notes": "auto scenario 73",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

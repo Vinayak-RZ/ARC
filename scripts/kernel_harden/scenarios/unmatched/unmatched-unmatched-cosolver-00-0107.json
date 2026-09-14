@@ -4,10 +4,15 @@
   "recipe_id": "unmatched-cosolver",
   "category": "unmatched",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Certify this machine as safe for human use under IEC 60601.",
     "variant": 0,
     "n": 107
   },
   "host_path": "cli",
-  "notes": "auto scenario 107"
+  "notes": "auto scenario 107",
+  "expect": {
+    "unchecked": true,
+    "reason": "unmatched",
+    "requires": []
+  }
 }

@@ -4,10 +4,15 @@
   "recipe_id": "explain-maths-for-ee",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Solve dy/dt + 2y = 0 with y(0) = 5 and identify the time constant.",
     "variant": 1,
     "n": 92
   },
   "host_path": "cli",
-  "notes": "auto scenario 92"
+  "notes": "auto scenario 92",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

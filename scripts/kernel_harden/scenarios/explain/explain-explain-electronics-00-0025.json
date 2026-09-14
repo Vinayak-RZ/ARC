@@ -4,10 +4,15 @@
   "recipe_id": "explain-electronics",
   "category": "explain",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "Explain the virtual short in an inverting op-amp and give the gain.",
     "variant": 0,
     "n": 25
   },
   "host_path": "cli",
-  "notes": "auto scenario 25"
+  "notes": "auto scenario 25",
+  "expect": {
+    "unchecked": true,
+    "reason": "labeled",
+    "requires": []
+  }
 }

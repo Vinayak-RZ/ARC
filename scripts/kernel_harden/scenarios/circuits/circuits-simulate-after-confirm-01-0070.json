@@ -4,10 +4,16 @@
   "recipe_id": "simulate-after-confirm",
   "category": "circuits",
   "problem": {
-    "prompt": "ug ee scenario",
+    "prompt": "State KVL and KCL and show where each applies in a single-loop RL circuit.",
     "variant": 1,
-    "n": 70
+    "n": 70,
+    "cir": "* divider\nV1 in 0 10\nR1 in out 1k\nR2 out 0 1k\n.op\n.end\n"
   },
   "host_path": "cli",
-  "notes": "auto scenario 70"
+  "notes": "auto scenario 70",
+  "expect": {
+    "unchecked": true,
+    "reason": "gate-closed",
+    "requires": []
+  }
 }
