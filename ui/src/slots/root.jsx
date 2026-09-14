@@ -19,6 +19,7 @@ function Root() {
           <span
             className="chip"
             title="Optional. Arc calls MATLAB MCP when the binary is installed. The coding assistant does not attach MATLAB MCP. Missing MATLAB stays unchecked. OSS simulators stay first-class."
+            aria-label="MATLAB optional via Arc"
           >
             MATLAB · via Arc
           </span>
@@ -96,7 +97,7 @@ function Sidebar() {
 function Workspace() {
   const id = useLayout((s) => s.currentRunId);
   if (!id) {
-    return <p className="empty">Select a run from the list.</p>;
+    return <p className="empty">No run selected. Open one from the list, or type electrical-engineer run simulate-circuit.</p>;
   }
   return (
     <div className="lab">

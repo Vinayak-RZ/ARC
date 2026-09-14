@@ -23,6 +23,7 @@ def test_skip_link_and_no_wan() -> None:
     assert "waiting-human" in root
     assert 'alt="Arc"' in root
     assert "MATLAB · via Arc" in root
+    assert 'aria-label="MATLAB optional via Arc"' in root
     assert "No saved runs yet" in root
     assert "electrical-engineer run" in root
     assert "named runs · exact token unchecked" not in root
