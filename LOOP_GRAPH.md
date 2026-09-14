@@ -3,7 +3,8 @@
 > **This is the plan you read.** Loop plans are separate files; every one
 > appears as a markdown link below.
 >
-> XOR: do not treat [`EXECUTION_GRAPH.md`](EXECUTION_GRAPH.md) as live.
+> XOR: do not treat [`EXECUTION_GRAPH.md`](EXECUTION_GRAPH.md) or
+> [`docs/planning/LOOP_GRAPH_D19.md`](docs/planning/LOOP_GRAPH_D19.md) as live.
 > Scope: [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md).
 
 ---
@@ -13,12 +14,12 @@
 | Field | Value |
 |-------|-------|
 | **Scope plan** | [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) |
-| **Objective** | Arc D19/D20 public promise: capability path for every pack, 5–7 ACI verbs, two-band UI, RAG ingest, proven by boot + trials + docs |
-| **Topology mix** | chain (P0–A1) + fan-out (B*) + diamond (V_PONY→M1) + tail (E1–H1) |
+| **Objective** | Licence-clean encyclopedic UG EE markdown corpus in `knowledge/`, proven by checker + inventory boot + trials + README |
+| **Topology mix** | chain (P0–B_SCAFFOLD) + fan-out (B_* packs) + diamond (M1) + tail (E1–D1) |
 | **Depth** | 2 |
 | **Graph-of-loops** | named — this graph is live |
 | **Graph-engineering** | not loaded (XOR) |
-| **Branch** | `cursor/d19-loop-graph-572f` |
+| **Branch** | `cursor/ug-ee-knowledge-corpus-0daa` |
 | **Cheap checker** | `composer-2.5-fast` else `inherit` |
 
 ---
@@ -27,28 +28,30 @@
 
 | ID | Name | Plan | Stop | Max rounds | Status |
 |----|------|------|------|------------|--------|
-| P0 | product lock | [plans/loops/P0.md](plans/loops/P0.md) | grep PRODUCT headings | 3 | passed |
-| D0 | docs-in | [plans/loops/D0.md](plans/loops/D0.md) | D0_GAPS + FR_TRACE | 3 | passed |
-| A1 | ADRs | [plans/loops/A1.md](plans/loops/A1.md) | ADR-0012 + trust | 3 | passed |
-| U1 | UX IA a11y | [plans/loops/U1.md](plans/loops/U1.md) | evidentiary/argument/WCAG/keyboard | 3 | passed |
-| B_KERNEL | capability kernel | [plans/loops/B_KERNEL.md](plans/loops/B_KERNEL.md) | pytest capabilities/composition/observation/fr9 | 3 | passed |
-| B_RAG | RAG ingest | [plans/loops/B_RAG.md](plans/loops/B_RAG.md) | pytest test_rag_ingest | 3 | passed |
-| B_HOST | host contract | [plans/loops/B_HOST.md](plans/loops/B_HOST.md) | pytest test_host_docs | 3 | passed |
-| B_ACI | MCP ACI | [plans/loops/B_ACI.md](plans/loops/B_ACI.md) | pytest mcp_aci + classifier + fail_closed | 3 | passed |
-| B_WF | attachments | [plans/loops/B_WF.md](plans/loops/B_WF.md) | unmatched + host_path tests | 3 | passed |
-| B_UI | two-band UI | [plans/loops/B_UI.md](plans/loops/B_UI.md) | slots + artifacts + bind + a11y | 3 | passed |
-| B_PACKS | pack coverage | [plans/loops/B_PACKS.md](plans/loops/B_PACKS.md) | pytest test_pack_coverage | 3 | passed |
-| V_PONY | ponytail-review | [plans/loops/V_PONY.md](plans/loops/V_PONY.md) | PONYTAIL_REVIEW.md Findings | 3 | passed |
-| M1 | integrate | [plans/loops/M1.md](plans/loops/M1.md) | pytest test_wiring | 3 | passed |
-| B_EVAL | gold FR9 | [plans/loops/B_EVAL.md](plans/loops/B_EVAL.md) | eval --pack circuits + scoring | 3 | passed |
-| E1 | evaluate | [plans/loops/E1.md](plans/loops/E1.md) | ./scripts/validate.sh | 3 | passed |
-| V_SEC | security | [plans/loops/V_SEC.md](plans/loops/V_SEC.md) | SECURITY_REVIEW.md 127.0.0.1 + secret | 3 | passed |
-| R1 | boot | [plans/loops/R1.md](plans/loops/R1.md) | R1_BOOT.md names electrical-engineer | 3 | passed |
-| T1 | trials | [plans/loops/T1.md](plans/loops/T1.md) | T1_TRIALS.md full queue | 3 | passed |
-| D1 | docs-out | [plans/loops/D1.md](plans/loops/D1.md) | README names boot command | 3 | passed |
-| H1 | harden | [plans/loops/H1.md](plans/loops/H1.md) | ./scripts/validate.sh | 3 | passed |
+| P0 | product lock | [plans/knowledge-loops/P0.md](plans/knowledge-loops/P0.md) | grep PRODUCT headings | 3 | passed |
+| D0 | coverage manifest | [plans/knowledge-loops/D0.md](plans/knowledge-loops/D0.md) | COVERAGE.yaml pack/unit floors | 3 | passed |
+| A1 | ADR-0014 | [plans/knowledge-loops/A1.md](plans/knowledge-loops/A1.md) | grep ADR-0014 | 3 | passed |
+| B_SCAFFOLD | schema and checker | [plans/knowledge-loops/B_SCAFFOLD.md](plans/knowledge-loops/B_SCAFFOLD.md) | check_knowledge_tree.py --allow-empty | 3 | passed |
+| B_CIRCUITS | circuits handbook | [plans/knowledge-loops/B_CIRCUITS.md](plans/knowledge-loops/B_CIRCUITS.md) | --pack circuits | 3 | passed |
+| B_SIGNALS | signals handbook | [plans/knowledge-loops/B_SIGNALS.md](plans/knowledge-loops/B_SIGNALS.md) | --pack signals | 3 | passed |
+| B_ELECTRONICS | electronics handbook | [plans/knowledge-loops/B_ELECTRONICS.md](plans/knowledge-loops/B_ELECTRONICS.md) | --pack electronics | 3 | passed |
+| B_MATHS | maths-for-EE | [plans/knowledge-loops/B_MATHS.md](plans/knowledge-loops/B_MATHS.md) | --pack maths | 3 | passed |
+| B_MACHINES | machines | [plans/knowledge-loops/B_MACHINES.md](plans/knowledge-loops/B_MACHINES.md) | --pack machines | 3 | passed |
+| B_POWER | power systems | [plans/knowledge-loops/B_POWER.md](plans/knowledge-loops/B_POWER.md) | --pack power | 3 | passed |
+| B_CONTROL | control | [plans/knowledge-loops/B_CONTROL.md](plans/knowledge-loops/B_CONTROL.md) | --pack control | 3 | passed |
+| B_PE | power electronics | [plans/knowledge-loops/B_PE.md](plans/knowledge-loops/B_PE.md) | --pack power-electronics | 3 | passed |
+| B_MEAS_EM | measurements + EM | [plans/knowledge-loops/B_MEAS_EM.md](plans/knowledge-loops/B_MEAS_EM.md) | --pack measurements and em | 3 | passed |
+| B_EL_POWER | power-side electives | [plans/knowledge-loops/B_EL_POWER.md](plans/knowledge-loops/B_EL_POWER.md) | --pack electives-power | 3 | passed |
+| B_EL_EMBED | embedded/comms electives | [plans/knowledge-loops/B_EL_EMBED.md](plans/knowledge-loops/B_EL_EMBED.md) | --pack electives-embed | 3 | passed |
+| M1 | cross-index | [plans/knowledge-loops/M1.md](plans/knowledge-loops/M1.md) | checker + GLOSSARY.md | 3 | passed |
+| E1 | evaluate | [plans/knowledge-loops/E1.md](plans/knowledge-loops/E1.md) | pytest test_knowledge_tree | 3 | passed |
+| R1 | inventory boot | [plans/knowledge-loops/R1.md](plans/knowledge-loops/R1.md) | R1_BOOT_KNOWLEDGE.md | 3 | passed |
+| T1 | trials | [plans/knowledge-loops/T1.md](plans/knowledge-loops/T1.md) | T1_TRIALS_KNOWLEDGE.md ≥5 pass | 3 | passed |
+| D1 | docs-out | [plans/knowledge-loops/D1.md](plans/knowledge-loops/D1.md) | README names checker | 3 | passed |
 
-State: `plans/loops/<id>.state.json`.
+State: `plans/knowledge-loops/<id>.state.json`.
+
+N/A: U1 (no user-facing UI), H1 (no new bind/secret surface; licence test is E1), deploy, auth, graph-engineering.
 
 ---
 
@@ -56,22 +59,18 @@ State: `plans/loops/<id>.state.json`.
 
 | Stage | Node id(s) | Plan |
 |-------|------------|------|
-| Research + questions | R0 | [GATE_0.md](docs/planning/GATE_0.md) — done |
-| Product lock | P0 | [P0](plans/loops/P0.md) |
-| Docs-in | D0 | [D0](plans/loops/D0.md) |
-| Architecture | A1 | [A1](plans/loops/A1.md) |
-| Design / UI UX | U1 | [U1](plans/loops/U1.md) |
-| Build | B_* | links above |
-| Review | V_PONY | [V_PONY](plans/loops/V_PONY.md) |
-| Integrate | M1 | [M1](plans/loops/M1.md) |
-| Evaluate | B_EVAL, E1 | links |
-| Security | V_SEC | [V_SEC](plans/loops/V_SEC.md) |
-| Run | R1 | [R1](plans/loops/R1.md) |
-| Trials | T1 | [T1](plans/loops/T1.md) |
-| Docs-out | D1 | [D1](plans/loops/D1.md) |
-| Harden | H1 | [H1](plans/loops/H1.md) |
-
-N/A: deploy, auth product, GSAP, Next.js, impeccable teach, graph-engineering.
+| Research + questions | R0 | [GATE_0_UG_EE_KNOWLEDGE.md](docs/planning/GATE_0_UG_EE_KNOWLEDGE.md) — done |
+| Product lock | P0 | [P0](plans/knowledge-loops/P0.md) |
+| Docs-in | D0 | [D0](plans/knowledge-loops/D0.md) |
+| Architecture | A1 | [A1](plans/knowledge-loops/A1.md) |
+| Design / UI UX | U1 | N/A — no user-facing UI this graph |
+| Build | B_SCAFFOLD, B_* | links above |
+| Integrate | M1 | [M1](plans/knowledge-loops/M1.md) |
+| Evaluate | E1 | [E1](plans/knowledge-loops/E1.md) |
+| Run | R1 | [R1](plans/knowledge-loops/R1.md) |
+| Trials | T1 | [T1](plans/knowledge-loops/T1.md) |
+| Docs-out | D1 | [D1](plans/knowledge-loops/D1.md) |
+| Harden | H1 | N/A — none this graph |
 
 ---
 
@@ -79,109 +78,100 @@ N/A: deploy, auth product, GSAP, Next.js, impeccable teach, graph-engineering.
 
 ```mermaid
 flowchart TB
-  P0[P0_product]
-  D0[D0_docs_FR]
-  A1[A1_adrs]
-  U1[U1_ux]
-  BK[B_KERNEL]
-  BR[B_RAG]
-  BH[B_HOST]
-  BA[B_ACI]
-  BW[B_WF]
-  BU[B_UI]
-  BP[B_PACKS]
-  VP[V_PONY]
-  M1[M1_integrate]
-  BE[B_EVAL]
-  E1[E1_validate]
-  VS[V_SEC]
-  R1[R1_boot]
-  T1[T1_trials]
-  D1[D1_docs]
-  H1[H1_harden]
-  P0 -->|"product_lock"| D0
-  D0 -->|"gap_list_fr_trace"| A1
-  A1 -->|"layout_aci"| U1
-  A1 -->|"layout_aci"| BK
-  A1 -->|"retrieve_port"| BR
-  A1 -->|"verb_names"| BH
-  BK -->|"capability_api"| BA
-  BK -->|"capability_ids"| BW
-  BK -->|"artifact_schema"| BU
-  U1 -->|"slot_and_state_map"| BU
-  BK -->|"id_list"| BP
-  BW -->|"attachment_ids"| BA
-  BA -->|"diff"| VP
-  BW -->|"diff"| VP
-  BU -->|"diff"| VP
-  BP -->|"diff"| VP
-  BK -->|"diff"| VP
-  BR -->|"diff"| VP
-  BH -->|"diff"| VP
-  VP -->|"findings"| M1
-  BA -->|"wired_verbs"| M1
-  BW -->|"recipes"| M1
-  BU -->|"ui_server"| M1
-  BP -->|"coverage"| M1
-  BR -->|"rag_facade"| M1
-  BH -->|"host_docs"| M1
-  M1 -->|"wired"| BE
-  M1 -->|"wired"| VS
-  BE -->|"gold"| E1
-  E1 -->|"suite"| R1
-  VS -->|"sec_note"| R1
-  R1 -->|"booted"| T1
-  T1 -->|"trial_log"| D1
-  T1 -->|"holes"| H1
-  D1 -->|"readme"| H1
+  P0[P0_product] --> D0[D0_coverage]
+  D0 --> A1[A1_ADR]
+  A1 --> Sc[B_SCAFFOLD]
+  Sc --> Ckt[B_CIRCUITS]
+  Sc --> Sig[B_SIGNALS]
+  Sc --> Elx[B_ELECTRONICS]
+  Sc --> Math[B_MATHS]
+  Sc --> Mac[B_MACHINES]
+  Sc --> Pwr[B_POWER]
+  Sc --> Ctrl[B_CONTROL]
+  Sc --> PE[B_PE]
+  Sc --> Meas[B_MEAS_EM]
+  Sc --> ElP[B_EL_POWER]
+  Sc --> ElE[B_EL_EMBED]
+  Ckt --> M1[M1_index]
+  Sig --> M1
+  Elx --> M1
+  Math --> M1
+  Mac --> M1
+  Pwr --> M1
+  Ctrl --> M1
+  PE --> M1
+  Meas --> M1
+  ElP --> M1
+  ElE --> M1
+  M1 --> E1[E1_checker]
+  E1 --> R1[R1_inventory]
+  R1 --> T1[T1_spotchecks]
+  T1 --> D1[D1_readme]
 ```
 
-**Edges cut:** UI does not wait on RAG; host docs wait on A1 verb names only; V_SEC does not wait on B_EVAL; D1 after T1.
+**Edges cut:** packs do not wait on each other; D1 after T1; no RAG node; no UI node.
+
+---
+
+## Nodes
+
+See loop-plans table. Maker inherit. Checker composer-2.5-fast else inherit. Max rounds 3. Write paths in each loop plan.
+
+---
+
+## Edges
+
+| From | To | Data name | Kind |
+|------|----|-----------|------|
+| P0 | D0 | product lock | verify |
+| D0 | A1 | COVERAGE.yaml | plumbing |
+| A1 | B_SCAFFOLD | ADR-0014 | plumbing |
+| B_SCAFFOLD | each B_* pack | schema+checker | verify |
+| all B_* | M1 | filled units | verify |
+| M1 | E1 | tree | verify |
+| E1 | R1 | pytest green | verify |
+| R1 | T1 | boot log | plumbing |
+| T1 | D1 | trial log | verify |
 
 ---
 
 ## Waves
 
-| Wave | Nodes | Fan-out? | Barrier? | Status |
-|------|-------|----------|----------|--------|
-| 0 | [P0](plans/loops/P0.md) | no | no | done |
-| 1 | [D0](plans/loops/D0.md) | no | no | done |
-| 2 | [A1](plans/loops/A1.md) | no | no | done |
-| 3 | [U1](plans/loops/U1.md), [B_KERNEL](plans/loops/B_KERNEL.md), [B_RAG](plans/loops/B_RAG.md), [B_HOST](plans/loops/B_HOST.md) | yes | no | done |
-| 4 | [B_ACI](plans/loops/B_ACI.md), [B_WF](plans/loops/B_WF.md), [B_UI](plans/loops/B_UI.md), [B_PACKS](plans/loops/B_PACKS.md) | yes | no | done |
-| 5 | [V_PONY](plans/loops/V_PONY.md) then [M1](plans/loops/M1.md) | no | yes after B* | done |
-| 6 | [B_EVAL](plans/loops/B_EVAL.md) | no | no | done |
-| 7 | [E1](plans/loops/E1.md), [V_SEC](plans/loops/V_SEC.md) | yes (disjoint) | no | done |
-| 8 | [R1](plans/loops/R1.md) | no | no | done |
-| 9 | [T1](plans/loops/T1.md) | no | no | done |
-| 10 | [D1](plans/loops/D1.md) | no | no | done |
-| 11 | [H1](plans/loops/H1.md) | no | yes | done |
-
-Resume at the first non-`done` wave. A wave is `done` only when every required node is `passed`.
+| Wave | Nodes | Fan-out? | Barrier? | Status | Lead plumbing |
+|------|-------|----------|----------|--------|---------------|
+| 0 | P0, D0, A1, B_SCAFFOLD | no | serial | done | archive D19 already done |
+| 1 | B_CIRCUITS, B_SIGNALS, B_ELECTRONICS, B_MATHS | yes | no | done | — |
+| 2 | B_MACHINES, B_POWER, B_CONTROL, B_PE | yes | no | done | — |
+| 3 | B_MEAS_EM, B_EL_POWER, B_EL_EMBED | yes | no | done | — |
+| 4 | M1 | no | yes — whole set | done | flatten indexes |
+| 5 | E1, R1, T1, D1 | no | serial tail | done | git + README |
 
 ---
 
 ## Failure
 
-- Checker fail + rounds left → next maker round with findings only
-- `max_rounds` exhausted → `escalated`, wait
-- Required node throw → escalate
-- Optional fan-in: none this graph (all nodes required)
-
----
-
-## T1 trial queue
-
-See [plans/loops/T1.md](plans/loops/T1.md). Fifteen rows: happy, empty, bad id, regression, auth N/A, FR9, two-band, non-circuits, UI, MCP verbs, UX empty/error/a11y/photo, unchecked badge.
+- Checker fail + rounds left → next maker round with findings only.
+- `max_rounds` exhausted → `escalated`, wait for human.
+- Required pack nodes are not optional.
 
 ---
 
 ## Commit mapping
 
-Lead commits after each loop **passed**. Matrix: [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md) §9.
+| Node | Plan | §9 rows | Gate |
+|------|------|---------|------|
+| archive + Gate 0 | this file | #1 | loop-plan links resolve |
+| P0 | [P0](plans/knowledge-loops/P0.md) | #2 | grep headings |
+| A1 | [A1](plans/knowledge-loops/A1.md) | #3 | grep ADR-0014 |
+| D0 + B_SCAFFOLD | [D0](plans/knowledge-loops/D0.md), [B_SCAFFOLD](plans/knowledge-loops/B_SCAFFOLD.md) | #4 | `--allow-empty` |
+| B_CIRCUITS … B_EL_EMBED | pack plans | #5–#15 | `--pack` |
+| M1 | [M1](plans/knowledge-loops/M1.md) | #16 | GLOSSARY.md |
+| E1 R1 T1 D1 | tail plans | #17 | pytest + boot + trials + README |
+
+Lead commits after the loop **passed**. Ponytail on every write. Subagents do not commit.
 
 ---
 
 ## Approval implication
 
-This graph is live on `cursor/d19-loop-graph-572f`. Execute per `.cursor/skills/graph-of-loops/EXECUTE.md`. No per-node wait unless `escalated`.
+Approving this loop graph started execution immediately. No second wait per node unless a loop **escalates**.

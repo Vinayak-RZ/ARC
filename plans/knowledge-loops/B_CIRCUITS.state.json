@@ -1,0 +1,9 @@
+{
+  "id": "B_CIRCUITS",
+  "round": 1,
+  "max_rounds": 3,
+  "status": "passed",
+  "last_exit_code": 0,
+  "findings": [],
+  "escalated": false
+}
