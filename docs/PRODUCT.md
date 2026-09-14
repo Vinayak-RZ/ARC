@@ -6,7 +6,7 @@ Undergraduate electrical-engineering student (India first; global UG EE first-cl
 
 ## Job
 
-Finish and understand a UG EE assignment: method, a checked number or the exact token `unchecked`, visible locally.
+Finish and understand a UG EE assignment: method, a verified number or an unverified label, visible locally.
 
 ## Done looks like
 
@@ -32,6 +32,7 @@ Finish and understand a UG EE assignment: method, a checked number or the exact 
 - C5 simulate-after-confirm
 - Large gold bank
 - PyPI publish
+- Arc mediates MATLAB MCP and other agents so the assistant does not ingest a huge tool list
 
 ## Non-goals
 
