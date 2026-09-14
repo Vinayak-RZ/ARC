@@ -7,7 +7,7 @@ import sys
 
 from electrical_engineer import __version__
 
-COMMANDS = ("run", "workflows", "mcp", "eval", "ui", "rag", "memory")
+COMMANDS = ("run", "workflows", "mcp", "eval", "ui", "rag", "memory", "hosts")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -33,6 +33,15 @@ def build_parser() -> argparse.ArgumentParser:
     rag.add_argument("--licence-tag")
     mem = sub.add_parser("memory")
     mem.add_argument("action", nargs="?", default="list")
+    hosts = sub.add_parser("hosts")
+    hsub = hosts.add_subparsers(dest="hosts_cmd")
+    inst = hsub.add_parser("install")
+    inst.add_argument("--into", required=True)
+    inst.add_argument(
+        "--host",
+        default="all",
+        choices=("all", "cursor", "codex", "claude"),
+    )
     return p
 
 
@@ -144,6 +153,17 @@ def main(argv: list[str] | None = None) -> int:
             tag_doc(args.path, tags)
             return 0
         print(args.action)
+        return 0
+    if args.cmd == "hosts":
+        from pathlib import Path as _Path
+
+        from electrical_engineer.hosts_install import install
+
+        if args.hosts_cmd != "install":
+            print("electrical-engineer hosts install --into <dir>", file=sys.stderr)
+            return 2
+        for path in install(_Path(args.into), host=args.host):
+            print(path)
         return 0
     print(args.cmd)
     return 0
