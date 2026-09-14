@@ -40,12 +40,13 @@ function Glyph({ kind }) {
 }
 
 export function PartNode({ data, selected }) {
-  const twoPort = data.kind !== "ground";
+  const kind = data?.kind;
+  const twoPort = kind !== "ground";
   return (
     <div className={selected ? "part-node is-selected" : "part-node"}>
       <Handle type="source" position={Position.Left} id="n1" />
-      <Glyph kind={data.kind} />
-      <span className="part-ref">{data.refdes}</span>
+      <Glyph kind={kind} />
+      <span className="part-ref">{data?.refdes}</span>
       {twoPort ? <Handle type="source" position={Position.Right} id="n2" /> : null}
     </div>
   );

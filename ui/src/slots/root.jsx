@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { register, renderSlot } from "./registry.js";
+import { useLayout } from "../store.js";
 import { Canvas } from "./canvas/Canvas.jsx";
 import { Inspector } from "./canvas/Inspector.jsx";
 

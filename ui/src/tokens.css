@@ -113,12 +113,16 @@ body { margin: 0; background: var(--ee-color-canvas); }
   padding: var(--ee-space-m);
 }
 .canvas-lab {
-  display: flex;
+  display: grid;
+  grid-template-columns: 132px minmax(200px, 1fr);
+  grid-template-rows: minmax(280px, 1fr) auto;
   flex: 1;
-  gap: var(--ee-space-m);
   min-width: 0;
-  flex-wrap: wrap;
+  gap: var(--ee-space-m);
 }
+.palette { grid-column: 1; grid-row: 1; }
+.flow-wrap { grid-column: 2; grid-row: 1; min-width: 200px; min-height: 280px; }
+.canvas-lab .confirm-row, .canvas-lab .number-display { grid-column: 1 / -1; }
 .palette {
   display: flex;
   flex-direction: column;

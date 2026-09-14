@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ReactFlow,
+  ReactFlowProvider,
   Background,
   ConnectionMode,
   addEdge,
@@ -25,6 +26,14 @@ function useRunGraph(id) {
 }
 
 export function Canvas({ id }) {
+  return (
+    <ReactFlowProvider>
+      <CanvasInner id={id} />
+    </ReactFlowProvider>
+  );
+}
+
+function CanvasInner({ id }) {
   const data = useRunGraph(id);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -194,11 +203,13 @@ export function Canvas({ id }) {
           edges={edges}
           onNodesChange={(c) => {
             onNodesChange(c);
-            setGraphDirty(true);
+            if (c.some((x) => x.type === "remove" || (x.type === "position" && x.dragging === false))) {
+              setGraphDirty(true);
+            }
           }}
           onEdgesChange={(c) => {
             onEdgesChange(c);
-            setGraphDirty(true);
+            if (c.some((x) => x.type === "remove")) setGraphDirty(true);
           }}
           onConnect={onConnect}
           onNodeClick={(_, node) => setSelectedNodeId(node.id)}
@@ -207,6 +218,7 @@ export function Canvas({ id }) {
           connectionMode={ConnectionMode.Loose}
           deleteKeyCode={["Backspace", "Delete"]}
           fitView
+          style={{ width: "100%", height: 320 }}
         >
           <Background gap={16} color="var(--ee-color-hairline)" />
         </ReactFlow>
