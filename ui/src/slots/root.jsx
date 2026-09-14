@@ -94,21 +94,17 @@ function Sidebar() {
 function Workspace() {
   const id = useLayout((s) => s.currentRunId);
   if (!id) {
-    return (
-      <p className="empty">
-        No saved runs yet. Ask the coding assistant, or type electrical-engineer run
-        solve-circuit-problem.
-      </p>
-    );
+    return <p className="empty">Select a run from the list.</p>;
   }
   return (
-    <div>
-      {renderSlot("run.detail", { id })}
-      {renderSlot("run.evidentiary", { id })}
+    <div className="lab">
+      {renderSlot("run.result", { id })}
+      <div className="lab-surface">
+        {renderSlot("run.canvas", { id })}
+        {renderSlot("run.inspector", { id })}
+      </div>
       {renderSlot("run.argument", { id })}
-      {renderSlot("run.plan", { id })}
-      {renderSlot("run.observation", { id })}
-      {renderSlot("run.artifacts", { id })}
+      {renderSlot("run.more", { id })}
       {renderSlot("photo.confirm", { id })}
     </div>
   );
@@ -135,95 +131,116 @@ function useRun(id) {
   return { data, error };
 }
 
-function RunDetail({ id }) {
+function parseEvid(summary) {
+  try {
+    const obj = JSON.parse(summary);
+    return obj && typeof obj === "object" ? obj : {};
+  } catch {
+    return {};
+  }
+}
+
+function Result({ id }) {
   const { data, error } = useRun(id);
-  const summary = data?.summary || "";
-  const unchecked = (() => {
-    try {
-      const obj = JSON.parse(summary);
-      return obj.unchecked === true || obj.token === "unchecked";
-    } catch {
-      return false;
-    }
-  })();
-  const state = error ? "failed" : data?.state || "running";
+  const evid = parseEvid(data?.summary || "");
+  const unchecked = evid.unchecked === true || evid.token === "unchecked";
+  const title = data?.title || evid.title || id;
+  const state = error ? "failed" : data?.state || "Working";
+  const live =
+    state === "waiting-human"
+      ? "Waiting for topology confirm"
+      : state === "failed"
+        ? "Run failed to load."
+        : state === "Working"
+          ? "Working"
+          : "";
+  const value = error ? "failed" : unchecked ? "unchecked" : evid.value == null ? "Working" : String(evid.value);
   return (
-    <section className="card" aria-live="polite">
-      <div className="row-title">
-        <h1>{id}</h1>
-        {unchecked ? <span className="badge-pill">unchecked</span> : null}
-      </div>
-      <p className="hint">
-        state {state}
-        {state === "waiting-human" ? " — confirm in the photo slot" : ""}
-      </p>
-      {error ? <p className="failed">Run failed to load.</p> : null}
-    </section>
+    <div className="result-strip" aria-live="polite">
+      <span className="asset-title">{title}</span>
+      <span className={error ? "failed" : unchecked ? "number-display" : "number-display checked"}>
+        {value}
+      </span>
+      {unchecked ? <span className="badge-pill">unchecked</span> : null}
+      {evid.verifier ? <span className="hint">{evid.verifier}</span> : null}
+      {live ? <span className="hint">{live}</span> : null}
+    </div>
   );
 }
 
-function Band({ id, title, field }) {
-  const { data, error } = useRun(id);
-  let body = data?.[field] || "";
-  if (error) body = "";
+function CanvasStub() {
   return (
-    <section className="card">
-      <h2>{title}</h2>
-      {error ? <p className="failed">unavailable</p> : null}
-      {!error && !body ? <p className="empty">No {title.toLowerCase()} yet.</p> : null}
-      {body ? <pre className="number-display">{body}</pre> : null}
-    </section>
+    <p className="hint canvas-hint">
+      Place parts from the palette. Confirm writes topology. It does not simulate.
+    </p>
   );
 }
 
-function Evidentiary({ id }) {
-  return <Band id={id} title="Evidentiary" field="evidentiary" />;
+function InspectorStub() {
+  return <aside className="inspector" aria-label="Inspector" />;
 }
 
 function Argument({ id }) {
-  return <Band id={id} title="Argument" field="argument" />;
-}
-
-function Plan({ id }) {
-  return <Band id={id} title="Plan" field="plan" />;
-}
-
-function Observation({ id }) {
-  return <Band id={id} title="Observation" field="observation" />;
-}
-
-function Artifacts({ id }) {
+  const { data, error } = useRun(id);
+  const text = data?.argument || "";
   return (
-    <section className="card">
-      <h2>Artifacts</h2>
-      <p className="hint">Library SVG/PNG from this run only.</p>
-      <img
-        className="plot"
-        alt={`Run ${id} artifact`}
-        src={`/api/runs/${id}/artifact.svg`}
-        width="200"
-        height="80"
-      />
+    <section className="argument">
+      <h2>Explanation</h2>
+      {error ? <p className="failed">unavailable</p> : null}
+      {!error && !text ? <p className="empty">No explanation yet.</p> : null}
+      {text ? <div className="prose">{text}</div> : null}
     </section>
+  );
+}
+
+function More({ id }) {
+  const { data, error } = useRun(id);
+  if (error || !data) return null;
+  return (
+    <div className="disclosures">
+      <details>
+        <summary>Evidentiary JSON</summary>
+        <pre className="number-display">{data.evidentiary || ""}</pre>
+      </details>
+      <details>
+        <summary>Plan</summary>
+        {data.plan ? <pre className="number-display">{data.plan}</pre> : <p className="empty">No plan yet.</p>}
+      </details>
+      <details>
+        <summary>Observation</summary>
+        <pre className="number-display">{data.observation || ""}</pre>
+      </details>
+      <details>
+        <summary>Raw graph</summary>
+        <pre className="number-display">{JSON.stringify(data.graph || {}, null, 2)}</pre>
+      </details>
+      <details>
+        <summary>Artifacts</summary>
+        <p className="hint">Library SVG/PNG from this run only.</p>
+        <img className="plot" alt={`Run ${id} artifact`} src={`/api/runs/${id}/artifact.svg`} width="200" height="80" />
+      </details>
+    </div>
   );
 }
 
 function PhotoConfirm({ id }) {
+  const { data } = useRun(id);
   const [msg, setMsg] = useState("");
+  const waiting = data?.state === "waiting-human";
   return (
-    <section className="card">
-      <h2>Confirm topology</h2>
-      <p className="hint">Writes confirmed.json. Does not run SPICE.</p>
+    <section className="confirm-row">
+      {waiting ? <p className="hint">Waiting for topology confirm</p> : null}
       <button
         className="button-primary"
         type="button"
+        aria-label="Confirm topology"
         onClick={() =>
           fetch(`/api/runs/${id}/confirm`, { method: "POST" })
             .then((r) => r.json())
             .then((d) => setMsg(JSON.stringify(d)))
         }
       >
-        Confirm
+        Confirm topology
       </button>
       {msg ? <pre className="number-display">{msg}</pre> : null}
     </section>
@@ -233,10 +250,9 @@ function PhotoConfirm({ id }) {
 register("root", Root);
 register("sidebar", Sidebar);
 register("workspace", Workspace);
-register("run.detail", RunDetail);
-register("run.evidentiary", Evidentiary);
+register("run.result", Result);
+register("run.canvas", CanvasStub);
+register("run.inspector", InspectorStub);
 register("run.argument", Argument);
-register("run.plan", Plan);
-register("run.observation", Observation);
-register("run.artifacts", Artifacts);
+register("run.more", More);
 register("photo.confirm", PhotoConfirm);

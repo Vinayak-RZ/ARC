@@ -9,9 +9,12 @@ def test_skip_link_and_no_wan() -> None:
     root = Path("ui/src/slots/root.jsx").read_text(encoding="utf-8")
     assert "Skip to workspace" in root
     assert "aria-live" in root
-    assert "obj.unchecked === true" in root
+    assert "unchecked === true" in root
     assert 'String(summary).includes("unchecked")' not in root
-    assert "run.evidentiary" in root
+    assert "run.result" in root
+    assert "run.canvas" in root
+    assert "Confirm topology" in root
+    assert "Waiting for topology confirm" in root
     assert "waiting-human" in root
     assert 'alt="Arc"' in root
     assert "MATLAB · coming next" in root
