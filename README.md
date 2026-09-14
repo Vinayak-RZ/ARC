@@ -44,7 +44,7 @@ Arc is that kernel for undergraduate electrical engineering. Cursor, Claude Code
 
 Arc is a working example of a domain kernel. It is what enables a general assistant to have expertise in electrical engineering, including the determinism a chat loop does not have on its own.
 
-Plain-language walkthrough (what Arc adds, why numbers stay deterministic, MATLAB coming next): [`docs/ON_THE_HARNESS.md`](docs/ON_THE_HARNESS.md).
+Plain-language walkthrough (what Arc adds, why numbers stay deterministic, how Arc mediates MATLAB): [`docs/ON_THE_HARNESS.md`](docs/ON_THE_HARNESS.md).
 
 ## Try these prompts
 
@@ -62,7 +62,7 @@ Explain Thevenin as if I have a viva in ten minutes. Cite the book chapter you r
 This isn't a named lab recipe. Still answer, and label anything you did not check.
 ```
 
-Works with those hosts, or with the CLI alone (`electrical-engineer run solve-circuit-problem`). Host adapters: [`docs/hosts/README.md`](docs/hosts/README.md).
+Works with those hosts, or with the CLI alone (`electrical-engineer run solve-circuit-problem`). Host adapters: [`docs/hosts/README.md`](docs/hosts/README.md). Pack specialists: `electrical-engineer hosts install --into <homework>`. Do not add MATLAB MCP on the host; Arc mediates it.
 
 ## Quick start
 
@@ -79,6 +79,7 @@ Then paste a prompt above, or boot the same commands recorded in [`docs/planning
 uv run electrical-engineer --help
 uv run electrical-engineer run solve-circuit-problem
 uv run electrical-engineer mcp
+uv run electrical-engineer hosts install --into /tmp/ee-hw --host all
 EE_NO_BROWSER=1 uv run electrical-engineer ui
 ```
 

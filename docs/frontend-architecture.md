@@ -19,7 +19,7 @@ ui/                          # Vite React CSR (slots, zustand, CSS variables)
 - CSS variables + CSS modules. Inter + JetBrains Mono (or Geist Mono). Never Coinbase fonts/wordmark.
 - Header identity is the Arc icon at `assets/brand/arc-icon.png` (served as `/arc-icon.png`). README lockup is `assets/brand/arc-lockup.png`. Do not ship Coinbase wordmark.
 - Color strategy: **Committed chrome, Restrained lab surface**. Header/focus/Confirm use `#0052ff`. Canvas + inspector stay white/ink/hairline.
-- MATLAB chip: "Coming next: Arc will call it." OSS simulators stay first-class. Product works with zero MATLAB.
+- MATLAB chip: "MATLAB · via Arc". Optional; Arc calls MATLAB MCP when installed. OSS simulators stay first-class. Product works with zero MATLAB.
 - **CD-KICAD:** capped composition canvas, not CAD. Keep the cannot-do row.
 
 ## Slot register API (ours, ~50 lines)
