@@ -649,7 +649,7 @@ run_id
 capabilities: [ ids ]
 providers: [ ids ]
 nodes: { id: { ok, unchecked } }
-unchecked_reason: no-provider | sim-exhausted | unmatched | empty-retrieve | gate-closed | null
+unchecked_reason: no-provider | sim-exhausted | unmatched | empty-retrieve | gate-closed | labeled | null
 retrieve: { empty, filters, citations }
 # P1: wall_ms per node. Never token/cost (host).
 ```

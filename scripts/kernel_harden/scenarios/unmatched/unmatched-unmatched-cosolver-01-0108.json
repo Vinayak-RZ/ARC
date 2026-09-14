@@ -1,0 +1,13 @@
+{
+  "id": "unmatched-unmatched-cosolver-01-0108",
+  "pack": "unmatched",
+  "recipe_id": "unmatched-cosolver",
+  "category": "unmatched",
+  "problem": {
+    "prompt": "ug ee scenario",
+    "variant": 1,
+    "n": 108
+  },
+  "host_path": "cli",
+  "notes": "auto scenario 108"
+}

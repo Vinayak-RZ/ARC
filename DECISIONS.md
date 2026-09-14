@@ -356,3 +356,15 @@ Student → L0 host (spawn ≤2) → pack skill and/or child card → EE MCP
 ```
 
 Autonomy: host-in-loop; no nested spawn; no `/in-cloud` EE children. Tools: children = EE MCP; Simulink tools = kernel only. Context: pack SKILL + run dir; no `knowledge/` dump. Model: inherit. Failure: `unchecked` / `CD-SIMULINK-PLANT`. Eval: install inventory + fail-closed node + host tools/list. Not ≥20 live `.slx` cases (no MATLAB here).
+
+---
+
+## ADR-0017 — Stdlib JSONL trace (kernel harden)
+
+- **Status:** accepted (2026-09-14)
+- **Context:** Need durable, Unagent-ingestible run traces without APM weight.
+- **Decision:** Append-only `runs/<id>/trace.jsonl` via stdlib only; keep `observation.json` contract; **no** OpenTelemetry/Langfuse SDK; Unagent via **custom** adapter; held-out ids file; scorer changes need ADR (frozen physics).
+- **Consequences:** Disk-auditable spans; export offline; no collector.
+- **Alternatives:** OTel GenAI spans (rejected — Gate 0); SaaS telemetry (rejected).
+- **Sources:** `docs/planning/ADR_TRACE_JSONL.md`, `docs/planning/GATE_0_KERNEL_HARDEN.md`
+

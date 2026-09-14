@@ -1,0 +1,13 @@
+{
+  "id": "rag-solve-measurements-problem-01-0106",
+  "pack": "rag",
+  "recipe_id": "solve-measurements-problem",
+  "category": "rag",
+  "problem": {
+    "prompt": "ug ee scenario",
+    "variant": 1,
+    "n": 106
+  },
+  "host_path": "cli",
+  "notes": "auto scenario 106"
+}

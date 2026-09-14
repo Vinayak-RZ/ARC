@@ -1,45 +1,26 @@
-# Simulink toolkit + host-spawned EE specialists — Master Execution Plan
+# Implementation plan — Kernel harden (live pointer)
 
-> Nawab **lite** + **graph-engineering** §19.
-> **The graph you run:** [`LOOP_GRAPH.md`](LOOP_GRAPH.md)
-> **Node plans:** [`plans/simulink-agents-loops/`](plans/simulink-agents-loops/)
-> Gate 0: [`docs/planning/GATE_0_SIMULINK_AGENTS.md`](docs/planning/GATE_0_SIMULINK_AGENTS.md)
+> **Live graph:** [`LOOP_GRAPH.md`](LOOP_GRAPH.md)  
+> **Node plans:** [`plans/kernel-harden-loops/`](plans/kernel-harden-loops/)  
+> **Gate 0:** [`docs/planning/GATE_0_KERNEL_HARDEN.md`](docs/planning/GATE_0_KERNEL_HARDEN.md)  
+> **Product overlay:** [`docs/planning/PRODUCT_KERNEL_HARDEN.md`](docs/planning/PRODUCT_KERNEL_HARDEN.md)  
+> **ADR:** [`docs/planning/ADR_TRACE_JSONL.md`](docs/planning/ADR_TRACE_JSONL.md)
 
-XOR: not graphify. Archived skills-matlab graph: [`docs/planning/LOOP_GRAPH_SKILLS_MATLAB.md`](docs/planning/LOOP_GRAPH_SKILLS_MATLAB.md).
+Supersedes the previous live Simulink-agents pointer. Archived graph: [`docs/planning/LOOP_GRAPH_SIMULINK_AGENTS.md`](docs/planning/LOOP_GRAPH_SIMULINK_AGENTS.md).
 
----
-
-## §0 Plan metadata
+## §0 Metadata
 
 | Field | Value |
 |-------|-------|
-| **Profile** | lite + §19 graph |
-| **Mode** | feature |
-| **Stack** | Python 3.11 kernel; host-native Cursor/Codex/Claude agents; optional MATLAB/Simulink MCP (kernel only) |
-| **Base branch** | `main` (this branch continues unmerged skills-matlab work) |
-| **Feature branch** | `cursor/ee-simulink-host-agents-37b3` |
-| **User commit budget** | 12 |
-| **Delivery** | repo IMPLEMENTATION_PLAN + LOOP_GRAPH + plans/simulink-agents-loops |
-| **Supersedes** | live pointer; skills-matlab graph archived |
-| **Authority** | Gate 0; PID; PRD; ARCHITECTURE §0.3; ADR-0015/0016 |
-| **Lead** | git, gates, PR; subagents do not commit |
+| Profile | project + graph-of-loops |
+| Branch | `cursor/ee-kernel-harden-trace-8db3` |
+| Commit budget | 40 (cap 42) |
+| PRIORITY | QUALITY > CONSISTENCY > SPEED > AVAILABILITY > COST |
 
-## §1 North star
+## §1 Objective
 
-The rented host can spawn named undergraduate EE specialists from files in this repo. Arc can call Simulink toolkit tools internally the same way it already calls MATLAB MCP. No second agent runtime. No host-attached Simulink MCP. No live MATLAB on CI.
+Stdlib JSONL tracing → ≥100 host-heavy UG EE trials → Unagent + Improveness critique → minimal kernel patches → UI surface → harden → docs-out case study.
 
-## §9 Commit matrix
+## §18 / §19
 
-See [`LOOP_GRAPH.md`](LOOP_GRAPH.md) commit mapping. Budget 12.
-
-## §16 Exit criteria
-
-See Gate 0 P0 and LOOP_GRAPH lifecycle. `./scripts/validate.sh` must pass. Host `tools/list` has no MATLAB/Simulink names. README counts 12 spawnable specialists.
-
-## §18 Execute
-
-Follow [`LOOP_GRAPH.md`](LOOP_GRAPH.md) waves. Ponytail on every product-code write.
-
-## §19
-
-The graph is [`LOOP_GRAPH.md`](LOOP_GRAPH.md). Approving it started this execution.
+Execute [`LOOP_GRAPH.md`](LOOP_GRAPH.md). Wave 0 is plans/docs only. §19 wins over linear protocol.

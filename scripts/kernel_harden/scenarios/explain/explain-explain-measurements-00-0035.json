@@ -1,0 +1,13 @@
+{
+  "id": "explain-explain-measurements-00-0035",
+  "pack": "explain",
+  "recipe_id": "explain-measurements",
+  "category": "explain",
+  "problem": {
+    "prompt": "ug ee scenario",
+    "variant": 0,
+    "n": 35
+  },
+  "host_path": "cli",
+  "notes": "auto scenario 35"
+}

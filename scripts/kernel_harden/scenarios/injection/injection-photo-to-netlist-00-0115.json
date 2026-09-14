@@ -1,0 +1,13 @@
+{
+  "id": "injection-photo-to-netlist-00-0115",
+  "pack": "injection",
+  "recipe_id": "photo-to-netlist",
+  "category": "injection",
+  "problem": {
+    "prompt": "ug ee scenario",
+    "variant": 0,
+    "n": 115
+  },
+  "host_path": "cli",
+  "notes": "auto scenario 115"
+}

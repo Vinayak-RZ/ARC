@@ -30,6 +30,10 @@ Finish and understand a UG EE assignment: method, a verified number or an unveri
 - Arc mediates Simulink Agentic Toolkit the same way: kernel `--extension-file` behind `run-simulink-if-present`; missing toolkit → `unchecked` + `CD-SIMULINK-PLANT`; host never lists `model_*`
 - Host-harness trials across cores; UI MATLAB and Simulink chips honesty; impeccable critique without `teach`; whole-tree harden
 
+## Kernel harden graph (live overlay)
+
+Active execution overlay: [`docs/planning/PRODUCT_KERNEL_HARDEN.md`](planning/PRODUCT_KERNEL_HARDEN.md) (JSONL tracing, host-heavy corpus, Unagent/Improveness critique). Base user/job above still hold.
+
 ## Later (not this graph)
 
 - HTTP MCP
@@ -58,6 +62,9 @@ Finish and understand a UG EE assignment: method, a verified number or an unveri
 - Cursor Cloud `/in-cloud` or isolated-worktree spawn for EE specialists (stdio MCP and `./runs/<id>/` would miss)
 
 ## Honest holes
+
+- Observation `unchecked_reason` may be `labeled` when the label-unverified path produced an honest unchecked (kernel-harden graph).
+
 
 - Missing provider → exact token `unchecked` and `CD-NO-PROVIDER`
 - Missing YAML row → `CD-YAML-GAP`; use `propose_composition` of capability ids

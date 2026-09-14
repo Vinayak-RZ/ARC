@@ -135,3 +135,11 @@ sequenceDiagram
 ## License
 
 Apache-2.0. See [`LICENSE`](LICENSE).
+
+
+## Kernel harden
+
+- [`docs/CASE_STUDY_DOMAIN_KERNEL.md`](docs/CASE_STUDY_DOMAIN_KERNEL.md)
+- [`docs/integrations/UNAGENT.md`](docs/integrations/UNAGENT.md)
+- [`docs/integrations/IMPROVENESS.md`](docs/integrations/IMPROVENESS.md)
+- [`LEARNING.md`](LEARNING.md)

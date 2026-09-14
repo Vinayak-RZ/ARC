@@ -1,0 +1,13 @@
+{
+  "id": "rag-explain-maths-for-ee-01-0046",
+  "pack": "rag",
+  "recipe_id": "explain-maths-for-ee",
+  "category": "rag",
+  "problem": {
+    "prompt": "ug ee scenario",
+    "variant": 1,
+    "n": 46
+  },
+  "host_path": "cli",
+  "notes": "auto scenario 46"
+}

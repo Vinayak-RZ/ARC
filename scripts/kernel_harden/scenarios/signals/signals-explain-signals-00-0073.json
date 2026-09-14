@@ -1,0 +1,13 @@
+{
+  "id": "signals-explain-signals-00-0073",
+  "pack": "signals",
+  "recipe_id": "explain-signals",
+  "category": "signals",
+  "problem": {
+    "prompt": "ug ee scenario",
+    "variant": 0,
+    "n": 73
+  },
+  "host_path": "cli",
+  "notes": "auto scenario 73"
+}

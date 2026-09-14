@@ -1,0 +1,13 @@
+{
+  "id": "explain-explain-machines-00-0087",
+  "pack": "explain",
+  "recipe_id": "explain-machines",
+  "category": "explain",
+  "problem": {
+    "prompt": "ug ee scenario",
+    "variant": 0,
+    "n": 87
+  },
+  "host_path": "cli",
+  "notes": "auto scenario 87"
+}

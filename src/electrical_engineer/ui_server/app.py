@@ -100,6 +100,35 @@ def create_app(root: Path | None = None) -> FastAPI:
         argument = (d / "argument.md").read_text(encoding="utf-8") if (d / "argument.md").is_file() else ""
         plan = (d / "plan.md").read_text(encoding="utf-8") if (d / "plan.md").is_file() else ""
         observation = (d / "observation.json").read_text(encoding="utf-8") if (d / "observation.json").is_file() else "{}"
+        obs_obj = _read_json(d / "observation.json")
+        observation_excerpt = {
+            "unchecked_reason": obs_obj.get("unchecked_reason"),
+            "capabilities": obs_obj.get("capabilities") or [],
+            "providers": obs_obj.get("providers") or [],
+            "retrieve_empty": bool((obs_obj.get("retrieve") or {}).get("empty")),
+            "unchecked": bool(evid_obj.get("unchecked")),
+            "token": evid_obj.get("token"),
+        }
+        trace_excerpt: list[dict] = []
+        trace_path = d / "trace.jsonl"
+        if trace_path.is_file():
+            lines = [ln for ln in trace_path.read_text(encoding="utf-8").splitlines() if ln.strip()]
+            for ln in lines[-40:]:
+                try:
+                    ev = json.loads(ln)
+                except json.JSONDecodeError:
+                    continue
+                if isinstance(ev, dict):
+                    attrs = ev.get("attrs") or {}
+                    trace_excerpt.append(
+                        {
+                            "name": ev.get("name"),
+                            "duration_ms": ev.get("duration_ms"),
+                            "node_id": attrs.get("node_id"),
+                            "ok": attrs.get("ok"),
+                            "unchecked": attrs.get("unchecked"),
+                        }
+                    )
         waiting = (d / "draft.cir").is_file() and not (d / "confirmed.json").is_file()
         state = "waiting-human" if waiting else "done"
         graph = _read_json(d / "graph.json")
@@ -111,6 +140,8 @@ def create_app(root: Path | None = None) -> FastAPI:
             "argument": argument,
             "plan": plan,
             "observation": observation,
+            "observation_excerpt": observation_excerpt,
+            "trace_excerpt": trace_excerpt,
             "graph": graph,
             "state": state,
         }

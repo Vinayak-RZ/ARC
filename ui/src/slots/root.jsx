@@ -201,8 +201,64 @@ function Argument({ id }) {
 function More({ id }) {
   const { data, error } = useRun(id);
   if (error || !data) return null;
+  const excerpt = data.observation_excerpt || {};
+  const spans = Array.isArray(data.trace_excerpt) ? data.trace_excerpt : [];
   return (
     <div className="disclosures">
+      <details open>
+        <summary>Observation</summary>
+        <dl className="obs-excerpt">
+          <div>
+            <dt>unchecked</dt>
+            <dd>
+              <code>{excerpt.unchecked ? String(excerpt.token || "unchecked") : "false"}</code>
+            </dd>
+          </div>
+          {excerpt.unchecked_reason ? (
+            <div>
+              <dt>unchecked_reason</dt>
+              <dd>
+                <code>{excerpt.unchecked_reason}</code>
+              </dd>
+            </div>
+          ) : null}
+          <div>
+            <dt>capabilities</dt>
+            <dd>{(excerpt.capabilities || []).join(", ") || "—"}</dd>
+          </div>
+          <div>
+            <dt>providers</dt>
+            <dd>{(excerpt.providers || []).join(", ") || "—"}</dd>
+          </div>
+          <div>
+            <dt>retrieve.empty</dt>
+            <dd>{excerpt.retrieve_empty ? "true" : "false"}</dd>
+          </div>
+        </dl>
+        <details>
+          <summary>Raw observation JSON</summary>
+          <pre className="number-display">{data.observation || ""}</pre>
+        </details>
+      </details>
+      <details open>
+        <summary>Trace</summary>
+        {spans.length === 0 ? (
+          <p className="empty">No trace.jsonl for this run.</p>
+        ) : (
+          <ol className="trace-list">
+            {spans.map((span, idx) => (
+              <li key={`${span.name}-${idx}`}>
+                <code>{span.name}</code>
+                {span.node_id ? <span className="hint"> {span.node_id}</span> : null}
+                {span.duration_ms != null ? (
+                  <span className="hint"> {Number(span.duration_ms).toFixed(1)}ms</span>
+                ) : null}
+                {span.unchecked ? <span className="badge-pill">unchecked</span> : null}
+              </li>
+            ))}
+          </ol>
+        )}
+      </details>
       <details>
         <summary>Evidentiary JSON</summary>
         <pre className="number-display">{data.evidentiary || ""}</pre>
@@ -210,10 +266,6 @@ function More({ id }) {
       <details>
         <summary>Plan</summary>
         {data.plan ? <pre className="number-display">{data.plan}</pre> : <p className="empty">No plan yet.</p>}
-      </details>
-      <details>
-        <summary>Observation</summary>
-        <pre className="number-display">{data.observation || ""}</pre>
       </details>
       <details>
         <summary>Raw graph</summary>

@@ -1,0 +1,13 @@
+{
+  "id": "circuits-simulate-after-confirm-01-0070",
+  "pack": "circuits",
+  "recipe_id": "simulate-after-confirm",
+  "category": "circuits",
+  "problem": {
+    "prompt": "ug ee scenario",
+    "variant": 1,
+    "n": 70
+  },
+  "host_path": "cli",
+  "notes": "auto scenario 70"
+}
