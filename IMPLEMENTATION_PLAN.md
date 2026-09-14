@@ -1,13 +1,11 @@
-# Pack specialists + Arc-mediated MATLAB MCP — Master Execution Plan
+# Simulink toolkit + host-spawned EE specialists — Master Execution Plan
 
-> Nawab **standard** + **graph-of-loops** §19.
+> Nawab **lite** + **graph-engineering** §19.
 > **The graph you run:** [`LOOP_GRAPH.md`](LOOP_GRAPH.md)
-> **Loop plans:** [`plans/skills-matlab-loops/`](plans/skills-matlab-loops/)
-> Gate 0: [`docs/planning/GATE_0_SKILLS_MATLAB.md`](docs/planning/GATE_0_SKILLS_MATLAB.md)
+> **Node plans:** [`plans/simulink-agents-loops/`](plans/simulink-agents-loops/)
+> Gate 0: [`docs/planning/GATE_0_SIMULINK_AGENTS.md`](docs/planning/GATE_0_SIMULINK_AGENTS.md)
 
-XOR: `graph-engineering` is not loaded.
-
-Knowledge-corpus plan archive: [`docs/planning/IMPLEMENTATION_PLAN_KNOWLEDGE.md`](docs/planning/IMPLEMENTATION_PLAN_KNOWLEDGE.md).
+XOR: not graphify. Archived skills-matlab graph: [`docs/planning/LOOP_GRAPH_SKILLS_MATLAB.md`](docs/planning/LOOP_GRAPH_SKILLS_MATLAB.md).
 
 ---
 
@@ -15,27 +13,33 @@ Knowledge-corpus plan archive: [`docs/planning/IMPLEMENTATION_PLAN_KNOWLEDGE.md`
 
 | Field | Value |
 |-------|-------|
-| **Profile** | standard + §19 loop graph |
+| **Profile** | lite + §19 graph |
 | **Mode** | feature |
-| **Stack** | Python 3.11 + markdown skills/adapters; optional MATLAB MCP binary at runtime |
-| **Base branch** | `main` |
-| **Feature branch** | `cursor/ee-skills-matlab-mcp-37b3` |
-| **User commit budget** | 24 |
-| **Delivery** | repo IMPLEMENTATION_PLAN + LOOP_GRAPH + plans/skills-matlab-loops |
-| **Supersedes** | live execution pointer (knowledge graph archived) |
-| **Authority** | Gate 0; PID; PRD; ARCHITECTURE; R0_SOLUTIONS after wave 0 |
+| **Stack** | Python 3.11 kernel; host-native Cursor/Codex/Claude agents; optional MATLAB/Simulink MCP (kernel only) |
+| **Base branch** | `main` (this branch continues unmerged skills-matlab work) |
+| **Feature branch** | `cursor/ee-simulink-host-agents-37b3` |
+| **User commit budget** | 12 |
+| **Delivery** | repo IMPLEMENTATION_PLAN + LOOP_GRAPH + plans/simulink-agents-loops |
+| **Supersedes** | live pointer; skills-matlab graph archived |
+| **Authority** | Gate 0; PID; PRD; ARCHITECTURE §0.3; ADR-0015/0016 |
 | **Lead** | git, gates, PR; subagents do not commit |
-
----
 
 ## §1 North star
 
-Undergraduate EE co-solver: pack specialists the rented host can spawn; MATLAB only through Arc. Retrieval scaffold empty. Host-harness trials + UI critique + harden in this graph.
+The rented host can spawn named undergraduate EE specialists from files in this repo. Arc can call Simulink toolkit tools internally the same way it already calls MATLAB MCP. No second agent runtime. No host-attached Simulink MCP. No live MATLAB on CI.
 
-Full contract: the approved Cursor plan `ee_skills_matlab_mcp` and [`LOOP_GRAPH.md`](LOOP_GRAPH.md).
+## §9 Commit matrix
 
----
+See [`LOOP_GRAPH.md`](LOOP_GRAPH.md) commit mapping. Budget 12.
+
+## §16 Exit criteria
+
+See Gate 0 P0 and LOOP_GRAPH lifecycle. `./scripts/validate.sh` must pass. Host `tools/list` has no MATLAB/Simulink names. README counts 12 spawnable specialists.
 
 ## §18 Execute
 
-Follow [`.cursor/skills/graph-of-loops/EXECUTE.md`](.cursor/skills/graph-of-loops/EXECUTE.md). **R_SURVEY first.** No product code until that stop passes.
+Follow [`LOOP_GRAPH.md`](LOOP_GRAPH.md) waves. Ponytail on every product-code write.
+
+## §19
+
+The graph is [`LOOP_GRAPH.md`](LOOP_GRAPH.md). Approving it started this execution.
