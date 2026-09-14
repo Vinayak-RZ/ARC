@@ -17,3 +17,9 @@ Undergraduate handbook for the Arc knowledge pack `machines`. Transformers, DC m
 | `11-per-unit-machine-tests` | Per-unit machines and standard tests | [notes](11-per-unit-machine-tests/notes.md) · [questions](11-per-unit-machine-tests/questions.md) · [sources](11-per-unit-machine-tests/sources.md) |
 
 Each unit is original notes (required headings Concepts, Equations, Methods, Mistakes) plus original worked questions. No commercial textbook or GATE paper text. This pack is original notes plus links in `sources.md`. No `oer/` copies.
+
+## See also
+
+- [UG EE tree](../INDEX.md)
+- [Glossary](../../GLOSSARY.md)
+- [Coverage](../../COVERAGE.yaml)

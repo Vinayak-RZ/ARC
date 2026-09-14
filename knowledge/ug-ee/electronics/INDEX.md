@@ -29,3 +29,9 @@ Pack path: `knowledge/ug-ee/electronics`. Bound: `SYLLABUS.md` and `docs/curricu
 Each unit has `notes.md`, `questions.md`, `sources.md`. Optional Kuphaldt CC BY excerpts live in `oer/` on selected analog (Vol. III) and digital (Vol. IV) units.
 
 OER index: http://www.ibiblio.org/kuphaldt/electricCircuits/ (CC BY 4.0). Ledger: `knowledge/SOURCE_LEDGER.md` K5.
+
+## See also
+
+- [UG EE tree](../INDEX.md)
+- [Glossary](../../GLOSSARY.md)
+- [Coverage](../../COVERAGE.yaml)

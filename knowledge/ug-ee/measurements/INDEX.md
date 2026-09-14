@@ -15,3 +15,9 @@ Bound: `SYLLABUS.md` and `docs/curriculum-map.md` (IITR, NITT, AICTE-family, MIT
 | `07-magnetic-measurements-calibration` | Fluxmeter, B-H, calibration chain | [notes](07-magnetic-measurements-calibration/notes.md) · [questions](07-magnetic-measurements-calibration/questions.md) · [sources](07-magnetic-measurements-calibration/sources.md) |
 
 Each unit is original notes (required headings Concepts, Equations, Methods, Mistakes) plus original worked questions. No commercial textbook or GATE paper text. This pack is original notes plus links in `sources.md`; no `oer/` copies.
+
+## See also
+
+- [UG EE tree](../INDEX.md)
+- [Glossary](../../GLOSSARY.md)
+- [Coverage](../../COVERAGE.yaml)

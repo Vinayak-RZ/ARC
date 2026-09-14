@@ -12,3 +12,9 @@ Bound: `SYLLABUS.md` and `docs/curriculum-map.md`. Pack path: `knowledge/ug-ee/e
 Worked items in `questions.md` are original numbers, not GATE or institute papers. Depth is UG EEE communication elective (AM power, Carson bandwidth, PCM bit rate, raised-cosine excess bandwidth), not information theory as a graduate core or a cellular-stack lab.
 
 MIT OCW is **link-only** in each unit `sources.md`.
+
+## See also
+
+- [UG EE tree](../../INDEX.md)
+- [Glossary](../../../GLOSSARY.md)
+- [Coverage](../../../COVERAGE.yaml)

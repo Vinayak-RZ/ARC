@@ -18,3 +18,9 @@ Undergraduate handbook for the Arc knowledge pack `signals`. Units match `knowle
 | [12-modulation-intro](12-modulation-intro/notes.md) | AM/complex exponential modulation for signals courses |
 
 Syllabus union: [SYLLABUS.md](SYLLABUS.md).
+
+## See also
+
+- [UG EE tree](../INDEX.md)
+- [Glossary](../../GLOSSARY.md)
+- [Coverage](../../COVERAGE.yaml)

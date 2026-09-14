@@ -16,3 +16,9 @@ Pack bound: [`SYLLABUS.md`](SYLLABUS.md). Units from `knowledge/COVERAGE.yaml`. 
 - [12 Describing function, limit cycles intro](12-nonlinear-describing-function/) — [notes](12-nonlinear-describing-function/notes.md) · [questions](12-nonlinear-describing-function/questions.md) · [sources](12-nonlinear-describing-function/sources.md)
 
 OER: [Åström/Murray *Feedback Systems*](https://fbswiki.org/wiki/index.php/FBS) is **link only** (ledger K9). Do not copy the PDF into this tree.
+
+## See also
+
+- [UG EE tree](../INDEX.md)
+- [Glossary](../../GLOSSARY.md)
+- [Coverage](../../COVERAGE.yaml)

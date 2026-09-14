@@ -12,3 +12,9 @@ Bound: `SYLLABUS.md` and `docs/curriculum-map.md` (IITR, NITT, AICTE-family, MIT
 Each unit is original notes (required headings Concepts, Equations, Methods, Mistakes) plus original worked questions. No commercial textbook or GATE paper text. This pack is original notes plus links in `sources.md`; no `oer/` copies.
 
 Related: `utilization/02-electric-traction`, `power-electronics/09-dc-drives`, `power-electronics/10-ac-drives`.
+
+## See also
+
+- [UG EE tree](../../INDEX.md)
+- [Glossary](../../../GLOSSARY.md)
+- [Coverage](../../../COVERAGE.yaml)

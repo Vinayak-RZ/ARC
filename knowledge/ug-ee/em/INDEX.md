@@ -18,3 +18,9 @@ Bound: `SYLLABUS.md` and `docs/curriculum-map.md` (IITR, NITT, AICTE-family, MIT
 | `10-waveguides-radiation-intro` | Rectangular waveguide cutoff, Hertzian dipole intro | [notes](10-waveguides-radiation-intro/notes.md) · [questions](10-waveguides-radiation-intro/questions.md) · [sources](10-waveguides-radiation-intro/sources.md) |
 
 Each unit is original notes (required headings Concepts, Equations, Methods, Mistakes) plus original worked questions. No commercial textbook or GATE paper text. A short Ellingson *Electromagnetics* Vol. 1 excerpt (CC BY-SA 4.0) lives in `06-maxwell-equations/oer/`.
+
+## See also
+
+- [UG EE tree](../INDEX.md)
+- [Glossary](../../GLOSSARY.md)
+- [Coverage](../../COVERAGE.yaml)

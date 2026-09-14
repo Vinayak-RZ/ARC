@@ -18,3 +18,9 @@ Bound: `docs/curriculum-map.md` (IITR, NITT, AICTE-family, MIT/Berkeley, GATE ov
 | `10-partial-fractions-residues` | Partial fractions and residues | [notes](10-partial-fractions-residues/notes.md) · [questions](10-partial-fractions-residues/questions.md) · [sources](10-partial-fractions-residues/sources.md) |
 
 Each unit is original notes (required headings Concepts, Equations, Methods, Mistakes) plus original worked questions. No commercial textbook or GATE paper text. OER copies, if any, would live under unit `oer/` with SPDX; this pack is original notes plus links in `sources.md`.
+
+## See also
+
+- [UG EE tree](../INDEX.md)
+- [Glossary](../../GLOSSARY.md)
+- [Coverage](../../COVERAGE.yaml)

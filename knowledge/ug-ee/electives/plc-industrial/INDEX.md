@@ -10,3 +10,9 @@ Bound: `SYLLABUS.md` and `docs/curriculum-map.md`. Pack path: `knowledge/ug-ee/e
 | `02-sensors-actuators-ug` | Digital/analog IO, interlocks (study-level) | [notes](02-sensors-actuators-ug/notes.md) · [questions](02-sensors-actuators-ug/questions.md) · [sources](02-sensors-actuators-ug/sources.md) |
 
 Worked items in `questions.md` are original numbers, not GATE or institute papers. Depth is UG study-level automation (scan arithmetic, TON/CTU, 4–20 mA scaling, fail-safe NC e-stop). This pack does **not** write a live PLC, actuate a plant, or replace a safety SIL assessment — live plant writes are out of product (`docs/PID.md`, `docs/CANNOT_DO.md` CD-PLC).
+
+## See also
+
+- [UG EE tree](../../INDEX.md)
+- [Glossary](../../../GLOSSARY.md)
+- [Coverage](../../../COVERAGE.yaml)

@@ -12,3 +12,9 @@ Bound: `SYLLABUS.md` and `docs/curriculum-map.md`. Pack path: `knowledge/ug-ee/e
 Worked items in `questions.md` are original numbers, not GATE or institute papers. Depth is UG DSP elective (DFT arithmetic, radix-2 counts, window FIR, bilinear IIR, decimation, SQNR), not filter-bank research or a vendor DSP BIOS.
 
 The Scientist and Engineer’s Guide to DSP and MIT OCW are **link-only** in each unit `sources.md`; do not copy those texts into this pack.
+
+## See also
+
+- [UG EE tree](../../INDEX.md)
+- [Glossary](../../../GLOSSARY.md)
+- [Coverage](../../../COVERAGE.yaml)

@@ -22,3 +22,9 @@ Pack path: `knowledge/ug-ee/power-electronics`.
 | `12-cyclo-dual-converters` | Cycloconverter and dual converter | [notes](12-cyclo-dual-converters/notes.md) · [questions](12-cyclo-dual-converters/questions.md) · [sources](12-cyclo-dual-converters/sources.md) |
 
 Worked items in `questions.md` are original numbers, not GATE or institute papers. Depth is UG coursework (assignment, lab numerical, exam-style), not a converter-research thesis.
+
+## See also
+
+- [UG EE tree](../INDEX.md)
+- [Glossary](../../GLOSSARY.md)
+- [Coverage](../../COVERAGE.yaml)

@@ -18,3 +18,9 @@ Pack bound: [`SYLLABUS.md`](SYLLABUS.md). Units from `knowledge/COVERAGE.yaml`.
 - [14 Laplace-domain networks and initial conditions](14-laplace-network-analysis/) — [notes](14-laplace-network-analysis/notes.md) · [questions](14-laplace-network-analysis/questions.md) · [sources](14-laplace-network-analysis/sources.md)
 - [15 Network frequency response and passive filters](15-frequency-response-filters/) — [notes](15-frequency-response-filters/notes.md) · [questions](15-frequency-response-filters/questions.md) · [sources](15-frequency-response-filters/sources.md)
 - [16 Graph theory, Tellegen, duality](16-graph-theory-tellegen/) — [notes](16-graph-theory-tellegen/notes.md) · [questions](16-graph-theory-tellegen/questions.md) · [sources](16-graph-theory-tellegen/sources.md)
+
+## See also
+
+- [UG EE tree](../INDEX.md)
+- [Glossary](../../GLOSSARY.md)
+- [Coverage](../../COVERAGE.yaml)

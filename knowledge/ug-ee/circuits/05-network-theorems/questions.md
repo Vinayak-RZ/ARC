@@ -14,11 +14,11 @@ Thévenin equivalent at a–b and \( v_L \) if \( R_L = 3.3\,\mathrm{k}\Omega \)
 
 ### Solution
 
-Open a–b: the 1.0 kΩ carries no current, so \( v_\mathrm{Th} = v_n = 36 \cdot 4.7/(2.7+4.7) = 22.70\,\mathrm{V} \). Deactivate 36 V (short): \( R_\mathrm{Th} = 1.0\mathrm{k} + (2.7\mathrm{k}\parallel 4.7\mathrm{k}) = 1.0 + 1.715 = 2.715\,\mathrm{k}\Omega \). Then \( v_L = 22.70 \cdot 3.3/(2.715+3.3) = 12.45\,\mathrm{V} \).
+Open a–b: the 1.0 kΩ carries no current, so \( v_\mathrm{Th} = v_n = 36 \cdot 4.7/(2.7+4.7) = 169.2/7.4 = 22.86\,\mathrm{V} \). Deactivate 36 V (short): \( R_\mathrm{Th} = 1.0\mathrm{k} + (2.7\mathrm{k}\parallel 4.7\mathrm{k}) = 1.0 + 1.715 = 2.715\,\mathrm{k}\Omega \). Then \( v_L = 22.86 \cdot 3.3/(2.715+3.3) = 12.54\,\mathrm{V} \).
 
 ### Answer
 
-\( v_\mathrm{Th} = 22.70\,\mathrm{V} \), \( R_\mathrm{Th} = 2.72\,\mathrm{k}\Omega \); \( v_L = 12.45\,\mathrm{V} \).
+\( v_\mathrm{Th} = 22.86\,\mathrm{V} \), \( R_\mathrm{Th} = 2.72\,\mathrm{k}\Omega \); \( v_L = 12.54\,\mathrm{V} \).
 
 ## Q2
 

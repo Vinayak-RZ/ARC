@@ -10,3 +10,9 @@ Bound: `SYLLABUS.md` and `docs/curriculum-map.md` (IITR, NITT, AICTE-family, MIT
 | `02-interfacing-8051-intro` | Memory/IO interfacing, 8051 intro | [notes](02-interfacing-8051-intro/notes.md) · [questions](02-interfacing-8051-intro/questions.md) · [sources](02-interfacing-8051-intro/sources.md) |
 
 Worked items in `questions.md` are original numbers, not GATE or institute papers. Depth is UG coursework (8085 timing, interrupt vectors, 8255/address decode, 8051 timers/serial), not ARM/Linux SoC bring-up.
+
+## See also
+
+- [UG EE tree](../../INDEX.md)
+- [Glossary](../../../GLOSSARY.md)
+- [Coverage](../../../COVERAGE.yaml)

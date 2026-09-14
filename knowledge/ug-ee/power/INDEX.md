@@ -20,3 +20,9 @@ Bound: `SYLLABUS.md` and `docs/curriculum-map.md` (IITR, NITT, AICTE-family, MIT
 | `12-reactive-power-voltage-control` | Q-V, shunt/series compensation | [notes](12-reactive-power-voltage-control/notes.md) · [questions](12-reactive-power-voltage-control/questions.md) · [sources](12-reactive-power-voltage-control/sources.md) |
 
 Each unit is original notes (required headings Concepts, Equations, Methods, Mistakes) plus original worked questions. No commercial textbook or GATE paper text. This pack is original notes plus links in `sources.md`; no `oer/` copies.
+
+## See also
+
+- [UG EE tree](../INDEX.md)
+- [Glossary](../../GLOSSARY.md)
+- [Coverage](../../COVERAGE.yaml)
