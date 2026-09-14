@@ -24,6 +24,7 @@ _UNCHECKED_REASONS = (
     "unmatched",
     "empty-retrieve",
     "gate-closed",
+    "labeled",
 )
 _REVERSE_BIND = {v: k for k, v in DEFAULT_BIND.items()}
 
@@ -198,5 +199,16 @@ def _unchecked_reason(recipe_id: str, completed: dict[str, Any], payload: dict[s
     for v in completed.values():
         if isinstance(v, dict) and v.get("error") in {"unconfirmed", "gate"}:
             return "gate-closed"
-    fallback = "unmatched"
-    return fallback if fallback in _UNCHECKED_REASONS else None
+    # Honest label-unverified path (explain / cannot-check) — do not pretend this is a router miss.
+    for v in completed.values():
+        if not isinstance(v, dict):
+            continue
+        labeled = v.get("token") == UNCHECKED or v.get("unchecked") is True
+        cap_ok = v.get("capability") in {"label-unverified", None} or "label" in str(
+            v.get("activity") or ""
+        )
+        if labeled and cap_ok:
+            return "labeled"
+    if payload.get("token") == UNCHECKED:
+        return "labeled"
+    return "labeled" if "labeled" in _UNCHECKED_REASONS else None
