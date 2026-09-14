@@ -23,7 +23,7 @@
 | **Graph-engineering** | named — this graph is live |
 | **Branch** | `cursor/ee-simulink-host-agents-37b3` |
 | **Cheap checker** | `composer-2.5-fast` else `inherit` |
-| **Wave status** | 0 running |
+| **Wave status** | 6 done |
 
 ---
 
@@ -31,19 +31,19 @@
 
 | ID | Name | Plan | Status |
 |----|------|------|--------|
-| R_SURVEY | landscape | [plans/simulink-agents-loops/R_SURVEY.md](plans/simulink-agents-loops/R_SURVEY.md) | pending |
-| P0 | product lock | [plans/simulink-agents-loops/P0.md](plans/simulink-agents-loops/P0.md) | pending |
-| D0 | docs-in | [plans/simulink-agents-loops/D0.md](plans/simulink-agents-loops/D0.md) | pending |
-| A1 | ADRs | [plans/simulink-agents-loops/A1.md](plans/simulink-agents-loops/A1.md) | pending |
-| B_AGENTS | catalog | [plans/simulink-agents-loops/B_AGENTS.md](plans/simulink-agents-loops/B_AGENTS.md) | pending |
-| B_SIMULINK | kernel | [plans/simulink-agents-loops/B_SIMULINK.md](plans/simulink-agents-loops/B_SIMULINK.md) | pending |
-| U1 | chip | [plans/simulink-agents-loops/U1.md](plans/simulink-agents-loops/U1.md) | pending |
-| M1 | integrate | [plans/simulink-agents-loops/M1.md](plans/simulink-agents-loops/M1.md) | pending |
-| E1 | evaluate | [plans/simulink-agents-loops/E1.md](plans/simulink-agents-loops/E1.md) | pending |
-| R1 | boot | [plans/simulink-agents-loops/R1.md](plans/simulink-agents-loops/R1.md) | pending |
-| T1 | trials | [plans/simulink-agents-loops/T1.md](plans/simulink-agents-loops/T1.md) | pending |
-| D1 | docs-out | [plans/simulink-agents-loops/D1.md](plans/simulink-agents-loops/D1.md) | pending |
-| H1 | harden | [plans/simulink-agents-loops/H1.md](plans/simulink-agents-loops/H1.md) | pending |
+| R_SURVEY | landscape | [plans/simulink-agents-loops/R_SURVEY.md](plans/simulink-agents-loops/R_SURVEY.md) | passed |
+| P0 | product lock | [plans/simulink-agents-loops/P0.md](plans/simulink-agents-loops/P0.md) | passed |
+| D0 | docs-in | [plans/simulink-agents-loops/D0.md](plans/simulink-agents-loops/D0.md) | passed |
+| A1 | ADRs | [plans/simulink-agents-loops/A1.md](plans/simulink-agents-loops/A1.md) | passed |
+| B_AGENTS | catalog | [plans/simulink-agents-loops/B_AGENTS.md](plans/simulink-agents-loops/B_AGENTS.md) | passed |
+| B_SIMULINK | kernel | [plans/simulink-agents-loops/B_SIMULINK.md](plans/simulink-agents-loops/B_SIMULINK.md) | passed |
+| U1 | chip | [plans/simulink-agents-loops/U1.md](plans/simulink-agents-loops/U1.md) | passed |
+| M1 | integrate | [plans/simulink-agents-loops/M1.md](plans/simulink-agents-loops/M1.md) | passed |
+| E1 | evaluate | [plans/simulink-agents-loops/E1.md](plans/simulink-agents-loops/E1.md) | passed |
+| R1 | boot | [plans/simulink-agents-loops/R1.md](plans/simulink-agents-loops/R1.md) | passed |
+| T1 | trials | [plans/simulink-agents-loops/T1.md](plans/simulink-agents-loops/T1.md) | passed |
+| D1 | docs-out | [plans/simulink-agents-loops/D1.md](plans/simulink-agents-loops/D1.md) | passed |
+| H1 | harden | [plans/simulink-agents-loops/H1.md](plans/simulink-agents-loops/H1.md) | passed |
 
 ---
 
@@ -94,13 +94,13 @@ flowchart TB
 
 | Wave | Nodes | Barrier | Status |
 |------|-------|---------|--------|
-| 0 | R_SURVEY | yes | pending |
-| 1 | P0, D0 | yes | pending |
-| 2 | A1 | yes | pending |
-| 3 | B_AGENTS, B_SIMULINK, U1 | yes — M1 needs the set | pending |
-| 4 | M1 | yes | pending |
-| 5 | E1, R1, T1 | yes | pending |
-| 6 | D1, H1 | yes | pending |
+| 0 | R_SURVEY | yes | done |
+| 1 | P0, D0 | yes | done |
+| 2 | A1 | yes | done |
+| 3 | B_AGENTS, B_SIMULINK, U1 | yes — M1 needs the set | done |
+| 4 | M1 | yes | done |
+| 5 | E1, R1, T1 | yes | done |
+| 6 | D1, H1 | yes | done |
 
 ---
 
