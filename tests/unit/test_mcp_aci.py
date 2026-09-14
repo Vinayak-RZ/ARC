@@ -12,6 +12,10 @@ def test_tools_list_is_five_to_seven() -> None:
     assert "retrieve" in names
     listed = handle("tools/list", {})
     assert {t["name"] for t in listed["tools"]} == set(names)
+    joined = " ".join(names)
+    assert "matlab" not in joined.lower()
+    assert "model_read" not in names
+    assert "evaluate_matlab_code" not in names
 
 
 def test_propose_composition_apply_false_records_plan(tmp_path, monkeypatch) -> None:

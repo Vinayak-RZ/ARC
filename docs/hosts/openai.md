@@ -33,6 +33,7 @@ ChatGPT **web** is **not** a host.
    (or copy
    [`../../hosts/adapters/codex/pack-specialist.md`](../../hosts/adapters/codex/pack-specialist.md)).
    At most two packs; same MCP; parent writes the viva. Not a second product.
-7. Do **not** add MATLAB MCP in `config.toml`. Arc mediates MATLAB when
-   installed. Peer scalars stay unverified until Arc recomputes them (FR20).
+7. Do **not** add MATLAB MCP or Simulink Agentic Toolkit in `config.toml`.
+   Arc mediates MATLAB and Simulink toolkit tools when installed. Peer
+   scalars stay unverified until Arc recomputes them (FR20).
    [`../ON_THE_HARNESS.md`](../ON_THE_HARNESS.md).

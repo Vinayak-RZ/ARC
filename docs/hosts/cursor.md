@@ -14,9 +14,12 @@ First-class host. Same kernel contract as Claude Code, Codex, and ChatGPT deskto
    `argument.md`; do not mega-apply `solve-circuit-problem`.
 4. Persistent UI is `electrical-engineer ui` on `127.0.0.1:8765`.
 5. Cursor is optional. CLI + UI without Cursor is a complete v1 path.
-6. Do **not** add MATLAB MCP to `.cursor/mcp.json`. Arc calls MATLAB MCP
-   internally via `run-matlab-if-present` when `matlab-mcp-server` is on the
-   machine. Peer MATLAB / Copilot scalars stay `unchecked` until Arc
+6. Do **not** add MATLAB MCP or Simulink Agentic Toolkit to `.cursor/mcp.json`.
+   Arc calls MATLAB MCP internally via `run-matlab-if-present` when
+   `matlab-mcp-server` is on the machine, and Simulink tools via
+   `run-simulink-if-present` when `EE_SIMULINK_TOOLS_JSON` points at toolkit
+   `tools.json`. Student desktop: run `satk_initialize` in that MATLAB session.
+   Peer MATLAB / Copilot / `model_*` scalars stay `unchecked` until Arc
    recomputes them (FR20 clamp). See [`../ON_THE_HARNESS.md`](../ON_THE_HARNESS.md).
 7. Do **not** copy EE packs into this product repo’s `.cursor/skills/`
    (that tree is coding SDLC). Symlink root + active pack into **your**
@@ -27,5 +30,7 @@ First-class host. Same kernel contract as Claude Code, Codex, and ChatGPT deskto
 9. Optional pack specialist: `electrical-engineer hosts install --into <homework> --host cursor`
    (or copy
    [`../../hosts/adapters/cursor/pack-specialist.md`](../../hosts/adapters/cursor/pack-specialist.md)).
+   Catalog: [`../../hosts/agents/INDEX.md`](../../hosts/agents/INDEX.md) (12 cards).
    Never into this product repo’s `.cursor/skills/` or `.cursor/agents/`.
-   At most two packs. Handoff is the run dir.
+   At most two packs. Local same-checkout only — do **not** spawn EE
+   specialists `/in-cloud` or in isolated worktrees. Handoff is the run dir.

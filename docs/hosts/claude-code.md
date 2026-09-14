@@ -21,6 +21,7 @@ First-class host. Same kernel contract as Cursor, Codex, and ChatGPT desktop.
    At most two pack specialists. Handoff is
    `run_id` + `./runs/<id>/`. Parent writes `argument.md`.
 6. Claude Code is optional. The CLI works without it.
-7. Do **not** add MATLAB MCP beside Arc. Arc mediates MATLAB when the binary
-   is installed. Peer scalars stay unverified until Arc recomputes them
-   (FR20). [`../ON_THE_HARNESS.md`](../ON_THE_HARNESS.md).
+7. Do **not** add MATLAB MCP or Simulink Agentic Toolkit beside Arc. Arc
+   mediates MATLAB and Simulink toolkit tools when the binary and
+   `EE_SIMULINK_TOOLS_JSON` are installed. Peer scalars stay unverified until
+   Arc recomputes them (FR20). [`../ON_THE_HARNESS.md`](../ON_THE_HARNESS.md).

@@ -40,11 +40,13 @@ Claude Desktop, GitHub Copilot, Gemini CLI.
 into *your* homework project). At most two packs. They share the saved run
 folder. Arc does not start those helpers.
 
-**MATLAB:** do **not** add MathWorks MCP next to Arc. Arc calls MATLAB MCP
-internally when `matlab-mcp-server` is installed (`run-matlab-if-present`).
-Peer Copilot scalars stay unverified until Arc recomputes them
-([`../PRD.md`](../PRD.md) FR20). Product and CI work with zero MATLAB.
-See [`ON_THE_HARNESS.md`](../ON_THE_HARNESS.md).
+**MATLAB / Simulink:** do **not** add MathWorks MCP or Simulink Agentic Toolkit
+next to Arc. Arc calls MATLAB MCP internally when `matlab-mcp-server` is
+installed (`run-matlab-if-present`), and Simulink tools when
+`EE_SIMULINK_TOOLS_JSON` points at toolkit `tools.json`
+(`run-simulink-if-present`). Peer Copilot / `model_*` scalars stay unverified
+until Arc recomputes them ([`../PRD.md`](../PRD.md) FR20). Product and CI work
+with zero MATLAB. See [`ON_THE_HARNESS.md`](../ON_THE_HARNESS.md).
 
 - [Cursor](cursor.md)
 - [Claude Code](claude-code.md)

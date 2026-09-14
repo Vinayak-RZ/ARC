@@ -321,7 +321,7 @@ flowchart TB
   end
 ```
 
-The product and CI already work with zero MATLAB. OSS simulators stay first-class. Simulink Agentic Toolkit is later.
+The product and CI already work with zero MATLAB. OSS simulators stay first-class. Simulink Agentic Toolkit is kernel-mediated the same way: set `EE_SIMULINK_TOOLS_JSON` to the toolkit `tools.json`. Do **not** attach the toolkit to the coding assistant. Missing toolkit stays unverified (`CD-SIMULINK-PLANT`). On a licensed desktop, run `satk_initialize` once per MATLAB session. Live `.slx` gold is later; this checkout’s CI has no Simulink.
 
 ## What ships in this checkout
 

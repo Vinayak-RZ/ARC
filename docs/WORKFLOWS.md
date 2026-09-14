@@ -105,6 +105,7 @@ Not student-facing. Classifier is **not** a node.
 | run-spice | ngspice/PySpice; writes only under this run dir | `lumped-circuit-sim` |
 | run-python-control | LTI, Bode, step, root locus | `lti-analysis` |
 | run-matlab-if-present | Optional; ask gate; fail clearly if busy/missing | several caps, MATLAB-if-present |
+| run-simulink-if-present | Optional toolkit; fail closed `CD-SIMULINK-PLANT`; no CI YAML | MATLAB-only plants, not a new capability |
 | run-load-flow | pandapower study-level | `power-network-study` |
 | ask-human | TTY or UI; counts toward the 2-interrupt budget | `ask-student` |
 | label-unchecked | Exact token `unchecked` + `summary.json` field | `label-unverified` |
@@ -174,7 +175,7 @@ flowchart LR
   R --> S --> U --> W
 ```
 
-**No** `run-spice`, `run-matlab-if-present`, or `run-load-flow`. Any numeric claim without a verifier artifact must carry `unchecked`.
+**No** `run-spice`, `run-matlab-if-present`, `run-simulink-if-present`, or `run-load-flow`. Any numeric claim without a verifier artifact must carry `unchecked`.
 
 ---
 
