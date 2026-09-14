@@ -212,3 +212,93 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 - **Consequences:** Pack makers write only their glob. Retrieval is a later graph. Product `src/` stays untouched.
 - **Alternatives:** Link-only syllabus map (rejected — owner chose original+CC-BY); store under `.electrical-engineer/corpus/` (rejected — that path is gitignored BYO); auto-ingest into LightRAG (rejected — Later).
 - **Sources:** `docs/planning/GATE_0_UG_EE_KNOWLEDGE.md`; `knowledge/PRODUCT.md`; `research/notes/ee-corpus-and-licensing.md`; constitution V
+
+---
+
+## ADR-0015 — Pack specialists as host-native wrappers
+
+- **Status:** accepted (this graph, 2026-09-14)
+- **Context:** D20 left generic adapter markdown. The owner asked for spawnable specialists over the 10 curriculum cores + maths + `_cross`, using `knowledge/ug-ee/` as links, not a dump. H5 Python fan-out remains forbidden. Product `.cursor/` is coding SDLC.
+
+### Trust
+
+- Install only into the **homework** (or user) host dirs, never this repo’s `.cursor/agents/`.
+- Children share the parent EE MCP. They must not mint checked ohms or skip UI confirm.
+- Retrieve scaffold is empty this graph: call it; a miss is visible; do not paste `knowledge/`.
+- At most two live pack children. CLI / MCP / UI never spawn.
+
+### Fail closed
+
+- Electives are not specialists this graph
+- Nested specialist spawn is forbidden in adapter prose
+- Empty retrieve is not a licence to invent a page number
+
+### Decision
+
+Canonical specialist law lives in `hosts/adapters/`. `electrical-engineer hosts install --into <dir>` emits thin per-pack wrappers:
+
+- Cursor: `.cursor/agents/ee-<pack>.md`
+- Codex: `.codex/agents/ee_<pack>.toml`
+- Claude Code: `.claude/agents/ee-<pack>.md`
+
+Skills stay short (`skills/<pack>/SKILL.md`) and link `knowledge/ug-ee/<pack>/INDEX.md` plus `COVERAGE.yaml` unit ids. Skills-only (root + ≤2 packs, no spawn) remains the default path. Spawn is for large or parallel pack work.
+
+## Trade-off: specialist shape
+
+**Decision:** Per-pack host-native wrappers generated from one adapter body.
+
+**Option A:** Skills-only — Pros: zero spawn files; matches Cursor “skill for one-shot method.” Cons: no picker row per pack; large assignments stay in one context.
+
+**Option B:** Per-pack wrappers (chosen) — Pros: host Task/subagent pickers see `ee-circuits`; still L0 host loop; no Python orchestrator. Cons: 12 small files on disk; descriptions must stay honest.
+
+**Option C:** H5 Python specialist runtime — Pros: one spawn API. Cons: H3 falsifier; Gate 0 forbidden.
+
+**Default:** B because PRIORITY = SIMPLICITY at the Arc layer and QUALITY at the host picker. Skills-only stays available without install.
+
+**Override:** Set PRIORITY = SIMPLICITY to skip install and stay skills-only.
+
+- **Consequences:** Tests install into a temp dir, not this repo’s `.cursor/`. Chat/Work pack spawn still waits on Skills-over-MCP (Later).
+- **Alternatives:** One generic agent + pack argument (fallback only); plugin marketplaces (Later); electives (out).
+- **Sources:** [`docs/planning/R0_SOLUTIONS.md`](docs/planning/R0_SOLUTIONS.md); `research/notes/pack-specialist-spawn-landscape.md`; ADR-0011
+
+---
+
+## ADR-0016 — Arc-mediated MATLAB MCP
+
+- **Status:** accepted (this graph, 2026-09-14)
+- **Context:** FR20 still *permits* a peer MATLAB MCP beside Arc. That dumps ~10k tokens of MATLAB tools into the homework host and makes Copilot scalars easy to treat as lab results. Gate 0: host talks only to Arc; Arc calls MATLAB MCP internally. Product and CI must work with zero MATLAB. MATLAB MCP is a local Go stdio binary, not a mathworks.com login.
+
+### Trust
+
+- Single-seat licence: kernel spawn on the student’s desktop; must not be a multi-user shared MCP.
+- Never store MathWorks passwords, REST PATs, or licence strings in git, committed env files, or `runs/`.
+- Peer MATLAB / Copilot scalars stay `unchecked` until an EE provider recomputes them (FR20 clamp).
+- No new host MCP verb. ACI stays 5–7. Host `tools/list` must not include MATLAB tool names.
+
+### Fail closed
+
+- Missing binary, spawn fail, licence error, timeout → same `_missing("matlab")` dict (`ok: false`, `unchecked: true`)
+- Stub must not mint a checked scalar
+- Simulink `--extension-file` is Later
+
+### Decision
+
+Kernel stdio NDJSON JSON-RPC client behind existing `run-matlab-if-present`. Spawn flags: `--matlab-session-mode=new`, `--matlab-display-mode=nodesktop`, `--disable-telemetry=true`. Env: `EE_MATLAB_MCP_BIN`, `MW_MCP_SERVER_MATLAB_ROOT`, `EE_MATLAB_MCP_TIMEOUT` (default 120s). Tests use a fake stdio server that speaks `initialize` + `tools/call`. No `mcp` PyPI dependency unless a stop fails. OSS providers stay first-class.
+
+## Trade-off: MATLAB attach
+
+**Decision:** Kernel mediates MATLAB MCP; host never lists those tools.
+
+**Option A:** Peer dual-MCP (FR20 allowance) — Pros: zero Arc client code. Cons: 10k-token dump; host can call MATLAB behind Arc; ON_THE_HARNESS forbids this as the happy path.
+
+**Option B:** Kernel stdio client (chosen) — Pros: host sees only Arc verbs; fail-closed without MATLAB; maps into an existing provider id. Cons: small NDJSON client to maintain; protocolVersion spike.
+
+**Option C:** New `matlab_*` host verbs — Pros: explicit. Cons: breaks 5–7 ACI; wraps a provider as extra MCP tools (ARCHITECTURE §2.2).
+
+**Default:** B because PRIORITY = SAFETY (single-seat, no host dump) then SIMPLICITY (reuse `run-matlab-if-present`).
+
+**Override:** Set PRIORITY = SPEED only if a licensed desktop already has MATLAB MCP on the host — still `unchecked` until Arc recomputes.
+
+- **Consequences:** `docs/hosts/` must stop recommending peer MATLAB MCP. UI chip: optional, via Arc when installed. `matlab.engine` / MPS / Jupyter / COM are not P0.
+- **Alternatives:** Filtered proxy (mcp-proxy does not filter; ToolHive still exposes verbs to the host); Simulink toolkit this graph (rejected — Later).
+- **Sources:** [`docs/planning/R0_SOLUTIONS.md`](docs/planning/R0_SOLUTIONS.md); `research/notes/matlab-mcp-mediation-landscape.md`; FR20; ADR-0003
