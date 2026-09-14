@@ -6,16 +6,15 @@ Persistent localhost workspace. Not KiCad. Not a second agent. WCAG AA.
 
 | Slot | Role |
 |------|------|
-| `root` | Shell: skip-link, header with **Arc icon** (`assets/brand/arc-icon.png` → `/arc-icon.png`), live region |
-| `sidebar` | Run list (`asset-row`) |
-| `workspace` | Current view |
-| `run.detail` | Recipe id, state, `unchecked` badge-pill |
-| `run.evidentiary` | `evidentiary.json` (alias `summary.json`): values, verifier, citations, artifact paths |
-| `run.argument` | Host (or local fallback) `argument.md`. Must not flip `unchecked`. |
-| `run.plan` | Large-job `plan.md` (Given/Find, packs, capability ids). Not a numeric band. |
-| `run.observation` | Kernel `observation.json`: capability/provider ids, node ok, `unchecked_reason` |
-| `run.artifacts` | Library SVG/PNG + paths |
-| `photo.confirm` | Draft netlist + confirm (no sim) |
+| `root` | Shell: skip-link, header with **Arc icon** (`/arc-icon.png`), engines chips (Numeric / SPICE / MATLAB · coming next) |
+| `sidebar` | Named runs (`asset-row`): title, recipe caption, run id. Collapses under 640px |
+| `workspace` | Local window for the selected run |
+| `run.result` | Coinbase asset-row: title, mono value or token `unchecked`, verifier caption. Not a hero metric |
+| `run.canvas` | Capped place-and-wire confirm surface (`@xyflow/react`). Palette R L C V Gnd. Writes `graph.json`. Confirm does not simulate |
+| `run.inspector` | Keyboard path for refdes/value. Equal to pointer on the canvas |
+| `run.argument` | Host `argument.md` as readable prose (~75ch). Must not flip `unchecked` |
+| `run.more` | Closed-by-default disclosures: evidentiary JSON, plan, observation, raw graph, artifacts |
+| `photo.confirm` | Confirm topology (merged into the canvas Confirm). `simulate: false` |
 | `rag.inventory` | Book/chapter/folder tags |
 | `memory.excerpt` | ≤800 char excerpt + path |
 | `gates.prompt` | Ask payload; MCP never waits here |
@@ -28,9 +27,11 @@ Persistent localhost workspace. Not KiCad. Not a second agent. WCAG AA.
 |-------|----------------|
 | `empty` | Run list and bands show an honest empty message; no fake numbers |
 | `running` | Live region announces progress; bands stay previous-or-empty |
-| `waiting-human` | Photo confirm / gate prompt; MCP never waits here |
-| `failed` | Error text in `run.detail`; evidentiary `unchecked` stays honest |
-| `done` | Two bands + plan + observation readable |
+| `failed` | Result strip uses semantic-down text; canvas stays editable |
+| `waiting-human` | Live region "Waiting for topology confirm"; Confirm enabled; no modal |
+| `done` | Result strip + canvas + argument; JSON/plan/observation stay in disclosures |
+
+The canvas is **confirm only**: 16 parts / 24 wires, allowlisted R L C V Gnd. Students place premade parts; the kernel compiles `netlist.cir`. This window is not a schematic editor (CD-KICAD). Engines chip: MATLAB is **coming next** (Arc will call it). Do not tell students to add MATLAB MCP in the host.
 
 ## Token map (DESIGN-coinbase)
 
@@ -39,7 +40,7 @@ Persistent localhost workspace. Not KiCad. Not a second agent. WCAG AA.
 | canvas | `--ee-color-canvas: #ffffff` | page |
 | ink | `--ee-color-ink: #0a0b0d` | text |
 | primary | `--ee-color-primary: #0052ff` | pills, 2px focus, links |
-| unchecked | `--ee-badge-pill` | exact token, not a red button |
+| unchecked | `--ee-color-surface-strong` + ink | exact token, never primary fill |
 | checked | `--ee-semantic-up` | text only |
 | failed number | `--ee-semantic-down` | text only |
 | radius card | `--ee-radius-xl: 24px` | cards |
@@ -48,7 +49,7 @@ Persistent localhost workspace. Not KiCad. Not a second agent. WCAG AA.
 
 ## A11y
 
-Keyboard operable (tab order: skip-link → sidebar → workspace bands → photo confirm). Visible focus (2px primary). Skip link. `aria-live` for run state including `waiting-human`. Contrast **WCAG AA** on blue-on-white and white-on-blue. Logo `alt` is “Arc” (or the README alt); decorative parts of the SVG use the SVG `<title>`. Empty and failed states are text, not colour-only.
+Keyboard operable (tab order: skip-link → run list → result → palette → inspector → Save graph → Confirm topology → disclosures). Visible focus (2px primary). Skip link. `aria-live` for run state including `waiting-human`. Contrast **WCAG AA** on blue-on-white and white-on-blue. Logo `alt` is “Arc”. Empty and failed states are text, not colour-only. Inspector is the keyboard path for topology; the XYFlow pane may be pointer-first.
 
 ## Must not
 

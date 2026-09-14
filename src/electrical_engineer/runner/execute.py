@@ -9,6 +9,8 @@ from typing import Any
 import electrical_engineer.nodes  # noqa: F401  register activities
 from electrical_engineer.capabilities import DEFAULT_BIND, rebind_recipe
 from electrical_engineer.catalog import load_recipe
+from electrical_engineer.circuit.graph import default_graph_for, write_graph
+from electrical_engineer.circuit.title import run_title
 from electrical_engineer.nodes.registry import REGISTRY
 from electrical_engineer.runner.fsm import Recipe, run_fsm
 from electrical_engineer.runner.runs import create_run_dir, new_run_id, node_dir, project_root
@@ -66,6 +68,7 @@ def execute(
     payload = {
         "recipe_id": recipe.id,
         "run_id": run_id,
+        "title": run_title(recipe.id, problem),
         "unchecked": bool(summary_node.get("unchecked")),
         "token": summary_node.get("token"),
         "value": summary_node.get("value"),
@@ -100,6 +103,9 @@ def execute(
     (run_dir / "evidentiary.json").write_text(blob)
     (run_dir / "summary.json").write_text(blob)
     (run_dir / "observation.json").write_text(json.dumps(observation, indent=2))
+    seed = default_graph_for(problem)
+    if seed is not None and not (run_dir / "graph.json").is_file():
+        write_graph(run_dir, seed)
     return {"run_id": run_id, "run_dir": str(run_dir), "summary": payload, "observation": observation}
 
 

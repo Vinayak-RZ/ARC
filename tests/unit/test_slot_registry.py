@@ -2,16 +2,18 @@ from pathlib import Path
 
 
 def test_registry_exports() -> None:
-    text = Path("ui/src/slots/registry.js").read_text()
+    text = Path("ui/src/slots/registry.js").read_text(encoding="utf-8")
     assert "export function register" in text
     assert "export function renderSlot" in text
-    root = Path("ui/src/slots/root.jsx").read_text()
+    root = Path("ui/src/slots/root.jsx").read_text(encoding="utf-8")
     for slot in (
-        "run.evidentiary",
+        "run.result",
+        "run.canvas",
+        "run.inspector",
         "run.argument",
-        "run.plan",
-        "run.observation",
         "photo.confirm",
     ):
         assert slot in root
+    assert 'register("run.evidentiary"' not in root
+    assert "<details>" in root
 

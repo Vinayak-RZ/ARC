@@ -2,6 +2,10 @@
   "mcpServers": {
     "agent-patterns": {
       "url": "https://mcp.agentpatternscatalog.org/mcp"
+    },
+    "electrical-engineer": {
+      "command": "uv",
+      "args": ["run", "electrical-engineer", "mcp"]
     }
   }
 }

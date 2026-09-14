@@ -1,18 +1,40 @@
 from pathlib import Path
 
-from electrical_engineer.ui_server.app import BIND_HOST, should_open_browser
+from fastapi.testclient import TestClient
+
+from electrical_engineer.ui_server.app import BIND_HOST, create_app, should_open_browser
 
 
 def test_skip_link_and_no_wan() -> None:
-    root = Path("ui/src/slots/root.jsx").read_text()
+    root = Path("ui/src/slots/root.jsx").read_text(encoding="utf-8")
     assert "Skip to workspace" in root
     assert "aria-live" in root
-    assert "obj.unchecked === true" in root
+    assert "unchecked === true" in root
     assert 'String(summary).includes("unchecked")' not in root
-    assert "run.evidentiary" in root
+    assert "run.result" in root
+    assert "run.canvas" in root
+    canvas = Path("ui/src/slots/canvas/Canvas.jsx").read_text(encoding="utf-8")
+    inspector = Path("ui/src/slots/canvas/Inspector.jsx").read_text(encoding="utf-8")
+    assert "Confirm topology" in canvas
+    assert "Save graph" in canvas
+    assert ">Refdes<" in inspector.replace(" ", "") or "Refdes" in inspector
+    assert "palette-btn" in Path("ui/src/slots/canvas/Palette.jsx").read_text(encoding="utf-8")
+    assert "Waiting for topology confirm" in root
     assert "waiting-human" in root
     assert 'alt="Arc"' in root
+    assert "MATLAB · coming next" in root
+    assert "No saved runs yet" in root
+    assert "electrical-engineer run" in root
+    assert "named runs · exact token unchecked" not in root
+    assert "nav-toggle" in root
     assert BIND_HOST == "127.0.0.1"
+
+
+def test_brand_icon_is_png() -> None:
+    r = TestClient(create_app()).get("/arc-icon.png")
+    assert r.status_code == 200
+    assert r.content[:8] == b"\x89PNG\r\n\x1a\n"
+    assert "png" in r.headers.get("content-type", "")
 
 
 def test_ee_no_browser(monkeypatch) -> None:
