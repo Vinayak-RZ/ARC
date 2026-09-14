@@ -111,7 +111,7 @@ sequenceDiagram
   UI-->>H: numbers plus explanation, confirm photos
 ```
 
-- **Named lab recipes.** 27 saved workflows under `workflows/`. Limit: Arc never invents a new graph in chat. Unmatched homework still gets an answer, labeled unverified. [`docs/WORKFLOWS.md`](docs/WORKFLOWS.md)
+- **Named lab recipes.** 27 saved workflows. The assistant picks one (or proposes an allowed graph). Arc runs it. A free agent loop can skip the simulator. Limit: Arc never invents a new recipe in chat. [`docs/WORKFLOWS.md`](docs/WORKFLOWS.md)
 - **Deterministic checks.** The recipe runner and the simulators do not sample. Same netlist, same `Vout`. Limit: the explanation can still vary. The ohms cannot, unless they are labeled unverified. [`docs/ON_THE_HARNESS.md`](docs/ON_THE_HARNESS.md)
 - **Unverified numbers are labeled.** If SPICE, python-control, or pandapower is missing, Arc does not guess. Limit: a verified number needs a simulator or a numeric check, not a fluent paragraph.
 - **Local window.** On `127.0.0.1:8765` only. Limit: not on the internet, no chat loop in the browser.

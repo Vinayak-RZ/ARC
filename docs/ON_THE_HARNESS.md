@@ -17,6 +17,7 @@ File maps: [`EXTENSIVE.md`](EXTENSIVE.md). Engineer contract: [`ARCHITECTURE.md`
 - [Words this page uses](#words-this-page-uses)
 - [The split in one picture](#the-split-in-one-picture)
 - [Determinism, accuracy, reliability](#determinism-accuracy-reliability)
+- [Named workflows, and when none fits](#named-workflows-and-when-none-fits)
 - [Why a generic command line, API, or MCP is not the product](#why-a-generic-command-line-api-or-mcp-is-not-the-product)
 - [What Arc already does](#what-arc-already-does)
 - [When a number was not verified](#when-a-number-was-not-verified)
@@ -36,6 +37,8 @@ File maps: [`EXTENSIVE.md`](EXTENSIVE.md). Engineer contract: [`ARCHITECTURE.md`
 | Gate | A local rule that says auto, ask you, or refuse. The chat never hangs waiting. If you must confirm a photo, you get a link to the local window. |
 | Unverified | Arc did not check this number. Saved as the word `unchecked`. |
 | Deterministic | Same inputs, same number. The recipe runner and the simulators do not sample. |
+| Named lab recipe | A saved sequence of steps (a workflow) checked into `workflows/`. Example: load netlist, simulate, label, write summary. |
+| Compose | Build a one-off sequence from *allowed* kinds of check only. Arc validates the graph, then runs it. |
 | Saved run | A folder under `./runs/` with the evidence, the observation log, and (when the assistant is driving) the explanation. |
 
 ## The split in one picture
@@ -53,6 +56,7 @@ flowchart TB
   subgraph arc["Arc already ships, on this machine"]
     Method[Course method]
     Tools[Tools the assistant can call]
+    Recipes[27 named lab recipes]
     Runner[Deterministic recipe runner]
     Sims[Simulators]
     Gates[Gates: auto, ask, or refuse]
@@ -69,6 +73,8 @@ flowchart TB
   You --> Loop
   You --> Window
   Loop --> Tools
+  Tools --> Recipes
+  Recipes --> Gates
   Tools --> Gates
   Gates --> Runner
   Runner --> Sims
@@ -114,6 +120,39 @@ flowchart LR
 ```
 
 Limit: Arc is an undergraduate lab, not a plant controller. It does not make every numeral tool-checked. It does make this promise: a number presented as verified came from a simulator or a numeric check, and you can open the run that produced it.
+
+## Named workflows, and when none fits
+
+A general assistant in a loop invents the next step as it goes. That is a poor fit when the next step is "run SPICE, then label anything that did not compute." The model can skip the simulator, reorder the work, or call a tool that does not exist.
+
+A **named lab recipe** is a saved path the runner will not improvise. This checkout has **27** of them across **10** packs (circuits, control, signals, machines, power, and the rest). `simulate-circuit` is four steps: load the netlist, simulate, label unverified leftovers, write the summary. Ask twice, get the same path.
+
+The combination is the product: the assistant **selects** a recipe (or proposes an allowed graph). Arc **runs** it. The assistant does not learn Kirchhoff by trial and error inside the loop.
+
+```mermaid
+flowchart LR
+  subgraph free["General agent loop"]
+    H1[Homework] --> M[Model picks the next tool]
+    M --> G[Fluent answer, steps may change]
+  end
+  subgraph combo["Arc combination"]
+    H2[Homework] --> Pick[Assistant picks a saved recipe]
+    H2 --> Comp[Or proposes allowed checks]
+    Pick --> Run[Deterministic runner]
+    Comp --> Val[Validator: allowlist, size, no cycles]
+    Val --> Run
+    Run --> Out[Same path, or labeled unverified]
+  end
+  free ~~~ combo
+```
+
+**How the assistant selects.** It lists the recipes, matches the homework, and runs a short saved one (`simulate-circuit`, `derive-circuit`, review this solution, explain this idea). If you type `electrical-engineer run` with no name, Arc classifies the `problem.json` text, asks when two recipes are close, or uses `unmatched-cosolver` (answer, and label anything not checked). It never invents a new recipe id.
+
+**When no saved recipe fits: compose.** The assistant names a graph of *already allowed* kinds of check (simulate this circuit, then check this algebra). Arc validates first: known ids only, at most 16 steps and 24 edges, no cycles, photos still need the local window. Record the plan without physics, or apply and run. On the command line the same job is `compose-from-parts` (asks you first). Invalid graphs fail before a simulator starts.
+
+A generic command line runs one flag. A generic MCP dumps tools into the chat. Neither ships 27 named lab recipes plus a validator that will only run allowed checks.
+
+Limit: the catalog is not the whole subject. A signals question with no YAML row is still in-bound: compose allowed checks, or unmatched plus an unverified label. Long `solve-*` recipes that include an essay step are the command-line / test path, not the assistant's chat brain. Full list: [`WORKFLOWS.md`](WORKFLOWS.md).
 
 ## Why a generic command line, API, or MCP is not the product
 
