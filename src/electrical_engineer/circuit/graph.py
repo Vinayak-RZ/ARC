@@ -12,6 +12,35 @@ MAX_EDGES = 24
 SCHEMA = "arc.circuit.v1"
 
 
+def divider_graph(vin: float = 10, r1: float = 1000, r2: float = 1000) -> dict[str, Any]:
+    return {
+        "schema": SCHEMA,
+        "nodes": [
+            {"id": "vin", "type": "source_v", "refdes": "Vin", "value": vin, "unit": "V", "x": 80, "y": 40},
+            {"id": "r1", "type": "resistor", "refdes": "R1", "value": r1, "unit": "ohm", "x": 220, "y": 40},
+            {"id": "r2", "type": "resistor", "refdes": "R2", "value": r2, "unit": "ohm", "x": 220, "y": 160},
+            {"id": "gnd", "type": "ground", "refdes": "Gnd", "value": 0, "unit": "", "x": 80, "y": 160},
+        ],
+        "edges": [
+            {"id": "e1", "from": "vin.n1", "to": "r1.n1"},
+            {"id": "e2", "from": "r1.n2", "to": "r2.n1"},
+            {"id": "e3", "from": "r2.n2", "to": "gnd.n1"},
+            {"id": "e4", "from": "vin.n2", "to": "gnd.n1"},
+        ],
+    }
+
+
+def default_graph_for(problem: dict[str, Any] | None) -> dict[str, Any] | None:
+    problem = problem or {}
+    if str(problem.get("kind") or "") != "voltage_divider":
+        return None
+    return divider_graph(
+        vin=float(problem.get("vin") or 10),
+        r1=float(problem.get("r1") or 1000),
+        r2=float(problem.get("r2") or 1000),
+    )
+
+
 class GraphError(ValueError):
     pass
 

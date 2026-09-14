@@ -1,24 +1,20 @@
-from electrical_engineer.circuit.graph import GraphError, parse_graph, write_graph
+from electrical_engineer.circuit.graph import (
+    GraphError,
+    default_graph_for,
+    divider_graph,
+    parse_graph,
+    write_graph,
+)
 from electrical_engineer.circuit.netlist import CompileError, compile_netlist
 
-DIVIDER = {
-    "schema": "arc.circuit.v1",
-    "nodes": [
-        {"id": "vin", "type": "source_v", "refdes": "Vin", "value": 10, "unit": "V", "x": 80, "y": 40},
-        {"id": "r1", "type": "resistor", "refdes": "R1", "value": 1000, "unit": "ohm", "x": 220, "y": 40},
-        {"id": "r2", "type": "resistor", "refdes": "R2", "value": 1000, "unit": "ohm", "x": 220, "y": 160},
-        {"id": "gnd", "type": "ground", "refdes": "Gnd", "value": 0, "unit": "", "x": 80, "y": 160},
-    ],
-    "edges": [
-        {"id": "e1", "from": "vin.n1", "to": "r1.n1"},
-        {"id": "e2", "from": "r1.n2", "to": "r2.n1"},
-        {"id": "e3", "from": "r2.n2", "to": "gnd.n1"},
-        {"id": "e4", "from": "vin.n2", "to": "gnd.n1"},
-    ],
-}
+DIVIDER = divider_graph()
 
 
-def test_parse_and_compile_divider() -> None:
+def test_default_graph_for_divider() -> None:
+    g = default_graph_for({"kind": "voltage_divider", "vin": 12, "r1": 2000, "r2": 2000})
+    assert g is not None
+    assert g["nodes"][0]["value"] == 12
+    assert default_graph_for({"kind": "ohms_law"}) is None
     parsed = parse_graph(DIVIDER)
     cir = compile_netlist(parsed)
     assert "Vin" in cir

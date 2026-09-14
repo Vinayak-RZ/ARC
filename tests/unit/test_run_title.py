@@ -26,3 +26,6 @@ def test_execute_writes_title(tmp_path) -> None:
     evidentiary = json.loads((Path(out["run_dir"]) / "evidentiary.json").read_text(encoding="utf-8"))
     assert evidentiary["title"] == "Voltage divider · Vout"
     assert out["summary"]["title"] == "Voltage divider · Vout"
+    graph = json.loads((Path(out["run_dir"]) / "graph.json").read_text(encoding="utf-8"))
+    refs = {n["refdes"] for n in graph["nodes"]}
+    assert refs == {"Vin", "R1", "R2", "Gnd"}
