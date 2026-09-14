@@ -24,7 +24,7 @@ Live status. Research phase completed on `cursor/ee-research-phase-7e0c`. Produc
 | Harness persist/observe/spawn | **Proposed D20** | named memory, `observation.json`, kernel hooks, `hosts/adapters/` |
 | Product execution plan | **H1 complete; D19/D20 complete (archived)** | D19 archive [`docs/planning/LOOP_GRAPH_D19.md`](docs/planning/LOOP_GRAPH_D19.md); H1 [`EXECUTION_GRAPH.md`](EXECUTION_GRAPH.md) |
 | UG EE knowledge corpus | **archived** | [`docs/planning/LOOP_GRAPH_KNOWLEDGE.md`](docs/planning/LOOP_GRAPH_KNOWLEDGE.md) |
-| Pack skills + MATLAB MCP | **live graph-of-loops — wave 2** | R_SURVEY/P0/D0/A1 passed; [`LOOP_GRAPH.md`](LOOP_GRAPH.md); branch `cursor/ee-skills-matlab-mcp-37b3` |
+| Pack skills + MATLAB MCP | **live graph-of-loops — wave 3** | B_PACKS/B_MATLAB/U1 passed; [`LOOP_GRAPH.md`](LOOP_GRAPH.md) |
 | UI design lock | **closed** | DESIGN-coinbase; ADR-0008 accepted |
 | Validator | PASS | `./scripts/research/validate-research.sh --full` |
 

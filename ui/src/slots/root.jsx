@@ -18,9 +18,9 @@ function Root() {
           <span className="chip">SPICE</span>
           <span
             className="chip"
-            title="The coding assistant will keep talking only to Arc. Arc will call MATLAB and return a short labeled result. A MATLAB Copilot scalar is not a check until Arc recomputes it. OSS simulators stay first-class."
+            title="Optional. Arc calls MATLAB MCP when the binary is installed. The coding assistant does not attach MATLAB MCP. Missing MATLAB stays unchecked. OSS simulators stay first-class."
           >
-            MATLAB · coming next
+            MATLAB · via Arc
           </span>
         </div>
       </header>

@@ -6,7 +6,7 @@ Persistent localhost workspace. Not KiCad. Not a second agent. WCAG AA.
 
 | Slot | Role |
 |------|------|
-| `root` | Shell: skip-link, header with **Arc icon** (`/arc-icon.png`), engines chips (Numeric / SPICE / MATLAB · coming next) |
+| `root` | Shell: skip-link, header with **Arc icon** (`/arc-icon.png`), engines chips (Numeric / SPICE / MATLAB · via Arc) |
 | `sidebar` | Named runs (`asset-row`): title, recipe caption, run id. Collapses under 640px |
 | `workspace` | Local window for the selected run |
 | `run.result` | Coinbase asset-row: title, mono value or token `unchecked`, verifier caption. Not a hero metric |
@@ -31,7 +31,7 @@ Persistent localhost workspace. Not KiCad. Not a second agent. WCAG AA.
 | `waiting-human` | Live region "Waiting for topology confirm"; Confirm enabled; no modal |
 | `done` | Result strip + canvas + argument; JSON/plan/observation stay in disclosures |
 
-The canvas is **confirm only**: 16 parts / 24 wires, allowlisted R L C V Gnd. Students place premade parts; the kernel compiles `netlist.cir`. This window is not a schematic editor (CD-KICAD). Engines chip: MATLAB is **coming next** (Arc will call it). Do not tell students to add MATLAB MCP in the host.
+The canvas is **confirm only**: 16 parts / 24 wires, allowlisted R L C V Gnd. Students place premade parts; the kernel compiles `netlist.cir`. This window is not a schematic editor (CD-KICAD). Engines chip: MATLAB is **optional, via Arc** when the MCP binary is installed. Do not tell students to add MATLAB MCP in the host.
 
 ## Token map (DESIGN-coinbase)
 

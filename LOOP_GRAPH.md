@@ -23,7 +23,7 @@
 | **Graph-engineering** | not loaded (XOR) |
 | **Branch** | `cursor/ee-skills-matlab-mcp-37b3` |
 | **Cheap checker** | `composer-2.5-fast` else `inherit` |
-| **Wave status** | 2 looping |
+| **Wave status** | 3 looping |
 
 ---
 
