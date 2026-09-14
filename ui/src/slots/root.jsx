@@ -23,6 +23,13 @@ function Root() {
           >
             MATLAB · via Arc
           </span>
+          <span
+            className="chip"
+            title="Optional. Arc calls Simulink Agentic Toolkit tools inside the kernel when tools.json is installed. The coding assistant does not attach the toolkit. Missing Simulink stays unchecked (CD-SIMULINK-PLANT). OSS simulators stay first-class."
+            aria-label="Simulink optional via Arc"
+          >
+            Simulink · via Arc
+          </span>
         </div>
       </header>
       <div className="layout">
