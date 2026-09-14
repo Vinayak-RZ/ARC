@@ -25,6 +25,8 @@ Honest holes. Prefer a row here over fake gold. Expanded by B_NODES and later pa
 | CD-RAG-ENGINE | LightRAG/Docling not installed in CI | Missing deps; no licensed chapter in git | Thin BM25 facade; BYO ingest |
 | CD-RAG-PARSE | PDF/scan OCR page-chunk for commercial scans | Text/markdown ingest is in; licensed PDF OCR is the remaining hole | `rag add` on licence-clean text; tag BYO PDFs; empty retrieve is visible |
 
+**CD-KICAD interpretation:** the local window may host a capped place-and-wire confirm canvas (16 parts / 24 wires, R L C V Gnd) that writes `graph.json`. That is composition of premade parts, not a KiCad clone, not a schematic editor product, and Confirm does not simulate.
+
 
 | CD-SIGNALS-MATLAB | MATLAB-only DSP toolboxes as checked answers | UG OSS bound | OSS first; else unchecked |
 | CD-MACHINES-FEA | Full FEA / Ansys Maxwell machine design | UG OSS bound | Phasor + equivalent-circuit OSS |
