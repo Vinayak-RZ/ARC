@@ -32,10 +32,10 @@
 | D0 | coverage manifest | [plans/knowledge-loops/D0.md](plans/knowledge-loops/D0.md) | COVERAGE.yaml pack/unit floors | 3 | passed |
 | A1 | ADR-0014 | [plans/knowledge-loops/A1.md](plans/knowledge-loops/A1.md) | grep ADR-0014 | 3 | passed |
 | B_SCAFFOLD | schema and checker | [plans/knowledge-loops/B_SCAFFOLD.md](plans/knowledge-loops/B_SCAFFOLD.md) | check_knowledge_tree.py --allow-empty | 3 | passed |
-| B_CIRCUITS | circuits handbook | [plans/knowledge-loops/B_CIRCUITS.md](plans/knowledge-loops/B_CIRCUITS.md) | --pack circuits | 3 | pending |
-| B_SIGNALS | signals handbook | [plans/knowledge-loops/B_SIGNALS.md](plans/knowledge-loops/B_SIGNALS.md) | --pack signals | 3 | pending |
-| B_ELECTRONICS | electronics handbook | [plans/knowledge-loops/B_ELECTRONICS.md](plans/knowledge-loops/B_ELECTRONICS.md) | --pack electronics | 3 | pending |
-| B_MATHS | maths-for-EE | [plans/knowledge-loops/B_MATHS.md](plans/knowledge-loops/B_MATHS.md) | --pack maths | 3 | pending |
+| B_CIRCUITS | circuits handbook | [plans/knowledge-loops/B_CIRCUITS.md](plans/knowledge-loops/B_CIRCUITS.md) | --pack circuits | 3 | passed |
+| B_SIGNALS | signals handbook | [plans/knowledge-loops/B_SIGNALS.md](plans/knowledge-loops/B_SIGNALS.md) | --pack signals | 3 | passed |
+| B_ELECTRONICS | electronics handbook | [plans/knowledge-loops/B_ELECTRONICS.md](plans/knowledge-loops/B_ELECTRONICS.md) | --pack electronics | 3 | passed |
+| B_MATHS | maths-for-EE | [plans/knowledge-loops/B_MATHS.md](plans/knowledge-loops/B_MATHS.md) | --pack maths | 3 | passed |
 | B_MACHINES | machines | [plans/knowledge-loops/B_MACHINES.md](plans/knowledge-loops/B_MACHINES.md) | --pack machines | 3 | pending |
 | B_POWER | power systems | [plans/knowledge-loops/B_POWER.md](plans/knowledge-loops/B_POWER.md) | --pack power | 3 | pending |
 | B_CONTROL | control | [plans/knowledge-loops/B_CONTROL.md](plans/knowledge-loops/B_CONTROL.md) | --pack control | 3 | pending |
@@ -140,7 +140,7 @@ See loop-plans table. Maker inherit. Checker composer-2.5-fast else inherit. Max
 | Wave | Nodes | Fan-out? | Barrier? | Status | Lead plumbing |
 |------|-------|----------|----------|--------|---------------|
 | 0 | P0, D0, A1, B_SCAFFOLD | no | serial | done | archive D19 already done |
-| 1 | B_CIRCUITS, B_SIGNALS, B_ELECTRONICS, B_MATHS | yes | no | pending | — |
+| 1 | B_CIRCUITS, B_SIGNALS, B_ELECTRONICS, B_MATHS | yes | no | done | — |
 | 2 | B_MACHINES, B_POWER, B_CONTROL, B_PE | yes | no | pending | — |
 | 3 | B_MEAS_EM, B_EL_POWER, B_EL_EMBED | yes | no | pending | — |
 | 4 | M1 | no | yes — whole set | pending | flatten indexes |
