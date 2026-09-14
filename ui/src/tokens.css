@@ -5,10 +5,14 @@
   --ee-color-muted: #7c828a;
   --ee-color-primary: #0052ff;
   --ee-color-primary-active: #003ecc;
+  --ee-color-primary-disabled: #a8b8cc;
   --ee-color-on-primary: #ffffff;
+  --ee-color-on-dark: #ffffff;
   --ee-color-hairline: #dee1e6;
   --ee-color-surface-soft: #f7f7f7;
   --ee-color-surface-card: #ffffff;
+  --ee-color-surface-strong: #eef0f3;
+  --ee-color-surface-dark: #0a0b0d;
   --ee-radius-xl: 24px;
   --ee-radius-pill: 999px;
   --ee-space-s: 8px;
@@ -16,8 +20,8 @@
   --ee-space-l: 24px;
   --ee-focus: 2px;
   --ee-shadow: 0 8px 24px rgba(10, 11, 13, 0.06);
-  --ee-semantic-up: #0f7b3a;
-  --ee-semantic-down: #b42318;
+  --ee-semantic-up: #05b169;
+  --ee-semantic-down: #cf202f;
   --ee-type-title: 18px;
   --ee-type-body: 16px;
   --ee-type-caption: 13px;
@@ -67,8 +71,8 @@ body { margin: 0; background: var(--ee-color-canvas); }
   display: inline-block;
   border-radius: var(--ee-radius-pill);
   padding: 4px 10px;
-  background: var(--ee-color-primary);
-  color: var(--ee-color-on-primary);
+  background: var(--ee-color-surface-strong);
+  color: var(--ee-color-ink);
   font-size: var(--ee-type-caption);
 }
 .button-primary {
@@ -112,9 +116,13 @@ body { margin: 0; background: var(--ee-color-canvas); }
   color: var(--ee-color-ink);
   cursor: pointer;
 }
-.asset-row:hover, .asset-row:focus {
+.asset-row:hover {
   background: var(--ee-color-canvas);
-  outline: none;
+}
+.asset-row:focus-visible {
+  outline: 2px solid var(--ee-color-primary);
+  outline-offset: 2px;
+  background: var(--ee-color-canvas);
 }
 .empty {
   color: var(--ee-color-body);

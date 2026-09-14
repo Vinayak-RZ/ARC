@@ -1,6 +1,8 @@
 from pathlib import Path
 
-from electrical_engineer.ui_server.app import BIND_HOST, should_open_browser
+from fastapi.testclient import TestClient
+
+from electrical_engineer.ui_server.app import BIND_HOST, create_app, should_open_browser
 
 
 def test_skip_link_and_no_wan() -> None:
@@ -13,6 +15,13 @@ def test_skip_link_and_no_wan() -> None:
     assert "waiting-human" in root
     assert 'alt="Arc"' in root
     assert BIND_HOST == "127.0.0.1"
+
+
+def test_brand_icon_is_png() -> None:
+    r = TestClient(create_app()).get("/arc-icon.png")
+    assert r.status_code == 200
+    assert r.content[:8] == b"\x89PNG\r\n\x1a\n"
+    assert "png" in r.headers.get("content-type", "")
 
 
 def test_ee_no_browser(monkeypatch) -> None:

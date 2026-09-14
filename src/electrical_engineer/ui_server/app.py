@@ -28,9 +28,32 @@ _PNG = (
 _SVG = "<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'></svg>"
 
 
+def _repo_root() -> Path:
+    return Path(__file__).resolve().parents[3]
+
+
+def _icon_path() -> Path | None:
+    here = _repo_root()
+    for cand in (
+        here / "ui" / "dist" / "arc-icon.png",
+        here / "ui" / "public" / "arc-icon.png",
+        here / "assets" / "brand" / "arc-icon.png",
+    ):
+        if cand.is_file():
+            return cand
+    return None
+
+
 def create_app(root: Path | None = None) -> FastAPI:
     app = FastAPI()
     runs = (root or Path.cwd()) / "runs"
+
+    @app.get("/arc-icon.png", response_model=None)
+    def brand_icon() -> FileResponse | Response:
+        path = _icon_path()
+        if path is not None:
+            return FileResponse(path, media_type="image/png")
+        return Response(_PNG, media_type="image/png")
 
     @app.get("/api/health")
     def health() -> dict:
