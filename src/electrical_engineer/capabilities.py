@@ -48,7 +48,7 @@ PROVIDERS = frozenset(
     }
 )
 
-# ponytail: MATLAB-if-present is always missing this pass; swap DEFAULT_BIND when registered.
+# ponytail: MATLAB-if-present is optional; DEFAULT_BIND stays OSS. Client is matlab_mcp.py.
 DEFAULT_BIND = {
     "algebraic-check": "check-numeric",
     "lumped-circuit-sim": "run-spice",

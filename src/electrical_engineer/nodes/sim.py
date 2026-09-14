@@ -115,7 +115,40 @@ def run_python_control(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str
 
 @register("run-matlab-if-present")
 def run_matlab_if_present(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
-    return _missing("matlab", spec, inputs)
+    from electrical_engineer.matlab_mcp import (
+        MatlabMcpError,
+        MatlabMissing,
+        evaluate_code,
+        result_text,
+        run_file,
+    )
+
+    problem = _problem(spec)
+    run_dir = spec.get("run_dir")
+    project = str(run_dir or Path.cwd())
+    code = problem.get("matlab") or problem.get("code") or inputs.get("code")
+    script = problem.get("script_path") or inputs.get("script_path")
+    try:
+        if code:
+            raw = evaluate_code(str(code), project)
+        elif script:
+            raw = run_file(str(script))
+        else:
+            return _missing("matlab", spec, inputs)
+    except (MatlabMissing, MatlabMcpError):
+        return _missing("matlab", spec, inputs)
+    if raw.get("isError"):
+        miss = _missing("matlab", spec, inputs)
+        miss["output"] = result_text(raw)
+        return miss
+    text = result_text(raw)
+    return {
+        "ok": True,
+        "tool": "matlab-mcp",
+        "unchecked": False,
+        "output": text,
+        "node": spec.get("id"),
+    }
 
 
 @register("run-load-flow")
