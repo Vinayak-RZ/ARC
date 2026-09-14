@@ -1,8 +1,8 @@
 # ChatGPT desktop
 
-First-class host **on the desktop app**. Same kernel **contract** (verbs, gates,
-`unchecked`) as Cursor / Claude Code / Codex. Weaker native repo editing than
-Cursor — that is expected. First-class does not mean identical IDE UX.
+First-class host **on the desktop app**. Same lab as Cursor / Claude Code /
+Codex: same tools, same gates, unverified numbers labeled. Weaker native repo
+editing than Cursor; that is expected. First-class does not mean identical IDE UX.
 
 ## Surfaces
 
@@ -36,17 +36,21 @@ The argument band (FR21) on Chat/Work may live in the transcript; copy or
 write it to `./runs/<id>/argument.md` when the student needs a file. Codex view
 can write the run dir directly. Do not mega-apply `solve-circuit-problem`.
 
-**Live ACI verbs (5–7):** `list_workflows`, `retrieve`, `open_ui` / `clarify`,
-`simulate_attachment`, `propose_composition` (`apply: false` records `plan.md`;
-`apply: true` returns `run_id` + artifact paths, never a graph body),
-`label` / `summary`. `run_workflow` remains a short-attachment / eval rollback.
-Photo / compose / control-diagram still fail closed with `ui_url`. MCP never
-waits. Pack skills stay out of this product repo’s `.cursor/skills/`.
+**Tools the assistant can call** (live MCP names): `list_workflows` (list recipes),
+`retrieve` (look up a citation), `open_ui` (open the local window),
+`simulate_attachment` (run a short simulation), `propose_composition`
+(`apply: false` records `plan.md`; `apply: true` returns the saved run, never
+a graph body), `label` (read the labeled result). Replay a named recipe is
+`run_workflow` on the command-line / test path. Photo / compose /
+control-diagram still return a window link. The chat never waits. Pack skills
+stay out of this product repo’s `.cursor/skills/`.
 
 Target contract: [`../PRD.md`](../PRD.md) FR17.
 
 ## Must not
 
 - Promise chatgpt.com in a browser as a simulator host.
-- Let MATLAB Copilot (if also connected) mint a checked `Vout` (FR20).
+- Let MATLAB Copilot (if also connected) mint a verified `Vout` (FR20).
+  Coming next: Arc will call MATLAB itself
+  ([`../ON_THE_HARNESS.md`](../ON_THE_HARNESS.md)).
 - Wait on a human inside MCP (fail closed, `ui_url`).
