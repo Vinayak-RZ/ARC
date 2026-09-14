@@ -10,7 +10,7 @@ Finish and understand a UG EE assignment: method, a verified number or an unveri
 
 ## Done looks like
 
-`electrical-engineer --help`; `electrical-engineer run simulate-circuit`; omitted-id classifier; `electrical-engineer mcp` `tools/list` shows 5–7 verbs including `propose_composition` and **no MATLAB tools**; `electrical-engineer ui` on `127.0.0.1` shows evidentiary + argument; a non-circuits pack question takes a capability path or `unchecked` without auto-SPICE; host can spawn at most two pack specialists from homework adapters.
+`electrical-engineer --help`; `electrical-engineer run simulate-circuit`; omitted-id classifier; `electrical-engineer mcp` `tools/list` shows 5–7 verbs including `propose_composition` and **no MATLAB or Simulink tools**; `electrical-engineer ui` on `127.0.0.1` shows evidentiary + argument; a non-circuits pack question takes a capability path or `unchecked` without auto-SPICE; clone search finds 12 EE specialist cards under `hosts/agents/`; host can spawn at most two of those from homework adapters after `hosts install`.
 
 ## P0 (this graph)
 
@@ -25,9 +25,10 @@ Finish and understand a UG EE assignment: method, a verified number or an unveri
 - Keep photo confirm-then-stop
 - Show empty, error, and waiting-human UI states without minting numbers
 - Knowledge-link 10 core packs + maths + `_cross` (no electives); retrieve heading scaffold stays empty
-- Host-native specialists: `electrical-engineer hosts install` into the **homework** Cursor/Codex/Claude agent dirs; never this product repo’s coding `.cursor/`
+- Host-native specialists: canonical cards in `hosts/agents/` (12 names + INDEX); `electrical-engineer hosts install` copies them into the **homework** Cursor/Codex/Claude agent dirs; never this product repo’s coding `.cursor/`
 - Arc mediates MATLAB MCP: kernel stdio client behind `run-matlab-if-present`; host talks only to Arc; product and CI work with zero MATLAB
-- Host-harness trials across cores; UI MATLAB chip honesty; impeccable critique without `teach`; whole-tree harden
+- Arc mediates Simulink Agentic Toolkit the same way: kernel `--extension-file` behind `run-simulink-if-present`; missing toolkit → `unchecked` + `CD-SIMULINK-PLANT`; host never lists `model_*`
+- Host-harness trials across cores; UI MATLAB and Simulink chips honesty; impeccable critique without `teach`; whole-tree harden
 
 ## Later (not this graph)
 
@@ -37,7 +38,7 @@ Finish and understand a UG EE assignment: method, a verified number or an unveri
 - Large gold bank
 - PyPI publish
 - Real retrieval over `knowledge/`
-- Simulink Agentic Toolkit
+- Live MATLAB / Simulink on a licensed desktop (CI stays stub)
 - Electives as first-class packs
 
 ## Non-goals
@@ -50,9 +51,11 @@ Finish and understand a UG EE assignment: method, a verified number or an unveri
 - Shipping copyrighted textbooks in git
 - Inventing capability or provider ids
 - Replacing DESIGN-coinbase
-- Host-attached MATLAB MCP as the recommended path
+- Host-attached MATLAB MCP or Simulink Agentic Toolkit as the recommended path
 - EE pack agents inside this product’s `.cursor/agents/`
+- 48–88 SDLC role agents copied from generic Cursor orchestrators
 - Storing MathWorks passwords
+- Cursor Cloud `/in-cloud` or isolated-worktree spawn for EE specialists (stdio MCP and `./runs/<id>/` would miss)
 
 ## Honest holes
 
@@ -62,3 +65,4 @@ Finish and understand a UG EE assignment: method, a verified number or an unveri
 - Peer MATLAB / Copilot scalars stay `unchecked` until an EE provider recomputes them
 - Gold depth stays circuits-first; other packs may legally pass as `unchecked`
 - Retrieve scaffold is empty this graph: call it; a miss is visible; do not dump `knowledge/`
+- Simulink stub is not a plant result; CI has no `.slx` gold
