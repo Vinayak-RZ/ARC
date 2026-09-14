@@ -1,4 +1,4 @@
-"""Copy per-pack host adapters into a homework tree. Not this product .cursor/."""
+"""Copy catalog cards into a homework tree. Not this product .cursor/."""
 
 from __future__ import annotations
 
@@ -19,26 +19,14 @@ PACKS = (
     "_cross",
 )
 
-HINTS = {
-    "circuits": "KCL/KVL, phasors, transients, Thevenin, two-ports",
-    "signals": "LTI, convolution, Fourier/Laplace/z, sampling",
-    "electronics": "devices, op-amps, small-signal, UG digital",
-    "machines": "transformers, DC/IM/synchronous equivalent circuits",
-    "power": "per-unit, load flow, faults, study-level protection",
-    "control": "TF/SS, Routh, Bode/Nyquist, simple compensators",
-    "power_electronics": "rectifiers, buck/boost, PWM, averaged models",
-    "measurements": "errors, bridges, instrument specs",
-    "em": "electrostatics, magnetostatics, TEM lines at UG",
-    "maths": "complex algebra, ODE/Laplace/Fourier as EE tools",
-    "_cross": "unmatched or multi-pack; no auto-SPICE",
-}
-
 HOSTS = ("cursor", "codex", "claude")
 
 
 def pack_slug(pack: str) -> str:
     if pack == "_cross":
         return "cross"
+    if pack == "simulink":
+        return "simulink"
     return pack.replace("_", "-")
 
 
@@ -63,48 +51,46 @@ def adapters_dir() -> Path:
     raise FileNotFoundError("hosts/adapters not found; run from checkout or set EE_ADAPTERS_DIR")
 
 
-def specialist_body() -> str:
-    path = adapters_dir() / "specialist-body.md"
-    return path.read_text(encoding="utf-8").strip() + "\n"
+def agents_dir() -> Path:
+    env = os.environ.get("EE_AGENTS_DIR")
+    if env:
+        path = Path(env)
+        if path.is_dir():
+            return path
+        raise FileNotFoundError(f"EE_AGENTS_DIR not a directory: {env}")
+    cand = adapters_dir().parent / "agents"
+    if cand.is_dir():
+        return cand
+    raise FileNotFoundError("hosts/agents not found; run from checkout or set EE_AGENTS_DIR")
 
 
-def _description(pack: str) -> str:
-    hint = HINTS[pack]
-    return (
-        f"UG EE {pack_slug(pack)} pack specialist. Use for {hint}. "
-        f"Load skills/{pack}. Same EE MCP. Do not mint checked ohms. "
-        "Never evaluate_matlab_code."
-    )
+def card_paths() -> list[Path]:
+    return sorted(p for p in agents_dir().glob("ee-*.md"))
 
 
-def _cursor_md(pack: str, body: str) -> str:
-    name = cursor_name(pack)
-    return (
-        f"---\n"
-        f"name: {name}\n"
-        f"description: {_description(pack)}\n"
-        f"model: inherit\n"
-        f"---\n\n"
-        f"Load `skills/{pack}/SKILL.md` (and root `skills/SKILL.md`).\n\n"
-        f"{body}"
-    )
+def parse_card(path: Path) -> tuple[dict[str, str], str]:
+    text = path.read_text(encoding="utf-8")
+    if not text.startswith("---"):
+        raise ValueError(f"missing frontmatter: {path}")
+    parts = text.split("---", 2)
+    if len(parts) < 3:
+        raise ValueError(f"bad frontmatter: {path}")
+    meta: dict[str, str] = {}
+    for line in parts[1].strip().splitlines():
+        key, _, val = line.partition(":")
+        meta[key.strip()] = val.strip()
+    return meta, parts[2].lstrip("\n")
 
 
-def _claude_md(pack: str, body: str) -> str:
-    return _cursor_md(pack, body)
-
-
-def _codex_toml(pack: str, body: str) -> str:
-    name = codex_name(pack)
-    instructions = (
-        f"Load skills/{pack}/SKILL.md and skills/SKILL.md.\n\n{body}"
-    )
-    # ponytail: TOML triple-quote; body has no """ by contract
+def _codex_toml(meta: dict[str, str], body: str) -> str:
+    name = meta["name"].replace("-", "_")
+    desc = meta["description"].replace('"', "'")
+    # ponytail: TOML triple-quote; cards have no """ by contract
     return (
         f'name = "{name}"\n'
-        f'description = "{_description(pack)}"\n'
+        f'description = "{desc}"\n'
         f'developer_instructions = """\n'
-        f"{instructions}"
+        f"{body.rstrip()}\n"
         f'"""\n'
     )
 
@@ -117,19 +103,23 @@ def install(into: Path, host: str = "all") -> list[Path]:
     for name in chosen:
         if name not in HOSTS:
             raise ValueError(f"unknown host {name}")
-    body = specialist_body()
+    cards = card_paths()
+    if not cards:
+        raise FileNotFoundError("no ee-*.md cards in hosts/agents")
     written: list[Path] = []
     for name in chosen:
-        for pack in PACKS:
+        for card in cards:
+            meta, body = parse_card(card)
+            cursor = meta["name"]
             if name == "cursor":
-                path = target / ".cursor" / "agents" / f"{cursor_name(pack)}.md"
-                text = _cursor_md(pack, body)
+                path = target / ".cursor" / "agents" / f"{cursor}.md"
+                text = card.read_text(encoding="utf-8")
             elif name == "claude":
-                path = target / ".claude" / "agents" / f"{cursor_name(pack)}.md"
-                text = _claude_md(pack, body)
+                path = target / ".claude" / "agents" / f"{cursor}.md"
+                text = card.read_text(encoding="utf-8")
             else:
-                path = target / ".codex" / "agents" / f"{codex_name(pack)}.toml"
-                text = _codex_toml(pack, body)
+                path = target / ".codex" / "agents" / f"{cursor.replace('-', '_')}.toml"
+                text = _codex_toml(meta, body)
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(text, encoding="utf-8")
             written.append(path)

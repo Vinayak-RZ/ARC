@@ -10,8 +10,9 @@ Install per-pack wrappers into a **homework** tree:
 electrical-engineer hosts install --into /path/to/homework --host all
 ```
 
-That writes `.cursor/agents/ee-<pack>.md`, `.codex/agents/ee_<pack>.toml`,
-`.claude/agents/ee-<pack>.md`. Canonical law: [`specialist-body.md`](specialist-body.md).
+Canonical cards: [`../agents/INDEX.md`](../agents/INDEX.md) (12 specialists).
+That writes `.cursor/agents/ee-*.md`, `.codex/agents/ee_*.toml`,
+`.claude/agents/ee-*.md`. Law: [`specialist-body.md`](specialist-body.md).
 Do not run this against this product repo’s `.cursor/`.
 
 | Host | Copy to (student machine) | File |
