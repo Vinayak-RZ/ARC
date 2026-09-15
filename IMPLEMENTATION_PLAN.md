@@ -1,26 +1,37 @@
-# Implementation plan — Kernel harden (live pointer)
+# RAG hybrid + hierarchical graph — Implementation Plan
 
-> **Live graph:** [`LOOP_GRAPH.md`](LOOP_GRAPH.md)  
-> **Node plans:** [`plans/kernel-harden-loops/`](plans/kernel-harden-loops/)  
-> **Gate 0:** [`docs/planning/GATE_0_KERNEL_HARDEN.md`](docs/planning/GATE_0_KERNEL_HARDEN.md)  
-> **Product overlay:** [`docs/planning/PRODUCT_KERNEL_HARDEN.md`](docs/planning/PRODUCT_KERNEL_HARDEN.md)  
-> **ADR:** [`docs/planning/ADR_TRACE_JSONL.md`](docs/planning/ADR_TRACE_JSONL.md)
+> Execution contract for branch `cursor/rag-hybrid-pipeline-78c0`.  
+> Profile: **project** · Commit budget: **20** · PRIORITY: QUALITY (retrieve p95 ≤ 7s)
 
-Supersedes the previous live Simulink-agents pointer. Archived graph: [`docs/planning/LOOP_GRAPH_SIMULINK_AGENTS.md`](docs/planning/LOOP_GRAPH_SIMULINK_AGENTS.md).
+## Objective
 
-## §0 Metadata
+Ship local BYO textbook RAG: multimodal ingest (OCR + figures) into a typed hierarchy, hybrid BM25+dense retrieve with ≤2 graph hops, eval slice, dual architecture docs.
 
-| Field | Value |
-|-------|-------|
-| Profile | project + graph-of-loops |
-| Branch | `cursor/ee-kernel-harden-trace-8db3` |
-| Commit budget | 40 (cap 42) |
-| PRIORITY | QUALITY > CONSISTENCY > SPEED > AVAILABILITY > COST |
+## Ontology (T0–T4)
 
-## §1 Objective
+| Tier | Kinds |
+|------|--------|
+| T0 | library → book → chapter → section |
+| T1 | chunk (`prose` \| `equation` \| `caption` \| `solution_step` \| `table_cell`) |
+| T2 | `worked_example` \| `section_parent` \| `figure_group` |
+| T3 | `figure` (path, page, caption_text, ocr_text?) |
+| T4 | `entity` \| `proposition` |
 
-Stdlib JSONL tracing → ≥100 host-heavy UG EE trials → Unagent + Improveness critique → minimal kernel patches → UI surface → harden → docs-out case study.
+Edges: `belongs_to`, `part_of_example`, `illustrates`, `caption_of`, `mentions`, `states`, `prerequisite`.
 
-## §18 / §19
+## Pipelines
 
-Execute [`LOOP_GRAPH.md`](LOOP_GRAPH.md). Wave 0 is plans/docs only. §19 wins over linear protocol.
+- **Ingest (offline):** gate → parse/OCR → structure → units/parents/figures → light T4 → BM25+dense+graph indexes
+- **Query (online):** filters → BM25∥dense → RRF → parent hydrate → hops k≤2 → 3×1500, empty visible, `engine: hybrid-graph`
+
+## Non-goals
+
+MS GraphRAG communities; ColPali primary; commercial PDFs in git; forcing MinerU/RAG-Anything in CI; UI redesign.
+
+## Commit matrix
+
+See plan §9 (rows 1–20). Lead owns git. Subagents do not commit.
+
+## Authority
+
+`docs/ARCHITECTURE.md` §10, `docs/architecture/rag.md`, `docs/rag-byo.md`, `docs/CANNOT_DO.md`, ADR-0004.
