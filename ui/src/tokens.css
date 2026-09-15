@@ -425,6 +425,13 @@ a { color: var(--ee-color-primary); }
 }
 .rights input { margin-top: 4px; }
 .error-text { color: var(--ee-semantic-down); margin: 0; }
+.passage {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--ee-space-s) 0;
+  border-bottom: 1px solid var(--ee-color-hairline);
+}
 @media (max-width: 640px) {
   .layout { flex-direction: column; }
   .nav-toggle { display: inline-flex; align-items: center; }

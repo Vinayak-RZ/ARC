@@ -35,6 +35,8 @@ def test_skip_link_and_no_wan() -> None:
     assert "Add a PDF you have rights to; it stays on this machine." in library
     assert 'aria-label="Book"' in library
     assert "I have rights to this file." in library
+    assert "Search tagged books" in library
+    assert "No passages for that query." in library
     assert BIND_HOST == "127.0.0.1"
 
 

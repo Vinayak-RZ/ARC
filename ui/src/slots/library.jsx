@@ -32,6 +32,9 @@ export function Library() {
   const [folder, setFolder] = useState("");
   const [rights, setRights] = useState(false);
   const [file, setFile] = useState(null);
+  const [query, setQuery] = useState("");
+  const [filterBook, setFilterBook] = useState("");
+  const [hit, setHit] = useState(null);
 
   const books = useMemo(() => bookIds(items), [items]);
 
@@ -180,6 +183,64 @@ export function Library() {
         </button>
         {error ? <p className="error-text">{error}</p> : null}
         {status ? <p className="hint">{status}</p> : null}
+      </form>
+      <form
+        className="library-form"
+        onSubmit={async (ev) => {
+          ev.preventDefault();
+          setError("");
+          setHit(null);
+          const q = query.trim();
+          if (!q) {
+            setError("Enter a retrieve query.");
+            return;
+          }
+          const payload = { query: q };
+          if (filterBook) payload.book_id = filterBook;
+          try {
+            const r = await fetch("/api/rag/query", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+            const body = await r.json();
+            if (!r.ok) throw new Error(body.error || "query");
+            setHit(body);
+          } catch (exc) {
+            setError(exc.message || "Could not retrieve.");
+          }
+        }}
+      >
+        <h2>Retrieve</h2>
+        <label className="field">
+          Query
+          <input value={query} onChange={(e) => setQuery(e.target.value)} aria-label="Retrieve query" />
+        </label>
+        <label className="field">
+          Filter book
+          <select value={filterBook} onChange={(e) => setFilterBook(e.target.value)} aria-label="Filter book">
+            <option value="">All books</option>
+            {books.map((id) => (
+              <option key={id} value={id}>
+                {id}
+              </option>
+            ))}
+          </select>
+        </label>
+        <button className="button-secondary" type="submit">
+          Search tagged books
+        </button>
+        {hit?.empty ? <p className="empty">No passages for that query.</p> : null}
+        {hit && !hit.empty
+          ? (hit.passages || []).map((p, idx) => (
+              <article key={p.node_id || idx} className="passage">
+                <p className="hint">
+                  {p.book_id || "unknown"} {p.chapter_id ? `ch ${p.chapter_id}` : ""} {p.page ? `p. ${p.page}` : ""}
+                </p>
+                <p className="prose">{p.text}</p>
+              </article>
+            ))
+          : null}
       </form>
     </section>
   );
