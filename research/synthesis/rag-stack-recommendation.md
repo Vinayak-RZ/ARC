@@ -83,6 +83,17 @@ Electrical-Engineer should treat RAG as a **release-packaged sidecar**, not repo
 | **Local full multimodal** | Above + vision model | On | Diagram-heavy power/machines texts |
 | **Hybrid cloud** | Cloud LLM/VLM + local index | On | Quality when offline GPU insufficient |
 
+## Ingest vs query (2026-09-15 overlay)
+
+Do not treat “RAG-Anything” as both parser and online search. Split is pinned in [`../notes/rag-ingest-query-architecture.md`](../notes/rag-ingest-query-architecture.md):
+
+| Side | Engine | Constraint |
+|------|--------|------------|
+| Ingest | RAG-Anything (MinerU) + EE ontology write | OCR, VLM captions, `illustrated_by` / `belongs_to` figure links |
+| Query | Hybrid BM25+dense on **propositions**, then **1–2 deterministic hops** (GRASP-RAG graph, not GRASP agent loops) | p95 retrieve ≤ 7 s; 3 × 1500 char citations |
+
+Eval bank: 12 lanes × 10 packs in [`../notes/rag-eval-pack-stack.md`](../notes/rag-eval-pack-stack.md). Decision **D21**.
+
 ## Spike gate (before ADR acceptance)
 
 Run only on **one user-owned EE chapter** (no corpus in git):
@@ -117,3 +128,5 @@ Strategic fit is strong; lock-in awaits EE-chapter spike and MCP wrapper feasibi
 - [recommendation.md](recommendation.md) — retrieved 2026-09-08 — reliability: primary
 - [option-scoring.md](option-scoring.md) — retrieved 2026-09-08 — reliability: primary
 - [RAG-Anything](https://github.com/HKUDS/RAG-Anything) — retrieved 2026-09-08 — reliability: primary (S43)
+- [rag-ingest-query-architecture.md](../notes/rag-ingest-query-architecture.md) — retrieved 2026-09-15 — reliability: primary
+- [rag-eval-pack-stack.md](../notes/rag-eval-pack-stack.md) — retrieved 2026-09-15 — reliability: primary

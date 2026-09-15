@@ -131,6 +131,15 @@ Every external or authoritative source used in research notes. Add a row when yo
 | S125 | Domain-kernel layering note | `research/notes/domain-kernel-layering.md` | 2026-09-12 | primary |
 | S126 | ToolWeave dynamic tool composition (clawrXiv 2026.00002) | https://clawrxiv.org/papers/2026.00002 | 2026-09-12 | paper |
 | S127 | Hybrid engine composition note | `research/notes/hybrid-engine-composition.md` | 2026-09-12 | primary |
+| S128 | GRASP: Graph Agentic Search over Propositions | https://arxiv.org/abs/2605.16598 | 2026-09-15 | paper |
+| S129 | Databricks AI Search retrieval quality | https://docs.databricks.com/aws/en/ai-search/retrieval-quality | 2026-09-15 | vendor |
+| S130 | Anthropic Contextual Retrieval | https://www.anthropic.com/engineering/contextual-retrieval | 2026-09-15 | primary |
+| S131 | Dense X Retrieval (EMNLP 2024) | https://aclanthology.org/2024.emnlp-main.845/ | 2026-09-15 | paper |
+| S132 | PropRAG (EMNLP 2025) | https://aclanthology.org/2025.emnlp-main.317.pdf | 2026-09-15 | paper |
+| S133 | ToPG: Traversal over Proposition Graphs | https://arxiv.org/html/2601.04859v1 | 2026-09-15 | paper |
+| S134 | ColPali (ICLR 2025) | https://arxiv.org/abs/2407.01449 | 2026-09-15 | paper |
+| S135 | RAG ingest vs query architecture note | `research/notes/rag-ingest-query-architecture.md` | 2026-09-15 | primary |
+| S136 | Per-pack RAG eval stack note | `research/notes/rag-eval-pack-stack.md` | 2026-09-15 | primary |
 
 ## Reliability tiers
 
