@@ -20,7 +20,7 @@ def divider_graph(vin: float = 10, r1: float = 1000, r2: float = 1000) -> dict[s
         "nodes": [
             {"id": "vin", "type": "source_v", "refdes": "Vin", "value": vin, "unit": "V", "x": 80, "y": 40},
             {"id": "r1", "type": "resistor", "refdes": "R1", "value": r1, "unit": "ohm", "x": 220, "y": 40},
-            {"id": "r2", "type": "resistor", "refdes": "R2", "value": r2, "unit": "ohm", "x": 220, "y": 160},
+            {"id": "r2", "type": "resistor", "refdes": "R2", "value": r2, "unit": "ohm", "x": 220, "y": 160, "rot": 90},
             {"id": "gnd", "type": "ground", "refdes": "Gnd", "value": 0, "unit": "", "x": 80, "y": 160},
         ],
         "edges": [

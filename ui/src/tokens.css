@@ -168,6 +168,9 @@ body { margin: 0; background: var(--ee-color-canvas); }
 .part-node.is-selected {
   outline: 2px solid var(--ee-color-primary);
 }
+.part-node.is-vertical {
+  flex-direction: column;
+}
 .inspector {
   min-width: 200px;
   max-width: 240px;

@@ -25,6 +25,14 @@ function Glyph({ kind }) {
       </svg>
     );
   }
+  if (kind === "source_i") {
+    return (
+      <svg width="28" height="28" aria-hidden="true">
+        <circle cx="14" cy="14" r="12" fill="none" stroke="currentColor" strokeWidth="2" />
+        <path d="M14 6 V20 M10 16 L14 20 L18 16" fill="none" stroke="currentColor" strokeWidth="2" />
+      </svg>
+    );
+  }
   if (kind === "ground") {
     return (
       <svg width="28" height="20" aria-hidden="true">
@@ -41,13 +49,17 @@ function Glyph({ kind }) {
 
 export function PartNode({ data, selected }) {
   const kind = data?.kind;
+  const rot = Number(data?.rot) === 90 ? 90 : 0;
   const twoPort = kind !== "ground";
+  const vertical = rot === 90;
+  const n1Pos = vertical ? Position.Top : Position.Left;
+  const n2Pos = vertical ? Position.Bottom : Position.Right;
   return (
-    <div className={selected ? "part-node is-selected" : "part-node"}>
-      <Handle type="source" position={Position.Left} id="n1" />
+    <div className={["part-node", selected ? "is-selected" : "", vertical ? "is-vertical" : ""].filter(Boolean).join(" ")}>
+      {twoPort ? <Handle type="source" position={n1Pos} id="n1" /> : <Handle type="source" position={Position.Top} id="n1" />}
       <Glyph kind={kind} />
       <span className="part-ref">{data?.refdes}</span>
-      {twoPort ? <Handle type="source" position={Position.Right} id="n2" /> : null}
+      {twoPort ? <Handle type="source" position={n2Pos} id="n2" /> : null}
     </div>
   );
 }

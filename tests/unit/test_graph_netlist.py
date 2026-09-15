@@ -25,6 +25,7 @@ def test_contract_file_drives_caps() -> None:
     assert ALLOWED_TYPES == frozenset(CONTRACT["$defs"]["partType"]["enum"])
     parsed = parse_graph(DIVIDER)
     assert parsed["nodes"][0]["rot"] == 0
+    assert parsed["nodes"][2]["rot"] == 90
     rotated = parse_graph(
         {
             "schema": SCHEMA,

@@ -149,8 +149,9 @@ function CanvasInner({ id }) {
       data: {
         kind: type,
         refdes: nextRefdes(nodes, type),
-        value: type === "ground" ? 0 : type === "source_v" ? 10 : 1000,
+        value: type === "ground" ? 0 : type === "source_v" ? 10 : type === "source_i" ? 0.001 : 1000,
         unit: spec?.unit || "",
+        rot: 0,
       },
     };
     setNodes((ns) => [...ns, node]);
