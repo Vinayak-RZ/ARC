@@ -12,6 +12,8 @@ from fastapi.staticfiles import StaticFiles
 
 BIND_HOST = "127.0.0.1"
 BIND_PORT = 8765
+_UPLOAD_MAX = 20 * 1024 * 1024
+_UPLOAD_SUFFIX = {".md", ".txt", ".pdf"}
 
 
 def ui_page_url(run_id: str | None = None) -> str:
@@ -65,9 +67,31 @@ def _run_list_item(folder: Path) -> dict:
     }
 
 
+def _safe_book_id(raw: str | None) -> str:
+    text = "".join(ch if ch.isalnum() or ch in "._-" else "-" for ch in str(raw or "").strip())
+    return (text.strip("-") or "unknown")[:80]
+
+
+def _rag_tags(
+    book_id: str | None,
+    chapter_id: str | None,
+    folder_tag: str | None,
+    domain_tag: str | None,
+    licence_tag: str | None,
+) -> dict:
+    return {
+        "book_id": _safe_book_id(book_id) if book_id else None,
+        "chapter_id": chapter_id or None,
+        "folder_tag": folder_tag or None,
+        "domain_tag": domain_tag or None,
+        "licence_tag": licence_tag or None,
+    }
+
+
 def create_app(root: Path | None = None) -> FastAPI:
     app = FastAPI()
     runs = (root or Path.cwd()) / "runs"
+    cwd = root or Path.cwd()
 
     @app.get("/arc-icon.png", response_model=None)
     def brand_icon() -> FileResponse | Response:
@@ -205,9 +229,91 @@ def create_app(root: Path | None = None) -> FastAPI:
 
     @app.get("/api/rag/inventory")
     def rag_inventory() -> dict:
-        from electrical_engineer.rag.inventory import load_inventory
+        from electrical_engineer.rag.inventory import listed_inventory
 
-        return {"items": load_inventory(root)}
+        return {"items": listed_inventory(cwd)}
+
+    @app.post("/api/rag/upload")
+    async def rag_upload(request: Request) -> dict:
+        from electrical_engineer.rag.inventory import add_doc, corpus_dir
+
+        q = request.query_params
+        rights = str(q.get("rights") or request.headers.get("x-ee-rights") or "")
+        if rights.strip().lower() not in {"1", "true", "yes", "on"}:
+            return JSONResponse({"error": "Confirm you have rights to this file."}, status_code=400)
+        name = Path(str(q.get("filename") or request.headers.get("x-filename") or "upload.md")).name
+        suffix = Path(name).suffix.lower()
+        if suffix not in _UPLOAD_SUFFIX:
+            return JSONResponse({"error": "Use a .pdf, .md, or .txt file."}, status_code=400)
+        body = await request.body()
+        if len(body) > _UPLOAD_MAX:
+            return JSONResponse({"error": "File is larger than 20 MB."}, status_code=400)
+        if not body:
+            return JSONResponse({"error": "File is empty."}, status_code=400)
+        bid = _safe_book_id(q.get("book_id") or Path(name).stem)
+        dest_dir = corpus_dir(cwd) / bid
+        dest_dir.mkdir(parents=True, exist_ok=True)
+        dest = dest_dir / name
+        dest.write_bytes(body)
+        rec = add_doc(
+            str(dest),
+            tags=_rag_tags(
+                bid,
+                q.get("chapter_id"),
+                q.get("folder_tag"),
+                q.get("domain_tag"),
+                q.get("licence_tag"),
+            ),
+            cwd=cwd,
+        )
+        return {"ok": True, "item": rec}
+
+    @app.post("/api/rag/tag")
+    async def rag_tag(request: Request) -> dict:
+        from electrical_engineer.rag.inventory import tag_doc
+
+        payload = await request.json()
+        if not isinstance(payload, dict):
+            return JSONResponse({"error": "tag body must be an object"}, status_code=400)
+        path = str(payload.get("path") or payload.get("source") or "")
+        if not path:
+            return JSONResponse({"error": "path is required"}, status_code=400)
+        hit = tag_doc(
+            path,
+            _rag_tags(
+                payload.get("book_id"),
+                payload.get("chapter_id"),
+                payload.get("folder_tag"),
+                payload.get("domain_tag"),
+                payload.get("licence_tag"),
+            ),
+            cwd=cwd,
+        )
+        if hit is None:
+            return JSONResponse({"error": "no matching document"}, status_code=404)
+        return {"ok": True, "item": hit}
+
+    @app.post("/api/rag/query")
+    async def rag_query(request: Request) -> dict:
+        from electrical_engineer.rag.retrieve import retrieve
+
+        payload = await request.json()
+        if not isinstance(payload, dict):
+            return JSONResponse({"error": "query body must be an object"}, status_code=400)
+        query = str(payload.get("query") or "").strip()
+        if not query:
+            return JSONResponse({"error": "query is required"}, status_code=400)
+        hops = payload.get("hops", 1)
+        try:
+            hops_n = int(hops)
+        except (TypeError, ValueError):
+            hops_n = 1
+        filters = {}
+        for key in ("book_id", "chapter_id", "folder_tag", "domain_tag"):
+            val = payload.get(key)
+            if val:
+                filters[key] = val
+        return retrieve(filters, query=query, cwd=cwd, hops=hops_n)
 
     ui_dist = Path(__file__).resolve().parents[3] / "ui" / "dist"
     index = ui_dist / "index.html"
