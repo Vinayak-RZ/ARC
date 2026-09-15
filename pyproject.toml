@@ -20,6 +20,9 @@ electrical-engineer = "electrical_engineer.cli:main"
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.6"]
+rag = ["pypdf>=5"]
+rag-ocr = ["electrical-engineer[rag]", "ocrmypdf>=16"]
+rag-multimodal = ["electrical-engineer[rag]"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/electrical_engineer"]

@@ -1,0 +1,5 @@
+{
+  "mode": "retrieval",
+  "query": "Ohm's law",
+  "filters": {"book_id": "kuphaldt-dc", "chapter_id": "99"}
+}

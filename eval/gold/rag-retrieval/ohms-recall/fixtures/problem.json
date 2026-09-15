@@ -1,0 +1,6 @@
+{
+  "mode": "retrieval",
+  "query": "How voltage, current, and resistance relate Ohm's law",
+  "filters": {"book_id": "kuphaldt-dc"},
+  "hops": 1
+}

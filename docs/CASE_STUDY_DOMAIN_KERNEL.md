@@ -25,7 +25,7 @@ The host may call `retrieve`. The kernel **is** the RAG system:
 
 Ingest vs query graphs: [`architecture/rag.md`](architecture/rag.md). Freeze: [`ARCHITECTURE.md`](ARCHITECTURE.md) §10 and §2.5 hook 1. Harness split: [`ON_THE_HARNESS.md`](ON_THE_HARNESS.md). Approach notes: [`../research/notes/rag-ingest-query-architecture.md`](../research/notes/rag-ingest-query-architecture.md).
 
-As-built extract/chunk is still `CD-RAG-PARSE`. That is a code hole, not a harness hole.
+As-built extract/chunk/graph is `hybrid-graph`; commercial-scan layout fidelity remains `CD-RAG-PARSE` (optional MinerU adapter). That remaining hole is parse depth, not a harness hole.
 
 ## Design principles that held
 

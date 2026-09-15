@@ -1,0 +1,30 @@
+{
+  "tiers": {
+    "T0": ["library", "book", "chapter", "section"],
+    "T1": ["prose", "equation", "caption", "solution_step", "table_cell", "question"],
+    "T2": ["worked_example", "section_parent", "figure_group"],
+    "T3": ["figure"],
+    "T4": ["entity", "proposition"]
+  },
+  "edges": [
+    "belongs_to",
+    "part_of_example",
+    "illustrates",
+    "caption_of",
+    "mentions",
+    "states",
+    "prerequisite"
+  ],
+  "query": {
+    "engine": "hybrid-graph",
+    "max_passages": 3,
+    "passage_chars": 1500,
+    "max_hops": 2,
+    "retrieve_budget_s": 7.0,
+    "fusion": "rrf"
+  },
+  "ingest": {
+    "providers": ["text", "pypdf", "ocrmypdf", "multimodal_optional"],
+    "figure_edges": ["illustrates", "caption_of", "belongs_to"]
+  }
+}

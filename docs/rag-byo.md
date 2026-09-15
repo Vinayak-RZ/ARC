@@ -12,17 +12,19 @@ drop .electrical-engineer/corpus/<book_id>/
   → gate (ask; persistent index)
   → extract (PDF text and/or scan OCR; low confidence flagged)
   → chunk (library → book → chapter → chunk; page on the chunk)
-  → index (facade: BM25 now; LightRAG 1.5 spike still ADR-0004)
-  → retrieve (filters first, then 3×1500 chars, empty visible)
+  → index (facade: hybrid-graph = BM25∥dense + typed hops; ADR-0004)
+  → retrieve (filters first, hybrid+hops, 3×1500 chars, empty visible)
 ```
+
+Query: `electrical-engineer rag query --book-id ID --query "…"`.
 
 Homework circuit **photos** for simulation do not use this path. Use
 `photo-to-netlist` / `ingest-figure` (UI confirm).
 
-As-built `rag add` records inventory metadata only; extract/chunk is
-[`CANNOT_DO.md`](CANNOT_DO.md) `CD-RAG-PARSE` until a code plan. Retrieve still
-honours `book_id` / `chapter_id` / `folder_tag` / `domain_tag` on whatever text
-is present. Empty retrieval must be visible.
+As-built `rag add` extracts text/markdown (optional PDF/OCR extras), chunks,
+writes graph links for figures/worked examples, and indexes for hybrid retrieve.
+Commercial-scan layout fidelity remains [`CANNOT_DO.md`](CANNOT_DO.md)
+`CD-RAG-PARSE`. Empty retrieval must be visible.
 
 ## Drop folder
 
