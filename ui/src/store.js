@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 export const useLayout = create((set) => ({
   currentRunId: null,
+  view: "runs",
   graphDirty: false,
   selectedNodeId: null,
   capMessage: "",
@@ -11,12 +12,14 @@ export const useLayout = create((set) => ({
   setRun: (id) =>
     set({
       currentRunId: id,
+      view: "runs",
       graphDirty: false,
       selectedNodeId: null,
       capMessage: "",
       flowNodes: [],
       flowEdges: [],
     }),
+  setView: (view) => set({ view }),
   setGraphDirty: (graphDirty) => set({ graphDirty }),
   setSelectedNodeId: (selectedNodeId) => set({ selectedNodeId }),
   setCapMessage: (capMessage) => set({ capMessage }),
