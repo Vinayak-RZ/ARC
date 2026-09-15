@@ -1,0 +1,6 @@
+{
+  "mode": "retrieval",
+  "query": "Kirchhoff Voltage Law KVL divider",
+  "filters": {"book_id": "kuphaldt-dc"},
+  "hops": 1
+}

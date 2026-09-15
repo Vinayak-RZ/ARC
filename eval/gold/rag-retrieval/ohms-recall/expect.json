@@ -1,0 +1,6 @@
+{
+  "mode": "retrieval",
+  "k": 3,
+  "citations": [{"book_id": "kuphaldt-dc", "chapter_id": "2"}],
+  "faithfulness_contains": ["ohm"]
+}

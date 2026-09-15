@@ -49,6 +49,28 @@ def score(summary: dict[str, Any], expect: dict[str, Any]) -> dict[str, Any]:
     return {"ok": bool(ok), "summary": summary, "expect": expect}
 
 
+def score_retrieval(result: dict[str, Any], expect: dict[str, Any]) -> dict[str, Any]:
+    """Recall@k on book/chapter (and optional node_id) plus token-overlap faithfulness."""
+    k = int(expect.get("k") or 3)
+    passages = (result.get("passages") or [])[:k]
+    ok = True
+    for want in expect.get("citations") or []:
+        ok = ok and any(
+            str(p.get("book_id")) == str(want.get("book_id"))
+            and str(p.get("chapter_id")) == str(want.get("chapter_id"))
+            for p in passages
+        )
+    for nid in expect.get("node_ids") or []:
+        ok = ok and any(str(p.get("node_id")) == str(nid) for p in passages)
+    faith = expect.get("faithfulness_contains") or []
+    blob = " ".join(str(p.get("text") or "") for p in passages).lower()
+    for needle in faith:
+        ok = ok and needle.lower() in blob
+    if expect.get("expect_empty"):
+        ok = bool(result.get("empty"))
+    return {"ok": bool(ok), "summary": result, "expect": expect}
+
+
 def run_item(item: Path, *, run_root: Path | None = None) -> dict[str, Any]:
     expect = json.loads((item / "expect.json").read_text())
     problem: dict[str, Any] = {}
@@ -56,6 +78,17 @@ def run_item(item: Path, *, run_root: Path | None = None) -> dict[str, Any]:
         path = item / "fixtures" / name
         if path.is_file():
             problem.update(json.loads(path.read_text()))
+    if expect.get("mode") == "retrieval" or problem.get("mode") == "retrieval":
+        from electrical_engineer.rag.retrieve import retrieve
+
+        filters = problem.get("filters") or {}
+        query = str(problem.get("query") or "")
+        hops = int(problem.get("hops") or 1)
+        result = retrieve(filters, query=query, hops=hops)
+        scored = score_retrieval(result, expect)
+        scored["item"] = str(item)
+        scored["run_id"] = None
+        return scored
     result = execute(expect["recipe_id"], run_root=run_root, problem=problem or None)
     evid_path = Path(result["run_dir"]) / "evidentiary.json"
     summary = json.loads(evid_path.read_text()) if evid_path.is_file() else result["summary"]
