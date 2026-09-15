@@ -230,7 +230,8 @@ function CanvasInner({ id }) {
           snapGrid={[GRID, GRID]}
           deleteKeyCode={["Backspace", "Delete"]}
           fitView
-          style={{ width: "100%", height: 320 }}
+          proOptions={{ hideAttribution: true }}
+          style={{ width: "100%", height: 420 }}
         >
           <Background gap={16} color="var(--ee-color-hairline)" />
         </ReactFlow>
