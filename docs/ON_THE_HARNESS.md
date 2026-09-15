@@ -244,21 +244,21 @@ Limit: a dead run does not resume. Notes cannot flip unverified to verified. The
 
 ## Books and RAG — kernel, not the chat loop
 
-The coding assistant does not hold your textbooks in its context window. It **calls** Arc. Arc **stores** the index and **returns** three short cited passages.
+The coding assistant does not hold your textbooks in its context window. It **calls** Arc. Arc **stores** the index and **returns** three short cited passages (`engine=hybrid-graph`).
 
 | Who | Does | Does not |
 |-----|------|----------|
 | Harness (the assistant) | Ask for a citation; put book/chapter filters in the plan; use the passages in the viva | OCR a PDF, own the graph, invent a page number |
-| Kernel (Arc) | `rag add` ingest, OCR/figures, hybrid search, 1–2 hops, pack citations | Compact the chat, run a multi-agent GRASP planner, treat a PDF as a new capability |
+| Kernel (Arc) | `rag add` ingest, optional OCR/figures, hybrid search, 1–2 hops, pack citations | Compact the chat, run a multi-agent GRASP planner, treat a PDF as a new capability |
 
 ```mermaid
-flowchart TB
+flowchart LR
   subgraph harness ["Harness — assistant"]
     Ask["Look up a citation"]
   end
   subgraph kernel ["Kernel — Arc"]
-    Ingest["rag add: OCR, figures, graph"]
-    Query["Hybrid search then hops"]
+    Ingest["rag add"]
+    Query["rag query / MCP retrieve"]
     Cite["book + chapter + page"]
   end
   Ask --> Query
@@ -266,9 +266,36 @@ flowchart TB
   Query --> Cite
 ```
 
-Ingest is the RAG-Anything-style path (PDFs with images). Query is hybrid BM25 + dense, then a short walk on a GRASP-style graph (entities, propositions, passages, linked figures). Approach, graphs, and paper links: [`architecture/rag.md`](architecture/rag.md). Student add-book steps: [`rag-byo.md`](rag-byo.md).
+### Ingest pipeline (offline, kernel-owned)
 
-Limit: until extract/chunk ships, `rag add` records inventory only (`CD-RAG-PARSE`). Empty lookup stays visible. Homework circuit **photos** for simulation still go through the photo confirm path, not this book index.
+```mermaid
+flowchart TB
+  Drop["BYO text, PDF, or scan"]
+  Gate["Ask gate"]
+  Parse["Parse text / PDF / optional OCR"]
+  Chunk["Chunk with page tags"]
+  Graph["Write graph.json T0-T4"]
+  Idx["BM25 + dense indexes"]
+  Drop --> Gate --> Parse --> Chunk --> Graph --> Idx
+```
+
+### Query pipeline (online, p95 ≤ 7 s)
+
+```mermaid
+flowchart TB
+  Q["Query + book/chapter filters"]
+  F["Apply filters first"]
+  H["BM25 parallel dense"]
+  RRF["RRF fuse"]
+  Hyd["Parent hydrate worked example / figure"]
+  Hop["Typed hops k at most 2"]
+  Pack["Pack 3 x 1500 chars; empty visible"]
+  Q --> F --> H --> RRF --> Hyd --> Hop --> Pack
+```
+
+**Why this shape:** filter-first hybrid lexical+dense plus a small typed graph is a proven production RAG pattern for textbooks; it keeps interactive lookup under about seven seconds without GraphRAG map-reduce or agent rewrite loops in the runner. Full approach notes and ontology: [`architecture/rag.md`](architecture/rag.md). Student add-book steps: [`rag-byo.md`](rag-byo.md).
+
+Limit: commercial-scan **layout** fidelity is still `CD-RAG-PARSE` (MinerU/RAG-Anything stay optional adapters). Empty lookup stays visible. Homework circuit **photos** for simulation still go through the photo confirm path, not this book index.
 
 ## When a number was not verified
 

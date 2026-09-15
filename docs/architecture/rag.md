@@ -4,9 +4,11 @@
 **Harness vs kernel (plain language):** [`ON_THE_HARNESS.md`](../ON_THE_HARNESS.md).  
 **This page:** the **graphs** the kernel runs on ingest vs query, and links to the approach (RAG-Anything ingest, GRASP-style proposition graph, hybrid then hops).
 
-**As-built (hybrid-graph graph):** `rag add` parses text/markdown (PDF text via optional `pypdf`; OCR via optional `ocrmypdf`), writes chunk inventory + `graph.json` (T0–T4: docs, chunks, worked examples, figures, light entities/propositions). Retrieve is **filter → BM25∥dense (hash embed in CI) → RRF → parent hydrate → ≤2 typed hops**, packed to 3 × 1500 chars, empty visible, `engine=hybrid-graph`, p95 budget 7s. MinerU/RAG-Anything remain optional multimodal adapters (`CD-RAG-ANYTHING` / `CD-RAG-ENGINE`); commercial scan OCR depth remains `CD-RAG-PARSE`.
+**As-built (`engine=hybrid-graph`):** `rag add` parses text/markdown (PDF text via optional `pypdf`; OCR via optional `ocrmypdf`), writes chunk inventory + `graph.json` (T0–T4: docs, chunks, worked examples, figures, light entities/propositions). Retrieve is **filter → BM25∥dense (hash embed in CI; MiniLM when installed) → RRF → parent hydrate → ≤2 typed hops**, packed to 3 × 1500 chars, empty visible, p95 budget **7 s**. MinerU/RAG-Anything remain optional multimodal adapters (`CD-RAG-ANYTHING` / `CD-RAG-ENGINE`); commercial scan layout fidelity remains `CD-RAG-PARSE`.
 
-Engine pin remains ADR-0004 (QUALITY then SPEED). Identity is **tagged, citable, local RAG**, not a vendor library.
+ADR-0004 (QUALITY then SPEED). Identity is **tagged, citable, local RAG**, not a vendor library.
+
+**Is this a good RAG approach?** Yes for Arc’s constraints. Hybrid lexical+dense with RRF is table-stakes production retrieval; a shallow typed graph (example↔solution↔figure, entity↔proposition↔chunk) buys multi-hop academic shape without GraphRAG’s offline community cost or agentic rewrite loops on the interactive path. Separating **ingest** (minutes OK) from **query** (seconds hard) matches how textbook BYO systems are operated. Gaps that remain intentional: heavy layout OCR and VLM-on-query stay out of the default ≤7 s path.
 
 ---
 
@@ -38,8 +40,8 @@ flowchart LR
 
 | Job | Kernel | Host / harness |
 |-----|--------|----------------|
-| `rag add` (OCR, figures, propositions, index write) | Yes — ask gate | May invoke CLI; must not skip the gate |
-| Filters, hybrid search, 1–2 hops, RankVote to pages | Yes | Passes query + tags only |
+| `rag add` (parse/OCR, figures, graph, index write) | Yes — ask gate | May invoke CLI; must not skip the gate |
+| Filters, hybrid search, 1–2 hops, pack citations | Yes | Passes query + tags only |
 | Multi-hop **viva** (decompose the homework) | Hop cap inside `retrieve-passage` | Host may plan extra `retrieve` calls |
 | Agentic GRASP planner / sub-agents | No | Optional in the host, not in the runner |
 | Citation in evidentiary band | Yes | Host must not invent page numbers |
@@ -47,55 +49,65 @@ flowchart LR
 
 ---
 
-## Ingest graph (offline)
+## Ingest pipeline (offline, separate)
 
-`electrical-engineer rag add`. Minutes per chapter are allowed. Fail closed on unreadable PDF (`CD-RAG-PARSE`).
+`electrical-engineer rag add`. Minutes per chapter are allowed. Fail closed on unreadable PDF when no text/OCR path works (`CD-RAG-PARSE`).
 
-**Approach:** [RAG-Anything](https://github.com/HKUDS/RAG-Anything) (MinerU parse, context-aware figures/tables/equations, multimodal `belongs_to` anchors) writing into an Arc-typed graph. Parser fallback: Docling or PaddleOCR. Circuit **simulation** photos do not use this path.
+**As-built path:** Arc parse providers (text → pypdf → optional ocrmypdf) → structure map → T1 chunks + T2 parents + T3 figures → light T4 → BM25+dense indexes. **Optional adapter:** [RAG-Anything](https://github.com/HKUDS/RAG-Anything) / MinerU may feed the same ontology when installed; not required in CI. Circuit **simulation** photos do not use this path.
 
 ```mermaid
 flowchart TB
-  Drop["BYO PDF or scan\nlibrary / book / chapter tags"]
-  Gate["Ask gate\npersistent index"]
-  Parse["RAG-Anything parser\nMinerU default"]
-  Split["Content list\ntext / image / table / equation + page"]
-  Tree["Filesystem tree\nlibrary → book → chapter → section → passage"]
-  Modal["Modal processors\ncaption + entity summary + crop"]
-  Prop["Joint proposition + entity extract"]
-  Graph["EE graph write"]
-  Idx["BM25 + dense on propositions"]
+  Drop["BYO text PDF or scan"]
+  Gate["Ask gate persistent index"]
+  Parse["Parse provider text pypdf OCR"]
+  Tree["library book chapter section"]
+  Units["T1 chunks prose equation caption solution"]
+  Parents["T2 worked_example figure_group"]
+  Figs["T3 figure caption_of illustrates"]
+  Concepts["T4 entity proposition light"]
+  Idx["BM25 + dense on T1 ids"]
+  GStore["graph.json edges"]
 
-  Drop --> Gate --> Parse --> Split
-  Split --> Tree
-  Split --> Modal
-  Tree --> Prop
-  Modal --> Prop
-  Prop --> Graph --> Idx
+  Drop --> Gate --> Parse --> Tree --> Units
+  Units --> Parents
+  Parse --> Figs
+  Figs --> Parents
+  Units --> Concepts
+  Figs --> Concepts
+  Units --> Idx
+  Parents --> GStore
+  Figs --> GStore
+  Concepts --> GStore
 ```
 
 Student-facing drop folder: [`rag-byo.md`](../rag-byo.md).
 
 ---
 
-## Query graph (online, p95 ≤ 7 s)
+## Query pipeline (online, separate, p95 ≤ 7 s)
 
-`retrieve-citation` / MCP `retrieve`. Filters first. Empty retrieval is visible. Target wall clock **≤ 6 s**, hard cap **7 s**. Skip rerank if the clock already passed 4 s. If hops would overrun, return hybrid passages and mark the retrieve truncated.
+`retrieve-citation` / MCP `retrieve` / CLI `rag query`. Filters first. Empty retrieval is visible. Target wall clock **≤ 6 s**, hard cap **7 s**. Skip optional rerank if the clock already passed 4 s. If hops would overrun, return hybrid passages and mark the retrieve truncated.
 
-**Approach:** hybrid BM25 + dense on **propositions**, then **deterministic hops** (GRASP-RAG index shape, not GRASP agent loops). Passages are what you cite.
+**As-built path:** hybrid BM25 ∥ dense → RRF → parent hydrate → deterministic typed hops (GRASP-RAG *index* shape, not GRASP *agent* loops). Passages are what you cite.
 
 ```mermaid
 flowchart TB
   Q["Query + tag filters"]
-  F["Filter cone\nbook / chapter / folder / domain"]
-  H["Hybrid retrieve on propositions\nBM25 + dense"]
-  Hop1["Hop 1\nentities, example siblings, linked figures"]
-  Hop2["Hop 2 only if multi_hop lane"]
-  Vote["RankVote propositions → passages"]
-  Pack["Pack 3 × 1500 chars\nbook + chapter + page + figure ids"]
+  F["Filter cone book chapter folder domain"]
+  BM["BM25 on T1"]
+  DE["Dense on T1"]
+  RRF["RRF fuse"]
+  Seeds["Top T1 seeds"]
+  Hyd["Parent hydrate T2"]
+  Hop["Typed hops k 1 default k 2 cap"]
+  Pack["Pack 3 x 1500 chars book chapter page figure ids"]
 
-  Q --> F --> H --> Hop1
-  Hop1 --> Hop2 --> Vote --> Pack
-  Hop1 --> Vote
+  Q --> F
+  F --> BM
+  F --> DE
+  BM --> RRF
+  DE --> RRF
+  RRF --> Seeds --> Hyd --> Hop --> Pack
 ```
 
 Host-path multi-hop in [`ARCHITECTURE.md`](../ARCHITECTURE.md) §4 stays a **hop cap** on `retrieve-passage`, not a second agent loop in Python.
