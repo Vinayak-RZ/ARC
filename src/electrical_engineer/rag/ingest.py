@@ -71,7 +71,7 @@ def light_entities(text: str) -> list[str]:
         r"\bNorton\w*\b",
         r"\b[Vv]\s*=\s*[Ii]\s*[Rr]\b",
     ):
-        for m in re.finditer(pat, text, flags=re.I):
+        for m in re.finditer(pat, text, flags=re.IGNORECASE):
             found.append(m.group(0))
     # de-dupe preserve order
     seen: set[str] = set()

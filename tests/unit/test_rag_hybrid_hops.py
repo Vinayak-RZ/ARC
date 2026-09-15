@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from electrical_engineer.rag.inventory import add_doc, rag_root
 from electrical_engineer.rag.graph_store import load_graph
+from electrical_engineer.rag.inventory import add_doc, rag_root
 from electrical_engineer.rag.retrieve import retrieve
 
 FIXTURE = Path("tests/fixtures/rag/worked-example-with-figure.md")

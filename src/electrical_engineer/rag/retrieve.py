@@ -177,7 +177,7 @@ def retrieve(
     root = rag_root(cwd)
     graph = load_graph(root)
     # Ensure seed inventory rows without graph nodes still return passages
-    for sid in list(seed_ids):
+    for sid in seed_ids:
         if sid.startswith("inv:") and sid not in (graph.get("nodes") or {}):
             rec = inventory_by_node[sid]
             passages_direct = {
@@ -221,9 +221,8 @@ def retrieve(
             if filters.get("chapter_id") and pas.get("chapter_id") not in (
                 None,
                 filters["chapter_id"],
-            ):
-                if pas.get("graph_kind") not in {"figure", "entity", "proposition"}:
-                    continue
+            ) and pas.get("graph_kind") not in {"figure", "entity", "proposition"}:
+                continue
         seen_paths.add(key)
         hits.append({**pas, "score": pas.get("score", 0)})
         if len(hits) >= MAX_PASSAGES + 2:

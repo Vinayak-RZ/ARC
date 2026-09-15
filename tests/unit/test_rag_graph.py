@@ -1,4 +1,10 @@
-from electrical_engineer.rag.graph_store import add_edge, load_graph, neighbors, save_graph, upsert_node
+from electrical_engineer.rag.graph_store import (
+    add_edge,
+    load_graph,
+    neighbors,
+    save_graph,
+    upsert_node,
+)
 from electrical_engineer.rag.ontology import ENGINE_ID, valid_edge, valid_node
 
 
