@@ -31,6 +31,8 @@ def build_parser() -> argparse.ArgumentParser:
     rag.add_argument("--folder-tag")
     rag.add_argument("--domain-tag")
     rag.add_argument("--licence-tag")
+    rag.add_argument("--query", default="")
+    rag.add_argument("--hops", type=int, default=1)
     mem = sub.add_parser("memory")
     mem.add_argument("action", nargs="?", default="list")
     hosts = sub.add_parser("hosts")
@@ -125,7 +127,10 @@ def main(argv: list[str] | None = None) -> int:
 
         return run_pack(args.pack)
     if args.cmd == "rag":
+        import json
+
         from electrical_engineer.rag.inventory import add_doc, listed_inventory, tag_doc
+        from electrical_engineer.rag.retrieve import retrieve
 
         tags = {
             "book_id": getattr(args, "book_id", None),
@@ -135,8 +140,6 @@ def main(argv: list[str] | None = None) -> int:
             "licence_tag": getattr(args, "licence_tag", None),
         }
         if args.action == "list":
-            import json
-
             print(json.dumps(listed_inventory(), indent=2))
             return 0
         if args.action == "add":
@@ -152,6 +155,12 @@ def main(argv: list[str] | None = None) -> int:
                 return 2
             tag_doc(args.path, tags)
             return 0
+        if args.action == "query":
+            filters = {k: v for k, v in tags.items() if v}
+            q = args.query or args.path or ""
+            out = retrieve(filters, query=q, hops=args.hops)
+            print(json.dumps(out, indent=2))
+            return 0 if not out.get("empty") else 1
         print(args.action)
         return 0
     if args.cmd == "hosts":
