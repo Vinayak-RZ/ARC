@@ -9,9 +9,9 @@ Every open research question for this phase. Status: `open` | `answered` | `defe
 | Q3 | How portable are Pi skills to Claude Code / Codex / Cursor? | WS-A | answered | Skill formats converging; treat MCP+skills as portable core — `notes/harness-landscape.md` |
 | Q4 | Which EE textbooks can we legally index? | WS-B | deferred | Intended: curator-licensed **embedding packs**; until licence review, **BYO + OER** — `notes/ee-corpus-and-licensing.md`, `notes/local-package-and-embedding-release.md` |
 | Q5 | How should formulae and circuit figures be preserved? | WS-B | answered | Layout/formula-aware parse; LaTeX/MathML preferred; figures via caption+image — `notes/rag-parsing-formulae-figures.md` |
-| Q6 | What chunking/retrieval design fits EE? | WS-B | answered | Structure-aware + parent-child + hybrid dense/BM25 — `notes/rag-chunking-and-retrieval.md` |
+| Q6 | What chunking/retrieval design fits EE? | WS-B | answered | Structure-aware parent-child remains the passage store; retrieve on **propositions** with hybrid + hops — `notes/rag-chunking-and-retrieval.md`, `notes/rag-ingest-query-architecture.md` |
 | Q7 | Should RAG enter as MCP, middleware, or multi-hop? | WS-B | answered | MCP portable core + skill multi-hop; optional Pi middleware — `notes/rag-agent-integration.md` |
-| Q8 | How do we evaluate EE RAG? | WS-B | answered | Retrieval/faithfulness/citation/EE failure taxonomy + 20 case titles — `notes/rag-eval-methodology.md` |
+| Q8 | How do we evaluate EE RAG? | WS-B | answered | Failure taxonomy + 20 titles in `notes/rag-eval-methodology.md`; **120 retrieval items** (12 lanes × 10 packs) in `notes/rag-eval-pack-stack.md` |
 | Q9 | Is MATLAB/Simulink the primary verifier? | WS-C | deferred | Intended primary; CP-2 licence pending — `notes/matlab-simulink-surface.md` |
 | Q10 | What OSS verification covers which domains? | WS-C | answered | Coverage matrix in `notes/open-source-verification.md` |
 | Q11 | What task genres define undergrad-EE-capable? | WS-D | answered | Seven genres × GATE sections — `notes/ee-task-taxonomy-draft.md` |
@@ -45,6 +45,8 @@ Every open research question for this phase. Status: `open` | `answered` | `defe
 | Q39 | Keep mega `run_workflow` (YAML DAG including `solve-explain`) as the host’s only write? | WS-G | answered | No on the host path (starves the viva). Yes as headless eval rollback and one-command CLI. — `notes/domain-kernel-layering.md` |
 | Q40 | One artifact blob vs two bands (evidentiary vs engineering argument)? | WS-G | answered | Two bands. Host explanation cannot mint checked scalars. — `notes/agentic-kernel-2026.md` |
 | Q41 | Long YAML brain vs unconstrained on-the-fly vs hybrid engines? | WS-G | answered | Hybrid quality: host + pack skills compose; typed engines; short attachments; validate-then-apply. Mega YAML with `solve-explain` retires on the host path. No new Layer 4. — `notes/hybrid-engine-composition.md` |
+| Q42 | Ingest vs query RAG: RAG-Anything images + GRASP-style hierarchy, local ≤ 7 s? | WS-B | answered | Split pipelines. Ingest: RAG-Anything OCR/VLM + EE ontology. Query: hybrid then 1–2 hops, not GraphRAG global or GRASP agent loops. — `notes/rag-ingest-query-architecture.md` |
+| Q43 | What graph ontology holds problems, solutions, and figures? | WS-B | answered | GRASP-RAG layers (entity, proposition, passage) plus FigureAsset / WorkedExample / `illustrated_by` / `part_of`. — `notes/rag-ingest-query-architecture.md` |
 
 ## Sources
 

@@ -26,7 +26,7 @@ Human walkthrough of harness vs kernel, in plain language: [`ON_THE_HARNESS.md`]
 - **Gate.** TOML most-restrictive merge; third interrupt aborts. MCP never waits: fail-closed with `ui_url`.
 - **Confirm ≠ simulate.** Photo and C5 stop after `confirm-topology`. C4 `simulate-after-confirm` requires `confirmed.json` before `run-spice`.
 - **Slot UI.** React `register(name, Component)`; shell renders `root` only. No LLM client in the browser. `?run=` selects a run; CLI `ui --run` opens that URL. The `unchecked` pill is `summary.unchecked === true`, not a substring match on JSON. Bands: `run.evidentiary`, `run.argument`, `run.plan`, `run.observation`.
-- **RAG facade.** EE owns `book_id` / `chapter_id` / `folder_tag` / `domain_tag`. Empty retrieval is a first-class `empty: true`. Engine after spike: thin bm25.
+- **RAG facade.** EE owns `book_id` / `chapter_id` / `folder_tag` / `domain_tag`. Empty retrieval is a first-class `empty: true`. Engine after spike: thin bm25. Target ingest/query graphs: [`architecture/rag.md`](architecture/rag.md).
 
 ## 2. How this repository runs
 
@@ -90,7 +90,7 @@ Vendored Cursor config (`.cursor/`) is not a product package; see `.cursor/VENDO
 | `src/electrical_engineer/nodes/photo.py` | Vision + explain | photo stages, retrieve, solve-explain |
 | `src/electrical_engineer/mcp/server.py` | Hosts | stdio JSON-RPC |
 | `src/electrical_engineer/ui_server/app.py` | UI API | bind 127.0.0.1, `ui_page_url`, runs, first `*.svg` artifact, confirm |
-| `src/electrical_engineer/rag/` | Retrieval | inventory + filters |
+| `src/electrical_engineer/rag/` | Retrieval | inventory + filters; ingest/query graphs in `docs/architecture/rag.md` |
 | `src/electrical_engineer/local_llm/` | Optional daemon | skip-if-missing |
 | `src/electrical_engineer/memory/store.py` | Notes | 32KiB cap |
 | `src/electrical_engineer/compose/graph.py` | Advanced DAG | 16/24 |
@@ -173,6 +173,7 @@ Python 3.11+, `uv`, hatchling. Optional tools (PySpice, python-control, pandapow
 ## 7. Further reading
 
 - [`ON_THE_HARNESS.md`](ON_THE_HARNESS.md): what Arc puts on a rented harness
+- [`docs/architecture/rag.md`](architecture/rag.md): RAG ingest vs query graphs (kernel)
 - [`docs/PID.md`](PID.md), [`docs/PRD.md`](PRD.md), [`docs/ARCHITECTURE.md`](ARCHITECTURE.md)
 - [`docs/WORKFLOWS.md`](WORKFLOWS.md), [`docs/CANNOT_DO.md`](CANNOT_DO.md)
 - [`docs/design/DESIGN-coinbase.md`](design/DESIGN-coinbase.md)

@@ -13,7 +13,7 @@ class, names, orchestrator split, and domain-kernel layering) and write recommen
 1. Start with [`question-bank.md`](question-bank.md) — every open research question.
 2. Check [`DECISION_REGISTER.md`](DECISION_REGISTER.md) — options and current stances.
 3. Read domain notes under [`notes/`](notes/).
-4. End with [`synthesis/recommendation.md`](synthesis/recommendation.md) (historical O1 harness) and [`synthesis/rag-stack-recommendation.md`](synthesis/rag-stack-recommendation.md) when evaluating RAG engine choice.
+4. End with [`synthesis/recommendation.md`](synthesis/recommendation.md) (historical O1 harness) and [`synthesis/rag-stack-recommendation.md`](synthesis/rag-stack-recommendation.md) when evaluating RAG engine choice. Ingest vs query split and pack eval bank: [`notes/rag-ingest-query-architecture.md`](notes/rag-ingest-query-architecture.md), [`notes/rag-eval-pack-stack.md`](notes/rag-eval-pack-stack.md).
 5. For class, names, hybrid architecture, and layering: [`synthesis/domain-system-recommendation.md`](synthesis/domain-system-recommendation.md) then [`synthesis/vision-lock-sheet.md`](synthesis/vision-lock-sheet.md). Kernel harvest: [`notes/agentic-kernel-2026.md`](notes/agentic-kernel-2026.md), [`notes/domain-kernel-layering.md`](notes/domain-kernel-layering.md), [`notes/host-first-class-attach.md`](notes/host-first-class-attach.md), [`notes/hybrid-engine-composition.md`](notes/hybrid-engine-composition.md). Proposed product docs: [`docs/PRD.md`](../docs/PRD.md).
 6. Sources are catalogued in [`source-ledger.md`](source-ledger.md).
 
@@ -30,7 +30,7 @@ memo, and (heuristically) verbatim book text.
 | ID | Topic | Primary artifacts |
 |----|-------|-------------------|
 | WS-A | Harness base | `notes/harness-landscape.md`, `notes/pi-feasibility.md` |
-| WS-B | EE textbook RAG | `notes/ee-corpus-and-licensing.md`, `notes/rag-*.md`, `notes/local-package-and-embedding-release.md`, `notes/rag-anything-evaluation.md` |
+| WS-B | EE textbook RAG | `notes/ee-corpus-and-licensing.md`, `notes/rag-*.md`, `notes/local-package-and-embedding-release.md`, `notes/rag-anything-evaluation.md`, `notes/rag-ingest-query-architecture.md`, `notes/rag-eval-pack-stack.md`; product graphs in `docs/architecture/rag.md` |
 | WS-C | Verification | `notes/matlab-simulink-surface.md`, `notes/open-source-verification.md`, `notes/photo-to-schematic-to-simulink.md` |
 | WS-D | Capability & evals | `notes/ee-task-taxonomy-draft.md`, `notes/capability-eval-design.md`, `notes/ai-core-engineering-landscape.md` |
 | WS-E | Synthesis | `synthesis/option-scoring.md`, `synthesis/recommendation.md`, `synthesis/rag-stack-recommendation.md` |

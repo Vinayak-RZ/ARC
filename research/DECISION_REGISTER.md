@@ -14,7 +14,7 @@ Stances for this research phase. Status: `open` | `leaning` | `proposed` | `defe
 | D8 | Recommended build path | O1–O4 | **proposed: O1 (runner-up O3)** | Phase E | `synthesis/recommendation.md` |
 | D9 | Vector store | Chroma / sqlite-vec / LanceDB | **leaning: Chroma default, sqlite-vec optional** | 2026-09-08 | `notes/local-package-and-embedding-release.md` |
 | D10 | Circuit vision pipeline | VLM-only / structured detect+netlist / hybrid | **leaning: structured netlist + UI edit gate** | 2026-09-08 | `notes/photo-to-schematic-to-simulink.md` |
-| D11 | Multimodal RAG engine | RAG-Anything / thin MinerU+MCP / commercial | **proposed: RAG-Anything behind MCP** | Spike gate | ADR-0004; `rag-stack-recommendation.md` |
+| D11 | Multimodal RAG engine | RAG-Anything / thin MinerU+MCP / commercial | **proposed: RAG-Anything behind MCP** | Spike gate | ADR-0004; `rag-stack-recommendation.md`; ingest path in `notes/rag-ingest-query-architecture.md` |
 | D12 | Success bar / product promise | vibe / exam-only / verified capability list | **proposed: UG-bounded verified capabilities + later research fork** | 2026-09-08 | ADR-0005; landscape note + README |
 | D13 | Orchestrator / recipes / UI / eval | LangGraph / Temporal / DSH / custom YAML DAG | **proposed: Python YAML DAG + persistent localhost UI + eval/gold** | 2026-09-10 | ADR-0007; `docs/ARCHITECTURE.md`. Runner freeze stands. Who *drives* the work is D16. |
 | D14 | Product name (PID Q1) | Electrical Engineer / coined lab-bench names / ChemCrow-style / **Arc** | **locked: Arc** (owner 2026-09-13). CLI/repo stay `electrical-engineer` / `Electrical-Engineer` this pass. | WS-G lock sheet + owner docs pass | `notes/naming-and-positioning.md`. Research preferred keep-name; owner chose a short public name. |
@@ -24,6 +24,7 @@ Stances for this research phase. Status: `open` | `leaning` | `proposed` | `defe
 | D18 | Host-path composition | long YAML brain / unconstrained on-the-fly / hybrid engines | **proposed: hybrid quality** — host + pack skills compose; typed engines; short attachments; `propose_composition` validate-then-apply; no Layer 4 | WS-G lock sheet | `notes/hybrid-engine-composition.md`. Reopens D13 only into allowlisted engine graphs. |
 | D19 | Domain contract vs providers | engine-id identity / capability registry / unconstrained tools | **proposed: capability-first coverage** — 14 capabilities; providers/YAML/UI/RAG are this-pass freezes; every in-bound UG question has a complete path | WS-G lock sheet | `docs/ARCHITECTURE.md` §0; ADR-0010. Does not reopen H3 or D13 runner. |
 | D20 | Harness persist / observe / spawn | Python orchestrator / host-native adapters / silent memory | **proposed: split harness** — host loop+spawn; kernel persist+observe+hooks; local memory; BYO ingest pipeline | WS-G lock sheet | ADR-0011; `hosts/adapters/`. H5 falsifier = Python specialist fan-out. |
+| D21 | RAG query graph + eval | GraphRAG-global / LightRAG-only / GRASP-RAG hops + hybrid | **leaning: hybrid BM25+dense on propositions, then 1–2 deterministic hops; GRASP-RAG ontology; no agentic planner in retrieve; p95 ≤ 7 s; 120-item pack eval bank** | Spike gate | `notes/rag-ingest-query-architecture.md`, `notes/rag-eval-pack-stack.md`. Does not reopen D11 ingest engine. |
 
 ## Sources
 
@@ -33,6 +34,8 @@ Stances for this research phase. Status: `open` | `leaning` | `proposed` | `defe
 - `research/notes/domain-system-architecture-patterns.md` — retrieved 2026-09-12 — reliability: primary
 - `research/notes/agentic-kernel-2026.md` — retrieved 2026-09-12 — reliability: primary
 - `research/notes/domain-kernel-layering.md` — retrieved 2026-09-12 — reliability: primary
+- `research/notes/rag-ingest-query-architecture.md` — retrieved 2026-09-15 — reliability: primary
+- `research/notes/rag-eval-pack-stack.md` — retrieved 2026-09-15 — reliability: primary
 
 ## Confidence
 

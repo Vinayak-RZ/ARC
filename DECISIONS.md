@@ -45,9 +45,9 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 - **Status:** proposed (engine undecided until spike)
 - **Context:** EE textbooks mix text, equations, tables, figures, and multi-column layout; text-only RAG fails. RAG-Anything is unmaintained risk.
 - **Decision:** **Spike LightRAG 1.5** vs Docling vs BM25+dense. Facade + inventory + book/chapter/folder filters ship regardless. Do **not** adopt any engine as the agent harness. Decide after measured numbers (QUALITY then SPEED).
-- **Consequences:** No engine pin in Wave 0. B_RAG_SPIKE writes the note. Fallback: BM25+dense + cannot-do row if all heavy engines fail.
+- **Consequences:** No engine pin in Wave 0. B_RAG_SPIKE writes the note. Fallback: BM25+dense + cannot-do row if all heavy engines fail. **Target graphs** (ingest RAG-Anything-style, query hybrid then hops) live in `docs/architecture/rag.md`; research in `research/notes/rag-ingest-query-architecture.md`. Still decide after measured numbers.
 - **Alternatives:** RAG-Anything/MinerU as locked default (deferred); VLM-only chunking; commercial parsers.
-- **Sources:** `research/notes/rag-anything-evaluation.md`, Gate 0 owner answers, `IMPLEMENTATION_PLAN.md` §11
+- **Sources:** `research/notes/rag-anything-evaluation.md`, `research/notes/rag-ingest-query-architecture.md`, `docs/architecture/rag.md`, Gate 0 owner answers, `IMPLEMENTATION_PLAN.md` §11
 
 ---
 

@@ -31,6 +31,8 @@ EE-specific failures differ from generic QA: formula variants, dropped assumptio
 5. **Orphaned example** (solution without matching problem constraints).
 6. **Fabricated citation** (page does not exist).
 
+Pack × lane retrieval items (120 queries, curator-bound pages): [`rag-eval-pack-stack.md`](rag-eval-pack-stack.md). The titles below remain a cross-pack flavour list; they are not a substitute for that bank.
+
 ### Twenty candidate eval case *titles* (design sketches — not built)
 
 1. Series RLC transient time constant identification
@@ -68,9 +70,10 @@ Pass thresholds, CI gating numbers, and product launch criteria wait for a later
 - [RAG4Reports](https://aclanthology.org/2026.rag4reports-1.4.pdf) — retrieved 2026-09-07 — reliability: paper (S16)
 - [agentic-system-design](.cursor/skills/agentic-system-design/SKILL.md) — retrieved 2026-09-07 — reliability: primary (S3)
 - [GATE EE syllabus](https://static.collegedekho.com/media/uploads/2024/07/01/gate-_ee_2025_syllabus.pdf) — retrieved 2026-09-07 — reliability: secondary (S11)
+- [rag-eval-pack-stack.md](rag-eval-pack-stack.md) — retrieved 2026-09-15 — reliability: primary
 
 ## Confidence
 
 Overall confidence for this note: high
 
-The failure taxonomy and case list are sufficient to guide a future eval harness; scoring automation quality remains medium uncertainty.
+The failure taxonomy still holds. Pack-lane gold binds live in `rag-eval-pack-stack.md`; scoring automation quality remains medium uncertainty.

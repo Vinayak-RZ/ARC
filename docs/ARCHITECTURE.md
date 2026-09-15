@@ -1,6 +1,6 @@
 # Technical architecture — Arc
 
-Human walkthrough (plain language: what Arc adds, determinism, MATLAB coming next): [`ON_THE_HARNESS.md`](ON_THE_HARNESS.md).
+Human walkthrough (plain language: what Arc adds, determinism, MATLAB coming next): [`ON_THE_HARNESS.md`](ON_THE_HARNESS.md). Topic pages (RAG ingest/query graphs): [`architecture/`](architecture/).
 
 **Status:** Accepted for this graph (D19/D20 graph-of-loops, 2026-09-13) overlay on Accepted A1 (2026-09-10). Hybrid composition (D18), **capability-first domain contract (D19)**, plus **harness persist / observe / spawn (D20)**: the rented host owns the loop, compaction, and specialist spawn; the kernel owns runs, memory, RAG ingest, observation, and deterministic hooks. Aligns with [`PRD.md`](PRD.md) / [`PID.md`](PID.md).  
 **Date:** 2026-09-12  
@@ -289,7 +289,7 @@ ChatGPT **web** is not a host. Chat/Work: pin root skill until Skills-over-MCP i
 
 Not host compaction, continuation, or essay lint. Those stay Layer 0. The kernel pipeline is **deterministic** (code later; this is the contract):
 
-1. **Ingest** (`rag add` / BYO): gate ask → extract PDF/scan → chunk (`book_id` / `chapter_id` / `page`) → index via the RAG facade → inventory row. Fail closed if unreadable (`CD-RAG-PARSE`). Circuit-homework photos do **not** take this path (`ingest-figure`).
+1. **Ingest** (`rag add` / BYO): kernel-owned. Gate ask → RAG-Anything-style extract (PDF/scan OCR, figures, tables, equations) → chunk (`book_id` / `chapter_id` / `page`) → proposition/entity graph write → index via the RAG facade → inventory row. Fail closed if unreadable (`CD-RAG-PARSE`). Circuit-homework photos do **not** take this path (`ingest-figure`). Diagrams: [`architecture/rag.md`](architecture/rag.md).
 2. **Validate-then-apply** (D18): allowlist of capability/provider ids, typed ports, unmatched predicate, 16/24 cap.
 3. **Simulate repair:** `repair_max: 2` then `label-unverified`. Never a fake pass.
 4. **Post-run observe:** write `observation.json` (or fields on the evidentiary seed until rename).
@@ -514,16 +514,40 @@ This remains **H3 glue** (a viewer/workspace). If the UI grows its own agent loo
 
 Do **not** lock a retrieval engine before numbers. This graph **spikes LightRAG 1.5** against Docling and BM25+dense (ADR-0004). QUALITY then SPEED. A facade exposes `retrieve-citation` / `retrieve` + inventory regardless of winner. Thin BM25 fallback is allowed if the spike fails; record that in [`CANNOT_DO.md`](CANNOT_DO.md). The architecture identity is **tagged, citable, local RAG**, not LightRAG.
 
-**Ingest pipeline** (student BYO; student machine only). Student-facing walkthrough: [`rag-byo.md`](rag-byo.md).
+**Target approach** (kernel contract; spike still required): RAG-Anything-style **ingest** (OCR + images + `belongs_to` figure anchors) writing a GRASP-style graph (entities → propositions → passages, plus `WorkedExample` / `FigureAsset`). **Query** is hybrid BM25 + dense on propositions, then 1–2 deterministic hops (p95 ≤ 7 s). Not GraphRAG global search. Not GRASP **agent** loops inside the runner. Full graphs, ontology, and paper links: [`architecture/rag.md`](architecture/rag.md). Research: [`../research/notes/rag-ingest-query-architecture.md`](../research/notes/rag-ingest-query-architecture.md). Eval bank: [`../research/notes/rag-eval-pack-stack.md`](../research/notes/rag-eval-pack-stack.md).
+
+**Ingest pipeline** (student BYO; student machine only; **kernel owns the write**). Student-facing walkthrough: [`rag-byo.md`](rag-byo.md).
+
+```mermaid
+flowchart TB
+  Drop["BYO PDF or scan"]
+  Gate["Ask gate"]
+  Parse["Extract OCR + figures + tables + equations"]
+  Tree["library → book → chapter → passage"]
+  Graph["Proposition / entity / figure graph"]
+  Idx["BM25 + dense index"]
+  Drop --> Gate --> Parse --> Tree --> Graph --> Idx
+```
 
 ```text
 drop .electrical-engineer/corpus/<book_id>/
   → electrical-engineer rag add PATH --book-id --chapter-id --domain-tag --licence-tag
   → gate (ask; persistent index)
-  → extract (PDF text and/or scan OCR; low confidence flagged)
+  → extract (PDF text and/or scan OCR; figures linked; low confidence flagged)
   → chunk (library → book → chapter → chunk; page on the chunk)
   → index (facade: BM25 now; LightRAG 1.5 spike still ADR-0004)
-  → retrieve (filters first, then 3×1500 chars, empty visible)
+  → retrieve (filters first, hybrid then hops, 3×1500 chars, empty visible)
+```
+
+**Query pipeline** (**kernel owns hops and packing**; host only sends query + tags). Host may call `retrieve` more than once; the kernel call itself is one shot + hop cap.
+
+```mermaid
+flowchart TB
+  Q["Query + filters"]
+  H["Hybrid BM25 + dense on propositions"]
+  Hop["Graph hops 1–2"]
+  Pack["3 × 1500 chars + book/chapter/page"]
+  Q --> H --> Hop --> Pack
 ```
 
 As-built `rag add` writes **inventory metadata only** and retrieve is BM25 over a file prefix. That is a **code hole**, not an architecture hole. Until extract/chunk ship, name `CD-RAG-PARSE`.
@@ -537,7 +561,7 @@ EE metadata on top of the chunk note: `doc_id`, title, chapter, section, pages, 
 | BYO ingest | PDFs **and** images (scans). Circuit-homework photos for **simulation** still go through `photo-to-netlist` / `ingest-figure`, not quiet RAG-as-netlist |
 | Inventory | `electrical-engineer rag list` — every ingested source and its tags. CLI is enough this pass (MCP `retrieve` is the FR17 read verb, not a third dump of nodes) |
 | Filters (v1 retrieval) | `book_id`, `chapter_id`, `folder_tag`, `domain_tag`. “Search only this book, chapter 3” is required, not optional |
-| Hybrid | dense + BM25. Empty retrieval is **visible**, never silent |
+| Hybrid | dense + BM25 then bounded graph hops. Empty retrieval is **visible**, never silent |
 | Citations | book + chapter + page (+ tag if filtered) |
 | Legal | no commercial PDFs in git; BYO stays on the student’s machine |
 | Untrusted | ingest cannot override gates, `--allow-all`, or `unchecked`; cannot mint a capability id |
@@ -749,5 +773,5 @@ Proposed capability-first overlay (D19, 2026-09-12) — same Accept sheet:
 Proposed harness overlay (D20, 2026-09-12) — same Accept sheet:
 
 - Host owns loop, compaction, spawn; kernel owns persist, observation, ingest hooks, memory write law
-- BYO RAG pipeline specified; extract/chunk is a later code plan (`CD-RAG-PARSE`)
+- BYO RAG pipeline specified; extract/chunk is a later code plan (`CD-RAG-PARSE`); target ingest/query graphs in [`architecture/rag.md`](architecture/rag.md)
 - Pack specialists are host-native adapters, not a Python orchestrator

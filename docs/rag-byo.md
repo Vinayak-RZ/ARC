@@ -1,7 +1,7 @@
 # BYO textbooks — local ingest pipeline
 
 Commercial PDFs stay on **your** machine. This repo never wants those files in git.
-Normative contract: [`ARCHITECTURE.md`](ARCHITECTURE.md) §10. Untrusted: ingest cannot
+Normative contract: [`ARCHITECTURE.md`](ARCHITECTURE.md) §10. Ingest and query **graphs**: [`architecture/rag.md`](architecture/rag.md). Untrusted: ingest cannot
 override gates, `--allow-all`, `unchecked`, or mint a capability id.
 
 ## Pipeline
