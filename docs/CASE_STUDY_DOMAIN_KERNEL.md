@@ -2,7 +2,7 @@
 
 ## What we built
 
-Arc is a **domain kernel**, not an agent harness. Hosts (Cursor / Claude / Codex) own the loop; Arc owns capabilities, providers, YAML recipes, gates, `unchecked`, run artifacts, and now **stdlib JSONL traces**.
+Arc is a **domain kernel**, not an agent harness. Hosts (Cursor / Claude / Codex) own the loop; Arc owns capabilities, providers, YAML recipes, gates, `unchecked`, run artifacts, **local RAG ingest/index/retrieve**, and now **stdlib JSONL traces**.
 
 This graph added:
 
@@ -12,6 +12,20 @@ This graph added:
 4. Minimal structural fixes where agents/obs lied
 5. Localhost UI excerpts for observation + trace
 6. Harden + docs-out for a publishable case study
+
+## Kernel RAG (Layer 2, not Layer 0)
+
+The host may call `retrieve`. The kernel **is** the RAG system:
+
+| Kernel does | Kernel does not |
+|-------------|-----------------|
+| `rag add`: gate, OCR/extract, figure link, graph write, inventory | Compact the host context window |
+| `retrieve-citation`: filters, hybrid BM25+dense, 1–2 hops, pack 3 × 1500 chars | Run GRASP agent sub-agents or GraphRAG global map-reduce |
+| Persist the index on the student machine | Treat a BYO PDF as a new capability or a checked ohm |
+
+Ingest vs query graphs: [`architecture/rag.md`](architecture/rag.md). Freeze: [`ARCHITECTURE.md`](ARCHITECTURE.md) §10 and §2.5 hook 1. Harness split: [`ON_THE_HARNESS.md`](ON_THE_HARNESS.md). Approach notes: [`../research/notes/rag-ingest-query-architecture.md`](../research/notes/rag-ingest-query-architecture.md).
+
+As-built extract/chunk is still `CD-RAG-PARSE`. That is a code hole, not a harness hole.
 
 ## Design principles that held
 

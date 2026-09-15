@@ -1,5 +1,7 @@
 # Ingest vs query RAG architecture (GRASP graph + RAG-Anything)
 
+Product diagrams (ingest graph, query graph, kernel vs harness) live in [`docs/architecture/rag.md`](../../docs/architecture/rag.md). This note is the research argument and spike order.
+
 ## Purpose
 
 Separate **ingest** from **query** for Arc’s local textbook RAG. Pin a **typed graph ontology** that can hold worked examples, equations, and **figures linked to text**, using RAG-Anything-style multimodal ingest plus a GRASP-style three-layer search space (entities → propositions → passages). Query path is **hybrid BM25 + dense, then bounded graph hops**, with a **p95 retrieve budget of 7 s** (aim under 6 s).

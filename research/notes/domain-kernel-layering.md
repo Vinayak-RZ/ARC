@@ -174,6 +174,8 @@ Held-out hygiene (Self-Harness idea in the uploaded memo): a packet the host did
 
 `./runs/<id>/` is audit, not crash-resume (Q29). Memory markdown and local RAG stay local. Hosts do not own the textbook corpus.
 
+**RAG split (Layer 2).** Ingest (`rag add`) and query (`retrieve-citation`) are kernel stores, not harness memory. Ingest is RAG-Anything-style (OCR + figures). Query is hybrid then 1–2 hops on a GRASP-style graph. Product diagrams: [`docs/architecture/rag.md`](../../docs/architecture/rag.md). Research: [`rag-ingest-query-architecture.md`](rag-ingest-query-architecture.md). Hosts call `retrieve`; they do not OCR.
+
 #### 2g ACI vs `execute()`
 
 Today `execute(wid)` is the apply. Propose/validate are implicit (explicit id, or classifier, or unmatched). On the host path, classification is a job the 2026 model can do in the harness (spend). The pre-runner classifier is a micro-call that starves context the same way Stamped’s nine extractors did.
@@ -271,6 +273,7 @@ Stamped translation (do not copy terms into PID): SKU → invented node voltage;
 - [`research/notes/agentic-kernel-2026.md`](agentic-kernel-2026.md) — retrieved 2026-09-12 — reliability: primary
 - [`research/notes/domain-system-architecture-patterns.md`](domain-system-architecture-patterns.md) — retrieved 2026-09-12 — reliability: primary
 - [`docs/ARCHITECTURE.md`](../../docs/ARCHITECTURE.md) — retrieved 2026-09-12 — reliability: primary
+- [`docs/architecture/rag.md`](../../docs/architecture/rag.md) — retrieved 2026-09-15 — reliability: primary
 - [`docs/PID.md`](../../docs/PID.md) — retrieved 2026-09-12 — reliability: primary
 - [`src/electrical_engineer/mcp/server.py`](../../src/electrical_engineer/mcp/server.py) — retrieved 2026-09-12 — reliability: primary
 - [`src/electrical_engineer/nodes/photo.py`](../../src/electrical_engineer/nodes/photo.py) — retrieved 2026-09-12 — reliability: primary

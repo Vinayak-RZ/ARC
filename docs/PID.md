@@ -111,7 +111,7 @@ The CLI is a **thin wrapper**: glue, ug profile, co-solver defaults, a **determi
 | Topic | Proposed |
 |-------|----------|
 | MATLAB vs OSS | MATLAB if present (EE node and/or peer MCP); OSS first-class otherwise; **product works without MATLAB** |
-| RAG | Local store; BYO drop → gate → extract → chunk → index → retrieve; inventory + book/chapter/folder tags; no commercial books in git |
+| RAG | Local store; BYO drop → gate → extract → chunk → index → retrieve; inventory + book/chapter/folder tags; no commercial books in git. Graphs: [`docs/architecture/rag.md`](architecture/rag.md) |
 | Memory | Project + user markdown; explicit write; `lessons.md` not silent; local-only |
 | Persistent UI | First-class local workspace (`electrical-engineer ui`) |
 | v1 slice | C1–C3, C6–C7 plus UI + eval layout; C4 photo stub; C5 after C4 |
@@ -126,6 +126,7 @@ The CLI is a **thin wrapper**: glue, ug profile, co-solver defaults, a **determi
 | [`PRD.md`](PRD.md) | Requirements (Proposed) |
 | [`PRD_CRITIQUE.md`](PRD_CRITIQUE.md) | Four critique loops |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Technical architecture |
+| [`architecture/rag.md`](architecture/rag.md) | RAG ingest vs query graphs (kernel) |
 | [`ARCHITECTURE_CRITIQUE.md`](ARCHITECTURE_CRITIQUE.md) | Hybrid architecture critique |
 | [`WORKFLOWS.md`](WORKFLOWS.md) | Named workflow catalog |
 | [`hosts/README.md`](hosts/README.md) | Host install |

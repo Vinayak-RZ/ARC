@@ -225,6 +225,7 @@ Empty RAG is **visible**. Do not silently proceed as if the book was retrieved.
 ### 6.7 RAG
 
 - Local index. BYO PDFs/scans through the **ingest pipeline** (drop → gate → extract → chunk → index → retrieve). Inventory (`rag list`). Filters: book, chapter, folder, domain.
+- **Ingest vs query graphs** (kernel-owned): [`architecture/rag.md`](architecture/rag.md). Approach: RAG-Anything-style ingest; hybrid then hops at retrieve. Research: [`../research/notes/rag-ingest-query-architecture.md`](../research/notes/rag-ingest-query-architecture.md).
 - Host path: `retrieve` is a **read verb**. CLI path: `retrieve-passage` node inside a named recipe. `rag add` / `memory` stay **CLI** (Chat/Work side terminal) until a later read-verb split.
 - Citations: book + chapter + page the student has rights to use.
 - Circuit-homework **photos** go through `photo-to-netlist` / `ingest-figure`, not RAG-as-netlist.

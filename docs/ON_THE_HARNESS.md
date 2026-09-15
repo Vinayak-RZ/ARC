@@ -20,6 +20,7 @@ File maps: [`EXTENSIVE.md`](EXTENSIVE.md). Engineer contract: [`ARCHITECTURE.md`
 - [Named workflows, and when none fits](#named-workflows-and-when-none-fits)
 - [Why a generic command line, API, or MCP is not the product](#why-a-generic-command-line-api-or-mcp-is-not-the-product)
 - [What Arc already does](#what-arc-already-does)
+- [Books and RAG — kernel, not the chat loop](#books-and-rag--kernel-not-the-chat-loop)
 - [When a number was not verified](#when-a-number-was-not-verified)
 - [How homework actually runs](#how-homework-actually-runs)
 - [How Arc mediates MATLAB](#how-arc-mediates-matlab)
@@ -237,9 +238,37 @@ Each run writes:
 - explanation (`argument.md`) when the assistant is driving the viva
 - a plan (`plan.md`) on a large assignment, written before tools that change physics
 
-You can add licence-clean notes and books on the machine (`electrical-engineer memory`, `electrical-engineer rag add`). Known-answer tests live under `eval/gold/` (`electrical-engineer eval --pack circuits`).
+You can add licence-clean notes and books on the machine (`electrical-engineer memory`, `electrical-engineer rag add`). Known-answer tests live under `eval/gold/` (`electrical-engineer eval --pack circuits`). Diagrams of ingest vs retrieve: [`architecture/rag.md`](architecture/rag.md).
 
 Limit: a dead run does not resume. Notes cannot flip unverified to verified. The browser is not a second chat loop.
+
+## Books and RAG — kernel, not the chat loop
+
+The coding assistant does not hold your textbooks in its context window. It **calls** Arc. Arc **stores** the index and **returns** three short cited passages.
+
+| Who | Does | Does not |
+|-----|------|----------|
+| Harness (the assistant) | Ask for a citation; put book/chapter filters in the plan; use the passages in the viva | OCR a PDF, own the graph, invent a page number |
+| Kernel (Arc) | `rag add` ingest, OCR/figures, hybrid search, 1–2 hops, pack citations | Compact the chat, run a multi-agent GRASP planner, treat a PDF as a new capability |
+
+```mermaid
+flowchart TB
+  subgraph harness ["Harness — assistant"]
+    Ask["Look up a citation"]
+  end
+  subgraph kernel ["Kernel — Arc"]
+    Ingest["rag add: OCR, figures, graph"]
+    Query["Hybrid search then hops"]
+    Cite["book + chapter + page"]
+  end
+  Ask --> Query
+  Ingest --> Query
+  Query --> Cite
+```
+
+Ingest is the RAG-Anything-style path (PDFs with images). Query is hybrid BM25 + dense, then a short walk on a GRASP-style graph (entities, propositions, passages, linked figures). Approach, graphs, and paper links: [`architecture/rag.md`](architecture/rag.md). Student add-book steps: [`rag-byo.md`](rag-byo.md).
+
+Limit: until extract/chunk ships, `rag add` records inventory only (`CD-RAG-PARSE`). Empty lookup stays visible. Homework circuit **photos** for simulation still go through the photo confirm path, not this book index.
 
 ## When a number was not verified
 
@@ -360,5 +389,6 @@ Honest holes stay in [`CANNOT_DO.md`](CANNOT_DO.md). Prefer a row there over a f
 | Hook up Cursor or another assistant | [`hosts/README.md`](hosts/README.md) |
 | Named lab recipes | [`WORKFLOWS.md`](WORKFLOWS.md) |
 | Engineer tables | [`ARCHITECTURE.md`](ARCHITECTURE.md) |
+| RAG ingest and query graphs | [`architecture/rag.md`](architecture/rag.md) |
 | Every package and file | [`EXTENSIVE.md`](EXTENSIVE.md) |
 | Identity and non-goals | [`PID.md`](PID.md), [`PRODUCT.md`](PRODUCT.md) |
