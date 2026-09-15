@@ -1,15 +1,26 @@
+import json
 from pathlib import Path
+
+from electrical_engineer.circuit.graph import ALLOWED_TYPES, MAX_EDGES, MAX_NODES, SCHEMA
+
+
+def _schema() -> dict:
+    path = Path("src/electrical_engineer/circuit/arc.circuit.v1.json")
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def test_canvas_adapter_contract() -> None:
+    schema = _schema()
     text = Path("ui/src/slots/canvas/graph.js").read_text(encoding="utf-8")
     assert "export function toFlow" in text
     assert "export function fromFlow" in text
-    assert "MAX_NODES = 16" in text
-    assert "MAX_EDGES = 24" in text
-    assert "arc.circuit.v1" in text
-    for kind in ("resistor", "capacitor", "inductor", "source_v", "ground"):
+    assert f"MAX_NODES = {MAX_NODES}" in text
+    assert f"MAX_EDGES = {MAX_EDGES}" in text
+    assert SCHEMA in text
+    assert "rot" in text
+    for kind in schema["$defs"]["partType"]["enum"]:
         assert kind in text
+    assert ALLOWED_TYPES == frozenset(schema["$defs"]["partType"]["enum"])
 
 
 def test_palette_and_inspector_labels() -> None:

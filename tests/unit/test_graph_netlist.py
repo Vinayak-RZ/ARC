@@ -1,5 +1,12 @@
+import json
+from pathlib import Path
+
 from electrical_engineer.circuit.graph import (
+    ALLOWED_TYPES,
     GraphError,
+    MAX_EDGES,
+    MAX_NODES,
+    SCHEMA,
     default_graph_for,
     divider_graph,
     parse_graph,
@@ -8,6 +15,30 @@ from electrical_engineer.circuit.graph import (
 from electrical_engineer.circuit.netlist import CompileError, compile_netlist
 
 DIVIDER = divider_graph()
+CONTRACT = json.loads(Path("src/electrical_engineer/circuit/arc.circuit.v1.json").read_text(encoding="utf-8"))
+
+
+def test_contract_file_drives_caps() -> None:
+    assert SCHEMA == CONTRACT["properties"]["schema"]["const"]
+    assert MAX_NODES == CONTRACT["properties"]["nodes"]["maxItems"]
+    assert MAX_EDGES == CONTRACT["properties"]["edges"]["maxItems"]
+    assert ALLOWED_TYPES == frozenset(CONTRACT["$defs"]["partType"]["enum"])
+    parsed = parse_graph(DIVIDER)
+    assert parsed["nodes"][0]["rot"] == 0
+    rotated = parse_graph(
+        {
+            "schema": SCHEMA,
+            "nodes": [{**DIVIDER["nodes"][1], "rot": 90}, DIVIDER["nodes"][3]],
+            "edges": [],
+        }
+    )
+    assert rotated["nodes"][0]["rot"] == 90
+    try:
+        parse_graph({"nodes": [{**DIVIDER["nodes"][1], "rot": 45}], "edges": []})
+    except GraphError as exc:
+        assert "rot" in str(exc)
+    else:
+        raise AssertionError("expected GraphError")
 
 
 def test_default_graph_for_divider() -> None:
