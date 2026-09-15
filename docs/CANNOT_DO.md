@@ -21,9 +21,9 @@ Honest holes. Prefer a row here over fake gold. Expanded by B_NODES and later pa
 | CD-LCAPY | Symbolic circuit via lcapy | Later graph | sympy check-numeric |
 | CD-WIN-CI | Windows/macOS CI | This graph Ubuntu only | Documented hosts |
 | CD-PYPI | Publish to PyPI | This graph | uv/pip from git |
-| CD-RAG-ANYTHING | RAG-Anything as locked engine | Unmaintained risk | LightRAG 1.5 spike + BM25 fallback |
-| CD-RAG-ENGINE | LightRAG/Docling not installed in CI | Missing deps; no licensed chapter in git | Thin BM25 facade; BYO ingest |
-| CD-RAG-PARSE | PDF/scan OCR page-chunk for commercial scans | Text/markdown ingest is in; licensed PDF OCR is the remaining hole | `rag add` on licence-clean text; tag BYO PDFs; empty retrieve is visible |
+| CD-RAG-ANYTHING | RAG-Anything as locked **product** engine | Unmaintained risk | Optional multimodal adapter behind facade; default hybrid-graph path |
+| CD-RAG-ENGINE | LightRAG/Docling not installed in CI | Missing deps; no licensed chapter in git | Hybrid BM25+dense+hops facade; BYO ingest |
+| CD-RAG-PARSE | Full commercial-scan OCR / layout fidelity | Text/markdown + optional OCR path are in; heavy MinerU layout not CI-required | `rag add` on licence-clean text; optional `rag-ocr` extra; empty retrieve is visible |
 
 **CD-KICAD interpretation:** the local window may host a capped place-and-wire confirm canvas (16 parts / 24 wires, R L C V Gnd) that writes `graph.json`. That is composition of premade parts, not a KiCad clone, not a schematic editor product, and Confirm does not simulate.
 

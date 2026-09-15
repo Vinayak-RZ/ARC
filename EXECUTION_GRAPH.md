@@ -70,9 +70,9 @@ flowchart TB
 
 | Wave | Nodes | Status |
 |------|-------|--------|
-| 0 | D0, A1 + artifacts | pending |
-| 1 | B_* parallel | pending |
-| 2 | M1, E1 | pending |
-| 3 | R1, T1, D1 | pending |
+| 0 | D0, A1 + artifacts | done |
+| 1 | B_* parallel | done |
+| 2 | M1, E1 | done |
+| 3 | R1, T1, D1 | done |
 
 Approving this graph starts execution. Node plans are linked.

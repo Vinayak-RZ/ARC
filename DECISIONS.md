@@ -42,12 +42,12 @@ Research memo [`research/synthesis/recommendation.md`](research/synthesis/recomm
 
 ## ADR-0004 — Multimodal RAG ingest engine
 
-- **Status:** proposed (engine undecided until spike)
-- **Context:** EE textbooks mix text, equations, tables, figures, and multi-column layout; text-only RAG fails. RAG-Anything is unmaintained risk.
-- **Decision:** **Spike LightRAG 1.5** vs Docling vs BM25+dense. Facade + inventory + book/chapter/folder filters ship regardless. Do **not** adopt any engine as the agent harness. Decide after measured numbers (QUALITY then SPEED).
-- **Consequences:** No engine pin in Wave 0. B_RAG_SPIKE writes the note. Fallback: BM25+dense + cannot-do row if all heavy engines fail. **Target graphs** (ingest RAG-Anything-style, query hybrid then hops) live in `docs/architecture/rag.md`; research in `research/notes/rag-ingest-query-architecture.md`. Still decide after measured numbers.
-- **Alternatives:** RAG-Anything/MinerU as locked default (deferred); VLM-only chunking; commercial parsers.
-- **Sources:** `research/notes/rag-anything-evaluation.md`, `research/notes/rag-ingest-query-architecture.md`, `docs/architecture/rag.md`, Gate 0 owner answers, `IMPLEMENTATION_PLAN.md` §11
+- **Status:** accepted (hybrid-graph default 2026-09-15; heavy engines still optional)
+- **Context:** EE textbooks mix text, equations, tables, figures, and multi-column layout; text-only RAG fails. RAG-Anything is unmaintained risk. Spike preferred BM25; product still needs hybrid + figure/example hops under ≤7s.
+- **Decision:** Ship **Arc-owned hybrid-graph facade**: BM25 ∥ local dense (hash embed in CI; MiniLM when installed) → RRF → parent hydrate → ≤2 typed hops over T0–T4 ontology (worked examples, figures, light propositions). Facade + inventory + book/chapter/folder filters remain mandatory. **Do not** adopt RAG-Anything/LightRAG/MinerU as the agent harness or CI-required engine; they may plug in as optional parse adapters. Decide any heavier pin only after measured QUALITY then SPEED.
+- **Consequences:** Default `engine=hybrid-graph`. `CD-RAG-ANYTHING` / `CD-RAG-ENGINE` stay for locked-vendor / CI-missing heavy deps. `CD-RAG-PARSE` narrows to commercial-scan layout fidelity. Graphs: `docs/architecture/rag.md`.
+- **Alternatives:** RAG-Anything/MinerU as locked default (deferred); VLM-only chunking; commercial parsers; MS GraphRAG communities (rejected for ≤7s path).
+- **Sources:** `research/notes/rag-anything-evaluation.md`, `research/notes/rag-ingest-query-architecture.md`, `docs/architecture/rag.md`, Gate 0 answers, IMPLEMENTATION_PLAN.md
 
 ---
 

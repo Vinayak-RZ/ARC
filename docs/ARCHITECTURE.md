@@ -550,7 +550,7 @@ flowchart TB
   Q --> H --> Hop --> Pack
 ```
 
-As-built `rag add` writes **inventory metadata only** and retrieve is BM25 over a file prefix. That is a **code hole**, not an architecture hole. Until extract/chunk ship, name `CD-RAG-PARSE`.
+As-built `rag add` extracts/chunks licence-clean text (optional PDF/OCR extras), writes `graph.json` (T0–T4), and retrieve is **hybrid-graph** (BM25∥dense → RRF → ≤2 hops). Commercial-scan layout fidelity remains `CD-RAG-PARSE`. Details: [`architecture/rag.md`](architecture/rag.md).
 
 Keep an explicit source tree: **library → book → chapter → chunk**.
 

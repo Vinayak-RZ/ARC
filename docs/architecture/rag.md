@@ -4,7 +4,7 @@
 **Harness vs kernel (plain language):** [`ON_THE_HARNESS.md`](../ON_THE_HARNESS.md).  
 **This page:** the **graphs** the kernel runs on ingest vs query, and links to the approach (RAG-Anything ingest, GRASP-style proposition graph, hybrid then hops).
 
-As-built today: `rag add` is inventory-only; retrieve is BM25 over a file prefix (`CD-RAG-PARSE`). The diagrams are the **target kernel contract**, not a claim that LightRAG or MinerU already shipped.
+**As-built (hybrid-graph graph):** `rag add` parses text/markdown (PDF text via optional `pypdf`; OCR via optional `ocrmypdf`), writes chunk inventory + `graph.json` (T0–T4: docs, chunks, worked examples, figures, light entities/propositions). Retrieve is **filter → BM25∥dense (hash embed in CI) → RRF → parent hydrate → ≤2 typed hops**, packed to 3 × 1500 chars, empty visible, `engine=hybrid-graph`, p95 budget 7s. MinerU/RAG-Anything remain optional multimodal adapters (`CD-RAG-ANYTHING` / `CD-RAG-ENGINE`); commercial scan OCR depth remains `CD-RAG-PARSE`.
 
 Engine pin remains ADR-0004 (QUALITY then SPEED). Identity is **tagged, citable, local RAG**, not a vendor library.
 
