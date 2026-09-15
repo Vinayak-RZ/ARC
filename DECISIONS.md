@@ -368,3 +368,14 @@ Autonomy: host-in-loop; no nested spawn; no `/in-cloud` EE children. Tools: chil
 - **Alternatives:** OTel GenAI spans (rejected — Gate 0); SaaS telemetry (rejected).
 - **Sources:** `docs/planning/ADR_TRACE_JSONL.md`, `docs/planning/GATE_0_KERNEL_HARDEN.md`
 
+---
+
+## ADR-0018 — Circuit JSON Schema and localhost RAG library
+
+- **Status:** accepted (2026-09-15)
+- **Context:** Canvas wires were bezier; UI and kernel duplicated `arc.circuit.v1`; FR12 kept `rag add` on the CLI while FR11 asked for RAG inventory in the UI.
+- **Decision:** Persist circuits as JSON. Authority is [`src/electrical_engineer/circuit/arc.circuit.v1.json`](src/electrical_engineer/circuit/arc.circuit.v1.json) plus `parse_graph`. Draw orthogonal (smoothstep) wires. Localhost UI may ingest/tag/query BYO books on `127.0.0.1`; corpus stays gitignored (`CD-BOOKS`).
+- **Consequences:** Optional `rot` 0/90 and `source_i` stay inside the 16/24 cap. No python-multipart; upload is a raw body with query tags.
+- **Alternatives:** Pydantic runtime models (rejected); diagonal `straight` edges (rejected); KiCad-class editor (CD-KICAD).
+- **Sources:** owner request; `docs/ui-ia.md`; `docs/rag-byo.md`
+
