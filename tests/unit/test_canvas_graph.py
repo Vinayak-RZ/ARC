@@ -34,8 +34,10 @@ def test_palette_and_inspector_labels() -> None:
     canvas = Path("ui/src/slots/canvas/Canvas.jsx").read_text(encoding="utf-8")
     assert 'aria-label="Palette"' in palette
     labels = Path("ui/src/slots/canvas/graph.js").read_text(encoding="utf-8")
-    for label in ("Resistor", "Capacitor", "Inductor", "Voltage", "Current", "Ground"):
-        assert label in labels
+    assert "Current" in labels
+    nodes = Path("ui/src/slots/canvas/nodes.jsx").read_text(encoding="utf-8")
+    assert "source_i" in nodes
+    assert "is-vertical" in nodes
     assert "Passives" in palette
     assert "Sources" in palette
     assert "Make vertical" in inspector

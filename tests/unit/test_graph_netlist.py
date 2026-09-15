@@ -3,10 +3,10 @@ from pathlib import Path
 
 from electrical_engineer.circuit.graph import (
     ALLOWED_TYPES,
-    GraphError,
     MAX_EDGES,
     MAX_NODES,
     SCHEMA,
+    GraphError,
     default_graph_for,
     divider_graph,
     parse_graph,
