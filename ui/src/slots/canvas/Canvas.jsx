@@ -3,6 +3,7 @@ import {
   ReactFlow,
   ReactFlowProvider,
   Background,
+  ConnectionLineType,
   ConnectionMode,
   addEdge,
   useEdgesState,
@@ -13,6 +14,9 @@ import { useLayout } from "../../store.js";
 import { Palette } from "./Palette.jsx";
 import { fromFlow, MAX_EDGES, MAX_NODES, nextEdgeId, nextPartId, nextRefdes, PARTS, toFlow } from "./graph.js";
 import { nodeTypes } from "./nodes.jsx";
+
+const EDGE_STYLE = { stroke: "var(--ee-color-ink)", strokeWidth: 1.5 };
+const GRID = 16;
 
 function useRunGraph(id) {
   const [data, setData] = useState(null);
@@ -123,7 +127,9 @@ function CanvasInner({ id }) {
         return;
       }
       snapshot();
-      setEdges((eds) => addEdge({ ...conn, id: nextEdgeId(eds) }, eds));
+      setEdges((eds) =>
+        addEdge({ ...conn, id: nextEdgeId(eds), type: "smoothstep", style: EDGE_STYLE }, eds),
+      );
       setGraphDirty(true);
     },
     [edges.length, setCapMessage, setEdges, setGraphDirty, snapshot],
@@ -215,7 +221,12 @@ function CanvasInner({ id }) {
           onNodeClick={(_, node) => setSelectedNodeId(node.id)}
           onPaneClick={() => setSelectedNodeId(null)}
           nodeTypes={nodeTypes}
+          defaultEdgeOptions={{ type: "smoothstep", style: EDGE_STYLE }}
+          connectionLineType={ConnectionLineType.SmoothStep}
+          connectionLineStyle={EDGE_STYLE}
           connectionMode={ConnectionMode.Loose}
+          snapToGrid
+          snapGrid={[GRID, GRID]}
           deleteKeyCode={["Backspace", "Delete"]}
           fitView
           style={{ width: "100%", height: 320 }}

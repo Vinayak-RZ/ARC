@@ -149,6 +149,11 @@ body { margin: 0; background: var(--ee-color-canvas); }
   min-height: 280px;
 }
 .flow-wrap .react-flow { height: 320px; width: 100%; }
+.react-flow__edge-path,
+.react-flow__connection-path {
+  stroke: var(--ee-color-ink);
+  stroke-width: 1.5;
+}
 .part-node {
   display: flex;
   align-items: center;
