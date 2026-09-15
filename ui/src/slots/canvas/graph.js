@@ -7,6 +7,7 @@ export const PARTS = [
   { type: "capacitor", label: "Capacitor", unit: "F", prefix: "C" },
   { type: "inductor", label: "Inductor", unit: "H", prefix: "L" },
   { type: "source_v", label: "Voltage", unit: "V", prefix: "V" },
+  { type: "source_i", label: "Current", unit: "A", prefix: "I" },
   { type: "ground", label: "Ground", unit: "", prefix: "Gnd" },
 ];
 

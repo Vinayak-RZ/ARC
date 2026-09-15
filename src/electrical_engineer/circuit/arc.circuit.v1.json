@@ -20,7 +20,7 @@
   },
   "$defs": {
     "partType": {
-      "enum": ["resistor", "capacitor", "inductor", "source_v", "ground"]
+      "enum": ["resistor", "capacitor", "inductor", "source_v", "source_i", "ground"]
     },
     "rot": { "enum": [0, 90] },
     "node": {

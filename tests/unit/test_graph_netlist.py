@@ -57,6 +57,26 @@ def test_default_graph_for_divider() -> None:
     assert "run-spice" not in cir
 
 
+def test_compile_current_source() -> None:
+    graph = {
+        "schema": SCHEMA,
+        "nodes": [
+            {"id": "i1", "type": "source_i", "refdes": "I1", "value": 0.002, "unit": "A", "x": 0, "y": 0},
+            {"id": "r1", "type": "resistor", "refdes": "R1", "value": 1000, "unit": "ohm", "x": 1, "y": 0},
+            {"id": "gnd", "type": "ground", "refdes": "Gnd", "value": 0, "x": 0, "y": 1},
+        ],
+        "edges": [
+            {"id": "e1", "from": "i1.n1", "to": "r1.n1"},
+            {"id": "e2", "from": "r1.n2", "to": "gnd.n1"},
+            {"id": "e3", "from": "i1.n2", "to": "gnd.n1"},
+        ],
+    }
+    cir = compile_netlist(parse_graph(graph))
+    assert "I1 1 0 DC 0.002" in cir or "I1 " in cir
+    assert "DC 0.002" in cir
+    assert "R1" in cir
+
+
 def test_missing_ground() -> None:
     bad = {"nodes": [{"id": "r1", "type": "resistor", "refdes": "R1", "value": 1}], "edges": []}
     try:
