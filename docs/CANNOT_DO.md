@@ -25,7 +25,7 @@ Honest holes. Prefer a row here over fake gold. Expanded by B_NODES and later pa
 | CD-RAG-ENGINE | LightRAG/Docling not installed in CI | Missing deps; no licensed chapter in git | Hybrid BM25+dense+hops facade; BYO ingest |
 | CD-RAG-PARSE | Full commercial-scan OCR / layout fidelity | Text/markdown + optional OCR path are in; heavy MinerU layout not CI-required | `rag add` on licence-clean text; optional `rag-ocr` extra; empty retrieve is visible |
 
-**CD-KICAD interpretation:** the local window may host a capped place-and-wire confirm canvas (16 parts / 24 wires, R L C V Gnd) that writes `graph.json`. That is composition of premade parts, not a KiCad clone, not a schematic editor product, and Confirm does not simulate.
+**CD-KICAD interpretation:** the local window may host a capped place-and-wire confirm canvas (16 parts / 24 wires, R L C V I Gnd, orthogonal wires) that writes `graph.json`. That is composition of premade parts, not a KiCad clone, not a schematic editor product, and Confirm does not simulate.
 
 
 | CD-SIGNALS-MATLAB | MATLAB-only DSP toolboxes as checked answers | UG OSS bound | OSS first; else unchecked |

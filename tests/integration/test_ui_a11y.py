@@ -30,6 +30,13 @@ def test_skip_link_and_no_wan() -> None:
     assert "electrical-engineer run" in root
     assert "named runs · exact token unchecked" not in root
     assert "nav-toggle" in root
+    assert 'register("rag.inventory"' in root
+    library = Path("ui/src/slots/library.jsx").read_text(encoding="utf-8")
+    assert "Add a PDF you have rights to; it stays on this machine." in library
+    assert 'aria-label="Book"' in library
+    assert "I have rights to this file." in library
+    assert "Search tagged books" in library
+    assert "No passages for that query." in library
     assert BIND_HOST == "127.0.0.1"
 
 

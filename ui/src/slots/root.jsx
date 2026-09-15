@@ -3,6 +3,7 @@ import { register, renderSlot } from "./registry.js";
 import { useLayout } from "../store.js";
 import { Canvas } from "./canvas/Canvas.jsx";
 import { Inspector } from "./canvas/Inspector.jsx";
+import { Library } from "./library.jsx";
 
 function Root() {
   return (
@@ -46,17 +47,37 @@ function Sidebar() {
   const [runs, setRuns] = useState([]);
   const [open, setOpen] = useState(false);
   const current = useLayout((s) => s.currentRunId);
+  const view = useLayout((s) => s.view);
   const setRun = useLayout((s) => s.setRun);
+  const setView = useLayout((s) => s.setView);
   useEffect(() => {
-    const q = new URLSearchParams(window.location.search).get("run");
-    if (q) setRun(q);
-  }, [setRun]);
+    const q = new URLSearchParams(window.location.search);
+    const viewQ = q.get("view");
+    if (viewQ === "library") setView("library");
+    const run = q.get("run");
+    if (run) setRun(run);
+  }, [setRun, setView]);
   useEffect(() => {
     fetch("/api/runs")
       .then((r) => r.json())
       .then((d) => setRuns(d.runs || []))
       .catch(() => setRuns([]));
   }, []);
+  function openRuns() {
+    setView("runs");
+    const url = new URL(window.location.href);
+    url.searchParams.delete("view");
+    window.history.replaceState({}, "", url);
+    setOpen(false);
+  }
+  function openBooks() {
+    setView("library");
+    const url = new URL(window.location.href);
+    url.searchParams.set("view", "library");
+    url.searchParams.delete("run");
+    window.history.replaceState({}, "", url);
+    setOpen(false);
+  }
   return (
     <>
       <button
@@ -66,43 +87,65 @@ function Sidebar() {
         aria-controls="run-list"
         onClick={() => setOpen(!open)}
       >
-        Runs
+        {view === "library" ? "Books" : "Runs"}
       </button>
-      <nav id="run-list" className={open ? "sidebar is-open" : "sidebar"} aria-label="Runs">
-        <h2>Runs</h2>
-        {runs.length === 0 ? (
-          <p className="hint">
-            No saved runs yet. Ask the coding assistant, or type electrical-engineer run
-            solve-circuit-problem.
-          </p>
-        ) : null}
-        {runs.map((run) => {
-          const id = run.id || run;
-          const title = run.title || id;
-          return (
-            <button
-              key={id}
-              className="asset-row"
-              aria-current={current === id ? "true" : undefined}
-              onClick={() => {
-                setRun(id);
-                setOpen(false);
-              }}
-            >
-              <span className="asset-title">{title}</span>
-              {run.recipe_id ? <span className="hint">{run.recipe_id}</span> : null}
-              <span className="hint">{id}</span>
-              {run.unchecked ? <span className="badge-pill">unchecked</span> : null}
-            </button>
-          );
-        })}
+      <nav id="run-list" className={open ? "sidebar is-open" : "sidebar"} aria-label="Workspace">
+        <div className="sidebar-switch" role="group" aria-label="Workspace">
+          <button type="button" className="sidebar-switch-btn" aria-current={view === "runs" ? "true" : undefined} onClick={openRuns}>
+            Runs
+          </button>
+          <button type="button" className="sidebar-switch-btn" aria-current={view === "library" ? "true" : undefined} onClick={openBooks}>
+            Books
+          </button>
+        </div>
+        {view === "library" ? (
+          <p className="hint">Ingest and tag books in the workspace. Files stay on this machine.</p>
+        ) : (
+          <>
+            <h2>Runs</h2>
+            {runs.length === 0 ? (
+              <p className="hint">
+                No saved runs yet. Ask the coding assistant, or type electrical-engineer run
+                solve-circuit-problem.
+              </p>
+            ) : null}
+            {runs.map((run) => {
+              const id = run.id || run;
+              const title = run.title || id;
+              return (
+                <button
+                  key={id}
+                  className="asset-row"
+                  aria-current={current === id ? "true" : undefined}
+                  onClick={() => {
+                    setRun(id);
+                    const url = new URL(window.location.href);
+                    url.searchParams.set("run", id);
+                    url.searchParams.delete("view");
+                    window.history.replaceState({}, "", url);
+                    setOpen(false);
+                  }}
+                >
+                  <span className="asset-title">{title}</span>
+                  {run.recipe_id ? <span className="hint">{run.recipe_id}</span> : null}
+                  <span className="hint">{id}</span>
+                  {run.unchecked ? <span className="badge-pill">unchecked</span> : null}
+                </button>
+              );
+            })}
+          </>
+        )}
       </nav>
     </>
   );
 }
 
 function Workspace() {
+  const view = useLayout((s) => s.view);
   const id = useLayout((s) => s.currentRunId);
+  if (view === "library") {
+    return renderSlot("rag.inventory");
+  }
   if (!id) {
     return <p className="empty">No run selected. Open one from the list, or type electrical-engineer run simulate-circuit.</p>;
   }
@@ -291,4 +334,5 @@ register("run.more", More);
 register("photo.confirm", function PhotoConfirm() {
   return null;
 });
+register("rag.inventory", Library);
 

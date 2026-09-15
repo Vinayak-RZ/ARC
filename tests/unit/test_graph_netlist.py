@@ -1,4 +1,11 @@
+import json
+from pathlib import Path
+
 from electrical_engineer.circuit.graph import (
+    ALLOWED_TYPES,
+    MAX_EDGES,
+    MAX_NODES,
+    SCHEMA,
     GraphError,
     default_graph_for,
     divider_graph,
@@ -8,6 +15,31 @@ from electrical_engineer.circuit.graph import (
 from electrical_engineer.circuit.netlist import CompileError, compile_netlist
 
 DIVIDER = divider_graph()
+CONTRACT = json.loads(Path("src/electrical_engineer/circuit/arc.circuit.v1.json").read_text(encoding="utf-8"))
+
+
+def test_contract_file_drives_caps() -> None:
+    assert SCHEMA == CONTRACT["properties"]["schema"]["const"]
+    assert MAX_NODES == CONTRACT["properties"]["nodes"]["maxItems"]
+    assert MAX_EDGES == CONTRACT["properties"]["edges"]["maxItems"]
+    assert ALLOWED_TYPES == frozenset(CONTRACT["$defs"]["partType"]["enum"])
+    parsed = parse_graph(DIVIDER)
+    assert parsed["nodes"][0]["rot"] == 0
+    assert parsed["nodes"][2]["rot"] == 90
+    rotated = parse_graph(
+        {
+            "schema": SCHEMA,
+            "nodes": [{**DIVIDER["nodes"][1], "rot": 90}, DIVIDER["nodes"][3]],
+            "edges": [],
+        }
+    )
+    assert rotated["nodes"][0]["rot"] == 90
+    try:
+        parse_graph({"nodes": [{**DIVIDER["nodes"][1], "rot": 45}], "edges": []})
+    except GraphError as exc:
+        assert "rot" in str(exc)
+    else:
+        raise AssertionError("expected GraphError")
 
 
 def test_default_graph_for_divider() -> None:
@@ -24,6 +56,26 @@ def test_default_graph_for_divider() -> None:
     assert " 1000" in cir
     assert ".end" in cir
     assert "run-spice" not in cir
+
+
+def test_compile_current_source() -> None:
+    graph = {
+        "schema": SCHEMA,
+        "nodes": [
+            {"id": "i1", "type": "source_i", "refdes": "I1", "value": 0.002, "unit": "A", "x": 0, "y": 0},
+            {"id": "r1", "type": "resistor", "refdes": "R1", "value": 1000, "unit": "ohm", "x": 1, "y": 0},
+            {"id": "gnd", "type": "ground", "refdes": "Gnd", "value": 0, "x": 0, "y": 1},
+        ],
+        "edges": [
+            {"id": "e1", "from": "i1.n1", "to": "r1.n1"},
+            {"id": "e2", "from": "r1.n2", "to": "gnd.n1"},
+            {"id": "e3", "from": "i1.n2", "to": "gnd.n1"},
+        ],
+    }
+    cir = compile_netlist(parse_graph(graph))
+    assert "I1 1 0 DC 0.002" in cir or "I1 " in cir
+    assert "DC 0.002" in cir
+    assert "R1" in cir
 
 
 def test_missing_ground() -> None:

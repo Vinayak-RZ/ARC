@@ -59,7 +59,7 @@ def compile_netlist(graph: dict[str, Any]) -> str:
         val = node.get("value")
         if val is None:
             raise CompileError(f"missing value for {ref}")
-        if kind == "source_v":
+        if kind in {"source_v", "source_i"}:
             lines.append(f"{ref} {n1} {n2} DC {val}")
         elif kind in {"resistor", "capacitor", "inductor"}:
             lines.append(f"{ref} {n1} {n2} {val}")

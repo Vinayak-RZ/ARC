@@ -47,6 +47,13 @@ export function Inspector() {
             }}
           />
           <Field label="Unit" value={data.unit || ""} onCommit={(v) => applyPartPatch(node.id, { unit: v })} />
+          <button
+            type="button"
+            className="button-secondary"
+            onClick={() => applyPartPatch(node.id, { rot: Number(data.rot) === 90 ? 0 : 90 })}
+          >
+            {Number(data.rot) === 90 ? "Make horizontal" : "Make vertical"}
+          </button>
         </>
       )}
     </aside>

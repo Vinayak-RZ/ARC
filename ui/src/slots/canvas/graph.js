@@ -7,6 +7,7 @@ export const PARTS = [
   { type: "capacitor", label: "Capacitor", unit: "F", prefix: "C" },
   { type: "inductor", label: "Inductor", unit: "H", prefix: "L" },
   { type: "source_v", label: "Voltage", unit: "V", prefix: "V" },
+  { type: "source_i", label: "Current", unit: "A", prefix: "I" },
   { type: "ground", label: "Ground", unit: "", prefix: "Gnd" },
 ];
 
@@ -19,11 +20,12 @@ export function toFlow(graph) {
     type: "part",
     position: { x: Number(n.x) || 0, y: Number(n.y) || 0 },
     data: {
-      kind: n.type,
-      refdes: n.refdes || n.id,
-      value: n.value,
-      unit: n.unit || "",
-    },
+        kind: n.type,
+        refdes: n.refdes || n.id,
+        value: n.value,
+        unit: n.unit || "",
+        rot: Number(n.rot) === 90 ? 90 : 0,
+      },
   }));
   const edges = (src.edges || []).map((e) => {
     const [source, sourceHandle] = String(e.from).split(".");
@@ -34,6 +36,7 @@ export function toFlow(graph) {
       target,
       sourceHandle: sourceHandle || "n1",
       targetHandle: targetHandle || "n1",
+      type: "smoothstep",
     };
   });
   return { nodes, edges };
@@ -50,6 +53,7 @@ export function fromFlow(nodes, edges) {
       unit: n.data?.unit || "",
       x: n.position?.x || 0,
       y: n.position?.y || 0,
+      rot: Number(n.data?.rot) === 90 ? 90 : 0,
     })),
     edges: (edges || []).map((e) => ({
       id: e.id,

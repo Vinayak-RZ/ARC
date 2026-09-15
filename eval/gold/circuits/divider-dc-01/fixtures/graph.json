@@ -3,7 +3,7 @@
   "nodes": [
     {"id": "vin", "type": "source_v", "refdes": "Vin", "value": 10, "unit": "V", "x": 80, "y": 40},
     {"id": "r1", "type": "resistor", "refdes": "R1", "value": 1000, "unit": "ohm", "x": 220, "y": 40},
-    {"id": "r2", "type": "resistor", "refdes": "R2", "value": 1000, "unit": "ohm", "x": 220, "y": 160},
+    {"id": "r2", "type": "resistor", "refdes": "R2", "value": 1000, "unit": "ohm", "x": 220, "y": 160, "rot": 90},
     {"id": "gnd", "type": "ground", "refdes": "Gnd", "value": 0, "unit": "", "x": 80, "y": 160}
   ],
   "edges": [

@@ -3,6 +3,7 @@ import {
   ReactFlow,
   ReactFlowProvider,
   Background,
+  ConnectionLineType,
   ConnectionMode,
   addEdge,
   useEdgesState,
@@ -13,6 +14,9 @@ import { useLayout } from "../../store.js";
 import { Palette } from "./Palette.jsx";
 import { fromFlow, MAX_EDGES, MAX_NODES, nextEdgeId, nextPartId, nextRefdes, PARTS, toFlow } from "./graph.js";
 import { nodeTypes } from "./nodes.jsx";
+
+const EDGE_STYLE = { stroke: "var(--ee-color-ink)", strokeWidth: 1.5 };
+const GRID = 16;
 
 function useRunGraph(id) {
   const [data, setData] = useState(null);
@@ -123,7 +127,9 @@ function CanvasInner({ id }) {
         return;
       }
       snapshot();
-      setEdges((eds) => addEdge({ ...conn, id: nextEdgeId(eds) }, eds));
+      setEdges((eds) =>
+        addEdge({ ...conn, id: nextEdgeId(eds), type: "smoothstep", style: EDGE_STYLE }, eds),
+      );
       setGraphDirty(true);
     },
     [edges.length, setCapMessage, setEdges, setGraphDirty, snapshot],
@@ -143,8 +149,9 @@ function CanvasInner({ id }) {
       data: {
         kind: type,
         refdes: nextRefdes(nodes, type),
-        value: type === "ground" ? 0 : type === "source_v" ? 10 : 1000,
+        value: type === "ground" ? 0 : type === "source_v" ? 10 : type === "source_i" ? 0.001 : 1000,
         unit: spec?.unit || "",
+        rot: 0,
       },
     };
     setNodes((ns) => [...ns, node]);
@@ -215,10 +222,16 @@ function CanvasInner({ id }) {
           onNodeClick={(_, node) => setSelectedNodeId(node.id)}
           onPaneClick={() => setSelectedNodeId(null)}
           nodeTypes={nodeTypes}
+          defaultEdgeOptions={{ type: "smoothstep", style: EDGE_STYLE }}
+          connectionLineType={ConnectionLineType.SmoothStep}
+          connectionLineStyle={EDGE_STYLE}
           connectionMode={ConnectionMode.Loose}
+          snapToGrid
+          snapGrid={[GRID, GRID]}
           deleteKeyCode={["Backspace", "Delete"]}
           fitView
-          style={{ width: "100%", height: 320 }}
+          proOptions={{ hideAttribution: true }}
+          style={{ width: "100%", height: 420 }}
         >
           <Background gap={16} color="var(--ee-color-hairline)" />
         </ReactFlow>

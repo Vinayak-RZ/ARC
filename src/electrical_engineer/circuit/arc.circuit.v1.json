@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arc.local/schema/arc.circuit.v1.json",
+  "title": "arc.circuit.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "nodes", "edges"],
+  "properties": {
+    "schema": { "const": "arc.circuit.v1" },
+    "nodes": {
+      "type": "array",
+      "maxItems": 16,
+      "items": { "$ref": "#/$defs/node" }
+    },
+    "edges": {
+      "type": "array",
+      "maxItems": 24,
+      "items": { "$ref": "#/$defs/edge" }
+    }
+  },
+  "$defs": {
+    "partType": {
+      "enum": ["resistor", "capacitor", "inductor", "source_v", "source_i", "ground"]
+    },
+    "rot": { "enum": [0, 90] },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "type": { "$ref": "#/$defs/partType" },
+        "refdes": { "type": "string" },
+        "value": true,
+        "unit": { "type": "string" },
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "rot": { "$ref": "#/$defs/rot" }
+      }
+    },
+    "edge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "from", "to"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "from": { "type": "string", "pattern": "^.+\\..+$" },
+        "to": { "type": "string", "pattern": "^.+\\..+$" }
+      }
+    }
+  }
+}

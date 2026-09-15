@@ -44,7 +44,7 @@ electrical-engineer rag list
 
 Then retrieve with those filters (host `retrieve` verb, or `problem.json`
 `filters.book_id` + `query` on a CLI explain attachment). CLI `rag add` /
-`rag list` / `rag tag` stay enough this graph; Chat/Work uses a side terminal.
+`rag list` / `rag tag` remain. The localhost UI **Books** page (`electrical-engineer ui`, `?view=library`) can ingest the same drop folder, set tags, and query. Files never enter git.
 
 ## Still needed (catalog `byo_status: needed`)
 

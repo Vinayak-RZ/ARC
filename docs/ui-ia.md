@@ -7,15 +7,15 @@ Persistent localhost workspace. Not KiCad. Not a second agent. WCAG AA.
 | Slot | Role |
 |------|------|
 | `root` | Shell: skip-link, header with **Arc icon** (`/arc-icon.png`), engines chips (Numeric / SPICE / MATLAB · via Arc) |
-| `sidebar` | Named runs (`asset-row`): title, recipe caption, run id. Collapses under 640px |
-| `workspace` | Local window for the selected run |
+| `sidebar` | Runs / Books switch. Named runs (`asset-row`) or library hint. Collapses under 640px |
+| `workspace` | Selected run lab, or Books (`?view=library`) |
 | `run.result` | Coinbase asset-row: title, mono value or token `unchecked`, verifier caption. Not a hero metric |
-| `run.canvas` | Capped place-and-wire confirm surface (`@xyflow/react`). Palette R L C V Gnd. Writes `graph.json`. Confirm does not simulate |
-| `run.inspector` | Keyboard path for refdes/value. Equal to pointer on the canvas |
+| `run.canvas` | Capped place-and-wire confirm surface (`@xyflow/react`). Palette R L C V I Gnd. Orthogonal (smoothstep) wires, 16px snap, optional 90° rotate. Writes `graph.json`. Confirm does not simulate |
+| `run.inspector` | Keyboard path for refdes/value/orientation. Equal to pointer on the canvas |
 | `run.argument` | Host `argument.md` as readable prose (~75ch). Must not flip `unchecked` |
 | `run.more` | Closed-by-default disclosures: evidentiary JSON, plan, observation, raw graph, artifacts |
 | `photo.confirm` | Confirm topology (merged into the canvas Confirm). `simulate: false` |
-| `rag.inventory` | Book/chapter/folder tags |
+| `rag.inventory` | Books: ingest, tags, retrieve. `?view=library` |
 | `memory.excerpt` | ≤800 char excerpt + path |
 | `gates.prompt` | Ask payload; MCP never waits here |
 
@@ -31,7 +31,7 @@ Persistent localhost workspace. Not KiCad. Not a second agent. WCAG AA.
 | `waiting-human` | Live region "Waiting for topology confirm"; Confirm enabled; no modal |
 | `done` | Result strip + canvas + argument; JSON/plan/observation stay in disclosures |
 
-The canvas is **confirm only**: 16 parts / 24 wires, allowlisted R L C V Gnd. Students place premade parts; the kernel compiles `netlist.cir`. This window is not a schematic editor (CD-KICAD). Engines chip: MATLAB is **optional, via Arc** when the MCP binary is installed. Do not tell students to add MATLAB MCP in the host.
+The canvas is **confirm only**: 16 parts / 24 wires, allowlisted R L C V I Gnd. Students place premade parts; the kernel compiles `netlist.cir`. Wires are orthogonal segments (not bezier). This window is not a schematic editor (CD-KICAD). Engines chip: MATLAB is **optional, via Arc** when the MCP binary is installed. Do not tell students to add MATLAB MCP in the host.
 
 ## Token map (DESIGN-coinbase)
 
@@ -49,7 +49,7 @@ The canvas is **confirm only**: 16 parts / 24 wires, allowlisted R L C V Gnd. St
 
 ## A11y
 
-Keyboard operable (tab order: skip-link → run list → result → palette → inspector → Save graph → Confirm topology → disclosures). Visible focus (2px primary). Skip link. `aria-live` for run state including `waiting-human`. Contrast **WCAG AA** on blue-on-white and white-on-blue. Logo `alt` is “Arc”. Empty and failed states are text, not colour-only. Inspector is the keyboard path for topology; the XYFlow pane may be pointer-first.
+Keyboard operable (tab order: skip-link → Runs/Books → run list → result → palette → inspector → Save graph → Confirm topology → disclosures). Visible focus (2px primary). Skip link. `aria-live` for run state including `waiting-human`. Contrast **WCAG AA** on blue-on-white and white-on-blue. Logo `alt` is “Arc”. Empty and failed states are text, not colour-only. Inspector is the keyboard path for topology; the XYFlow pane may be pointer-first.
 
 ## Must not
 
