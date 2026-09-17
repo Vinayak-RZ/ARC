@@ -38,7 +38,7 @@ That eval is the product check. Gold `eval/gold/circuits/divider-dc-01` expects 
 
 ## Domain kernel
 
-A **domain kernel** is the expertise a general coding assistant loads so it can do one subject well.
+A **domain kernel** is what enables a general agentic harness to have expertise in a specific domain.
 
 Arc is that kernel for undergraduate electrical engineering. Cursor, Claude Code, Codex, and ChatGPT desktop stay general assistants. This kernel holds what they load: named lab recipes, simulators when they exist, gates, saved runs, and an unverified label when a number was not checked. The assistant still writes the viva. The ohms come from a deterministic check, or they are labeled unverified.
 
