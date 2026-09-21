@@ -26,6 +26,10 @@ Bode/Nyquist/root locus, simple compensators. Not graduate optimal control.
 Solve and design-to-spec use the same capabilities. Simulate means `lti-analysis`
 on a typed TF/SS, not SPICE by default. Explain stays in `argument.md`.
 
+## UI construction
+
+Unity-feedback figures and Bode/step in the lab: **`skills/ui-diagrams/SKILL.md`**. Prefer `control_diagram.json` with `diagramKind: unity_feedback` (see example) or recipe `control-diagram-to-model`. Check artifacts before `open_ui`.
+
 ## Do not
 
 Drop `control-diagram-to-model`. Use `simulate-circuit` for a compensator

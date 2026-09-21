@@ -20,6 +20,10 @@ faults, protection as coursework (relay settings on paper), not EMS dispatch
    `v_line_kv` for simple distance zone check.
 6. Missing provider → `unchecked`, never a fluent “converged” voltage.
 
+## UI construction
+
+Power SLD + LG inset: **`skills/ui-diagrams/SKILL.md`**. Write `control_diagram.json` with `diagramKind: power_fault` or run `simulate-power-fault` so the kernel seeds the same shape.
+
 ## Genres
 
 Design-to-spec is UG (conductor/transformer sizing at study level), not
