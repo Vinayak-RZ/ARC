@@ -22,9 +22,12 @@ DOMAIN_FILES: dict[str, tuple[str, str]] = {
 }
 
 
-def _run_id() -> str:
-    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
-    return f"trl-{stamp}"
+def trial_run_id(domain: str, stamp: str | None = None) -> str:
+    """Unique run folder id per domain (second-level stamp is not enough alone)."""
+    if domain not in DOMAIN_FILES:
+        raise ValueError(f"unknown domain: {domain}")
+    ts = stamp or datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+    return f"trl-{domain}-{ts}"
 
 
 def _load_example(filename: str) -> dict[str, Any]:
@@ -43,7 +46,7 @@ def compose_agent_trial_run(
         raise ValueError(f"unknown domain: {domain}")
     filename, kind = DOMAIN_FILES[domain]
     payload = _load_example(filename)
-    rid = run_id or _run_id()
+    rid = run_id or trial_run_id(domain)
     run_dir = runs_root / rid
     run_dir.mkdir(parents=True, exist_ok=True)
     if kind == "graph":
