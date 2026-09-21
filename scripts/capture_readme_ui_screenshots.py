@@ -88,12 +88,34 @@ def _wait_server(proc: subprocess.Popen, timeout: float = 30.0) -> None:
     raise RuntimeError("ui server did not become healthy")
 
 
+def _diagram_has_ink(path: Path) -> None:
+    if path.stat().st_size < 8000:
+        raise RuntimeError(f"{path.name}: PNG suspiciously small")
+    try:
+        from PIL import Image
+    except ImportError:
+        return
+    im = Image.open(path).convert("RGB")
+    # Center band where static SVG diagrams render
+    band = im.crop((240, 200, 1040, 520))
+    dark = sum(1 for r, g, b in band.getdata() if r + g + b < 450)
+    if dark / band.size[0] / band.size[1] < 0.002:
+        raise RuntimeError(f"{path.name}: diagram band looks blank")
+
+
 def _capture(page, run_id: str, dest: Path) -> None:
     url = f"http://{HOST}:{PORT}/?run={run_id}"
     page.goto(url, wait_until="networkidle")
     page.wait_for_selector(".shell", timeout=20000)
     page.wait_for_selector(".lab-surface, .empty", timeout=20000)
-    page.wait_for_timeout(900)
+    if page.locator(".static-diagram-wrap").count():
+        page.wait_for_selector(".static-diagram rect, .static-diagram circle", timeout=20000)
+        shapes = page.locator(".static-diagram rect, .static-diagram circle").count()
+        if shapes < 2:
+            raise RuntimeError(f"{dest.name}: expected diagram shapes, saw {shapes}")
+    elif page.locator(".flow-wrap .part-node").count():
+        page.wait_for_selector(".flow-wrap .part-node", timeout=20000)
+    page.wait_for_timeout(1200)
     page.screenshot(
         path=str(dest),
         full_page=False,
@@ -102,6 +124,7 @@ def _capture(page, run_id: str, dest: Path) -> None:
     height = _png_height(dest)
     if height > MAX_PNG_HEIGHT:
         raise RuntimeError(f"{dest.name} height {height}px exceeds {MAX_PNG_HEIGHT}px cap")
+    _diagram_has_ink(dest)
 
 
 def main() -> int:

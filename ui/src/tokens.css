@@ -169,12 +169,27 @@ body { margin: 0; background: var(--ee-color-canvas); }
   color: var(--ee-color-muted);
   font-variant-numeric: tabular-nums;
 }
+.control-diagram-wrap { width: 100%; min-height: 400px; }
 .canvas-lab.control-only {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
   grid-template-columns: unset;
   grid-template-rows: unset;
 }
-.control-diagram-wrap { width: 100%; min-height: 400px; }
+.static-diagram-wrap {
+  width: 100%;
+  flex: 1;
+  min-width: 0;
+  min-height: 360px;
+}
+.static-diagram {
+  display: block;
+  border: 1px solid var(--ee-color-hairline);
+  border-radius: 12px;
+  background: var(--ee-color-surface-soft);
+}
 .control-sum,
 .control-block,
 .control-tap,
