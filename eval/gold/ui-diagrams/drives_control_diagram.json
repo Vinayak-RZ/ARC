@@ -1,0 +1,67 @@
+{
+  "schema": "arc.control_diagram.v1",
+  "diagramKind": "drives_dc",
+  "title": "DC drive \u2014 armature circuit and load torque",
+  "meta": {
+    "v_dc": 120.0,
+    "ra_ohm": 1.0,
+    "t_load": 5.0
+  },
+  "nodes": [
+    {
+      "id": "dc",
+      "type": "equip",
+      "label": "DC bus",
+      "tf": "120 V",
+      "x": 48,
+      "y": 120
+    },
+    {
+      "id": "inv",
+      "type": "equip",
+      "label": "Converter",
+      "tf": "average model",
+      "x": 200,
+      "y": 120
+    },
+    {
+      "id": "mot",
+      "type": "equip",
+      "label": "Motor",
+      "tf": "DC / IM",
+      "x": 352,
+      "y": 120
+    },
+    {
+      "id": "load",
+      "type": "equip",
+      "label": "Load",
+      "tf": "5 N\u00b7m",
+      "x": 504,
+      "y": 120
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "dc",
+      "fromPort": "out",
+      "to": "inv",
+      "toPort": "in"
+    },
+    {
+      "id": "e2",
+      "from": "inv",
+      "fromPort": "out",
+      "to": "mot",
+      "toPort": "in"
+    },
+    {
+      "id": "e3",
+      "from": "mot",
+      "fromPort": "out",
+      "to": "load",
+      "toPort": "in"
+    }
+  ]
+}
