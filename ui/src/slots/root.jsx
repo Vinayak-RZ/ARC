@@ -164,7 +164,11 @@ function Workspace() {
   return (
     <div className="lab">
       {renderSlot("run.result", { id })}
-      <div className="lab-surface lab-surface-primary">
+      <div
+        className={
+          hasStudyDiagram ? "lab-surface lab-surface-primary lab-surface-study" : "lab-surface lab-surface-primary lab-surface-circuit"
+        }
+      >
         {renderSlot("run.canvas", { id })}
         {hasStudyDiagram ? null : renderSlot("run.inspector", { id })}
       </div>

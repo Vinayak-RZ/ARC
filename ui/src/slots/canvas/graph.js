@@ -36,7 +36,7 @@ export function toFlow(graph) {
       target,
       sourceHandle: sourceHandle || "n1",
       targetHandle: targetHandle || "n1",
-      type: "smoothstep",
+      type: "step",
     };
   });
   return { nodes, edges };

@@ -141,7 +141,7 @@ function CircuitCanvas({ id, data }) {
       }
       snapshot();
       setEdges((eds) =>
-        addEdge({ ...conn, id: nextEdgeId(eds), type: "smoothstep", style: EDGE_STYLE }, eds),
+        addEdge({ ...conn, id: nextEdgeId(eds), type: "step", style: EDGE_STYLE }, eds),
       );
       setGraphDirty(true);
     },
@@ -236,8 +236,8 @@ function CircuitCanvas({ id, data }) {
           onNodeClick={(_, node) => setSelectedNodeId(node.id)}
           onPaneClick={() => setSelectedNodeId(null)}
           nodeTypes={nodeTypes}
-          defaultEdgeOptions={{ type: "smoothstep", style: EDGE_STYLE }}
-          connectionLineType={ConnectionLineType.SmoothStep}
+          defaultEdgeOptions={{ type: "step", style: EDGE_STYLE }}
+          connectionLineType={ConnectionLineType.Step}
           connectionLineStyle={EDGE_STYLE}
           connectionMode={ConnectionMode.Loose}
           snapToGrid
@@ -245,7 +245,7 @@ function CircuitCanvas({ id, data }) {
           deleteKeyCode={["Backspace", "Delete"]}
           fitView
           proOptions={{ hideAttribution: true }}
-          style={{ width: "100%", height: 420 }}
+          style={{ width: "100%", height: 400 }}
         >
           <Background gap={16} color="var(--ee-color-hairline)" />
         </ReactFlow>

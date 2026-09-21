@@ -24,11 +24,11 @@ def series_rlc_graph(
     return {
         "schema": SCHEMA,
         "nodes": [
-            {"id": "vin", "type": "source_v", "refdes": "V", "value": vin, "unit": "V", "x": 64, "y": 112},
-            {"id": "r1", "type": "resistor", "refdes": "R", "value": r_ohm, "unit": "ohm", "x": 224, "y": 112},
-            {"id": "l1", "type": "inductor", "refdes": "L", "value": l_h, "unit": "H", "x": 384, "y": 112},
-            {"id": "c1", "type": "capacitor", "refdes": "C", "value": c_f, "unit": "F", "x": 544, "y": 112},
-            {"id": "gnd", "type": "ground", "refdes": "GND", "value": 0, "unit": "", "x": 64, "y": 288},
+            {"id": "vin", "type": "source_v", "refdes": "V1", "value": vin, "unit": "V", "x": 48, "y": 128},
+            {"id": "r1", "type": "resistor", "refdes": "R1", "value": r_ohm, "unit": "ohm", "x": 192, "y": 128},
+            {"id": "l1", "type": "inductor", "refdes": "L1", "value": l_h, "unit": "H", "x": 336, "y": 128},
+            {"id": "c1", "type": "capacitor", "refdes": "C1", "value": c_f, "unit": "F", "x": 480, "y": 128},
+            {"id": "gnd", "type": "ground", "refdes": "GND", "value": 0, "unit": "", "x": 48, "y": 304},
         ],
         "edges": [
             {"id": "e1", "from": "vin.n1", "to": "r1.n1"},
