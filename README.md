@@ -99,6 +99,32 @@ Maintainers compiling UG method notes (not the RAG index): [`knowledge/README.md
 
 The workspace is `electrical-engineer ui` on **127.0.0.1:8765** only.
 
+### Optional simulation engines
+
+```bash
+# Linux: ngspice system binary + Python extras
+sudo apt-get install -y ngspice libngspice0
+uv sync --extra engines --extra dev
+```
+
+| Domain | Recipe | Engine |
+|--------|--------|--------|
+| RLC / netlist | `simulate-circuit` | ngspice + PySpice |
+| Bode / step | `solve-control-problem` | `control` (python-control) |
+| Fault / load flow | `simulate-power-fault` | pandapower + sequence networks |
+
+Boot details: [`docs/planning/R1_BOOT_SHIP.md`](docs/planning/R1_BOOT_SHIP.md).
+
+### Domain screenshots (verified runs)
+
+| Domain | Screenshot |
+|--------|------------|
+| Circuits (SPICE) | ![RLC](docs/media/rlc-spice.svg) |
+| Control (step) | ![Step](docs/media/control-step.png) |
+| Control (Bode) | ![Bode](docs/media/control-bode.png) |
+| Power (fault) | ![Fault](docs/media/power-fault.svg) |
+| UI (checked run) | ![UI](docs/media/ui-checked-run.png) |
+
 ## How it works
 
 ```mermaid
