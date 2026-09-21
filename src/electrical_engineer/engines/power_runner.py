@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
+import cmath
 import json
+import math
 from pathlib import Path
 from typing import Any
-
-import numpy as np
 
 
 def pandapower_available() -> bool:
@@ -64,10 +64,10 @@ def _sequence_fault(
     if ft in {"LG", "SLG", "1LG"}:
         return 3.0 * v_prefault / (z1 + z2 + z0 + 3.0 * zf)
     if ft in {"LL", "2LL"}:
-        return np.sqrt(3) * v_prefault / (z1 + z2)
+        return cmath.sqrt(3) * v_prefault / (z1 + z2)
     if ft in {"LLG", "2LLG", "DLG"}:
         den = z1 + z2 * (z0 + 3.0 * zf) / (z2 + z0 + 3.0 * zf)
-        return np.sqrt(3) * v_prefault / den
+        return cmath.sqrt(3) * v_prefault / den
     raise ValueError(f"unsupported fault type {fault_type}")
 
 
@@ -119,7 +119,7 @@ def run_power_study(run_dir: Path, problem: dict[str, Any]) -> dict[str, Any]:
     fault_row = {
         "fault_type": fault_type,
         "i_fault_pu": float(abs(i_fault)),
-        "i_fault_angle_deg": float(np.degrees(np.angle(i_fault))),
+        "i_fault_angle_deg": float(math.degrees(cmath.phase(i_fault))),
     }
     table.append({"fault": fault_row})
 
