@@ -34,7 +34,40 @@ Gold templates: `skills/ui-diagrams/examples/` and `eval/gold/ui-diagrams/` (mus
 6. **`open_ui`** with `?run=<id>`. For editable RLC, student uses palette; inspector is **bottom-right overlay only** — never add a left column strip.
 7. **Confirm topology** before claiming sim checked (`Confirm topology` on canvas).
 
-Programmatic trial path (tests): `electrical_engineer.ui_diagrams.compose.compose_agent_trial_run`.
+Programmatic paths:
+
+- Copy template: `compose_agent_trial_run(domain, runs_root)`
+- **From student prompt (no example file):** `build_artifact_from_prompt(domain)` in `electrical_engineer.ui_diagrams.build_from_prompt`
+- Sidecars (plots/tables): `attach_sidecar_artifacts(domain, run_dir, payload)` — **required for control** (`bode.png`, `step.png`)
+
+### Worked example — student prompt → JSON
+
+**Prompt:** “Series RLC with V1=12 V, R1=470 Ω, L1=2 mH, C1=0.5 µF.”
+
+1. Map fields → `series_rlc_graph(vin=12, r_ohm=470, l_h=2e-3, c_f=0.5e-6)` (or build nodes `vin,r1,l1,c1,gnd`).
+2. Write `runs/<id>/graph.json`, `evidentiary.json` with `recipe_id: agent-ui-rlc`.
+3. `python scripts/check_ui_diagram_artifacts.py --path runs/<id>/graph.json`
+4. `open_ui ?run=<id>`
+
+**Prompt:** “Unity feedback G(s)=5/(s+2), H(s)=1 — show Bode and step.”
+
+1. Build `control_diagram.json` via `control_diagram_from_problem({blocks, unity_feedback})` with `diagramKind: unity_feedback` and title **Unity feedback system**.
+2. Call `run_control_plots` (or `attach_sidecar_artifacts("control", ...)`) so `bode.png` and `step.png` exist **before** `open_ui`.
+3. Checker + visual: block diagram band non-empty **and** plot images load (natural width > 80px).
+
+See `STUDENT_PROMPTS` in `build_from_prompt.py` for all five domains.
+
+### Self-score rubric (before `open_ui`)
+
+| Dimension | 5 = pass | 1 = fail |
+|-----------|----------|----------|
+| Symbols | RLC glyphs / Σ / G / CT / CB / M visible | Generic boxes only |
+| Orthogonal | Horizontal/vertical segments only | Diagonal clipart |
+| Labels | `R1=…`, pu, CT ratio, TF in blocks | Missing refdes/title |
+| No empty band | Ink in diagram crop | White `.lab-surface` |
+| Control plots | `bode.png` + `step.png` render | Broken-image placeholders |
+
+Target **overall ≥ 4/5**. Stress gate: `python scripts/trial_agent_ui_diagrams_stress.py`.
 
 ## IITR visual law (normative)
 

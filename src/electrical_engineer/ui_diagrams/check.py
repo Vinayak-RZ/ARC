@@ -50,6 +50,9 @@ def check_rlc_graph(data: dict[str, Any], *, path: str = "graph.json") -> list[s
         errors.append(f"{path}: exceeds UI cap ({MAX_NODES} parts / {MAX_EDGES} wires)")
     if len(nodes) < 2:
         errors.append(f"{path}: blank-risk — fewer than 2 nodes")
+    types = {str(n.get("type")) for n in nodes if isinstance(n, dict)}
+    if "source_v" in types and "ground" not in types:
+        errors.append(f"{path}: voltage source without ground return (IIT sheet law)")
     by_id = {str(n.get("id")): n for n in nodes if isinstance(n, dict)}
     if SERIES_RLC_IDS <= set(by_id):
         for nid, kind in SERIES_RLC_TYPES.items():
@@ -90,8 +93,15 @@ def check_control_diagram(data: dict[str, Any], *, path: str = "control_diagram.
     if kind == "unity_feedback":
         if not any(n.get("type") == "sum" for n in nodes if isinstance(n, dict)):
             errors.append(f"{path}: unity feedback requires summing junction (type sum)")
-        if not any(n.get("type") == "block" for n in nodes if isinstance(n, dict)):
+        blocks = [n for n in nodes if isinstance(n, dict) and n.get("type") == "block"]
+        if not blocks:
             errors.append(f"{path}: unity feedback requires G(s) block")
+        has_h_block = any(n.get("id") == "H" for n in blocks)
+        fb_edge = any(
+            isinstance(e, dict) and e.get("to") == "sum" and e.get("toPort") == "feedback" for e in edges
+        )
+        if not has_h_block and not fb_edge:
+            errors.append(f"{path}: unity feedback requires H(s) block or feedback edge to Σ")
     if kind == "power_fault" and not isinstance(data.get("sequence"), dict):
         errors.append(f"{path}: power_fault requires sequence {{z1,z2,z0,fault}} for LG inset")
     if kind == "protection_5051" and not isinstance(data.get("meta"), dict):

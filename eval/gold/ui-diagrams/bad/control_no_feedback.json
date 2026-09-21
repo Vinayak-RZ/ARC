@@ -1,0 +1,12 @@
+{
+  "schema": "arc.control_diagram.v1",
+  "diagramKind": "unity_feedback",
+  "title": "No feedback",
+  "nodes": [
+    {"id": "sum", "type": "sum", "label": "Σ", "x": 72, "y": 140},
+    {"id": "G", "type": "block", "label": "G", "tf": "1/(s+1)", "x": 240, "y": 140}
+  ],
+  "edges": [
+    {"id": "e1", "from": "sum", "to": "G"}
+  ]
+}
