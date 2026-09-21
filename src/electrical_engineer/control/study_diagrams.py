@@ -1,4 +1,4 @@
-"""One-line study diagrams (power, protection) for the localhost UI."""
+"""One-line study diagrams (power, protection, drives) for the localhost UI."""
 
 from __future__ import annotations
 
@@ -30,7 +30,14 @@ def power_oneline_diagram(problem: dict[str, Any] | None) -> dict[str, Any]:
         {"id": "e3", "from": "line", "fromPort": "out", "to": "load", "toPort": "in"},
         {"id": "e4", "from": "line", "fromPort": "out", "to": "fault", "toPort": "in"},
     ]
-    return {"schema": SCHEMA, "nodes": nodes, "edges": edges}
+    return {
+        "schema": SCHEMA,
+        "diagramKind": "power_fault",
+        "title": f"{fault} fault study — single-line diagram (pu)",
+        "sequence": {"fault": fault, "z1": z1, "z2": z2, "z0": z0},
+        "nodes": nodes,
+        "edges": edges,
+    }
 
 
 def protection_oneline_diagram(problem: dict[str, Any] | None) -> dict[str, Any]:
@@ -40,8 +47,8 @@ def protection_oneline_diagram(problem: dict[str, Any] | None) -> dict[str, Any]
     pickup = float(problem.get("relay_pickup_a") or 2)
     nodes = [
         _equip("bus", "Bus", "faulted feeder", 48, 120),
-        _equip("ct", "CT", f"{ct_p}/{ct_s} A", 200, 120),
-        _equip("relay", "50/51 relay", f"pickup {pickup} A sec", 352, 120),
+        _equip("ct", "CT", f"{ct_p:g}/{ct_s:g} A", 200, 120),
+        _equip("relay", "50/51 relay", f"pickup {pickup:g} A sec", 352, 120),
         _equip("brk", "Breaker", "trip coil", 504, 120),
         _equip("line", "Feeder", "to fault", 656, 120),
     ]
@@ -51,24 +58,43 @@ def protection_oneline_diagram(problem: dict[str, Any] | None) -> dict[str, Any]
         {"id": "e3", "from": "relay", "fromPort": "out", "to": "brk", "toPort": "in"},
         {"id": "e4", "from": "brk", "fromPort": "out", "to": "line", "toPort": "in"},
     ]
-    return {"schema": SCHEMA, "nodes": nodes, "edges": edges}
+    return {
+        "schema": SCHEMA,
+        "diagramKind": "protection_5051",
+        "title": "Feeder protection — CT, 50/51 relay, breaker",
+        "meta": {
+            "ct_ratio": f"{ct_p:g}/{ct_s:g} A",
+            "pickup_sec": f"{pickup:g} A sec",
+        },
+        "nodes": nodes,
+        "edges": edges,
+    }
 
 
 def drives_oneline_diagram(problem: dict[str, Any] | None) -> dict[str, Any]:
     problem = problem or {}
     v = float(problem.get("v_dc") or 120)
+    ra = float(problem.get("ra_ohm") or 1)
+    t_load = float(problem.get("t_load_nm") or 5)
     nodes = [
         _equip("dc", "DC bus", f"{v:.0f} V", 48, 120),
         _equip("inv", "Converter", "average model", 200, 120),
         _equip("mot", "Motor", "DC / IM", 352, 120),
-        _equip("load", "Load", f"{problem.get('t_load_nm', 5)} N·m", 504, 120),
+        _equip("load", "Load", f"{t_load:g} N·m", 504, 120),
     ]
     edges = [
         {"id": "e1", "from": "dc", "fromPort": "out", "to": "inv", "toPort": "in"},
         {"id": "e2", "from": "inv", "fromPort": "out", "to": "mot", "toPort": "in"},
         {"id": "e3", "from": "mot", "fromPort": "out", "to": "load", "toPort": "in"},
     ]
-    return {"schema": SCHEMA, "nodes": nodes, "edges": edges}
+    return {
+        "schema": SCHEMA,
+        "diagramKind": "drives_dc",
+        "title": "DC drive — armature circuit and load torque",
+        "meta": {"v_dc": v, "ra_ohm": ra, "t_load": t_load},
+        "nodes": nodes,
+        "edges": edges,
+    }
 
 
 def control_diagram_from_tf_problem(problem: dict[str, Any] | None) -> dict[str, Any] | None:

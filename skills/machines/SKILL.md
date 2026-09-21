@@ -18,6 +18,10 @@ Lab-report OC/SC is in-bound (report genre). Starting transients without a
 provider stay `unchecked`. Do not route a transformer homework through
 `lumped-circuit-sim` unless the student supplied a lumped netlist.
 
+## UI construction
+
+DC drive chain in the UI: **`skills/ui-diagrams/SKILL.md`** (`diagramKind: drives_dc` or `solve-drives-problem`).
+
 **UG drives (OSS):** `solve-drives-problem` — DC (`kind: dc`, `v_dc`, `ra_ohm`,
 `k_torque`, `t_load_nm`) or IM slip line (`kind: im`, `t_rated_nm`, `slip_rated`,
 `t_load_nm`). Checked steady-state speed (rpm). Full Simulink drive plant remains

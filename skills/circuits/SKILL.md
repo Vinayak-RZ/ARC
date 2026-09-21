@@ -28,6 +28,10 @@ resonance, two-ports. Not device physics (electronics), not machines.
 | Explain | Viva without new scalars |
 | Report | Lab numerical + library plots |
 
+## UI construction
+
+For localhost schematics (series RLC sheet, confirm topology), load **`skills/ui-diagrams/SKILL.md`**. Write `graph.json` from `skills/ui-diagrams/examples/rlc_graph.json`; validate with `scripts/check_ui_diagram_artifacts.py`. `render-figure` does not replace an empty canvas.
+
 ## Do not
 
 Auto-spice unmatched text. Invent a circuit PNG. Treat MATLAB Copilot as SPICE.

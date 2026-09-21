@@ -19,7 +19,7 @@ dependencies = [
 electrical-engineer = "electrical_engineer.cli:main"
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "ruff>=0.6"]
+dev = ["pytest>=8", "ruff>=0.6", "Pillow>=10", "playwright>=1.49"]
 rag = ["pypdf>=5"]
 rag-ocr = ["electrical-engineer[rag]", "ocrmypdf>=16"]
 rag-multimodal = ["electrical-engineer[rag]"]

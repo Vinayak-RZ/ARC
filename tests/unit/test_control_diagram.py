@@ -36,12 +36,15 @@ def test_unity_feedback_diagram() -> None:
     assert d["schema"] == SCHEMA
     assert any(n["id"] == "sum" for n in d["nodes"])
     assert any(n["type"] == "block" and n["id"] == "G" for n in d["nodes"])
+    assert d.get("diagramKind") == "unity_feedback"
 
 
 def test_power_and_protection_diagrams() -> None:
     p = power_oneline_diagram({"fault_type": "LG"})
+    assert p.get("diagramKind") == "power_fault"
     assert any(n["type"] == "equip" and "fault" in n["id"] for n in p["nodes"])
     prot = protection_oneline_diagram({})
+    assert prot.get("diagramKind") == "protection_5051"
     assert any(n["label"] == "CT" for n in prot["nodes"])
 
 

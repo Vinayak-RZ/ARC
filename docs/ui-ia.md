@@ -10,8 +10,8 @@ Persistent localhost workspace. Not KiCad. Not a second agent. WCAG AA.
 | `sidebar` | Runs / Books switch. Named runs (`asset-row`) or library hint. Collapses under 640px |
 | `workspace` | Selected run lab, or Books (`?view=library`) |
 | `run.result` | Coinbase asset-row: title, mono value or token `unchecked`, verifier caption. Not a hero metric |
-| `run.canvas` | Capped place-and-wire confirm surface (`@xyflow/react`). Palette R L C V I Gnd. Orthogonal (smoothstep) wires, 16px snap, optional 90° rotate. Writes `graph.json`. Confirm does not simulate |
-| `run.inspector` | Keyboard path for refdes/value/orientation. Equal to pointer on the canvas |
+| `run.canvas` | **Agent construction:** write `graph.json` (RLC sheet ids → `SeriesRlcSchematic`) or `control_diagram.json` (`diagramKind` → `StaticStudyDiagram`). Skill: `skills/ui-diagrams/SKILL.md`. Editable path: `@xyflow/react` palette, step wires, 16px snap. Caps 16/24. Confirm does not simulate |
+| `run.inspector` | Bottom-right overlay on editable circuit runs only (hidden when study diagram present). Keyboard path for refdes/value/orientation |
 | `run.argument` | Host `argument.md` as readable prose (~75ch). Must not flip `unchecked` |
 | `run.more` | Closed-by-default disclosures: evidentiary JSON, plan, observation, raw graph, artifacts |
 | `photo.confirm` | Confirm topology (merged into the canvas Confirm). `simulate: false` |

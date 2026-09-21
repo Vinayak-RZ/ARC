@@ -14,7 +14,8 @@ import { useLayout } from "../../store.js";
 import { Palette } from "./Palette.jsx";
 import { fromFlow, MAX_EDGES, MAX_NODES, nextEdgeId, nextPartId, nextRefdes, PARTS, toFlow } from "./graph.js";
 import { nodeTypes } from "./nodes.jsx";
-import { ControlDiagram } from "./ControlDiagram.jsx";
+import { StaticStudyDiagram } from "./StaticStudyDiagram.jsx";
+import { isSeriesRlcSheetGraph, SeriesRlcSchematic } from "./SeriesRlcSchematic.jsx";
 
 const EDGE_STYLE = { stroke: "var(--ee-color-ink)", strokeWidth: 1.5 };
 const GRID = 16;
@@ -31,11 +32,7 @@ function useRunGraph(id) {
 }
 
 export function Canvas({ id }) {
-  return (
-    <ReactFlowProvider>
-      <CanvasInner id={id} />
-    </ReactFlowProvider>
-  );
+  return <CanvasInner id={id} />;
 }
 
 function CanvasInner({ id }) {
@@ -48,7 +45,14 @@ function CanvasInner({ id }) {
   if (hasControl) {
     return (
       <div className="canvas-lab control-only">
-        <ControlDiagram diagram={controlDiagram} />
+        <StaticStudyDiagram diagram={controlDiagram} />
+      </div>
+    );
+  }
+  if (isSeriesRlcSheetGraph(data?.graph)) {
+    return (
+      <div className="canvas-lab control-only">
+        <SeriesRlcSchematic graph={data.graph} />
       </div>
     );
   }
@@ -145,7 +149,7 @@ function CircuitCanvas({ id, data }) {
       }
       snapshot();
       setEdges((eds) =>
-        addEdge({ ...conn, id: nextEdgeId(eds), type: "smoothstep", style: EDGE_STYLE }, eds),
+        addEdge({ ...conn, id: nextEdgeId(eds), type: "step", style: EDGE_STYLE }, eds),
       );
       setGraphDirty(true);
     },
@@ -212,6 +216,7 @@ function CircuitCanvas({ id, data }) {
   const empty = nodes.length === 0;
 
   return (
+    <ReactFlowProvider>
     <div className="canvas-lab">
       <Palette onAdd={addPart} />
       <div className="flow-wrap">
@@ -239,8 +244,8 @@ function CircuitCanvas({ id, data }) {
           onNodeClick={(_, node) => setSelectedNodeId(node.id)}
           onPaneClick={() => setSelectedNodeId(null)}
           nodeTypes={nodeTypes}
-          defaultEdgeOptions={{ type: "smoothstep", style: EDGE_STYLE }}
-          connectionLineType={ConnectionLineType.SmoothStep}
+          defaultEdgeOptions={{ type: "step", style: EDGE_STYLE }}
+          connectionLineType={ConnectionLineType.Step}
           connectionLineStyle={EDGE_STYLE}
           connectionMode={ConnectionMode.Loose}
           snapToGrid
@@ -248,7 +253,7 @@ function CircuitCanvas({ id, data }) {
           deleteKeyCode={["Backspace", "Delete"]}
           fitView
           proOptions={{ hideAttribution: true }}
-          style={{ width: "100%", height: 420 }}
+          style={{ width: "100%", height: 400 }}
         >
           <Background gap={16} color="var(--ee-color-hairline)" />
         </ReactFlow>
@@ -263,5 +268,6 @@ function CircuitCanvas({ id, data }) {
       </div>
       {msg ? <pre className="number-display">{msg}</pre> : null}
     </div>
+    </ReactFlowProvider>
   );
 }

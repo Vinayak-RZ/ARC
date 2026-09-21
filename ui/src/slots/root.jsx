@@ -152,18 +152,25 @@ function Workspace() {
     return <p className="empty">No run selected. Open one from the list, or type electrical-engineer run simulate-circuit.</p>;
   }
   let recipeId = "";
+  let hasStudyDiagram = false;
   try {
     const evid = JSON.parse(data?.summary || "{}");
     recipeId = evid.recipe_id || "";
   } catch {
     recipeId = "";
   }
+  const cd = data?.control_diagram;
+  hasStudyDiagram = Boolean(cd && Array.isArray(cd.nodes) && cd.nodes.length > 0);
   return (
     <div className="lab">
       {renderSlot("run.result", { id })}
-      <div className="lab-surface lab-surface-primary">
+      <div
+        className={
+          hasStudyDiagram ? "lab-surface lab-surface-primary lab-surface-study" : "lab-surface lab-surface-primary lab-surface-circuit"
+        }
+      >
         {renderSlot("run.canvas", { id })}
-        {renderSlot("run.inspector", { id })}
+        {hasStudyDiagram ? null : renderSlot("run.inspector", { id })}
       </div>
       <EngineArtifacts id={id} recipeId={recipeId} />
       {renderSlot("run.argument", { id })}
@@ -222,6 +229,15 @@ function Result({ id }) {
           ? "Working"
           : "";
   const value = error ? "failed" : unchecked ? "unchecked" : evid.value == null ? "Working" : String(evid.value);
+  const verifierRaw = evid.verifier ? String(evid.verifier) : "";
+  let verifierHint = null;
+  if (!unchecked && verifierRaw) {
+    if (/label-unverified|label-unchecked| via /i.test(verifierRaw)) {
+      verifierHint = "Checked simulation";
+    } else {
+      verifierHint = verifierRaw;
+    }
+  }
   return (
     <div className="result-strip" aria-live="polite">
       <span className="asset-title">{title}</span>
@@ -229,7 +245,7 @@ function Result({ id }) {
         {value}
       </span>
       {unchecked ? <span className="badge-pill">unchecked</span> : null}
-      {evid.verifier ? <span className="hint">{evid.verifier}</span> : null}
+      {verifierHint ? <span className="hint">{verifierHint}</span> : null}
       {live ? <span className="hint">{live}</span> : null}
     </div>
   );

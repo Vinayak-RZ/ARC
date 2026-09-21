@@ -1,0 +1,83 @@
+{
+  "schema": "arc.control_diagram.v1",
+  "diagramKind": "power_fault",
+  "title": "LG fault study \u2014 single-line diagram (pu)",
+  "sequence": {
+    "fault": "LG",
+    "z1": 0.12,
+    "z2": 0.12,
+    "z0": 0.28
+  },
+  "nodes": [
+    {
+      "id": "gen",
+      "type": "equip",
+      "label": "Generator",
+      "tf": "1.0 pu",
+      "x": 48,
+      "y": 100
+    },
+    {
+      "id": "bus",
+      "type": "equip",
+      "label": "Bus 1",
+      "tf": "slack",
+      "x": 200,
+      "y": 100
+    },
+    {
+      "id": "line",
+      "type": "equip",
+      "label": "Transmission",
+      "tf": "Z1=0.12 Z2=0.12 pu",
+      "x": 352,
+      "y": 100
+    },
+    {
+      "id": "load",
+      "type": "equip",
+      "label": "Load",
+      "tf": "Z0=0.28 pu",
+      "x": 504,
+      "y": 100
+    },
+    {
+      "id": "fault",
+      "type": "equip",
+      "label": "LG fault",
+      "tf": "sequence network",
+      "x": 352,
+      "y": 220
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "gen",
+      "fromPort": "out",
+      "to": "bus",
+      "toPort": "in"
+    },
+    {
+      "id": "e2",
+      "from": "bus",
+      "fromPort": "out",
+      "to": "line",
+      "toPort": "in"
+    },
+    {
+      "id": "e3",
+      "from": "line",
+      "fromPort": "out",
+      "to": "load",
+      "toPort": "in"
+    },
+    {
+      "id": "e4",
+      "from": "line",
+      "fromPort": "out",
+      "to": "fault",
+      "toPort": "in"
+    }
+  ]
+}

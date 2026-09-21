@@ -1,0 +1,81 @@
+{
+  "schema": "arc.control_diagram.v1",
+  "diagramKind": "protection_5051",
+  "title": "Feeder protection \u2014 CT, 50/51 relay, breaker",
+  "meta": {
+    "ct_ratio": "300/5 A",
+    "pickup_sec": "2 A sec"
+  },
+  "nodes": [
+    {
+      "id": "bus",
+      "type": "equip",
+      "label": "Bus",
+      "tf": "faulted feeder",
+      "x": 48,
+      "y": 120
+    },
+    {
+      "id": "ct",
+      "type": "equip",
+      "label": "CT",
+      "tf": "300/5 A",
+      "x": 200,
+      "y": 120
+    },
+    {
+      "id": "relay",
+      "type": "equip",
+      "label": "50/51 relay",
+      "tf": "pickup 2 A sec",
+      "x": 352,
+      "y": 120
+    },
+    {
+      "id": "brk",
+      "type": "equip",
+      "label": "Breaker",
+      "tf": "trip coil",
+      "x": 504,
+      "y": 120
+    },
+    {
+      "id": "line",
+      "type": "equip",
+      "label": "Feeder",
+      "tf": "to fault",
+      "x": 656,
+      "y": 120
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "bus",
+      "fromPort": "out",
+      "to": "ct",
+      "toPort": "in"
+    },
+    {
+      "id": "e2",
+      "from": "ct",
+      "fromPort": "out",
+      "to": "relay",
+      "toPort": "in"
+    },
+    {
+      "id": "e3",
+      "from": "relay",
+      "fromPort": "out",
+      "to": "brk",
+      "toPort": "in"
+    },
+    {
+      "id": "e4",
+      "from": "brk",
+      "fromPort": "out",
+      "to": "line",
+      "toPort": "in"
+    }
+  ]
+}

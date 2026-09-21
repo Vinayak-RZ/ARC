@@ -104,8 +104,7 @@ body { margin: 0; background: var(--ee-color-canvas); }
 }
 .lab { display: flex; flex-direction: column; gap: var(--ee-space-m); }
 .lab-surface {
-  display: flex;
-  gap: var(--ee-space-m);
+  position: relative;
   min-height: 420px;
   border: 1px solid var(--ee-color-hairline);
   border-radius: 12px;
@@ -114,6 +113,12 @@ body { margin: 0; background: var(--ee-color-canvas); }
 }
 .lab-surface-primary {
   min-height: 460px;
+}
+.lab-surface-circuit .canvas-lab {
+  width: 100%;
+}
+.lab-surface-study .canvas-lab.control-only {
+  width: 100%;
 }
 .canvas-lab {
   display: grid;
@@ -163,18 +168,33 @@ body { margin: 0; background: var(--ee-color-canvas); }
   outline: 2px solid var(--ee-color-primary);
   outline-offset: 2px;
 }
-.flow-wrap .react-flow { height: 340px; width: 100%; }
+.flow-wrap .react-flow { height: 400px; width: 100%; }
 .part-value {
   font-size: 11px;
   color: var(--ee-color-muted);
   font-variant-numeric: tabular-nums;
 }
+.control-diagram-wrap { width: 100%; min-height: 400px; }
 .canvas-lab.control-only {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
   grid-template-columns: unset;
   grid-template-rows: unset;
 }
-.control-diagram-wrap { width: 100%; min-height: 400px; }
+.static-diagram-wrap {
+  width: 100%;
+  flex: 1;
+  min-width: 0;
+  min-height: 360px;
+}
+.static-diagram {
+  display: block;
+  border: 1px solid var(--ee-color-hairline);
+  border-radius: 12px;
+  background: var(--ee-color-surface-soft);
+}
 .control-sum,
 .control-block,
 .control-tap,
@@ -241,11 +261,26 @@ body { margin: 0; background: var(--ee-color-canvas); }
   flex-direction: column;
 }
 .inspector {
+  position: absolute;
+  right: var(--ee-space-m);
+  bottom: calc(var(--ee-space-m) + 52px);
+  z-index: 12;
   min-width: 200px;
   max-width: 240px;
   display: flex;
   flex-direction: column;
   gap: var(--ee-space-s);
+  padding: var(--ee-space-s) var(--ee-space-m);
+  border: 1px solid var(--ee-color-hairline);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--ee-color-canvas) 92%, transparent);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  pointer-events: auto;
+}
+.lab-surface-circuit .inspector .hint {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.35;
 }
 .inspector .button-secondary { width: 100%; }
 .inspector h2 { margin: 0; font-size: var(--ee-type-title); font-weight: 500; }

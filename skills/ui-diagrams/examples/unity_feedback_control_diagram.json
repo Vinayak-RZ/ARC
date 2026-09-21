@@ -1,0 +1,68 @@
+{
+  "schema": "arc.control_diagram.v1",
+  "diagramKind": "unity_feedback",
+  "title": "Unity feedback system",
+  "nodes": [
+    {
+      "id": "sum",
+      "type": "sum",
+      "label": "\u03a3",
+      "x": 72,
+      "y": 140,
+      "negative": true
+    },
+    {
+      "id": "G",
+      "type": "block",
+      "label": "G",
+      "tf": "10/(s+1)",
+      "x": 240,
+      "y": 140
+    },
+    {
+      "id": "H",
+      "type": "block",
+      "label": "H",
+      "tf": "1",
+      "x": 240,
+      "y": 260
+    }
+  ],
+  "edges": [
+    {
+      "id": "e_r",
+      "from": "r",
+      "fromPort": "out",
+      "to": "sum",
+      "toPort": "in"
+    },
+    {
+      "id": "e_sum_g",
+      "from": "sum",
+      "fromPort": "out",
+      "to": "G",
+      "toPort": "in"
+    },
+    {
+      "id": "e_g_y",
+      "from": "G",
+      "fromPort": "out",
+      "to": "y",
+      "toPort": "in"
+    },
+    {
+      "id": "e_y_h",
+      "from": "y",
+      "fromPort": "out",
+      "to": "H",
+      "toPort": "in"
+    },
+    {
+      "id": "e_h_sum",
+      "from": "H",
+      "fromPort": "out",
+      "to": "sum",
+      "toPort": "feedback"
+    }
+  ]
+}

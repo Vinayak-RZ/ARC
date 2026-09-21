@@ -1,0 +1,77 @@
+{
+  "schema": "arc.circuit.v1",
+  "nodes": [
+    {
+      "id": "vin",
+      "type": "source_v",
+      "refdes": "V1",
+      "value": 10,
+      "unit": "V",
+      "x": 48,
+      "y": 128
+    },
+    {
+      "id": "r1",
+      "type": "resistor",
+      "refdes": "R1",
+      "value": 1000,
+      "unit": "ohm",
+      "x": 192,
+      "y": 128
+    },
+    {
+      "id": "l1",
+      "type": "inductor",
+      "refdes": "L1",
+      "value": 0.001,
+      "unit": "H",
+      "x": 336,
+      "y": 128
+    },
+    {
+      "id": "c1",
+      "type": "capacitor",
+      "refdes": "C1",
+      "value": 1e-06,
+      "unit": "F",
+      "x": 480,
+      "y": 128
+    },
+    {
+      "id": "gnd",
+      "type": "ground",
+      "refdes": "GND",
+      "value": 0,
+      "unit": "",
+      "x": 48,
+      "y": 304
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "vin.n1",
+      "to": "r1.n1"
+    },
+    {
+      "id": "e2",
+      "from": "r1.n2",
+      "to": "l1.n1"
+    },
+    {
+      "id": "e3",
+      "from": "l1.n2",
+      "to": "c1.n1"
+    },
+    {
+      "id": "e4",
+      "from": "vin.n2",
+      "to": "gnd.n1"
+    },
+    {
+      "id": "e5",
+      "from": "c1.n2",
+      "to": "gnd.n1"
+    }
+  ]
+}

@@ -6,6 +6,7 @@ import {
   Handle,
   MarkerType,
   Position,
+  useReactFlow,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
@@ -73,10 +74,12 @@ const nodeTypes = {
   ref: RefNode,
 };
 
-function portPosition(port) {
-  if (port === "feedback" || port === "minus") return Position.Left;
-  if (port === "in") return Position.Right;
-  return Position.Right;
+function diagramCaption(diagram) {
+  const nodes = diagram?.nodes || [];
+  if (nodes.some((n) => n.type === "equip")) {
+    return "One-line study diagram from this run (read-only).";
+  }
+  return "Closed-loop block diagram from this run (read-only).";
 }
 
 function toFlow(diagram) {
@@ -85,6 +88,7 @@ function toFlow(diagram) {
   const rawNodes = diagram?.nodes || [];
   const rawEdges = diagram?.edges || [];
   const ids = new Set(rawNodes.map((n) => n.id));
+  const hasEquip = rawNodes.some((n) => n.type === "equip");
   for (const n of rawNodes) {
     const type =
       n.type === "sum"
@@ -107,11 +111,13 @@ function toFlow(diagram) {
       targetPosition: Position.Left,
     });
   }
-  if (!ids.has("r")) {
-    nodes.push({ id: "r", type: "ref", position: { x: 0, y: 140 }, data: {} });
-  }
-  if (!ids.has("y")) {
-    nodes.push({ id: "y", type: "tap", position: { x: 400, y: 140 }, data: { label: "y" } });
+  if (!hasEquip) {
+    if (!ids.has("r")) {
+      nodes.push({ id: "r", type: "ref", position: { x: 0, y: 140 }, data: {} });
+    }
+    if (!ids.has("y")) {
+      nodes.push({ id: "y", type: "tap", position: { x: 520, y: 140 }, data: { label: "y" } });
+    }
   }
   for (const e of rawEdges) {
     edges.push({
@@ -129,11 +135,24 @@ function toFlow(diagram) {
   return { nodes, edges };
 }
 
+function FitViewOnLoad({ nodeCount }) {
+  const { fitView } = useReactFlow();
+  useEffect(() => {
+    if (!nodeCount) return;
+    const t = window.setTimeout(() => {
+      fitView({ padding: 0.18, duration: 0 });
+    }, 50);
+    return () => window.clearTimeout(t);
+  }, [fitView, nodeCount]);
+  return null;
+}
+
 function ControlDiagramInner({ diagram }) {
   const { nodes, edges } = useMemo(() => toFlow(diagram || {}), [diagram]);
+  const caption = diagramCaption(diagram);
   return (
     <div className="control-diagram-wrap">
-      <p className="hint">Closed-loop block diagram from this run (read-only).</p>
+      <p className="hint">{caption}</p>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -143,11 +162,11 @@ function ControlDiagramInner({ diagram }) {
         elementsSelectable={false}
         panOnDrag
         zoomOnScroll
-        fitView
         proOptions={{ hideAttribution: true }}
-        style={{ width: "100%", height: 380 }}
+        style={{ width: "100%", height: 340 }}
       >
         <Background gap={16} color="var(--ee-color-hairline)" />
+        <FitViewOnLoad nodeCount={nodes.length} />
       </ReactFlow>
     </div>
   );
