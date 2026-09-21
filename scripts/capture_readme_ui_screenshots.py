@@ -88,19 +88,30 @@ def _wait_server(proc: subprocess.Popen, timeout: float = 30.0) -> None:
     raise RuntimeError("ui server did not become healthy")
 
 
-def _diagram_has_ink(path: Path) -> None:
-    if path.stat().st_size < 8000:
-        raise RuntimeError(f"{path.name}: PNG suspiciously small")
+def _require_pillow():
     try:
         from PIL import Image
-    except ImportError:
-        return
+    except ImportError as exc:
+        raise RuntimeError(
+            "Pillow is required for README UI captures (ink gate). Install: pip install Pillow"
+        ) from exc
+    return Image
+
+
+def _diagram_has_ink(path: Path, *, circuit: bool) -> None:
+    if path.stat().st_size < 8000:
+        raise RuntimeError(f"{path.name}: PNG suspiciously small")
+    Image = _require_pillow()
     im = Image.open(path).convert("RGB")
-    # Center band where static SVG diagrams render
-    band = im.crop((240, 200, 1040, 520))
+    if circuit:
+        band = im.crop((180, 160, 1100, 560))
+    else:
+        band = im.crop((240, 200, 1040, 520))
+    pixels = band.size[0] * band.size[1]
     dark = sum(1 for r, g, b in band.getdata() if r + g + b < 450)
-    if dark / band.size[0] / band.size[1] < 0.002:
-        raise RuntimeError(f"{path.name}: diagram band looks blank")
+    frac = dark / pixels if pixels else 0.0
+    if frac < 0.002:
+        raise RuntimeError(f"{path.name}: diagram band looks blank (dark_frac={frac:.5f})")
 
 
 def _capture(page, run_id: str, dest: Path) -> None:
@@ -108,13 +119,18 @@ def _capture(page, run_id: str, dest: Path) -> None:
     page.goto(url, wait_until="networkidle")
     page.wait_for_selector(".shell", timeout=20000)
     page.wait_for_selector(".lab-surface, .empty", timeout=20000)
+    is_circuit = False
     if page.locator(".static-diagram-wrap").count():
         page.wait_for_selector(".static-diagram rect, .static-diagram circle", timeout=20000)
         shapes = page.locator(".static-diagram rect, .static-diagram circle").count()
         if shapes < 2:
             raise RuntimeError(f"{dest.name}: expected diagram shapes, saw {shapes}")
-    elif page.locator(".flow-wrap .part-node").count():
+    else:
+        is_circuit = True
         page.wait_for_selector(".flow-wrap .part-node", timeout=20000)
+        shapes = page.locator(".flow-wrap .part-node").count()
+        if shapes < 2:
+            raise RuntimeError(f"{dest.name}: expected circuit parts, saw {shapes}")
     page.wait_for_timeout(1200)
     page.screenshot(
         path=str(dest),
@@ -124,10 +140,11 @@ def _capture(page, run_id: str, dest: Path) -> None:
     height = _png_height(dest)
     if height > MAX_PNG_HEIGHT:
         raise RuntimeError(f"{dest.name} height {height}px exceeds {MAX_PNG_HEIGHT}px cap")
-    _diagram_has_ink(dest)
+    _diagram_has_ink(dest, circuit=is_circuit)
 
 
 def main() -> int:
+    _require_pillow()
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
