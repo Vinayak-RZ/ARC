@@ -1,0 +1,7 @@
+{
+  "blocks": [
+    {"id": "G", "tf": "10/(s+1)"},
+    {"id": "H", "tf": "1"}
+  ],
+  "unity_feedback": {"forward": "G", "feedback": "H", "negative": true}
+}

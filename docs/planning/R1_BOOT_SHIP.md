@@ -41,3 +41,42 @@ uv run electrical-engineer run simulate-power-fault
 ```
 
 Checked |I| = 6.0 pu for default prefault 1.0 pu.
+
+## Block diagram → Bode/step
+
+```bash
+cat > problem.json <<'EOF'
+{
+  "blocks": [{"id": "G", "tf": "10/(s+1)"}, {"id": "H", "tf": "1"}],
+  "unity_feedback": {"forward": "G", "feedback": "H"}
+}
+EOF
+uv run electrical-engineer run control-diagram-to-model
+```
+
+## Protection (study-level)
+
+```bash
+cat > problem.json <<'EOF'
+{"ct_primary_a":300,"ct_secondary_a":5,"relay_pickup_a":2,"fault_current_a":800}
+EOF
+uv run electrical-engineer run study-protection-setting
+```
+
+## DC drive speed
+
+```bash
+cat > problem.json <<'EOF'
+{"kind":"dc","v_dc":120,"ra_ohm":1,"k_torque":0.5,"t_load_nm":5}
+EOF
+uv run electrical-engineer run solve-drives-problem
+```
+
+## Digital control (z-domain)
+
+```bash
+cat > problem.json <<'EOF'
+{"num":[0.1],"den":[1,-0.5],"ts":0.01}
+EOF
+uv run electrical-engineer run solve-digital-control-problem
+```

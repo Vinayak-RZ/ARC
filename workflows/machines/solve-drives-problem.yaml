@@ -1,0 +1,10 @@
+id: solve-drives-problem
+nodes:
+  drive:
+    activity: run-drives-study
+  label:
+    activity: label-unchecked
+    needs: [drive]
+  summary:
+    activity: write-run-summary
+    needs: [label]

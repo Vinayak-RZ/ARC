@@ -1,0 +1,6 @@
+{
+  "ct_primary_a": 300,
+  "ct_secondary_a": 5,
+  "relay_pickup_a": 2.0,
+  "fault_current_a": 800
+}

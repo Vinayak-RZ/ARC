@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 
 function recipeKind(recipeId) {
   const id = String(recipeId || "");
-  if (id.includes("control")) return "control";
+  if (id.includes("protection")) return "protection";
+  if (id.includes("drives")) return "drives";
+  if (id.includes("control") || id.includes("digital")) return "control";
   if (id.includes("power")) return "power";
   if (id.includes("simulate-circuit") || id.includes("circuit")) return "circuits";
   return "";
@@ -11,12 +13,28 @@ function recipeKind(recipeId) {
 export function EngineArtifacts({ id, recipeId }) {
   const kind = recipeKind(recipeId);
   const [power, setPower] = useState(null);
+  const [protection, setProtection] = useState(null);
+  const [drives, setDrives] = useState(null);
   useEffect(() => {
-    if (kind !== "power" || !id) return;
-    fetch(`/api/runs/${id}/file/power_tables.json`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d) => setPower(d))
-      .catch(() => setPower(null));
+    if (!id) return;
+    if (kind === "power") {
+      fetch(`/api/runs/${id}/file/power_tables.json`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => setPower(d))
+        .catch(() => setPower(null));
+    }
+    if (kind === "protection") {
+      fetch(`/api/runs/${id}/file/protection_tables.json`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => setProtection(d))
+        .catch(() => setProtection(null));
+    }
+    if (kind === "drives") {
+      fetch(`/api/runs/${id}/file/drives_result.json`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => setDrives(d))
+        .catch(() => setDrives(null));
+    }
   }, [id, kind]);
 
   if (!kind) return null;
@@ -35,6 +53,33 @@ export function EngineArtifacts({ id, recipeId }) {
             <figcaption>Step response</figcaption>
           </figure>
         </div>
+      </section>
+    );
+  }
+
+  if (kind === "protection" && protection) {
+    return (
+      <section className="engine-panel" aria-label="Protection study">
+        <h2>Protection settings</h2>
+        <table className="data-table">
+          <tbody>
+            <tr><th>CT ratio</th><td>{Number(protection.ct_ratio).toFixed(1)}</td></tr>
+            <tr><th>Pickup (primary A)</th><td>{Number(protection.pickup_primary_a).toFixed(2)}</td></tr>
+            <tr><th>Fault current (A)</th><td>{Number(protection.fault_current_a).toFixed(2)}</td></tr>
+            <tr><th>Overcurrent trip</th><td>{protection.overcurrent_trip ? "yes" : "no"}</td></tr>
+          </tbody>
+        </table>
+        <img className="plot" src={`/api/runs/${id}/artifact.svg`} alt="Protection summary" width="360" height="120" />
+      </section>
+    );
+  }
+
+  if (kind === "drives" && drives) {
+    return (
+      <section className="engine-panel" aria-label="Drive study">
+        <h2>Drive steady-state</h2>
+        <p className="hint">Speed: <strong>{Number(drives.rpm).toFixed(2)} rpm</strong></p>
+        <img className="plot" src={`/api/runs/${id}/artifact.svg`} alt="Drive summary" width="320" height="120" />
       </section>
     );
   }

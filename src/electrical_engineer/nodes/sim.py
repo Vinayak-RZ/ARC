@@ -98,7 +98,12 @@ def run_python_control(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str
     run_dir_s = spec.get("run_dir")
     if not run_dir_s:
         return _missing("python-control", spec, inputs)
-    problem = _problem(spec)
+    problem = dict(_problem(spec))
+    for v in inputs.values():
+        if isinstance(v, dict) and v.get("num") is not None and v.get("den") is not None:
+            problem["num"] = v["num"]
+            problem["den"] = v["den"]
+            break
     if not control_available():
         out = _missing("python-control", spec, inputs)
         return out
