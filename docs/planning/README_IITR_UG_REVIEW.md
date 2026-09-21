@@ -6,14 +6,14 @@
 
 - **Try these prompts** now read like actual tutorial sheet lines (RLC step, Bode homework, LG fault, DC machine). I would paste one without rewriting.
 - **Pip-first quick start** matches how we set up venv on the lab machine; I do not need uv to try it tonight.
-- **Screenshots** (after the window capture fix) show one run, a schematic or one-line diagram on top, and bigger plots below. That matches how I want to check “did the sim match my diagram?”
+- **Screenshots** (1280×900 window, Pillow ink gate) now show real ink: RLC series schematic (inspector as a bottom-right overlay, not a side split), control closed-loop blocks, and power/protection/drives one-lines. Plots sit below the diagram band.
 - **Honest coursework spread:** circuits, control, power, protection, drives in one README table. Feels closer to our semester than “10 V divider only.”
 
 ## What felt fake or lab-toy before this pass
 
 - Full-page scroll shots with twenty old runs in the sidebar looked like a dev dogfood dump, not a product I would show in a viva demo.
 - Agent briefs that named internal recipes and `unchecked` policy read like operator docs, not student homework.
-- Tiny 240px-wide Bode thumbnails and empty canvas on power/protection runs made the UI look like a CSV viewer with icons.
+- Tiny 240px-wide Bode thumbnails and empty canvas on power/protection runs made the UI look like a CSV viewer with icons. **Fixed in PR #41:** static SVG study diagrams + mandatory capture ink check.
 
 ## What was still confusing (and README tweaks applied)
 
