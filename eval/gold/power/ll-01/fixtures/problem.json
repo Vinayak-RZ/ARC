@@ -1,0 +1,7 @@
+{
+  "fault_type": "LL",
+  "z1_pu": 0.1,
+  "z2_pu": 0.1,
+  "z0_pu": 0.3,
+  "v_prefault_pu": 1.0
+}

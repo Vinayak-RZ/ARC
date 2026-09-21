@@ -32,7 +32,11 @@ def test_unmatched_recipe_stays_unmatched(tmp_path: Path) -> None:
     assert obs["unchecked_reason"] == "unmatched"
 
 
-def test_absent_tool_reports_no_provider(tmp_path: Path) -> None:
+def test_absent_tool_reports_no_provider(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr(
+        "electrical_engineer.engines.control_runner.control_available",
+        lambda: False,
+    )
     out = execute("solve-control-problem", run_root=tmp_path, problem={"prompt": "step of 1/(s+1)"})
     assert out["summary"]["unchecked"] is True
     assert _reason(out) == "no-provider"

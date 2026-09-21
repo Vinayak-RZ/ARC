@@ -1,0 +1,10 @@
+id: simulate-power-fault
+nodes:
+  flow:
+    activity: run-load-flow
+  label:
+    activity: label-unchecked
+    needs: [flow]
+  summary:
+    activity: write-run-summary
+    needs: [label]

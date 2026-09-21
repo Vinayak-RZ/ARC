@@ -23,6 +23,12 @@ dev = ["pytest>=8", "ruff>=0.6"]
 rag = ["pypdf>=5"]
 rag-ocr = ["electrical-engineer[rag]", "ocrmypdf>=16"]
 rag-multimodal = ["electrical-engineer[rag]"]
+sim = ["PySpice>=1.5", "numpy>=1.26"]
+control = ["control>=0.9.4", "matplotlib>=3.8", "numpy>=1.26", "scipy>=1.11"]
+power = ["pandapower>=2.14", "numpy>=1.26"]
+engines = [
+    "electrical-engineer[sim,control,power]",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/electrical_engineer"]

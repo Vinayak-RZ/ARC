@@ -80,6 +80,18 @@ def retrieve_passage(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, 
 
 @register("solve-explain")
 def solve_explain(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
+    for v in inputs.values():
+        if isinstance(v, dict) and v.get("ok") is True and v.get("unchecked") is False:
+            val = v.get("value")
+            tool = v.get("tool") or "verifier"
+            return {
+                "text": f"{tool} checked value {val}.",
+                "value": val,
+                "unchecked": False,
+                "token": None,
+                "citations": list(v.get("citations") or []),
+                "paths": list(v.get("paths") or []),
+            }
     problem = _problem(spec)
     passages = []
     citations = []
