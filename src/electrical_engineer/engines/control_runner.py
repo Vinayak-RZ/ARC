@@ -17,15 +17,12 @@ def control_available() -> bool:
 def _tf_from_problem(problem: dict[str, Any]):
     import control
 
+    from electrical_engineer.engines.block_diagram import _parse_tf
+
     if "num" in problem and "den" in problem:
         return control.tf(problem["num"], problem["den"])
     if "tf" in problem:
-        raw = str(problem["tf"])
-        if "/" in raw:
-            num_s, den_s = raw.split("/", 1)
-            num_s = num_s.strip().strip("()")
-            den_s = den_s.strip().strip("()")
-            return control.tf(num_s, den_s)
+        return _parse_tf({"tf": problem["tf"]})
     # default first-order for demos
     k = float(problem.get("k", 1.0))
     tau = float(problem.get("tau", 1.0))
