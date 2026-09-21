@@ -56,7 +56,13 @@ def control_diagram_from_problem(problem: dict[str, Any] | None) -> dict[str, An
                 {"id": "e_h_sum", "from": fb_id, "fromPort": "out", "to": "sum", "toPort": "feedback"},
             ]
         )
-    return {"schema": SCHEMA, "nodes": nodes, "edges": edges}
+    return {
+        "schema": SCHEMA,
+        "diagramKind": "unity_feedback",
+        "title": "Unity feedback system",
+        "nodes": nodes,
+        "edges": edges,
+    }
 
 
 def control_diagram_for_recipe(recipe_id: str, problem: dict[str, Any] | None) -> dict[str, Any] | None:

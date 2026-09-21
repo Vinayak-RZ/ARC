@@ -15,6 +15,7 @@ import { Palette } from "./Palette.jsx";
 import { fromFlow, MAX_EDGES, MAX_NODES, nextEdgeId, nextPartId, nextRefdes, PARTS, toFlow } from "./graph.js";
 import { nodeTypes } from "./nodes.jsx";
 import { StaticStudyDiagram } from "./StaticStudyDiagram.jsx";
+import { isSeriesRlcSheetGraph, SeriesRlcSchematic } from "./SeriesRlcSchematic.jsx";
 
 const EDGE_STYLE = { stroke: "var(--ee-color-ink)", strokeWidth: 1.5 };
 const GRID = 16;
@@ -45,6 +46,13 @@ function CanvasInner({ id }) {
     return (
       <div className="canvas-lab control-only">
         <StaticStudyDiagram diagram={controlDiagram} />
+      </div>
+    );
+  }
+  if (isSeriesRlcSheetGraph(data?.graph)) {
+    return (
+      <div className="canvas-lab control-only">
+        <SeriesRlcSchematic graph={data.graph} />
       </div>
     );
   }

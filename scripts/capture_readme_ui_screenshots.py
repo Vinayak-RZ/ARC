@@ -120,9 +120,17 @@ def _capture(page, run_id: str, dest: Path) -> None:
     page.wait_for_selector(".shell", timeout=20000)
     page.wait_for_selector(".lab-surface, .empty", timeout=20000)
     is_circuit = False
-    if page.locator(".static-diagram-wrap").count():
-        page.wait_for_selector(".static-diagram rect, .static-diagram circle", timeout=20000)
-        shapes = page.locator(".static-diagram rect, .static-diagram circle").count()
+    if page.locator(".series-rlc-schematic").count():
+        is_circuit = True
+        page.wait_for_selector(".series-rlc-schematic", timeout=20000, state="attached")
+        shapes = page.locator(".series-rlc-schematic line, .series-rlc-schematic path").count()
+        if shapes < 2:
+            raise RuntimeError(f"{dest.name}: expected schematic strokes, saw {shapes}")
+    elif page.locator(".static-diagram-wrap").count():
+        page.wait_for_selector(".static-diagram", timeout=20000, state="attached")
+        shapes = page.locator(
+            ".static-diagram line, .static-diagram path, .static-diagram rect, .static-diagram circle"
+        ).count()
         if shapes < 2:
             raise RuntimeError(f"{dest.name}: expected diagram shapes, saw {shapes}")
     else:
