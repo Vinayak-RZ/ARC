@@ -22,14 +22,17 @@
 
 Turn your AI coding assistant into an undergraduate electrical engineer. 10 undergraduate packs, 12 host-spawned specialists, 27 named lab recipes.
 
-Describe the circuit, viva, or assignment in plain language. Arc retrieves, checks, and explains. Simulators run when they exist. If Arc did not verify a number, it labels that number unverified. In the saved run that label is the word `unchecked`. It never presents a guess as a lab result.
+**Arc is built for agents.** Clone the repo, install, run `electrical-engineer hosts install`, then paste a job brief into Cursor, Claude Code, Codex, or ChatGPT desktop. The assistant picks named recipes, runs simulators when they exist, and labels anything it did not verify as `unchecked` in the saved run.
 
 > **Arc is a local lab you clone and run.** It is not a general coding agent that also does circuits.
-> Primary interface: paste a prompt into Cursor, Claude Code, Codex, or ChatGPT desktop, or run `electrical-engineer`.
+> Primary interface: an agent (or you) pasting a prompt after install.
 > Rule: **if a number was not verified, Arc labels it unverified.**
 
 ```text
-$ uv run electrical-engineer eval --pack circuits
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -e ".[dev]"
+electrical-engineer eval --pack circuits
 PASS divider-dc-01 recipe=solve-circuit-problem
 1/1 passed
 ```
@@ -48,46 +51,71 @@ Plain-language walkthrough (what Arc adds, why numbers stay deterministic, how A
 
 ## Try these prompts
 
-Open this repo in Cursor, Claude Code, Codex, or ChatGPT desktop and paste:
+Open this repo in a coding assistant **after** install and `electrical-engineer hosts install --into <homework>`. Paste a full job brief (not a one-liner). Load [`skills/SKILL.md`](skills/SKILL.md) and [`docs/hosts/README.md`](docs/hosts/README.md). Name the recipe or pack skill when you know it.
 
 ```text
-Solve this: 10 V divider, R1 = R2 = 1 kΩ. What is Vout?
+We need a checked transient for a series RLC: 10 V DC, R = 1 kΩ, L = 1 mH, C = 1 µF.
+Use recipe simulate-circuit with a SPICE netlist in problem.json, run the eval path if
+you touch gold, and open the localhost UI so I can see the schematic on the canvas plus
+the probe plot. If ngspice is missing, stop and label unchecked; do not guess V(t).
 ```
 
 ```text
-Explain Thevenin as if I have a viva in ten minutes. Cite the book chapter you retrieved.
+Classical control homework: plant G(s) = 1/(s+1), unity negative feedback, H = 1.
+Run solve-control-problem for Bode and step plots, save the run, and summarize gain
+margin in the argument band only from python-control outputs. Use skills/control if
+the host supports it.
 ```
 
 ```text
-This isn't a named lab recipe. Still answer, and label anything you did not check.
+The assignment gives a block diagram photo, but I also have the JSON spec: forward block
+G = 10/(s+1), feedback H = 1, unity negative feedback. Run control-diagram-to-model,
+show the closed-loop diagram on the UI canvas and the Bode plot in the same window.
+Do not simulate until any photo confirm gate is satisfied.
 ```
 
-Works with those hosts, or with the CLI alone (`electrical-engineer run solve-circuit-problem`). Host adapters: [`docs/hosts/README.md`](docs/hosts/README.md). **12 EE specialists** live in [`hosts/agents/`](hosts/agents/INDEX.md); the **host** (Cursor, Codex, Claude) spawns at most two after `electrical-engineer hosts install --into <homework>`. Do not add MATLAB MCP or Simulink Agentic Toolkit on the host; Arc mediates both.
+```text
+Power systems drill: LG fault on the default sequence network with z1 = z2 = 0.1 pu and
+z0 = 0.3 pu. Recipe simulate-power-fault, report |I_fault| in pu from pandapower, and
+paste the bus table excerpt into the run argument. If pandapower is absent, label
+unchecked and cite docs/CANNOT_DO.md.
+```
+
+```text
+This question is outside the named recipes (layout EM, device physics, or a handwritten
+photo I have not confirmed). Still help me study, but label every numeric claim you did
+not verify through Arc as unchecked in the saved run. Use unmatched-cosolver and retrieve
+only when you can cite a book passage.
+```
+
+Host adapters: [`docs/hosts/README.md`](docs/hosts/README.md). **12 EE specialists** live in [`hosts/agents/`](hosts/agents/INDEX.md); the **host** spawns at most two after `hosts install`. Do not add MATLAB MCP or Simulink Agentic Toolkit on the host; Arc mediates both.
 
 ## Quick start
 
-You need **Python 3.11+**, **[uv](https://docs.astral.sh/uv/)**, and (for the UI) **Node** to build `ui/dist`. An AI coding assistant is optional. The CLI is a complete path without one.
+You need **Python 3.11+** and (for the UI) **Node** to build `ui/dist`. An AI coding assistant is the primary interface; the CLI is complete without one.
 
-```text
-uv sync --extra dev
-uv run electrical-engineer workflows
+```bash
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -e ".[dev]"
+electrical-engineer workflows
 ```
 
 Then paste a prompt above, or boot the same commands recorded in [`docs/planning/R1_BOOT.md`](docs/planning/R1_BOOT.md):
 
-```text
-uv run electrical-engineer --help
-uv run electrical-engineer run solve-circuit-problem
-uv run electrical-engineer mcp
-uv run electrical-engineer hosts install --into /tmp/ee-hw --host all
-EE_NO_BROWSER=1 uv run electrical-engineer ui
+```bash
+electrical-engineer --help
+electrical-engineer run solve-circuit-problem
+electrical-engineer mcp
+electrical-engineer hosts install --into /tmp/ee-hw --host all
+EE_NO_BROWSER=1 electrical-engineer ui
 ```
 
-```text
-uv run electrical-engineer run solve-circuit-problem
-EE_NO_BROWSER=1 uv run electrical-engineer ui
-uv run electrical-engineer mcp
-uv run electrical-engineer eval --pack circuits
+```bash
+electrical-engineer run solve-circuit-problem
+EE_NO_BROWSER=1 electrical-engineer ui
+electrical-engineer mcp
+electrical-engineer eval --pack circuits
 ./scripts/validate.sh
 ```
 
@@ -99,12 +127,23 @@ Maintainers compiling UG method notes (not the RAG index): [`knowledge/README.md
 
 The workspace is `electrical-engineer ui` on **127.0.0.1:8765** only.
 
+### Optional: uv
+
+If you use [uv](https://docs.astral.sh/uv/), the same extras apply:
+
+```bash
+uv sync --extra dev
+uv run electrical-engineer workflows
+```
+
+CI uses uv internally; user-facing docs stay pip-first.
+
 ### Optional simulation engines
 
 ```bash
 # Linux: ngspice system binary + Python extras
 sudo apt-get install -y ngspice libngspice0
-uv sync --extra engines --extra dev
+pip install -e ".[engines,dev]"
 ```
 
 | Domain | Recipe | Engine |
@@ -119,19 +158,28 @@ uv sync --extra engines --extra dev
 
 Boot details: [`docs/planning/R1_BOOT_SHIP.md`](docs/planning/R1_BOOT_SHIP.md).
 
-### Domain screenshots (verified runs)
+### Domain screenshots (full localhost UI)
 
-PNG artifacts below are copied from engine outputs (`runs/<id>/…`) after the recipes in the table above. Regenerate with the commands in [`docs/planning/R1_BOOT_SHIP.md`](docs/planning/R1_BOOT_SHIP.md).
+Each PNG is a **full browser page** of the Arc workspace at `127.0.0.1:8765` after a real recipe run (schematic or block diagram on canvas, plots in the run panel).
+
+Regenerate (build UI, engines + ngspice recommended):
+
+```bash
+pip install playwright
+playwright install chromium
+npm run build --prefix ui
+python scripts/capture_readme_ui_screenshots.py
+```
 
 | Domain | Screenshot |
 |--------|------------|
-| Circuits — RC transient (SPICE) | ![RLC transient](docs/media/rlc-spice.png) |
-| Control — block diagram Bode | ![Block Bode](docs/media/control-block-bode.png) |
-| Control — block diagram step | ![Block step](docs/media/control-block-step.png) |
-| Power — LG fault current | ![Fault](docs/media/power-fault.png) |
-| Protection — overcurrent trip | ![Protection](docs/media/protection-oc.png) |
-| Drives — DC steady-state speed | ![Drives](docs/media/drives-dc-speed.png) |
-| Digital — z-plane poles | ![Digital poles](docs/media/digital-poles.png) |
+| Circuits (series RLC schematic + SPICE) | ![RLC UI](docs/media/ui-rlc-full.png) |
+| Control (Bode + step in UI) | ![Control Bode UI](docs/media/ui-control-bode-full.png) |
+| Control (closed-loop block diagram on canvas) | ![Block diagram UI](docs/media/ui-block-diagram-full.png) |
+| Power (LG fault study) | ![Power fault UI](docs/media/ui-power-fault-full.png) |
+| Protection (overcurrent study) | ![Protection UI](docs/media/ui-protection-full.png) |
+
+Plot-only crops from earlier passes live under `docs/media/` for docs planning; the README table above is the product-facing set.
 
 ## How it works
 

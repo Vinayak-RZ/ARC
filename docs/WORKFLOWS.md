@@ -65,7 +65,7 @@ Every pack owns genres solve, derive, design, simulate, review, explain, report.
 |----|-------|------|-------|
 | solve-control-problem | Solve a classical control problem | v1 | python-control; MATLAB if present |
 | explain-control | Explain stability, Bode, or root locus | v1 | Library plots, not invented PNGs |
-| control-diagram-to-model | Block diagram or Bode figure to a model | stub | Do **not** drop. Same UI-confirm spirit as photo stub; no silent sim |
+| control-diagram-to-model | Block diagram or Bode figure to a model | v1 | OSS block compose + python-control Bode/step; `control_diagram.json` + UI canvas |
 
 ### Other packs (solve + explain for every curriculum pack)
 

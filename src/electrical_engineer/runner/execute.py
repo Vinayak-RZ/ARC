@@ -10,11 +10,11 @@ from typing import Any
 import electrical_engineer.nodes  # noqa: F401  register activities
 from electrical_engineer.capabilities import DEFAULT_BIND, rebind_recipe
 from electrical_engineer.catalog import load_recipe
-from electrical_engineer.circuit.graph import default_graph_for, write_graph
 from electrical_engineer.circuit.title import run_title
 from electrical_engineer.nodes.registry import REGISTRY
 from electrical_engineer.runner.fsm import Recipe, run_fsm
 from electrical_engineer.runner.runs import create_run_dir, new_run_id, node_dir, project_root
+from electrical_engineer.runner.seed_visuals import seed_run_visuals
 from electrical_engineer.runner.trace import TraceWriter
 from electrical_engineer.unchecked import UNCHECKED
 
@@ -145,9 +145,7 @@ def execute(
         unchecked_reason=reason,
         parent_span_id=run_span,
     )
-    seed = default_graph_for(problem)
-    if seed is not None and not (run_dir / "graph.json").is_file():
-        write_graph(run_dir, seed)
+    seed_run_visuals(run_dir, recipe.id, problem)
     return {"run_id": run_id, "run_dir": str(run_dir), "summary": payload, "observation": observation}
 
 

@@ -47,6 +47,10 @@ def test_default_graph_for_divider() -> None:
     assert g is not None
     assert g["nodes"][0]["value"] == 12
     assert default_graph_for({"kind": "ohms_law"}) is None
+    rlc = default_graph_for({"kind": "series_rlc"})
+    assert rlc is not None
+    kinds = {n["type"] for n in rlc["nodes"]}
+    assert "inductor" in kinds and "capacitor" in kinds
     parsed = parse_graph(DIVIDER)
     cir = compile_netlist(parsed)
     assert "Vin" in cir

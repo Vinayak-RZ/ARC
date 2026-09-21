@@ -144,13 +144,13 @@ function Sidebar() {
 function Workspace() {
   const view = useLayout((s) => s.view);
   const id = useLayout((s) => s.currentRunId);
+  const { data } = useRun(id);
   if (view === "library") {
     return renderSlot("rag.inventory");
   }
   if (!id) {
     return <p className="empty">No run selected. Open one from the list, or type electrical-engineer run simulate-circuit.</p>;
   }
-  const { data } = useRun(id);
   let recipeId = "";
   try {
     const evid = JSON.parse(data?.summary || "{}");
@@ -176,6 +176,11 @@ function useRun(id) {
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
   useEffect(() => {
+    if (!id) {
+      setData(null);
+      setError("");
+      return;
+    }
     fetch(`/api/runs/${id}`)
       .then((r) => {
         if (!r.ok) throw new Error("failed");

@@ -156,6 +156,7 @@ def create_app(root: Path | None = None) -> FastAPI:
         waiting = (d / "draft.cir").is_file() and not (d / "confirmed.json").is_file()
         state = "waiting-human" if waiting else "done"
         graph = _read_json(d / "graph.json")
+        control_diagram = _read_json(d / "control_diagram.json")
         return {
             "id": run_id,
             "title": str(evid_obj.get("title") or run_id),
@@ -167,6 +168,7 @@ def create_app(root: Path | None = None) -> FastAPI:
             "observation_excerpt": observation_excerpt,
             "trace_excerpt": trace_excerpt,
             "graph": graph,
+            "control_diagram": control_diagram,
             "state": state,
         }
 

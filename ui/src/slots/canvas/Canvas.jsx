@@ -14,6 +14,7 @@ import { useLayout } from "../../store.js";
 import { Palette } from "./Palette.jsx";
 import { fromFlow, MAX_EDGES, MAX_NODES, nextEdgeId, nextPartId, nextRefdes, PARTS, toFlow } from "./graph.js";
 import { nodeTypes } from "./nodes.jsx";
+import { ControlDiagram } from "./ControlDiagram.jsx";
 
 const EDGE_STYLE = { stroke: "var(--ee-color-ink)", strokeWidth: 1.5 };
 const GRID = 16;
@@ -39,6 +40,22 @@ export function Canvas({ id }) {
 
 function CanvasInner({ id }) {
   const data = useRunGraph(id);
+  const controlDiagram = data?.control_diagram;
+  const hasControl =
+    controlDiagram &&
+    Array.isArray(controlDiagram.nodes) &&
+    controlDiagram.nodes.length > 0;
+  if (hasControl) {
+    return (
+      <div className="canvas-lab control-only">
+        <ControlDiagram diagram={controlDiagram} />
+      </div>
+    );
+  }
+  return <CircuitCanvas id={id} data={data} />;
+}
+
+function CircuitCanvas({ id, data }) {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [msg, setMsg] = useState("");

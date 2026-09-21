@@ -14,6 +14,32 @@ MAX_NODES = int(_CONTRACT["properties"]["nodes"]["maxItems"])
 MAX_EDGES = int(_CONTRACT["properties"]["edges"]["maxItems"])
 
 
+def series_rlc_graph(
+    vin: float = 10,
+    r_ohm: float = 1000,
+    l_h: float = 1e-3,
+    c_f: float = 1e-6,
+) -> dict[str, Any]:
+    """Series R-L-C with DC source (schematic seed for simulate-circuit UI)."""
+    return {
+        "schema": SCHEMA,
+        "nodes": [
+            {"id": "vin", "type": "source_v", "refdes": "Vin", "value": vin, "unit": "V", "x": 60, "y": 120},
+            {"id": "r1", "type": "resistor", "refdes": "R1", "value": r_ohm, "unit": "ohm", "x": 180, "y": 120},
+            {"id": "l1", "type": "inductor", "refdes": "L1", "value": l_h, "unit": "H", "x": 300, "y": 120},
+            {"id": "c1", "type": "capacitor", "refdes": "C1", "value": c_f, "unit": "F", "x": 420, "y": 120},
+            {"id": "gnd", "type": "ground", "refdes": "Gnd", "value": 0, "unit": "", "x": 540, "y": 200},
+        ],
+        "edges": [
+            {"id": "e1", "from": "vin.n1", "to": "r1.n1"},
+            {"id": "e2", "from": "r1.n2", "to": "l1.n1"},
+            {"id": "e3", "from": "l1.n2", "to": "c1.n1"},
+            {"id": "e4", "from": "c1.n2", "to": "gnd.n1"},
+            {"id": "e5", "from": "vin.n2", "to": "gnd.n1"},
+        ],
+    }
+
+
 def divider_graph(vin: float = 10, r1: float = 1000, r2: float = 1000) -> dict[str, Any]:
     return {
         "schema": SCHEMA,
@@ -32,15 +58,33 @@ def divider_graph(vin: float = 10, r1: float = 1000, r2: float = 1000) -> dict[s
     }
 
 
+def _cir_has_series_rlc(cir: str) -> bool:
+    import re
+
+    text = cir.upper()
+    return bool(re.search(r"\bL\d", text) and re.search(r"\bC\d", text))
+
+
 def default_graph_for(problem: dict[str, Any] | None) -> dict[str, Any] | None:
     problem = problem or {}
-    if str(problem.get("kind") or "") != "voltage_divider":
-        return None
-    return divider_graph(
-        vin=float(problem.get("vin") or 10),
-        r1=float(problem.get("r1") or 1000),
-        r2=float(problem.get("r2") or 1000),
-    )
+    kind = str(problem.get("kind") or problem.get("graph_kind") or "")
+    if kind == "voltage_divider":
+        return divider_graph(
+            vin=float(problem.get("vin") or 10),
+            r1=float(problem.get("r1") or 1000),
+            r2=float(problem.get("r2") or 1000),
+        )
+    if kind == "series_rlc":
+        return series_rlc_graph(
+            vin=float(problem.get("vin") or 10),
+            r_ohm=float(problem.get("r") or problem.get("r_ohm") or 1000),
+            l_h=float(problem.get("l") or problem.get("l_h") or 1e-3),
+            c_f=float(problem.get("c") or problem.get("c_f") or 1e-6),
+        )
+    cir = str(problem.get("cir") or "")
+    if cir and _cir_has_series_rlc(cir):
+        return series_rlc_graph()
+    return None
 
 
 class GraphError(ValueError):
