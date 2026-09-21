@@ -18,5 +18,8 @@ def seed_run_visuals(run_dir: Path, recipe_id: str, problem: dict[str, Any] | No
         if graph is not None:
             write_graph(run_dir, graph)
     diagram = control_diagram_for_recipe(recipe_id, problem)
+    cd_path = run_dir / "control_diagram.json"
     if diagram is not None:
         write_control_diagram(run_dir, diagram)
+    elif cd_path.is_file():
+        cd_path.unlink()
