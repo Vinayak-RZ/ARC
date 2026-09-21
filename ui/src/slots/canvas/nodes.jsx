@@ -47,6 +47,29 @@ function Glyph({ kind }) {
   );
 }
 
+function formatPartValue(kind, value, unit) {
+  if (value == null || kind === "ground") return "";
+  const v = Number(value);
+  if (Number.isNaN(v)) return "";
+  if (kind === "resistor") {
+    if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1)} MΩ`;
+    if (v >= 1000) return `${(v / 1000).toFixed(v % 1000 === 0 ? 0 : 1)} kΩ`;
+    return `${v} Ω`;
+  }
+  if (kind === "capacitor") {
+    if (v <= 1e-6) return `${(v * 1e6).toFixed(1)} µF`;
+    if (v <= 1e-3) return `${(v * 1e3).toFixed(1)} mF`;
+    return `${v} F`;
+  }
+  if (kind === "inductor") {
+    if (v <= 1e-3) return `${(v * 1e3).toFixed(1)} mH`;
+    return `${v} H`;
+  }
+  if (kind === "source_v") return `${v} V`;
+  if (kind === "source_i") return `${v} A`;
+  return unit ? `${v} ${unit}` : String(v);
+}
+
 export function PartNode({ data, selected }) {
   const kind = data?.kind;
   const rot = Number(data?.rot) === 90 ? 90 : 0;
@@ -54,11 +77,13 @@ export function PartNode({ data, selected }) {
   const vertical = rot === 90;
   const n1Pos = vertical ? Position.Top : Position.Left;
   const n2Pos = vertical ? Position.Bottom : Position.Right;
+  const valueLabel = formatPartValue(kind, data?.value, data?.unit);
   return (
     <div className={["part-node", selected ? "is-selected" : "", vertical ? "is-vertical" : ""].filter(Boolean).join(" ")}>
       {twoPort ? <Handle type="source" position={n1Pos} id="n1" /> : <Handle type="source" position={Position.Top} id="n1" />}
       <Glyph kind={kind} />
       <span className="part-ref">{data?.refdes}</span>
+      {valueLabel ? <span className="part-value">{valueLabel}</span> : null}
       {twoPort ? <Handle type="source" position={n2Pos} id="n2" /> : null}
     </div>
   );

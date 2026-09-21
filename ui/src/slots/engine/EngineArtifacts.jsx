@@ -41,16 +41,16 @@ export function EngineArtifacts({ id, recipeId }) {
 
   if (kind === "control") {
     return (
-      <section className="engine-panel" aria-label="Control plots">
-        <h2>Control response</h2>
-        <div className="engine-grid">
+      <section className="engine-panel engine-panel-plots" aria-label="Control plots">
+        <h2>Bode and step response</h2>
+        <div className="engine-grid engine-grid-plots">
           <figure>
-            <img className="plot" src={`/api/runs/${id}/file/bode.png`} alt="Bode plot" width="480" height="320" />
-            <figcaption>Bode magnitude and phase</figcaption>
+            <img className="plot plot-lg" src={`/api/runs/${id}/file/bode.png`} alt="Bode plot" />
+            <figcaption>Magnitude and phase</figcaption>
           </figure>
           <figure>
-            <img className="plot" src={`/api/runs/${id}/file/step.png`} alt="Step response" width="480" height="320" />
-            <figcaption>Step response</figcaption>
+            <img className="plot plot-lg" src={`/api/runs/${id}/file/step.png`} alt="Step response" />
+            <figcaption>Closed-loop step</figcaption>
           </figure>
         </div>
       </section>
@@ -60,7 +60,7 @@ export function EngineArtifacts({ id, recipeId }) {
   if (kind === "protection" && protection) {
     return (
       <section className="engine-panel" aria-label="Protection study">
-        <h2>Protection settings</h2>
+        <h2>Protection study results</h2>
         <table className="data-table">
           <tbody>
             <tr><th>CT ratio</th><td>{Number(protection.ct_ratio).toFixed(1)}</td></tr>
@@ -69,7 +69,6 @@ export function EngineArtifacts({ id, recipeId }) {
             <tr><th>Overcurrent trip</th><td>{protection.overcurrent_trip ? "yes" : "no"}</td></tr>
           </tbody>
         </table>
-        <img className="plot" src={`/api/runs/${id}/artifact.svg`} alt="Protection summary" width="360" height="120" />
       </section>
     );
   }
@@ -89,7 +88,7 @@ export function EngineArtifacts({ id, recipeId }) {
     const buses = (power?.buses || []).filter((row) => row.bus != null);
     return (
       <section className="engine-panel" aria-label="Power study">
-        <h2>Power network study</h2>
+        <h2>Fault study results</h2>
         {fault.fault_type ? (
           <p className="hint">
             Fault <strong>{fault.fault_type}</strong>: |I| = {Number(fault.i_fault_pu || 0).toFixed(4)} pu
@@ -117,15 +116,18 @@ export function EngineArtifacts({ id, recipeId }) {
         ) : (
           <p className="empty">Load-flow table not available for this run.</p>
         )}
-        <img className="plot" src={`/api/runs/${id}/artifact.svg`} alt="Power study summary" width="360" height="140" />
       </section>
     );
   }
 
-  return (
-    <section className="engine-panel" aria-label="SPICE result">
-      <h2>Circuit simulation</h2>
-      <img className="plot" src={`/api/runs/${id}/artifact.svg`} alt="SPICE probe" width="360" height="140" />
-    </section>
-  );
+  if (kind === "circuits") {
+    return (
+      <section className="engine-panel engine-panel-plots" aria-label="SPICE result">
+        <h2>Transient waveform</h2>
+        <img className="plot plot-lg plot-wide" src={`/api/runs/${id}/artifact.svg`} alt="SPICE probe" />
+      </section>
+    );
+  }
+
+  return null;
 }

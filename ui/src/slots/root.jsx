@@ -161,11 +161,11 @@ function Workspace() {
   return (
     <div className="lab">
       {renderSlot("run.result", { id })}
-      <EngineArtifacts id={id} recipeId={recipeId} />
-      <div className="lab-surface">
+      <div className="lab-surface lab-surface-primary">
         {renderSlot("run.canvas", { id })}
         {renderSlot("run.inspector", { id })}
       </div>
+      <EngineArtifacts id={id} recipeId={recipeId} />
       {renderSlot("run.argument", { id })}
       {renderSlot("run.more", { id })}
     </div>
@@ -263,7 +263,7 @@ function More({ id }) {
   const spans = Array.isArray(data.trace_excerpt) ? data.trace_excerpt : [];
   return (
     <div className="disclosures">
-      <details open>
+      <details>
         <summary>Observation</summary>
         <dl className="obs-excerpt">
           <div>
@@ -298,7 +298,7 @@ function More({ id }) {
           <pre className="number-display">{data.observation || ""}</pre>
         </details>
       </details>
-      <details open>
+      <details>
         <summary>Trace</summary>
         {spans.length === 0 ? (
           <p className="empty">No trace.jsonl for this run.</p>

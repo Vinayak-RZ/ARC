@@ -15,7 +15,7 @@ pip install playwright && playwright install chromium
 python scripts/capture_readme_ui_screenshots.py
 ```
 
-Writes `docs/media/ui-*-full.png` from live runs at `http://127.0.0.1:8765`.
+Writes `docs/media/ui-*-full.png` (1280×800 viewport, one run in sidebar) from live runs at `http://127.0.0.1:8765`. Clears `runs/` before each capture.
 
 ## RLC (SPICE)
 
