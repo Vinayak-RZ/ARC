@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""Capture full-page Arc UI screenshots for README (127.0.0.1:8765).
+"""Capture window-sized Arc UI screenshots for README (127.0.0.1:8765).
 
-Requires: ui built (`npm run build` in ui/), engines extra for checked runs, ngspice on PATH.
-Install browser once: `pip install playwright && playwright install chromium`
+Rules: fixed viewport only (no full-page scroll), one run visible in the sidebar.
 """
 
 from __future__ import annotations
@@ -10,17 +9,38 @@ from __future__ import annotations
 import json
 import os
 import re
+import shutil
+import struct
 import subprocess
 import sys
 import time
 from pathlib import Path
 
 _RUN_ID = re.compile(r"^[a-z0-9]{4}-\d{8}T\d{6}Z$")
+VIEWPORT_WIDTH = 1280
+VIEWPORT_HEIGHT = 900
+MAX_PNG_HEIGHT = 1000
 
 ROOT = Path(__file__).resolve().parents[1]
 MEDIA = ROOT / "docs" / "media"
+RUNS = ROOT / "runs"
 PORT = 8765
 HOST = "127.0.0.1"
+
+
+def _png_height(path: Path) -> int:
+    raw = path.read_bytes()
+    if raw[:8] != b"\x89PNG\r\n\x1a\n":
+        raise ValueError(f"not a PNG: {path}")
+    offset = 8
+    while offset < len(raw):
+        length = struct.unpack(">I", raw[offset : offset + 4])[0]
+        chunk = raw[offset + 4 : offset + 8]
+        if chunk == b"IHDR":
+            _, h = struct.unpack(">II", raw[offset + 8 : offset + 16])
+            return int(h)
+        offset += 12 + length
+    raise ValueError("IHDR missing")
 
 
 def _run_recipe(recipe: str, problem: dict) -> str:
@@ -36,6 +56,12 @@ def _run_recipe(recipe: str, problem: dict) -> str:
         if _RUN_ID.match(candidate):
             return candidate
     raise RuntimeError(f"could not parse run_id from:\n{out}")
+
+
+def _clear_runs() -> None:
+    if RUNS.is_dir():
+        shutil.rmtree(RUNS)
+    RUNS.mkdir(parents=True, exist_ok=True)
 
 
 def _free_port() -> None:
@@ -65,10 +91,17 @@ def _wait_server(proc: subprocess.Popen, timeout: float = 30.0) -> None:
 def _capture(page, run_id: str, dest: Path) -> None:
     url = f"http://{HOST}:{PORT}/?run={run_id}"
     page.goto(url, wait_until="networkidle")
-    page.wait_for_selector(".topbar", timeout=20000)
-    page.wait_for_selector(".lab, .empty", timeout=20000)
-    page.wait_for_timeout(1200)
-    page.screenshot(path=str(dest), full_page=True)
+    page.wait_for_selector(".shell", timeout=20000)
+    page.wait_for_selector(".lab-surface, .empty", timeout=20000)
+    page.wait_for_timeout(900)
+    page.screenshot(
+        path=str(dest),
+        full_page=False,
+        clip={"x": 0, "y": 0, "width": VIEWPORT_WIDTH, "height": VIEWPORT_HEIGHT},
+    )
+    height = _png_height(dest)
+    if height > MAX_PNG_HEIGHT:
+        raise RuntimeError(f"{dest.name} height {height}px exceeds {MAX_PNG_HEIGHT}px cap")
 
 
 def main() -> int:
@@ -99,14 +132,13 @@ def main() -> int:
                 "simulate-circuit",
                 {
                     "kind": "series_rlc",
+                    "vin": 10,
+                    "r_ohm": 1000,
+                    "l_h": 1e-3,
+                    "c_f": 1e-6,
                     "cir": "* series RLC\nV1 1 0 DC 10\nR1 1 2 1k\nL1 2 3 1m\nC1 3 0 1u\n.tran 1m 10m\n.end\n",
                 },
                 "ui-rlc-full.png",
-            ),
-            (
-                "solve-control-problem",
-                {"tf": "1/(s+1)"},
-                "ui-control-bode-full.png",
             ),
             (
                 "control-diagram-to-model",
@@ -114,7 +146,7 @@ def main() -> int:
                     "blocks": [{"id": "G", "tf": "10/(s+1)"}, {"id": "H", "tf": "1"}],
                     "unity_feedback": {"forward": "G", "feedback": "H", "negative": True},
                 },
-                "ui-block-diagram-full.png",
+                "ui-control-bode-full.png",
             ),
             (
                 "simulate-power-fault",
@@ -131,20 +163,27 @@ def main() -> int:
                 },
                 "ui-protection-full.png",
             ),
+            (
+                "solve-drives-problem",
+                {"kind": "dc", "v_dc": 120, "ra_ohm": 1, "k_torque": 0.5, "t_load_nm": 5},
+                "ui-drives-full.png",
+            ),
         ]
         with sync_playwright() as p:
             browser = p.chromium.launch()
-            page = browser.new_page(viewport={"width": 1280, "height": 900})
+            page = browser.new_page(viewport={"width": VIEWPORT_WIDTH, "height": VIEWPORT_HEIGHT})
             for recipe, problem, name in shots:
+                _clear_runs()
                 run_id = _run_recipe(recipe, problem)
                 dest = MEDIA / name
-                print(f"capture {name} run={run_id}")
+                print(f"capture {name} run={run_id} viewport={VIEWPORT_WIDTH}x{VIEWPORT_HEIGHT}")
                 _capture(page, run_id, dest)
+                print(f"  -> {dest.name} height={_png_height(dest)}px")
             browser.close()
     finally:
         server.terminate()
         server.wait(timeout=10)
-    print(f"Wrote PNGs under {MEDIA}")
+    print(f"Wrote PNGs under {MEDIA} (all heights <= {MAX_PNG_HEIGHT}px)")
     return 0
 
 

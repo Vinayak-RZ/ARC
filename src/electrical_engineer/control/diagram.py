@@ -60,9 +60,24 @@ def control_diagram_from_problem(problem: dict[str, Any] | None) -> dict[str, An
 
 
 def control_diagram_for_recipe(recipe_id: str, problem: dict[str, Any] | None) -> dict[str, Any] | None:
-    if recipe_id != "control-diagram-to-model":
-        return None
-    return control_diagram_from_problem(problem)
+    from electrical_engineer.control.study_diagrams import (
+        control_diagram_from_tf_problem,
+        drives_oneline_diagram,
+        power_oneline_diagram,
+        protection_oneline_diagram,
+    )
+
+    if recipe_id == "control-diagram-to-model":
+        return control_diagram_from_problem(problem)
+    if recipe_id == "solve-control-problem":
+        return control_diagram_from_tf_problem(problem)
+    if recipe_id == "simulate-power-fault":
+        return power_oneline_diagram(problem)
+    if recipe_id == "study-protection-setting":
+        return protection_oneline_diagram(problem)
+    if recipe_id == "solve-drives-problem":
+        return drives_oneline_diagram(problem)
+    return None
 
 
 def write_control_diagram(run_dir: Path, diagram: dict[str, Any]) -> None:

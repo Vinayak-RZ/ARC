@@ -20,22 +20,22 @@ def series_rlc_graph(
     l_h: float = 1e-3,
     c_f: float = 1e-6,
 ) -> dict[str, Any]:
-    """Series R-L-C with DC source (schematic seed for simulate-circuit UI)."""
+    """Series R-L-C with DC source (orthogonal lab schematic seed)."""
     return {
         "schema": SCHEMA,
         "nodes": [
-            {"id": "vin", "type": "source_v", "refdes": "Vin", "value": vin, "unit": "V", "x": 60, "y": 120},
-            {"id": "r1", "type": "resistor", "refdes": "R1", "value": r_ohm, "unit": "ohm", "x": 180, "y": 120},
-            {"id": "l1", "type": "inductor", "refdes": "L1", "value": l_h, "unit": "H", "x": 300, "y": 120},
-            {"id": "c1", "type": "capacitor", "refdes": "C1", "value": c_f, "unit": "F", "x": 420, "y": 120},
-            {"id": "gnd", "type": "ground", "refdes": "Gnd", "value": 0, "unit": "", "x": 540, "y": 200},
+            {"id": "vin", "type": "source_v", "refdes": "V", "value": vin, "unit": "V", "x": 64, "y": 112},
+            {"id": "r1", "type": "resistor", "refdes": "R", "value": r_ohm, "unit": "ohm", "x": 224, "y": 112},
+            {"id": "l1", "type": "inductor", "refdes": "L", "value": l_h, "unit": "H", "x": 384, "y": 112},
+            {"id": "c1", "type": "capacitor", "refdes": "C", "value": c_f, "unit": "F", "x": 544, "y": 112},
+            {"id": "gnd", "type": "ground", "refdes": "GND", "value": 0, "unit": "", "x": 64, "y": 288},
         ],
         "edges": [
             {"id": "e1", "from": "vin.n1", "to": "r1.n1"},
             {"id": "e2", "from": "r1.n2", "to": "l1.n1"},
             {"id": "e3", "from": "l1.n2", "to": "c1.n1"},
-            {"id": "e4", "from": "c1.n2", "to": "gnd.n1"},
-            {"id": "e5", "from": "vin.n2", "to": "gnd.n1"},
+            {"id": "e4", "from": "vin.n2", "to": "gnd.n1"},
+            {"id": "e5", "from": "c1.n2", "to": "gnd.n1"},
         ],
     }
 

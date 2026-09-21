@@ -35,6 +35,17 @@ function BlockNode({ data }) {
   );
 }
 
+function EquipNode({ data }) {
+  return (
+    <div className="control-equip">
+      <Handle type="target" position={Position.Left} id="in" />
+      <Handle type="source" position={Position.Right} id="out" />
+      <span className="control-block-label">{data?.label || ""}</span>
+      <span className="control-block-tf">{data?.tf || ""}</span>
+    </div>
+  );
+}
+
 function TapNode({ data }) {
   return (
     <div className="control-tap">
@@ -57,6 +68,7 @@ function RefNode() {
 const nodeTypes = {
   sum: SumNode,
   block: BlockNode,
+  equip: EquipNode,
   tap: TapNode,
   ref: RefNode,
 };
@@ -74,7 +86,14 @@ function toFlow(diagram) {
   const rawEdges = diagram?.edges || [];
   const ids = new Set(rawNodes.map((n) => n.id));
   for (const n of rawNodes) {
-    const type = n.type === "sum" ? "sum" : n.type === "block" ? "block" : "tap";
+    const type =
+      n.type === "sum"
+        ? "sum"
+        : n.type === "block"
+          ? "block"
+          : n.type === "equip"
+            ? "equip"
+            : "tap";
     nodes.push({
       id: n.id,
       type,

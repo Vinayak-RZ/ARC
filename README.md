@@ -51,44 +51,34 @@ Plain-language walkthrough (what Arc adds, why numbers stay deterministic, how A
 
 ## Try these prompts
 
-Open this repo in a coding assistant **after** install and `electrical-engineer hosts install --into <homework>`. Paste a full job brief (not a one-liner). Load [`skills/SKILL.md`](skills/SKILL.md) and [`docs/hosts/README.md`](docs/hosts/README.md). Name the recipe or pack skill when you know it.
+Paste into Cursor or Claude after you clone Arc and install. Each block is a real homework ask (2–3 lines). Open the local UI at `127.0.0.1:8765` to see schematics, diagrams, and plots for each run.
 
 ```text
-We need a checked transient for a series RLC: 10 V DC, R = 1 kΩ, L = 1 mH, C = 1 µF.
-Use recipe simulate-circuit with a SPICE netlist in problem.json, run the eval path if
-you touch gold, and open the localhost UI so I can see the schematic on the canvas plus
-the probe plot. If ngspice is missing, stop and label unchecked; do not guess V(t).
+Series RLC: 10 V step, R = 1 kΩ, L = 1 mH, C = 1 µF.
+Plot capacitor voltage for the first 10 ms and explain the overdamped/underdamped case.
 ```
 
 ```text
-Classical control homework: plant G(s) = 1/(s+1), unity negative feedback, H = 1.
-Run solve-control-problem for Bode and step plots, save the run, and summarize gain
-margin in the argument band only from python-control outputs. Use skills/control if
-the host supports it.
+Control tutorial: G(s) = 10/(s+1) in unity negative feedback with H = 1.
+I need Bode plots and the step response, plus phase margin in plain words.
 ```
 
 ```text
-The assignment gives a block diagram photo, but I also have the JSON spec: forward block
-G = 10/(s+1), feedback H = 1, unity negative feedback. Run control-diagram-to-model,
-show the closed-loop diagram on the UI canvas and the Bode plot in the same window.
-Do not simulate until any photo confirm gate is satisfied.
+Compensator design: plant 10/(s+1), unity feedback, sketch the loop you used.
+Compare open-loop vs closed-loop bandwidth before I submit the lab report.
 ```
 
 ```text
-Power systems drill: LG fault on the default sequence network with z1 = z2 = 0.1 pu and
-z0 = 0.3 pu. Recipe simulate-power-fault, report |I_fault| in pu from pandapower, and
-paste the bus table excerpt into the run argument. If pandapower is absent, label
-unchecked and cite docs/CANNOT_DO.md.
+Power systems assignment: LG fault on a 3-bus equivalent, Z1 = Z2 = 0.1 pu, Z0 = 0.3 pu.
+Find fault current in pu and show bus voltages after the fault.
 ```
 
 ```text
-This question is outside the named recipes (layout EM, device physics, or a handwritten
-photo I have not confirmed). Still help me study, but label every numeric claim you did
-not verify through Arc as unchecked in the saved run. Use unmatched-cosolver and retrieve
-only when you can cite a book passage.
+DC machine lab: 120 V armature, Ra = 1 Ω, torque constant 0.5 N·m/A, load 5 N·m.
+What steady-state speed should I expect? Include the back-emf relation in the write-up.
 ```
 
-Host adapters: [`docs/hosts/README.md`](docs/hosts/README.md). **12 EE specialists** live in [`hosts/agents/`](hosts/agents/INDEX.md); the **host** spawns at most two after `hosts install`. Do not add MATLAB MCP or Simulink Agentic Toolkit on the host; Arc mediates both.
+Host adapters: [`docs/hosts/README.md`](docs/hosts/README.md). **12 EE specialists** in [`hosts/agents/`](hosts/agents/INDEX.md) for large worksheets (host spawns at most two).
 
 ## Quick start
 
@@ -158,11 +148,11 @@ pip install -e ".[engines,dev]"
 
 Boot details: [`docs/planning/R1_BOOT_SHIP.md`](docs/planning/R1_BOOT_SHIP.md).
 
-### Domain screenshots (full localhost UI)
+### Domain screenshots (localhost UI window)
 
-Each PNG is a **full browser page** of the Arc workspace at `127.0.0.1:8765` after a real recipe run (schematic or block diagram on canvas, plots in the run panel).
+Fixed **1280×900** viewport captures of the Arc shell at `127.0.0.1:8765` (one run in the sidebar, diagram on canvas, plots below). Not full-page scroll shots.
 
-Regenerate (build UI, engines + ngspice recommended):
+Regenerate:
 
 ```bash
 pip install playwright
@@ -173,13 +163,11 @@ python scripts/capture_readme_ui_screenshots.py
 
 | Domain | Screenshot |
 |--------|------------|
-| Circuits (series RLC schematic + SPICE) | ![RLC UI](docs/media/ui-rlc-full.png) |
-| Control (Bode + step in UI) | ![Control Bode UI](docs/media/ui-control-bode-full.png) |
-| Control (closed-loop block diagram on canvas) | ![Block diagram UI](docs/media/ui-block-diagram-full.png) |
-| Power (LG fault study) | ![Power fault UI](docs/media/ui-power-fault-full.png) |
-| Protection (overcurrent study) | ![Protection UI](docs/media/ui-protection-full.png) |
-
-Plot-only crops from earlier passes live under `docs/media/` for docs planning; the README table above is the product-facing set.
+| Circuits (series RLC + transient) | ![RLC UI](docs/media/ui-rlc-full.png) |
+| Control (loop diagram + Bode/step) | ![Control UI](docs/media/ui-control-bode-full.png) |
+| Power (one-line + fault table) | ![Power fault UI](docs/media/ui-power-fault-full.png) |
+| Protection (CT/relay one-line + settings) | ![Protection UI](docs/media/ui-protection-full.png) |
+| Drives (DC steady-state) | ![Drives UI](docs/media/ui-drives-full.png) |
 
 ## How it works
 

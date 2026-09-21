@@ -1,5 +1,13 @@
 from electrical_engineer.circuit.graph import default_graph_for, series_rlc_graph
-from electrical_engineer.control.diagram import SCHEMA, control_diagram_from_problem
+from electrical_engineer.control.diagram import (
+    SCHEMA,
+    control_diagram_for_recipe,
+    control_diagram_from_problem,
+)
+from electrical_engineer.control.study_diagrams import (
+    power_oneline_diagram,
+    protection_oneline_diagram,
+)
 
 
 def test_series_rlc_graph_seed() -> None:
@@ -28,3 +36,15 @@ def test_unity_feedback_diagram() -> None:
     assert d["schema"] == SCHEMA
     assert any(n["id"] == "sum" for n in d["nodes"])
     assert any(n["type"] == "block" and n["id"] == "G" for n in d["nodes"])
+
+
+def test_power_and_protection_diagrams() -> None:
+    p = power_oneline_diagram({"fault_type": "LG"})
+    assert any(n["type"] == "equip" and "fault" in n["id"] for n in p["nodes"])
+    prot = protection_oneline_diagram({})
+    assert any(n["label"] == "CT" for n in prot["nodes"])
+
+
+def test_solve_control_seeds_diagram() -> None:
+    d = control_diagram_for_recipe("solve-control-problem", {"tf": "1/(s+1)"})
+    assert d is not None

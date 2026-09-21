@@ -106,11 +106,14 @@ body { margin: 0; background: var(--ee-color-canvas); }
 .lab-surface {
   display: flex;
   gap: var(--ee-space-m);
-  min-height: 480px;
+  min-height: 420px;
   border: 1px solid var(--ee-color-hairline);
   border-radius: 12px;
   background: var(--ee-color-canvas);
   padding: var(--ee-space-m);
+}
+.lab-surface-primary {
+  min-height: 460px;
 }
 .canvas-lab {
   display: grid;
@@ -160,7 +163,12 @@ body { margin: 0; background: var(--ee-color-canvas); }
   outline: 2px solid var(--ee-color-primary);
   outline-offset: 2px;
 }
-.flow-wrap .react-flow { height: 420px; width: 100%; }
+.flow-wrap .react-flow { height: 340px; width: 100%; }
+.part-value {
+  font-size: 11px;
+  color: var(--ee-color-muted);
+  font-variant-numeric: tabular-nums;
+}
 .canvas-lab.control-only {
   display: block;
   grid-template-columns: unset;
@@ -203,6 +211,12 @@ body { margin: 0; background: var(--ee-color-canvas); }
 .control-ref {
   border-style: dashed;
   min-width: 40px;
+}
+.control-equip {
+  min-width: 96px;
+  border-radius: 4px;
+  border: 2px solid var(--ee-color-ink);
+  background: var(--ee-color-canvas);
 }
 .react-flow__edge-path,
 .react-flow__connection-path {
@@ -492,6 +506,24 @@ a { color: var(--ee-color-primary); }
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--ee-space-m);
+}
+.engine-grid-plots {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.engine-panel-plots .plot-lg {
+  max-width: none;
+  width: 100%;
+  min-height: 220px;
+  max-height: 280px;
+  object-fit: contain;
+}
+.engine-panel-plots {
+  margin-top: 0;
+  padding: var(--ee-space-s);
+}
+.engine-panel-plots .plot-wide {
+  max-width: 720px;
+  min-height: 200px;
 }
 .engine-grid figure { margin: 0; }
 .engine-grid figcaption {
