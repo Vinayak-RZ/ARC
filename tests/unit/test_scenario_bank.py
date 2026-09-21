@@ -10,7 +10,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts" / "kernel_harden"))
 
-from annotate_scenarios import BANK, check, expectation
+from annotate_scenarios import BANK, check, expectation, missing_providers
 from trial_driver import grade
 
 from electrical_engineer.runner.execute import _UNCHECKED_REASONS
@@ -39,11 +39,18 @@ def test_expected_reasons_stay_inside_the_enum() -> None:
         ("simulate-after-confirm", {"cir": "* x\n"}, "gate-closed"),
         ("photo-to-netlist", {"prompt": "x"}, "gate-closed"),
         ("explain-signals", {"prompt": "x"}, "labeled"),
-        ("simulate-circuit", {"cir": "* x\n"}, "no-provider"),
     ],
 )
 def test_expectation_table(recipe_id: str, problem: dict, reason: str) -> None:
     assert expectation(recipe_id, problem)["reason"] == reason
+
+
+def test_simulate_circuit_expectation_when_spice_present() -> None:
+    exp = expectation("simulate-circuit", {"cir": "* x\n"})
+    if missing_providers("simulate-circuit"):
+        assert exp["reason"] == "no-provider"
+    else:
+        assert exp["reason"] == "labeled"
 
 
 def test_grade_rejects_a_wrong_reason() -> None:

@@ -4,6 +4,7 @@ import { useLayout } from "../store.js";
 import { Canvas } from "./canvas/Canvas.jsx";
 import { Inspector } from "./canvas/Inspector.jsx";
 import { Library } from "./library.jsx";
+import { EngineArtifacts } from "./engine/EngineArtifacts.jsx";
 
 function Root() {
   return (
@@ -149,9 +150,18 @@ function Workspace() {
   if (!id) {
     return <p className="empty">No run selected. Open one from the list, or type electrical-engineer run simulate-circuit.</p>;
   }
+  const { data } = useRun(id);
+  let recipeId = "";
+  try {
+    const evid = JSON.parse(data?.summary || "{}");
+    recipeId = evid.recipe_id || "";
+  } catch {
+    recipeId = "";
+  }
   return (
     <div className="lab">
       {renderSlot("run.result", { id })}
+      <EngineArtifacts id={id} recipeId={recipeId} />
       <div className="lab-surface">
         {renderSlot("run.canvas", { id })}
         {renderSlot("run.inspector", { id })}

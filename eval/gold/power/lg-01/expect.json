@@ -1,0 +1,5 @@
+{
+  "recipe_id": "simulate-power-fault",
+  "unchecked": false,
+  "value": 6.0
+}

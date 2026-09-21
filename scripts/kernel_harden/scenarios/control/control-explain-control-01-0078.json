@@ -12,9 +12,7 @@
   "notes": "auto scenario 78",
   "expect": {
     "unchecked": true,
-    "reason": "no-provider",
-    "requires": [
-      "run-python-control"
-    ]
+    "reason": "labeled",
+    "requires": []
   }
 }

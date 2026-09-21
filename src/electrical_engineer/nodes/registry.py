@@ -22,16 +22,44 @@ def register(name: str) -> Callable[[Activity], Activity]:
     return wrap
 
 
+def _nested_payloads(node: dict[str, Any]) -> list[Any]:
+    inner = node.get("inputs")
+    if isinstance(inner, dict):
+        return list(inner.values())
+    return []
+
+
 def _walk_checked(inputs: Mapping[str, Any]) -> bool:
-    """True when a direct child node verified a number. Do not recurse into echoed inputs."""
-    for v in inputs.values():
+    """True when an upstream verifier (including through explain nodes) produced a checked value."""
+    frontier = list(inputs.values())
+    steps = 0
+    while frontier and steps < 64:
+        steps += 1
+        v = frontier.pop()
         if not isinstance(v, dict):
             continue
-        if v.get("unchecked"):
-            continue
-        if v.get("ok") is True or (v.get("unchecked") is False and v.get("value") is not None):
+        if v.get("ok") is True and (v.get("value") is not None or v.get("tool")):
             return True
+        if v.get("unchecked") is False and v.get("value") is not None:
+            return True
+        frontier.extend(_nested_payloads(v))
     return False
+
+
+def _first_checked_value(inputs: Mapping[str, Any]) -> Any:
+    frontier = list(inputs.values())
+    steps = 0
+    while frontier and steps < 64:
+        steps += 1
+        v = frontier.pop()
+        if not isinstance(v, dict):
+            continue
+        if v.get("ok") is True and v.get("value") is not None:
+            return v.get("value")
+        if v.get("unchecked") is False and v.get("value") is not None:
+            return v.get("value")
+        frontier.extend(_nested_payloads(v))
+    return None
 
 
 @register("label-unchecked")
@@ -42,10 +70,7 @@ def label_unchecked(_spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, 
     if _spec.get("capability"):
         extra["capability"] = _spec["capability"]
     if _walk_checked(inputs):
-        value = None
-        for v in inputs.values():
-            if isinstance(v, dict) and v.get("value") is not None:
-                value = v.get("value")
+        value = _first_checked_value(inputs)
         return {"unchecked": False, "token": None, "value": value, "inputs": inputs, **extra}
     return {"unchecked": True, "token": UNCHECKED, "inputs": inputs, **extra}
 
@@ -53,16 +78,19 @@ def label_unchecked(_spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, 
 @register("write-run-summary")
 def write_run_summary(_spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
     checked = _walk_checked(inputs)
-    value = None
+    value = _first_checked_value(inputs) if checked else None
     paths: list[str] = []
     citations: list[Any] = []
-    for v in inputs.values():
+    frontier = list(inputs.values())
+    steps = 0
+    while frontier and steps < 64:
+        steps += 1
+        v = frontier.pop()
         if not isinstance(v, dict):
             continue
-        if v.get("value") is not None:
-            value = v.get("value")
         paths.extend(v.get("paths") or [])
         citations.extend(v.get("citations") or [])
+        frontier.extend(_nested_payloads(v))
     out = {
         "recipe_id": _spec.get("recipe_id", ""),
         "unchecked": not checked,

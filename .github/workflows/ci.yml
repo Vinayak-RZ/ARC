@@ -9,6 +9,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v4
-      - run: uv sync --extra dev
+      - name: Install ngspice (optional engine backend for CI tests)
+        run: sudo apt-get update && sudo apt-get install -y ngspice
+      - run: uv sync --extra dev --extra engines
       - run: uv run ruff check .
       - run: uv run pytest -q

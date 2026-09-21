@@ -1,13 +1,13 @@
 id: control-diagram-to-model
 nodes:
-  detect:
-    activity: detect-components
-  draft:
-    activity: draft-netlist
-    needs: [detect]
-  confirm:
-    activity: confirm-topology
-    needs: [draft]
+  compose:
+    activity: compose-control-blocks
+  ctrl:
+    activity: run-python-control
+    needs: [compose]
+  label:
+    activity: label-unchecked
+    needs: [ctrl]
   summary:
     activity: write-run-summary
-    needs: [confirm]
+    needs: [label]

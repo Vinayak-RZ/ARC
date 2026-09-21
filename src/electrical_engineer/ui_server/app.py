@@ -186,6 +186,20 @@ def create_app(root: Path | None = None) -> FastAPI:
         body = path.read_bytes() if path.is_file() else _PNG
         return Response(body, media_type="image/png")
 
+    @app.get("/api/runs/{run_id}/file/{name}")
+    def run_file(run_id: str, name: str) -> Response:
+        safe = Path(name).name
+        path = runs / run_id / safe
+        if not path.is_file():
+            return JSONResponse({"error": "missing"}, status_code=404)
+        if safe.endswith(".json"):
+            return Response(path.read_text(encoding="utf-8"), media_type="application/json")
+        if safe.endswith(".png"):
+            return Response(path.read_bytes(), media_type="image/png")
+        if safe.endswith(".svg"):
+            return Response(path.read_text(encoding="utf-8"), media_type="image/svg+xml")
+        return FileResponse(path)
+
     @app.put("/api/runs/{run_id}/graph", response_model=None)
     async def put_graph(run_id: str, request: Request):
         from electrical_engineer.circuit.graph import GraphError, write_graph

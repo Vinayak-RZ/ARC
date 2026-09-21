@@ -46,6 +46,10 @@ PROVIDERS = frozenset(
         "confirm-topology",
         "run-recipe",
         "load-netlist",
+        "compose-control-blocks",
+        "run-digital-control",
+        "run-protection-study",
+        "run-drives-study",
     }
 )
 

@@ -12,7 +12,13 @@ faults, protection as coursework (relay settings on paper), not EMS dispatch
    small enough to do by hand.
 3. `power-network-study` only with a **network artifact** (case file / typed
    bus list). Unmatched text is not a pandapower case.
-4. Missing provider → `unchecked`, never a fluent “converged” voltage.
+4. Named fault study: `simulate-power-fault` with `problem.json` fields
+   `fault_type` (`LG`, `LL`, `LLG`, `3PH`), `z1_pu`, `z2_pu`, `z0_pu`.
+   Sequence-network currents are checked; pandapower load flow runs when installed.
+5. Study-level protection (no EMS): `study-protection-setting` with CT ratio,
+   relay pickup (secondary A), fault current; optional `zone_reach_ohm` +
+   `v_line_kv` for simple distance zone check.
+6. Missing provider → `unchecked`, never a fluent “converged” voltage.
 
 ## Genres
 

@@ -99,6 +99,40 @@ Maintainers compiling UG method notes (not the RAG index): [`knowledge/README.md
 
 The workspace is `electrical-engineer ui` on **127.0.0.1:8765** only.
 
+### Optional simulation engines
+
+```bash
+# Linux: ngspice system binary + Python extras
+sudo apt-get install -y ngspice libngspice0
+uv sync --extra engines --extra dev
+```
+
+| Domain | Recipe | Engine |
+|--------|--------|--------|
+| RLC / netlist | `simulate-circuit` | ngspice + PySpice |
+| Bode / step | `solve-control-problem` | `control` (python-control) |
+| Block diagram → plant | `control-diagram-to-model` | compose blocks + `control` |
+| Digital z-domain | `solve-digital-control-problem` | discrete TF / ZOH sample |
+| Fault / load flow | `simulate-power-fault` | pandapower + sequence networks |
+| Protection (study) | `study-protection-setting` | CT, pickup, distance zone math |
+| Drives (UG intro) | `solve-drives-problem` | OSS DC / IM slip steady-state |
+
+Boot details: [`docs/planning/R1_BOOT_SHIP.md`](docs/planning/R1_BOOT_SHIP.md).
+
+### Domain screenshots (verified runs)
+
+PNG artifacts below are copied from engine outputs (`runs/<id>/…`) after the recipes in the table above. Regenerate with the commands in [`docs/planning/R1_BOOT_SHIP.md`](docs/planning/R1_BOOT_SHIP.md).
+
+| Domain | Screenshot |
+|--------|------------|
+| Circuits — RC transient (SPICE) | ![RLC transient](docs/media/rlc-spice.png) |
+| Control — block diagram Bode | ![Block Bode](docs/media/control-block-bode.png) |
+| Control — block diagram step | ![Block step](docs/media/control-block-step.png) |
+| Power — LG fault current | ![Fault](docs/media/power-fault.png) |
+| Protection — overcurrent trip | ![Protection](docs/media/protection-oc.png) |
+| Drives — DC steady-state speed | ![Drives](docs/media/drives-dc-speed.png) |
+| Digital — z-plane poles | ![Digital poles](docs/media/digital-poles.png) |
+
 ## How it works
 
 ```mermaid

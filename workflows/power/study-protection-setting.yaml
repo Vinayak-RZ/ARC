@@ -1,0 +1,10 @@
+id: study-protection-setting
+nodes:
+  prot:
+    activity: run-protection-study
+  label:
+    activity: label-unchecked
+    needs: [prot]
+  summary:
+    activity: write-run-summary
+    needs: [label]

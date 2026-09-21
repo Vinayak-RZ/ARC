@@ -1,27 +1,29 @@
-# Gate 0 — D19/D20 graph-of-loops
+# Gate 0 — graph-of-loops ship (W1–W7)
 
-**Status:** Closed 2026-09-13. Do not re-ask on resume.
+**Status:** Closed 2026-09-21. Do not re-ask on resume.
 
 Skill: `.cursor/skills/graph-of-loops/QUESTIONS.md`. XOR: `graph-engineering` not loaded.
 
 ## Research (5–10 lines)
 
-Checkout started behind `origin/main`; fast-forwarded to `c1736b6` (Arc public name; CLI still `electrical-engineer`). H1 graph is complete: CLI, YAML runner, FastAPI+Vite UI, MCP `list_workflows`+`run_workflow`, pack YAML, eval, boot, trials. Proposed D19/D20 is docs + pack skills. Gaps: no capability→provider bind in the runner; FR9 `_solve_value` can mint checked ohms; one-band `summary.json`; RAG add is inventory-only (`CD-RAG-PARSE`); CLI omitted-id exits usage. Vendored `.cursor/` pin `280dbc5`; coding-config `1b303c3` adds `graph-of-loops`. Public name **Arc** locked 2026-09-13.
+Arc H1 kernel is complete (CLI, YAML runner, localhost UI, MCP, eval). Simulation providers `run-spice`, `run-python-control`, and `run-load-flow` exist as seams but return placeholder/missing results without optional engines. Ship graph wires real ngspice/PySpice RLC, python-control Bode/step plots, and pandapower/sequence fault study, then dedicated control/power UI, fault gold, polish, QA, IITR gap fill, and README domain screenshots last.
 
-## Locked (cited, not re-asked)
+## Locked answers (owner 2026-09-21)
 
-- User / job / non-goals: `docs/PID.md` §2–§8, `docs/PRD.md` §1–§3 / §11
-- Identity vs freeze: `docs/ARCHITECTURE.md` §0
-- Trust / local-only: PID §7; ADR-0001/0006/0008
-- Surfaces: CLI + `127.0.0.1` UI; hosts Cursor / Claude Code / Codex / ChatGPT **desktop**; web out
+| Topic | Answer |
+|-------|--------|
+| **User** | UG EE student (IITR-like Y1–Y3) |
+| **Job** | Solve/verify coursework with checked numbers + real sims |
+| **Done when** | Live RLC sim + control Bode/step + power fault demo (UI/CLI); 4–5 domain screenshots in `docs/media/` + README; IITR Y1–Y3 gaps filled or documented with hard blocker |
+| **Out of scope** | PG-only EE; live MATLAB/Simulink licence requirement; ChatGPT desktop pack spawn; KiCad/full CAD; PyPI + marketing site |
+| **Constraints** | Extend this repo; inherit stack; truth in git + local run artifacts; no multi-tenant auth; CLI + localhost UI; local only |
+| **Engines** | ngspice/PySpice RLC; python-control Bode/step; pandapower and/or sequence-network OSS for faults |
+| **Budget** | 2–3h wall clock; coalesce commits; **PRIORITY=QUALITY** |
 
-## Owner answers (2026-09-13)
+## Wave order (mandatory)
 
-1. **P0 this graph:** full Proposed public promise — every curriculum pack has a complete co-solver **path** (not gold depth); host ACI 5–7 verbs including `propose_composition`; two-band UI; eval layout; C4 photo stub kept; RAG ingest facade; ChatGPT desktop contract
-2. **Later:** HTTP MCP, BYOK, C5 simulate-after-confirm, large gold bank, PyPI
-3. **Source:** revamp `src/` as needed if identity holds
-4. **Commit budget:** no cap — coalesce to P0 (~44 conventional commits)
+W1 Real engines → W2 Control+power UI → W3 Fault coverage → W4 UI polish → W5 QA → W6 IITR gaps → W7 README shots (after W6).
 
 ## Open spikes
 
-None blocking compile. MATLAB remains optional. DESIGN-coinbase stays the visual system (`impeccable teach` forbidden).
+None blocking execution. ngspice system binary required alongside PySpice on Linux CI may be optional-extra only.

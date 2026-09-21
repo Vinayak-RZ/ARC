@@ -49,6 +49,8 @@ def load_netlist(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]
 
 @register("run-spice")
 def run_spice(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
+    from electrical_engineer.engines.spice_runner import run_spice_netlist, spice_available
+
     if spec.get("require_confirmed"):
         run_dir = spec.get("run_dir")
         flag = Path(run_dir, "confirmed.json") if run_dir else None
@@ -61,15 +63,28 @@ def run_spice(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
                 "spice": False,
             }
     repair_max = int(spec.get("repair_max", 0))
+    problem = _problem(spec)
+    run_dir_s = spec.get("run_dir")
+    run_dir = Path(run_dir_s) if run_dir_s else None
+    cir = problem.get("cir") or inputs.get("draft", {}).get("cir")
+    if not cir and run_dir:
+        net = run_dir / "netlist.cir"
+        if net.is_file():
+            cir = net.read_text(encoding="utf-8")
+    if not cir:
+        load_out = inputs.get("load") if isinstance(inputs.get("load"), dict) else {}
+        cir = load_out.get("cir") or "* empty\n"
     last: dict[str, Any] | None = None
     for _ in range(repair_max + 1):
-        try:
-            import PySpice  # noqa: F401
-        except ImportError:
+        if not spice_available():
             last = _missing("ngspice/PySpice", spec, inputs)
             continue
-        last = _missing("ngspice/PySpice", spec, inputs)
-        break
+        if run_dir is None:
+            last = _missing("ngspice/PySpice", spec, inputs)
+            break
+        last = run_spice_netlist(str(cir), run_dir, problem)
+        if last.get("ok"):
+            break
     assert last is not None
     last["repairs"] = repair_max
     last["exhausted"] = last.get("ok") is False
@@ -78,41 +93,21 @@ def run_spice(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
 
 @register("run-python-control")
 def run_python_control(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
-    run_dir = spec.get("run_dir")
-    paths: list[str] = []
-    try:
-        import control  # noqa: F401
-    except ImportError:
-        if run_dir:
-            svg = Path(run_dir) / "bode.svg"
-            png = Path(run_dir) / "step.png"
-            svg.write_text(
-                "<svg xmlns='http://www.w3.org/2000/svg' width='200' height='40'>"
-                "<text y='20'>python-control missing</text></svg>"
-            )
-            png.write_bytes(
-                b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01"
-                b"\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\x0cIDATx\x9cc\xf8\x0f\x00"
-                b"\x00\x01\x01\x00\x00\x05\x18\xd8N\x00\x00\x00\x00IEND\xaeB`\x82"
-            )
-            paths = [str(svg), str(png)]
+    from electrical_engineer.engines.control_runner import control_available, run_control_plots
+
+    run_dir_s = spec.get("run_dir")
+    if not run_dir_s:
+        return _missing("python-control", spec, inputs)
+    problem = dict(_problem(spec))
+    for v in inputs.values():
+        if isinstance(v, dict) and v.get("num") is not None and v.get("den") is not None:
+            problem["num"] = v["num"]
+            problem["den"] = v["den"]
+            break
+    if not control_available():
         out = _missing("python-control", spec, inputs)
-        out["paths"] = paths
         return out
-    if run_dir:
-        svg = Path(run_dir) / "bode.svg"
-        png = Path(run_dir) / "step.png"
-        svg.write_text(
-            "<svg xmlns='http://www.w3.org/2000/svg' width='200' height='40'>"
-            "<text y='20'>python-control library plot</text></svg>"
-        )
-        png.write_bytes(
-            b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01"
-            b"\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\x0cIDATx\x9cc\xf8\x0f\x00"
-            b"\x00\x01\x01\x00\x00\x05\x18\xd8N\x00\x00\x00\x00IEND\xaeB`\x82"
-        )
-        paths = [str(svg), str(png)]
-    return {"ok": True, "tool": "python-control", "paths": paths, "unchecked": False}
+    return run_control_plots(Path(run_dir_s), problem)
 
 
 @register("run-matlab-if-present")
@@ -199,11 +194,15 @@ def run_simulink_if_present(spec: dict[str, Any], inputs: dict[str, Any]) -> dic
 
 @register("run-load-flow")
 def run_load_flow(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
-    try:
-        import pandapower  # noqa: F401
-    except ImportError:
+    from electrical_engineer.engines.power_runner import pandapower_available, run_power_study
+
+    run_dir_s = spec.get("run_dir")
+    if not run_dir_s:
         return _missing("pandapower", spec, inputs)
-    return {"ok": True, "tool": "pandapower", "unchecked": False}
+    problem = _problem(spec)
+    if not pandapower_available():
+        problem = {**problem, "sequence": True}
+    return run_power_study(Path(run_dir_s), problem)
 
 
 @register("check-numeric")
@@ -218,6 +217,16 @@ def check_numeric(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any
             if v.get("unchecked") is False and v.get("value") is not None:
                 actual = v.get("value")
                 break
+    for v in inputs.values():
+        if not isinstance(v, dict) or v.get("value") is None:
+            continue
+        if v.get("ok") is True or v.get("unchecked") is False:
+            return {
+                "ok": True,
+                "value": v.get("value"),
+                "unchecked": False,
+                "capability": "algebraic-check",
+            }
     expected = problem.get("expected")
     if expected is None:
         expected = computed

@@ -14,6 +14,11 @@ Bode/Nyquist/root locus, simple compensators. Not graduate optimal control.
    - `render-figure` for library plots — never invent a Bode bitmap
    - `ingest-figure` for block-diagram / Bode photos (`control-diagram-to-model`,
      UI confirm, no silent sim)
+   - **OSS block diagram:** `control-diagram-to-model` with `problem.json`
+     `blocks[]` + `structure` (`series`/`parallel`/`feedback`) or
+     `unity_feedback` → composed plant → Bode/step via python-control.
+   - **Digital intro:** `solve-digital-control-problem` with discrete `num`/`den`
+     and `ts`, or `continuous_*` + ZOH sample — pole plot + discrete step.
 4. MATLAB-only toolboxes missing → `unchecked`, not a fake plot.
 
 ## Genres

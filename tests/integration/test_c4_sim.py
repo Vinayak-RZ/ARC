@@ -14,7 +14,11 @@ def test_unconfirmed_spice_rejected(tmp_path) -> None:
     assert "unconfirmed" in spice
 
 
-def test_confirmed_still_honest_without_ngspice(tmp_path) -> None:
+def test_confirmed_still_honest_without_ngspice(tmp_path, monkeypatch) -> None:
+    monkeypatch.setattr(
+        "electrical_engineer.engines.spice_runner.spice_available",
+        lambda: False,
+    )
     d = tmp_path / "conf"
     d.mkdir()
     (d / "confirmed.json").write_text('{"confirmed": true}')

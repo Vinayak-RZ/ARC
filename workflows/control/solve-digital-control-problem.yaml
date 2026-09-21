@@ -1,0 +1,10 @@
+id: solve-digital-control-problem
+nodes:
+  dig:
+    activity: run-digital-control
+  label:
+    activity: label-unchecked
+    needs: [dig]
+  summary:
+    activity: write-run-summary
+    needs: [label]

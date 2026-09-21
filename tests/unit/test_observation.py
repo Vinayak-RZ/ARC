@@ -32,4 +32,8 @@ def test_every_reason_stays_inside_the_enum(tmp_path) -> None:
     for recipe_id in recipes:
         out = execute(recipe_id, run_root=tmp_path, problem={"prompt": "ug ee probe"})
         observation = json.loads((Path(out["run_dir"]) / "observation.json").read_text())
-        assert observation["unchecked_reason"] in _UNCHECKED_REASONS
+        reason = observation["unchecked_reason"]
+        if out["summary"]["unchecked"]:
+            assert reason in _UNCHECKED_REASONS
+        else:
+            assert reason is None

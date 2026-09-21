@@ -1,0 +1,7 @@
+{
+  "kind": "dc",
+  "v_dc": 120,
+  "ra_ohm": 1,
+  "k_torque": 0.5,
+  "t_load_nm": 5
+}
