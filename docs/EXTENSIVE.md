@@ -46,7 +46,7 @@ sequenceDiagram
   UI-->>S: slots + confirm POST
 ```
 
-Install with `uv sync --extra dev`. Entry: `electrical-engineer` → `electrical_engineer.cli:main`. UI auto-opens unless `EE_NO_BROWSER=1`. MCP is line-delimited JSON-RPC on stdio.
+Install with pip (`pip install -e ".[dev]"`) or uv (`uv sync --extra dev`). Entry: `electrical-engineer` → `electrical_engineer.cli:main`. UI auto-opens unless `EE_NO_BROWSER=1`. MCP is line-delimited JSON-RPC on stdio. Agents are the primary consumer: paste job briefs from the README, load `skills/SKILL.md`, run recipes, open `127.0.0.1:8765` for schematic (`graph.json`) and control block diagrams (`control_diagram.json`).
 
 ## 3. Package map
 

@@ -4,16 +4,27 @@ Install optional engines (system **ngspice** + Python extras):
 
 ```bash
 sudo apt-get install -y ngspice libngspice0 libngspice0-dev   # Debian/Ubuntu
-uv sync --extra engines --extra dev
+pip install -e ".[engines,dev]"   # or: uv sync --extra engines --extra dev
 ```
+
+## README full-UI screenshots
+
+```bash
+npm run build --prefix ui
+pip install playwright && playwright install chromium
+python scripts/capture_readme_ui_screenshots.py
+```
+
+Writes `docs/media/ui-*-full.png` from live runs at `http://127.0.0.1:8765`.
 
 ## RLC (SPICE)
 
-`problem.json`:
+`problem.json` (seeds a series RLC schematic on the UI canvas when `kind` is set):
 
 ```json
 {
-  "cir": "* series RC\nV1 1 0 DC 10\nR1 1 2 1k\nC1 2 0 1u\n.tran 1m 10m\n.end\n"
+  "kind": "series_rlc",
+  "cir": "* series RLC\nV1 1 0 DC 10\nR1 1 2 1k\nL1 2 3 1m\nC1 3 0 1u\n.tran 1m 10m\n.end\n"
 }
 ```
 

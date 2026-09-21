@@ -161,6 +161,49 @@ body { margin: 0; background: var(--ee-color-canvas); }
   outline-offset: 2px;
 }
 .flow-wrap .react-flow { height: 420px; width: 100%; }
+.canvas-lab.control-only {
+  display: block;
+  grid-template-columns: unset;
+  grid-template-rows: unset;
+}
+.control-diagram-wrap { width: 100%; min-height: 400px; }
+.control-sum,
+.control-block,
+.control-tap,
+.control-ref {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 72px;
+  min-height: 48px;
+  padding: 8px 12px;
+  border: 1px solid var(--ee-color-hairline);
+  border-radius: 8px;
+  background: var(--ee-color-surface-soft);
+  font-size: var(--ee-type-caption);
+}
+.control-sum { border-radius: 50%; width: 52px; height: 52px; }
+.control-sum-sign {
+  position: absolute;
+  left: 4px;
+  bottom: 2px;
+  font-size: 11px;
+  color: var(--ee-color-muted);
+}
+.control-block-tf {
+  color: var(--ee-color-muted);
+  font-size: 11px;
+  max-width: 120px;
+  text-align: center;
+  word-break: break-word;
+}
+.control-tap,
+.control-ref {
+  border-style: dashed;
+  min-width: 40px;
+}
 .react-flow__edge-path,
 .react-flow__connection-path {
   stroke: var(--ee-color-ink);

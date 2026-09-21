@@ -68,7 +68,7 @@ Allowlist. Host and CLI may name these ids. Session-defined ids (`lookup_vout_gu
 | `measurement-model` | Error budgets, bridges, instrument specs | measurements | `check-numeric` | none as live-bench control |
 | `retrieve-citation` | Book + chapter + page the student has rights to | all | `retrieve-passage` (RAG facade) | BM25 fallback |
 | `render-figure` | Library schematic or plot (PNG+SVG) | all | schemdraw / matplotlib / python-control | other **libraries**, never a vision-invented circuit PNG |
-| `ingest-figure` | Photo/diagram → draft structure → **UI confirm** | circuits, control, electronics | photo-stub stages | same class for `control-diagram-to-model` |
+| `ingest-figure` | Photo/diagram → draft structure → **UI confirm** | circuits, control, electronics | photo-stub stages | `control-diagram-to-model` also seeds `control_diagram.json` on canvas |
 | `label-unverified` | Exact token `unchecked` | all | `label-unchecked` | — |
 | `ask-student` | Missing data, topology confirm | all | `ask-human` / UI | MCP fail-closed with `ui_url` |
 

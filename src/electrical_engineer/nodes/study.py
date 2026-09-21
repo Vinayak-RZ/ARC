@@ -27,6 +27,16 @@ def compose_control_blocks(spec: dict[str, Any], inputs: dict[str, Any]) -> dict
             "unchecked": True,
             "token": UNCHECKED,
         }
+    run_dir_s = spec.get("run_dir")
+    if run_dir_s:
+        from electrical_engineer.control.diagram import (
+            control_diagram_from_problem,
+            write_control_diagram,
+        )
+
+        diagram = control_diagram_from_problem(problem)
+        if diagram is not None:
+            write_control_diagram(Path(run_dir_s), diagram)
     return {
         "ok": True,
         "unchecked": False,
