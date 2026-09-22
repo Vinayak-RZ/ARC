@@ -1,0 +1,200 @@
+{
+  "experiment": "EEC-301 Exp7 two-area AGC OSS twin",
+  "params": {
+    "area1": {
+      "Tg": 0.2,
+      "Tt": 0.5,
+      "M": 10.0,
+      "D": 0.6,
+      "R": 0.05,
+      "B": 20.6,
+      "K": 0.3
+    },
+    "area2": {
+      "Tg": 0.3,
+      "Tt": 0.6,
+      "M": 8.0,
+      "D": 0.9,
+      "R": 0.0625,
+      "B": 16.9,
+      "K": 0.3
+    },
+    "two_pi_T12": 2.0,
+    "T12": 0.3183098861837907,
+    "SB_MVA": 1000.0,
+    "f0_Hz": 60.0,
+    "beta1": 20.6,
+    "beta2": 16.9
+  },
+  "analytic_primary": {
+    "beta1": 20.6,
+    "beta2": 16.9,
+    "df_pu": -0.002666666666666667,
+    "df_Hz": -0.16000000000000003,
+    "P12_pu": -0.045066666666666665,
+    "P12_MW": -45.06666666666666,
+    "Pm1_pu": 0.05333333333333334,
+    "Pm2_pu": 0.04266666666666667,
+    "Pm1_MW": 53.333333333333336,
+    "Pm2_MW": 42.66666666666667,
+    "damping_MW": 4.0
+  },
+  "pdf_expected": {
+    "primary_df_pu": -0.002667,
+    "primary_df_Hz": -0.16,
+    "primary_P12_pu": -0.04507,
+    "primary_P12_MW": -45.07,
+    "primary_Pm1_MW": 53.33,
+    "primary_Pm2_MW": 42.67,
+    "primary_damping_MW": 4.0,
+    "primary_dip_Hz": -0.427,
+    "agc_dip_Hz": -0.411,
+    "agc_peak_P12_MW": -17.52
+  },
+  "run1_primary": {
+    "steady": {
+      "df1_pu": -0.0026666925784320492,
+      "df2_pu": -0.0026666364336406065,
+      "df1_Hz": -0.16000155470592292,
+      "df2_Hz": -0.1599981860184364,
+      "P12_pu": -0.04506610326596475,
+      "P12_MW": -45.066103265964756,
+      "Pm1_pu": 0.05333393282653526,
+      "Pm2_pu": 0.042666082262162806,
+      "Pm1_MW": 53.33393282653526,
+      "Pm2_MW": 42.6660822621628
+    },
+    "first_dip": {
+      "f1_Hz": -0.4270527043765579,
+      "t_abs": 2.1470000000000002,
+      "t_after_step": 1.1470000000000002,
+      "df1_pu": -0.007117545072942631,
+      "note": "PDF expected-result times (~1.15 s) match t_after_step when step is at t=1 s; procedure places the step at t=1 s, so absolute clock is ~2.15 s."
+    }
+  },
+  "run2_agc": {
+    "steady": {
+      "df1_pu": 2.7383724811676083e-09,
+      "df2_pu": -3.710615627660953e-09,
+      "df1_Hz": 1.6430234887005652e-07,
+      "df2_Hz": -2.2263693765965713e-07,
+      "P12_pu": -4.328490984494997e-08,
+      "P12_MW": -4.328490984494997e-05,
+      "Pm1_pu": 0.09999995512749388,
+      "Pm2_pu": 7.422903366363481e-08,
+      "Pm1_MW": 99.99995512749389,
+      "Pm2_MW": 7.422903366363481e-05
+    },
+    "first_dip": {
+      "f1_Hz": -0.4111297530823944,
+      "t_abs": 2.072,
+      "t_after_step": 1.072,
+      "df1_pu": -0.00685216255137324,
+      "note": "PDF expected-result times (~1.15 s) match t_after_step when step is at t=1 s; procedure places the step at t=1 s, so absolute clock is ~2.15 s."
+    },
+    "peak_P12": {
+      "P12_MW": -17.523381304835958,
+      "P12_pu": -0.017523381304835956,
+      "t": 3.1990000000000003
+    },
+    "settling_f_within_0p001Hz_s": 26.375,
+    "settling_P12_within_0p1MW_s": 30.627
+  },
+  "run3_area2_disturbance": {
+    "steady": {
+      "df1_pu": -2.546016056048226e-09,
+      "df2_pu": 1.1875967776660844e-08,
+      "df1_Hz": -1.5276096336289358e-07,
+      "df2_Hz": 7.125580665996507e-07,
+      "P12_pu": 4.497984046290223e-08,
+      "P12_MW": 4.4979840462902234e-05,
+      "Pm1_pu": 8.378494903953852e-08,
+      "Pm2_pu": 0.09999988742183057,
+      "Pm1_MW": 8.378494903953851e-05,
+      "Pm2_MW": 99.99988742183056
+    }
+  },
+  "run4_gain_sweep": [
+    {
+      "K": 0.0,
+      "peak_df1_Hz": -0.4270527043765579,
+      "peak_P12_MW": -45.0663380892711,
+      "t_after_step_dip": 1.1470000000000002,
+      "settling_s": null,
+      "diverged": false,
+      "ss_df1_Hz": -0.16000090672092046,
+      "ss_P12_MW": -45.0663380892711
+    },
+    {
+      "K": 0.1,
+      "peak_df1_Hz": -0.4212630878003281,
+      "peak_P12_MW": -24.260065411907252,
+      "t_after_step_dip": 1.1179999999999999,
+      "settling_s": 35.614,
+      "diverged": false,
+      "ss_df1_Hz": -0.0001191096223965416,
+      "ss_P12_MW": -0.1506706287061925
+    },
+    {
+      "K": 0.3,
+      "peak_df1_Hz": -0.4111297530823944,
+      "peak_P12_MW": -17.523381304835958,
+      "t_after_step_dip": 1.072,
+      "settling_s": 26.375,
+      "diverged": false,
+      "ss_df1_Hz": 3.683453176871338e-08,
+      "ss_P12_MW": -1.3088040814856043e-05
+    },
+    {
+      "K": 0.6,
+      "peak_df1_Hz": -0.3985016029029096,
+      "peak_P12_MW": -15.535498005452396,
+      "t_after_step_dip": 1.0180000000000002,
+      "settling_s": 57.933,
+      "diverged": false,
+      "ss_df1_Hz": -0.0008582267828275258,
+      "ss_P12_MW": 0.05949818744187913
+    },
+    {
+      "K": 1.0,
+      "peak_df1_Hz": null,
+      "peak_P12_MW": null,
+      "t_after_step_dip": null,
+      "settling_s": null,
+      "diverged": true,
+      "ss_df1_Hz": null,
+      "ss_P12_MW": null
+    }
+  ],
+  "run5_bias_B10": {
+    "steady": {
+      "df1_pu": -1.1209793653937276e-07,
+      "df2_pu": -1.384228196945364e-07,
+      "df1_Hz": -6.725876192362366e-06,
+      "df2_Hz": -8.305369181672184e-06,
+      "P12_pu": 1.6475156193853313e-06,
+      "P12_MW": 0.0016475156193853308,
+      "Pm1_pu": 0.10000149399307315,
+      "Pm2_pu": -1.3112906358375193e-06,
+      "Pm1_MW": 100.00149399307315,
+      "Pm2_MW": -0.0013112906358375192
+    },
+    "mid_peak_abs_Pm2_MW": 22.55136020020223
+  },
+  "residuals_primary": {
+    "df_Hz": -1.5547059229181759e-06,
+    "P12_MW": 0.0038967340352442648,
+    "Pm1_MW": 0.003932826535262279,
+    "Pm2_MW": -0.0039177378371988425,
+    "dip_Hz": -5.270437655791049e-05
+  },
+  "residuals_agc": {
+    "dip_Hz": -0.00012975308239443484,
+    "peak_P12_MW": -0.003381304835958332,
+    "ss_df1_Hz": 1.6430234887005652e-07,
+    "ss_P12_MW": -4.328490984494997e-05,
+    "ss_Pm1_MW": -4.4872506109072674e-05,
+    "ss_Pm2_MW": 7.422903366363481e-05
+  },
+  "notes": "OSS RK4 twin of Simulink Fig 1. Steady-state primary matches analytic \u03b2 exactly. First-dip / peak-tie are solver- and step-sensitive; small residuals vs PDF ode45 expected and documented. K=1.0 expected unstable (Kcr\u22480.74)."
+}

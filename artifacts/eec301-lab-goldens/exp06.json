@@ -1,0 +1,176 @@
+{
+  "experiment": "EEC-301 Exp6 SMIB swing",
+  "params": {
+    "H": 5.0,
+    "f0": 50.0,
+    "Pm": 0.9,
+    "Pmax_pre": 2.0,
+    "Pmax_fault": 0.5,
+    "Pmax_post": 1.5
+  },
+  "equal_area": {
+    "delta0_rad": 0.46676533904729633,
+    "delta0_deg": 26.743683950403007,
+    "deltamax_rad": 2.498091544796509,
+    "deltamax_deg": 143.13010235415598,
+    "cos_delta_cr": 0.18167930768699725,
+    "delta_cr_rad": 1.3881024160562225,
+    "delta_cr_deg": 79.53240997193419
+  },
+  "pdf_expected": {
+    "delta0_deg": 26.74,
+    "deltamax_deg": 143.13,
+    "delta_cr_deg": 79.53,
+    "cos_delta_cr": 0.1817,
+    "delta0_rad": 0.4668,
+    "deltamax_rad": 2.4981,
+    "delta_cr_rad": 1.3881,
+    "ref_delta_0p30_deg": 61.7317,
+    "tcr_pdf": 0.3097
+  },
+  "equal_area_residuals": {
+    "delta0_deg": 0.003683950403008396,
+    "deltamax_deg": 0.0001023541559845853,
+    "delta_cr_deg": 0.002409971934184796,
+    "cos_delta_cr": -2.0692313002751428e-05
+  },
+  "reference": {
+    "method": "rk4",
+    "h": 1e-06,
+    "tc": 0.15,
+    "delta_0p30_deg": 61.73170142526541,
+    "pdf_delta_0p30_deg": 61.7317,
+    "residual_deg": 1.425265416798993e-06
+  },
+  "accuracy_tc_0p15": {
+    "euler": {
+      "0.05": {
+        "delta_0p30_deg": 62.35927437222633,
+        "error_deg": 0.6275729469609175,
+        "peak_deg": 77.52074372488065,
+        "unstable": true
+      },
+      "0.01": {
+        "delta_0p30_deg": 62.01921033616388,
+        "error_deg": 0.28750891089846675,
+        "peak_deg": 69.39873019740185,
+        "unstable": false
+      },
+      "0.005": {
+        "delta_0p30_deg": 61.88288884849248,
+        "error_deg": 0.15118742322706424,
+        "peak_deg": 68.57029597836667,
+        "unstable": false
+      },
+      "0.0025": {
+        "delta_0p30_deg": 61.80904743928442,
+        "error_deg": 0.07734601401900676,
+        "peak_deg": 68.17111880749557,
+        "unstable": false
+      }
+    },
+    "modified_euler": {
+      "0.05": {
+        "delta_0p30_deg": 62.20255090694767,
+        "error_deg": 0.47084948168225793,
+        "peak_deg": 68.05990390493177,
+        "unstable": false
+      },
+      "0.01": {
+        "delta_0p30_deg": 61.749441268455904,
+        "error_deg": 0.01773984319049049,
+        "peak_deg": 67.7936758616883,
+        "unstable": false
+      },
+      "0.005": {
+        "delta_0p30_deg": 61.736095403943516,
+        "error_deg": 0.004393978678102428,
+        "peak_deg": 67.78457727077364,
+        "unstable": false
+      },
+      "0.0025": {
+        "delta_0p30_deg": 61.73279464187762,
+        "error_deg": 0.0010932166122046283,
+        "peak_deg": 67.78276240127833,
+        "unstable": false
+      }
+    },
+    "rk4": {
+      "0.05": {
+        "delta_0p30_deg": 61.73048425262405,
+        "error_deg": -0.0012171726413612305,
+        "peak_deg": 67.6295753376497,
+        "unstable": false
+      },
+      "0.01": {
+        "delta_0p30_deg": 61.73169967552959,
+        "error_deg": -1.7497358228979465e-06,
+        "peak_deg": 67.78171129984764,
+        "unstable": false
+      },
+      "0.005": {
+        "delta_0p30_deg": 61.73170131791694,
+        "error_deg": -1.0734847677440484e-07,
+        "peak_deg": 67.78171202814094,
+        "unstable": false
+      },
+      "0.0025": {
+        "delta_0p30_deg": 61.73170141862175,
+        "error_deg": -6.643659844485228e-09,
+        "peak_deg": 67.78204629785668,
+        "unstable": false
+      }
+    }
+  },
+  "tc_sweep_rk4": [
+    {
+      "tc": 0.1,
+      "clearing_angle_deg": 32.74877535274584,
+      "peak_deg": 57.734897721135184,
+      "verdict": "Stable"
+    },
+    {
+      "tc": 0.15,
+      "clearing_angle_deg": 40.06572148981277,
+      "peak_deg": 67.78257226244736,
+      "verdict": "Stable"
+    },
+    {
+      "tc": 0.2,
+      "clearing_angle_deg": 49.98070490584894,
+      "peak_deg": 80.73847028933889,
+      "verdict": "Stable"
+    },
+    {
+      "tc": 0.25,
+      "clearing_angle_deg": 62.22312744020678,
+      "peak_deg": 97.80319151721936,
+      "verdict": "Stable"
+    },
+    {
+      "tc": 0.3,
+      "clearing_angle_deg": 76.53065179121967,
+      "peak_deg": 125.63721329840291,
+      "verdict": "Stable"
+    },
+    {
+      "tc": 0.32,
+      "clearing_angle_deg": 82.78504059857677,
+      "peak_deg": null,
+      "verdict": "Unstable"
+    }
+  ],
+  "cct_bisection": {
+    "tcr_s": 0.3096875,
+    "pdf_tcr_s": 0.3097,
+    "residual_s": -1.2499999999970868e-05,
+    "tol_s": 0.001
+  },
+  "time_to_delta_cr": {
+    "t_to_dcr": 0.30971631056004756,
+    "delta_cr_deg": 79.53240997193419,
+    "h": 1e-05,
+    "method": "rk4"
+  },
+  "notes": "Formulation uses d\u0394\u03c9/dt = (\u03c0 f0 / H)(Pm \u2212 Pmax sin \u03b4) per PDF. Equal-area matches PDF to printed precision. CCT from during-fault integration to \u03b4cr is the primary analytic check; bisection uses \u03b4>180\u00b0 indicator with 1 ms tolerance."
+}
