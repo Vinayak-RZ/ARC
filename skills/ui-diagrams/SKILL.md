@@ -69,6 +69,19 @@ See `STUDENT_PROMPTS` in `build_from_prompt.py` for all five domains.
 
 Target **overall ≥ 4/5**. Stress gate: `python scripts/trial_agent_ui_diagrams_stress.py`.
 
+## PSA / power LFC lab figures (EEC-301)
+
+For two-area AGC block diagrams (Exp 7), follow
+`docs/planning/eec301-lift/CLAUDE_EE_DIAGRAM_RESEARCH.md` and trap **T8**:
+
+- Droop and ACE into the **governor** path; turbine follows `ΔPm`.
+- Tie flow `ΔP12` subtracts from Area 1 swing, adds to Area 2 (opposite signs).
+- Label `B` in **pu MW / pu Hz**, not Hz alone.
+- Do not route ACE only after the tie block.
+
+Use `diagramKind: power_fault` only for fault studies; LFC homework needs a
+**control** diagram with summing junctions (`unity_feedback` or custom blocks).
+
 ## IITR visual law (normative)
 
 ### Global
