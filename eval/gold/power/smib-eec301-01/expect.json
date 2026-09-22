@@ -1,0 +1,13 @@
+{
+  "engine": "smib_swing",
+  "golden_file": "artifacts/eec301-lab-goldens/exp06.json",
+  "case": "eec301_exp6_default",
+  "delta0_deg": 26.743683950403007,
+  "delta_cr_deg": 79.53240997193419,
+  "tcr_s": 0.3096875,
+  "t_to_delta_cr_s": 0.30971631056004756,
+  "tolerance_deg": 1e-6,
+  "tolerance_tcr_s": 0.0001,
+  "integrators": ["euler", "modified_euler", "rk4"],
+  "forbidden": ["ode45", "solve_ivp", "fmincon"]
+}

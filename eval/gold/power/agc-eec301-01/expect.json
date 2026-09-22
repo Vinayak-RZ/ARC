@@ -1,0 +1,9 @@
+{
+  "engine": "agc_two_area",
+  "golden_file": "artifacts/eec301-lab-goldens/exp07.json",
+  "primary_df1_Hz": -0.16,
+  "primary_P12_MW": -45.07,
+  "agc_ss_Pm1_MW": 100.0,
+  "agc_ss_df1_Hz": 0.0,
+  "K_diverges": 1.0
+}

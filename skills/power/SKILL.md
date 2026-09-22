@@ -15,10 +15,15 @@ faults, protection as coursework (relay settings on paper), not EMS dispatch
 4. Named fault study: `simulate-power-fault` with `problem.json` fields
    `fault_type` (`LG`, `LL`, `LLG`, `3PH`), `z1_pu`, `z2_pu`, `z0_pu`.
    Sequence-network currents are checked; pandapower load flow runs when installed.
-5. Study-level protection (no EMS): `study-protection-setting` with CT ratio,
+5. **SMIB transient / equal-area / CCT:** `skills/swing-equation/SKILL.md` +
+   `engines/smib_swing` (goldens `artifacts/eec301-lab-goldens/exp06.json`).
+6. **Two-area AGC (Exp 7):** `skills/agc-two-area/SKILL.md` + `engines/agc_two_area`.
+7. **Economic dispatch λ (Exp 8):** `skills/economic-dispatch-lambda/SKILL.md` +
+   `engines/ed_lambda`.
+8. Study-level protection (no EMS): `study-protection-setting` with CT ratio,
    relay pickup (secondary A), fault current; optional `zone_reach_ohm` +
    `v_line_kv` for simple distance zone check.
-6. Missing provider → `unchecked`, never a fluent “converged” voltage.
+9. Missing provider → `unchecked`, never a fluent “converged” voltage.
 
 ## UI construction
 

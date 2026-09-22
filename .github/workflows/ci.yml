@@ -14,3 +14,4 @@ jobs:
       - run: uv sync --extra dev --extra engines
       - run: uv run ruff check .
       - run: uv run pytest -q
+      - run: uv run python scripts/check_psa_evals.py

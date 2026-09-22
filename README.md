@@ -8,12 +8,13 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-2ea043" alt="Apache License 2.0"></a>
-  <a href=".github/workflows/ci.yml"><img src="https://github.com/Vinayak-RZ/Electrical-Engineer/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href=".github/workflows/ci.yml"><img src="https://github.com/Vinayak-RZ/ARC/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
 </p>
 
 <p align="center">
   <a href="#quick-start"><b>Quick start</b></a> ·
   <a href="#domain-kernel"><b>Domain kernel</b></a> ·
+  <a href="docs/DOMAIN_KERNEL_CAPABILITIES.md"><b>What Arc unlocks</b></a> ·
   <a href="docs/ON_THE_HARNESS.md"><b>On the harness</b></a> ·
   <a href="#try-these-prompts"><b>Try these prompts</b></a> ·
   <a href="docs/CANNOT_DO.md"><b>Cannot-do</b></a> ·
@@ -49,6 +50,20 @@ Arc is a working example of a domain kernel. It is what enables a general assist
 
 Plain-language walkthrough (what Arc adds, why numbers stay deterministic, how Arc mediates MATLAB): [`docs/ON_THE_HARNESS.md`](docs/ON_THE_HARNESS.md).
 
+### What the domain kernel unlocks
+
+A coding agent can derive formulas from a PDF and still hand in the **wrong stage**
+of a power-angle curve, the **wrong sign** on a tie flow, or an economic dispatch
+that violates a generator limit. Arc loads skills, trap notes, and checked engines
+so those answers are verified against lab goldens or marked `unchecked`.
+
+- **Transient stability:** critical clearing angle **79.53°** (not a single-Pmax shortcut that ablation tests miss by **~177°**).
+- **Clearing time:** CCT **≈ 0.3097 s** tied to Exp 6 data, not `ode45` when the sheet forbids it.
+- **Two-area AGC:** primary droop **Δf ≈ −0.16 Hz**, **ΔP12 ≈ −45 MW**; integral AGC recenters frequency and load share.
+- **Economic dispatch:** at **500 MW** demand, Unit 2 sits on **150 MW** limit with correct λ (not an unconstrained λ solve).
+
+Full before/after table and commands: [`docs/DOMAIN_KERNEL_CAPABILITIES.md`](docs/DOMAIN_KERNEL_CAPABILITIES.md).
+
 ## Try these prompts
 
 Paste into Cursor or Claude after you clone Arc and install. Each block is a real homework ask (2–3 lines). Open the local UI at `127.0.0.1:8765` to see schematics, diagrams, and plots for each run.
@@ -76,6 +91,21 @@ Find fault current in pu and show bus voltages after the fault.
 ```text
 DC machine lab: 120 V armature, Ra = 1 Ω, torque constant 0.5 N·m/A, load 5 N·m.
 What steady-state speed should I expect? Include the back-emf relation in the write-up.
+```
+
+```text
+Power systems lab: SMIB with H = 5, Pm = 0.9 pu, pre/fault/post Pmax 2.0 / 0.5 / 1.5 pu.
+Find δ0, critical clearing angle, and critical clearing time for the given data.
+```
+
+```text
+Three-unit economic dispatch: quadratic costs as in the assignment table, PD = 500 MW.
+Dispatch with limits and show λ and each unit output; Unit 2 must respect its maximum.
+```
+
+```text
+Two-area AGC: 100 MW load step in Area 1 at t = 1 s. Compare primary droop vs AGC (K = 0.3):
+steady frequency, tie flow, and who carries the load at the end.
 ```
 
 Host adapters: [`docs/hosts/README.md`](docs/hosts/README.md). **12 EE specialists** in [`hosts/agents/`](hosts/agents/INDEX.md) for large worksheets (host spawns at most two).
