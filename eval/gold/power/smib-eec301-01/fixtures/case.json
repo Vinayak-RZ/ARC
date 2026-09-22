@@ -1,0 +1,8 @@
+{
+  "h_mj_mva": 5.0,
+  "f0_hz": 50.0,
+  "pm_pu": 0.9,
+  "pmax_pre_pu": 2.0,
+  "pmax_fault_pu": 0.5,
+  "pmax_post_pu": 1.5
+}

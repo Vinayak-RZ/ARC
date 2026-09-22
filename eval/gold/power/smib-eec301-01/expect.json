@@ -1,0 +1,11 @@
+{
+  "engine": "smib_swing",
+  "case": "eec301_exp6_default",
+  "delta0_deg": 26.74,
+  "delta_cr_deg": 79.53,
+  "tcr_s": 0.3097,
+  "tolerance_deg": 0.05,
+  "tolerance_tcr_s": 0.002,
+  "integrators": ["euler", "modified_euler", "rk4"],
+  "forbidden": ["ode45", "solve_ivp", "fmincon"]
+}
