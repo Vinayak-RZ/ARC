@@ -1,6 +1,6 @@
 # EEC-301 Exp 6 — golden reference (Arc evals)
 
-Source: IIT Roorkee EEC-301 Software Laboratory, Experiment 6 (parameter table).
+**Authority:** `artifacts/eec301-lab-goldens/exp06.json` (lab pack, PDF-matching).
 
 ## Case data
 
@@ -11,25 +11,29 @@ Source: IIT Roorkee EEC-301 Software Laboratory, Experiment 6 (parameter table).
 | Pm | 0.9 pu |
 | Pmax pre / fault / post | 2.0 / 0.5 / 1.5 pu |
 
-## Analytical (equal-area)
+## Equal-area (full precision)
 
-| Quantity | Expected | Tolerance (Arc tests) |
-|----------|----------|------------------------|
-| δ₀ | 26.74° (0.4668 rad) | ±0.05° |
-| δmax | 143.13° (2.4981 rad) | ±0.05° |
-| δcr | 79.53° (1.3881 rad) | ±0.05° |
-| cos δcr | 0.1817 | ±0.002 |
+| Quantity | Lab JSON | PDF table (rounded) |
+|----------|----------|---------------------|
+| δ₀ | 26.743683950403007° | 26.74° |
+| δmax | 143.13010235415598° | 143.13° |
+| δcr | 79.53240997193419° | 79.53° |
+| cos δcr | 0.18167930768699725 | 0.1817 |
 
-Computed via `electrical_engineer.engines.smib_swing` (`eec301_reference`, `critical_clearing_angle`).
+Kernel: `eec301_reference()` / `critical_clearing_angle()` must match JSON
+`equal_area` within floating noise (< 1e-9° in CI).
 
-## Critical clearing time (RK4 bisection)
+## Critical clearing time
 
-| Quantity | Lab table | Tolerance |
-|----------|-----------|-----------|
-| tcr | 0.3097 s | ±2 ms |
+| Metric | Value | Notes |
+|--------|-------|-------|
+| tcr (bisection, lab pack) | **0.3096875 s** | `cct_bisection.tcr_s`; PDF prints 0.3097 s |
+| t to δcr (during-fault RK4) | 0.30971631056004756 s | h = 1×10⁻⁵; primary analytic cross-check |
+| Arc headline | **≈ 0.309688 s** | Use lab JSON, not invented rounding |
 
-Method: bisection on tc with instability = first-swing peak δ > π rad within 2 s window; RK4 with **h = 0.0005 s**; tc aligned to integer multiple of h (lab procedure §5). Clearing angle at tcr matches δcr within angle tolerance when integrated during-fault only.
+**Tests:** `time_to_angle_during_fault` at lab `h` vs JSON; kernel bisection within **2 ms**
+of `cct_bisection.tcr_s` (integrator/grid sensitivity).
 
 ## Integrators
 
-Euler, modified Euler (Heun), and RK4 are implemented explicitly. **No** `ode45`, SciPy `solve_ivp`, or MATLAB built-in solvers in the kernel helper path.
+Euler, modified Euler (Heun), and RK4 only in kernel. No `ode45` / `solve_ivp` (trap T9).
