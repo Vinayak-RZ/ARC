@@ -16,3 +16,5 @@
 **A/B DoD (landing PR):** narrative for all T1–T10; scripted fail/pass for at least **T1, T2, T6**; stretch to five scripted.
 
 **W0–W2 scope:** traps **T1–T3** encoded as knowledge; engines/evals back T1–T2 numerics.
+
+Narrative source: `docs/planning/eec301-lift/BARE_AGENT_FAILURE_NOTES.md`. Numerics: `artifacts/eec301-lab-goldens/exp06.json`.
