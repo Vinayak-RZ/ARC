@@ -7,8 +7,12 @@ import math
 import yaml
 
 from electrical_engineer.engines.ed_lambda import EdCase, solve_lambda_ed
-from electrical_engineer.engines.smib_swing import SmibCase, critical_clearing_angle, time_to_angle_during_fault
 from electrical_engineer.engines.eec301_goldens import load_exp06_golden
+from electrical_engineer.engines.smib_swing import (
+    SmibCase,
+    critical_clearing_angle,
+    time_to_angle_during_fault,
+)
 
 
 def _bare_t1_wrong_delta_cr() -> float:
@@ -45,5 +49,8 @@ def test_ablation_t6_ed_limit_case() -> None:
 
 
 def test_trap_prompts_catalog_loads() -> None:
-    data = yaml.safe_load(open("proofs/ablation/trap_prompts.yaml", encoding="utf-8"))
+    from pathlib import Path
+
+    text = Path("proofs/ablation/trap_prompts.yaml").read_text(encoding="utf-8")
+    data = yaml.safe_load(text)
     assert "T1" in data["traps"] and "T6" in data["traps"]

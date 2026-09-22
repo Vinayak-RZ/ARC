@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import Callable, Literal
+from typing import Literal
 
 IntegratorName = Literal["euler", "modified_euler", "rk4"]
 

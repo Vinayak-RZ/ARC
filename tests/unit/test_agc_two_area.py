@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from electrical_engineer.engines.agc_two_area import TwoAreaAgcCase, gain_sweep, simulate_two_area
+from electrical_engineer.engines.agc_two_area import TwoAreaAgcCase, simulate_two_area
 from electrical_engineer.engines.eec301_goldens import load_exp07_golden
 
 
