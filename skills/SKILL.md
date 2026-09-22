@@ -78,6 +78,16 @@ Filters: book_id, chapter_id, domain_tag, folder_tag.
 Index: TBD (empty this graph). Call `retrieve` anyway. Empty is visible. Do not
 dump `knowledge/ug-ee/**`. Link `knowledge/ug-ee/INDEX.md` instead.
 
+## EEC-301 PSA kernel skills (when lab constraints apply)
+
+| Topic | Skill |
+|-------|--------|
+| SMIB / CCT | `skills/swing-equation/SKILL.md` |
+| Two-area AGC | `skills/agc-two-area/SKILL.md` |
+| λ-ED | `skills/economic-dispatch-lambda/SKILL.md` |
+
+Goldens: `artifacts/eec301-lab-goldens/`. Traps: `knowledge/traps/`.
+
 ## UI diagrams (localhost canvas)
 
 When the student must see a **schematic, block diagram, or one-line SLD** in Arc (not only a plot file), load **`skills/ui-diagrams/SKILL.md`**. It covers `graph.json`, `control_diagram.json`, `diagramKind`, IITR visual law, and the pre-show checklist. Use `render-figure` for library plots only.
