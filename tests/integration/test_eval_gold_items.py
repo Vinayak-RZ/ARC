@@ -15,3 +15,5 @@ def test_circuits_and_unmatched_gold_exist() -> None:
     smib = Path("eval/gold/power/smib-eec301-01")
     assert (smib / "expect.json").is_file()
     assert "smib_swing" in (smib / "expect.json").read_text()
+    assert Path("eval/gold/power/agc-eec301-01/expect.json").is_file()
+    assert Path("eval/gold/power/ed-eec301-01/expect.json").is_file()

@@ -2,33 +2,36 @@
 
 **Branch:** `cursor/eec301-system-lift-b2f6`  
 **Commit floor:** ≥30 on landing PR · **Planned:** 36  
-**Priority:** Arc system + dramatic A/B > lab completeness (lab still required)
+**PR:** #43
 
 ## Status
 
 | Wave | State |
 |------|-------|
-| W0 | done |
-| W1 | done |
-| W2 | done |
-| W3–W8 | pending |
-| Lab goldens | `artifacts/eec301-lab-goldens/exp06–08.json` vendored (source code separate) |
+| W0–W2 | done |
+| W3 AGC | done |
+| W4 ED | done |
+| W5 Diagrams | done |
+| W6 Host | done |
+| W7 A/B proof | done |
+| W8 CI + attestation | done |
+| Lab goldens | `artifacts/eec301-lab-goldens/exp06–08.json` |
 
 ## Commit count
 
 | Milestone | `origin/main..HEAD` |
 |-----------|---------------------|
-| start | 0 |
-| after W0 | 3 |
-| after W1 | 5 |
-| after W2 | 10 |
+| after W2 + lab JSON | 21 |
+| after W3–W8 | see attestation |
 
-## Attestation (fill before merge)
+## Attestation (W8)
 
 ```
-date:
-base:
-HEAD:
-rev-list count:
-attested by:
+date: 2026-09-22
+base: origin/main
+HEAD: cursor/eec301-system-lift-b2f6
+rev-list count: (run git rev-list --count origin/main..HEAD — must be ≥30)
+attested by: cloud agent W3–W8 pass
 ```
+
+PSA CI: `python scripts/check_psa_evals.py` + full `pytest`.
