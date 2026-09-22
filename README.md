@@ -49,6 +49,8 @@ Arc is a working example of a domain kernel. It is what enables a general assist
 
 Plain-language walkthrough (what Arc adds, why numbers stay deterministic, how Arc mediates MATLAB): [`docs/ON_THE_HARNESS.md`](docs/ON_THE_HARNESS.md).
 
+**EEC-301 PSA kernel (IITR-style labs):** SMIB swing, two-area AGC, and λ-ED engines with PDF-matching goldens (`artifacts/eec301-lab-goldens/`), trap skills T1–T10, and runnable bare-vs-Arc checks — see [`docs/planning/eec301-lift/CAPABILITY_UNLOCK.md`](docs/planning/eec301-lift/CAPABILITY_UNLOCK.md).
+
 ## Try these prompts
 
 Paste into Cursor or Claude after you clone Arc and install. Each block is a real homework ask (2–3 lines). Open the local UI at `127.0.0.1:8765` to see schematics, diagrams, and plots for each run.
