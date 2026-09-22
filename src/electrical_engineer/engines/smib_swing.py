@@ -25,6 +25,9 @@ class SmibCase:
     pmax_fault_pu: float = 0.5
     pmax_post_pu: float = 1.5
 
+    def __post_init__(self) -> None:
+        validate_smib_case(self)
+
     @property
     def omega_s(self) -> float:
         return 2.0 * math.pi * self.f0_hz
@@ -32,6 +35,27 @@ class SmibCase:
     def accel_coeff(self) -> float:
         """π f0 / H for dΔω/dt = (π f0 / H)(Pm − Pmax sin δ)."""
         return math.pi * self.f0_hz / self.h_mj_mva
+
+
+def validate_smib_case(case: SmibCase) -> None:
+    """Trap T10: reject silent wrong defaults and inconsistent stages."""
+    if case.h_mj_mva <= 0 or case.f0_hz <= 0:
+        raise ValueError("H and f0 must be positive")
+    if case.pm_pu <= 0:
+        raise ValueError("Pm must be positive")
+    for name, val in (
+        ("pmax_pre", case.pmax_pre_pu),
+        ("pmax_fault", case.pmax_fault_pu),
+        ("pmax_post", case.pmax_post_pu),
+    ):
+        if val <= 0:
+            raise ValueError(f"{name} must be positive")
+    if case.pm_pu > case.pmax_pre_pu:
+        raise ValueError("Pm cannot exceed pre-fault Pmax")
+    if case.pm_pu > case.pmax_post_pu:
+        raise ValueError("Pm cannot exceed post-fault Pmax")
+    if case.f0_hz == 60.0 and case.h_mj_mva == 5.0 and case.pm_pu == 1.0:
+        raise ValueError("suspicious default mix (Pm=1, f0=60) — use EEC-301 Exp6 table")
 
 
 def swing_derivative(delta: float, d_delta: float, pmax_pu: float, case: SmibCase) -> tuple[float, float]:
