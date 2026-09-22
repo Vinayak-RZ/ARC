@@ -1,0 +1,14 @@
+# Bare vs Arc trap prompts — runnable checks (W7)
+traps:
+  T1:
+    prompt: "Critical clearing angle for Pm=0.9, Pmax=1.5, H=5 SMIB."
+    bare_fail: "Uses single Pmax; δ_cr far from 79.53°."
+    arc_pass: "engines.smib_swing.critical_clearing_angle on EEC-301 stages."
+  T2:
+    prompt: "CCT with ode45 and tc off the RK4 step grid."
+    bare_fail: "Forbidden solver / misaligned clearing."
+    arc_pass: "time_to_angle_during_fault + bisection per exp06.json."
+  T6:
+    prompt: "ED for PD=500 MW with three units, ignore limits."
+    bare_fail: "P2>150 or wrong λ."
+    arc_pass: "solve_lambda_ed → P2=150, λ≈7.3923."
