@@ -12,6 +12,10 @@ from electrical_engineer.engines.smib_swing import (
 )
 
 __all__ = [
+    "EdCase",
+    "TwoAreaAgcCase",
+    "simulate_two_area",
+    "solve_lambda_ed",
     "SmibCase",
     "critical_clearing_angle",
     "critical_clearing_time_bisection",

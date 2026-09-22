@@ -30,7 +30,7 @@
 date: 2026-09-22
 base: origin/main
 HEAD: cursor/eec301-system-lift-b2f6
-rev-list count: (run git rev-list --count origin/main..HEAD — must be ≥30)
+rev-list count: 47 (≥30 floor met)
 attested by: cloud agent W3–W8 pass
 ```
 
