@@ -12,7 +12,7 @@
 | W1 | done |
 | W2 | done |
 | W3–W8 | pending |
-| Lab L1–L6 | pending (separate repo / not vendored) |
+| Lab goldens | `artifacts/eec301-lab-goldens/exp06–08.json` vendored (source code separate) |
 
 ## Commit count
 
