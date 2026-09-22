@@ -1,0 +1,6 @@
+{
+  "engine": "ed_lambda",
+  "golden_file": "artifacts/eec301-lab-goldens/exp08.json",
+  "cases": ["PD_450", "PD_500", "PD_300"],
+  "unit2_binds_at_PD_500": true
+}
