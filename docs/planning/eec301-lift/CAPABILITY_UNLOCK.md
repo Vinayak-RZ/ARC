@@ -1,13 +1,10 @@
-# Capability unlock summary (EEC-301 lift)
+# Capability unlock (planning appendix)
 
-A **generic coding agent** can paste formulas but routinely fails **stage laws,
-signs, limits, and forbidden solvers** on PSA labs.
+**Canonical product doc:** [`docs/DOMAIN_KERNEL_CAPABILITIES.md`](../../DOMAIN_KERNEL_CAPABILITIES.md).
 
-Arc adds:
+This file is the short lift note for the EEC-301 execution graph. Evidence tables
+and runnable commands live in:
 
-1. **Checked engines** — SMIB, two-area AGC, λ-ED tied to `exp06–08.json`.
-2. **Trap skills/knowledge** — T1–T10 with host-visible paths.
-3. **Runnable A/B** — T1/T2/T6 prove multi-degree / MW-level errors vs bare shortcuts.
-
-See `AB_REVIEW_RUNNABLE.md` for evidence. README pointer: add “EEC-301 PSA kernel”
-bullet linking `docs/planning/eec301-lift/LAB_FEEDS_KERNEL.md`.
+- [`AB_REVIEW_RUNNABLE.md`](AB_REVIEW_RUNNABLE.md)
+- [`AB_REVIEW_NARRATIVE.md`](AB_REVIEW_NARRATIVE.md)
+- [`LAB_FEEDS_KERNEL.md`](LAB_FEEDS_KERNEL.md)
