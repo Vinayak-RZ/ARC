@@ -9,8 +9,8 @@
 | Wave | State |
 |------|-------|
 | W0 | done |
-| W1 | pending |
-| W2 | pending |
+| W1 | done |
+| W2 | done |
 | W3–W8 | pending |
 | Lab L1–L6 | pending (separate repo / not vendored) |
 
@@ -19,9 +19,9 @@
 | Milestone | `origin/main..HEAD` |
 |-----------|---------------------|
 | start | 0 |
-| after W0 | TBD |
-| after W1 | TBD |
-| after W2 | TBD |
+| after W0 | 3 |
+| after W1 | 5 |
+| after W2 | 9 |
 
 ## Attestation (fill before merge)
 

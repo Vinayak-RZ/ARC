@@ -12,3 +12,6 @@ def test_circuits_and_unmatched_gold_exist() -> None:
     assert "unchecked" in (u / "expect.json").read_text()
     assert Path("eval/gold/rag-retrieval/ohms-perturbed/expect.json").is_file()
     assert Path("eval/gold/explain/kvl-viva/expect.json").is_file()
+    smib = Path("eval/gold/power/smib-eec301-01")
+    assert (smib / "expect.json").is_file()
+    assert "smib_swing" in (smib / "expect.json").read_text()
