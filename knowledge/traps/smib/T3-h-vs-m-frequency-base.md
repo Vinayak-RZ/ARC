@@ -1,31 +1,33 @@
 # T3 — H vs M and frequency base mixup
 
-**Domain:** Swing equation constants (all SMIB labs)
+**Domain:** Swing equation constants (Exp 6; AGC inertia in Exp 7) · Trap catalog T3
 
-## Symptom
+## Failure modes (bare agent)
 
-- Uses \(2H/\omega_s \cdot d^2\delta/dt^2 = P_m - P_e\) then plugs
-  \(f_0=50\) Hz as \(\omega_s\) without \(2\pi\).
-- Swaps **M** (inertia coefficient) and **H** (inertia constant in seconds).
-- Integrates in **degrees** while \(H\) and \(P\) are per-unit on radian angle.
+**Exp 6 swing**
 
-## Why it fails
+- PDF: \(d\Delta\omega/dt = (\pi f_0/H)(P_m - P_e)\). Agents write \(\omega_s/(2H)\) with
+  \(\omega_s=2\pi f_0\) **correctly** (= \(\pi f_0/H\)) **or** wrongly use \(f_0/H\),
+  \(2\pi f_0/H\), or treat \(\Delta\omega\) in **Hz**.
+- Mix **inertia constant H** (MJ/MVA, seconds) with AGC area **M** (pu·s) — different models.
 
-Standard coursework form (EEC-301):
+**Exp 7 (preview)**
 
-\[
-\frac{d\Delta\omega}{dt} = \frac{\pi f_0}{H}(P_m - P_{\max}\sin\delta),
-\quad \Delta\omega = \frac{d\delta}{dt}
-\]
+- Report \(\Delta f\) in pu as Hz (forget ×60).
+- Reuse **f₀ = 50 Hz** from Exp 6 inside the Exp 7 twin (PDF: **60 Hz**).
 
-with \(\omega_s = 2\pi f_0\). Using \(f_0\) where \(\omega_s\) belongs scales
-acceleration by \(2\pi\). Degree/radian mix multiplies angles by \(180/\pi\).
+## Lab truth (Exp 6)
+
+Formulation in `exp06.json` notes: \(d\Delta\omega/dt = (\pi f_0/H)(P_m - P_{\max}\sin\delta)\).
+
+At prefault equilibrium (\(P_e = P_m\)), acceleration must be **zero** at δ₀ from JSON.
 
 ## Arc path
 
-1. `SmibCase.accel_coeff()` returns \(\pi f_0/H\) — single source in kernel.
-2. `skills/swing-equation/SKILL.md` unit checklist before integration.
-3. Cross-read `knowledge/ug-ee/power/06-power-system-stability/notes.md` §Mistakes.
+1. `SmibCase.accel_coeff()` → \(\pi f_0/H\) only.
+2. `skills/swing-equation/SKILL.md` unit checklist.
+3. CI: `test_swing_rhs_accel_coeff_trap_t3`.
+4. Exp 7 goldens staged in `artifacts/eec301-lab-goldens/exp07.json` (W3).
 
 ## Bare-agent prompt that should fail
 
