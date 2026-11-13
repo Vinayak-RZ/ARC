@@ -5,6 +5,7 @@ import {
   Background,
   MiniMap,
   ConnectionLineType,
+  MarkerType,
   addEdge,
   useEdgesState,
   useNodesState,
@@ -128,6 +129,7 @@ function ControlStudioInner({ sessionId, onSession }) {
   const [revision, setRevision] = useState(0);
   const [lastSimRevision, setLastSimRevision] = useState(null);
   const [connecting, setConnecting] = useState(false);
+  const [fitBump, setFitBump] = useState(0);
   const [validation, setValidation] = useState({ ok: true, issues: [], warnings: [] });
   const [highlight, setHighlight] = useState({ ids: new Set(), author: null });
   const diagramBase = useRef({});
@@ -235,6 +237,7 @@ function ControlStudioInner({ sessionId, onSession }) {
         const data = JSON.parse(ev.data);
         if (data.type === "hello") return;
         if ((data.revision || 0) > revision) {
+          setFitBump((n) => n + 1);
           loadSession(sid);
         }
       } catch {
@@ -408,16 +411,22 @@ function ControlStudioInner({ sessionId, onSession }) {
                 onConnectEnd={() => setConnecting(false)}
                 onNodeDragStop={onNodeDragStop}
                 connectionRadius={22}
-                defaultEdgeOptions={{ type: "signal", zIndex: 0 }}
                 snapToGrid
                 snapGrid={[GRID, GRID]}
                 connectionLineType={ConnectionLineType.SmoothStep}
-                minZoom={0.35}
+                elevateEdgesOnSelect={false}
+                elevateNodesOnSelect
+                defaultEdgeOptions={{
+                  type: "signal",
+                  zIndex: 0,
+                  markerEnd: { type: MarkerType.ArrowClosed, color: "#202020", width: 20, height: 20 },
+                }}
+                minZoom={0.75}
                 maxZoom={1.5}
                 proOptions={{ hideAttribution: true }}
               >
                 <Background gap={GRID} color="var(--cs-border)" size={1} />
-                <FitViewOnChange revision={revision} nodeCount={nodes.length} />
+                <FitViewOnChange revision={revision} nodeCount={nodes.length} agentBump={fitBump} />
                 {nodes.length > 8 ? (
                   <MiniMap
                     className="studio-minimap"

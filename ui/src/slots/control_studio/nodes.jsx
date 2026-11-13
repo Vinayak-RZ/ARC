@@ -112,9 +112,9 @@ export function PidNode({ data, selected }) {
     data,
     <>
       <span className="studio-block-kind">PID</span>
-      <span className="studio-param-line">
-        Kp={p.kp ?? 0} Ki={p.ki ?? 0} Kd={p.kd ?? 0}
-      </span>
+      <span className="studio-param-line">Kp = {p.kp ?? 0}</span>
+      <span className="studio-param-line">Ki = {p.ki ?? 0}</span>
+      <span className="studio-param-line">Kd = {p.kd ?? 0}</span>
     </>,
     <>
       <InPort id="in" />

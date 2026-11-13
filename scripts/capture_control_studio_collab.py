@@ -38,12 +38,19 @@ def main() -> int:
         page.wait_for_function(
             """() => {
             const cells = Array.from(document.querySelectorAll('.cs-margin-grid dd'));
-            return cells.some((el) => (el.textContent || '').includes('dB'));
+            return cells.some((el) => {
+              const t = (el.textContent || '').trim();
+              return t.includes('dB') || t === 'Infinite' || t === 'No crossover';
+            });
         }""",
             timeout=35000,
         )
-        page.wait_for_timeout(400)
+        page.wait_for_timeout(600)
         page.screenshot(path=str(populated), full_page=False)
+        bode_shot = OUT / "control_studio_bode_1280x800.png"
+        page.locator(".studio-results-tabs button", has_text="Bode").click()
+        page.wait_for_timeout(800)
+        page.screenshot(path=str(bode_shot), full_page=False)
 
         sid2 = handle_tool("control_studio_create_diagram", {"title": "Agent build", "golden": None})["session_id"]
         build_sid = sid2
@@ -63,6 +70,7 @@ def main() -> int:
             lambda: handle_tool("control_studio_connect", {"session_id": sid2, "wire_id": "w3", "from": "g1:out", "to": "p1:in"}),
             lambda: handle_tool("control_studio_connect", {"session_id": sid2, "wire_id": "w4", "from": "p1:out", "to": "y:in"}),
             lambda: handle_tool("control_studio_connect", {"session_id": sid2, "wire_id": "w5", "from": "p1:tap", "to": "sum1:feedback"}),
+            lambda: handle_tool("control_studio_auto_layout", {"session_id": sid2}),
             lambda: handle_tool("control_studio_simulate", {"session_id": sid2}),
         ]
         for i, step in enumerate(steps, start=1):
@@ -153,6 +161,7 @@ def main() -> int:
         "build_session": build_sid,
         "frames": [str(f) for f in frames],
         "populated": str(populated),
+        "bode": str(OUT / "control_studio_bode_1280x800.png"),
         "gif": str(gif_path) if gif_path else None,
     }
     (OUT / "control_studio_capture_meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")

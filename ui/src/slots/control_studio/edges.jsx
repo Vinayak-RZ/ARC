@@ -1,7 +1,7 @@
 import { BaseEdge, EdgeLabelRenderer, getSmoothStepPath } from "@xyflow/react";
 
 function feedbackPath(sourceX, sourceY, targetX, targetY) {
-  const drop = 100;
+  const drop = 72;
   const midY = Math.max(sourceY, targetY) + drop;
   return `M ${sourceX} ${sourceY} V ${midY} H ${targetX} V ${targetY}`;
 }
@@ -22,21 +22,22 @@ export function SignalEdge({
   const label = data?.label || "";
   if (below) {
     const path = feedbackPath(sourceX, sourceY, targetX, targetY);
-    const lx = (sourceX + targetX) / 2;
-    const ly = Math.max(sourceY, targetY) + 72;
     return (
       <>
-        <BaseEdge id={id} path={path} markerEnd={markerEnd} style={{ stroke: "var(--cs-text)", strokeWidth: 1.75 }} />
-        {label ? (
-          <EdgeLabelRenderer>
-            <div
-              className="studio-edge-label is-feedback"
-              style={{ transform: `translate(-50%, -50%) translate(${lx}px,${ly}px)` }}
-            >
-              {label}
-            </div>
-          </EdgeLabelRenderer>
-        ) : null}
+        <circle
+          cx={sourceX}
+          cy={sourceY}
+          r={4.5}
+          fill="var(--cs-copper)"
+          stroke="var(--cs-surface)"
+          strokeWidth={1.5}
+        />
+        <BaseEdge
+          id={id}
+          path={path}
+          markerEnd={markerEnd}
+          style={{ stroke: "var(--cs-text)", strokeWidth: 2, zIndex: 0 }}
+        />
       </>
     );
   }
@@ -47,16 +48,19 @@ export function SignalEdge({
     targetX,
     targetY,
     targetPosition,
-    borderRadius: 12,
+    borderRadius: 0,
   });
   return (
     <>
-      <BaseEdge id={id} path={path} markerEnd={markerEnd} style={{ stroke: "var(--cs-text)", strokeWidth: 1.75 }} />
+      <BaseEdge id={id} path={path} markerEnd={markerEnd} style={{ stroke: "var(--cs-text)", strokeWidth: 2, zIndex: 0 }} />
       {label ? (
         <EdgeLabelRenderer>
-          <div className="studio-edge-label" style={{ transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)` }}>
+          <span
+            className="studio-edge-signal"
+            style={{ transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)` }}
+          >
             {label}
-          </div>
+          </span>
         </EdgeLabelRenderer>
       ) : null}
     </>
@@ -66,9 +70,9 @@ export function SignalEdge({
 export const studioEdgeTypes = { signal: SignalEdge };
 
 export function wireLabel(from, to, blocksById) {
-  const [fb] = from.split(":");
   const [tb, tp] = to.split(":");
-  if (tp === "feedback") return "fb";
+  if (tp === "feedback") return "";
+  const [fb] = from.split(":");
   const src = blocksById[fb];
   const tgt = blocksById[tb];
   if (src?.type === "step") return "r";
