@@ -1,0 +1,6 @@
+* bjt ss
+Vb 1 0 DC 0.001
+Rc 2 0 2.2k
+Eav 2 0 1 0 -110
+Rin 1 0 1
+.end

@@ -21,8 +21,7 @@ async function contentOutsideCanvas(page: Page, label: string) {
     width: canvas!.width - 2 * inset,
     height: canvas!.height - 2 * inset,
   };
-  const sel =
-    ".react-flow__edge-path, .react-flow__edge circle, .studio-block";
+  const sel = ".react-flow__edge-path, .react-flow__edge circle, .studio-block";
   const bad: string[] = [];
   let measured = 0;
   const loc = page.locator(sel);

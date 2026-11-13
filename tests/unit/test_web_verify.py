@@ -109,7 +109,7 @@ def test_context_web_gold_pack(tmp_path):
 
 def test_solve_recipe_includes_web_verify(tmp_path):
     problem = json.loads(
-        (Path(__file__).resolve().parents[2] / "eval/gold/circuits/rc-step-01/fixtures/problem.json").read_text()
+        (Path(__file__).resolve().parents[2] / "eval/gold/circuits/mna-ladder-01/fixtures/problem.json").read_text()
     )
     result = execute("solve-circuit-problem", run_root=tmp_path, problem=problem)
     summary = json.loads((Path(result["run_dir"]) / "evidentiary.json").read_text())

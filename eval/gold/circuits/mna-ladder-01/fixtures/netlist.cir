@@ -1,0 +1,7 @@
+* ladder
+V1 1 0 DC 12
+R1 1 2 1k
+R2 2 0 3k
+R3 2 3 2k
+R4 3 0 4k
+.end

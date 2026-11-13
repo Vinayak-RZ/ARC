@@ -1,0 +1,8 @@
+* bode
+V1 1 0 AC 1
+R1 1 2 1k
+C1 2 0 100n
+R2 2 3 1k
+C2 3 0 100n
+.ac lin 1 1k 1k
+.end

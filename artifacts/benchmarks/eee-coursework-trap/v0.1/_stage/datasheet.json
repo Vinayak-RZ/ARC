@@ -5,11 +5,11 @@
   "task_counts_by_domain": {
     "power": 12,
     "control": 7,
-    "circuits": 6,
+    "circuits": 31,
     "trap": 47
   },
-  "total_tasks": 72,
-  "unique_question_givens": 72,
+  "total_tasks": 97,
+  "unique_question_givens": 97,
   "grading_tolerance_rules": "Submit only fields named in answer_schema within listed tolerances and units.",
   "licence": "Apache-2.0; license-clean reconstructions only.",
   "excluded": "live-ab, exam-v4/v5/v6, sealed REFERENCE.json",

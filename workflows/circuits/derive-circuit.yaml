@@ -1,10 +1,13 @@
 id: derive-circuit
 nodes:
-  check:
-    activity: algebraic-check
+  derive:
+    activity: run-circuit-derive
+  spice:
+    activity: verify-circuit-spice
+    needs: [derive]
   label:
     activity: label-unverified
-    needs: [check]
+    needs: [spice]
   summary:
     activity: write-run-summary
     needs: [label]

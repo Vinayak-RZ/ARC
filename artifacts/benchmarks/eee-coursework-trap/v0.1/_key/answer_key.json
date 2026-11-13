@@ -1,6 +1,6 @@
 {
   "schema": "arc.benchmark.answer_key.v0.1",
-  "key_sha256": "b71946de817226157241a9db9a8c9746ad576e9a5054e1e06ca1549a169b00f9",
+  "key_sha256": "28c1f61b7a41d2b894806c322618ecdafe562b15cc9e2c9fd5afeb854bc69b5b",
   "answers": {
     "power/agc-eec301-01-s118": {
       "reference": {
@@ -1067,25 +1067,941 @@
         }
       }
     },
-    "circuits/divider-dc-01-s413": {
+    "circuits/mna-ac-mix-01-s413": {
+      "reference": {
+        "value": 1.0
+      },
+      "grading": {
+        "solver": null,
+        "tol": 0.01,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": 1.0,
+          "tol": 0.01,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-ac-mix-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-ac-mix-01",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "ac",
+          "probe": "mag(v(2))",
+          "unit": "V",
+          "require_spice": true,
+          "f_hz": 1000.0
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.01
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.01"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-ac-rc-01-s416": {
+      "reference": {
+        "value": 7.071
+      },
+      "grading": {
+        "solver": null,
+        "tol": 0.01,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": 7.071178,
+          "tol": 0.01,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-ac-rc-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-ac-rc-01",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "ac",
+          "probe": "mag(v(2))",
+          "unit": "V",
+          "require_spice": true,
+          "f_hz": 159.2
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.01
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.01"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-ac-rc-02-s408": {
+      "reference": {
+        "value": 4.193
+      },
+      "grading": {
+        "solver": null,
+        "tol": 0.01,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": 4.192828,
+          "tol": 0.01,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-ac-rc-02",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-ac-rc-02",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "ac",
+          "probe": "mag(v(2))",
+          "unit": "V",
+          "require_spice": true,
+          "f_hz": 100.0
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.01
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.01"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-ac-rl-01-s429": {
+      "reference": {
+        "value": 15.67
+      },
+      "grading": {
+        "solver": null,
+        "tol": 0.01,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": 15.66808,
+          "tol": 0.01,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-ac-rl-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-ac-rl-01",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "ac",
+          "probe": "mag(v(1))",
+          "unit": "V",
+          "require_spice": true,
+          "f_hz": 50.0
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.01
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.01"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-bjt-01-s404": {
+      "reference": {
+        "value": -0.11
+      },
+      "grading": {
+        "solver": null,
+        "tol": 0.001,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": -0.11,
+          "tol": 0.001,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-bjt-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-bjt-01",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "dc",
+          "probe": "v(2)",
+          "unit": "V",
+          "require_spice": true
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-bode-01-s429": {
+      "reference": {
+        "value": 0.5051
+      },
+      "grading": {
+        "solver": null,
+        "tol": 0.01,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": 0.5051186,
+          "tol": 0.01,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-bode-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-bode-01",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "ac",
+          "probe": "mag(v(3))",
+          "unit": "V",
+          "require_spice": true,
+          "f_hz": 1000.0
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.01
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.01"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-bridge-01-s421": {
+      "reference": {
+        "value": 6.667
+      },
+      "grading": {
+        "solver": null,
+        "tol": 0.0001,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": 6.666667,
+          "tol": 0.0001,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-bridge-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-bridge-01",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "dc",
+          "probe": "v(3)",
+          "unit": "V",
+          "require_spice": true
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.0001"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-bridge-02-s414": {
+      "reference": {
+        "value": 3.333
+      },
+      "grading": {
+        "solver": null,
+        "tol": 0.0001,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": 3.333333,
+          "tol": 0.0001,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-bridge-02",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-bridge-02",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "dc",
+          "probe": "v(4)",
+          "unit": "V",
+          "require_spice": true
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.0001"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-dio-01-s422": {
+      "reference": {
+        "value": 0.6929
+      },
+      "grading": {
+        "solver": null,
+        "tol": 0.08,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": 0.692891,
+          "tol": 0.08,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-dio-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-dio-01",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "dc",
+          "probe": "v(2)",
+          "unit": "V",
+          "require_spice": true
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.08
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.08"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-ladder-01-s407": {
+      "reference": {
+        "value": 8.0
+      },
+      "grading": {
+        "solver": null,
+        "tol": 0.0001,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": 8.0,
+          "tol": 0.0001,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-ladder-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-ladder-01",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "dc",
+          "probe": "v(2)",
+          "unit": "V",
+          "require_spice": true
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.0001"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-ladder-02-s418": {
+      "reference": {
+        "value": 5.333
+      },
+      "grading": {
+        "solver": null,
+        "tol": 0.0001,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": 5.333333,
+          "tol": 0.0001,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-ladder-02",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-ladder-02",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "dc",
+          "probe": "v(3)",
+          "unit": "V",
+          "require_spice": true
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.0001"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-maxpwr-01-s426": {
+      "reference": {
+        "value": 6.0
+      },
+      "grading": {
+        "solver": null,
+        "tol": 0.0001,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": 6.0,
+          "tol": 0.0001,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-maxpwr-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-maxpwr-01",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "dc",
+          "probe": "v(2)",
+          "unit": "V",
+          "require_spice": true
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.0001"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-mesh-01-s403": {
+      "reference": {
+        "value": 0.75
+      },
+      "grading": {
+        "solver": null,
+        "tol": 0.0001,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": 0.75,
+          "tol": 0.0001,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-mesh-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-mesh-01",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "dc",
+          "probe": "v(4)",
+          "unit": "V",
+          "require_spice": true
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.0001"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-mesh-02-s416": {
+      "reference": {
+        "value": 1.429
+      },
+      "grading": {
+        "solver": null,
+        "tol": 0.0001,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": 1.428571,
+          "tol": 0.0001,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-mesh-02",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-mesh-02",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "dc",
+          "probe": "v(3)",
+          "unit": "V",
+          "require_spice": true
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.0001"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-op-ac-01-s407": {
+      "reference": {
+        "value": 0.8467
+      },
+      "grading": {
+        "solver": null,
+        "tol": 0.01,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": 0.846733,
+          "tol": 0.01,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-op-ac-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-op-ac-01",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "ac",
+          "probe": "mag(v(3))",
+          "unit": "V",
+          "require_spice": true,
+          "f_hz": 1000.0
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.01
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.01"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-op-inv-01-s411": {
+      "reference": {
+        "value": -0.2273
+      },
+      "grading": {
+        "solver": null,
+        "tol": 0.001,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": -0.227273,
+          "tol": 0.001,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-op-inv-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-op-inv-01",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "dc",
+          "probe": "v(2)",
+          "unit": "V",
+          "require_spice": true
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-op-ninv-01-s411": {
+      "reference": {
+        "value": 3.0
+      },
+      "grading": {
+        "solver": null,
+        "tol": 0.001,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": 3.0,
+          "tol": 0.001,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-op-ninv-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-op-ninv-01",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "dc",
+          "probe": "v(2)",
+          "unit": "V",
+          "require_spice": true
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-super-01-s407": {
+      "reference": {
+        "value": 4.0
+      },
+      "grading": {
+        "solver": null,
+        "tol": 0.0001,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": 4.0,
+          "tol": 0.0001,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-super-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-super-01",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "dc",
+          "probe": "v(2)",
+          "unit": "V",
+          "require_spice": true
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.0001"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-super-02-s408": {
+      "reference": {
+        "value": 2.5
+      },
+      "grading": {
+        "solver": null,
+        "tol": 0.0001,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": 2.5,
+          "tol": 0.0001,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-super-02",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-super-02",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "dc",
+          "probe": "v(2)",
+          "unit": "V",
+          "require_spice": true
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.0001"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-thev-01-s402": {
+      "reference": {
+        "value": 6.13
+      },
+      "grading": {
+        "solver": null,
+        "tol": 0.0001,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": 6.130435,
+          "tol": 0.0001,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-thev-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-thev-01",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "dc",
+          "probe": "v(3)",
+          "unit": "V",
+          "require_spice": true
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.0001"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-tr-rc-01-s426": {
+      "reference": {
+        "value": 10.0
+      },
+      "grading": {
+        "solver": null,
+        "tol": 0.005,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": 10.0,
+          "tol": 0.005,
+          "require_spice": false,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-tr-rc-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-tr-rc-01",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "tran",
+          "probe": "v(2)",
+          "unit": "V",
+          "require_spice": false,
+          "t_s": 0.05
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.005
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.005"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-tr-rc-02-s401": {
       "reference": {
         "value": 5.0
       },
       "grading": {
         "solver": null,
-        "tol": 1e-06,
-        "engine": null,
-        "recipe_id": "solve-circuit-problem",
+        "tol": 0.005,
+        "engine": "circuit_unit",
+        "recipe_id": null,
         "expect": {
-          "recipe_id": "solve-circuit-problem",
+          "engine": "circuit_unit",
           "value": 5.0,
-          "tol": 1e-06,
-          "unchecked": false
+          "tol": 0.005,
+          "require_spice": false,
+          "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-tr-rc-02",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-tr-rc-02",
         "public_givens": {
-          "vin_V": 10.0,
-          "r1_ohm": 1000.0,
-          "r2_ohm": 1000.0
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "tran",
+          "probe": "v(2)",
+          "unit": "V",
+          "require_spice": false,
+          "t_s": 0.2
         },
         "answer_schema": {
           "fields": [
@@ -1094,37 +2010,42 @@
               "type": "float",
               "unit": "1",
               "tolerance_rel": 0.005,
-              "tolerance_abs": 0.0001
+              "tolerance_abs": 0.005
             }
           ],
-          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.0001"
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.005"
         },
         "gold_provenance": {
-          "method": "ee_v2_analytic",
+          "method": "ee_v2_or_recipe",
           "ok": true
         }
       }
     },
-    "circuits/rc-step-01-s419": {
+    "circuits/mna-tr-rl-01-s402": {
       "reference": {
-        "value": 6.68
+        "value": -0.12
       },
       "grading": {
-        "solver": "rc_step",
-        "tol": 1e-06,
-        "engine": null,
-        "recipe_id": "study-circuits-v2",
+        "solver": null,
+        "tol": 0.005,
+        "engine": "circuit_unit",
+        "recipe_id": null,
         "expect": {
-          "recipe_id": "study-circuits-v2",
-          "unchecked": false,
-          "value": 6.321205
+          "engine": "circuit_unit",
+          "value": 0.11919144636010974,
+          "tol": 0.005,
+          "require_spice": false,
+          "gold_provenance": "hand_calc"
         },
+        "benchmark_item": "mna-tr-rl-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-tr-rl-01",
         "public_givens": {
-          "v": 11.5,
-          "r": 1150.0,
-          "c": 0.00115,
-          "t": 1.15,
-          "unit": "V"
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "tran",
+          "probe": "i(v1)",
+          "unit": "A",
+          "require_spice": false,
+          "t_s": 0.01
         },
         "answer_schema": {
           "fields": [
@@ -1133,37 +2054,42 @@
               "type": "float",
               "unit": "1",
               "tolerance_rel": 0.005,
-              "tolerance_abs": 0.001
+              "tolerance_abs": 0.005
             }
           ],
-          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.005"
         },
         "gold_provenance": {
-          "method": "ee_v2_analytic",
+          "method": "ee_v2_or_recipe",
           "ok": true
         }
       }
     },
-    "circuits/rc-step-01-s430": {
+    "circuits/mna-tr-rlc-01-s413": {
       "reference": {
-        "value": 6.373
+        "value": 10.0
       },
       "grading": {
-        "solver": "rc_step",
-        "tol": 1e-06,
-        "engine": null,
-        "recipe_id": "study-circuits-v2",
+        "solver": null,
+        "tol": 0.1,
+        "engine": "circuit_unit",
+        "recipe_id": null,
         "expect": {
-          "recipe_id": "study-circuits-v2",
-          "unchecked": false,
-          "value": 6.321205
+          "engine": "circuit_unit",
+          "value": 10.0,
+          "tol": 0.1,
+          "require_spice": false,
+          "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-tr-rlc-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-tr-rlc-01",
         "public_givens": {
-          "v": 10.2,
-          "r": 1020.0,
-          "c": 0.00102,
-          "t": 1.02,
-          "unit": "V"
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "tran",
+          "probe": "v(3)",
+          "unit": "V",
+          "require_spice": false,
+          "t_s": 2e-05
         },
         "answer_schema": {
           "fields": [
@@ -1172,36 +2098,85 @@
               "type": "float",
               "unit": "1",
               "tolerance_rel": 0.005,
-              "tolerance_abs": 0.001
+              "tolerance_abs": 0.1
             }
           ],
-          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.1"
         },
         "gold_provenance": {
-          "method": "ee_v2_analytic",
+          "method": "ee_v2_or_recipe",
           "ok": true
         }
       }
     },
-    "circuits/rl-step-01-s424": {
+    "circuits/mna-tr-rlc-02-s403": {
       "reference": {
-        "value": 0.1675
+        "value": 0.0
       },
       "grading": {
-        "solver": "rl_step",
+        "solver": null,
+        "tol": 0.15,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": 0.0,
+          "tol": 0.15,
+          "require_spice": false,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-tr-rlc-02",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-tr-rlc-02",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "tran",
+          "probe": "v(3)",
+          "unit": "V",
+          "require_spice": false,
+          "t_s": 0.0001
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.15
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.15"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-vccs-01-s417": {
+      "reference": {
+        "value": -50.0
+      },
+      "grading": {
+        "solver": null,
         "tol": 0.0001,
-        "engine": null,
-        "recipe_id": "study-circuits-v2",
+        "engine": "circuit_unit",
+        "recipe_id": null,
         "expect": {
-          "recipe_id": "study-circuits-v2",
-          "unchecked": false,
-          "tol": 0.0001
+          "engine": "circuit_unit",
+          "value": -50.0,
+          "tol": 0.0001,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-vccs-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-vccs-01",
         "public_givens": {
-          "v": 26.4,
-          "r": 132.0,
-          "l": 0.165,
-          "t": 0.00227
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "dc",
+          "probe": "v(3)",
+          "unit": "V",
+          "require_spice": true
         },
         "answer_schema": {
           "fields": [
@@ -1216,30 +2191,35 @@
           "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.0001"
         },
         "gold_provenance": {
-          "method": "ee_v2_analytic",
+          "method": "ee_v2_or_recipe",
           "ok": true
         }
       }
     },
-    "circuits/rl-step-01-s435": {
+    "circuits/mna-vccs-02-s407": {
       "reference": {
-        "value": 0.1896
+        "value": 0.0
       },
       "grading": {
-        "solver": "rl_step",
+        "solver": null,
         "tol": 0.0001,
-        "engine": null,
-        "recipe_id": "study-circuits-v2",
+        "engine": "circuit_unit",
+        "recipe_id": null,
         "expect": {
-          "recipe_id": "study-circuits-v2",
-          "unchecked": false,
-          "tol": 0.0001
+          "engine": "circuit_unit",
+          "value": 0.0,
+          "tol": 0.0001,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-vccs-02",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-vccs-02",
         "public_givens": {
-          "v": 24.24,
-          "r": 121.2,
-          "l": 0.1515,
-          "t": 0.003697
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "dc",
+          "probe": "v(3)",
+          "unit": "V",
+          "require_spice": true
         },
         "answer_schema": {
           "fields": [
@@ -1254,32 +2234,35 @@
           "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.0001"
         },
         "gold_provenance": {
-          "method": "ee_v2_analytic",
+          "method": "ee_v2_or_recipe",
           "ok": true
         }
       }
     },
-    "circuits/rlc-natural-01-s416": {
+    "circuits/mna-vcvs-01-s429": {
       "reference": {
-        "value": 0.09312
+        "value": 25.0
       },
       "grading": {
-        "solver": "rlc_natural",
+        "solver": null,
         "tol": 0.001,
-        "engine": null,
-        "recipe_id": "study-circuits-v2",
+        "engine": "circuit_unit",
+        "recipe_id": null,
         "expect": {
-          "recipe_id": "study-circuits-v2",
-          "unchecked": false,
-          "tol": 0.001
+          "engine": "circuit_unit",
+          "value": 25.0,
+          "tol": 0.001,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-vcvs-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-vcvs-01",
         "public_givens": {
-          "r": 212.0,
-          "l": 0.106,
-          "c": 1.06e-05,
-          "vc0": 12.72,
-          "i0": 0.053,
-          "t": 0.00106
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "dc",
+          "probe": "v(3)",
+          "unit": "V",
+          "require_spice": true
         },
         "answer_schema": {
           "fields": [
@@ -1294,13 +2277,148 @@
           "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
         },
         "gold_provenance": {
-          "method": "parallel_rlc_state_space",
-          "convention": "R||L||C at one node; i0_A is inductor current at t=0+ from the shared node through L toward ground",
-          "independent_V": 0.09312035050446156,
-          "catalog_V": 0.09312035050446156,
-          "ngspice_V": 0.09312036,
-          "ngspice_agree": true,
-          "catalog_V_rounded": 0.09312,
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-vcvs-02-s427": {
+      "reference": {
+        "value": 10.0
+      },
+      "grading": {
+        "solver": null,
+        "tol": 0.001,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": 10.0,
+          "tol": 0.001,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-vcvs-02",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-vcvs-02",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "dc",
+          "probe": "v(3)",
+          "unit": "V",
+          "require_spice": true
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/mna-zpi-01-s405": {
+      "reference": {
+        "value": 300.0
+      },
+      "grading": {
+        "solver": null,
+        "tol": 0.001,
+        "engine": "circuit_unit",
+        "recipe_id": null,
+        "expect": {
+          "engine": "circuit_unit",
+          "value": 300.0,
+          "tol": 0.001,
+          "require_spice": true,
+          "gold_provenance": "ngspice_oracle"
+        },
+        "benchmark_item": "mna-zpi-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-zpi-01",
+        "public_givens": {
+          "netlist_path": "fixtures/netlist.cir",
+          "analysis": "dc",
+          "probe": "v(1)",
+          "unit": "V",
+          "require_spice": true
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
+          "ok": true
+        }
+      }
+    },
+    "circuits/photo-stub-01-s409": {
+      "reference": {
+        "token": "unchecked",
+        "unchecked": true
+      },
+      "grading": {
+        "solver": null,
+        "tol": 1e-06,
+        "engine": null,
+        "recipe_id": "photo-to-netlist",
+        "expect": {
+          "recipe_id": "photo-to-netlist",
+          "token": "unchecked",
+          "unchecked": true
+        },
+        "benchmark_item": "photo-stub-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/photo-stub-01",
+        "public_givens": {
+          "nodes": [
+            {
+              "id": "1"
+            },
+            {
+              "id": "2"
+            },
+            {
+              "id": "0"
+            }
+          ],
+          "edges": [
+            {
+              "from": "1",
+              "to": "2",
+              "R": 1000
+            }
+          ]
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_or_recipe",
           "ok": true
         }
       }

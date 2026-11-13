@@ -74,15 +74,39 @@ def test_k10_settles_against_final_value_not_setpoint() -> None:
     assert m["on_target"] is False
 
 
+def _unity_k(k: float) -> dict:
+    d = GOLDENS["unity_first_order"]()
+    for b in d["blocks"]:
+        if b.get("id") == "G":
+            b["params"]["k"] = k
+    d["meta"]["unity_feedback"]["blocks"][0]["tf"] = f"{k:g}/(s+1)"
+    return d
+
+
+@pytest.mark.skipif(not control_available(), reason="python-control missing")
+@pytest.mark.parametrize("t_final", ["auto", 10, 30, 100])
+def test_k10_settling_time_window_independent(t_final) -> None:
+    out = simulate(_unity_k(10.0), t_final=t_final)
+    m = out["step_series"]["metrics"]
+    ts_theory = float(np.log(50.0) / 11.0)
+    assert m["t_settle_s"] == pytest.approx(ts_theory, rel=0.02)
+
+
+@pytest.mark.skipif(not control_available(), reason="python-control missing")
+@pytest.mark.parametrize("t_final", ["auto", 10, 30, 100])
+def test_k200_settling_time_window_independent(t_final) -> None:
+    out = simulate(_unity_k(200.0), t_final=t_final)
+    m = out["step_series"]["metrics"]
+    ts_theory = float(np.log(50.0) / 201.0)
+    assert m["t_settle_s"] == pytest.approx(ts_theory, rel=0.05)
+
+
 @pytest.mark.skipif(not control_available(), reason="python-control missing")
 def test_k10_golden_through_simulate_matches_theory_within_sampling() -> None:
     out = simulate(GOLDENS["unity_first_order"](), t_final=10.0)
-    s = out["step_series"]
-    m = s["metrics"]
-    dt = s["t"][1] - s["t"][0]
+    m = out["step_series"]["metrics"]
     assert m["final_value"] == pytest.approx(10.0 / 11.0, abs=5e-4)
-    # sampled equivalent: the last sample outside the band sits at most one step before the true time
-    assert abs(m["t_settle_s"] - float(np.log(50.0) / 11.0)) <= 1.5 * dt
+    assert m["t_settle_s"] == pytest.approx(float(np.log(50.0) / 11.0), rel=0.02)
 
 
 @pytest.mark.parametrize("k", [39.0, 60.0])

@@ -15,7 +15,9 @@ Beat CircuitSense symbolic gap with **verify-after-derive** pipeline (report #02
 
 ## Contract
 
-**Output:** `{ "circuit_unit_pass_rate": 0.55, "multimodal_path_smoke": true }`
+**Output:** `{ "circuit_unit_pass_rate", "derive_spice_agreement_rate", "multimodal_path_smoke" }` (independent ngspice/hand golds vs MNA `derive()`).
+
+Run: `uv run python scripts/run_circuit_benchmark.py` → `artifacts/frontier/b4_contract.json`. Golds: `uv run python scripts/capture_circuit_oracle.py` (no `derive()`).
 
 ## Commits
 

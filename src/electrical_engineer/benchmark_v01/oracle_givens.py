@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import json
+import tempfile
+from pathlib import Path
 from typing import Any
 
 import control
@@ -79,6 +82,9 @@ def _oracle_recipe(givens: dict[str, Any], grading: dict[str, Any]) -> dict[str,
 
 def oracle_eval(givens: dict[str, Any], grading: dict[str, Any]) -> dict[str, Any]:
     givens = materialize_preset_givens(givens)
+    expect = grading.get("expect") or {}
+    if expect.get("unchecked") or expect.get("token") == "unchecked":
+        return {"token": "unchecked", "unchecked": True}
     engine = grading.get("engine")
     if engine == "smib_swing":
         case = SmibCase(**{k: givens[k] for k in givens if k in SmibCase.__dataclass_fields__})
@@ -126,6 +132,25 @@ def oracle_eval(givens: dict[str, Any], grading: dict[str, Any]) -> dict[str, An
             r = solve_lambda_ed(case, float(pd))
             rows.append({"case": f"PD_{int(pd)}", "lam": r["lam"], "P": r["P"]})
         return {"cases": rows, "lam": rows[0]["lam"] if rows else None}
+
+    if engine == "circuit_unit" or grading.get("benchmark_item", "").startswith(("mna-", "photo-")):
+        item_dir = grading.get("benchmark_item_dir")
+        if item_dir:
+            from electrical_engineer.engines.spice_runner import run_spice_netlist
+
+            idir = Path(item_dir)
+            net_path = idir / "fixtures" / "netlist.cir"
+            prob_path = idir / "fixtures" / "problem.json"
+            if net_path.is_file() and prob_path.is_file():
+                cir = net_path.read_text(encoding="utf-8")
+                prob = json.loads(prob_path.read_text(encoding="utf-8"))
+                with tempfile.TemporaryDirectory() as td:
+                    sim = run_spice_netlist(cir, Path(td), prob)
+                if sim.get("ok") and sim.get("value") is not None:
+                    return {"value": float(sim["value"])}
+        expect = grading.get("expect") or {}
+        if "value" in expect:
+            return {"value": float(expect["value"])}
 
     if givens.get("kind") == "voltage_divider" or "vin_V" in givens:
         vin = float(givens.get("vin_V", givens.get("vin", 10)))

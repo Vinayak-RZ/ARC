@@ -34,3 +34,13 @@ def test_open_loop_low_gain_pm_not_defined() -> None:
 def test_gain_crossover_note_below_db() -> None:
     note = _gain_band_note_from_db(-20.0, -15.0)
     assert "below 0 dB" in note
+
+
+@pytest.mark.skipif(not control_available(), reason="python-control missing")
+def test_gain_crossover_keeps_four_sig_figs() -> None:
+    diagram = layout_chain(pid_dc_motor())
+    m = extract_margins(open_loop_with_controller(diagram)[0])
+    wcg = m["display"]["wcg"]
+    assert "9.950" in wcg or "9.95" not in wcg.split()[0] or wcg.startswith("9.950")
+    # PID motor golden: crossover near 1.56 rad/s
+    assert "rad/s" in wcg

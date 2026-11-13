@@ -19,12 +19,22 @@ def _band_note(kind: str = "gain") -> str:
     return f"No crossing in {lo_s} to {hi_s} rad/s."
 
 
+def _fmt_sig4(x: float) -> str:
+    if not math.isfinite(x):
+        return str(x)
+    if x == 0.0:
+        return "0.000"
+    exp = math.floor(math.log10(abs(x)))
+    decimals = 3 - exp
+    return f"{round(x, decimals):.{decimals}f}"
+
+
 def _fmt_freq(x: float | None, *, phase_cross: bool = False) -> tuple[str, str | None]:
     if x is None or (isinstance(x, float) and math.isnan(x)):
         return "No crossover in range", _phase_above_note() if phase_cross else None
     if math.isinf(x):
         return "Infinite", "The crossover lies beyond the analyzed frequency band."
-    return f"{x:.4g} rad/s", None
+    return f"{_fmt_sig4(float(x))} rad/s", None
 
 
 def _phase_never_minus180_note() -> str:

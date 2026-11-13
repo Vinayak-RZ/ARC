@@ -1,0 +1,9 @@
+{
+  "netlist_path": "fixtures/netlist.cir",
+  "analysis": "ac",
+  "probe": "mag(v(2))",
+  "unit": "V",
+  "tol": 0.01,
+  "require_spice": true,
+  "f_hz": 100.0
+}
