@@ -1,0 +1,77 @@
+{
+  "P1": {
+    "answers": {
+      "delta0_deg": 24.901,
+      "delta_cr_deg": 78.317,
+      "t_cr_s": 0.2966,
+      "integration_step_s": 1e-5
+    },
+    "method": "Arc smib_swing engine (RK4 h=1e-5): equal-area δ_cr, time-to-δ_cr during fault, bisection CCT; verified via `electrical-engineer run smib-swing-study` with problem.json overrides.",
+    "confidence": 0.95
+  },
+  "P2": {
+    "answers": {
+      "stable": true,
+      "max_rotor_angle_deg": 102.062
+    },
+    "method": "Arc smib_swing.simulate_clearing at t_clear=0.25 s, RK4 h=1e-5; peak δ < 180° and instability flag false (t_clear < t_cr from P1).",
+    "confidence": 0.93
+  },
+  "P3": {
+    "answers": {
+      "P1_MW": 350.0,
+      "P2_MW": 250.0,
+      "P3_MW": 300.0,
+      "lambda_Rs_per_MWh": 9.8
+    },
+    "method": "Arc ed_lambda.solve_lambda_ed with sheet unit table (IC = b + 2cP); λ-iteration with limits (U2 and U3 at Pmax).",
+    "confidence": 0.96
+  },
+  "P4": {
+    "answers": {
+      "steady_state_frequency_deviation_Hz": -0.05952,
+      "Delta_P12_MW": -25.0
+    },
+    "method": "Primary-only identical-area steady partition: Δf = −ΔPL/(β1+β2), ΔP12 = −β2/(β1+β2)·ΔPL with β=21 pu, ΔPL=50 MW, f0=50 Hz; used Arc agc_two_area.analytic_primary_steady for pu tie/mgen, then scaled Δf with f0=50 (engine helper hard-codes 60 Hz).",
+    "confidence": 0.88
+  },
+  "P5": {
+    "answers": {
+      "gain_crossover_rad_s": 4.472,
+      "phase_margin_deg": 43.21,
+      "phase_crossover_rad_s": 1.559,
+      "gain_margin_dB": 6.0
+    },
+    "method": "python-control margin() on L(s)=40/(s(s+2)(s+10)); workflow `solve-control-problem` produced Bode/step plots only (no margin numbers).",
+    "confidence": 0.94
+  },
+  "P6": {
+    "answers": {
+      "damping_type": "underdamped",
+      "zeta": 0.4,
+      "vc_peak_V": 15.046,
+      "t_vc_peak_s": 0.343,
+      "settling_time_2pct_s": 0.841
+    },
+    "method": "ζ from R,L,C classification; ODE integration of series RLC state (vc,i) for 12 V step — ngspice unavailable (`simulate-circuit` returned unchecked).",
+    "confidence": 0.85
+  },
+  "P7": {
+    "answers": {
+      "fault_current_pu": 4.286,
+      "fault_current_kA": 7.498
+    },
+    "method": "Arc power_runner._sequence_fault SLG: |I|=3|V|/|Z1+Z2+Z0+3Zf|; kA from 100 MVA, 33 kV LL base I=1.75 kA. CLI fault workflow failed on string complex z_pu.",
+    "confidence": 0.94
+  },
+  "P8": {
+    "answers": {
+      "rotor_speed_rpm": 1440.0,
+      "stator_current_A": 23.456,
+      "developed_torque_Nm": 88.1,
+      "slip_at_max_torque": 0.1092
+    },
+    "method": "Exact per-phase equivalent circuit at s=0.04 (star Vph); s_max from Thevenin toward rotor branch. Arc drives_study only supports slip-from-load torque, not full EC.",
+    "confidence": 0.82
+  }
+}
