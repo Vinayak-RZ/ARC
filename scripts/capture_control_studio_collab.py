@@ -52,7 +52,7 @@ def main() -> int:
             if (!pane) return true;
             const paneRect = pane.getBoundingClientRect();
             const pad = 3;
-            const nodes = document.querySelectorAll('.react-flow__node');
+            const nodes = document.querySelectorAll('.react-flow__node .studio-block');
             if (!nodes.length) return true;
             for (const n of nodes) {
                 const r = n.getBoundingClientRect();

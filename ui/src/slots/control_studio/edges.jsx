@@ -58,7 +58,9 @@ export function SignalEdge({
         <EdgeLabelRenderer>
           <span
             className="studio-edge-signal"
-            style={{ transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)` }}
+            style={{
+              transform: `translate(-50%, calc(-100% - 10px)) translate(${labelX}px,${labelY}px)`,
+            }}
           >
             {label}
           </span>

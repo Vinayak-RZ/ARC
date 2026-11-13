@@ -105,8 +105,10 @@ def list_sessions(root: Path | None = None, *, limit: int = 12) -> list[dict[str
         if not isinstance(data, dict):
             continue
         diagram = data.get("diagram") or {}
-        title = str(diagram.get("title") or data.get("session_id"))
-        if title.startswith("unmatched") or "scratch" in title.lower():
+        sid = str(data.get("session_id") or path.stem)
+        title = str(diagram.get("title") or sid)
+        low = f"{sid} {title}".lower()
+        if low.startswith("unmatched") or "scratch" in low or "unmatched-cosolver" in low:
             continue
         items.append(
             {

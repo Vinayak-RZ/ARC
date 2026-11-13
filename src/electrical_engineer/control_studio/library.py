@@ -101,4 +101,5 @@ def pid_tf(params: dict[str, Any]):
     kp = float(params.get("kp") or params.get("Kp") or 0.0)
     ki = float(params.get("ki") or params.get("Ki") or 0.0)
     kd = float(params.get("kd") or params.get("Kd") or 0.0)
-    return kp + ki / control.tf([1], [1, 0]) + kd * control.tf([1, 0], [1])
+    # Parallel PID as one rational TF: (kd*s^2 + kp*s + ki) / s
+    return control.tf([kd, kp, ki], [1.0, 0.0])

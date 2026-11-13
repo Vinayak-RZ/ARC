@@ -340,8 +340,13 @@
   z-index: 2 !important;
 }
 
+.studio-canvas .react-flow__node {
+  overflow: visible !important;
+}
+
 .studio-block {
   position: relative;
+  overflow: visible;
   width: 132px;
   min-width: 132px;
   min-height: 64px;
@@ -349,7 +354,7 @@
   border: 1px solid var(--cs-border-strong);
   border-radius: var(--cs-radius-md);
   box-shadow: 0 1px 2px rgba(32, 32, 32, 0.06), 0 6px 16px rgba(32, 32, 32, 0.06);
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.4;
   box-sizing: border-box;
 }
@@ -404,7 +409,7 @@
 }
 
 .studio-block-kind {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -412,7 +417,7 @@
 }
 
 .studio-param-line {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--cs-text);
   line-height: 1.25;
@@ -473,9 +478,10 @@
 
 .studio-port-sign {
   position: absolute;
-  font-size: 11px;
+  z-index: 4;
+  font-size: 13px;
   font-weight: 700;
-  color: var(--cs-text-muted);
+  color: var(--cs-text);
   pointer-events: none;
 }
 
@@ -661,18 +667,21 @@
 
 .studio-results-stage {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 220px;
-  background: var(--cs-surface-subtle);
+  justify-content: stretch;
+  align-items: stretch;
+  min-height: 280px;
+  background: var(--cs-canvas);
   border-radius: var(--cs-radius-sm);
   border: 1px solid var(--cs-border);
+  padding: var(--cs-space-2);
 }
 
 .studio-results-stage img {
-  width: min(100%, 980px);
-  max-height: 280px;
+  width: 100%;
+  height: auto;
+  max-height: min(52vh, 420px);
   object-fit: contain;
+  display: block;
 }
 
 .studio-results.empty .studio-results-stage {

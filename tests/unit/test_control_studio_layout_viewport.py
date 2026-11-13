@@ -20,11 +20,12 @@ def test_pid_golden_bbox_fits_viewport_at_min_zoom() -> None:
     width = max_x - min_x
     # 1280×800 shell: icon palette 56px, inspector 248px → ~720px canvas (see studio.css grid).
     canvas_w = 720.0
-    pad_frac = 0.12
-    min_zoom = 0.6
+    pad_frac = 0.10
     usable = canvas_w * (1.0 - 2.0 * pad_frac)
+    fit_zoom = usable / width if width > 0 else 1.0
     assert width > 0
     assert min_x >= ORIGIN_X - 4
-    assert (width * min_zoom) <= usable + 8, (
-        f"diagram width {width:.0f}px at zoom {min_zoom} exceeds usable canvas {usable:.0f}px"
+    assert fit_zoom >= 0.35, f"diagram needs zoom {fit_zoom:.2f} below fitView minZoom"
+    assert width * fit_zoom <= usable + 8, (
+        f"diagram width {width:.0f}px at fit zoom {fit_zoom:.2f} exceeds usable canvas {usable:.0f}px"
     )

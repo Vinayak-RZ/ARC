@@ -57,6 +57,18 @@ def _read_json(path: Path) -> dict:
     return data if isinstance(data, dict) else {}
 
 
+def _run_list_hidden(folder: Path) -> bool:
+    name = folder.name
+    if name.startswith("_") or name.startswith("unmatched"):
+        return True
+    evid = _read_json(folder / "evidentiary.json") or _read_json(folder / "summary.json")
+    title = str(evid.get("title") or name).lower()
+    recipe = str(evid.get("recipe_id") or "")
+    if title.startswith("unmatched") or "scratch" in title or "scratch" in name.lower():
+        return True
+    return recipe == "unmatched-cosolver"
+
+
 def _run_list_item(folder: Path) -> dict:
     evid = _read_json(folder / "evidentiary.json") or _read_json(folder / "summary.json")
     return {
@@ -108,7 +120,11 @@ def create_app(root: Path | None = None) -> FastAPI:
     def list_runs() -> dict:
         items = []
         if runs.is_dir():
-            items = [_run_list_item(p) for p in sorted(runs.iterdir()) if p.is_dir()]
+            items = [
+                _run_list_item(p)
+                for p in sorted(runs.iterdir())
+                if p.is_dir() and not _run_list_hidden(p)
+            ]
         return {"runs": items}
 
     @app.get("/api/runs/{run_id}")
