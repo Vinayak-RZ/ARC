@@ -143,6 +143,9 @@ def verify_circuit_spice(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[s
         _write_run_json(run_dir, "circuit_verify.json", out)
     if out.get("mismatch"):
         out["label_message"] = "derive vs simulation mismatch"
+        out["spice_mismatch"] = True
+    if out.get("ok") and not out.get("unchecked"):
+        out["unchecked"] = False
     return {**out, "capability": "lumped-circuit-sim", "tool": "circuit_verify"}
 
 

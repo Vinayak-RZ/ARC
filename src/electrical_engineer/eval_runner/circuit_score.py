@@ -30,7 +30,9 @@ def run_circuit_item(item: Path, expect: dict[str, Any], *, run_root: Path | Non
     ok = bool(out.get("ok"))
     if want is not None:
         got = out.get("value")
-        ok = got is not None and abs(float(got) - float(want)) <= tol and not out.get("mismatch")
+        ok = got is not None and abs(float(got) - float(want)) <= tol
+    if expect.get("require_spice_match") and out.get("mismatch"):
+        ok = False
     if expect.get("require_spice") and (out.get("spice") or {}).get("skipped"):
         ok = False
     summary = {

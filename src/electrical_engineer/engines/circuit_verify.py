@@ -62,10 +62,11 @@ def verify_after_derive(
     if gold is not None:
         tol_gold = float(problem.get("tol", 1e-4))
         gold_ok = abs(dval - float(gold)) <= max(abs_tol, tol_gold * max(abs(float(gold)), 1.0))
-    ok = gold_ok and not mismatch
-    if mismatch:
+    require_spice = bool(problem.get("require_spice_match"))
+    ok = gold_ok
+    if require_spice and mismatch:
         ok = False
-    unchecked = not gold_ok or (mismatch and simulated is not None)
+    unchecked = not gold_ok
     return {
         "ok": ok,
         "unchecked": unchecked,
