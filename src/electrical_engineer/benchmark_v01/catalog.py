@@ -253,6 +253,8 @@ def build_task_catalog() -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]
             ref = _round_reference(raw_ref)
             grading_pub = {
                 **grading,
+                "benchmark_item": base_name,
+                "benchmark_item_dir": str(item_dir.resolve()),
                 "public_givens": givens,
                 "answer_schema": schema,
                 "gold_provenance": circuit_gold_provenance(

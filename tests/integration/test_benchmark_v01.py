@@ -165,9 +165,11 @@ def test_schema_fields_match_reference_keys(
 
 
 def test_circuit_gold_provenance_and_independent_oracle(benchmark_answers: dict) -> None:
-    for task_id, entry in benchmark_answers.items():
-        if not task_id.startswith("circuits/rlc-natural"):
-            continue
+    rlc = [tid for tid in benchmark_answers if tid.startswith("circuits/rlc-natural")]
+    if not rlc:
+        pytest.skip("no legacy rlc-natural benchmark tasks")
+    for task_id in rlc:
+        entry = benchmark_answers[task_id]
         prov = (entry.get("grading") or {}).get("gold_provenance") or {}
         assert prov.get("ok") is True, (task_id, prov)
         assert "convention" in prov
@@ -190,6 +192,11 @@ S416_ORACLE_V = 0.09312035050446156
 
 
 def test_rlc_natural_s416_ngspice_matches_oracle() -> None:
+    if not any(
+        p.is_dir() and (p / "expect.json").is_file()
+        for p in (ROOT / "eval" / "gold" / "circuits").glob("rlc-natural*")
+    ):
+        pytest.skip("rlc-natural eval golds removed (mna pack)")
     from electrical_engineer.benchmark_v01.circuit_gold import (
         parallel_rlc_vc_independent,
         parallel_rlc_vc_ngspice,

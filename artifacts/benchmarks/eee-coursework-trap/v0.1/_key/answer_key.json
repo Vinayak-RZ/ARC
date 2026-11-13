@@ -1,6 +1,6 @@
 {
   "schema": "arc.benchmark.answer_key.v0.1",
-  "key_sha256": "d0b89379d3475bec39af40110a8e3a73a545fa32e198f35d80269174cb3fae3a",
+  "key_sha256": "28c1f61b7a41d2b894806c322618ecdafe562b15cc9e2c9fd5afeb854bc69b5b",
   "answers": {
     "power/agc-eec301-01-s118": {
       "reference": {
@@ -1083,6 +1083,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-ac-mix-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-ac-mix-01",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "ac",
@@ -1125,6 +1127,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-ac-rc-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-ac-rc-01",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "ac",
@@ -1167,6 +1171,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-ac-rc-02",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-ac-rc-02",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "ac",
@@ -1209,6 +1215,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-ac-rl-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-ac-rl-01",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "ac",
@@ -1251,6 +1259,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-bjt-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-bjt-01",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "dc",
@@ -1292,6 +1302,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-bode-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-bode-01",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "ac",
@@ -1334,6 +1346,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-bridge-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-bridge-01",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "dc",
@@ -1375,6 +1389,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-bridge-02",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-bridge-02",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "dc",
@@ -1416,6 +1432,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-dio-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-dio-01",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "dc",
@@ -1457,6 +1475,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-ladder-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-ladder-01",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "dc",
@@ -1498,6 +1518,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-ladder-02",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-ladder-02",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "dc",
@@ -1539,6 +1561,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-maxpwr-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-maxpwr-01",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "dc",
@@ -1580,6 +1604,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-mesh-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-mesh-01",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "dc",
@@ -1621,6 +1647,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-mesh-02",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-mesh-02",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "dc",
@@ -1662,6 +1690,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-op-ac-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-op-ac-01",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "ac",
@@ -1704,6 +1734,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-op-inv-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-op-inv-01",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "dc",
@@ -1745,6 +1777,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-op-ninv-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-op-ninv-01",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "dc",
@@ -1786,6 +1820,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-super-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-super-01",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "dc",
@@ -1827,6 +1863,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-super-02",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-super-02",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "dc",
@@ -1868,6 +1906,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-thev-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-thev-01",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "dc",
@@ -1909,6 +1949,8 @@
           "require_spice": false,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-tr-rc-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-tr-rc-01",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "tran",
@@ -1951,6 +1993,8 @@
           "require_spice": false,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-tr-rc-02",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-tr-rc-02",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "tran",
@@ -1993,6 +2037,8 @@
           "require_spice": false,
           "gold_provenance": "hand_calc"
         },
+        "benchmark_item": "mna-tr-rl-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-tr-rl-01",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "tran",
@@ -2035,6 +2081,8 @@
           "require_spice": false,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-tr-rlc-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-tr-rlc-01",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "tran",
@@ -2077,6 +2125,8 @@
           "require_spice": false,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-tr-rlc-02",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-tr-rlc-02",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "tran",
@@ -2119,6 +2169,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-vccs-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-vccs-01",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "dc",
@@ -2160,6 +2212,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-vccs-02",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-vccs-02",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "dc",
@@ -2201,6 +2255,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-vcvs-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-vcvs-01",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "dc",
@@ -2242,6 +2298,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-vcvs-02",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-vcvs-02",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "dc",
@@ -2283,6 +2341,8 @@
           "require_spice": true,
           "gold_provenance": "ngspice_oracle"
         },
+        "benchmark_item": "mna-zpi-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/mna-zpi-01",
         "public_givens": {
           "netlist_path": "fixtures/netlist.cir",
           "analysis": "dc",
@@ -2323,6 +2383,8 @@
           "token": "unchecked",
           "unchecked": true
         },
+        "benchmark_item": "photo-stub-01",
+        "benchmark_item_dir": "/agent/repos/ARC/eval/gold/circuits/photo-stub-01",
         "public_givens": {
           "nodes": [
             {
