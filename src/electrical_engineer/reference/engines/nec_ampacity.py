@@ -12,6 +12,19 @@ _INSULATION_KEYS = {"60": "factor_60", "75": "factor_75", "90": "factor_90"}
 _AWG_RE = re.compile(r"^\s*(\d+(?:/\d+)?)\s*(?:awg|kcmil)?\s*$", re.IGNORECASE)
 
 
+def _resolve_ambient_c(ambient_c: float, round_ambient: str | None) -> tuple[int, float]:
+    """NEC 310.15(B)(1) bands use whole degrees; optional conservative ceiling."""
+    given = float(ambient_c)
+    if given == int(given):
+        return int(given), given
+    if round_ambient == "up":
+        return math.ceil(given), given
+    raise ValueError(
+        f"ambient_c={ambient_c} is not a whole degree; NEC Table 310.15(B)(1) uses integer "
+        f"degree bands — pass round_ambient='up' for conservative ceiling or use an integer ambient"
+    )
+
+
 def _normalize_size_awg(size: str) -> str:
     raw = str(size).strip().upper().replace("AWG", "").replace("KCMIL", "").strip()
     m = _AWG_RE.match(raw) or _AWG_RE.match(str(size))
@@ -122,25 +135,43 @@ def allowable_ampacity(
     size_awg: str,
     material: str,
     insulation_column: str,
-    ambient_c: int,
+    ambient_c: float,
     n_current_carrying: int,
+    round_ambient: str | None = None,
 ) -> dict[str, Any]:
     """Corrected allowable ampacity with NEC round-down (fractional ampere dropped)."""
+    ambient_resolved, ambient_given = _resolve_ambient_c(ambient_c, round_ambient)
     base = table31016_ampacity_a(
         size_awg=size_awg, material=material, insulation_column=insulation_column
     )
-    amb = ambient_correction_factor(ambient_c=ambient_c, insulation_column=insulation_column)
+    amb = ambient_correction_factor(
+        ambient_c=ambient_resolved, insulation_column=insulation_column
+    )
     adj = conductor_count_factor(n_current_carrying=n_current_carrying)
     corrected = (
         base["base_ampacity_a"] * amb["ambient_factor"] * adj["adjustment_factor"]
     )
     allowable = float(math.floor(corrected))
     return {
-        **base,
-        **amb,
-        **adj,
+        "size_awg": base["size_awg"],
+        "material": base["material"],
+        "insulation_column_c": base["insulation_column_c"],
+        "base_ampacity_a": base["base_ampacity_a"],
+        "ampacity_record_id": base["record_id"],
+        "ampacity_standard_clause": base["standard_clause"],
+        "ambient_c": ambient_resolved,
+        "ambient_c_given": ambient_given,
+        "ambient_factor": amb["ambient_factor"],
+        "ambient_band_label": amb["ambient_band_label"],
+        "ambient_record_id": amb["record_id"],
         "ambient_boundary_policy": amb.get("boundary_policy"),
+        "ambient_standard_clause": amb["standard_clause"],
+        "n_current_carrying": adj["n_current_carrying"],
+        "adjustment_factor": adj["adjustment_factor"],
+        "conductor_band_label": adj["conductor_band_label"],
+        "adjustment_record_id": adj["record_id"],
         "conductor_boundary_policy": adj.get("boundary_policy"),
+        "adjustment_standard_clause": adj["standard_clause"],
         "corrected_ampacity_a": corrected,
         "allowable_ampacity_a": allowable,
         "round_down_rule": "NEC 310.15(B) / 310.15(C) — drop fractional amperes",
@@ -148,7 +179,9 @@ def allowable_ampacity(
             "size_awg": base["size_awg"],
             "material": material,
             "insulation_column": insulation_column,
-            "ambient_c": ambient_c,
+            "ambient_c": ambient_resolved,
+            "ambient_c_given": ambient_given,
+            "round_ambient": round_ambient,
             "n_current_carrying": n_current_carrying,
         },
     }

@@ -30,6 +30,11 @@ def test_exam_v6_three_awg_thwn2_45c_8ccc() -> None:
     assert out["adjustment_factor"] == 0.70
     assert out["corrected_ampacity_a"] == pytest.approx(115 * 0.87 * 0.70, rel=1e-9)
     assert out["allowable_ampacity_a"] == 70
+    assert out["ampacity_record_id"] == "NEC_TABLE_310_16_CU_90C"
+    assert out["ambient_record_id"] == "NEC_TABLE_310_15B1_AMBIENT"
+    assert out["adjustment_record_id"] == "NEC_TABLE_310_15C1_ADJUSTMENT"
+    assert "record_id" not in out
+    assert "boundary_policy" not in out
 
 
 def test_four_awg_40c_4_to_6_conductors() -> None:
@@ -53,3 +58,30 @@ def test_four_awg_40c_4_to_6_conductors() -> None:
 def test_ambient_band_edges_inclusive(ambient_c: int, factor: float) -> None:
     out = ambient_correction_factor(ambient_c=ambient_c, insulation_column="90")
     assert out["ambient_factor"] == factor
+
+
+def test_non_integer_ambient_raises_without_round_mode() -> None:
+    with pytest.raises(ValueError, match="whole degree"):
+        allowable_ampacity(
+            size_awg="3",
+            material="cu",
+            insulation_column="90",
+            ambient_c=45.6,
+            n_current_carrying=8,
+        )
+
+
+def test_non_integer_ambient_round_up_uses_conservative_band() -> None:
+    """45.6 C with round_ambient=up -> 46 C band (0.82), lower than 45 C (0.87)."""
+    out = allowable_ampacity(
+        size_awg="3",
+        material="cu",
+        insulation_column="90",
+        ambient_c=45.6,
+        n_current_carrying=8,
+        round_ambient="up",
+    )
+    assert out["ambient_c"] == 46
+    assert out["ambient_c_given"] == 45.6
+    assert out["ambient_factor"] == 0.82
+    assert out["allowable_ampacity_a"] == 66
