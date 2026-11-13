@@ -37,7 +37,8 @@ def test_mcp_create_and_pid_loop() -> None:
         assert sim.get("ok") is True
         an = handle_tool("control_studio_analyze", {"session_id": sid})
         assert an.get("ok") is True
-        assert an.get("phase_margin_deg") is not None or an.get("gain_margin_db") is not None
+        assert an.get("paths", {}).get("bode")
+        assert "gain_margin_db" in an and "phase_margin_deg" in an
 
 
 def test_mcp_seed_golden() -> None:

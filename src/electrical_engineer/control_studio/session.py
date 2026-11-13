@@ -40,19 +40,48 @@ def load_session(session_id: str, root: Path | None = None) -> dict[str, Any]:
 def save_session(session_id: str, payload: dict[str, Any], root: Path | None = None) -> None:
     path = session_path(session_id, root)
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    try:
+        from electrical_engineer.ui_server.studio_events import publish
+
+        publish(
+            session_id,
+            {
+                "type": "session",
+                "revision": payload.get("revision"),
+                "presence": payload.get("presence"),
+                "last_op": (payload.get("op_log") or [])[-1:] if payload.get("op_log") else [],
+            },
+        )
+    except ImportError:
+        pass
 
 
-def create_session(title: str = "Control Studio", root: Path | None = None) -> dict[str, Any]:
+def create_session(
+    title: str = "Control Studio",
+    root: Path | None = None,
+    *,
+    golden: str | None = None,
+) -> dict[str, Any]:
+    from electrical_engineer.control_studio.goldens import GOLDENS
+
     sid = new_session_id()
+    diagram = empty_diagram(title)
+    if golden and golden in GOLDENS:
+        diagram = parse_diagram(GOLDENS[golden]())
+        diagram["title"] = title
+        diagram = auto_layout(diagram)
     payload = {
         "session_id": sid,
         "revision": 0,
-        "diagram": empty_diagram(title),
+        "diagram": diagram,
         "op_log": [],
         "undo_stack": [],
         "redo_stack": [],
+        "presence": {"agent_editing": False, "last_author": "system", "highlight_until_ms": 0},
         "updated_at_ms": int(time.time() * 1000),
     }
+    if diagram.get("blocks"):
+        payload["undo_stack"] = [json.loads(json.dumps(diagram))]
     save_session(sid, payload, root)
     return payload
 
@@ -79,9 +108,47 @@ def apply_diagram(session_id: str, diagram: dict[str, Any], *, author: str, op: 
     payload = load_session(session_id, root)
     parsed = parse_diagram(diagram)
     payload["diagram"] = parsed
-    _append_op(payload, {"op": op, "diff": {"title": parsed.get("title")}}, author)
+    entry = _append_op(payload, {"op": op, "diff": {"title": parsed.get("title")}}, author)
+    presence = payload.setdefault(
+        "presence",
+        {"agent_editing": False, "last_author": author, "highlight_until_ms": 0},
+    )
+    presence["last_author"] = author
+    presence["agent_editing"] = author == "agent"
+    presence["highlight_until_ms"] = int(time.time() * 1000) + (4000 if author == "agent" else 1500)
+    if author == "agent":
+        presence["agent_editing_until_ms"] = int(time.time() * 1000) + 8000
+    else:
+        presence["agent_editing"] = False
     save_session(session_id, payload, root)
-    return {"session_id": session_id, "revision": payload["revision"], "diagram": parsed}
+    return {
+        "session_id": session_id,
+        "revision": payload["revision"],
+        "diagram": parsed,
+        "last_op": entry,
+        "presence": presence,
+    }
+
+
+def add_note(
+    session_id: str,
+    block_id: str,
+    text: str,
+    *,
+    author: str = "human",
+    root: Path | None = None,
+) -> dict[str, Any]:
+    payload = load_session(session_id, root)
+    diagram = payload["diagram"]
+    note = {
+        "id": f"note-{len(diagram.get('notes') or []) + 1}",
+        "block_id": block_id,
+        "text": text,
+        "author": author if author in ("human", "agent") else "human",
+        "ts_ms": int(time.time() * 1000),
+    }
+    diagram.setdefault("notes", []).append(note)
+    return apply_diagram(session_id, diagram, author=author, op="add_note", root=root)
 
 
 def undo(session_id: str, *, author: str = "human", root: Path | None = None) -> dict[str, Any]:

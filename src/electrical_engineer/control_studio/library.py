@@ -4,6 +4,55 @@ from __future__ import annotations
 
 from typing import Any
 
+PALETTE_GROUPS: list[dict[str, Any]] = [
+    {
+        "id": "sources",
+        "label": "Sources",
+        "items": [
+            {"type": "step", "label": "Step", "icon": "▸", "default_params": {"amplitude": 1.0, "unit": "1"}},
+            {"type": "ramp", "label": "Ramp", "icon": "↗", "default_params": {"slope": 1.0, "unit": "1/s"}},
+            {"type": "sine", "label": "Sine", "icon": "~", "default_params": {"amplitude": 1.0, "frequency_hz": 1.0}},
+        ],
+    },
+    {
+        "id": "linear",
+        "label": "Linear",
+        "items": [
+            {"type": "gain", "label": "Gain", "icon": "△", "default_params": {"k": 1.0, "unit": "1"}},
+            {"type": "sum", "label": "Sum", "icon": "⊕", "default_params": {"signs": "+-"}},
+            {"type": "transfer_function", "label": "Transfer Fcn", "icon": "H", "default_params": {"tf": "1/(s+1)", "unit": "1"}},
+            {"type": "pid", "label": "PID", "icon": "PID", "default_params": {"kp": 1.0, "ki": 0.0, "kd": 0.0}},
+            {"type": "integrator", "label": "Integrator", "icon": "∫", "default_params": {}},
+            {"type": "derivative", "label": "Derivative", "icon": "d/dt", "default_params": {}},
+        ],
+    },
+    {
+        "id": "nonlinear",
+        "label": "Nonlinear",
+        "items": [
+            {"type": "saturation", "label": "Saturation", "icon": "⎍", "default_params": {"upper": 1.0, "lower": -1.0}},
+            {"type": "delay", "label": "Delay (Pade)", "icon": "τ", "default_params": {"tau_s": 0.1, "order": 1}},
+        ],
+    },
+    {
+        "id": "sinks",
+        "label": "Sinks",
+        "items": [
+            {"type": "scope", "label": "Scope", "icon": "◔", "default_params": {}},
+        ],
+    },
+    {
+        "id": "plants",
+        "label": "Plants",
+        "items": [
+            {"type": "plant_dc_motor", "label": "DC motor", "icon": "⚙", "default_params": {"J": 0.01, "b": 0.1, "K": 0.01, "R": 1.0, "L": 0.5}},
+            {"type": "plant_first_order", "label": "1st-order plant", "icon": "P", "default_params": {"k": 10.0, "tau": 1.0, "unit": "1"}},
+            {"type": "plant_agc_area", "label": "AGC area", "icon": "A", "default_params": {"case": "eec301_default"}},
+        ],
+    },
+]
+
+
 PALETTE: list[dict[str, Any]] = [
     {"type": "step", "label": "Step", "default_params": {"amplitude": 1.0, "unit": "1"}},
     {"type": "ramp", "label": "Ramp", "default_params": {"slope": 1.0, "unit": "1/s"}},
