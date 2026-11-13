@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 
 from electrical_engineer.control_studio.compose import open_loop_with_controller
-from electrical_engineer.control_studio.goldens import pid_dc_motor
+from electrical_engineer.control_studio.goldens import open_loop_low_gain, pid_dc_motor
 from electrical_engineer.control_studio.layout import layout_chain
 from electrical_engineer.control_studio.margins import _gain_band_note_from_db, extract_margins
 from electrical_engineer.engines.control_runner import control_available
@@ -19,6 +19,16 @@ def test_infinite_gain_margin_explains_phase() -> None:
     tip = m["margin_tooltips"]["gm_db"] or ""
     assert "−180" in tip or "-180" in tip
     assert "above 0 dB" not in tip
+
+
+@pytest.mark.skipif(not control_available(), reason="python-control missing")
+def test_open_loop_low_gain_pm_not_defined() -> None:
+    import control
+
+    meta = open_loop_low_gain()["meta"]
+    sys = control.TransferFunction(meta["num"], meta["den"])
+    m = extract_margins(sys)
+    assert m["display"]["pm_deg"] == "Not defined"
 
 
 def test_gain_crossover_note_below_db() -> None:

@@ -1,0 +1,19 @@
+{
+  "git_sha": "2297a6661b87fc323e8895724e2c4ec3ae0564e3",
+  "git_sha_short": "2297a66",
+  "git_dirty_lines": 0,
+  "git_diff_sha256": null,
+  "package_path": "/tmp/r7/src/electrical_engineer/__init__.py",
+  "dist_index_mtime": 1794599577.5909584,
+  "kp": 50.0,
+  "step_series": true,
+  "gain_margin_caption": "No \u2212180\u00b0 crossing in 0.001 to 100,000 rad/s.",
+  "low_gain_pm_deg": "Not defined",
+  "finite_crossover": {
+    "status": "settled_off_target",
+    "final_value": 0.909090909090373,
+    "t_settle_s": 0.355018654543556,
+    "overshoot_pct": 0.0,
+    "steady_state_error_pct": 9.1
+  }
+}

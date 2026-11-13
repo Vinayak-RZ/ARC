@@ -22,21 +22,19 @@ async function contentOutsideCanvas(page: Page, label: string) {
     height: canvas!.height - 2 * inset,
   };
   const sel =
-    ".react-flow__edge-path, .react-flow__arrowhead, .react-flow__edge circle, .studio-block";
+    ".react-flow__edge-path, .react-flow__edge circle, .studio-block";
   const bad: string[] = [];
+  let measured = 0;
   const loc = page.locator(sel);
   const n = await loc.count();
   for (let i = 0; i < n; i += 1) {
     const el = loc.nth(i);
-    if (!(await el.isVisible())) continue;
-    // ponytail: React Flow may detach transient handles; do not burn full test timeout
-    let r;
-    try {
-      r = await el.boundingBox({ timeout: 5000 });
-    } catch {
+    const r = await el.boundingBox({ timeout: 5000 });
+    if (!r) {
+      bad.push(`element ${i} (${sel}) has no bounding box`);
       continue;
     }
-    if (!r) continue;
+    measured += 1;
     if (
       r.x < box.x - 0.5 ||
       r.y < box.y - 0.5 ||
@@ -46,6 +44,9 @@ async function contentOutsideCanvas(page: Page, label: string) {
       bad.push(JSON.stringify(r));
     }
   }
+  // <marker> arrowheads live in <defs> and have no box of their own; their presence is asserted in studio-r5/r6.
+  expect(await page.locator(".react-flow__edge-path").count(), `${label}: wire count`).toBe(5);
+  expect(measured, `${label}: measured elements (5 wires + 5 blocks + feedback dot)`).toBeGreaterThanOrEqual(10);
   expect(bad, `${label}: drawn content outside canvas`).toEqual([]);
 }
 

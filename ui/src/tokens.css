@@ -1450,9 +1450,30 @@ a { color: var(--ee-color-primary); }
 .example-thumb-svg { width: 100%; height: 100%; display: block; }
 .example-thumb-bg { fill: var(--ee-color-surface-soft); }
 .example-thumb-ink { stroke: currentColor; color: var(--ee-color-ink); fill: none; }
-.example-thumb-accent { stroke: var(--ee-color-primary); color: var(--ee-color-primary); fill: var(--ee-color-primary); }
 .example-thumb-muted { stroke: var(--ee-color-muted); color: var(--ee-color-muted); fill: none; }
 .example-thumb-label { fill: var(--ee-color-muted); font-size: 11px; }
+.example-thumb-svg .th-line,
+.example-thumb-svg .th-axis,
+.example-thumb-svg .th-dash,
+.example-thumb-svg .th-tint,
+.example-thumb-svg .th-dot { vector-effect: non-scaling-stroke; }
+.example-thumb-svg .th-line { fill: none; stroke: var(--ee-color-primary); stroke-width: 1.5px; stroke-linecap: round; stroke-linejoin: round; }
+.example-thumb-svg .th-axis { fill: none; stroke: var(--ee-color-muted); stroke-width: 1px; opacity: 0.7; }
+.example-thumb-svg .th-dash { fill: none; stroke: var(--ee-color-muted); stroke-width: 1px; stroke-dasharray: 4 3; }
+.example-thumb-svg .th-tint { fill: var(--ee-color-primary); fill-opacity: 0.14; stroke: none; }
+.example-thumb-svg .th-dot { fill: var(--ee-color-primary); stroke: none; }
+.shortcut-kbd-row { display: inline-flex; gap: 4px; vertical-align: baseline; }
+.shortcut-kbd-row .shortcut-kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  border: 1px solid var(--ee-color-hairline-strong);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background: var(--ee-color-surface-soft);
+  color: var(--ee-color-ink);
+  font-size: 11px;
+  line-height: 1.4;
+}
 .param-field input,
 .param-field input:focus {
   color: var(--ee-color-ink);
@@ -1749,7 +1770,8 @@ a { color: var(--ee-color-primary); }
   background: var(--ee-color-surface-card);
   box-shadow: 0 -12px 16px var(--ee-color-surface-card);
 }
-.problems-row:hover .problems-row-actions { opacity: 1; }
+.problems-row:hover .problems-row-actions,
+.problems-row:focus-within .problems-row-actions { opacity: 1; }
 .problems-row-actions {
   opacity: 0;
   transition: opacity 120ms ease;
@@ -1783,7 +1805,7 @@ a { color: var(--ee-color-primary); }
   --cs-border-strong: var(--ee-color-hairline-strong);
   --cs-text: var(--ee-color-ink);
   --cs-text-secondary: var(--ee-color-muted);
-  --cs-text-muted: var(--ee-color-faint);
+  --cs-text-muted: var(--ee-color-muted);
   --cs-accent: var(--ee-color-primary);
   --cs-accent-hover: var(--ee-color-primary-active);
   --cs-accent-700: #1d47a3;
@@ -1817,7 +1839,7 @@ a { color: var(--ee-color-primary); }
   --ee-color-link: #8fb0f5;
   --ee-color-hairline: #353532;
   --ee-color-hairline-strong: #454542;
-  --ee-color-surface-soft: #1a1a18;
+  --ee-color-surface-soft: #121211;
   --ee-color-surface-card: #1a1a18;
   --ee-color-surface-strong: #252523;
 }
@@ -1834,3 +1856,43 @@ a { color: var(--ee-color-primary); }
   }
   .sidebar.is-open { display: flex; max-height: 50vh; overflow: auto; }
 }
+
+/* Keyboard focus: one visible cobalt ring everywhere (accent-400 in dark via the token). */
+:where(a, button, input, select, textarea, summary, [role="tab"], [tabindex]):focus-visible {
+  outline: 2px solid var(--ee-color-primary);
+  outline-offset: 2px;
+}
+
+/* Work step expander: tokens only, no native button chrome in either theme. */
+.step-expand {
+  width: 28px;
+  height: 28px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+  margin-top: 4px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ee-color-muted);
+  cursor: pointer;
+}
+.step-expand:hover { background: var(--ee-color-surface-strong); color: var(--ee-color-ink); }
+.step-expand svg { transition: transform 120ms ease; }
+.step-expand[aria-expanded="true"] svg { transform: rotate(180deg); }
+
+/* Inline text button (stale banner "Run again"): no native chrome in either theme. */
+.text-link {
+  font: inherit;
+  font-weight: 600;
+  padding: 2px 6px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ee-color-link, var(--ee-color-primary-ink));
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.text-link:hover { background: var(--ee-color-surface-strong); }

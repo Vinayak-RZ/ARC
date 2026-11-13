@@ -123,7 +123,7 @@ def register_studio_routes(app: FastAPI, *, root: Path) -> None:
             payload = session_mod.load_session(session_id, root)
             run_dir = root / "runs" / session_id
             _write_studio_run_summary(run_dir, payload.get("diagram") or {}, payload.get("updated_at_ms"))
-            t_final = body.get("t_final", 10.0)
+            t_final = body.get("t_final", "auto")
             an_pre = analyze_mod.analyze(payload["diagram"], run_dir=run_dir) if t_final == "auto" else {}
             sim = simulate_mod.simulate(
                 payload["diagram"],

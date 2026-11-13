@@ -80,7 +80,7 @@ function useUiTheme() {
 
 export function ResultsDock({ results, stepData, margins, stale, sessionId, onResimulate }) {
   const [tab, setTab] = useState("step");
-  const [windowS, setWindowS] = useState(10);
+  const [windowS, setWindowS] = useState("auto");
   const uiTheme = useUiTheme();
   const ts = results?.ts || Date.now();
   const src = results ? results[tab] : null;
@@ -102,41 +102,61 @@ export function ResultsDock({ results, stepData, margins, stale, sessionId, onRe
   return (
     <footer className={`studio-results${stale ? " is-stale" : ""}${results ? "" : " is-empty"}`} aria-label="Results">
       <div className="studio-results-layout">
-        <MarginsStrip margins={margins} stale={stale} />
+        {results || margins ? <MarginsStrip margins={margins} stale={stale} /> : null}
         <div className="studio-results-chart-col">
-          {results ? (
-            <div className="studio-results-chart-head">
-              <div className="studio-results-tabs" role="tablist">
-                {TABS.map((t) => (
-                  <button
-                    key={t.id}
-                    type="button"
-                    role="tab"
-                    aria-selected={tab === t.id}
-                    className={tab === t.id ? "is-active" : ""}
-                    onClick={() => setTab(t.id)}
-                  >
-                    {t.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ) : null}
           <div className="studio-results-stage">
-            {!results ? null : tab === "step" && stepData ? (
+            {!results ? (
+              <p className="studio-results-placeholder cs-margins-hint">Run Simulate to see the step response and margins.</p>
+            ) : tab === "step" && stepData ? (
               <StepChart
                 data={stepData}
                 margins={margins}
                 windowS={windowS}
                 onWindowChange={pickWindow}
+                tabBar={
+                  <div className="studio-results-tabs" role="tablist">
+                    {TABS.map((t) => (
+                      <button
+                        key={t.id}
+                        type="button"
+                        role="tab"
+                        aria-selected={tab === t.id}
+                        className={tab === t.id ? "is-active" : ""}
+                        onClick={() => setTab(t.id)}
+                      >
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
+                }
               />
-            ) : src ? (
-              <div className="studio-export-plot-frame">
-                <img src={`${src}?t=${ts}&theme=${encodeURIComponent(uiTheme)}`} alt={`${tab} plot`} loading="eager" />
-              </div>
-            ) : (
-              <p className="cs-margins-hint">No plot.</p>
-            )}
+            ) : results ? (
+              <>
+                <div className="studio-results-chart-head">
+                  <div className="studio-results-tabs" role="tablist">
+                    {TABS.map((t) => (
+                      <button
+                        key={t.id}
+                        type="button"
+                        role="tab"
+                        aria-selected={tab === t.id}
+                        className={tab === t.id ? "is-active" : ""}
+                        onClick={() => setTab(t.id)}
+                      >
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                {src ? (
+                  <div className="studio-export-plot-frame">
+                    <img src={`${src}?t=${ts}&theme=${encodeURIComponent(uiTheme)}`} alt={`${tab} plot`} loading="eager" />
+                  </div>
+                ) : (
+                  <p className="cs-margins-hint">No plot.</p>
+                )}
+              </>
+            ) : null}
           </div>
         </div>
       </div>

@@ -24,21 +24,6 @@ import "../../control-studio/studio.css";
 
 const GRID = 16;
 
-function useWireStroke() {
-  const [color, setColor] = useState("#1A1A18");
-  useEffect(() => {
-    const read = () => {
-      const v = getComputedStyle(document.documentElement).getPropertyValue("--cs-wire").trim();
-      setColor(v || "#1A1A18");
-    };
-    read();
-    const obs = new MutationObserver(read);
-    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-    return () => obs.disconnect();
-  }, []);
-  return color;
-}
-
 function useNarrowViewport() {
   const [narrow, setNarrow] = useState(() =>
     typeof window !== "undefined" ? window.matchMedia("(max-width: 1199px)").matches : false,
@@ -172,6 +157,8 @@ function ControlStudioInner({ sessionId, onSession }) {
   const [lastSimRevision, setLastSimRevision] = useState(null);
   const [connecting, setConnecting] = useState(false);
   const [fitBump, setFitBump] = useState(0);
+  // Bumped whenever the node objects are replaced from the diagram; see FitViewOnChange.
+  const [nodesEpoch, setNodesEpoch] = useState(0);
   const [zoomPct, setZoomPct] = useState(1);
   const [selectedId, setSelectedId] = useState(null);
   const selectedIdRef = useRef(null);
@@ -186,6 +173,12 @@ function ControlStudioInner({ sessionId, onSession }) {
   const [highlight, setHighlight] = useState({ ids: new Set(), author: null });
   const diagramBase = useRef({});
   const blockIssues = useMemo(() => issuesByBlock(validation), [validation]);
+  // paint() must keep a stable identity: it feeds loadSession, which feeds the effect that
+  // fetches the session. If paint changed whenever validation changed, each validate response
+  // would trigger another session fetch and another validate, in an endless loop that
+  // re-creates every node and wire (the cause of wires disappearing).
+  const blockIssuesRef = useRef(blockIssues);
+  blockIssuesRef.current = blockIssues;
 
   const paint = useCallback(
     (payload, { author = null } = {}) => {
@@ -193,19 +186,20 @@ function ControlStudioInner({ sessionId, onSession }) {
       const presence = payload.presence || {};
       const ids = targetsFromLastOp(payload, presence);
       const flow = diagramToFlow(payload.diagram, {
-        issuesByBlock: blockIssues,
+        issuesByBlock: blockIssuesRef.current,
         notes: payload.diagram?.notes,
         highlightSet: ids,
         flashAuthor: ids.size ? presence.last_author || author : null,
       });
       setNodes(withSelection(flow.nodes));
+      setNodesEpoch((n) => n + 1);
       setEdges(flow.edges);
       setRevision(payload.revision || 0);
       setSession(payload);
       setHighlight({ ids, author: presence.last_author });
       if (presence.agent_editing) setMsg("Agent editing…");
     },
-    [blockIssues, setNodes, setEdges, withSelection],
+    [setNodes, setEdges, withSelection],
   );
 
   const refreshValidation = useCallback(
@@ -268,17 +262,27 @@ function ControlStudioInner({ sessionId, onSession }) {
     return undefined;
   }, [sessionId, loadSession, onSession, paint, refreshValidation]);
 
+  const resyncFlowFromDiagram = useCallback(
+    (diagram) => {
+      if (!diagram) return;
+      const flow = diagramToFlow(diagram, {
+        issuesByBlock: blockIssues,
+        notes: diagram?.notes,
+        highlightSet: highlight.ids,
+        flashAuthor: highlight.author,
+      });
+      setNodes(withSelection(flow.nodes));
+      setNodesEpoch((n) => n + 1);
+      setEdges(flow.edges);
+    },
+    [blockIssues, highlight.author, highlight.ids, setEdges, setNodes, withSelection],
+  );
+
   useEffect(() => {
     if (!session?.diagram) return;
-    const flow = diagramToFlow(session.diagram, {
-      issuesByBlock: blockIssues,
-      notes: session.diagram?.notes,
-      highlightSet: highlight.ids,
-      flashAuthor: highlight.author,
-    });
-    setNodes(withSelection(flow.nodes));
-    setEdges(flow.edges);
-  }, [validation, session?.diagram, session?.presence, highlight.ids.size, blockIssues, setNodes, setEdges, withSelection]);
+    resyncFlowFromDiagram(session.diagram);
+  }, [validation, session?.diagram, session?.presence, highlight.ids.size, resyncFlowFromDiagram]);
+
 
   useEffect(() => {
     if (!selectedId) return undefined;
@@ -322,7 +326,11 @@ function ControlStudioInner({ sessionId, onSession }) {
         .then((r) => r.json())
         .then((out) => {
           diagramBase.current = out.diagram;
-          setRevision(out.revision || revision + 1);
+          const nextRev = out.revision || revision + 1;
+          setRevision(nextRev);
+          // Keep session.diagram current: the resync effect rebuilds nodes from it whenever
+          // validation changes, so a stale copy would revert the edit that was just saved.
+          setSession((prev) => (prev ? { ...prev, diagram: out.diagram, revision: nextRev } : prev));
           refreshValidation(sid);
         })
         .catch(() => setMsg("Save failed"));
@@ -376,15 +384,16 @@ function ControlStudioInner({ sessionId, onSession }) {
       body: JSON.stringify({ diagram, author: "human", op: "edit" }),
     })
       .then((r) => r.json())
-      .then((out) => {
+        .then((out) => {
         diagramBase.current = out.diagram;
         const simRev = out.revision || revision;
         setRevision(simRev);
+        setSession((prev) => (prev ? { ...prev, diagram: out.diagram, revision: simRev } : prev));
         return fetch(`/api/control-studio/sessions/${sid}/simulate`, { method: "POST" })
           .then((r) => r.json())
-          .then((sim) =>
-            applySimAndAnalyze(sid, sim, setResults, setMargins, setStepData, setMsg, () => setLastSimRevision(simRev)),
-          );
+          .then((sim) => {
+            applySimAndAnalyze(sid, sim, setResults, setMargins, setStepData, setMsg, () => setLastSimRevision(simRev));
+          });
       })
       .catch(() => setMsg("Save failed"));
   }
@@ -422,7 +431,6 @@ function ControlStudioInner({ sessionId, onSession }) {
     session?.presence?.agent_editing ||
     (session?.presence?.agent_editing_until_ms && session.presence.agent_editing_until_ms > Date.now());
   const resultsStale = lastSimRevision != null && revision > lastSimRevision;
-  const wireStroke = useWireStroke();
   const narrowViewport = useNarrowViewport();
   const inspectorFloating = Boolean(selected) && narrowViewport;
 
@@ -435,7 +443,7 @@ function ControlStudioInner({ sessionId, onSession }) {
 
   return (
     <section
-      className={`cs-app control-studio studio${results ? "" : " is-empty"}${selected ? " has-selection" : ""}`}
+      className={`cs-app control-studio studio${selected ? " has-selection" : ""}`}
     >
       <ReactFlowProvider>
         <StudioToolbar
@@ -483,7 +491,7 @@ function ControlStudioInner({ sessionId, onSession }) {
               defaultEdgeOptions={{
                 type: "signal",
                 zIndex: 0,
-                markerEnd: { type: MarkerType.ArrowClosed, color: wireStroke, width: 14, height: 14 },
+                markerEnd: { type: MarkerType.ArrowClosed, color: "currentColor", width: 14, height: 14 },
               }}
               minZoom={0.2}
               maxZoom={1.25}
@@ -491,7 +499,13 @@ function ControlStudioInner({ sessionId, onSession }) {
             >
               <Background gap={8} color="var(--cs-border)" size={1} />
               <Background gap={32} color="var(--cs-border-strong)" size={1} offset={0} />
-              <FitViewOnChange revision={revision} nodeCount={nodes.length} agentBump={fitBump} fitRef={fitRef} />
+              <FitViewOnChange
+                revision={revision}
+                nodeCount={nodes.length}
+                agentBump={fitBump}
+                nodesEpoch={nodesEpoch}
+                fitRef={fitRef}
+              />
             </ReactFlow>
           </CanvasDrop>
         </div>

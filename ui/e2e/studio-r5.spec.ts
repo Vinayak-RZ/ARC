@@ -44,6 +44,11 @@ test("margins never collide or clip", async ({ page, request }) => {
     els.filter((e) => e.scrollWidth > e.clientWidth + 1).map((e) => e.textContent),
   );
   expect(clipped).toEqual([]);
+  // vertical overflow too: a line-clamped caption cut mid-sentence has scrollHeight > clientHeight
+  const cutOff = await page.locator(".studio-margin-meta").evaluateAll((els) =>
+    els.filter((e) => e.scrollHeight > e.clientHeight + 1).map((e) => e.textContent),
+  );
+  expect(cutOff, "margin captions cut off vertically").toEqual([]);
   const cells = await box(page, ".studio-margin");
   for (let i = 0; i < cells.length; i += 1) {
     for (let j = i + 1; j < cells.length; j += 1) expect(hit(cells[i], cells[j])).toBe(false);
@@ -65,15 +70,35 @@ for (const phase of ["before", "after"] as const) {
   });
 }
 
-test("arrowheads are visible in dark", async ({ page, request }) => {
+test("arrowheads are visible in dark and match the wire colour", async ({ page, request }) => {
   await page.addInitScript(() => localStorage.setItem("arc-theme", "dark"));
   await openPid(page, request);
-  const bad = await page.locator(".studio-canvas marker polygon, .studio-canvas marker path").evaluateAll((els) => {
-    const bg = getComputedStyle(document.querySelector(".studio-canvas")!).backgroundColor;
-    return els.filter((e) => {
-      const f = getComputedStyle(e).fill;
-      return f === bg || f === "rgb(0, 0, 0)" || f === "none";
-    }).length;
+  const res = await page.evaluate(() => {
+    const canvas = document.querySelector(".studio-canvas") as HTMLElement;
+    const paths = [...canvas.querySelectorAll(".react-flow__edge-path")];
+    // Each wire points at a <marker> by id; that marker's shape must be painted like the wire.
+    return paths.map((p) => {
+      const ref = p.getAttribute("marker-end") || "";
+      const id = ref.replace(/^url\(["']?#?/, "").replace(/["']?\)$/, "");
+      const marker = [...document.querySelectorAll("marker")].find((m) => m.id === id);
+      const shape = marker?.querySelector("polyline, polygon, path");
+      const st = shape ? getComputedStyle(shape) : null;
+      return {
+        ref,
+        hasMarker: !!marker,
+        wire: getComputedStyle(p).stroke,
+        fill: st?.fill ?? "",
+        stroke: st?.stroke ?? "",
+      };
+    });
   });
-  expect(bad).toBe(0);
+  expect(res.length, "wires").toBeGreaterThanOrEqual(5);
+  const norm = (c: string) => c.replace(/\s+/g, "");
+  for (const [i, w] of res.entries()) {
+    expect(w.ref, `wire ${i} marker-end`).not.toBe("");
+    expect(w.hasMarker, `wire ${i} marker ${w.ref} exists`).toBe(true);
+    const paints = [norm(w.fill), norm(w.stroke)];
+    expect(paints, `wire ${i}: head paint ${paints} vs wire ${w.wire}`).toContain(norm(w.wire));
+    expect(norm(w.wire), `wire ${i} colour`).not.toBe("none");
+  }
 });

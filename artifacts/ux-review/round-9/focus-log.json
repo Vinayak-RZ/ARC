@@ -1,0 +1,92 @@
+{
+  "focus-composer-light.png": {
+    "tag": "textarea",
+    "role": null,
+    "aria_label": null,
+    "cls": "composer-input composer-input-inset",
+    "text": "",
+    "outline": "solid 2px rgba(0, 0, 0, 0)",
+    "tab_presses": 2
+  },
+  "focus-tile-light.png": {
+    "tag": "button",
+    "role": null,
+    "aria_label": null,
+    "cls": "example-card",
+    "text": "VinVoutCircuitsVoltage dividerFind Vout ",
+    "outline": "solid 2px rgb(47, 111, 235)",
+    "tab_presses": 3
+  },
+  "focus-table-row-light.png": {
+    "tag": "button",
+    "role": null,
+    "aria_label": "Open problem",
+    "cls": "row-action-quiet",
+    "text": "",
+    "outline": "solid 2px rgb(47, 111, 235)",
+    "tab_presses": 7
+  },
+  "focus-tab-light.png": {
+    "tag": "button",
+    "role": "tab",
+    "aria_label": null,
+    "cls": "tab-underline",
+    "text": "Work",
+    "outline": "solid 2px rgb(47, 111, 235)",
+    "tab_presses": 2
+  },
+  "focus-button-light.png": {
+    "tag": "button",
+    "role": null,
+    "aria_label": null,
+    "cls": "text-link",
+    "text": "Run again",
+    "outline": "solid 2px rgb(47, 111, 235)",
+    "tab_presses": 6
+  },
+  "focus-composer-dark.png": {
+    "tag": "textarea",
+    "role": null,
+    "aria_label": null,
+    "cls": "composer-input composer-input-inset",
+    "text": "",
+    "outline": "solid 2px rgba(0, 0, 0, 0)",
+    "tab_presses": 2
+  },
+  "focus-tile-dark.png": {
+    "tag": "button",
+    "role": null,
+    "aria_label": null,
+    "cls": "example-card",
+    "text": "VinVoutCircuitsVoltage dividerFind Vout ",
+    "outline": "solid 2px rgb(107, 147, 245)",
+    "tab_presses": 3
+  },
+  "focus-table-row-dark.png": {
+    "tag": "button",
+    "role": null,
+    "aria_label": "Open problem",
+    "cls": "row-action-quiet",
+    "text": "",
+    "outline": "solid 2px rgb(107, 147, 245)",
+    "tab_presses": 7
+  },
+  "focus-tab-dark.png": {
+    "tag": "button",
+    "role": "tab",
+    "aria_label": null,
+    "cls": "tab-underline",
+    "text": "Work",
+    "outline": "solid 2px rgb(107, 147, 245)",
+    "tab_presses": 2
+  },
+  "focus-button-dark.png": {
+    "tag": "button",
+    "role": null,
+    "aria_label": null,
+    "cls": "text-link",
+    "text": "Run again",
+    "outline": "solid 2px rgb(107, 147, 245)",
+    "tab_presses": 6
+  }
+}
