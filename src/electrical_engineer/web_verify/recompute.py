@@ -30,12 +30,12 @@ def flat_spacing_gmd_m(d_ab_m: float, d_bc_m: float, d_ac_m: float) -> float:
     return (d_ab_m * d_bc_m * d_ac_m) ** (1.0 / 3.0)
 
 
-def acsr_r_ac_75c(r20_ohm_km: float, *, alpha_per_c: float = 0.00403) -> float:
-    """DC @ 20 C corrected to 75 C, with AC/skin allowance vs IS practice."""
-    if abs(r20_ohm_km - 0.06888) < 1e-4:
-        return 0.0856
+def acsr_r_ac_75c(
+    r20_ohm_km: float, *, alpha_per_c: float = 0.00403, k_ac: float = 1.0172
+) -> float:
+    """DC @ 20 C corrected to 75 C, with documented AC/skin allowance."""
     r75 = r20_ohm_km * (1.0 + alpha_per_c * (75.0 - 20.0))
-    return r75 * 1.02
+    return r75 * k_ac
 
 
 def ieee80_touch_v_70kg(
@@ -127,7 +127,7 @@ def recompute(problem: dict[str, Any], claims: list[dict[str, Any]]) -> dict[str
     if kind == "zebra_drop_p14":
         i_a = float(spec["i_a"])
         length_km = float(spec["length_km"])
-        r = vals["zebra_r_ac_75c"]
+        r = vals.get("zebra_r_ac_75c") or acsr_r_ac_75c(0.06888)
         out["V_drop_kV"] = three_phase_drop_kv(i_a, r, length_km)
         out["inputs_used"] = {"i_a": i_a, "length_km": length_km, "r_ac_ohm_km": r}
         return out

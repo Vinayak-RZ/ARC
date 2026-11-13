@@ -27,15 +27,24 @@
           "source_class": "reference_case"
         },
         {
+          "url": "https://matpower.org/docs/ref/matpower6.0/case9.html",
+          "domain": "matpower.org",
+          "title": "MATPOWER case9 reference",
+          "retrieved_at": "2026-11-13T12:10:00Z",
+          "http_status": 200,
+          "snippet": "mpc.gencost = [ 2 1500 0 3 0.11 5 150;",
+          "extracted_value": 0.11,
+          "unit": "",
+          "source_class": "reference_doc"
+        },
+        {
           "url": "https://matpower.org/documentation/ref-manual/legacy/functions/caseformat.html",
           "domain": "matpower.org",
           "title": "MATPOWER caseformat",
           "retrieved_at": "2026-11-13T11:37:30Z",
           "http_status": 200,
           "snippet": "MODEL = 2 : cn, ..., c1, c0 polynomial cost for each generator row in mpc.gencost",
-          "extracted_value": 0.11,
-          "unit": "",
-          "source_class": "format_spec"
+          "source_class": "context_only"
         }
       ]
     }

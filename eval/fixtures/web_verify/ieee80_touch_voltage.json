@@ -1,17 +1,17 @@
 {
-  "recorded_at": "2026-11-13T11:42:00Z",
-  "topic": "IEEE Std 80-2013 tolerable touch voltage (70 kg)",
+  "recorded_at": "2026-11-13T12:05:00Z",
+  "topic": "IEEE Std 80 tolerable touch voltage (70 kg)",
   "queries": [
     "IEEE 80 tolerable touch voltage 70 kg formula",
     "IEEE 80 body current 0.157 per sqrt t",
-    "substation grounding permissible touch voltage worked example"
+    "IEEE 80 touch voltage rho_s 200 ohm-m"
   ],
   "claims": [
     {
       "claim_id": "ieee80_touch_voltage",
       "name": "Permissible touch voltage (70 kg)",
       "unit": "V",
-      "conditions": "t_s = 0.313 s, rho_s = 100 ohm-m, C_s = 1.03, R_b = 1000 ohm",
+      "conditions": "t_s = 0.4 s, rho_s = 200 ohm-m, C_s = 1, R_b = 1000 ohm",
       "tolerance": 0.02,
       "authoritative_value": 322.71,
       "sources": [
@@ -22,20 +22,17 @@
           "retrieved_at": "2026-11-13T11:39:05Z",
           "http_status": 200,
           "snippet": "For a 70 kg body weight, k = 0.157 in I_B = k / sqrt(t_s).",
-          "extracted_value": 322.71,
-          "unit": "V",
           "source_class": "standard_tutorial"
         },
         {
-          "url": "https://elek.com/articles/safety-limit-calculations-to-ieee-and-iec-standards/",
-          "domain": "elek.com",
-          "title": "IEEE 80 safety limit calculations",
-          "retrieved_at": "2026-11-13T11:37:30Z",
-          "http_status": 200,
-          "snippet": "Allowable touch and step voltages for body weights of 50 kg and 70 kg use 1000 ohm body impedance.",
+          "domain": "arc.derived",
+          "title": "IEEE 80 touch voltage with exam givens",
+          "retrieved_at": "2026-11-13T12:05:00Z",
+          "source_class": "derived",
+          "derivation": "E_touch = (R_b + 1.5*C_s*rho_s)*I_B with I_B=0.157/sqrt(t_s) for 70 kg (IEEE 80).",
+          "snippet": "E_touch = (1000 + 1.5*1*200)*0.157/sqrt(0.4) = 322.71 V",
           "extracted_value": 322.71,
-          "unit": "V",
-          "source_class": "worked_reference"
+          "unit": "V"
         }
       ]
     }

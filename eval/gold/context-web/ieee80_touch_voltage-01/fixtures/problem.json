@@ -11,8 +11,8 @@
   ],
   "recompute": {
     "kind": "ieee80_touch_p06",
-    "ts_s": 0.31547309943938223,
-    "rho_s_ohm_m": 100.0,
-    "cs": 1.03
+    "ts_s": 0.4,
+    "rho_s_ohm_m": 200.0,
+    "cs": 1.0
   }
 }

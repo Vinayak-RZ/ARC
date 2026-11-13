@@ -1,5 +1,5 @@
 {
-  "recorded_at": "2026-11-13T11:40:00Z",
+  "recorded_at": "2026-11-13T12:05:00Z",
   "topic": "IRF540N maximum R_DS(on) at 25 C",
   "queries": [
     "IRF540N datasheet RDS on 44 mohm VGS 10V",
@@ -16,6 +16,17 @@
       "authoritative_value": 0.044,
       "sources": [
         {
+          "url": "https://www.infineon.com/assets/row/public/documents/24/49/infineon-irf540n-datasheet-en.pdf",
+          "domain": "infineon.com",
+          "title": "Infineon IRF540N datasheet (EN)",
+          "retrieved_at": "2026-11-13T12:05:00Z",
+          "http_status": 200,
+          "snippet": "Static Drain-to-Source On-Resistance max 44 mOhm, VGS = 10V, ID = 16A",
+          "extracted_value": 0.044,
+          "unit": "ohm",
+          "source_class": "datasheet"
+        },
+        {
           "url": "https://www.infineon.cn/part/IRF540N",
           "domain": "infineon.cn",
           "title": "Infineon IRF540N product page",
@@ -27,15 +38,15 @@
           "source_class": "manufacturer"
         },
         {
-          "url": "https://www.datasheetcafe.com/irf540n-datasheet-pdf-mosfet/",
-          "domain": "datasheetcafe.com",
-          "title": "IRF540N datasheet summary",
-          "retrieved_at": "2026-11-13T11:39:03Z",
+          "url": "https://www.mouser.com/datasheet/2/196/irf540npbf-1227114.pdf",
+          "domain": "mouser.com",
+          "title": "IRF540NPbF authorized distributor datasheet mirror",
+          "retrieved_at": "2026-11-13T12:05:00Z",
           "http_status": 200,
-          "snippet": "Ultra Low On-Resistance - rDS(ON)= 0.040 ohm, VGS = 10V (typical); catalog lists 44 milliohms max.",
+          "snippet": "Static Drain-to-Source On-Resistance max 44 mOhm at VGS = 10V, ID = 16A",
           "extracted_value": 0.044,
           "unit": "ohm",
-          "source_class": "datasheet_summary"
+          "source_class": "authorized_distributor_mirror"
         }
       ]
     }

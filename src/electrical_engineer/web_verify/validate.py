@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from electrical_engineer.web_verify.source_evidence import validate_claim_sources
+
 
 def _domains(sources: list[dict[str, Any]]) -> set[str]:
     out: set[str] = set()
@@ -21,9 +23,8 @@ def validate_host_submit(payload: dict[str, Any]) -> None:
         raise ValueError("host submit must include web_sources.claims")
     all_sources: list[dict[str, Any]] = []
     for c in claims:
+        validate_claim_sources(c, min_sources=2)
         srcs = c.get("sources") or []
-        if len(srcs) < 2:
-            raise ValueError(f"claim {c.get('claim_id')}: need at least 2 sources")
         qs = c.get("queries") or []
         if len(qs) < 3:
             raise ValueError(f"claim {c.get('claim_id')}: need at least 3 queries recorded")

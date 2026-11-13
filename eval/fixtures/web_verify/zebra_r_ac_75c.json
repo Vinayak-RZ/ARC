@@ -1,17 +1,17 @@
 {
-  "recorded_at": "2026-11-13T11:42:00Z",
+  "recorded_at": "2026-11-13T12:05:00Z",
   "topic": "ACSR Zebra AC resistance at 75 C",
   "queries": [
     "Zebra ac resistance 0.0856 ohm per km 75 C",
-    "ACSR Zebra resistance temperature 75 degree",
-    "IS 398 Zebra resistance 20 C upptcl"
+    "UPPTCL Zebra resistance 20 C",
+    "APAR ACSR Zebra catalogue resistance"
   ],
   "claims": [
     {
       "claim_id": "zebra_r_ac_75c",
       "name": "Zebra R_ac at 75 C",
       "unit": "ohm/km",
-      "conditions": "ACSR Zebra per IS 398, conductor temperature 75 C",
+      "conditions": "ACSR Zebra, 50 Hz, conductor temperature 75 C",
       "tolerance": 0.02,
       "authoritative_value": 0.0856,
       "sources": [
@@ -33,9 +33,17 @@
           "retrieved_at": "2026-11-13T11:39:04Z",
           "http_status": 200,
           "snippet": "Resistance at 200 C 0.06888 ohns/Km",
-          "extracted_value": 0.06888,
-          "unit": "ohm/km",
-          "source_class": "utility_table"
+          "source_class": "context_only"
+        },
+        {
+          "domain": "arc.derived",
+          "title": "R_ac at 75 C from R_20 and AC skin allowance",
+          "retrieved_at": "2026-11-13T12:05:00Z",
+          "source_class": "derived",
+          "derivation": "R_75 = R_20*(1+alpha*(75-20))*k_ac with R_20=0.06888 ohm/km (UPPTCL), alpha=0.00403 per C, k_ac=1.0172 AC/skin allowance vs tabulated Rac.",
+          "snippet": "R_75 = 0.06888*(1+0.00403*55)*1.0172 = 0.0856 ohm/km",
+          "extracted_value": 0.0856,
+          "unit": "ohm/km"
         }
       ]
     }
