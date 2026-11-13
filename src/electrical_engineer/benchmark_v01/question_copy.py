@@ -12,6 +12,17 @@ def _fmt_task_dir(name: str) -> str:
 
 
 def _template_question(item_name: str, pack: str, givens: dict[str, Any]) -> str | None:
+    if item_name == "rl-step-01":
+        return (
+            f"A series RL circuit has V={givens['v']} V, R={givens['r']} ohm, L={givens['l']} H. "
+            f"Find the inductor current (A) at t={givens['t']} s after the step at t=0."
+        )
+    if item_name == "rlc-natural-01":
+        return (
+            f"A parallel RLC has R={givens['r']} ohm, L={givens['l']} H, C={givens['c']} F, "
+            f"initial capacitor voltage vc0={givens['vc0']} V, inductor current i0={givens['i0']} A. "
+            f"Find capacitor voltage (V) at t={givens['t']} s."
+        )
     if item_name == "rc-step-01":
         return (
             f"A series RC circuit has V={givens['v']} V, R={givens['r']} ohm, "
@@ -38,9 +49,10 @@ def _template_question(item_name: str, pack: str, givens: dict[str, Any]) -> str
         )
     if item_name == "smib-eec301-01":
         return (
-            "Single-machine-infinite-bus equal-area: from the SMIB parameters in givens "
-            "(H, f0, Pm, Pmax pre/fault/post in pu), find delta0 (deg), delta_cr (deg), "
-            "and critical clearing time tcr (s) using handwritten RK4 (no ode45)."
+            "A synchronous machine on an infinite bus: using H, f0, Pm, and Pmax (pre-, during-, "
+            "and post-fault) in the data, find prefault angle delta0 (deg), critical clearing "
+            "angle delta_cr (deg), critical clearing time tcr (s), and the time to reach "
+            "delta_cr during the fault t_to_delta_cr_s (s) at step h=0.001 s."
         )
     if item_name == "agc-eec301-01":
         return (

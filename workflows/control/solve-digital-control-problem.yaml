@@ -5,9 +5,12 @@ nodes:
   web:
     activity: web-verify
     needs: [dig]
+  trap:
+    activity: trap-verify
+    needs: [web]
   label:
     activity: label-unchecked
-    needs: [dig, web]
+    needs: [trap, dig, web]
   summary:
     activity: write-run-summary
     needs: [label]

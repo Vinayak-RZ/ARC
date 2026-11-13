@@ -51,12 +51,10 @@ def main() -> int:
         "version": "v0.1",
         "name": "eee-coursework-trap",
         "task_counts_by_domain": by_domain,
+        "difficulty_tiers": catalog_meta.get("difficulty_tiers", {}),
         "total_tasks": len(questions),
         "unique_question_givens": catalog_meta["unique_question_givens"],
-        "grading_tolerance_rules": (
-            "Numeric fields in answer_schema only; verifiers use Arc engines. "
-            "No self-reported flags. Trap tasks include per-episode givens."
-        ),
+        "grading_tolerance_rules": "Submit only fields named in answer_schema within listed tolerances and units.",
         "licence": "Apache-2.0; license-clean reconstructions only.",
         "excluded": "live-ab, exam-v4/v5/v6, sealed REFERENCE.json",
         "public_artifact": "eee-coursework-trap-v0.1-questions.tar.gz",
@@ -105,6 +103,7 @@ def main() -> int:
         "total_tasks": len(questions),
         "unique_question_givens": catalog_meta["unique_question_givens"],
         "task_counts_by_domain": by_domain,
+        "difficulty_tiers": catalog_meta.get("difficulty_tiers", {}),
     }
     (OUT_DIR / "manifest.json").write_text(json.dumps(release_manifest, indent=2))
     print(
@@ -115,6 +114,7 @@ def main() -> int:
                 "tasks": len(questions),
                 "unique_tasks": catalog_meta["unique_question_givens"],
                 "by_domain": by_domain,
+                "difficulty_tiers": catalog_meta.get("difficulty_tiers", {}),
             }
         )
     )

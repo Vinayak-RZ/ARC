@@ -10,7 +10,9 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
+from electrical_engineer.benchmark_v01.givens_units import givens_units_map
 from electrical_engineer.benchmark_v01.oracle_givens import oracle_eval, oracle_trap
+from electrical_engineer.benchmark_v01.public_schema import public_answer_schema
 from electrical_engineer.benchmark_v01.question_copy import eval_question
 from electrical_engineer.benchmark_v01.sanitize import (
     flatten_public_givens,
@@ -18,7 +20,7 @@ from electrical_engineer.benchmark_v01.sanitize import (
     strip_grader_fields,
 )
 from electrical_engineer.rlvr_env import problems as trap_problems
-from electrical_engineer.rlvr_env.schema import TRAP_ANSWER_SCHEMAS
+from electrical_engineer.rlvr_env.schema import TRAP_ANSWER_SCHEMAS, TRAP_VERIFIER_NOTES
 
 ROOT = Path(__file__).resolve().parents[3]
 
@@ -66,7 +68,7 @@ def _perturb_givens(g: dict[str, Any], seed: int) -> dict[str, Any]:
         if key in out and isinstance(out[key], (int, float)):
             out[key] = float(out[key]) * (1.0 + scale * (1 + seed % 5))
 
-    for key in ("v", "r", "c", "t", "vin", "r1", "r2", "pm_pu", "dpl1_pu", "PD_MW"):
+    for key in ("v", "r", "c", "l", "t", "vc0", "i0", "vin", "r1", "r2", "pm_pu", "dpl1_pu", "PD_MW"):
         bump(key, 0.01 * (1 + seed % 3))
     if isinstance(out.get("num"), list) and out["num"]:
         out["num"] = [float(out["num"][0]) * (1.0 + 0.02 * (seed % 7))]
@@ -94,39 +96,52 @@ def _engine_public_givens(item_name: str, expect: dict[str, Any]) -> dict[str, A
     return {}
 
 
+def _difficulty_tier(domain: str, item_name: str) -> str:
+    if domain == "trap":
+        return "hard"
+    if domain == "circuits":
+        if item_name in {"divider-dc-01"}:
+            return "easy"
+        if item_name in {"rl-step-01", "rlc-natural-01"}:
+            return "medium"
+        return "medium"
+    if item_name.endswith("eec301-01") or "penalty" in item_name:
+        return "hard"
+    if domain == "control" and item_name in {"margin-40-01", "block-feedback-01", "digital-pole-01"}:
+        return "medium"
+    if domain == "power" and item_name.startswith(("lg-", "ll", "pu-base")):
+        return "medium"
+    return "medium"
+
+
 def _public_schema(expect: dict[str, Any]) -> dict[str, Any]:
     if expect.get("engine") == "smib_swing":
-        return {
-            "fields": [
+        return public_answer_schema(
+            [
                 {"name": "delta0_deg", "type": "float", "unit": "deg", "tolerance": 0.02},
                 {"name": "delta_cr_deg", "type": "float", "unit": "deg", "tolerance": 0.05},
                 {"name": "tcr_s", "type": "float", "unit": "s", "tolerance": 0.002},
-            ],
-            "rule": "Handwritten RK4 SMIB equal-area and CCT numerics.",
-        }
+                {"name": "t_to_delta_cr_s", "type": "float", "unit": "s", "tolerance": 0.002},
+            ]
+        )
     if expect.get("engine") == "agc_two_area":
-        return {
-            "fields": [
+        return public_answer_schema(
+            [
                 {"name": "primary_df1_Hz", "type": "float", "unit": "Hz", "tolerance": 0.002},
                 {"name": "primary_P12_MW", "type": "float", "unit": "MW", "tolerance": 0.5},
                 {"name": "agc_ss_df1_Hz", "type": "float", "unit": "Hz", "tolerance": 0.002},
                 {"name": "agc_ss_P12_MW", "type": "float", "unit": "MW", "tolerance": 0.05},
-            ],
-            "rule": "Two-area primary and AGC steady state after load step in givens.",
-        }
+            ]
+        )
     if expect.get("engine") == "ed_lambda":
-        return {
-            "fields": [
+        return public_answer_schema(
+            [
                 {"name": "lam", "type": "float", "unit": "Rs/MWh", "tolerance": 0.05},
                 {"name": "cases", "type": "array"},
-            ],
-            "rule": "Lambda iteration with unit limits from givens.",
-        }
+            ]
+        )
     tol = float(expect.get("tol", 1e-6))
-    return {
-        "fields": [{"name": "value", "type": "float", "tolerance": tol}],
-        "rule": "Single numeric result from the stated givens.",
-    }
+    return public_answer_schema([{"name": "value", "type": "float", "tolerance": tol, "unit": "1"}])
 
 
 def _dedupe_tasks(questions: list[dict[str, Any]], answers: dict[str, dict[str, Any]]) -> tuple:
@@ -178,11 +193,12 @@ def build_task_catalog() -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]
                 public = {
                     "id": task_id,
                     "domain": pack,
+                    "difficulty_tier": _difficulty_tier(pack, base_name),
                     "seed": seed,
                     "question": qtext,
                     "givens": givens,
+                    "givens_units": givens_units_map(givens),
                     "answer_schema": schema,
-                    "grading_rule": schema["rule"],
                 }
                 questions.append(public)
                 ref = oracle_eval(givens, grading)
@@ -209,11 +225,12 @@ def build_task_catalog() -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]
             public = {
                 "id": task_id,
                 "domain": "circuits",
+                "difficulty_tier": _difficulty_tier("circuits", base_name),
                 "seed": seed,
                 "question": eval_question(base_name, "circuits", givens, task_md=_read_task_md(item_dir)),
                 "givens": givens,
+                "givens_units": givens_units_map(givens),
                 "answer_schema": schema,
-                "grading_rule": schema["rule"],
             }
             questions.append(public)
             ref = oracle_eval(givens, grading)
@@ -228,26 +245,34 @@ def build_task_catalog() -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]
             givens = strip_grader_fields(trap_problems.sample_trap_givens(trap_id, seed))
             task_id = f"trap/{trap_id}-s{seed}"
             schema = TRAP_ANSWER_SCHEMAS[trap_id]
+            obs = trap_problems.build_observation(trap_id, seed)
             public = {
                 "id": task_id,
                 "domain": "trap",
+                "difficulty_tier": "hard",
                 "seed": seed,
-                "question": trap_problems.build_observation(trap_id, seed)["question"],
+                "question": obs["question"],
                 "givens": givens,
-                "givens_units": trap_problems.build_observation(trap_id, seed).get("givens_units", {}),
+                "givens_units": obs.get("givens_units", {}),
                 "answer_schema": schema,
-                "grading_rule": schema["rule"],
             }
             questions.append(public)
             answers[task_id] = {
                 "reference": oracle_trap(trap_id, givens),
-                "grading": {"trap_id": trap_id, "givens": givens},
+                "grading": {
+                    "trap_id": trap_id,
+                    "givens": givens,
+                    "verifier_note": TRAP_VERIFIER_NOTES[trap_id],
+                },
                 "naive": naive_submission(trap_id, givens),
             }
 
     questions, answers, unique = _dedupe_tasks(questions, answers)
     by_domain: dict[str, int] = {}
+    by_tier: dict[str, int] = {}
     for q in questions:
         by_domain[q["domain"]] = by_domain.get(q["domain"], 0) + 1
-    meta = {"unique_question_givens": unique, "by_domain": by_domain}
+        tier = q.get("difficulty_tier", "medium")
+        by_tier[tier] = by_tier.get(tier, 0) + 1
+    meta = {"unique_question_givens": unique, "by_domain": by_domain, "difficulty_tiers": by_tier}
     return questions, answers, meta

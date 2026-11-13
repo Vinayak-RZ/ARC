@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import subprocess
 import sys
 import tarfile
@@ -110,6 +111,32 @@ def test_rebuild_answers_from_givens_only() -> None:
         for k, v in entry["reference"].items():
             if isinstance(v, (int, float)):
                 assert abs(float(rebuilt[k]) - float(v)) < 1e-5, task_id
+
+
+_TRAP_HINT_WORDS = re.compile(
+    r"ode45|RK4|handwritten|Arc\b|smib_swing|bind unit|must be zero|not b \+ c\*P|python-control|engine",
+    re.IGNORECASE,
+)
+
+
+def test_trap_stems_and_rules_defuse_traps() -> None:
+    tasks = _load_questions()
+    for task in tasks:
+        if task["domain"] != "trap":
+            continue
+        blob = task["question"] + (task.get("answer_schema") or {}).get("rule", "")
+        assert not _TRAP_HINT_WORDS.search(blob), task["id"]
+
+
+def test_schema_fields_match_reference_keys() -> None:
+    tasks = {t["id"]: t for t in _load_questions()}
+    key = _load_key()
+    for task_id, entry in key.items():
+        ref = entry["reference"]
+        schema_names = {f["name"] for f in tasks[task_id]["answer_schema"].get("fields", [])}
+        for fname, val in ref.items():
+            if isinstance(val, (int, float)) and not isinstance(val, bool):
+                assert fname in schema_names, f"{task_id} missing schema field {fname}"
 
 
 def test_oracle_full_naive_low() -> None:

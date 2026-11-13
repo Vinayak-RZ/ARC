@@ -154,6 +154,18 @@ TOOLS = [
             "required": ["id"],
         },
     },
+    {
+        "name": "arc_trap_verify",
+        "description": "Deterministic trap PRM on a solution trace (steps + final). Call before finalizing an answer.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "solution_trace": {"type": "object"},
+                "trap_ids": {"type": "array", "items": {"type": "string"}},
+            },
+            "required": ["solution_trace"],
+        },
+    },
 ] + CONTROL_STUDIO_TOOLS
 
 
@@ -413,6 +425,16 @@ def handle(method: str, params: dict[str, Any] | None) -> Any:
                 return _ok({"error": "not_found", "id": rid, "waits": False}, error=True)
             rec["waits"] = False
             return _ok(rec)
+        if name == "arc_trap_verify":
+            from electrical_engineer.traps.verify import verify_trace_payload
+
+            trace = dict(args.get("solution_trace") or {})
+            extra_ids = args.get("trap_ids")
+            if extra_ids:
+                trace.setdefault("trap_ids", list(extra_ids))
+            payload = verify_trace_payload(trace)
+            payload["waits"] = False
+            return _ok(payload)
         if name.startswith("control_studio_"):
             return _ok(control_studio_handle(name, args))
         return _ok({"error": f"unknown tool {name}", "waits": False}, error=True)

@@ -5,12 +5,17 @@
   "task_counts_by_domain": {
     "power": 13,
     "control": 7,
-    "circuits": 3,
+    "circuits": 6,
     "trap": 47
   },
-  "total_tasks": 70,
-  "unique_question_givens": 70,
-  "grading_tolerance_rules": "Numeric fields in answer_schema only; verifiers use Arc engines. No self-reported flags. Trap tasks include per-episode givens.",
+  "difficulty_tiers": {
+    "hard": 55,
+    "medium": 17,
+    "easy": 1
+  },
+  "total_tasks": 73,
+  "unique_question_givens": 73,
+  "grading_tolerance_rules": "Submit only fields named in answer_schema within listed tolerances and units.",
   "licence": "Apache-2.0; license-clean reconstructions only.",
   "excluded": "live-ab, exam-v4/v5/v6, sealed REFERENCE.json",
   "public_artifact": "eee-coursework-trap-v0.1-questions.tar.gz",

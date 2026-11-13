@@ -5,6 +5,7 @@ from __future__ import annotations
 import random
 from typing import Any
 
+from electrical_engineer.benchmark_v01.givens_units import givens_units_map
 from electrical_engineer.engines.smib_swing import SmibCase
 from electrical_engineer.rlvr_env.schema import TRAP_ANSWER_SCHEMAS
 
@@ -12,43 +13,45 @@ _TRAP_IDS = [f"T{i}" for i in range(1, 11)]
 
 _TRAP_QUESTION: dict[str, str] = {
     "T1": (
-        "Single-machine-infinite-bus (equal area): find critical clearing angle delta_cr in degrees. "
-        "Use the SMIB parameters in givens (H, f0, Pm, Pmax pre/fault/post in pu)."
+        "A synchronous machine on an infinite bus experiences a fault and clearing sequence. "
+        "Using H, f0, Pm, and Pmax (pre-, during-, and post-fault) in the data, "
+        "find the critical clearing angle delta_cr (deg)."
     ),
     "T2": (
-        "SMIB fault trajectory: time in seconds for RK4 integration during the fault to reach "
-        "the critical clearing angle. Step size h in givens."
+        "For the same SMIB data with integration step h_integrator_s, find the time (s) "
+        "to reach the critical clearing angle while the fault is still applied."
     ),
     "T3": (
-        "Swing equation: report acceleration coefficient pi*f0/H (rad/s^2 per pu) and domega/dt at "
-        "prefault equilibrium (must be zero)."
+        "For the SMIB data, report the swing acceleration coefficient (rad/s^2 per pu) "
+        "and the initial rotor acceleration domega/dt (rad/s) at the prefault operating point."
     ),
     "T4": (
-        "Two-area primary tie-line: after the load step in givens, report Area-1 frequency (Hz) and "
-        "tie-line flow P12 (MW) at primary steady state."
+        "A two-area system receives a load increase dpl1_pu at step_time_s (both areas described "
+        "in the data, simulation horizon t_end_s). Report steady-state Area-1 frequency (Hz) "
+        "and tie-line flow P12 (MW) without automatic generation control."
     ),
     "T5": (
-        "Two-area AGC: with integral gain K in givens, report Area-1 steady-state frequency (Hz) "
-        "and tie P12 (MW) after the same load step."
+        "The same two-area case uses integral AGC gain K_agc (agc horizon agc_t_end_s) after "
+        "a load step dpl1_pu at step_time_s. Report steady-state Area-1 frequency (Hz) and tie flow P12 (MW)."
     ),
     "T6": (
-        "Three-unit economic dispatch with quadratic costs and limits in givens: for load PD (MW), "
-        "report unit 2 output (MW), its incremental cost (Rs/MWh), and system lambda (Rs/MWh)."
+        "Three thermal units have quadratic costs and MW limits in the data. "
+        "For demand PD_MW, report unit-2 output (MW), unit-2 incremental cost (Rs/MWh), "
+        "and system lambda (Rs/MWh)."
     ),
     "T7": (
-        "Incremental cost for unit 1 at power P1 (MW) in givens. Use IC = b + 2*c*P, not b + c*P."
+        "For the three-unit cost data, find the incremental cost (Rs/MWh) of unit 1 "
+        "when it produces unit1_MW."
     ),
     "T8": (
-        "Unity-feedback loop for plant G(s) with numerator and denominator coeffs in givens: "
-        "gain margin (dB) and gain crossover frequency (rad/s)."
+        "Unity-feedback around the open-loop plant with numerator and denominator coefficients "
+        "in the data: report gain margin (dB) and gain crossover frequency (rad/s)."
     ),
     "T9": (
-        "SMIB clearing with handwritten RK4 only: rotor angle in degrees at time t (s) with "
-        "clearing time tc (s) and step h in givens."
+        "An SMIB clears a fault at tc_s. Using h_integrator_s, find rotor angle (deg) at t_query_s."
     ),
     "T10": (
-        "SMIB prefault: report equilibrium angle delta0 in degrees from the power-angle balance "
-        "for parameters in givens."
+        "For the SMIB power-angle data, find the prefault rotor angle delta0 (deg) at mechanical–electrical balance."
     ),
 }
 
@@ -169,31 +172,8 @@ def build_observation(trap_id: str, seed: int) -> dict[str, Any]:
         "question": _TRAP_QUESTION[trap_id],
         "givens": givens,
         "answer_schema": schema,
-        "givens_units": _givens_units(trap_id),
+        "givens_units": givens_units_map(givens),
     }
-
-
-def _givens_units(trap_id: str) -> dict[str, str]:
-    u = {"MW": "MW", "pu": "pu", "Hz": "Hz", "s": "s", "deg": "deg", "Rs/MWh": "Rs/MWh"}
-    if trap_id in {"T1", "T2", "T3", "T9", "T10"}:
-        return {
-            "h_mj_mva": "MJ/MVA",
-            "f0_hz": "Hz",
-            "pm_pu": "pu",
-            "pmax_pre_pu": "pu",
-            "pmax_fault_pu": "pu",
-            "pmax_post_pu": "pu",
-            "h_integrator_s": "s",
-            "tc_s": "s",
-            "t_query_s": "s",
-        }
-    if trap_id in {"T4", "T5"}:
-        return {"dpl1_pu": "pu", "t_end_s": "s", "agc_t_end_s": "s", "K_agc": "pu"}
-    if trap_id in {"T6", "T7"}:
-        return {"PD_MW": u["MW"], "unit1_MW": u["MW"]}
-    if trap_id == "T8":
-        return {"num": "coeff", "den": "coeff"}
-    return {}
 
 
 def default_trap_for_seed(seed: int) -> str:

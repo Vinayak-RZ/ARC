@@ -1,6 +1,6 @@
 {
   "schema": "arc.benchmark.answer_key.v0.1",
-  "key_sha256": "6e175b60bea3950b97697696cb2bb6b96ebbdf6d7e3c45c2d0ca329ea6329a72",
+  "key_sha256": "753fc0516d5c3c94b6428ba2991117a0e473348178d969700fb58c5dfd986ac1",
   "answers": {
     "power/agc-eec301-01-s118": {
       "reference": {
@@ -857,6 +857,74 @@
         }
       }
     },
+    "circuits/rl-step-01-s424": {
+      "reference": {
+        "value": 0.19999999545590802
+      },
+      "grading": {
+        "solver": "rl_step",
+        "tol": 0.0001,
+        "engine": null,
+        "recipe_id": "study-circuits-v2",
+        "expect": {
+          "recipe_id": "study-circuits-v2",
+          "unchecked": false,
+          "tol": 0.0001
+        },
+        "public_givens": {
+          "v": 26.400000000000002,
+          "r": 132.0,
+          "l": 0.165,
+          "t": 0.022000000000000002
+        }
+      }
+    },
+    "circuits/rl-step-01-s435": {
+      "reference": {
+        "value": 0.19999998082076997
+      },
+      "grading": {
+        "solver": "rl_step",
+        "tol": 0.0001,
+        "engine": null,
+        "recipe_id": "study-circuits-v2",
+        "expect": {
+          "recipe_id": "study-circuits-v2",
+          "unchecked": false,
+          "tol": 0.0001
+        },
+        "public_givens": {
+          "v": 24.240000000000002,
+          "r": 121.2,
+          "l": 0.1515,
+          "t": 0.0202
+        }
+      }
+    },
+    "circuits/rlc-natural-01-s416": {
+      "reference": {
+        "value": 11.324517383131038
+      },
+      "grading": {
+        "solver": "rlc_natural",
+        "tol": 0.001,
+        "engine": null,
+        "recipe_id": "study-circuits-v2",
+        "expect": {
+          "recipe_id": "study-circuits-v2",
+          "unchecked": false,
+          "tol": 0.001
+        },
+        "public_givens": {
+          "r": 212.0,
+          "l": 0.10600000000000001,
+          "c": 1.0600000000000002e-05,
+          "vc0": 12.72,
+          "i0": 0.053000000000000005,
+          "t": 0.0010600000000000002
+        }
+      }
+    },
     "trap/T1-s217": {
       "reference": {
         "delta_cr_deg": 78.21711054836577
@@ -870,7 +938,8 @@
           "pmax_pre_pu": 1.95,
           "pmax_fault_pu": 0.475,
           "pmax_post_pu": 1.468
-        }
+        },
+        "verifier_note": "critical_clearing_angle on SmibCase givens"
       },
       "naive": {
         "delta_cr_deg": 261.8514085828075
@@ -889,7 +958,8 @@
           "pmax_pre_pu": 2.09,
           "pmax_fault_pu": 0.485,
           "pmax_post_pu": 1.441
-        }
+        },
+        "verifier_note": "critical_clearing_angle on SmibCase givens"
       },
       "naive": {
         "delta_cr_deg": 270.98348334512184
@@ -908,7 +978,8 @@
           "pmax_pre_pu": 1.908,
           "pmax_fault_pu": 0.521,
           "pmax_post_pu": 1.421
-        }
+        },
+        "verifier_note": "critical_clearing_angle on SmibCase givens"
       },
       "naive": {
         "delta_cr_deg": 285.8934701367672
@@ -927,7 +998,8 @@
           "pmax_pre_pu": 1.95,
           "pmax_fault_pu": 0.478,
           "pmax_post_pu": 1.48
-        }
+        },
+        "verifier_note": "critical_clearing_angle on SmibCase givens"
       },
       "naive": {
         "delta_cr_deg": 257.0853432656229
@@ -946,7 +1018,8 @@
           "pmax_pre_pu": 1.956,
           "pmax_fault_pu": 0.532,
           "pmax_post_pu": 1.446
-        }
+        },
+        "verifier_note": "critical_clearing_angle on SmibCase givens"
       },
       "naive": {
         "delta_cr_deg": 267.73732435049664
@@ -966,7 +1039,8 @@
           "pmax_fault_pu": 0.542,
           "pmax_post_pu": 1.501,
           "h_integrator_s": 0.001
-        }
+        },
+        "verifier_note": "fault-interval time to critical angle at step h_integrator_s"
       },
       "naive": {
         "t_to_delta_cr_s": 0.0
@@ -986,7 +1060,8 @@
           "pmax_fault_pu": 0.458,
           "pmax_post_pu": 1.404,
           "h_integrator_s": 0.001
-        }
+        },
+        "verifier_note": "fault-interval time to critical angle at step h_integrator_s"
       },
       "naive": {
         "t_to_delta_cr_s": 0.0
@@ -1006,7 +1081,8 @@
           "pmax_fault_pu": 0.458,
           "pmax_post_pu": 1.542,
           "h_integrator_s": 0.001
-        }
+        },
+        "verifier_note": "fault-interval time to critical angle at step h_integrator_s"
       },
       "naive": {
         "t_to_delta_cr_s": 0.0
@@ -1026,7 +1102,8 @@
           "pmax_fault_pu": 0.529,
           "pmax_post_pu": 1.412,
           "h_integrator_s": 0.001
-        }
+        },
+        "verifier_note": "fault-interval time to critical angle at step h_integrator_s"
       },
       "naive": {
         "t_to_delta_cr_s": 0.0
@@ -1046,7 +1123,8 @@
           "pmax_fault_pu": 0.457,
           "pmax_post_pu": 1.429,
           "h_integrator_s": 0.001
-        }
+        },
+        "verifier_note": "fault-interval time to critical angle at step h_integrator_s"
       },
       "naive": {
         "t_to_delta_cr_s": 0.0
@@ -1066,7 +1144,8 @@
           "pmax_pre_pu": 2.016,
           "pmax_fault_pu": 0.496,
           "pmax_post_pu": 1.482
-        }
+        },
+        "verifier_note": "accel_coeff pi*f0/H; domega0 at prefault equilibrium"
       },
       "naive": {
         "accel_coeff": 15.898748246911907,
@@ -1087,7 +1166,8 @@
           "pmax_pre_pu": 2.037,
           "pmax_fault_pu": 0.504,
           "pmax_post_pu": 1.562
-        }
+        },
+        "verifier_note": "accel_coeff pi*f0/H; domega0 at prefault equilibrium"
       },
       "naive": {
         "accel_coeff": 14.874965215860763,
@@ -1108,7 +1188,8 @@
           "pmax_pre_pu": 2.073,
           "pmax_fault_pu": 0.515,
           "pmax_post_pu": 1.596
-        }
+        },
+        "verifier_note": "accel_coeff pi*f0/H; domega0 at prefault equilibrium"
       },
       "naive": {
         "accel_coeff": 15.583296892806514,
@@ -1129,7 +1210,8 @@
           "pmax_pre_pu": 2.032,
           "pmax_fault_pu": 0.472,
           "pmax_post_pu": 1.544
-        }
+        },
+        "verifier_note": "accel_coeff pi*f0/H; domega0 at prefault equilibrium"
       },
       "naive": {
         "accel_coeff": 16.127272349023578,
@@ -1150,7 +1232,8 @@
           "pmax_pre_pu": 2.059,
           "pmax_fault_pu": 0.455,
           "pmax_post_pu": 1.598
-        }
+        },
+        "verifier_note": "accel_coeff pi*f0/H; domega0 at prefault equilibrium"
       },
       "naive": {
         "accel_coeff": 17.22364393415457,
@@ -1191,7 +1274,8 @@
             "k": 0.0
           },
           "t_end_s": 30.0
-        }
+        },
+        "verifier_note": "two-area primary steady state after dpl1_pu step"
       },
       "naive": {
         "primary_df1_Hz": 0.0,
@@ -1232,7 +1316,8 @@
             "k": 0.0
           },
           "t_end_s": 30.0
-        }
+        },
+        "verifier_note": "two-area primary steady state after dpl1_pu step"
       },
       "naive": {
         "primary_df1_Hz": 0.0,
@@ -1273,7 +1358,8 @@
             "k": 0.0
           },
           "t_end_s": 30.0
-        }
+        },
+        "verifier_note": "two-area primary steady state after dpl1_pu step"
       },
       "naive": {
         "primary_df1_Hz": 0.0,
@@ -1314,7 +1400,8 @@
             "k": 0.0
           },
           "t_end_s": 30.0
-        }
+        },
+        "verifier_note": "two-area primary steady state after dpl1_pu step"
       },
       "naive": {
         "primary_df1_Hz": 0.0,
@@ -1355,7 +1442,8 @@
             "k": 0.0
           },
           "t_end_s": 30.0
-        }
+        },
+        "verifier_note": "two-area primary steady state after dpl1_pu step"
       },
       "naive": {
         "primary_df1_Hz": 0.0,
@@ -1398,7 +1486,8 @@
           "K_agc": 0.31,
           "t_end_s": 30.0,
           "agc_t_end_s": 60.0
-        }
+        },
+        "verifier_note": "AGC steady state with K_agc"
       },
       "naive": {
         "agc_ss_df1_Hz": -0.16,
@@ -1441,7 +1530,8 @@
           "K_agc": 0.3,
           "t_end_s": 30.0,
           "agc_t_end_s": 60.0
-        }
+        },
+        "verifier_note": "AGC steady state with K_agc"
       },
       "naive": {
         "agc_ss_df1_Hz": -0.16,
@@ -1484,7 +1574,8 @@
           "K_agc": 0.34,
           "t_end_s": 30.0,
           "agc_t_end_s": 60.0
-        }
+        },
+        "verifier_note": "AGC steady state with K_agc"
       },
       "naive": {
         "agc_ss_df1_Hz": -0.16,
@@ -1527,7 +1618,8 @@
           "K_agc": 0.33,
           "t_end_s": 30.0,
           "agc_t_end_s": 60.0
-        }
+        },
+        "verifier_note": "AGC steady state with K_agc"
       },
       "naive": {
         "agc_ss_df1_Hz": -0.16,
@@ -1567,7 +1659,8 @@
             }
           ],
           "PD_MW": 520.0
-        }
+        },
+        "verifier_note": "lambda economic dispatch with unit limits"
       },
       "naive": {
         "unit2_MW": 200.0,
@@ -1608,7 +1701,8 @@
             }
           ],
           "PD_MW": 450.0
-        }
+        },
+        "verifier_note": "lambda economic dispatch with unit limits"
       },
       "naive": {
         "unit2_MW": 200.0,
@@ -1649,7 +1743,8 @@
             }
           ],
           "PD_MW": 480.0
-        }
+        },
+        "verifier_note": "lambda economic dispatch with unit limits"
       },
       "naive": {
         "unit2_MW": 200.0,
@@ -1688,7 +1783,8 @@
             }
           ],
           "unit1_MW": 107.1
-        }
+        },
+        "verifier_note": "incremental cost unit 1 at unit1_MW"
       },
       "naive": {
         "unit1_IC": 5.7284
@@ -1725,7 +1821,8 @@
             }
           ],
           "unit1_MW": 117.8
-        }
+        },
+        "verifier_note": "incremental cost unit 1 at unit1_MW"
       },
       "naive": {
         "unit1_IC": 5.771199999999999
@@ -1762,7 +1859,8 @@
             }
           ],
           "unit1_MW": 111.0
-        }
+        },
+        "verifier_note": "incremental cost unit 1 at unit1_MW"
       },
       "naive": {
         "unit1_IC": 5.744
@@ -1799,7 +1897,8 @@
             }
           ],
           "unit1_MW": 134.9
-        }
+        },
+        "verifier_note": "incremental cost unit 1 at unit1_MW"
       },
       "naive": {
         "unit1_IC": 5.8396
@@ -1836,7 +1935,8 @@
             }
           ],
           "unit1_MW": 129.3
-        }
+        },
+        "verifier_note": "incremental cost unit 1 at unit1_MW"
       },
       "naive": {
         "unit1_IC": 5.8172
@@ -1859,7 +1959,8 @@
             20.0,
             0.0
           ]
-        }
+        },
+        "verifier_note": "loop gain margin and crossover"
       },
       "naive": {
         "gain_margin_dB": 6.0,
@@ -1883,7 +1984,8 @@
             20.0,
             0.0
           ]
-        }
+        },
+        "verifier_note": "loop gain margin and crossover"
       },
       "naive": {
         "gain_margin_dB": 6.0,
@@ -1907,7 +2009,8 @@
             20.0,
             0.0
           ]
-        }
+        },
+        "verifier_note": "loop gain margin and crossover"
       },
       "naive": {
         "gain_margin_dB": 6.0,
@@ -1931,7 +2034,8 @@
             20.0,
             0.0
           ]
-        }
+        },
+        "verifier_note": "loop gain margin and crossover"
       },
       "naive": {
         "gain_margin_dB": 6.0,
@@ -1955,7 +2059,8 @@
             20.0,
             0.0
           ]
-        }
+        },
+        "verifier_note": "loop gain margin and crossover"
       },
       "naive": {
         "gain_margin_dB": 6.0,
@@ -1978,7 +2083,8 @@
           "tc_s": 0.15,
           "t_query_s": 0.3,
           "h_integrator_s": 0.01
-        }
+        },
+        "verifier_note": "rotor angle at t_query_s with clearing tc_s"
       },
       "naive": {
         "delta_deg_at_t": 0.895
@@ -2000,7 +2106,8 @@
           "tc_s": 0.15,
           "t_query_s": 0.3,
           "h_integrator_s": 0.01
-        }
+        },
+        "verifier_note": "rotor angle at t_query_s with clearing tc_s"
       },
       "naive": {
         "delta_deg_at_t": 0.883
@@ -2022,7 +2129,8 @@
           "tc_s": 0.15,
           "t_query_s": 0.3,
           "h_integrator_s": 0.01
-        }
+        },
+        "verifier_note": "rotor angle at t_query_s with clearing tc_s"
       },
       "naive": {
         "delta_deg_at_t": 0.905
@@ -2044,7 +2152,8 @@
           "tc_s": 0.15,
           "t_query_s": 0.3,
           "h_integrator_s": 0.01
-        }
+        },
+        "verifier_note": "rotor angle at t_query_s with clearing tc_s"
       },
       "naive": {
         "delta_deg_at_t": 0.899
@@ -2066,7 +2175,8 @@
           "tc_s": 0.15,
           "t_query_s": 0.3,
           "h_integrator_s": 0.01
-        }
+        },
+        "verifier_note": "rotor angle at t_query_s with clearing tc_s"
       },
       "naive": {
         "delta_deg_at_t": 0.917
@@ -2085,7 +2195,8 @@
           "pmax_pre_pu": 2.054,
           "pmax_fault_pu": 0.509,
           "pmax_post_pu": 1.456
-        }
+        },
+        "verifier_note": "prefault power-angle equilibrium"
       },
       "naive": {
         "pm_pu": 0.913,
@@ -2106,7 +2217,8 @@
           "pmax_pre_pu": 2.022,
           "pmax_fault_pu": 0.547,
           "pmax_post_pu": 1.596
-        }
+        },
+        "verifier_note": "prefault power-angle equilibrium"
       },
       "naive": {
         "pm_pu": 0.897,
@@ -2127,7 +2239,8 @@
           "pmax_pre_pu": 2.049,
           "pmax_fault_pu": 0.474,
           "pmax_post_pu": 1.506
-        }
+        },
+        "verifier_note": "prefault power-angle equilibrium"
       },
       "naive": {
         "pm_pu": 0.919,
@@ -2148,7 +2261,8 @@
           "pmax_pre_pu": 2.049,
           "pmax_fault_pu": 0.462,
           "pmax_post_pu": 1.439
-        }
+        },
+        "verifier_note": "prefault power-angle equilibrium"
       },
       "naive": {
         "pm_pu": 0.915,
@@ -2169,7 +2283,8 @@
           "pmax_pre_pu": 2.056,
           "pmax_fault_pu": 0.463,
           "pmax_post_pu": 1.575
-        }
+        },
+        "verifier_note": "prefault power-angle equilibrium"
       },
       "naive": {
         "pm_pu": 0.909,

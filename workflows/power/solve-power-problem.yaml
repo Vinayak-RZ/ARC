@@ -15,9 +15,12 @@ nodes:
   check:
     activity: check-numeric
     needs: [solve, web]
+  trap:
+    activity: trap-verify
+    needs: [solve, web]
   label:
     activity: label-unchecked
-    needs: [check, web]
+    needs: [trap, check, web]
   summary:
     activity: write-run-summary
     needs: [label]
