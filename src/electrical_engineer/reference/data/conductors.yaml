@@ -7,13 +7,15 @@
     gmr_m: 0.01144
     r_dc_ohm_per_km_20c: 0.06886
     r_ac_ohm_per_km_75c: 0.0856
+    r_75c_resistance_basis: ac_tabulated_skin_effect
     default_spacing_m: 0.6
     stranding: "54 Al / 3.18 mm + 7 St / 3.18 mm"
   value_conditions:
     diameter_m: overall conductor diameter at 20 C per IS 398 Table
     gmr_m: geometric mean radius (GMR) per IS 398 Part II Table, not conductor radius
     r_dc_ohm_per_km_20c: DC resistance maximum at 20 C
-    r_ac_ohm_per_km_75c: AC resistance at 75 C conductor temperature for ampacity studies
+    r_ac_ohm_per_km_75c: AC resistance at 75 C from IS table (includes skin effect vs DC temp correction)
+    r_75c_resistance_basis: ac_tabulated_skin_effect documents why R75 exceeds R20*(1+alpha*dT)
     default_spacing_m: assumed bundled phase spacing for line-parameter engine only
   confidence: verified_dual
   source:
@@ -37,27 +39,39 @@
     diameter_m: 0.01415
     gmr_m: 0.00556
     r_dc_ohm_per_km_20c: 0.2792
-    r_ac_ohm_per_km_75c: 0.347
+    r_ac_ohm_per_km_75c: 0.3412
+    r_75c_resistance_basis: dc_temperature_corrected
     default_spacing_m: 0.45
     stranding: "6 Al / 4.72 mm + 1 St / 4.72 mm"
   value_conditions:
-    diameter_m: overall diameter IS 398 Dog row
+    diameter_m: overall diameter IS 398 Dog row (14.15 mm)
     gmr_m: GMR from IS 398 Part II table (mm converted to m)
-    r_dc_ohm_per_km_20c: DC resistance max at 20 C
-    r_ac_ohm_per_km_75c: AC resistance at 75 C from IS ampacity column
+    r_dc_ohm_per_km_20c: DC resistance maximum at 20 C (ohms/km); not AC
+    r_ac_ohm_per_km_75c: DC resistance corrected to 75 C via alpha=0.00403/C — not an AC/skin tabulation
+    r_75c_resistance_basis: dc_temperature_corrected means R75 = R20*(1+alpha*(75-20))
+  value_sources:
+    r_dc_ohm_per_km_20c:
+      title: IS 398 (Part II) 1996
+      edition: "1996"
+      clause: Dog row Resistance AT 20 deg C
+    r_ac_ohm_per_km_75c:
+      title: IS 398 practice + TEMP_COEFF_AL
+      edition: "1996"
+      clause: R20*(1+0.00403*(75-20)); Janaki/Lumino tabulations give R20 only
   confidence: verified_dual
   source:
     title: IS 398 (Part II) 1996
     edition: "1996"
     clause: Dog row
   source_secondary:
-    title: Lumino IS 398 Part II table
+    title: Janaki Cable IS 398 Part II tabulation
     edition: "1996"
-    clause: Dog row
-    url: https://luminoindustries.com/wp-content/uploads/2024/04/IS-398-PART-II-1996.pdf
-  url: https://janakicable.com/media/hlmpxhae/basic-data-for-aluminium-conductors-steel-reinforced-acsr-as-per-is-398-part-ii-1996.pdf
+    clause: Dog row R20 and diameter
+    url: https://janakicable.com/media/hlmpxhae/basic-data-for-aluminium-conductors-steel-reinforced-acsr-as-per-is-398-part-ii-1996.pdf
+  url: https://luminoindustries.com/wp-content/uploads/2024/04/IS-398-PART-II-1996.pdf
   license: Factual tabular data
-  verification: R20 0.2792 ohm/km matches both tabulations
+  verification: R20 0.2792 ohm/km dual-source; R75 0.3412 ohm/km DC-corrected (not 0.347 miscopy)
+
 
 - id: ACSR_DRAKE
   domain: overhead_conductors

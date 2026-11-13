@@ -70,7 +70,7 @@
 
 - id: IEC60909_KAPPA_XR10
   domain: short_circuit
-  title: IEC 60909 peak factor kappa at R/X about 0.1 (X/R=10)
+  title: IEC 60909 peak factor kappa tabulated at X/R=10 only (R/X=0.1)
   aliases: [kappa, peak factor, KAPPA_PEAK_FACTOR]
   values:
     kappa: 1.632

@@ -3,8 +3,8 @@
   title: IEEE 80 body-weight constants 50 kg
   aliases: [50 kg body, IEEE 80 50kg]
   values:
-    k_touch: 0.157
-    k_step: 0.157
+    k_touch: 0.116
+    k_step: 0.116
     body_mass_kg: 50
   value_conditions:
     k_touch: fibrillation constant for tolerable touch voltage Eq. 32 (50 kg)
@@ -22,7 +22,7 @@
     url: https://standards.ieee.org/standard/80-2013.html
   url: https://standards.ieee.org/standard/80-2013.html
   license: Factual constants; standard text not reproduced
-  verification: (1000+1.5*Cs*rho)*0.157/sqrt(t) golden case
+  verification: 50 kg step (1000+6*Cs*rho)*0.116/sqrt(t) -> 490.2 V at rho=250 Cs=1 t=0.35
 
 - id: IEEE80_BODY_70KG
   domain: earthing_safety

@@ -21,15 +21,19 @@ def _fresh_catalog() -> None:
 def test_ieee80_eq32_touch_annex_style() -> None:
     """IEEE Std 80-2013 Eq. 32 style: (1000+1.5*Cs*rho)*k_touch/sqrt(t)."""
     out = tolerable_voltages(
-        body_id="IEEE80_BODY_70KG",
+        kind="touch",
+        body_mass_kg=70,
         rho_s_ohm_m=200.0,
         cs=1.0,
         t_s=0.4,
     )
     expected = (1000.0 + 1.5 * 1.0 * 200.0) * 0.157 / math.sqrt(0.4)
-    assert out["e_touch_v"] == pytest.approx(322.71, rel=1e-3)
-    assert out["e_touch_v"] == pytest.approx(expected, rel=1e-6)
-    assert out["e_step_v"] > out["e_touch_v"]
+    assert out["e_v"] == pytest.approx(322.71, rel=1e-3)
+    assert out["e_v"] == pytest.approx(expected, rel=1e-6)
+    step = tolerable_voltages(
+        kind="step", body_mass_kg=70, rho_s_ohm_m=200.0, cs=1.0, t_s=0.4
+    )
+    assert step["e_v"] > out["e_v"]
 
 
 def test_matpower_case9_economic_dispatch_golden() -> None:
@@ -47,8 +51,9 @@ def test_matpower_case9_economic_dispatch_golden() -> None:
 
 def test_iec60909_peak_factor_chain() -> None:
     """IEC 60909-0 ip = kappa * sqrt(2) * Ik'' (TR 60909-4 equation chain)."""
-    sym = initial_symmetrical_ka(voltage_kv=11.0, z_ohm=0.5 + 0j)
-    peak = peak_short_circuit_ka(voltage_kv=11.0, z_ohm=0.5 + 0j)
+    z = 0.05 + 0.5j
+    sym = initial_symmetrical_ka(voltage_kv=11.0, z_ohm=z)
+    peak = peak_short_circuit_ka(voltage_kv=11.0, z_ohm=z)
     assert peak["ip_ka"] == pytest.approx(
         peak["kappa"] * math.sqrt(2) * sym["ik_ka"],
         rel=1e-9,

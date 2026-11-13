@@ -1,5 +1,7 @@
 """Regression traps for reference-backed engines (eval-aligned)."""
 
+import pytest
+
 from electrical_engineer.reference.catalog import clear_catalog_cache
 from electrical_engineer.reference.engines.idmt import idmt_operating_time_s
 from electrical_engineer.reference.engines.line_params import line_sequence_per_km
@@ -20,6 +22,7 @@ def test_conductor_temp_key_changes_r() -> None:
     at75 = line_sequence_per_km("ACSR_ZEBRA", length_km=1.0, temp_c=75.0)
     assert at75["r_lookup_key"] == "r_ac_ohm_per_km_75c"
     dog = line_sequence_per_km("ACSR_DOG", length_km=1.0, temp_c=75.0)
+    assert dog["r_ohm_per_km"] == pytest.approx(0.3412, rel=1e-3)
     assert dog["r_ohm_per_km"] > at75["r_ohm_per_km"]
 
 

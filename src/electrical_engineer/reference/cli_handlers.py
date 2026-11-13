@@ -85,11 +85,16 @@ def cmd_engine(name: str, payload: dict[str, Any]) -> int:
                 use=str(payload.get("use", "mid")),
             )
         elif name == "ieee80":
+            if payload.get("kind") is None or payload.get("body_mass_kg") is None:
+                raise ValueError("ieee80 requires kind (touch|step) and body_mass_kg (50|70)")
+            if payload.get("rho_s_ohm_m") is None or payload.get("cs") is None or payload.get("t_s") is None:
+                raise ValueError("ieee80 requires rho_s_ohm_m, cs, and t_s")
             out = ref_engines.tolerable_voltages(
-                body_id=str(payload.get("body_id", "IEEE80_BODY_50KG")),
-                rho_s_ohm_m=float(payload.get("rho_s_ohm_m", 100.0)),
-                cs=float(payload.get("cs", 1.0)),
-                t_s=float(payload.get("t_s", 1.0)),
+                kind=str(payload["kind"]),
+                body_mass_kg=int(payload["body_mass_kg"]),
+                rho_s_ohm_m=float(payload["rho_s_ohm_m"]),
+                cs=float(payload["cs"]),
+                t_s=float(payload["t_s"]),
             )
         elif name == "ieee519":
             if payload.get("measured_tdd_percent") is not None:

@@ -35,14 +35,39 @@ def citation_map_for_claims(claims: list[dict[str, Any]]) -> dict[str, list[int]
     return out
 
 
+def append_standard_formula_lines(lines: list[str], recomputed: dict[str, Any]) -> None:
+    """Show clause + inputs when a recompute used a standard formula/table."""
+    clause = recomputed.get("standard_clause")
+    inputs = recomputed.get("inputs_used")
+    if not clause and not inputs:
+        return
+    lines.append("")
+    lines.append("### Standard formula check")
+    if clause:
+        lines.append(f"- **Clause**: {clause}")
+    if inputs:
+        parts = [f"{k}={v}" for k, v in sorted(inputs.items()) if v is not None]
+        if parts:
+            lines.append(f"- **Inputs**: {', '.join(parts)}")
+    if recomputed.get("table_row_label"):
+        lines.append(f"- **Table row**: {recomputed['table_row_label']}")
+    for key in ("e_v", "V_touch_V", "tdd_limit_percent", "limit_tdd_percent"):
+        if key in recomputed and recomputed[key] is not None:
+            lines.append(f"- **Result ({key})**: {recomputed[key]}")
+
+
 def render_answer_section(
     summary_lines: list[str],
     web_bundle: dict[str, Any],
     similar_bundle: dict[str, Any],
     citations: list[dict[str, Any]],
+    *,
+    recomputed: dict[str, Any] | None = None,
 ) -> str:
     """Return markdown with [n] refs and trailing reference list."""
     lines = list(summary_lines)
+    if recomputed:
+        append_standard_formula_lines(lines, recomputed)
     claim_ids = citation_map_for_claims(web_bundle.get("claims") or [])
     if claim_ids:
         lines.append("")

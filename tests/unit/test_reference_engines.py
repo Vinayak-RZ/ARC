@@ -48,12 +48,20 @@ def test_line_params_zebra_length() -> None:
 def test_ieee519_band() -> None:
     out = tdd_limit_percent(isc_il_ratio=35.0)
     assert out["tdd_limit_percent"] == 8.0
+    assert out["ratio_id"] == "IEEE519_TDD_BAND_20_50"
 
 
 def test_ieee80_touch_step_split() -> None:
-    out = tolerable_voltages(body_id="IEEE80_BODY_70KG", rho_s_ohm_m=200.0, cs=1.0, t_s=0.4)
-    assert out["e_touch_v"] == pytest.approx(322.71, rel=1e-3)
-    assert out["e_step_v"] == pytest.approx(643.4, rel=1e-3)
+    touch = tolerable_voltages(
+        kind="touch", body_mass_kg=70, rho_s_ohm_m=200.0, cs=1.0, t_s=0.4
+    )
+    step = tolerable_voltages(
+        kind="step", body_mass_kg=70, rho_s_ohm_m=200.0, cs=1.0, t_s=0.4
+    )
+    assert touch["e_v"] == pytest.approx(322.71, rel=1e-3)
+    expected_step = (1000.0 + 6.0 * 200.0) * 0.313 / math.sqrt(0.4)
+    assert step["e_v"] == pytest.approx(expected_step, rel=1e-3)
+    assert step["e_v"] > touch["e_v"]
 
 
 def test_mcb_type_c_band() -> None:

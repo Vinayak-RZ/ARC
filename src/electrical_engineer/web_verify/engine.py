@@ -123,13 +123,19 @@ def run_web_verify(
     citations = index_citations(web_bundle, similar_bundle)
     web_bundle["citations"] = citations
     status = overall_status(claims_out, similar_matches, str(web_raw.get("status") or ""))
-    answer_md = render_answer_section(summary_lines or [], web_bundle, similar_bundle, citations)
     recomputed: dict[str, Any] = {}
     try:
         if problem.get("recompute"):
             recomputed = recompute(problem, claims_out)
     except (ValueError, KeyError, TypeError):
         recomputed = {"error": "recompute_failed"}
+    answer_md = render_answer_section(
+        summary_lines or [],
+        web_bundle,
+        similar_bundle,
+        citations,
+        recomputed=recomputed if recomputed and "error" not in recomputed else None,
+    )
 
     evidence_dir = (run_dir / "evidence") if run_dir else None
     if evidence_dir:
