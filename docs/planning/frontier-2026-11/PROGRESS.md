@@ -14,7 +14,7 @@ Branch: `cursor/frontier-execution-7a2f` · PR [#49](https://github.com/Vinayak-
 | B5 | **done** | trap PRM (`trap-verify`), `docs/hosts/trap_hooks.md`, ablation via `scripts/trap_prm_contract.py` |
 | B6 | **blocked** | Harness + LIVE_AB.md (keys) |
 | B7 | **partial** | `rlvr_env` manifest |
-| B8 | **partial** | `ee-vertical-pack` skill |
+| B8 | **done** | `hosts install` vertical pack + `hosts smoke` contract |
 | B9 | **blocked** | P1 |
 | B10 | **partial** | benchmark v0.1 tarball script |
 | B11 | **done** | Design system, Nyquist, dark goldens, regression, gallery |

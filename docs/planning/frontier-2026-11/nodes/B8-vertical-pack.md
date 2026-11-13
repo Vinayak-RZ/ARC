@@ -15,7 +15,13 @@ Anthropic life-sciences style packaging: connectors + skills + benchmarks pointe
 
 ## Contract
 
-**Output:** `{ "pack_install_smoke": true, "matlab_optional": true }`
+**Command:**
+
+```text
+uv run electrical-engineer hosts smoke
+```
+
+**Output:** `{ "pack_install_smoke": true, "matlab_optional": true }` (booleans from install/uninstall smoke + MATLAB degrade check; CI has no MATLAB license).
 
 ## Commits
 

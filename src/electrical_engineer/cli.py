@@ -69,6 +69,12 @@ def build_parser() -> argparse.ArgumentParser:
         default="all",
         choices=("all", "cursor", "codex", "claude"),
     )
+    hsub.add_parser("uninstall", help="Remove vertical pack files listed in install state").add_argument(
+        "--into", required=True
+    )
+    hsub.add_parser("doctor", help="Report engines and optional backends")
+    smoke = hsub.add_parser("smoke", help="Install smoke + contract JSON for CI")
+    smoke.add_argument("--into", default=None, help="Temp homework dir (default: .vertical-pack-smoke)")
     cs = sub.add_parser("control-studio", help="Control Studio CLI (same model as UI/MCP)")
     cs.add_argument("action", nargs="?", default="create", choices=("create", "validate", "simulate", "analyze", "export"))
     cs.add_argument("--session", dest="session_id")
@@ -264,16 +270,28 @@ def main(argv: list[str] | None = None) -> int:
         print("reference search|get|engine", file=sys.stderr)
         return 2
     if args.cmd == "hosts":
+        import json
         from pathlib import Path as _Path
 
-        from electrical_engineer.hosts_install import install
+        from electrical_engineer import vertical_pack
 
-        if args.hosts_cmd != "install":
-            print("electrical-engineer hosts install --into <dir>", file=sys.stderr)
-            return 2
-        for path in install(_Path(args.into), host=args.host):
-            print(path)
-        return 0
+        if args.hosts_cmd == "install":
+            for path in vertical_pack.install_pack(_Path(args.into), host=args.host):
+                print(path)
+            return 0
+        if args.hosts_cmd == "uninstall":
+            for path in vertical_pack.uninstall_pack(_Path(args.into)):
+                print(path)
+            return 0
+        if args.hosts_cmd == "doctor":
+            print(json.dumps(vertical_pack.doctor(), indent=2))
+            return 0
+        if args.hosts_cmd == "smoke":
+            into = _Path(args.into) if args.into else None
+            print(json.dumps(vertical_pack.smoke_contract(into), indent=2))
+            return 0
+        print("electrical-engineer hosts install|uninstall|doctor|smoke", file=sys.stderr)
+        return 2
     print(args.cmd)
     return 0
 

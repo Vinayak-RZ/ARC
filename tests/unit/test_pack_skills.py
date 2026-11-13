@@ -68,3 +68,10 @@ def test_no_elective_pack_skills() -> None:
     skills = Path("skills")
     assert not (skills / "electives").exists()
     assert not (skills / "dsp").exists()
+
+
+def test_b8_domain_skills_exist() -> None:
+    for pack in ("protection-standards", "web-verify"):
+        text = Path(f"skills/{pack}/SKILL.md").read_text()
+        assert "provenance" in text.lower()
+        assert "unchecked" in text.lower()
