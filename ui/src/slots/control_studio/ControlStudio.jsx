@@ -322,7 +322,11 @@ function ControlStudioInner({ sessionId, onSession }) {
         .then((r) => r.json())
         .then((out) => {
           diagramBase.current = out.diagram;
-          setRevision(out.revision || revision + 1);
+          const nextRev = out.revision || revision + 1;
+          setRevision(nextRev);
+          // Keep session.diagram current: the resync effect rebuilds nodes from it whenever
+          // validation changes, so a stale copy would revert the edit that was just saved.
+          setSession((prev) => (prev ? { ...prev, diagram: out.diagram, revision: nextRev } : prev));
           refreshValidation(sid);
         })
         .catch(() => setMsg("Save failed"));

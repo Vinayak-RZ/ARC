@@ -708,7 +708,11 @@ def main() -> int:
                     if field.count():
                         field.fill(val)
                 page.locator(".cs-simulate-btn").click()
-                page.wait_for_selector(".studio-unsettled-pill", timeout=120000)
+                try:
+                    page.wait_for_selector(".studio-unsettled-pill", timeout=60000)
+                except Exception:
+                    page.screenshot(path="/tmp/capture-debug-unsettled-dark.png")
+                    raise
                 page.wait_for_timeout(400)
                 snap("studio-step-unsettled-dark.png")
                 _click_window(page, "30 s")

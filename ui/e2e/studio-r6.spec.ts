@@ -176,3 +176,13 @@ test("low gain: phase margin is not defined", async ({ page, request }) => {
   await page.waitForSelector(".studio-margin");
   await expect(page.locator(".studio-margins")).toContainText("Not defined");
 });
+
+test("an inspector edit is not reverted when validation returns", async ({ page, request }) => {
+  await open(page, request);
+  await page.locator(".react-flow__node", { hasText: "PID" }).click();
+  await page.getByLabel("Kp").fill("0.08");
+  await page.getByLabel("Ki").fill("0.02");
+  await page.waitForTimeout(2000);
+  await expect(page.getByLabel("Kp")).toHaveValue("0.08");
+  await expect(page.locator(".react-flow__node", { hasText: "PID" })).toContainText("Kp 0.08");
+});
