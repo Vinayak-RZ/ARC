@@ -26,6 +26,7 @@ Product execution graph **complete through H1** on `cursor/ee-product-execution-
 - **README:** `readme` router — this repo’s landing is product-readme (OSS co-solver); internals companion is `extensive-readme`.
 - Inventory: [skills-manifest.json](skills-manifest.json)
 - **Reference library:** curated open/factual EE data in `src/electrical_engineer/reference/data/`; retrieve via `electrical-engineer reference search|get` or MCP `arc_reference_search` / `arc_reference_get`. Agent skill: [`skills/reference/SKILL.md`](skills/reference/SKILL.md). Coverage and gaps: [`docs/reference/COVERAGE.md`](docs/reference/COVERAGE.md), [`docs/reference/GAPS.md`](docs/reference/GAPS.md). When a problem names a standard curve, conductor, IEEE case, or limit table, **look it up and cite** — do not assume constants.
+- **Provenance honesty:** Never write `Web-verify:`, `web-verified`, or similar in answers/notes unless the same run has `evidence/web_sources.json` (or `host_submit.json`) with **URL + quoted snippet + timestamp** per claim source. Use `arc_reference_get` / `reference engine` for NEC/IEEE tables, then `arc_web_evidence_submit` when you need a verified label. Otherwise say **unverified (from memory)**. CLI gate: `electrical-engineer provenance audit <file>`.
 
 ## UI and visual design
 

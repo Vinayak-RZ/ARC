@@ -8,6 +8,7 @@ from typing import Any
 
 from electrical_engineer.web_verify.citations import index_citations, render_answer_section
 from electrical_engineer.web_verify.config import load_web_verify_config
+from electrical_engineer.web_verify.provenance import apply_claim_provenance_honesty
 from electrical_engineer.web_verify.providers import get_provider
 from electrical_engineer.web_verify.recompute import recompute
 from electrical_engineer.web_verify.reconcile import (
@@ -15,6 +16,7 @@ from electrical_engineer.web_verify.reconcile import (
     reconcile_claim,
     reconcile_similar_match,
 )
+from electrical_engineer.web_verify.validate import audit_markdown_provenance
 
 
 def enrich_claims_from_reference_library(claims: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -110,7 +112,7 @@ def run_web_verify(
         row = reconcile_claim(c)
         if row.get("web_value") is not None:
             row["substituted_value"] = row.get("web_value")
-        claims_out.append(row)
+        claims_out.append(apply_claim_provenance_honesty([row])[0])
     web_bundle = {**web_raw, "claims": claims_out}
     similar_raw = provider.find_similar_problems(
         problem, arc_result=arc_primary_result, run_dir=run_dir
@@ -136,6 +138,12 @@ def run_web_verify(
         citations,
         recomputed=recomputed if recomputed and "error" not in recomputed else None,
     )
+    try:
+        audit_markdown_provenance(answer_md, run_dir=run_dir)
+    except ValueError:
+        from electrical_engineer.web_verify.provenance import sanitize_verification_markers
+
+        answer_md, _ = sanitize_verification_markers(answer_md)
 
     evidence_dir = (run_dir / "evidence") if run_dir else None
     if evidence_dir:

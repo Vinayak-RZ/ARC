@@ -163,6 +163,14 @@ def write_run_summary(_spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str
             out["answer_markdown"] = answer_md
         Path(run_dir, "summary.json").write_text(json.dumps(out, indent=2))
         if answer_md:
+            from electrical_engineer.web_verify.provenance import sanitize_verification_markers
+            from electrical_engineer.web_verify.validate import audit_markdown_provenance
+
+            try:
+                audit_markdown_provenance(answer_md, run_dir=rd)
+            except ValueError:
+                answer_md, _ = sanitize_verification_markers(answer_md)
+                out["answer_markdown"] = answer_md
             (rd / "argument.md").write_text(answer_md, encoding="utf-8")
         out["paths"] = [*paths, str(Path(run_dir) / "summary.json")]
     return out

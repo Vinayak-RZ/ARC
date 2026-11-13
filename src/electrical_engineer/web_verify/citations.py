@@ -4,6 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
+from electrical_engineer.web_verify.provenance import (
+    claim_may_use_verified_label,
+    sanitize_verification_markers,
+)
+
 
 def index_citations(web_bundle: dict[str, Any], similar_bundle: dict[str, Any]) -> list[dict[str, Any]]:
     citations: list[dict[str, Any]] = list(web_bundle.get("citations") or [])
@@ -65,20 +70,36 @@ def render_answer_section(
     recomputed: dict[str, Any] | None = None,
 ) -> str:
     """Return markdown with [n] refs and trailing reference list."""
-    lines = list(summary_lines)
+    raw = "\n".join(summary_lines or [])
+    sanitized, _ = sanitize_verification_markers(raw)
+    lines = sanitized.splitlines() if sanitized else []
     if recomputed:
         append_standard_formula_lines(lines, recomputed)
     claim_ids = citation_map_for_claims(web_bundle.get("claims") or [])
-    if claim_ids:
+    verified_claims = [c for c in (web_bundle.get("claims") or []) if claim_may_use_verified_label(c)]
+    if verified_claims:
         lines.append("")
-        lines.append("### Verified context")
-        for claim in web_bundle.get("claims") or []:
+        lines.append("### Verified context (session evidence)")
+        for claim in verified_claims:
             cid = claim.get("claim_id") or claim.get("name")
             refs = claim_ids.get(cid, [])
             ref_str = "".join(f" [{i}]" for i in refs)
             val = claim.get("web_value")
             unit = claim.get("unit") or ""
             lines.append(f"- **{claim.get('name', cid)}**: {val} {unit}{ref_str}".strip())
+    memory_claims = [
+        c
+        for c in (web_bundle.get("claims") or [])
+        if not claim_may_use_verified_label(c) and (c.get("library_value") is not None or c.get("web_value") is not None)
+    ]
+    if memory_claims:
+        lines.append("")
+        lines.append("### unverified (from memory)")
+        for claim in memory_claims:
+            cid = claim.get("claim_id") or claim.get("name")
+            val = claim.get("web_value") if claim.get("web_value") is not None else claim.get("library_value")
+            unit = claim.get("unit") or ""
+            lines.append(f"- **{claim.get('name', cid)}**: {val} {unit} — session evidence required for verified label".strip())
     matches = similar_bundle.get("matches") or []
     if matches:
         lines.append("")

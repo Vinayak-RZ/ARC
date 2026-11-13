@@ -9,10 +9,12 @@ from electrical_engineer.reference.engines.ieee519 import tdd_compliance, tdd_li
 from electrical_engineer.reference.engines.line_params import line_sequence_per_km
 from electrical_engineer.reference.engines.load_flow import run_case_load_flow
 from electrical_engineer.reference.engines.mcb import magnetic_trip_in_band
+from electrical_engineer.reference.engines.nec_ampacity import allowable_ampacity
 from electrical_engineer.reference.engines.nema_locked_rotor import locked_rotor_current_a
 from electrical_engineer.reference.engines.vector_group import phase_shift_deg
 
 __all__ = [
+    "allowable_ampacity",
     "coordination_margin_s",
     "economic_dispatch",
     "idmt_operating_time_s",

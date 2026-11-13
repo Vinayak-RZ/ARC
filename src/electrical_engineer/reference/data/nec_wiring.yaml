@@ -1,0 +1,268 @@
+- id: NEC_310_16_HEADER
+  domain: nec_wiring
+  title: NEC Table 310.16 allowable ampacities (basis conditions)
+  aliases: [310.16, ampacity table, THWN-2 ampacity basis]
+  values:
+    standard_edition: "NFPA 70 NEC 2023"
+    table: "310.16"
+    ambient_base_c: 30
+    max_current_carrying_conductors: 3
+    nec_2017_table_names: "310.15(B)(16)"
+    nec_2020_table_names: "310.15(B)(16)"
+  value_conditions:
+    ambient_base_c: table ampacities assume 30 C unless corrected per 310.15(B)(1)
+    max_current_carrying_conductors: not more than three current-carrying conductors in raceway
+    nec_2017_table_names: 2017/2020 numbering before 310.16 rename
+  confidence: verified_dual
+  source:
+    title: NFPA 70 National Electrical Code
+    edition: "2023"
+    clause: Table 310.16 header
+  source_secondary:
+    title: NFPA NEC Ampacity Workflow fact sheet
+    edition: "2023"
+    clause: Table 310.16 notes 1-2
+    url: https://www.nfpa.org/-/media/project/storefront/catalog/files/code-or-topic-fact-sheets/NECAmpacityWorkflow.pdf
+  url: https://www.nfpa.org/-/media/project/storefront/catalog/files/code-or-topic-fact-sheets/NECAmpacityWorkflow.pdf
+  license: Factual tabular data; no copyrighted prose copied
+  verification: >-
+    Note 1 refs 310.15(B) ambient correction; Note 2 refs 310.15(C)(1) for more than three conductors.
+
+- id: NEC_TABLE_310_16_CU_90C
+  domain: nec_wiring
+  title: NEC Table 310.16 copper allowable ampacity 90 C column
+  aliases: [310.16 copper 90, THWN-2 copper ampacity, THHN 90C]
+  values:
+    ampacity_by_size:
+      "14": 25
+      "12": 30
+      "10": 40
+      "8": 55
+      "6": 75
+      "4": 95
+      "3": 115
+      "2": 130
+      "1": 145
+      "1/0": 170
+      "2/0": 195
+      "3/0": 225
+      "4/0": 260
+      "250": 290
+      "300": 320
+      "350": 350
+      "400": 380
+      "500": 430
+      "600": 475
+      "700": 520
+      "750": 535
+      "800": 555
+      "900": 585
+      "1000": 615
+    insulation_column: 90
+    material: copper
+  value_conditions:
+    ampacity_by_size: amperes at 30 C ambient, not more than three current-carrying conductors
+    insulation_column: 90 C types THWN-2 THHN THW-2 RHH RHW-2 USE-2 XHHW-2 per Table 310.4(1)
+  confidence: verified_dual
+  source:
+    title: NFPA 70 National Electrical Code
+    edition: "2023"
+    clause: Table 310.16 copper 90 C column
+  source_secondary:
+    title: LaborSam NEC 310.16 ampacity chart
+    edition: "2023"
+    clause: Copper 90 C column 3 AWG 115 A, 4 AWG 95 A
+    url: https://laborsam.com/electrical/nec/ampacity-chart
+  url: https://wiresizes.com/guides/nec-table-310-16
+  license: Factual tabular data from NEC Table 310.16
+  verification: >-
+    Secondary quote for 3 AWG row: "#3 AWG | 85 | 100 | 115"; 4 AWG row ends with "95" in 90 C column.
+
+- id: NEC_TABLE_310_15B1_AMBIENT
+  domain: nec_wiring
+  title: NEC Table 310.15(B)(1)(1) ambient temperature correction factors
+  aliases:
+    - 310.15(B)(1)
+    - 310.15(B)(2)(a)
+    - ambient correction NEC
+  values:
+    ambient_base_c: 30
+    nec_2017_name: Table 310.15(B)(2)(a)
+    nec_2020_name: Table 310.15(B)(2)(a)
+    nec_2023_name: Table 310.15(B)(1)(1)
+    ambient_bands:
+      - label: 10 or less
+        ambient_c_max: 10
+        factor_60: 1.29
+        factor_75: 1.20
+        factor_90: 1.15
+      - label: 11-15
+        ambient_c_min: 11
+        ambient_c_max: 15
+        factor_60: 1.22
+        factor_75: 1.15
+        factor_90: 1.12
+      - label: 16-20
+        ambient_c_min: 16
+        ambient_c_max: 20
+        factor_60: 1.15
+        factor_75: 1.11
+        factor_90: 1.08
+      - label: 21-25
+        ambient_c_min: 21
+        ambient_c_max: 25
+        factor_60: 1.08
+        factor_75: 1.05
+        factor_90: 1.04
+      - label: 26-30
+        ambient_c_min: 26
+        ambient_c_max: 30
+        factor_60: 1.0
+        factor_75: 1.0
+        factor_90: 1.0
+      - label: 31-35
+        ambient_c_min: 31
+        ambient_c_max: 35
+        factor_60: 0.91
+        factor_75: 0.94
+        factor_90: 0.96
+      - label: 36-40
+        ambient_c_min: 36
+        ambient_c_max: 40
+        factor_60: 0.82
+        factor_75: 0.88
+        factor_90: 0.91
+      - label: 41-45
+        ambient_c_min: 41
+        ambient_c_max: 45
+        factor_60: 0.71
+        factor_75: 0.82
+        factor_90: 0.87
+      - label: 46-50
+        ambient_c_min: 46
+        ambient_c_max: 50
+        factor_60: 0.58
+        factor_75: 0.75
+        factor_90: 0.82
+      - label: 51-55
+        ambient_c_min: 51
+        ambient_c_max: 55
+        factor_60: 0.41
+        factor_75: 0.67
+        factor_90: 0.76
+      - label: 56-60
+        ambient_c_min: 56
+        ambient_c_max: 60
+        factor_60: null
+        factor_75: 0.58
+        factor_90: 0.71
+      - label: 61-65
+        ambient_c_min: 61
+        ambient_c_max: 65
+        factor_60: null
+        factor_75: 0.47
+        factor_90: 0.65
+      - label: 66-70
+        ambient_c_min: 66
+        ambient_c_max: 70
+        factor_60: null
+        factor_75: 0.33
+        factor_90: 0.58
+      - label: 71-75
+        ambient_c_min: 71
+        ambient_c_max: 75
+        factor_60: null
+        factor_75: null
+        factor_90: 0.50
+      - label: 76-80
+        ambient_c_min: 76
+        ambient_c_max: 80
+        factor_60: null
+        factor_75: null
+        factor_90: 0.41
+      - label: 81-85
+        ambient_c_min: 81
+        ambient_c_max: 85
+        factor_60: null
+        factor_75: null
+        factor_90: 0.29
+    boundary_policy: inclusive_integer_degree_edges
+  value_conditions:
+    ambient_bands: multiply Table 310.16 ampacity by factor for insulation rating column
+    boundary_policy: ambient 45 C maps to 41-45 row (0.87 at 90 C); 46 C maps to 46-50 row (0.82)
+    nec_2017_name: former Table 310.15(B)(2)(a) in 2017/2020 NEC
+  confidence: verified_dual
+  source:
+    title: NFPA 70 National Electrical Code
+    edition: "2023"
+    clause: Table 310.15(B)(1)(1)
+  source_secondary:
+    title: Conduit.site NEC table mirror
+    edition: "2023"
+    clause: Table 310.15(B)(1) row 41-45 column 90 C
+    url: https://conduit.site/tables/table-310.15-b-1.php
+  url: https://up.codes/s/correction-factor-for-ambient-temperatures
+  license: Factual NEC correction factors
+  verification: >-
+    Up Codes row quote 41-45 column 90 C factor 0.87; Conduit.site mirror row 41-45 factor_90 0.87.
+
+- id: NEC_TABLE_310_15C1_ADJUSTMENT
+  domain: nec_wiring
+  title: NEC Table 310.15(C)(1) adjustment factors for conductor count
+  aliases:
+    - 310.15(C)(1)
+    - 310.15(B)(3)(a)
+    - CCC adjustment factor NEC
+  values:
+    nec_2017_name: Table 310.15(B)(3)(a)
+    nec_2020_name: Table 310.15(B)(3)(a)
+    nec_2023_name: Table 310.15(C)(1)
+    conductor_bands:
+      - label: 4-6
+        n_min: 4
+        n_max: 6
+        factor: 0.80
+        percent: 80
+      - label: 7-9
+        n_min: 7
+        n_max: 9
+        factor: 0.70
+        percent: 70
+      - label: 10-20
+        n_min: 10
+        n_max: 20
+        factor: 0.50
+        percent: 50
+      - label: 21-30
+        n_min: 21
+        n_max: 30
+        factor: 0.45
+        percent: 45
+      - label: 31-40
+        n_min: 31
+        n_max: 40
+        factor: 0.40
+        percent: 40
+      - label: 41+
+        n_min: 41
+        n_max: null
+        factor: 0.35
+        percent: 35
+    boundary_policy: inclusive_integer_count_edges
+  value_conditions:
+    conductor_bands: percent of Table 310.16 ampacity after any ambient correction
+    boundary_policy: eight current-carrying conductors map to 7-9 band at 70 percent
+  confidence: verified_dual
+  source:
+    title: NFPA 70 National Electrical Code
+    edition: "2023"
+    clause: Table 310.15(C)(1)
+  source_secondary:
+    title: Schneider Electric NEC conductor ampacity reference
+    edition: "2017"
+    clause: Table 310.15(B)(3)(a) rows 4-6 and 7-9
+    url: https://www.productinfo.schneider-electric.com/na-std-ref/viewer/5c0fee4b347bdf0001de4d55/5c0fee5b347bdf0001de4d6b/r/CorrectionAndAdjustmentFactors-F20BC8E5
+  url: https://conduit.site/tables/table-310.15-c-1.php
+  license: Factual NEC adjustment factors
+  verification: >-
+    Conduit.site rows 4-6 percent 80 and 7-9 percent 70; Schneider adjustment table 7-9 row 70.

@@ -114,6 +114,14 @@ def cmd_engine(name: str, payload: dict[str, Any]) -> int:
             )
         elif name == "vector_group":
             out = ref_engines.phase_shift_deg(group_id=str(payload["group_id"]))
+        elif name == "nec_ampacity":
+            out = ref_engines.allowable_ampacity(
+                size_awg=str(payload["size_awg"]),
+                material=str(payload.get("material", "cu")),
+                insulation_column=str(payload.get("insulation_column", "90")),
+                ambient_c=int(payload["ambient_c"]),
+                n_current_carrying=int(payload["n_current_carrying"]),
+            )
         else:
             print(json.dumps({"error": "unknown_engine", "name": name}), file=sys.stderr)
             return 2

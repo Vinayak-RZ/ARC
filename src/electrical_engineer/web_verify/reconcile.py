@@ -23,7 +23,7 @@ def reconcile_claim(claim: dict[str, Any]) -> dict[str, Any]:
     lib = _as_float(claim.get("library_value"))
     sol = _as_float(claim.get("solver_value"))
     web = _as_float(claim.get("web_value"))
-    status = claim.get("status") or "verified"
+    status = claim.get("status") or "unverified_from_memory"
     disagreement: dict[str, Any] = {}
 
     def rel_diff(a: float, b: float) -> float:

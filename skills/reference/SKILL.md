@@ -17,9 +17,12 @@ Use when a problem names a **standard symbol, curve, conductor, test case, or li
 | IEEE 80 touch/step | engine `ieee80` — requires `kind` and `body_mass_kg`; k=0.116/0.157 by weight only |
 | IEC 60909 peak ip | engine `iec60909_peak` after Ik'' |
 | NEMA code letter I_lr | get `NEMA_CODE_*`; engine `nema_locked_rotor` |
+| NEC 310.16 / 310.15 ampacity + derating | get `NEC_TABLE_310_16_CU_90C`, `NEC_TABLE_310_15B1_AMBIENT`, `NEC_TABLE_310_15C1_ADJUSTMENT`; engine `nec_ampacity` |
 | EEC-301 Exp 6–8 | get `EEC301_EXP*` pointer; use existing PSA workflows |
 
 Never guess curve constants, conductor R, or c factors. If `get` returns missing, say so and check `docs/reference/GAPS.md`.
+
+**Provenance:** `arc_reference_get` is not a web-verify. Do not write `Web-verify:` in the answer until `arc_web_evidence_submit` (or the workflow `web-verify` node) stored session evidence with URL, snippet, and timestamp. Otherwise label **unverified (from memory)**.
 
 ## CLI
 
