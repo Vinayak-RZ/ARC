@@ -362,6 +362,8 @@ def main() -> int:
             snap("studio-block-selected.png")
             sim = page.locator(".cs-simulate-btn")
             if sim.count() > 0:
+                page.locator(".studio-canvas .react-flow__pane").click(position={"x": 40, "y": 40}, force=True)
+                page.wait_for_timeout(200)
                 sim.click()
                 page.wait_for_selector(
                     ".studio-results-stage .studio-step-svg, .studio-results-stage img",
