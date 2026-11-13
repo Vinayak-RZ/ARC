@@ -15,7 +15,7 @@ from electrical_engineer.control_studio.margins import extract_margins
 from electrical_engineer.engines.control_runner import control_available
 
 
-def _hand_built_cg(diagram: dict) -> "object":
+def _hand_built_cg(diagram: dict) -> object:
     import control
 
     p = next(b for b in diagram["blocks"] if b["type"] == "pid")

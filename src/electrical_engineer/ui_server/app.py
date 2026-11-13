@@ -59,7 +59,7 @@ def _read_json(path: Path) -> dict:
 
 def _run_list_hidden(folder: Path) -> bool:
     name = folder.name
-    if name.startswith("_") or name.startswith("unmatched"):
+    if name.startswith(("_", "unmatched")):
         return True
     evid = _read_json(folder / "evidentiary.json") or _read_json(folder / "summary.json")
     title = str(evid.get("title") or name).lower()
