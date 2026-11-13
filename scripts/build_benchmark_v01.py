@@ -7,12 +7,14 @@ import gzip
 import hashlib
 import io
 import json
+import os
 import shutil
 import tarfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT_DIR = ROOT / "artifacts" / "benchmarks" / "eee-coursework-trap" / "v0.1"
+_DEFAULT_OUT = ROOT / "artifacts" / "benchmarks" / "eee-coursework-trap" / "v0.1"
+OUT_DIR = Path(os.environ.get("ARC_BENCHMARK_V01_DIR", _DEFAULT_OUT)).resolve()
 STAGING = OUT_DIR / "_stage"
 KEY_DIR = OUT_DIR / "_key"
 
@@ -97,7 +99,11 @@ def main() -> int:
         "version": "v0.1",
         "questions_sha256": q_sha,
         "questions_tarball": q_tar.name,
-        "answer_key_path": str(key_path.relative_to(ROOT)),
+        "answer_key_path": (
+            str(key_path.relative_to(ROOT))
+            if key_path.is_relative_to(ROOT)
+            else str(key_path)
+        ),
         "answer_key_sha256": key_body["key_sha256"],
         "total_tasks": len(questions),
         "unique_question_givens": catalog_meta["unique_question_givens"],

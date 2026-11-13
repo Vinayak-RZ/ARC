@@ -4,12 +4,15 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-KEY_PATH = ROOT / "artifacts" / "benchmarks" / "eee-coursework-trap" / "v0.1" / "_key" / "answer_key.json"
+_DEFAULT_OUT = ROOT / "artifacts" / "benchmarks" / "eee-coursework-trap" / "v0.1"
+_BENCH_DIR = Path(os.environ.get("ARC_BENCHMARK_V01_DIR", _DEFAULT_OUT)).resolve()
+KEY_PATH = _BENCH_DIR / "_key" / "answer_key.json"
 
 
 def _ensure_key() -> None:

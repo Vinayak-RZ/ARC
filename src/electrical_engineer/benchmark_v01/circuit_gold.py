@@ -11,9 +11,28 @@ from typing import Any
 from electrical_engineer.benchmark_v01.public_schema import values_close
 from electrical_engineer.engines.spice_runner import (
     _ensure_control_block,
-    _parse_print_voltage,
+    _interp_series_at_t,
+    _parse_tran_series,
     spice_available,
 )
+
+# Fine step for RLC transients (well under 1 µs); cap points for long t.
+_NGSPICE_STEP_S = 100e-9
+
+
+def parallel_rlc_ngspice_netlist(
+    r: float, l: float, c: float, vc0: float, i0: float, t_stop: float
+) -> str:
+    """SPICE deck for parallel R||L||C; i0 is initial current 1→0 through L (down)."""
+    step = min(_NGSPICE_STEP_S, max(t_stop / 5000.0, 10e-9))
+    base = f"""* parallel RLC natural (R||L||C @ node 1)
+R1 1 0 {r:g}
+C1 1 0 {c:g} IC={vc0:g}
+L1 1 0 {l:g} IC={i0:g}
+.tran {step:g} {t_stop:g} uic
+.end
+"""
+    return _ensure_control_block(base, probe="v(1)")
 
 
 def parallel_rlc_vc_independent(
@@ -51,14 +70,7 @@ def parallel_rlc_vc_ngspice(
     if not spice_available() or t <= 0:
         return None
     probe = "v(1)"
-    base = f"""* parallel RLC natural
-R1 1 0 {r}
-C1 1 0 {c} IC={vc0}
-L1 1 0 {l} IC={i0}
-.tran {t / 200:.6g} {t:.6g} uic
-.end
-"""
-    body = _ensure_control_block(base, probe=probe)
+    body = parallel_rlc_ngspice_netlist(r, l, c, vc0, i0, t)
     with tempfile.TemporaryDirectory() as td:
         path = Path(td) / "rlc.cir"
         path.write_text(body, encoding="utf-8")
@@ -67,13 +79,14 @@ L1 1 0 {l} IC={i0}
                 ["ngspice", "-b", str(path)],
                 capture_output=True,
                 text=True,
-                timeout=30,
+                timeout=60,
                 check=False,
             )
         except OSError:
             return None
     combined = (proc.stdout or "") + "\n" + (proc.stderr or "")
-    return _parse_print_voltage(combined, probe)
+    series = _parse_tran_series(combined, probe)
+    return _interp_series_at_t(series, t)
 
 
 def assert_circuit_gold_independent(item_name: str, givens: dict[str, Any], catalog_v: float) -> None:
@@ -114,7 +127,7 @@ def circuit_gold_provenance(
         if spice is not None:
             out["ngspice_V"] = spice
             out["ngspice_agree"] = values_close(
-                catalog_value, spice, {"tolerance_rel": 0.01, "tolerance_abs": 5e-3}
+                catalog_value, spice, {"tolerance_rel": 0.005, "tolerance_abs": 1e-3}
             )
         from electrical_engineer.benchmark_v01.round_public import _sigfig
 

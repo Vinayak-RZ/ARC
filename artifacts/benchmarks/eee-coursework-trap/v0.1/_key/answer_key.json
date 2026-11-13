@@ -1,6 +1,6 @@
 {
   "schema": "arc.benchmark.answer_key.v0.1",
-  "key_sha256": "a1e7ec080d74617257bad39f0100a71b007c7a15d044524b2f865b054057135d",
+  "key_sha256": "b71946de817226157241a9db9a8c9746ad576e9a5054e1e06ca1549a169b00f9",
   "answers": {
     "power/agc-eec301-01-s118": {
       "reference": {
@@ -1298,7 +1298,7 @@
           "convention": "R||L||C at one node; i0_A is inductor current at t=0+ from the shared node through L toward ground",
           "independent_V": 0.09312035050446156,
           "catalog_V": 0.09312035050446156,
-          "ngspice_V": 0.09313965,
+          "ngspice_V": 0.09312036,
           "ngspice_agree": true,
           "catalog_V_rounded": 0.09312,
           "ok": true

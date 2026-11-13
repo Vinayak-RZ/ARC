@@ -3,7 +3,7 @@
   "questions_sha256": "6a449e8bd44ce3f776e8fbb944815dd85731cd9d32c29d6a920151b6c93d9a7d",
   "questions_tarball": "eee-coursework-trap-v0.1-questions.tar.gz",
   "answer_key_path": "artifacts/benchmarks/eee-coursework-trap/v0.1/_key/answer_key.json",
-  "answer_key_sha256": "a1e7ec080d74617257bad39f0100a71b007c7a15d044524b2f865b054057135d",
+  "answer_key_sha256": "b71946de817226157241a9db9a8c9746ad576e9a5054e1e06ca1549a169b00f9",
   "total_tasks": 72,
   "unique_question_givens": 72,
   "task_counts_by_domain": {
