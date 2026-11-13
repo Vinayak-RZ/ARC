@@ -18,7 +18,7 @@ import { ResultsDock } from "./ResultsDock.jsx";
 import { studioNodeTypes } from "./nodes.jsx";
 import { studioEdgeTypes } from "./edges.jsx";
 import { FitViewOnChange } from "./FitViewOnChange.jsx";
-import { diagramToFlow, flowToDiagram, issuesByBlock } from "./utils.js";
+import { diagramToFlow, flowToDiagram, humanBlockLabel, issuesByBlock } from "./utils.js";
 import { StudioToolbar } from "./StudioToolbar.jsx";
 import "../../control-studio/studio.css";
 
@@ -311,7 +311,7 @@ function ControlStudioInner({ sessionId, onSession }) {
       data: {
         blockId: id,
         blockType: item.type,
-        label: item.label,
+        label: humanBlockLabel(item.type, item.label),
         params: { ...(item.default_params || {}) },
       },
     };
@@ -385,7 +385,9 @@ function ControlStudioInner({ sessionId, onSession }) {
   }
 
   return (
-    <section className="cs-app control-studio studio">
+    <section
+      className={`cs-app control-studio studio${results ? "" : " is-empty"}${selected ? " has-selection" : ""}`}
+    >
       <ReactFlowProvider>
         <StudioToolbar
           title={session?.diagram?.title}
@@ -414,6 +416,10 @@ function ControlStudioInner({ sessionId, onSession }) {
               onConnectStart={() => setConnecting(true)}
               onConnectEnd={() => setConnecting(false)}
               onNodeDragStop={onNodeDragStop}
+              onNodeClick={(_, node) => {
+                setNodes((nds) => nds.map((n) => ({ ...n, selected: n.id === node.id })));
+              }}
+              onPaneClick={() => setNodes((nds) => nds.map((n) => ({ ...n, selected: false })))}
               onMove={(_, vp) => setZoomPct(vp.zoom)}
               connectionRadius={22}
               snapToGrid

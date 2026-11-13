@@ -15,7 +15,13 @@ from electrical_engineer.control_studio.schema import StudioError
 from electrical_engineer.engines.control_runner import control_available
 
 
-def _plot_bode_open_loop(sys, path: Path, margins: dict[str, Any]) -> None:
+def _plot_path(base: Path, theme: str) -> Path:
+    if theme == "dark":
+        return base.with_name(f"{base.stem}_dark{base.suffix}")
+    return base
+
+
+def _plot_bode_open_loop(sys, path: Path, margins: dict[str, Any], *, theme_name: str = "light") -> None:
     import control
     import matplotlib.pyplot as plt
     import numpy as np
@@ -23,7 +29,7 @@ def _plot_bode_open_loop(sys, path: Path, margins: dict[str, Any]) -> None:
     from electrical_engineer.visual_kit.design_tokens import get_theme
     from electrical_engineer.visual_kit.mpl_theme import apply_theme, direct_label
 
-    theme = get_theme("light")
+    theme = get_theme(theme_name)
     wgc = margins.get("gain_crossover_rad_s")
     wpc = margins.get("phase_crossover_rad_s")
     gm_db = margins.get("gain_margin_db")
@@ -126,21 +132,24 @@ def analyze(diagram: dict[str, Any], *, run_dir: Path | None = None) -> dict[str
     nyquist_png = run_dir / "studio_nyquist.png"
     rlocus_png = run_dir / "studio_root_locus.png"
 
-    _plot_bode_open_loop(ol, bode_png, margins)
+    for theme_name in ("light", "dark"):
+        theme = get_theme(theme_name)
+        _plot_bode_open_loop(ol, _plot_path(bode_png, theme_name), margins, theme_name=theme_name)
 
-    theme = get_theme("light")
-    plt.figure(figsize=(5, 5))
-    control.nyquist_plot(closed)
-    plt.tight_layout()
-    plt.savefig(nyquist_png, dpi=120)
-    plt.close()
+        fig = plt.figure(figsize=(5, 5), facecolor=theme.canvas)
+        control.nyquist_plot(closed)
+        plt.gca().set_facecolor(theme.canvas)
+        plt.tight_layout()
+        plt.savefig(_plot_path(nyquist_png, theme_name), dpi=theme.dpi, facecolor=theme.canvas)
+        plt.close(fig)
 
-    fig = plt.figure(figsize=(theme.fig_w, theme.fig_h))
-    control.root_locus(ol if ol is not closed else closed)
-    plt.title("Root locus")
-    plt.tight_layout()
-    plt.savefig(rlocus_png, dpi=theme.dpi)
-    plt.close(fig)
+        fig = plt.figure(figsize=(theme.fig_w, theme.fig_h), facecolor=theme.canvas)
+        control.root_locus(ol if ol is not closed else closed)
+        plt.title("Root locus", color=theme.ink)
+        plt.gca().set_facecolor(theme.canvas)
+        plt.tight_layout()
+        plt.savefig(_plot_path(rlocus_png, theme_name), dpi=theme.dpi, facecolor=theme.canvas)
+        plt.close(fig)
 
     return {
         "ok": True,

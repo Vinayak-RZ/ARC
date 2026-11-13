@@ -1024,6 +1024,13 @@ a { color: var(--ee-color-primary); }
 .verification-ok {
   background: var(--ee-semantic-up-tint);
   border: 1px solid var(--ee-color-hairline);
+  color: var(--ee-color-ink);
+}
+[data-theme="dark"] .verification-ok .verification-body {
+  color: var(--ee-color-ink);
+}
+[data-theme="dark"] .verification-ok .checked-tag {
+  color: var(--ee-semantic-up);
 }
 .verification-warn {
   background: var(--ee-semantic-warn-tint);
@@ -1404,12 +1411,15 @@ a { color: var(--ee-color-primary); }
   margin-bottom: var(--ee-space-s);
 }
 .example-thumb-frame {
-  width: 160px;
-  height: 96px;
+  width: 100%;
+  height: 112px;
   max-width: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+  background: var(--ee-color-surface-soft);
 }
 .example-card:hover .example-thumb-wrap { outline: 1px solid var(--ee-color-primary); }
-.example-thumb { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+.example-thumb { width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; }
 .home-product h1 { margin: 0 0 var(--ee-space-s); font-size: var(--ee-type-display); font-weight: 600; letter-spacing: -0.03em; }
 .ask-composer { display: flex; flex-direction: column; gap: var(--ee-space-m); margin: var(--ee-space-l) 0; }
 .example-grid-six {
@@ -1717,6 +1727,8 @@ a { color: var(--ee-color-primary); }
 }
 
 [data-theme="dark"] {
+  --ee-semantic-up-tint: #12261c;
+  --ee-semantic-warn-tint: #2a2210;
   --ee-color-canvas: #121211;
   --ee-color-ink: #f4f4f3;
   --ee-color-body: #a3a39e;

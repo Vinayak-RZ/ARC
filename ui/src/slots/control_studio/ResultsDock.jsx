@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { marginLine } from "../../control-studio/marginFormat.js";
 
 const TABS = [
@@ -6,6 +6,11 @@ const TABS = [
   { id: "bode", label: "Bode" },
   { id: "rlocus", label: "Root locus" },
 ];
+
+function isTextualKpi(value) {
+  const s = String(value);
+  return s === "Infinite" || s.includes("No crossover");
+}
 
 function MarginTable({ margins, stale }) {
   if (!margins) {
@@ -41,7 +46,7 @@ function MarginTable({ margins, stale }) {
         <tr>
           {rows.map(([label, value, tip], i) => (
             <td key={label} className={stale ? "is-muted" : undefined} title={tip || undefined}>
-              <span className="studio-kpi tabular-nums">{value}</span>
+              <span className={`studio-kpi tabular-nums${isTextualKpi(value) ? " is-textual" : ""}`}>{value}</span>
               {tip && (value === "Infinite" || String(value).includes("No crossover")) ? (
                 <span className="studio-margin-meta">{tip}</span>
               ) : null}
@@ -53,12 +58,25 @@ function MarginTable({ margins, stale }) {
   );
 }
 
+function useUiTheme() {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute("data-theme") || "light");
+  useEffect(() => {
+    const obs = new MutationObserver(() => {
+      setTheme(document.documentElement.getAttribute("data-theme") || "light");
+    });
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => obs.disconnect();
+  }, []);
+  return theme;
+}
+
 export function ResultsDock({ results, margins, stale }) {
   const [tab, setTab] = useState("step");
+  const uiTheme = useUiTheme();
   const ts = results?.ts || Date.now();
   const src = results ? results[tab] : null;
   return (
-    <footer className={`studio-results${stale ? " is-stale" : ""}${results ? "" : " empty"}`} aria-label="Results">
+    <footer className={`studio-results${stale ? " is-stale" : ""}${results ? "" : " is-empty"}`} aria-label="Results">
       <div className="studio-results-head">
         <MarginTable margins={margins} stale={stale} />
         {results ? (
@@ -79,10 +97,8 @@ export function ResultsDock({ results, margins, stale }) {
         ) : null}
       </div>
       <div className="studio-results-stage">
-        {!results ? (
-          <p className="cs-margins-hint">Run Simulate to see the step response and margins.</p>
-        ) : src ? (
-          <img src={`${src}?t=${ts}`} alt={`${tab} plot`} loading="eager" />
+        {!results ? null : src ? (
+          <img src={`${src}?t=${ts}&theme=${encodeURIComponent(uiTheme)}`} alt={`${tab} plot`} loading="eager" />
         ) : (
           <p className="cs-margins-hint">No plot.</p>
         )}

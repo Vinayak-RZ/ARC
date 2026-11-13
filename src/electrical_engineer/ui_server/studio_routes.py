@@ -165,9 +165,12 @@ def register_studio_routes(app: FastAPI, *, root: Path) -> None:
             return JSONResponse({"error": str(exc)}, status_code=400)
 
     @app.get("/api/control-studio/sessions/{session_id}/plot/{name}")
-    def studio_plot(session_id: str, name: str) -> Response:
+    def studio_plot(session_id: str, name: str, theme: str = "light") -> Response:
         safe = Path(name).name
-        path = root / "runs" / session_id / f"studio_{safe}.png"
+        suffix = "_dark" if (theme or "light").strip().lower() == "dark" else ""
+        path = root / "runs" / session_id / f"studio_{safe}{suffix}.png"
+        if not path.is_file() and suffix:
+            path = root / "runs" / session_id / f"studio_{safe}.png"
         if not path.is_file():
             return JSONResponse({"error": "missing"}, status_code=404)
         return FileResponse(

@@ -11,11 +11,12 @@ SWEEP_MAX_RAD_S = 1e5
 
 def _band_note(kind: str = "gain") -> str:
     lo, hi = SWEEP_MIN_RAD_S, SWEEP_MAX_RAD_S
+    lo_s, hi_s = f"{lo:g}", f"{hi:,g}"
     if kind == "gain":
-        return f"Gain stays above 0 dB from {lo:g} to {hi:g} rad/s."
+        return f"Gain stays above 0 dB from {lo_s} to {hi_s} rad/s."
     if kind == "phase":
-        return f"Phase stays above −180° from {lo:g} to {hi:g} rad/s."
-    return f"No crossing found from {lo:g} to {hi:g} rad/s."
+        return f"Phase stays above −180° from {lo_s} to {hi_s} rad/s."
+    return f"No crossing found from {lo_s} to {hi_s} rad/s."
 
 
 def _fmt_freq(x: float | None) -> tuple[str, str | None]:

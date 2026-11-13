@@ -35,7 +35,8 @@ export function VerificationStrip({ checked, unchecked, modifiedAt }) {
   return (
     <div className="verification-strip verification-ok" role="status">
       <CheckCircle2 size={16} strokeWidth={1.5} className="verification-icon" aria-hidden="true" />
-      <span>
+      <span className="checked-tag status-tag">Checked</span>
+      <span className="verification-body">
         Solved in SPICE and matched the hand calculation within 0.1%. Checked {relativeTimeShort(modifiedAt)}.
       </span>
       <button type="button" className="verification-link">

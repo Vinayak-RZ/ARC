@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useReactFlow } from "@xyflow/react";
 
-const WIDTH_FILL = 0.8;
+const WIDTH_FILL = 0.92;
 
 function measureBlockSpan() {
   const pane = document.querySelector(".studio-canvas .react-flow__pane");
@@ -44,7 +44,7 @@ export function FitViewOnChange({ revision, nodeCount, agentBump = 0 }) {
       const vp = getViewport();
       const target = m.paneW * WIDTH_FILL;
       const scale = target / m.spanW;
-      const newZoom = Math.min(Math.max(vp.zoom * scale, 0.25), 4.5);
+      const newZoom = Math.min(Math.max(vp.zoom * scale, 0.85), 1.25);
       const flow = screenToFlowPosition({ x: m.midX, y: m.midY });
       setCenter(flow.x, flow.y, { zoom: newZoom, duration: attempt === 0 ? 180 : 0 });
       if (attempt < 8) {

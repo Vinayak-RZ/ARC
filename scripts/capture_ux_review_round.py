@@ -128,7 +128,18 @@ def main() -> int:
             browser = p.chromium.launch()
             page = browser.new_page(viewport={"width": W, "height": H})
 
+            def shot_name(name: str) -> str:
+                if args.round < 4:
+                    return name
+                stem = name.replace(".png", "")
+                if stem.endswith("-light") or stem.endswith("-dark"):
+                    return name
+                if stem.startswith("dark-"):
+                    return f"{stem[5:]}-dark.png"
+                return f"{stem}-light.png"
+
             def snap(name: str, target=None) -> None:
+                name = shot_name(name)
                 shot = target or page
                 path = out_dir / name
                 shot.screenshot(path=str(path), full_page=False)
@@ -195,27 +206,58 @@ def main() -> int:
             page.wait_for_timeout(100)
             snap("focus-composer.png")
 
-            go("?view=studio")
+            import urllib.request
+
+            req = urllib.request.Request(
+                f"http://{HOST}:{PORT}/api/control-studio/sessions",
+                method="POST",
+                data=json.dumps({"title": "PID DC motor", "golden": "pid_dc_motor"}).encode(),
+                headers={"Content-Type": "application/json"},
+            )
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                pid_sess = json.loads(resp.read().decode())["session_id"]
+            go(f"?view=studio&session={pid_sess}")
             page.wait_for_timeout(800)
-            snap("studio.png")
+            snap("studio-layout-before-simulate.png")
 
             page.locator(".studio-canvas .react-flow").wait_for(state="visible", timeout=15000)
-            pid = page.locator('[data-testid="rf__node-pid1"], .react-flow__node-pid')
+            pid = page.locator(".react-flow__node[data-id='pid1']")
             if pid.count() == 0:
-                pid = page.locator(".react-flow__node").nth(2)
-            pid.first.click(force=True)
-            page.wait_for_selector(".studio-inspector", timeout=10000)
+                pid = page.locator(".react-flow__node-pid, .react-flow__node", has_text="PID")
+            box = pid.first.bounding_box()
+            if box:
+                page.mouse.click(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
+            else:
+                pid.first.locator(".studio-block").click(force=True)
+            page.wait_for_function(
+                "() => document.querySelector('.studio.has-selection')",
+                timeout=15000,
+            )
+            page.wait_for_timeout(300)
             page.wait_for_timeout(400)
             snap("studio-block-selected.png")
             sim = page.locator(".cs-simulate-btn")
             if sim.count() > 0:
                 sim.click()
-                page.wait_for_timeout(2000)
-            snap("studio-after-simulate.png")
+                page.wait_for_selector(".studio-results-stage img", timeout=120000)
+                page.wait_for_timeout(800)
+            snap("studio-layout-after-simulate.png")
+            if args.round >= 4:
+                wide_studio = browser.new_page(viewport={"width": 1440, "height": 900})
+                wide_studio.goto(
+                    f"http://{HOST}:{PORT}/?view=studio&session={pid_sess}",
+                    wait_until="domcontentloaded",
+                )
+                wide_studio.wait_for_selector(".studio-canvas", timeout=15000)
+                wide_studio.wait_for_timeout(500)
+                snap("studio-layout-before-simulate-1440.png", wide_studio)
+                wide_studio.locator(".cs-simulate-btn").click()
+                wide_studio.wait_for_selector(".studio-results-stage img", timeout=120000)
+                wide_studio.wait_for_timeout(400)
+                snap("studio-layout-after-simulate-1440.png", wide_studio)
+                wide_studio.close()
 
             if args.round >= 3:
-                import urllib.request
-
                 req = urllib.request.Request(
                     f"http://{HOST}:{PORT}/api/control-studio/sessions",
                     method="POST",
@@ -231,6 +273,22 @@ def main() -> int:
                 page.wait_for_selector(".studio-margin-table", timeout=60000)
                 page.wait_for_timeout(400)
                 snap("studio-margins-no-crossover.png")
+
+            if args.round >= 4:
+                req = urllib.request.Request(
+                    f"http://{HOST}:{PORT}/api/control-studio/sessions",
+                    method="POST",
+                    data=json.dumps({"title": "Finite crossover", "golden": "unity_first_order"}).encode(),
+                    headers={"Content-Type": "application/json"},
+                )
+                with urllib.request.urlopen(req, timeout=60) as resp:
+                    fin = json.loads(resp.read().decode())["session_id"]
+                go(f"?view=studio&session={fin}")
+                page.wait_for_selector(".cs-simulate-btn", timeout=15000)
+                page.click(".cs-simulate-btn")
+                page.wait_for_selector(".studio-margin-table", timeout=120000)
+                page.wait_for_timeout(400)
+                snap("studio-margins-finite.png")
 
             go("?view=gallery")
             page.wait_for_selector(".gallery-card", timeout=10000)
@@ -356,15 +414,25 @@ def main() -> int:
 
                 go(f"?problem={run_id}")
                 page.get_by_role("tab", name="Work").click()
-                page.locator(".tab-underline").first.focus()
+                for _ in range(6):
+                    page.keyboard.press("Tab")
+                    page.wait_for_timeout(80)
                 snap("focus-tab.png")
                 go("?view=home")
-                page.locator(".example-card").first.focus()
+                page.locator(".example-card").first.click()
+                page.keyboard.press("Tab")
+                page.wait_for_timeout(150)
                 snap("focus-tile.png")
                 go("?view=problems")
-                page.locator(".problems-row").first.focus()
+                page.locator(".problems-row").first.click()
+                for _ in range(4):
+                    page.keyboard.press("Tab")
+                    page.wait_for_timeout(80)
                 snap("focus-table-row.png")
-                page.locator(".button-primary.button-compact").first.focus()
+                page.locator(".problems-row").first.click()
+                for _ in range(3):
+                    page.keyboard.press("Tab")
+                    page.wait_for_timeout(80)
                 snap("focus-button.png")
 
             if not run_id:
@@ -375,9 +443,21 @@ def main() -> int:
             page.wait_for_selector(".static-diagram", timeout=15000)
             snap("dark-problem.png")
 
-            go("?view=studio")
+            req = urllib.request.Request(
+                f"http://{HOST}:{PORT}/api/control-studio/sessions",
+                method="POST",
+                data=json.dumps({"golden": "pid_dc_motor"}).encode(),
+                headers={"Content-Type": "application/json"},
+            )
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                dark_sid = json.loads(resp.read().decode())["session_id"]
+            go(f"?view=studio&session={dark_sid}")
             page.wait_for_timeout(800)
-            snap("dark-studio.png")
+            snap("dark-studio-before-simulate.png")
+            page.locator(".cs-simulate-btn").click()
+            page.wait_for_selector(".studio-results-stage img", timeout=120000)
+            page.wait_for_timeout(400)
+            snap("dark-studio-after-simulate.png")
 
             browser.close()
 

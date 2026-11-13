@@ -4,7 +4,30 @@ import { wireLabel } from "./edges.jsx";
 
 const EDGE_MARKER = { type: MarkerType.ArrowClosed, color: "#202020", width: 14, height: 14 };
 const BOX_W = 96;
-const PID_W = 144;
+const PID_W = 168;
+
+const HUMAN_BLOCK_LABELS = {
+  step: "Step",
+  ramp: "Ramp",
+  sine: "Sine",
+  gain: "Gain",
+  sum: "Sum",
+  pid: "PID",
+  plant_dc_motor: "DC motor",
+  plant_first_order: "First-order plant",
+  scope: "Scope",
+};
+
+export function humanBlockLabel(type, label) {
+  const id = String(type || "");
+  if (label && label !== id && !label.includes("_")) return label;
+  if (HUMAN_BLOCK_LABELS[id]) return HUMAN_BLOCK_LABELS[id];
+  return id
+    .replace(/^plant_/, "")
+    .split("_")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
 const BOX_H = 56;
 const SUM_W = 56;
 
@@ -28,7 +51,7 @@ export function diagramToFlow(diagram, { issuesByBlock = {}, notes = [], highlig
     data: {
       blockId: b.id,
       blockType: b.type,
-      label: b.label || b.type,
+      label: humanBlockLabel(b.type, b.label),
       params: b.params || {},
       paramLine: paramLine(b.params),
       issues: issuesByBlock[b.id] || [],
