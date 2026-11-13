@@ -1,0 +1,8 @@
+{
+  "kind": "voltage_divider",
+  "vin": 10,
+  "r1": 1000,
+  "r2": 1000,
+  "expected": 5.0,
+  "tol": 1e-6
+}
