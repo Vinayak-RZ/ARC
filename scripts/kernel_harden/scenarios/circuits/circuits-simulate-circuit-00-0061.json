@@ -17,7 +17,9 @@
   "notes": "auto scenario 61",
   "expect": {
     "unchecked": true,
-    "reason": "labeled",
-    "requires": []
+    "reason": "no-provider",
+    "requires": [
+      "run-spice"
+    ]
   }
 }
