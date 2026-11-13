@@ -13,6 +13,7 @@ def test_css_vars_match_design() -> None:
     assert "--ee-semantic-down: #d0312d" in css
     assert "Geist" in css
     assert "JetBrains Mono" in css
+    assert "--ee-border-input: #8c8c87" in css
     assert "--ee-color-hairline" in css
     assert ".status-badge" in css
     assert "var(--ee-color-surface-strong)" in css
