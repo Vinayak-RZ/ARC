@@ -1,4 +1,5 @@
-import { Handle, Position } from "@xyflow/react";
+import { Position } from "@xyflow/react";
+import { InPort, OutPort } from "./ports.jsx";
 
 function badge(data) {
   if (!data?.flashAuthor) return null;
@@ -23,35 +24,56 @@ function pinNote(data) {
   return <span className="studio-note-pin" title={note.text}>💬</span>;
 }
 
-export function SumNode({ data, selected }) {
-  const signs = String(data?.params?.signs || "+-");
+function shell(cls, selected, data, children, ports) {
   return (
-    <div className={`studio-node studio-sum${selected ? " is-selected" : ""}${data?.highlight ? " is-highlight" : ""}`}>
+    <div
+      className={`studio-block ${cls}${selected ? " is-selected" : ""}${data?.highlight ? " is-highlight" : ""}`}
+      style={{ zIndex: 2 }}
+    >
       {badge(data)}
       {pinNote(data)}
-      <Handle type="target" position={Position.Left} id="in1" style={{ top: "42%" }} />
-      <Handle type="target" position={Position.Bottom} id="feedback" />
-      <Handle type="source" position={Position.Right} id="out" />
-      <span className="studio-sum-glyphs">
-        <span className="sign-plus">+</span>
-        <span className="sign-minus">{signs.includes("-") ? "−" : "+"}</span>
-      </span>
+      {ports}
+      <div className="studio-block-body">{children}</div>
       {errs(data)}
     </div>
   );
 }
 
+export function SumNode({ data, selected }) {
+  const signs = String(data?.params?.signs || "+-");
+  return shell(
+    "studio-sum",
+    selected,
+    data,
+    <span className="studio-sum-icon" aria-hidden>
+      Σ
+    </span>,
+    <>
+      <div className="studio-port-col studio-port-col-left">
+        <InPort id="in1" sign="+" />
+      </div>
+      <div className="studio-port-col studio-port-col-bottom">
+        <InPort id="feedback" sign={signs.includes("-") ? "−" : "+"} position={Position.Bottom} />
+      </div>
+      <OutPort id="out" />
+    </>,
+  );
+}
+
 export function GainNode({ data, selected }) {
   const k = data?.params?.k ?? data?.params?.gain ?? 1;
-  return (
-    <div className={`studio-node studio-gain${selected ? " is-selected" : ""}${data?.highlight ? " is-highlight" : ""}`}>
-      {badge(data)}
-      {pinNote(data)}
-      <Handle type="target" position={Position.Left} id="in" />
-      <Handle type="source" position={Position.Right} id="out" />
-      <span className="gain-k">{k}</span>
-      {errs(data)}
-    </div>
+  return shell(
+    "studio-gain",
+    selected,
+    data,
+  <>
+      <span className="studio-block-kind">Gain</span>
+      <span className="studio-param-line">k = {k}</span>
+  </>,
+    <>
+      <InPort id="in" />
+      <OutPort id="out" />
+    </>,
   );
 }
 
@@ -66,89 +88,99 @@ function tfFrac(tf) {
 
 export function TfNode({ data, selected }) {
   const { num, den } = tfFrac(data?.params?.tf);
-  return (
-    <div className={`studio-node studio-tf${selected ? " is-selected" : ""}${data?.highlight ? " is-highlight" : ""}`}>
-      {badge(data)}
-      {pinNote(data)}
-      <Handle type="target" position={Position.Left} id="in" />
-      <Handle type="source" position={Position.Right} id="out" />
-      <div className="tf-frac">
-        <span className="tf-num">{num}</span>
-        <span className="tf-line" />
-        <span className="tf-den">{den}</span>
-      </div>
-      {errs(data)}
-    </div>
+  return shell(
+    "studio-tf",
+    selected,
+    data,
+    <div className="tf-frac">
+      <span className="tf-num">{num}</span>
+      <span className="tf-line" />
+      <span className="tf-den">{den}</span>
+    </div>,
+    <>
+      <InPort id="in" />
+      <OutPort id="out" />
+    </>,
   );
 }
 
 export function PidNode({ data, selected }) {
   const p = data?.params || {};
-  return (
-    <div className={`studio-node studio-pid${selected ? " is-selected" : ""}${data?.highlight ? " is-highlight" : ""}`}>
-      {badge(data)}
-      {pinNote(data)}
-      <Handle type="target" position={Position.Left} id="in" />
-      <Handle type="source" position={Position.Right} id="out" />
-      <span className="pid-label">PID</span>
-      <span className="pid-tune">
-        Kp={p.kp ?? 0} Ki={p.ki ?? 0}
+  return shell(
+    "studio-pid",
+    selected,
+    data,
+    <>
+      <span className="studio-block-kind">PID</span>
+      <span className="studio-param-line">
+        Kp={p.kp ?? 0} Ki={p.ki ?? 0} Kd={p.kd ?? 0}
       </span>
-      {errs(data)}
-    </div>
+    </>,
+    <>
+      <InPort id="in" />
+      <OutPort id="out" />
+    </>,
   );
 }
 
 export function SourceNode({ data, selected }) {
-  return (
-    <div className={`studio-node studio-source${selected ? " is-selected" : ""}${data?.highlight ? " is-highlight" : ""}`}>
-      {badge(data)}
-      <Handle type="source" position={Position.Right} id="out" />
+  return shell(
+    "studio-source",
+    selected,
+    data,
+    <>
+      <span className="studio-block-icon">▸</span>
       <span>{data?.label || data?.blockType}</span>
-      {errs(data)}
-    </div>
+    </>,
+    <OutPort id="out" />,
   );
 }
 
 export function ScopeNode({ data, selected }) {
-  return (
-    <div className={`studio-node studio-scope${selected ? " is-selected" : ""}${data?.highlight ? " is-highlight" : ""}`}>
-      {pinNote(data)}
-      <Handle type="target" position={Position.Left} id="in" />
+  return shell(
+    "studio-scope",
+    selected,
+    data,
+    <>
       <span className="scope-glyph" aria-hidden>
         ◔
       </span>
       <span className="scope-title">Scope</span>
-      {errs(data)}
-    </div>
+    </>,
+    <InPort id="in" />,
   );
 }
 
 export function PlantNode({ data, selected }) {
-  return (
-    <div className={`studio-node studio-plant${selected ? " is-selected" : ""}${data?.highlight ? " is-highlight" : ""}`}>
-      {badge(data)}
-      {pinNote(data)}
-      <Handle type="target" position={Position.Left} id="in" />
-      <Handle type="source" position={Position.Right} id="out" />
-      <Handle type="source" position={Position.Bottom} id="tap" className="studio-tap-handle" />
+  return shell(
+    "studio-plant",
+    selected,
+    data,
+    <>
+      <span className="studio-block-icon">⚙</span>
       <span className="plant-label">{data?.label || data?.blockType}</span>
-      {errs(data)}
-    </div>
+    </>,
+    <>
+      <InPort id="in" />
+      <OutPort id="out" />
+      <OutPort id="tap" tap />
+    </>,
   );
 }
 
 export function GenericNode({ data, selected }) {
-  return (
-    <div className={`studio-node studio-generic${selected ? " is-selected" : ""}${data?.highlight ? " is-highlight" : ""}`}>
-      {badge(data)}
-      {pinNote(data)}
-      <Handle type="target" position={Position.Left} id="in" />
-      <Handle type="source" position={Position.Right} id="out" />
+  return shell(
+    "studio-generic",
+    selected,
+    data,
+    <>
       <span>{data?.label || data?.blockType}</span>
       {data?.paramLine ? <span className="studio-param-line">{data.paramLine}</span> : null}
-      {errs(data)}
-    </div>
+    </>,
+    <>
+      <InPort id="in" />
+      <OutPort id="out" />
+    </>,
   );
 }
 

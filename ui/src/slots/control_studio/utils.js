@@ -18,6 +18,7 @@ export function diagramToFlow(diagram, { issuesByBlock = {}, notes = [], highlig
     id: b.id,
     type: nodeForType(b.type),
     position: { x: b.x || 0, y: b.y || 0 },
+    zIndex: 2,
     data: {
       blockId: b.id,
       blockType: b.type,
@@ -42,6 +43,7 @@ export function diagramToFlow(diagram, { issuesByBlock = {}, notes = [], highlig
       sourceHandle: fp,
       targetHandle: tp,
       markerEnd: EDGE_MARKER,
+      zIndex: 0,
       data: { label: wireLabel(w.from, w.to, blocksById), route: below ? "below" : "forward" },
     };
   });

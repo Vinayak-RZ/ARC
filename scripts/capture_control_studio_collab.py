@@ -100,6 +100,16 @@ def main() -> int:
         )
         page.goto(url_golden, wait_until="domcontentloaded", timeout=60000)
         page.wait_for_timeout(1800)
+        motor = page.locator('[data-id="motor"]')
+        mbox = motor.bounding_box()
+        if mbox:
+            page.mouse.move(mbox["x"] + mbox["width"] / 2, mbox["y"] + mbox["height"] / 2)
+            page.mouse.down()
+            page.mouse.move(mbox["x"] + mbox["width"] / 2 + 40, mbox["y"] + mbox["height"] / 2 + 16)
+            page.mouse.up()
+            page.wait_for_timeout(700)
+            frames.append(OUT / "studio_frame_human_drag.png")
+            page.screenshot(path=str(frames[-1]), full_page=False)
         page.evaluate(
             """() => {
             const n = document.querySelector('[data-id="pid1"]');
