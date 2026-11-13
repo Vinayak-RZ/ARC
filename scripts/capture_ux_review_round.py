@@ -73,14 +73,36 @@ def _preflight(out_dir: Path) -> dict:
     with urllib.request.urlopen(sim_req, timeout=180) as resp:
         sim = json.loads(resp.read().decode())
     gm_tip = str((sim.get("analyze") or {}).get("margin_tooltips", {}).get("gm_db", ""))
+    dirty = subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True).strip()
+    diff = subprocess.check_output(["git", "diff", "HEAD"], cwd=ROOT)
+    req_low = urllib.request.Request(
+        f"http://{HOST}:{PORT}/api/control-studio/sessions",
+        method="POST",
+        data=json.dumps({"title": "Low gain", "golden": "open_loop_low_gain"}).encode(),
+        headers={"Content-Type": "application/json"},
+    )
+    with urllib.request.urlopen(req_low, timeout=60) as resp:
+        low_sid = json.loads(resp.read().decode())["session_id"]
+    low_sim = urllib.request.Request(
+        f"http://{HOST}:{PORT}/api/control-studio/sessions/{low_sid}/simulate",
+        method="POST",
+        data=b"{}",
+        headers={"Content-Type": "application/json"},
+    )
+    with urllib.request.urlopen(low_sim, timeout=180) as resp:
+        low_payload = json.loads(resp.read().decode())
+    low_pm = str(((low_payload.get("analyze") or {}).get("display") or {}).get("pm_deg", ""))
     data = {
         "git_sha": sha,
         "git_sha_short": sha_short,
+        "git_dirty_lines": len(dirty.splitlines()) if dirty else 0,
+        "git_diff_sha256": hashlib.sha256(diff).hexdigest()[:16] if diff else None,
         "package_path": pkg_path,
         "dist_index_mtime": dist_mtime,
         "kp": kp,
         "step_series": bool(sim.get("step_series")),
         "gain_margin_caption": gm_tip,
+        "low_gain_pm_deg": low_pm,
     }
     if kp != 50:
         raise RuntimeError(f"preflight kp={kp}, expected 50 (stale backend?)")
@@ -88,6 +110,8 @@ def _preflight(out_dir: Path) -> dict:
         raise RuntimeError("preflight: simulate response missing step_series")
     if "180" not in gm_tip and "−180" not in gm_tip:
         raise RuntimeError(f"preflight: gain margin caption missing −180: {gm_tip!r}")
+    if low_pm != "Not defined":
+        raise RuntimeError(f"preflight low_gain pm_deg={low_pm!r}, expected Not defined")
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "preflight.json").write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
     print("preflight.json", data)
@@ -297,6 +321,10 @@ def main() -> int:
             with urllib.request.urlopen(req, timeout=60) as resp:
                 pid_sess = json.loads(resp.read().decode())["session_id"]
             go(f"?view=studio&session={pid_sess}")
+            page.wait_for_function(
+                "() => document.querySelectorAll('.react-flow__edge-path').length >= 4",
+                timeout=20000,
+            )
             page.wait_for_timeout(800)
             snap("studio-layout-before-simulate.png")
 
@@ -353,6 +381,22 @@ def main() -> int:
                 page.wait_for_timeout(800)
                 snap("studio-after-resize.png")
                 page.set_viewport_size({"width": W, "height": H})
+            if args.round >= 7:
+                go(f"?view=studio&session={pid_sess}")
+                page.locator(".cs-simulate-btn").click()
+                page.wait_for_selector(".studio-settled-pill", timeout=120000)
+                snap("studio-step-settled.png")
+                page.locator(".react-flow__node", has_text="PID").click()
+                for label, val in [("Kp", "0.15"), ("Ki", "0.02")]:
+                    field = page.get_by_label(label)
+                    if field.count():
+                        field.fill(val)
+                page.locator(".cs-simulate-btn").click()
+                page.wait_for_selector(".studio-unsettled-pill", timeout=120000)
+                snap("studio-step-unsettled.png")
+                page.locator(".studio-window-segment button", has_text="30 s").click()
+                page.wait_for_timeout(1500)
+                snap("studio-step-extended.png")
             if args.round >= 4:
                 wide_studio = browser.new_page(viewport={"width": 1440, "height": 900})
                 wide_studio.goto(
@@ -360,7 +404,11 @@ def main() -> int:
                     wait_until="domcontentloaded",
                 )
                 wide_studio.wait_for_selector(".studio-canvas", timeout=15000)
-                wide_studio.wait_for_timeout(500)
+                wide_studio.wait_for_function(
+                    "() => document.querySelectorAll('.react-flow__edge-path').length >= 4",
+                    timeout=20000,
+                )
+                wide_studio.wait_for_timeout(1200)
                 snap("studio-layout-before-simulate-1440.png", wide_studio)
                 wide_studio.locator(".cs-simulate-btn").click()
                 wide_studio.wait_for_selector(
@@ -561,7 +609,7 @@ def main() -> int:
             req = urllib.request.Request(
                 f"http://{HOST}:{PORT}/api/control-studio/sessions",
                 method="POST",
-                data=json.dumps({"golden": "pid_dc_motor"}).encode(),
+                data=json.dumps({"title": "PID DC motor", "golden": "pid_dc_motor"}).encode(),
                 headers={"Content-Type": "application/json"},
             )
             with urllib.request.urlopen(req, timeout=60) as resp:
@@ -576,6 +624,13 @@ def main() -> int:
             )
             page.wait_for_timeout(400)
             snap("dark-studio-after-simulate.png")
+            if args.round >= 7:
+                page.locator(".react-flow__node", has_text="PID").click()
+                page.wait_for_timeout(500)
+                snap("studio-block-selected.png", theme="dark")
+                page.locator(".cs-simulate-btn").click()
+                page.wait_for_selector(".studio-unsettled-pill, .studio-step-svg", timeout=120000)
+                snap("studio-step-unsettled.png", theme="dark")
 
             if args.round >= 5:
                 _set_theme(page, "dark")

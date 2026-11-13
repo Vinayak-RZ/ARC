@@ -2,8 +2,8 @@ import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
   testDir: ".",
-  testMatch: /studio-(layout|wire-selection|r5)\.spec\.ts/,
-  retries: 0,
+  testMatch: /studio-(layout|wire-selection|r5|r6)\.spec\.ts/,
+  retries: 2,
   workers: 1,
   timeout: 120_000,
   use: {

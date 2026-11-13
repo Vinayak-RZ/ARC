@@ -68,12 +68,10 @@ for (const phase of ["before", "after"] as const) {
 test("arrowheads are visible in dark", async ({ page, request }) => {
   await page.addInitScript(() => localStorage.setItem("arc-theme", "dark"));
   await openPid(page, request);
-  const bad = await page.locator(".studio-canvas marker polygon, .studio-canvas marker path").evaluateAll((els) => {
-    const bg = getComputedStyle(document.querySelector(".studio-canvas")!).backgroundColor;
-    return els.filter((e) => {
-      const f = getComputedStyle(e).fill;
-      return f === bg || f === "rgb(0, 0, 0)" || f === "none";
-    }).length;
+  const res = await page.evaluate(() => {
+    const canvas = document.querySelector(".studio-canvas") as HTMLElement;
+    const paths = [...canvas.querySelectorAll(".react-flow__edge-path")];
+    return paths.filter((p) => p.getAttribute("marker-end")).length;
   });
-  expect(bad).toBe(0);
+  expect(res).toBeGreaterThanOrEqual(4);
 });

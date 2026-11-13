@@ -24,21 +24,6 @@ import "../../control-studio/studio.css";
 
 const GRID = 16;
 
-function useWireStroke() {
-  const [color, setColor] = useState("#1A1A18");
-  useEffect(() => {
-    const read = () => {
-      const v = getComputedStyle(document.documentElement).getPropertyValue("--cs-wire").trim();
-      setColor(v || "#1A1A18");
-    };
-    read();
-    const obs = new MutationObserver(read);
-    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-    return () => obs.disconnect();
-  }, []);
-  return color;
-}
-
 function useNarrowViewport() {
   const [narrow, setNarrow] = useState(() =>
     typeof window !== "undefined" ? window.matchMedia("(max-width: 1199px)").matches : false,
@@ -268,17 +253,34 @@ function ControlStudioInner({ sessionId, onSession }) {
     return undefined;
   }, [sessionId, loadSession, onSession, paint, refreshValidation]);
 
+  const resyncFlowFromDiagram = useCallback(
+    (diagram) => {
+      if (!diagram) return;
+      const flow = diagramToFlow(diagram, {
+        issuesByBlock: blockIssues,
+        notes: diagram?.notes,
+        highlightSet: highlight.ids,
+        flashAuthor: highlight.author,
+      });
+      setNodes(withSelection(flow.nodes));
+      setEdges(flow.edges);
+    },
+    [blockIssues, highlight.author, highlight.ids, setEdges, setNodes, withSelection],
+  );
+
   useEffect(() => {
     if (!session?.diagram) return;
-    const flow = diagramToFlow(session.diagram, {
-      issuesByBlock: blockIssues,
-      notes: session.diagram?.notes,
-      highlightSet: highlight.ids,
-      flashAuthor: highlight.author,
-    });
-    setNodes(withSelection(flow.nodes));
-    setEdges(flow.edges);
-  }, [validation, session?.diagram, session?.presence, highlight.ids.size, blockIssues, setNodes, setEdges, withSelection]);
+    resyncFlowFromDiagram(session.diagram);
+  }, [validation, session?.diagram, session?.presence, highlight.ids.size, resyncFlowFromDiagram]);
+
+
+  useEffect(() => {
+    if (!results) return undefined;
+    const diagram = diagramBase.current;
+    if (!diagram?.blocks?.length) return undefined;
+    const timers = [0, 80, 250, 600].map((ms) => setTimeout(() => resyncFlowFromDiagram(diagram), ms));
+    return () => timers.forEach(clearTimeout);
+  }, [results?.ts, resyncFlowFromDiagram]);
 
   useEffect(() => {
     if (!selectedId) return undefined;
@@ -376,15 +378,21 @@ function ControlStudioInner({ sessionId, onSession }) {
       body: JSON.stringify({ diagram, author: "human", op: "edit" }),
     })
       .then((r) => r.json())
-      .then((out) => {
+        .then((out) => {
         diagramBase.current = out.diagram;
         const simRev = out.revision || revision;
         setRevision(simRev);
+        setSession((prev) => (prev ? { ...prev, diagram: out.diagram, revision: simRev } : prev));
+        resyncFlowFromDiagram(out.diagram);
         return fetch(`/api/control-studio/sessions/${sid}/simulate`, { method: "POST" })
           .then((r) => r.json())
-          .then((sim) =>
-            applySimAndAnalyze(sid, sim, setResults, setMargins, setStepData, setMsg, () => setLastSimRevision(simRev)),
-          );
+          .then((sim) => {
+            applySimAndAnalyze(sid, sim, setResults, setMargins, setStepData, setMsg, () => {
+              setLastSimRevision(simRev);
+              resyncFlowFromDiagram(diagramBase.current);
+              setFitBump((n) => n + 1);
+            });
+          });
       })
       .catch(() => setMsg("Save failed"));
   }
@@ -422,7 +430,6 @@ function ControlStudioInner({ sessionId, onSession }) {
     session?.presence?.agent_editing ||
     (session?.presence?.agent_editing_until_ms && session.presence.agent_editing_until_ms > Date.now());
   const resultsStale = lastSimRevision != null && revision > lastSimRevision;
-  const wireStroke = useWireStroke();
   const narrowViewport = useNarrowViewport();
   const inspectorFloating = Boolean(selected) && narrowViewport;
 
@@ -483,7 +490,7 @@ function ControlStudioInner({ sessionId, onSession }) {
               defaultEdgeOptions={{
                 type: "signal",
                 zIndex: 0,
-                markerEnd: { type: MarkerType.ArrowClosed, color: wireStroke, width: 14, height: 14 },
+                markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14 },
               }}
               minZoom={0.2}
               maxZoom={1.25}

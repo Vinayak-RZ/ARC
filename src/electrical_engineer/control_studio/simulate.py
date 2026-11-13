@@ -23,7 +23,9 @@ def _output_unit(diagram: dict[str, Any]) -> str:
     return ""
 
 
-def _auto_t_final(margins: dict[str, Any] | None) -> float:
+def _auto_t_final(margins: dict[str, Any] | None, *, t_settle: float | None = None) -> float:
+    if t_settle is not None and math.isfinite(t_settle) and t_settle > 0:
+        return float(min(600.0, max(2.0, 8.0 * t_settle)))
     wcg = (margins or {}).get("gain_crossover_rad_s")
     if wcg and math.isfinite(float(wcg)) and float(wcg) > 0:
         return float(min(600.0, max(10.0, 6.0 / float(wcg))))
@@ -44,6 +46,15 @@ def _step_metrics(t, y, setpoint: float, window_s: float) -> dict[str, Any]:
             "value_at_end": float(y[-1]) if len(y) else None,
             "setpoint": setpoint,
         }
+    band = 0.02 * sp
+    settle_idx = len(y) - 1
+    for i in range(len(y) - 1, -1, -1):
+        if abs(float(y[i]) - setpoint) > band:
+            settle_idx = i
+            break
+    t_settle = float(t[settle_idx]) if settle_idx < len(t) else float(t[-1])
+    peak = float(np.max(y)) if len(y) else setpoint
+    overshoot_pct = max(0.0, (peak - setpoint) / sp * 100.0) if sp > 0 else None
     tail_n = max(3, int(len(y) * 0.1))
     tail = y[-tail_n:]
     flat = float(tail.max() - tail.min()) <= 0.01 * max(abs(float(tail.mean())), 1e-9)
@@ -62,6 +73,8 @@ def _step_metrics(t, y, setpoint: float, window_s: float) -> dict[str, Any]:
         "value_at_end": float(y[-1]),
         "setpoint": setpoint,
         "steady_state_error_pct": round(sse * 100.0, 1) if status == "settled_off_target" else None,
+        "t_settle_s": t_settle if status == "settled" else None,
+        "overshoot_pct": round(overshoot_pct, 2) if status == "settled" and overshoot_pct is not None else None,
     }
     if status == "not_settled":
         slope = float((y[-1] - y[-tail_n]) / max(float(t[-1] - t[-tail_n]), 1e-9))
@@ -73,7 +86,10 @@ def _step_metrics(t, y, setpoint: float, window_s: float) -> dict[str, Any]:
     elif status == "settled_off_target":
         pct = metrics["steady_state_error_pct"]
         direction = "below" if float(y[-1]) < setpoint else "above"
-        metrics["aria_summary"] = f"Step response settles at {y[-1]:.2g}, {pct:g}% {direction} setpoint"
+        y_end = float(y[-1])
+        metrics["aria_summary"] = (
+            f"Step response settles at {y_end:.3g}, {pct:.1f}% {direction} setpoint"
+        )
     else:
         metrics["aria_summary"] = f"Closed-loop step response settled near {setpoint:g} within {window_s:.0f} s"
     return metrics
@@ -97,12 +113,16 @@ def simulate(
     from electrical_engineer.visual_kit.design_tokens import get_theme
     from electrical_engineer.visual_kit.mpl_theme import apply_theme
 
-    if t_final == "auto" or t_final is None:
-        t_final = _auto_t_final(margins)
-    t_final = float(t_final)
-
     sys, meta = compose_closed_loop(diagram)
     run_dir = run_dir or Path("runs") / "_control_studio_scratch"
+    if t_final == "auto" or t_final is None:
+        import numpy as np
+
+        t_probe = np.linspace(0, 10.0, 500)
+        t_p, y_p = control.step_response(sys, T=t_probe)
+        probe = _step_metrics(t_p, y_p, 1.0, 10.0)
+        t_final = _auto_t_final(margins, t_settle=probe.get("t_settle_s"))
+    t_final = float(t_final)
     run_dir.mkdir(parents=True, exist_ok=True)
     step_png = run_dir / "studio_step.png"
     impulse_png = run_dir / "studio_impulse.png"

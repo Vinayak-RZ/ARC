@@ -67,11 +67,12 @@ def _fmt_gm_db(gm_db: float | None, gm_lin: float | None) -> tuple[str, str | No
 
 
 def _fmt_pm(pm: float | None, *, w_gain_cross: float | None = None) -> tuple[str, str | None]:
-    if w_gain_cross is None:
+    if w_gain_cross is None or (isinstance(w_gain_cross, float) and not math.isfinite(w_gain_cross)):
         if pm is None or (isinstance(pm, float) and math.isnan(pm)):
             return "Not defined", "No gain crossover in range."
-        if math.isinf(pm):
+        if pm is not None and math.isinf(pm):
             return "Not defined", "No gain crossover in range."
+        return "Not defined", "No gain crossover in range."
     if pm is None or (isinstance(pm, float) and math.isnan(pm)):
         return "No crossover in range", None
     if math.isinf(pm):

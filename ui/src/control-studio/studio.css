@@ -35,11 +35,15 @@
   grid-template-areas:
     "bar bar bar"
     "palette canvas inspector"
-    "results results results";
+    "palette results inspector";
 }
 
-.cs-app.control-studio.studio.is-empty {
-  --studio-results-h: 120px;
+.cs-app.control-studio.studio.is-empty .studio-results-stage {
+  min-height: 96px;
+}
+
+.cs-app.control-studio.studio.is-empty .studio-margins + .studio-results-chart-col {
+  display: none;
 }
 
 .cs-app.control-studio.studio:not(.has-selection) .studio-inspector {
@@ -53,10 +57,15 @@
   padding: 12px;
   border-left: 1px solid var(--cs-border);
   background: var(--cs-surface);
+  grid-area: inspector;
+  grid-row: 2 / 4;
+  min-height: 0;
+  overflow: auto;
 }
 
 .studio-canvas {
   position: relative;
+  color: var(--cs-wire);
 }
 
 .studio-inspector-float {
@@ -219,7 +228,47 @@
   display: flex;
   flex-direction: column;
   min-height: 160px;
+  min-width: 560px;
   max-height: 100%;
+}
+
+.studio-step-chart-head-unified {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 32px;
+  flex-wrap: wrap;
+}
+
+.studio-step-chart-head-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.studio-step-plot {
+  flex: 1 1 auto;
+  min-height: 160px;
+  min-width: 560px;
+  display: flex;
+  align-items: stretch;
+}
+
+.studio-step-tick {
+  font-size: 11px;
+  fill: var(--cs-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.studio-step-band {
+  fill: color-mix(in srgb, var(--cs-accent) 12%, transparent);
+}
+
+.studio-settled-pill {
+  font-size: 12px;
+  color: var(--cs-text-secondary);
 }
 
 .studio-step-svg text {
@@ -269,10 +318,13 @@
   font-size: 12px;
   padding: 4px 8px;
   cursor: pointer;
+  color: var(--cs-text-secondary);
+  font: inherit;
 }
 
 .studio-window-segment button.is-active {
   background: var(--cs-surface-subtle);
+  color: var(--cs-text);
 }
 
 .studio-bar {
@@ -786,6 +838,13 @@
   z-index: 0 !important;
 }
 
+.studio-canvas marker path,
+.studio-canvas marker polyline,
+.studio-canvas marker polygon {
+  fill: var(--cs-wire);
+  stroke: var(--cs-wire);
+}
+
 .studio-canvas .react-flow__nodes,
 .studio-canvas .react-flow__node {
   z-index: 2 !important;
@@ -1115,10 +1174,12 @@
 .studio-comments textarea {
   width: 100%;
   margin-top: var(--cs-space-1);
-  height: 36px;
-  padding: 0 var(--cs-space-3);
+  min-height: 56px;
+  height: auto;
+  padding: var(--cs-space-2) var(--cs-space-3);
   border: 1px solid var(--cs-border);
   border-radius: var(--cs-radius-sm);
+  font: inherit;
   font-size: var(--cs-type-body);
 }
 

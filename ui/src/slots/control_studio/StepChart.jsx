@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 const WINDOWS = [
   { id: 10, label: "10 s" },
@@ -12,14 +12,38 @@ function fmt(v, d = 2) {
   return Number(v).toFixed(d);
 }
 
-export function StepChart({ data, margins, onWindowChange, windowS }) {
+export function niceTicks(min, max, n = 5) {
+  const step0 = (max - min) / Math.max(n - 1, 1);
+  const mag = 10 ** Math.floor(Math.log10(step0 || 1));
+  const norm = step0 / mag;
+  const step = (norm < 1.5 ? 1 : norm < 3 ? 2 : norm < 7 ? 5 : 10) * mag;
+  const out = [];
+  for (let v = Math.ceil(min / step) * step; v <= max + 1e-9; v += step) out.push(+v.toFixed(10));
+  return out;
+}
+
+export function StepChart({ data, margins, onWindowChange, windowS, tabBar = null }) {
   const [cursor, setCursor] = useState(null);
+  const wrapRef = useRef(null);
+  const plotRef = useRef(null);
+  const [size, setSize] = useState({ w: 640, h: 180 });
   const { t, y, setpoint = 1, unit = "", metrics = {} } = data || {};
   const status = metrics.status || (metrics.settled ? "settled" : "not_settled");
   const yLabel = unit ? `Speed (${unit})` : "Output";
-  const xLabel = metrics.window_s && metrics.window_s !== 10
-    ? `Time (s), window ${fmt(metrics.window_s, 0)} s`
-  : "Time (s)";
+  const win = metrics.window_s || 10;
+  const xLabel = win !== 10 ? `Time (s), ${fmt(win, 0)} s window` : "Time (s)";
+
+  useEffect(() => {
+    const el = plotRef.current;
+    if (!el) return undefined;
+    const ro = new ResizeObserver(() => {
+      const r = el.getBoundingClientRect();
+      setSize({ w: Math.max(560, Math.floor(r.width)), h: Math.max(160, Math.floor(r.height)) });
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   const series = useMemo(() => {
     if (!t?.length || !y?.length) return null;
     const t0 = t[0];
@@ -32,55 +56,68 @@ export function StepChart({ data, margins, onWindowChange, windowS }) {
 
   if (!series) return <p className="cs-margins-hint">No step data.</p>;
 
-  const w = 640;
-  const h = 160;
-  const m = { l: 48, r: 16, t: 28, b: 36 };
+  const w = size.w;
+  const h = size.h;
+  const m = { l: 48, r: 16, t: 24, b: 40 };
   const plotW = w - m.l - m.r;
   const plotH = h - m.t - m.b;
   const x = (time) => m.l + ((time - series.t0) / (series.t1 - series.t0 || 1)) * plotW;
   const ypx = (val) => m.t + plotH - ((val - series.ymin) / (series.ymax - series.ymin || 1)) * plotH;
   const path = series.points.map((p, i) => `${i === 0 ? "M" : "L"} ${x(p.t).toFixed(1)} ${ypx(p.y).toFixed(1)}`).join(" ");
   const spY = ypx(setpoint);
+  const bandLo = setpoint * 0.98;
+  const bandHi = setpoint * 1.02;
+  const xTicks = niceTicks(series.t0, series.t1, 5);
+  const yTicks = niceTicks(series.ymin, series.ymax, 4);
   const aria = metrics.aria_summary || `Step response to ${fmt(setpoint)} ${unit}`.trim();
 
   return (
-    <div className="studio-step-chart">
-      <div className="studio-step-chart-head">
-        <div className="studio-window-segment" role="group" aria-label="Simulation window">
-          {WINDOWS.map((wopt) => (
-            <button
-              key={wopt.id}
-              type="button"
-              className={windowS === wopt.id ? "is-active" : ""}
-              onClick={() => onWindowChange?.(wopt.id)}
-            >
-              {wopt.label}
-            </button>
-          ))}
+    <div className="studio-step-chart" ref={wrapRef}>
+      <div className="studio-step-chart-head studio-step-chart-head-unified">
+        {tabBar}
+        <div className="studio-step-chart-head-right">
+          <div className="studio-window-segment" role="group" aria-label="Simulation window">
+            {WINDOWS.map((wopt) => (
+              <button
+                key={wopt.id}
+                type="button"
+                className={windowS === wopt.id ? "is-active" : ""}
+                onClick={() => onWindowChange?.(wopt.id)}
+              >
+                {wopt.label}
+              </button>
+            ))}
+          </div>
+          {status === "not_settled" ? (
+            <span className="studio-unsettled-pill" role="status">
+              Not settled within {fmt(metrics.window_s || 10, 0)} s
+            </span>
+          ) : null}
+          {status === "settled_off_target" ? (
+            <span className="studio-offtarget-pill" role="status">
+              Settles at {Number(metrics.final_value ?? metrics.value_at_end).toPrecision(3)},{" "}
+              {fmt(metrics.steady_state_error_pct, 1)}% below the setpoint
+            </span>
+          ) : null}
+          {status === "settled" && metrics.t_settle_s != null ? (
+            <span className="studio-settled-pill" role="status">
+              Settled at {fmt(metrics.t_settle_s, 2)} s
+              {metrics.overshoot_pct != null ? ` · Overshoot ${fmt(metrics.overshoot_pct, 1)}%` : ""}
+            </span>
+          ) : null}
         </div>
-        {status === "not_settled" ? (
-          <span className="studio-unsettled-pill" role="status">
-            Not settled within {fmt(metrics.window_s || 10, 0)} s
-          </span>
-        ) : null}
-        {status === "settled_off_target" ? (
-          <span className="studio-offtarget-pill" role="status">
-            Settles at {fmt(metrics.final_value ?? metrics.value_at_end, 2)}, {fmt(metrics.steady_state_error_pct, 0)}%
-            below the setpoint
-          </span>
-        ) : null}
       </div>
+      <div className="studio-step-plot" ref={plotRef}>
       <svg
         className="studio-step-svg"
-        width="100%"
+        width={w}
         height={h}
-        viewBox={`0 0 ${w} ${h}`}
         role="img"
         aria-label={aria}
         onMouseLeave={() => setCursor(null)}
         onMouseMove={(ev) => {
           const rect = ev.currentTarget.getBoundingClientRect();
-          const px = ((ev.clientX - rect.left) / rect.width) * w;
+          const px = ev.clientX - rect.left;
           const frac = (px - m.l) / plotW;
           const ti = series.t0 + frac * (series.t1 - series.t0);
           let idx = 0;
@@ -90,23 +127,37 @@ export function StepChart({ data, margins, onWindowChange, windowS }) {
           setCursor(series.points[idx]);
         }}
       >
-        {[0, 0.25, 0.5, 0.75, 1].map((f) => {
-          const gy = m.t + plotH * f;
-          return <line key={f} x1={m.l} x2={w - m.r} y1={gy} y2={gy} className="studio-step-grid" />;
+        {yTicks.map((yv) => {
+          const gy = ypx(yv);
+          return <line key={yv} x1={m.l} x2={w - m.r} y1={gy} y2={gy} className="studio-step-grid" />;
         })}
+        <rect
+          x={m.l}
+          y={ypx(bandHi)}
+          width={plotW}
+          height={Math.max(0, ypx(bandLo) - ypx(bandHi))}
+          className="studio-step-band"
+        />
         <line x1={m.l} x2={w - m.r} y1={spY} y2={spY} className="studio-step-setpoint" strokeDasharray="4 3" />
-        <text x={w - m.r - 4} y={spY - 4} className="studio-step-label" textAnchor="end">
-          Setpoint {fmt(setpoint)}
-        </text>
         <path d={path} className="studio-step-line" fill="none" />
-        <text x={m.l} y={h - 8} className="studio-step-axis">
+        {xTicks.map((tv) => (
+          <text key={tv} x={x(tv)} y={h - 10} className="studio-step-tick" textAnchor="middle">
+            {fmt(tv, tv < 10 ? 1 : 0)}
+          </text>
+        ))}
+        {yTicks.map((yv) => (
+          <text key={yv} x={m.l - 6} y={ypx(yv) + 4} className="studio-step-tick" textAnchor="end">
+            {fmt(yv, 2)}
+          </text>
+        ))}
+        <text x={w / 2} y={h - 2} className="studio-step-axis" textAnchor="middle">
           {xLabel}
         </text>
         <text
-          x={12}
+          x={14}
           y={m.t + plotH / 2}
           className="studio-step-axis"
-          transform={`rotate(-90 12 ${m.t + plotH / 2})`}
+          transform={`rotate(-90 14 ${m.t + plotH / 2})`}
           textAnchor="middle"
         >
           {yLabel}
@@ -120,11 +171,7 @@ export function StepChart({ data, margins, onWindowChange, windowS }) {
           </>
         ) : null}
       </svg>
-      {status === "not_settled" && (metrics.tail_slope ?? 0) > 0 ? (
-        <p className="studio-step-foot">
-          Still rising at {fmt(metrics.window_s || 10, 0)} s: {fmt(metrics.value_at_end)} of a setpoint of {fmt(setpoint)}.
-        </p>
-      ) : null}
+      </div>
     </div>
   );
 }

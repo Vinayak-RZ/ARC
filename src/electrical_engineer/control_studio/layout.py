@@ -5,9 +5,9 @@ from __future__ import annotations
 from typing import Any
 
 BLOCK_W = 96
-PID_W = 144
+PID_W = 168
 BLOCK_H = 56
-GAP = 32
+GAP = 48
 GRID = 8
 ORIGIN_X = 56
 ORIGIN_Y = 96
