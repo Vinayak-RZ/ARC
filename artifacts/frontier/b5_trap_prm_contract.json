@@ -11,81 +11,91 @@
     "T9"
   ],
   "hook_contract_path": "docs/hosts/trap_hooks.md",
-  "ablation": {
+  "eval_cases": 61,
+  "eval_metrics": {
+    "eval_cases": 61,
+    "correct_cases": 30,
+    "false_positives_on_correct": 0,
+    "false_positive_rate_on_correct": 0.0,
+    "abstain_rate": 0.086,
+    "empty_not_unchecked": 0,
+    "per_trap": {
+      "T1": {
+        "tp": 12,
+        "fp": 0,
+        "fn": 0,
+        "abstain": 0,
+        "scored": 24,
+        "precision": 1.0,
+        "recall": 1.0,
+        "false_positive_rate_on_correct": 0.0
+      },
+      "T2": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "abstain": 4,
+        "scored": 15,
+        "precision": 1.0,
+        "recall": 1.0,
+        "false_positive_rate_on_correct": 0.0
+      },
+      "T3": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "abstain": 0,
+        "scored": 12,
+        "precision": null,
+        "recall": null,
+        "false_positive_rate_on_correct": 0.0
+      },
+      "T4": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "abstain": 0,
+        "scored": 6,
+        "precision": null,
+        "recall": null,
+        "false_positive_rate_on_correct": 0.0
+      },
+      "T5": {
+        "tp": 6,
+        "fp": 0,
+        "fn": 0,
+        "abstain": 0,
+        "scored": 12,
+        "precision": 1.0,
+        "recall": 1.0,
+        "false_positive_rate_on_correct": 0.0
+      },
+      "T6": {
+        "tp": 8,
+        "fp": 0,
+        "fn": 0,
+        "abstain": 0,
+        "scored": 16,
+        "precision": 1.0,
+        "recall": 1.0,
+        "false_positive_rate_on_correct": 0.0
+      },
+      "T9": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "abstain": 4,
+        "scored": 0,
+        "precision": null,
+        "recall": null,
+        "false_positive_rate_on_correct": 0.0
+      }
+    },
+    "substance_empty_count": 2
+  },
+  "legacy_ablation": {
     "cases": 8,
     "outcome_only_pass_rate": 0.75,
-    "with_verifier_pass_rate": 0.25,
-    "traps_caught_with_good_outcome": 4,
-    "bare_labeled_process_failures": 6,
-    "rows": [
-      {
-        "case_id": "t1-arc-good",
-        "label": "arc_pass",
-        "outcome_only_pass": true,
-        "with_verifier_pass": true,
-        "failed_traps": []
-      },
-      {
-        "case_id": "t1-bare-bad",
-        "label": "bare_trap",
-        "outcome_only_pass": false,
-        "with_verifier_pass": false,
-        "failed_traps": [
-          "T1"
-        ]
-      },
-      {
-        "case_id": "t2-ode45-bad",
-        "label": "bare_trap",
-        "outcome_only_pass": true,
-        "with_verifier_pass": false,
-        "failed_traps": [
-          "T2"
-        ]
-      },
-      {
-        "case_id": "t4-ace-sign-bad",
-        "label": "bare_trap",
-        "outcome_only_pass": true,
-        "with_verifier_pass": false,
-        "failed_traps": [
-          "T4"
-        ]
-      },
-      {
-        "case_id": "t5-agc-dip-bad",
-        "label": "bare_trap",
-        "outcome_only_pass": true,
-        "with_verifier_pass": false,
-        "failed_traps": [
-          "T5"
-        ]
-      },
-      {
-        "case_id": "t6-limits-bad",
-        "label": "bare_trap",
-        "outcome_only_pass": false,
-        "with_verifier_pass": false,
-        "failed_traps": [
-          "T6"
-        ]
-      },
-      {
-        "case_id": "t6-arc-good",
-        "label": "arc_pass",
-        "outcome_only_pass": true,
-        "with_verifier_pass": true,
-        "failed_traps": []
-      },
-      {
-        "case_id": "t3-h-m-bad",
-        "label": "bare_trap",
-        "outcome_only_pass": true,
-        "with_verifier_pass": false,
-        "failed_traps": [
-          "T3"
-        ]
-      }
-    ]
+    "with_verifier_pass_rate": 0.0
   }
 }

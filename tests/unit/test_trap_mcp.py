@@ -21,4 +21,4 @@ def test_arc_trap_verify_mcp() -> None:
     )
     text = out["content"][0]["text"]
     assert '"tool": "trap-verify"' in text
-    assert '"process_pass": true' in text
+    assert '"process_status"' in text

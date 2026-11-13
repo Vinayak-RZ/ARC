@@ -15,6 +15,7 @@ def trap_verify(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
     payload = verify_trace_payload(
         {
             "trap_ids": list(trace.trap_ids),
+            "givens": trace.givens,
             "steps": [{"id": s.id, "text": s.text, **s.values} for s in trace.steps],
             "final": trace.final,
             "topic": trace.topic,

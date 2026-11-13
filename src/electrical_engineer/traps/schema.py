@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Literal
+
+CheckStatus = Literal["pass", "fail", "unchecked"]
+ProcessStatus = Literal["pass", "fail", "unchecked"]
 
 
 @dataclass(frozen=True)
@@ -17,6 +20,7 @@ class TraceStep:
 @dataclass(frozen=True)
 class SolutionTrace:
     trap_ids: tuple[str, ...] = ()
+    givens: dict[str, Any] = field(default_factory=dict)
     steps: tuple[TraceStep, ...] = ()
     final: dict[str, Any] = field(default_factory=dict)
     topic: str = ""
@@ -39,8 +43,10 @@ class SolutionTrace:
                 )
             )
         tids = raw.get("trap_ids") or raw.get("traps") or ()
+        givens = dict(raw.get("givens") or {})
         return cls(
             trap_ids=tuple(str(t) for t in tids),
+            givens=givens,
             steps=tuple(steps),
             final=dict(raw.get("final") or {}),
             topic=str(raw.get("topic") or ""),
@@ -50,15 +56,19 @@ class SolutionTrace:
 @dataclass(frozen=True)
 class TrapCheck:
     trap_id: str
+    status: CheckStatus
     passed: bool
     offending_step: str | None = None
     message: str = ""
+    advisory: str | None = None
 
 
 @dataclass(frozen=True)
 class GradeScores:
     outcome_pass: bool
     process_pass: bool
+    process_status: ProcessStatus
     outcome_score: float
     process_score: float
     checks: tuple[TrapCheck, ...]
+    advisories: tuple[str, ...] = ()

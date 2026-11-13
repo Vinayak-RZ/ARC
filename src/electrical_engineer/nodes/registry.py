@@ -37,9 +37,7 @@ def _trap_blocks_checked(inputs: Mapping[str, Any]) -> bool:
         v = frontier.pop()
         if not isinstance(v, dict):
             continue
-        if v.get("tool") == "trap-verify" and (
-            v.get("ok") is False or v.get("process_pass") is False
-        ):
+        if v.get("tool") == "trap-verify" and v.get("process_status") == "fail":
             return True
         frontier.extend(_nested_payloads(v))
     return False
@@ -153,6 +151,7 @@ def write_run_summary(_spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str
             trap_excerpt = {
                 "outcome_pass": v.get("outcome_pass"),
                 "process_pass": v.get("process_pass"),
+                "process_status": v.get("process_status"),
                 "outcome_score": v.get("outcome_score"),
                 "process_score": v.get("process_score"),
                 "checks": v.get("checks"),

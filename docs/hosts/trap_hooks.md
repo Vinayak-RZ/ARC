@@ -16,22 +16,28 @@ Pass a trace the verifier can walk:
 
 ```json
 {
-  "topic": "smib",
   "trap_ids": ["T1", "T2"],
+  "givens": {
+    "domain": "smib",
+    "h_mj_mva": 5.0,
+    "f0_hz": 50.0,
+    "pm_pu": 0.9,
+    "pmax_pre_pu": 2.0,
+    "pmax_fault_pu": 0.5,
+    "pmax_post_pu": 1.5,
+    "h_s": 0.01
+  },
   "steps": [
-    { "id": "derive", "text": "Equal-area with staged Pmax", "delta_cr_deg": 79.53241 }
+    { "id": "derive", "text": "Equal-area with staged Pmax", "delta_cr_deg": 79.53 }
   ],
-  "final": {
-    "delta_cr_deg": 79.53241,
-    "text": "Student-facing summary",
-    "expected": { "delta_cr_deg": 79.53240997193419 },
-    "outcome_tolerance": 0.01
-  }
+  "final": { "delta_cr_deg": 79.53, "t_to_dcr_s": 0.3097 }
 }
 ```
 
-- `steps` plus `final` are the trace. Each step may carry numeric fields the detectors read (`delta_cr_deg`, `cct_s`, `P2_mw`, `delta_f1_hz`, …).
-- `expected` in `final` is optional; when present it powers the **outcome** score separate from **process**.
+- **`givens`** drive engine recomputation. Detectors **abstain** (`process_status: unchecked`) when givens or numeric claims are missing. They never compare to a fixed lab JSON.
+- **`trap_ids`** must be explicit (or `givens.domain` set). Topic keywords alone do not select traps.
+- Text cues (`ode45`, “ignore limits”, …) are **advisories** unless a structural field (`solver_used`, `ignore_limits`, …) or a numeric mismatch confirms the trap.
+- Empty traces → trap `process_status: unchecked` (not a process pass). Engine-checked runs may still label checked when `check-numeric` / simulators pass; trap **fail** always blocks checked.
 
 ## Workflow (YAML recipes)
 
@@ -72,20 +78,15 @@ If `outcome_pass` is false but process passed, fix numerics against golden or en
 
 Detectors ship for **T1, T2, T3, T4, T5, T6, T7, T9, T10** (see `artifacts/frontier/trap_suite_index.json`). T8 (diagram signal flow) remains host/visual validation until Control Studio exports a machine-readable trace.
 
-## Ablation contract
+## Metrics contract
 
 ```bash
-python scripts/trap_prm_contract.py
+python scripts/generate_trap_prm_eval.py   # engine-only corpus (61+ cases)
+PYTHONPATH=src python scripts/trap_prm_contract.py
 ```
 
-Emits:
+Emits `eval_metrics` (precision/recall per trap, abstain rate, false-positive rate on correct traces) from `eval/fixtures/trap_prm/eval_traces.json`. Regenerate the eval file when engines change; do not tune detectors against it.
 
-```json
-{
-  "traps_automated": ["T1", "T2", "..."],
-  "hook_contract_path": "docs/hosts/trap_hooks.md",
-  "ablation": { "outcome_only_pass_rate": ..., "with_verifier_pass_rate": ... }
-}
-```
+### Workflows without `label-unchecked`
 
-Numbers are computed from `eval/fixtures/trap_prm/traces.json`, not hand-edited.
+`solve-*` and `study-*` recipes with `web-verify` include `trap-verify`. `symmetrical-fault-study` includes `trap-verify` before summary (numeric label is `check-numeric`; trap still writes `trap_prm.json` and blocks checked via evidentiary inputs when wired).
