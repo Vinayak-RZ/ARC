@@ -180,7 +180,7 @@ def _clear_runs() -> None:
     RUNS.mkdir(parents=True, exist_ok=True)
 
 
-def _wait_studio_edges(page, minimum: int = 5, timeout_ms: int = 90000) -> None:
+def _wait_studio_edges(page, minimum: int = 5, timeout_ms: int = 180000) -> None:
     """Wait until React Flow draws every signal wire (fresh pages can need Fit)."""
     expr = f"() => document.querySelectorAll('.studio-canvas .react-flow__edge-path').length >= {minimum}"
     fit = page.get_by_role("button", name="Fit")
@@ -339,6 +339,7 @@ def main() -> int:
             with urllib.request.urlopen(req, timeout=60) as resp:
                 pid_sess = json.loads(resp.read().decode())["session_id"]
             go(f"?view=studio&session={pid_sess}")
+            page.wait_for_selector(".studio-canvas .react-flow__node", timeout=60000)
             _wait_studio_edges(page)
             page.wait_for_timeout(800)
             snap("studio-layout-before-simulate.png")
