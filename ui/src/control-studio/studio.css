@@ -1019,6 +1019,11 @@
   font-weight: 600;
 }
 
+.plant-label {
+  font-size: 13px;
+  line-height: 16px;
+}
+
 .studio-port-col-left {
   position: absolute;
   left: 0;

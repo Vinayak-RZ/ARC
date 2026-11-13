@@ -157,6 +157,8 @@ function ControlStudioInner({ sessionId, onSession }) {
   const [lastSimRevision, setLastSimRevision] = useState(null);
   const [connecting, setConnecting] = useState(false);
   const [fitBump, setFitBump] = useState(0);
+  // Bumped whenever the node objects are replaced from the diagram; see FitViewOnChange.
+  const [nodesEpoch, setNodesEpoch] = useState(0);
   const [zoomPct, setZoomPct] = useState(1);
   const [selectedId, setSelectedId] = useState(null);
   const selectedIdRef = useRef(null);
@@ -190,6 +192,7 @@ function ControlStudioInner({ sessionId, onSession }) {
         flashAuthor: ids.size ? presence.last_author || author : null,
       });
       setNodes(withSelection(flow.nodes));
+      setNodesEpoch((n) => n + 1);
       setEdges(flow.edges);
       setRevision(payload.revision || 0);
       setSession(payload);
@@ -269,6 +272,7 @@ function ControlStudioInner({ sessionId, onSession }) {
         flashAuthor: highlight.author,
       });
       setNodes(withSelection(flow.nodes));
+      setNodesEpoch((n) => n + 1);
       setEdges(flow.edges);
     },
     [blockIssues, highlight.author, highlight.ids, setEdges, setNodes, withSelection],
@@ -495,7 +499,13 @@ function ControlStudioInner({ sessionId, onSession }) {
             >
               <Background gap={8} color="var(--cs-border)" size={1} />
               <Background gap={32} color="var(--cs-border-strong)" size={1} offset={0} />
-              <FitViewOnChange revision={revision} nodeCount={nodes.length} agentBump={fitBump} fitRef={fitRef} />
+              <FitViewOnChange
+                revision={revision}
+                nodeCount={nodes.length}
+                agentBump={fitBump}
+                nodesEpoch={nodesEpoch}
+                fitRef={fitRef}
+              />
             </ReactFlow>
           </CanvasDrop>
         </div>

@@ -166,7 +166,8 @@ export function PlantNode({ data, selected }) {
     selected,
     data,
     <>
-      <span className="studio-block-icon">⚙</span>
+      {/* a two-line name ("First-order plant") has no room for the icon inside the 56 px block */}
+      {(data?.label || data?.blockType || "").length <= 12 ? <span className="studio-block-icon">⚙</span> : null}
       <span className="plant-label">{data?.label || data?.blockType}</span>
     </>,
     <>

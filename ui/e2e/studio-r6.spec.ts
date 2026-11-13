@@ -186,3 +186,18 @@ test("an inspector edit is not reverted when validation returns", async ({ page,
   await expect(page.getByLabel("Kp")).toHaveValue("0.08");
   await expect(page.locator(".react-flow__node", { hasText: "PID" })).toContainText("Kp 0.08");
 });
+
+test("first-order plant name stays inside its block", async ({ page, request }) => {
+  await open(page, request, "unity_first_order", "First order");
+  const res = await page.evaluate(() => {
+    const node = document.querySelector(".react-flow__node-plant .studio-block, .studio-plant");
+    const label = node?.querySelector(".plant-label");
+    if (!node || !label) return null;
+    const n = node.getBoundingClientRect();
+    const l = label.getBoundingClientRect();
+    return { top: l.top - n.top, bottom: n.bottom - l.bottom };
+  });
+  expect(res, "plant block present").not.toBeNull();
+  expect(res!.top).toBeGreaterThanOrEqual(0);
+  expect(res!.bottom, "plant label bottom inside block").toBeGreaterThanOrEqual(0);
+});

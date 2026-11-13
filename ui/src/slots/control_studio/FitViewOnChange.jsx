@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import { useNodesInitialized, useReactFlow } from "@xyflow/react";
+import { useNodesInitialized, useReactFlow, useUpdateNodeInternals } from "@xyflow/react";
 
 const MIN_ZOOM = 0.85;
 const MAX_ZOOM = 1.25;
@@ -16,10 +16,20 @@ export function useFitContent() {
   );
 }
 
-export function FitViewOnChange({ revision, nodeCount, agentBump = 0, fitRef }) {
+export function FitViewOnChange({ revision, nodeCount, agentBump = 0, nodesEpoch = 0, fitRef }) {
   const fit = useFitContent();
-  const { getEdges } = useReactFlow();
+  const { getEdges, getNodes } = useReactFlow();
+  const updateNodeInternals = useUpdateNodeInternals();
   const nodesReady = useNodesInitialized();
+
+  // Replacing the node objects (initial paint, validation resync) makes React Flow drop the
+  // handle bounds it measured. The DOM size is unchanged, so nothing re-measures them and every
+  // wire stays undrawn (seen in about 1 in 40 page loads). Re-measure after each replacement.
+  useEffect(() => {
+    if (!nodesEpoch) return undefined;
+    const id = requestAnimationFrame(() => updateNodeInternals(getNodes().map((n) => n.id)));
+    return () => cancelAnimationFrame(id);
+  }, [nodesEpoch, getNodes, updateNodeInternals]);
 
   useEffect(() => {
     if (fitRef) fitRef.current = () => fit(180);

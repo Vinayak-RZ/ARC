@@ -59,7 +59,7 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
   const w = size.w;
   const h = size.h;
   // Bottom band: tick numbers (16 px under the plot) plus the axis title with room for descenders.
-  const m = { l: 48, r: 16, t: 24, b: 56 };
+  const m = { l: 56, r: 16, t: 24, b: 56 };
   const plotW = w - m.l - m.r;
   const plotH = h - m.t - m.b;
   const x = (time) => m.l + ((time - series.t0) / (series.t1 - series.t0 || 1)) * plotW;
