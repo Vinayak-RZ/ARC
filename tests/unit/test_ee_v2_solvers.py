@@ -4,6 +4,7 @@ import math
 
 from electrical_engineer.engines.ed_lambda import EdCase
 from electrical_engineer.engines.ee_v2_solvers import (
+    breakaway_real_axis,
     ccm_buck,
     dc_motor_shunt,
     ed_with_losses,
@@ -131,6 +132,11 @@ def test_z_inverse_first_order() -> None:
     r = z_inverse({"den": [1.0, -0.5], "num": [1.0]})
     assert len(r["poles_z_inv"]) == 1
     assert abs(r["poles_z_inv"][0]["re"] - 0.5) < 1e-9
+
+
+def test_breakaway_three_pole_locus() -> None:
+    pts = breakaway_real_axis(poles=[0.0, -3.0, -6.0], zeros=[])
+    assert any(-3.0 < p < 0.0 and abs(p + 1.268) < 0.05 for p in pts)
 
 
 def test_steady_state_errors() -> None:

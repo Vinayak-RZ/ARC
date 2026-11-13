@@ -461,6 +461,19 @@ def z_inverse(spec: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def breakaway_real_axis(*, poles: list[float], zeros: list[float] | None = None) -> list[float]:
+    """Real-axis breakaway/in points from dK/ds = 0 on K = -prod(s - p_i)/prod(s - z_i)."""
+    zeros = zeros or []
+    import numpy as np
+
+    k_poly = np.poly(poles).astype(float)
+    if zeros:
+        k_poly = np.polymul(k_poly, np.poly(zeros).astype(float))
+    dk = np.polyder(k_poly)
+    roots = [float(r.real) for r in np.roots(dk) if abs(r.imag) < 1e-9]
+    return sorted(roots)
+
+
 def steady_state_error_type(system_type: int, gain: float) -> dict[str, float]:
     if gain <= 0:
         raise ValueError("gain must be positive")
