@@ -18,7 +18,10 @@ faults, protection as coursework (relay settings on paper), not EMS dispatch
    `I_phase_pu` (magnitude + angle vs prefault `Va`), not a single `sqrt(3)*V` scalar.
    Per-unit base trap: `symmetrical-fault-study` + `engines/pu_base` rescores every
    element onto the system MVA/kV before summing `Z1`.
-5. Exam-style kernels: `docs/AGENT_ROUTING.md` + recipes `ed-penalty-study`,
+5. After every solve/study engine step, **`web-verify`** runs: list stale-risk
+   constants in `context_claims`, search the web (host MCP) or offline fixtures,
+   cite with `[n]` in the answer, and file similar worked problems.
+6. Exam-style kernels: `docs/AGENT_ROUTING.md` + recipes `ed-penalty-study`,
    pack workflows `study-*-v2`, `run-ee-v2-solver` with `solver` + `expected` in
    `problem.json`.
 6. **SMIB transient / equal-area / CCT:** `skills/swing-equation/SKILL.md` +

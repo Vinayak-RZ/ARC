@@ -4,6 +4,11 @@ Load for transformers and DC/IM/synchronous machines at UG: equivalent
 circuits, phasors, OC/SC / no-load tests, torque-speed, efficiency.
 Not FEA / Ansys Maxwell (`CD-MACHINES-FEA`). Not plant actuation.
 
+## Web-verify
+
+Solve/study recipes call **`web-verify`** before label. Put datasheet and nameplate
+fields in `context_claims`; never ship stale library ohms/flux without web reconcile.
+
 ## Any question in this pack
 
 1. Name the machine, test or regime (no-load, blocked rotor, rated, starting).

@@ -9,7 +9,7 @@ resonance, two-ports. Not device physics (electronics), not machines.
 2. Choose method: Ohm + KCL/KVL, nodal/mesh, Thevenin/Norton, superposition,
    phasor, Laplace transient — **before** a simulator.
 3. **Exam v2 solvers** (`engines/ee_v2_runner.py`): put `solver` + inputs + `expected`/`tol` in
-   `problem.json`, run `study-circuits-v2` (CLI/MCP). Routing table: `docs/AGENT_ROUTING.md`.
+   `problem.json`, run `study-circuits-v2` (CLI/MCP). Every solve/study recipe runs **`web-verify`** after the engine; add `context_claims` for datasheet constants and cite web sources with `[n]` in the answer. Routing: `docs/AGENT_ROUTING.md`.
    Solvers: `rc_step`, `rl_step`, `rlc_natural`, `phasor_pfc`, `three_phase_balanced`, `z_inverse`.
 4. Request capabilities (do not mint ohms):
    - `algebraic-check` for hand/symbolic last lines

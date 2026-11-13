@@ -1,0 +1,14 @@
+{
+  "web_verify_fixture": "zebra_r_ac_75c",
+  "context_claims": [
+    {
+      "claim_id": "zebra_r_ac_75c",
+      "name": "Zebra conductor R_ac at 75 C",
+      "library_value": 0.31,
+      "unit": "ohm/km",
+      "conditions": "ACSR Zebra, 75 C conductor",
+      "tolerance": 0.02,
+      "solver_value": 0.31
+    }
+  ]
+}

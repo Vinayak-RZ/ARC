@@ -1,0 +1,36 @@
+{
+  "topic": "Overhead line ac resistance temperature",
+  "status": "offline_pass",
+  "claims": [
+    {
+      "claim_id": "zebra_r_ac_75c",
+      "name": "Zebra conductor R_ac at 75 C",
+      "library_value": 0.31,
+      "authoritative_value": 0.337,
+      "unit": "ohm/km",
+      "conditions": "ACSR Zebra, 75 C conductor",
+      "tolerance": 0.02,
+      "queries": [
+        "ACSR Zebra resistance 75C ohm per km",
+        "overhead line conductor temperature resistance table",
+        "allaboutcircuits line resistance temperature"
+      ],
+      "sources": [
+        {
+          "url": "https://www.allaboutcircuits.com/technical-articles/example-line-resistance/",
+          "domain": "allaboutcircuits.com",
+          "snippet": "Zebra at 75 °C is often tabulated near 0.337 Ω/km for AC resistance.",
+          "extracted_value": 0.337,
+          "unit": "ohm/km"
+        },
+        {
+          "url": "https://nptel.ac.in/courses/overhead-lines",
+          "domain": "nptel.ac.in",
+          "snippet": "Temperature-corrected ac resistance for Zebra at 75 °C ≈ 0.336–0.338 Ω/km.",
+          "extracted_value": 0.337,
+          "unit": "ohm/km"
+        }
+      ]
+    }
+  ]
+}

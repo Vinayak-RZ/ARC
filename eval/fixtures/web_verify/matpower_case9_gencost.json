@@ -1,0 +1,36 @@
+{
+  "topic": "MATPOWER case9 gencost-to-bus mapping",
+  "status": "offline_pass",
+  "claims": [
+    {
+      "claim_id": "case9_gencost",
+      "name": "case9 gencost row to bus mapping",
+      "library_value": "gencost row 2 is bus 3",
+      "authoritative_value": "gencost row 2 is bus 2",
+      "unit": "",
+      "conditions": "MATPOWER case9",
+      "tolerance": 0.0,
+      "queries": [
+        "MATPOWER case9 gencost bus order",
+        "case9.m generator bus numbers",
+        "power systems case9 ed example"
+      ],
+      "sources": [
+        {
+          "url": "https://matpower.org/docs/ref/caseformat/",
+          "domain": "matpower.org",
+          "snippet": "In case9, the second generator row corresponds to bus 2, not bus 3.",
+          "extracted_value": "bus 2",
+          "unit": ""
+        },
+        {
+          "url": "https://ocw.mit.edu/example-case9-gencost",
+          "domain": "ocw.mit.edu",
+          "snippet": "Generator index 2 in case9 attaches to bus 2 in the standard file.",
+          "extracted_value": "bus 2",
+          "unit": ""
+        }
+      ]
+    }
+  ]
+}

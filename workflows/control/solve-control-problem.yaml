@@ -4,12 +4,15 @@ nodes:
     activity: run-ee-v2-solver
   ctrl:
     activity: run-python-control
+  web:
+    activity: web-verify
+    needs: [exam, ctrl]
   check:
     activity: check-numeric
-    needs: [exam, ctrl]
+    needs: [exam, ctrl, web]
   label:
     activity: label-unchecked
-    needs: [check, ctrl]
+    needs: [check, ctrl, web]
   summary:
     activity: write-run-summary
     needs: [label]

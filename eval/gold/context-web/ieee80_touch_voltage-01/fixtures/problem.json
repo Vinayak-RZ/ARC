@@ -1,0 +1,14 @@
+{
+  "web_verify_fixture": "ieee80_touch_voltage",
+  "context_claims": [
+    {
+      "claim_id": "ieee80_touch_voltage",
+      "name": "IEEE 80 allowable touch voltage",
+      "library_value": 70.0,
+      "unit": "V",
+      "conditions": "body resistance 1000 ohm, 0.5 s duration, rural soil",
+      "tolerance": 0.03,
+      "solver_value": 70.0
+    }
+  ]
+}

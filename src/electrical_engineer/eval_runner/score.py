@@ -46,6 +46,19 @@ def score(summary: dict[str, Any], expect: dict[str, Any]) -> dict[str, Any]:
                 and str(g.get("chapter_id")) == str(want.get("chapter_id"))
                 for g in got
             )
+    wv = expect.get("web_verification") or {}
+    got_wv = summary.get("web_verification") or {}
+    if wv:
+        if "needs_review" in wv:
+            ok = ok and bool(got_wv.get("needs_review")) == bool(wv["needs_review"])
+        if "offline_unverified" in wv:
+            ok = ok and bool(got_wv.get("offline_unverified")) == bool(wv["offline_unverified"])
+        if wv.get("caught_stale"):
+            ok = ok and bool(got_wv.get("needs_review"))
+    if expect.get("answer_markdown_contains"):
+        md = str(summary.get("answer_markdown") or "")
+        for needle in expect["answer_markdown_contains"]:
+            ok = ok and needle in md
     return {"ok": bool(ok), "summary": summary, "expect": expect}
 
 

@@ -4,6 +4,12 @@ Load for UG converters and drives-adjacent courses: rectifiers, buck/boost/buck-
 inverters, PWM, averaged models, duty-cycle algebra. Not HIL benches
 (`CD-PE-HIL`).
 
+## Web-verify
+
+MOSFET/diode datasheet values belong in `context_claims` for **`web-verify`**
+(Rds(on), Vf, Qg). Cite sources as `[n]`; similar converter homework pages go under
+**Similar solved problems**.
+
 ## Any question in this pack
 
 1. Name topology, CCM/DCM, ideal vs ESR, the unknown (V, I, duty, ripple).

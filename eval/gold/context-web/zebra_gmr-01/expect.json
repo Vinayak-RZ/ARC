@@ -1,0 +1,11 @@
+{
+  "recipe_id": "context-web-spotcheck",
+  "unchecked": true,
+  "token": "unchecked",
+  "web_verification": {
+    "needs_review": true,
+    "caught_stale": true
+  },
+  "answer_markdown_contains": ["[1]", "Similar solved problems", "### References"],
+  "tol": 1e-6
+}

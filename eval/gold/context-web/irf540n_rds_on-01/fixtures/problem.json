@@ -1,0 +1,14 @@
+{
+  "web_verify_fixture": "irf540n_rds_on",
+  "context_claims": [
+    {
+      "claim_id": "irf540n_rds_on",
+      "name": "IRF540N R_DS(on) at 25 C",
+      "library_value": 0.077,
+      "unit": "ohm",
+      "conditions": "V_GS=10 V, T_j=25 C",
+      "tolerance": 0.05,
+      "solver_value": 0.077
+    }
+  ]
+}

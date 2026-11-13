@@ -1,0 +1,14 @@
+{
+  "web_verify_fixture": "matpower_case9_gencost",
+  "context_claims": [
+    {
+      "claim_id": "case9_gencost",
+      "name": "case9 gencost row to bus mapping",
+      "library_value": "gencost row 2 is bus 3",
+      "unit": "",
+      "conditions": "MATPOWER case9",
+      "tolerance": 0.0,
+      "solver_value": "gencost row 2 is bus 3"
+    }
+  ]
+}

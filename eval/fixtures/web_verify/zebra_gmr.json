@@ -1,0 +1,59 @@
+{
+  "topic": "Permanent-magnet machine air-gap flux density",
+  "status": "offline_pass",
+  "queries": [
+    "Zebra PM motor air gap flux density GMR",
+    "NdFeB remanence typical flux density air gap",
+    "permanent magnet machine Bg calculation example"
+  ],
+  "claims": [
+    {
+      "claim_id": "zebra_gmr",
+      "name": "Zebra GMR (stale library)",
+      "library_value": 0.95,
+      "authoritative_value": 1.23,
+      "unit": "T",
+      "conditions": "rated speed, 25 C ambient",
+      "tolerance": 0.02,
+      "queries": [
+        "Zebra electric motor GMR specification",
+        "PM motor air gap flux 1.2 tesla textbook",
+        "IEEE PM machine worked example Bg"
+      ],
+      "sources": [
+        {
+          "url": "https://nptel.ac.in/courses/example-pm-machine-flux",
+          "domain": "nptel.ac.in",
+          "title": "NPTEL PM machine flux linkage",
+          "snippet": "Worked example gives air-gap flux density Bg ≈ 1.23 T for the stated pole geometry.",
+          "extracted_value": 1.23,
+          "unit": "T",
+          "source_class": "course_notes"
+        },
+        {
+          "url": "https://ocw.mit.edu/example-electrical-machines",
+          "domain": "ocw.mit.edu",
+          "title": "MIT OCW electrical machines sample",
+          "snippet": "Using the given magnet grade, Bg is about 1.2–1.25 T.",
+          "extracted_value": 1.24,
+          "unit": "T",
+          "source_class": "textbook"
+        }
+      ]
+    }
+  ],
+  "similar_problems": [
+    {
+      "url": "https://www.allaboutcircuits.com/textbook/example-pm-flux/",
+      "domain": "allaboutcircuits.com",
+      "title": "PM flux density quick estimate",
+      "similarity_score": 0.88,
+      "diff_note": "Uses ferrite magnets; Arc uses NdFeB at 25 C.",
+      "their_result": 1.18,
+      "their_unit": "T",
+      "arc_result": 1.23,
+      "agrees_after_adjustment": true,
+      "snippet": "For NdFeB the example rounds to about 1.2 T in the gap."
+    }
+  ]
+}

@@ -112,6 +112,28 @@ TOOLS = [
             "required": ["component_id"],
         },
     },
+    {
+        "name": "arc_web_evidence_request",
+        "description": "Read pending web-verify request for a run (host coding agent).",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"run_id": {"type": "string"}},
+            "required": ["run_id"],
+        },
+    },
+    {
+        "name": "arc_web_evidence_submit",
+        "description": "Submit web_sources and similar_problems for a run after live search.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "run_id": {"type": "string"},
+                "web_sources": {"type": "object"},
+                "similar_problems": {"type": "object"},
+            },
+            "required": ["run_id", "web_sources"],
+        },
+    },
 ]
 
 
@@ -318,6 +340,40 @@ def handle(method: str, params: dict[str, Any] | None) -> Any:
             except (ValueError, RuntimeError) as exc:
                 return _ok({"error": str(exc), "waits": False}, error=True)
             return _ok({"run_id": rid, "paths": [out["png"]], "meta": out["meta"], "waits": False})
+        if name == "arc_web_evidence_request":
+            rid = str(args.get("run_id") or "")
+            req = project_root() / "runs" / rid / "evidence" / "host_request.json"
+            if not req.is_file():
+                return _ok({"error": "no_pending_request", "waits": False}, error=True)
+            data = json.loads(req.read_text())
+            data["waits"] = False
+            return _ok(data)
+        if name == "arc_web_evidence_submit":
+            from electrical_engineer.web_verify.validate import validate_host_submit, validate_similar_matches
+
+            rid = str(args.get("run_id") or "")
+            run_dir = project_root() / "runs" / rid
+            payload = {
+                "web_sources": args.get("web_sources") or {},
+                "similar_problems": args.get("similar_problems") or {},
+            }
+            try:
+                validate_host_submit(payload)
+                validate_similar_matches((payload.get("similar_problems") or {}).get("matches") or [])
+            except ValueError as exc:
+                return _ok({"error": str(exc), "waits": False}, error=True)
+            evid = run_dir / "evidence"
+            evid.mkdir(parents=True, exist_ok=True)
+            submit_path = evid / "host_submit.json"
+            submit_path.write_text(json.dumps(payload, indent=2))
+            return _ok(
+                {
+                    "run_id": rid,
+                    "paths": [str(submit_path)],
+                    "waits": False,
+                    "status": "submitted",
+                }
+            )
         return _ok({"error": f"unknown tool {name}", "waits": False}, error=True)
     if method == "notifications/initialized":
         return None

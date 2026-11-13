@@ -1,6 +1,14 @@
 # Agent routing — problem types to Arc commands
 
-Fresh agents should copy the **problem.json** pattern, then run the **recipe** (CLI or MCP `run_recipe`). Each `study-*-v2` recipe runs `run-ee-v2-solver` → `check-numeric` (recompute vs `expected`) → summary.
+Fresh agents should copy the **problem.json** pattern, then run the **recipe** (CLI or MCP `run_recipe`). Each solve and study recipe runs the engine chain, then **`web-verify`** (external constants and similar worked problems online), then `check-numeric` when present, then label/summary.
+
+### Web-verify (mandatory on solve recipes)
+
+1. Add `context_claims[]` when the problem uses datasheet, standard, or library values that can go stale (`library_value`, `unit`, `tolerance`, optional `solver_key`).
+2. Default provider is **`host`**: the coding agent reads `evidence/host_request.json` via MCP `arc_web_evidence_request`, searches (≥3 queries, ≥2 domains, short quoted snippets), and submits `arc_web_evidence_submit` with `web_sources` and `similar_problems`.
+3. CI uses **`offline`** (`arc.toml` `[web_verify] provider = "offline"` or `EE_WEB_VERIFY_PROVIDER=offline`) with fixtures under `eval/fixtures/web_verify/`.
+4. Outputs: `evidence/web_sources.json`, `evidence/similar_problems.json`, `evidence/answer_cited.md` with inline `[1]` citations in the answer markdown and API.
+5. Stale library vs web mismatch sets `needs_review` and blocks **checked**; offline fixture runs may label **`checked (offline, unverified context)`** when numeric gates pass without live search.
 
 ## CLI
 

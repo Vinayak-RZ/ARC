@@ -1,0 +1,8 @@
+# Arc local configuration (optional). Env vars override these keys.
+
+[web_verify]
+# provider: offline | host | builtin (default: host when EE_WEB_VERIFY unset)
+provider = "offline"
+# builtin search API base (SearXNG-compatible JSON) when provider = builtin
+# search_url = "https://example.com/search"
+# search_api_key = ""

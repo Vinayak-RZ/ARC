@@ -2,9 +2,12 @@ id: solve-drives-problem
 nodes:
   drive:
     activity: run-drives-study
+  web:
+    activity: web-verify
+    needs: [drive]
   label:
     activity: label-unchecked
-    needs: [drive]
+    needs: [drive, web]
   summary:
     activity: write-run-summary
     needs: [label]

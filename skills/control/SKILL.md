@@ -8,7 +8,10 @@ Bode/Nyquist/root locus, simple compensators. Not graduate optimal control.
 1. Name the plant (TF or SS), the unknown (pole, Gm/Pm, Kv, settling, PID
    gains), and assumptions (LTI, SISO unless stated).
 2. Write the characteristic equation / Routh / final-value **before** plots.
-3. **Exam v2** (`study-control-exam` or `solve-control-problem` with `solver`):
+3. **`web-verify`** on all solve recipes: datasheet/plant parameters in
+   `context_claims`, inline `[n]` citations, and a **Similar solved problems**
+   block when the host search finds close OCW/NPTEL/StackExchange examples.
+4. **Exam v2** (`study-control-exam` or `solve-control-problem` with `solver`):
    `breakaway_real_axis` (`poles`, `pick_sigma`), `steady_state_error`
    (`system_type`, `gain`, `error_key`). Routing: `docs/AGENT_ROUTING.md`.
 4. Request capabilities:

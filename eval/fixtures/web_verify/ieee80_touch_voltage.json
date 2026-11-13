@@ -1,0 +1,36 @@
+{
+  "topic": "IEEE Std 80 touch voltage limit",
+  "status": "offline_pass",
+  "claims": [
+    {
+      "claim_id": "ieee80_touch_voltage",
+      "name": "IEEE 80 allowable touch voltage",
+      "library_value": 70.0,
+      "authoritative_value": 52.2,
+      "unit": "V",
+      "conditions": "body resistance 1000 ohm, 0.5 s duration, rural soil",
+      "tolerance": 0.03,
+      "queries": [
+        "IEEE 80 touch voltage limit worked example",
+        "IEEE Std 80 permissible body voltage 0.5 s",
+        "grounding grid touch potential university notes"
+      ],
+      "sources": [
+        {
+          "url": "https://standards.ieee.org/ieee/80/1000/",
+          "domain": "ieee.org",
+          "snippet": "Permissible touch voltage for the stated parameters is about 52 V.",
+          "extracted_value": 52.2,
+          "unit": "V"
+        },
+        {
+          "url": "https://nptel.ac.in/courses/substation-grounding",
+          "domain": "nptel.ac.in",
+          "snippet": "Using IEEE 80 Eq. for rural case gives V_touch ≈ 52 V.",
+          "extracted_value": 52.0,
+          "unit": "V"
+        }
+      ]
+    }
+  ]
+}

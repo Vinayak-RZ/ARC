@@ -2,12 +2,15 @@ id: ed-penalty-study
 nodes:
   solve:
     activity: run-ee-v2-solver
+  web:
+    activity: web-verify
+    needs: [solve]
   check:
     activity: check-numeric
-    needs: [solve]
+    needs: [solve, web]
   label:
     activity: label-unchecked
-    needs: [check]
+    needs: [check, web]
   summary:
     activity: write-run-summary
     needs: [label]
