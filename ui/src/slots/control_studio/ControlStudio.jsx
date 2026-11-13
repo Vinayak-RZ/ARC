@@ -278,7 +278,9 @@ function ControlStudioInner({ sessionId, onSession }) {
     if (!results) return undefined;
     const diagram = diagramBase.current;
     if (!diagram?.blocks?.length) return undefined;
-    const timers = [0, 80, 250, 600, 1200].map((ms) => setTimeout(() => resyncFlowFromDiagram(diagram), ms));
+    const timers = [0, 80, 250, 600, 1200, 2000, 3500].map((ms) =>
+      setTimeout(() => resyncFlowFromDiagram(diagram), ms),
+    );
     return () => timers.forEach(clearTimeout);
   }, [results?.ts, resyncFlowFromDiagram]);
 

@@ -367,7 +367,7 @@ def main() -> int:
                     ".studio-results-stage .studio-step-svg, .studio-results-stage img",
                     timeout=120000,
                 )
-                page.wait_for_timeout(800)
+                page.wait_for_timeout(3500)
                 _wait_studio_edges(page)
             snap("studio-layout-after-simulate.png")
             if args.round >= 6:
@@ -429,7 +429,7 @@ def main() -> int:
                     ".studio-results-stage .studio-step-svg, .studio-results-stage img",
                     timeout=120000,
                 )
-                wide_studio.wait_for_timeout(400)
+                wide_studio.wait_for_timeout(3500)
                 _wait_studio_edges(wide_studio)
                 snap("studio-layout-after-simulate-1440.png", wide_studio)
                 wide_studio.close()
