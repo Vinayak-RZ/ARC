@@ -71,7 +71,7 @@ def test_ablation_t11_margin_crossover_names() -> None:
     from electrical_engineer.engines.control_margins import loop_margins
 
     sys = control.tf([40.0], [1.0, 12.0, 20.0, 0.0])
-    gm, pm, wg, wp = control.margin(sys)
+    gm, _pm, wg, wp = control.margin(sys)
     m = loop_margins(sys)
     bare_wgc = float(wg)
     bare_gm_db = float(gm)

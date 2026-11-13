@@ -79,7 +79,7 @@ def run_control_plots(run_dir: Path, problem: dict[str, Any]) -> dict[str, Any]:
         from electrical_engineer.engines.control_margins import loop_margins
 
         margins = loop_margins(sys)
-    except Exception:
+    except (ImportError, ValueError, TypeError, ArithmeticError):
         margins = {}
     out: dict[str, Any] = {
         "ok": True,

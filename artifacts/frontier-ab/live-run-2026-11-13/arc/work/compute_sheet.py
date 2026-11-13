@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Sheet solutions using Arc engines (import only; no repo edits)."""
 from __future__ import annotations
 
@@ -11,10 +10,8 @@ from electrical_engineer.engines.ed_lambda import EdCase, solve_lambda_ed
 from electrical_engineer.engines.power_runner import _sequence_fault
 from electrical_engineer.engines.smib_swing import (
     SmibCase,
-    critical_clearing_angle,
     critical_clearing_time_bisection,
     eec301_reference,
-    initial_angle_pre_fault,
     simulate_clearing,
     time_to_angle_during_fault,
 )
@@ -100,7 +97,6 @@ def p4():
 
 def p5():
     import control
-    import numpy as np
 
     sys_ol = control.tf([40.0], [1.0, 12.0, 20.0, 0.0])
     gm, pm, wg, wp = control.margin(sys_ol)

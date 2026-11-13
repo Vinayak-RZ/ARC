@@ -13,12 +13,9 @@ from electrical_engineer.engines.induction_motor import solve_induction_motor
 from electrical_engineer.engines.rlc_transient import series_rlc_step
 from electrical_engineer.engines.smib_swing import (
     SmibCase,
-    critical_clearing_angle,
     critical_clearing_time_bisection,
     eec301_reference,
-    initial_angle_pre_fault,
     simulate_clearing,
-    time_to_angle_during_fault,
 )
 from electrical_engineer.runner.execute import execute
 
