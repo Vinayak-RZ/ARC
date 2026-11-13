@@ -1,6 +1,45 @@
 import { BaseEdge, EdgeLabelRenderer, getSmoothStepPath } from "@xyflow/react";
 
-export function SignalEdge({ id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, data, markerEnd }) {
+function feedbackPath(sourceX, sourceY, targetX, targetY) {
+  const drop = 96;
+  const midY = Math.max(sourceY, targetY) + drop;
+  return `M ${sourceX} ${sourceY} V ${midY} H ${targetX} V ${targetY}`;
+}
+
+export function SignalEdge({
+  id,
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  sourcePosition,
+  targetPosition,
+  targetHandleId,
+  data,
+  markerEnd,
+}) {
+  const below = data?.route === "below" || targetHandleId === "feedback";
+  const label = data?.label || "";
+  if (below) {
+    const path = feedbackPath(sourceX, sourceY, targetX, targetY);
+    const lx = (sourceX + targetX) / 2;
+    const ly = Math.max(sourceY, targetY) + 72;
+    return (
+      <>
+        <BaseEdge id={id} path={path} markerEnd={markerEnd} style={{ stroke: "var(--ee-color-ink)", strokeWidth: 1.75 }} />
+        {label ? (
+          <EdgeLabelRenderer>
+            <div
+              className="studio-edge-label is-feedback"
+              style={{ transform: `translate(-50%, -50%) translate(${lx}px,${ly}px)` }}
+            >
+              {label}
+            </div>
+          </EdgeLabelRenderer>
+        ) : null}
+      </>
+    );
+  }
   const [path, labelX, labelY] = getSmoothStepPath({
     sourceX,
     sourceY,
@@ -8,9 +47,8 @@ export function SignalEdge({ id, sourceX, sourceY, targetX, targetY, sourcePosit
     targetX,
     targetY,
     targetPosition,
-    borderRadius: 8,
+    borderRadius: 12,
   });
-  const label = data?.label || "";
   return (
     <>
       <BaseEdge id={id} path={path} markerEnd={markerEnd} style={{ stroke: "var(--ee-color-ink)", strokeWidth: 1.75 }} />
@@ -29,13 +67,9 @@ export const studioEdgeTypes = { signal: SignalEdge };
 
 export function wireLabel(from, to, blocksById) {
   const [fb, fp] = from.split(":");
-  const [tb] = to.split(":");
+  const [, tp] = to.split(":");
+  if (tp === "feedback" || fp === "feedback") return "fb";
   const src = blocksById[fb];
-  const dst = blocksById[tb];
-  if (dst?.type === "scope") return "y";
   if (src?.type === "step") return "r";
-  if (fp === "feedback" || fp === "in2") return "fb";
-  if (src?.type === "sum" && fp === "out") return "e";
-  if (src?.type === "pid") return "u";
   return "";
 }
