@@ -322,8 +322,8 @@ def main() -> int:
                 pid_sess = json.loads(resp.read().decode())["session_id"]
             go(f"?view=studio&session={pid_sess}")
             page.wait_for_function(
-                "() => document.querySelectorAll('.react-flow__edge-path').length >= 4",
-                timeout=20000,
+                "() => document.querySelectorAll('.studio-canvas .react-flow__edge-path').length >= 5",
+                timeout=60000,
             )
             page.wait_for_timeout(800)
             snap("studio-layout-before-simulate.png")
@@ -352,6 +352,10 @@ def main() -> int:
                     timeout=120000,
                 )
                 page.wait_for_timeout(800)
+                page.wait_for_function(
+                    "() => document.querySelectorAll('.studio-canvas .react-flow__edge-path').length >= 5",
+                    timeout=60000,
+                )
             snap("studio-layout-after-simulate.png")
             if args.round >= 6:
                 pid = page.locator(".react-flow__node[data-id='pid1']")
@@ -387,7 +391,7 @@ def main() -> int:
                 page.wait_for_selector(".studio-settled-pill", timeout=120000)
                 snap("studio-step-settled.png")
                 page.locator(".react-flow__node", has_text="PID").click()
-                for label, val in [("Kp", "0.15"), ("Ki", "0.02")]:
+                for label, val in [("Kp", "0.5"), ("Ki", "0.1")]:
                     field = page.get_by_label(label)
                     if field.count():
                         field.fill(val)
@@ -405,8 +409,8 @@ def main() -> int:
                 )
                 wide_studio.wait_for_selector(".studio-canvas", timeout=15000)
                 wide_studio.wait_for_function(
-                    "() => document.querySelectorAll('.react-flow__edge-path').length >= 4",
-                    timeout=20000,
+                    "() => document.querySelectorAll('.studio-canvas .react-flow__edge-path').length >= 5",
+                    timeout=60000,
                 )
                 wide_studio.wait_for_timeout(1200)
                 snap("studio-layout-before-simulate-1440.png", wide_studio)
@@ -416,6 +420,10 @@ def main() -> int:
                     timeout=120000,
                 )
                 wide_studio.wait_for_timeout(400)
+                wide_studio.wait_for_function(
+                    "() => document.querySelectorAll('.studio-canvas .react-flow__edge-path').length >= 5",
+                    timeout=60000,
+                )
                 snap("studio-layout-after-simulate-1440.png", wide_studio)
                 wide_studio.close()
 
