@@ -24,9 +24,18 @@ async function contentOutsideCanvas(page: Page, label: string) {
   const sel =
     ".react-flow__edge-path, .react-flow__arrowhead, .react-flow__edge circle, .studio-block";
   const bad: string[] = [];
-  const n = await page.locator(sel).count();
+  const loc = page.locator(sel);
+  const n = await loc.count();
   for (let i = 0; i < n; i += 1) {
-    const r = await page.locator(sel).nth(i).boundingBox();
+    const el = loc.nth(i);
+    if (!(await el.isVisible())) continue;
+    // ponytail: React Flow may detach transient handles; do not burn full test timeout
+    let r;
+    try {
+      r = await el.boundingBox({ timeout: 5000 });
+    } catch {
+      continue;
+    }
     if (!r) continue;
     if (
       r.x < box.x - 0.5 ||
