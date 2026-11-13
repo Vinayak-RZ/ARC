@@ -1,43 +1,49 @@
-export function ResultsDock({ sessionId, results, margins }) {
+import { useState } from "react";
+
+const TABS = [
+  { id: "step", label: "Step" },
+  { id: "bode", label: "Bode" },
+  { id: "rlocus", label: "Root locus" },
+];
+
+export function ResultsDock({ results, stale }) {
+  const [tab, setTab] = useState("step");
   if (!results) {
     return (
       <footer className="studio-results empty">
-        <p className="hint">Run Simulate to populate step, Bode, and root locus plots.</p>
+        <div className="studio-results-head">
+          <h3>Plots</h3>
+        </div>
+        <div className="studio-results-stage">
+          <p className="cs-margins-hint">Plots appear here after Simulate completes.</p>
+        </div>
       </footer>
     );
   }
-  const sid = sessionId;
   const ts = results.ts || Date.now();
+  const src = results[tab];
   return (
-    <footer className="studio-results" aria-label="Simulation results">
-      <h3>Results</h3>
-      {margins ? (
-        <p className="studio-margin-line">
-          GM {margins.gain_margin_db != null ? `${margins.gain_margin_db.toFixed(2)} dB` : "—"} · PM{" "}
-          {margins.phase_margin_deg != null ? `${margins.phase_margin_deg.toFixed(1)}°` : "—"} · ωcg{" "}
-          {margins.gain_crossover_rad_s != null ? `${margins.gain_crossover_rad_s.toFixed(2)} rad/s` : "—"} · ωcp{" "}
-          {margins.phase_crossover_rad_s != null ? `${margins.phase_crossover_rad_s.toFixed(2)} rad/s` : "—"}
-        </p>
-      ) : null}
-      <div className="studio-results-grid">
-        {results.step ? (
-          <figure>
-            <img src={`${results.step}?t=${ts}`} alt="Step response" loading="lazy" />
-            <figcaption>Step</figcaption>
-          </figure>
-        ) : null}
-        {results.bode ? (
-          <figure>
-            <img src={`${results.bode}?t=${ts}`} alt="Bode with margins" loading="lazy" />
-            <figcaption>Bode</figcaption>
-          </figure>
-        ) : null}
-        {results.rlocus ? (
-          <figure>
-            <img src={`${results.rlocus}?t=${ts}`} alt="Root locus" loading="lazy" />
-            <figcaption>Root locus</figcaption>
-          </figure>
-        ) : null}
+    <footer className={`studio-results${stale ? " is-stale" : ""}`} aria-label="Simulation plots">
+      <div className="studio-results-head">
+        <h3>Plots</h3>
+        {stale ? <span className="cs-stale-banner">Out of date with diagram</span> : null}
+        <div className="studio-results-tabs" role="tablist">
+          {TABS.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              role="tab"
+              aria-selected={tab === t.id}
+              className={tab === t.id ? "is-active" : ""}
+              onClick={() => setTab(t.id)}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="studio-results-stage">
+        {src ? <img src={`${src}?t=${ts}`} alt={`${tab} plot`} loading="eager" /> : <p className="cs-margins-hint">No plot.</p>}
       </div>
     </footer>
   );

@@ -4,7 +4,13 @@ function Field({ label, type = "text", value, onChange, error }) {
   return (
     <label className={`studio-field${error ? " has-error" : ""}`}>
       <span>{label}</span>
-      <input type={type} value={value} onChange={(e) => onChange(e.target.value)} step={type === "number" ? "any" : undefined} />
+      <input
+        type={type}
+        aria-label={label}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        step={type === "number" ? "any" : undefined}
+      />
       {error ? <span className="field-error">{error}</span> : null}
     </label>
   );
@@ -16,7 +22,7 @@ export function StudioInspector({ selected, blockIssues, onPatch, onComment, not
     return (
       <aside className="studio-inspector">
         <h3>Inspector</h3>
-        <p className="hint">Select a block for typed parameters and comments.</p>
+        <p className="cs-margins-hint">Select a block to tune parameters, then Simulate again.</p>
       </aside>
     );
   }
@@ -28,7 +34,7 @@ export function StudioInspector({ selected, blockIssues, onPatch, onComment, not
   return (
     <aside className="studio-inspector">
       <h3>{selected.data?.label || t}</h3>
-      <p className="hint">{t}</p>
+      <p className="cs-margins-hint">{t}</p>
       {t === "pid" ? (
         <>
           <Field
