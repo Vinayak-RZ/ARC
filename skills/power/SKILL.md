@@ -24,15 +24,15 @@ faults, protection as coursework (relay settings on paper), not EMS dispatch
 6. Exam-style kernels: `docs/AGENT_ROUTING.md` + recipes `ed-penalty-study`,
    pack workflows `study-*-v2`, `run-ee-v2-solver` with `solver` + `expected` in
    `problem.json`.
-6. **SMIB transient / equal-area / CCT:** `skills/swing-equation/SKILL.md` +
+7. **SMIB transient / equal-area / CCT:** `skills/swing-equation/SKILL.md` +
    `engines/smib_swing` (goldens `artifacts/eec301-lab-goldens/exp06.json`).
-7. **Two-area AGC (Exp 7):** `skills/agc-two-area/SKILL.md` + `engines/agc_two_area`.
-8. **Economic dispatch λ (Exp 8):** `skills/economic-dispatch-lambda/SKILL.md` +
+8. **Two-area AGC (Exp 7):** `skills/agc-two-area/SKILL.md` + `engines/agc_two_area`.
+9. **Economic dispatch λ (Exp 8):** `skills/economic-dispatch-lambda/SKILL.md` +
    `engines/ed_lambda`.
-9. Study-level protection (no EMS): `study-protection-setting` with CT ratio,
+10. Study-level protection (no EMS): `study-protection-setting` with CT ratio,
    relay pickup (secondary A), fault current; optional `zone_reach_ohm` +
    `v_line_kv` for simple distance zone check.
-10. Missing provider → `unchecked`, never a fluent “converged” voltage.
+11. Missing provider → `unchecked`, never a fluent “converged” voltage.
 
 ## UI construction
 

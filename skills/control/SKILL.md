@@ -14,7 +14,7 @@ Bode/Nyquist/root locus, simple compensators. Not graduate optimal control.
 4. **Exam v2** (`study-control-exam` or `solve-control-problem` with `solver`):
    `breakaway_real_axis` (`poles`, `pick_sigma`), `steady_state_error`
    (`system_type`, `gain`, `error_key`). Routing: `docs/AGENT_ROUTING.md`.
-4. Request capabilities:
+5. Request capabilities:
    - `algebraic-check` for Routh, residues, gain formulas
    - `lti-analysis` for step/Bode/Nyquist/rlocus (python-control or MATLAB)
    - `render-figure` for library plots — never invent a Bode bitmap
