@@ -2,9 +2,6 @@
 
 from __future__ import annotations
 
-import cmath
-import math
-
 import pytest
 
 from electrical_engineer.engines.sequence_fault import analyze_sequence_fault

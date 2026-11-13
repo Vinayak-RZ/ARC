@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import math
-import re
 from typing import Any
 
 
@@ -11,7 +10,7 @@ def _variants(value: float, unit: str | None) -> list[str]:
     patterns: list[str] = []
     v = value
     if math.isclose(v, round(v)):
-        patterns.append(str(int(round(v))))
+        patterns.append(str(round(v)))
     patterns.append(f"{v:.6g}")
     patterns.append(f"{v:.4f}".rstrip("0").rstrip("."))
     u = (unit or "").lower()
@@ -93,8 +92,10 @@ def validate_fixture_claim(claim: dict[str, Any]) -> None:
         val = src.get("extracted_value")
         if val is None:
             continue
-        if not value_supported_by_snippet(str(src.get("snippet") or ""), float(val), src.get("unit")):
-            if role not in ("context_only",):
-                raise ValueError(
-                    f"source {src.get('url')}: extracted_value {val} not supported by snippet"
-                )
+        if (
+            not value_supported_by_snippet(str(src.get("snippet") or ""), float(val), src.get("unit"))
+            and role not in ("context_only",)
+        ):
+            raise ValueError(
+                f"source {src.get('url')}: extracted_value {val} not supported by snippet"
+            )

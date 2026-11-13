@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import math
 from typing import Any
 
 
@@ -33,10 +32,15 @@ def reconcile_claim(claim: dict[str, Any]) -> dict[str, Any]:
 
     lib_raw = claim.get("library_value")
     web_raw = claim.get("web_value")
-    if lib is None and web is None and lib_raw is not None and web_raw is not None:
-        if str(lib_raw).strip().lower() != str(web_raw).strip().lower():
-            status = "mismatch_library"
-            disagreement["library_vs_web"] = {"library": lib_raw, "web": web_raw}
+    if (
+        lib is None
+        and web is None
+        and lib_raw is not None
+        and web_raw is not None
+        and str(lib_raw).strip().lower() != str(web_raw).strip().lower()
+    ):
+        status = "mismatch_library"
+        disagreement["library_vs_web"] = {"library": lib_raw, "web": web_raw}
     if web is not None and lib is not None and rel_diff(web, lib) > tol:
         status = "mismatch_library"
         disagreement["library_vs_web"] = {"library": lib, "web": web}

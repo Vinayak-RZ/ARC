@@ -9,8 +9,12 @@ from typing import Any
 from electrical_engineer.web_verify.citations import index_citations, render_answer_section
 from electrical_engineer.web_verify.config import load_web_verify_config
 from electrical_engineer.web_verify.providers import get_provider
-from electrical_engineer.web_verify.reconcile import overall_status, reconcile_claim, reconcile_similar_match
 from electrical_engineer.web_verify.recompute import recompute
+from electrical_engineer.web_verify.reconcile import (
+    overall_status,
+    reconcile_claim,
+    reconcile_similar_match,
+)
 
 
 def extract_context_claims(problem: dict[str, Any], solver_outputs: dict[str, Any]) -> list[dict[str, Any]]:

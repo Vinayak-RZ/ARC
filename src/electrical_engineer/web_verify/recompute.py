@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 from typing import Any
 
-from electrical_engineer.engines.ed_lambda import EdCase, solve_lambda_ed
+from electrical_engineer.engines.ed_lambda import EdCase
 
 
 def _num(v: Any) -> float | None:
