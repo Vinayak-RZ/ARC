@@ -325,16 +325,6 @@ def main() -> int:
             page.wait_for_timeout(400)
             snap("studio-layout-before-simulate.png")
 
-            sim = page.locator(".cs-simulate-btn")
-            if sim.count() > 0:
-                sim.click()
-                page.wait_for_selector(
-                    ".studio-results-stage .studio-step-svg, .studio-results-stage img",
-                    timeout=120000,
-                )
-                page.locator(".studio-canvas .react-flow__edge-path").nth(4).wait_for(timeout=60000)
-            snap("studio-layout-after-simulate.png")
-
             page.locator(".studio-canvas .react-flow").wait_for(state="visible", timeout=15000)
             pid = page.locator(".react-flow__node[data-id='pid1']")
             if pid.count() == 0:
@@ -348,15 +338,28 @@ def main() -> int:
                 "() => document.querySelector('.studio.has-selection')",
                 timeout=15000,
             )
-            page.wait_for_timeout(300)
             page.wait_for_timeout(400)
             snap("studio-block-selected.png")
+            page.locator(".studio-canvas .react-flow__pane").click(position={"x": 40, "y": 40}, force=True)
+            page.wait_for_timeout(200)
+
+            sim = page.locator(".cs-simulate-btn")
+            if sim.count() > 0:
+                sim.click()
+                page.wait_for_selector(
+                    ".studio-results-stage .studio-step-svg, .studio-results-stage img",
+                    timeout=120000,
+                )
+                page.locator(".studio-canvas .react-flow__edge-path").nth(4).wait_for(timeout=60000)
+            snap("studio-layout-after-simulate.png")
+
             if args.round >= 6:
-                pid = page.locator(".react-flow__node[data-id='pid1']")
                 box = pid.first.bounding_box()
                 if box:
                     page.mouse.click(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
-                page.wait_for_timeout(900)
+                else:
+                    pid.first.locator(".studio-block").click(force=True)
+                page.wait_for_timeout(400)
                 snap("studio-block-selected-after-simulate.png")
                 page.locator(".studio-window-segment button", has_text="Auto").click(force=True)
                 page.wait_for_timeout(600)
