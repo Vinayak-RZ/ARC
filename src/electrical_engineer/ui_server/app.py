@@ -59,11 +59,16 @@ def _read_json(path: Path) -> dict:
 
 def _run_list_item(folder: Path) -> dict:
     evid = _read_json(folder / "evidentiary.json") or _read_json(folder / "summary.json")
+    try:
+        modified_at = folder.stat().st_mtime
+    except OSError:
+        modified_at = 0.0
     return {
         "id": folder.name,
         "title": str(evid.get("title") or folder.name),
         "unchecked": bool(evid.get("unchecked")),
         "recipe_id": str(evid.get("recipe_id") or ""),
+        "modified_at": modified_at,
     }
 
 
