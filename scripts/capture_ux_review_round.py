@@ -477,6 +477,8 @@ def main() -> int:
                 _studio_wires_ready(wide_studio, timeout_s=120.0)
                 wide_studio.wait_for_timeout(400)
                 snap("studio-layout-before-simulate-1440.png", wide_studio)
+                if args.round >= 7:
+                    snap("studio-layout-before-simulate-1440-dark.png", wide_studio)
                 wide_studio.locator(".cs-simulate-btn").click()
                 wide_studio.wait_for_selector(
                     ".studio-results-stage .studio-step-svg, .studio-results-stage img",
@@ -485,6 +487,8 @@ def main() -> int:
                 wide_studio.wait_for_selector(".studio-canvas .react-flow__node", timeout=60000)
                 _studio_wires_ready(wide_studio, timeout_s=120.0)
                 snap("studio-layout-after-simulate-1440.png", wide_studio)
+                if args.round >= 7:
+                    snap("studio-layout-after-simulate-1440-dark.png", wide_studio)
                 wide_studio.close()
 
             if args.round >= 3:
