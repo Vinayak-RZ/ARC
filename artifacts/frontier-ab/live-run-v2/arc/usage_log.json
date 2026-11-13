@@ -1,0 +1,217 @@
+[
+  {
+    "problem": "H1",
+    "coverage": "not covered",
+    "skill": "skills/circuits/SKILL.md",
+    "workflow": "solve-circuit-problem",
+    "engine": "check-numeric (divider only)",
+    "commands": [
+      "electrical-engineer run solve-circuit-problem"
+    ],
+    "friction": [
+      "check-numeric only supports divider/ohms_law; no RL phasor payload"
+    ],
+    "agent_fallback": "hand phasor algebra"
+  },
+  {
+    "problem": "H2",
+    "coverage": "partly covered",
+    "skill": "skills/circuits/SKILL.md",
+    "workflow": "simulate-circuit",
+    "engine": "run-spice / KCL analytic",
+    "commands": [
+      "electrical-engineer run simulate-circuit + netlist"
+    ],
+    "friction": [],
+    "agent_fallback": "Thevenin divider algebra"
+  },
+  {
+    "problem": "H3",
+    "coverage": "not covered",
+    "skill": "skills/circuits/SKILL.md",
+    "workflow": "simulate-circuit",
+    "engine": "no first-order RC engine",
+    "commands": [
+      "electrical-engineer run simulate-circuit (no RC kind)"
+    ],
+    "friction": [
+      "run-rlc-analytic requires L>0 series RLC only"
+    ],
+    "agent_fallback": "first-order RC closed form"
+  },
+  {
+    "problem": "H4",
+    "coverage": "partly covered",
+    "skill": "skills/circuits/SKILL.md",
+    "workflow": "simulate-circuit",
+    "engine": "run-rlc-analytic (step; not source-free ICs)",
+    "commands": [
+      "electrical-engineer run simulate-circuit + problem.json kind=series_rlc"
+    ],
+    "friction": [
+      "workflow value Vc_peak for 10V step: None"
+    ],
+    "agent_fallback": "RK4 source-free integration"
+  },
+  {
+    "problem": "H5",
+    "coverage": "not covered",
+    "skill": "skills/power/SKILL.md",
+    "workflow": "solve-power-problem",
+    "engine": "check-numeric / default pandapower net",
+    "commands": [
+      "electrical-engineer run solve-power-problem"
+    ],
+    "friction": [
+      "no delta-connected balanced load recipe"
+    ],
+    "agent_fallback": "phasor algebra"
+  },
+  {
+    "problem": "H6",
+    "coverage": "not covered",
+    "skill": "skills/machines/SKILL.md",
+    "workflow": "solve-machines-problem",
+    "engine": "check-numeric only",
+    "commands": [
+      "electrical-engineer run solve-machines-problem"
+    ],
+    "friction": [
+      "no transformer regulation engine"
+    ],
+    "agent_fallback": "ideal transformer copper loss algebra"
+  },
+  {
+    "problem": "H7",
+    "coverage": "not covered",
+    "skill": "skills/machines/SKILL.md",
+    "workflow": "solve-drives-problem",
+    "engine": "run-drives-study (_dc_drive torque-speed, not shunt field)",
+    "commands": [
+      "electrical-engineer run solve-drives-problem"
+    ],
+    "friction": [
+      "dc model expects k_torque+load; mismatch: None"
+    ],
+    "agent_fallback": "shunt motor KVL"
+  },
+  {
+    "problem": "H8",
+    "coverage": "partly covered",
+    "skill": "skills/swing-equation/SKILL.md",
+    "workflow": "smib-swing-study",
+    "engine": "smib_swing (transient; not steady \u03b4(P))",
+    "commands": [
+      "electrical-engineer run smib-swing-study"
+    ],
+    "friction": [
+      "workflow targets EEC-301 swing; problem.json fields are h,f0,pmax_* not steady Pe"
+    ],
+    "agent_fallback": "cylindrical rotor power-angle"
+  },
+  {
+    "problem": "H9",
+    "coverage": "partly covered",
+    "skill": "skills/machines/SKILL.md",
+    "workflow": "solve-drives-problem",
+    "engine": "im_slip_torque (rated slip model; no Pag split)",
+    "commands": [
+      "electrical-engineer run solve-drives-problem kind=im_slip"
+    ],
+    "friction": [
+      "engine returns speed from load torque, not P_ag\u2192P_mech identity"
+    ],
+    "agent_fallback": "slip-speed power split"
+  },
+  {
+    "problem": "H10",
+    "coverage": "not covered",
+    "skill": "skills/power_electronics/SKILL.md",
+    "workflow": "solve-power-electronics-problem",
+    "engine": "check-numeric only",
+    "commands": [
+      "electrical-engineer run solve-power-electronics-problem"
+    ],
+    "friction": [
+      "no buck-CCM ripple engine"
+    ],
+    "agent_fallback": "averaged buck CCM"
+  },
+  {
+    "problem": "H11",
+    "coverage": "partly covered",
+    "skill": "skills/power/SKILL.md",
+    "workflow": "solve-power-problem",
+    "engine": "run-load-flow (pandapower; custom net via agent)",
+    "commands": [
+      "electrical-engineer run solve-power-problem",
+      "pandapower custom net"
+    ],
+    "friction": [],
+    "agent_fallback": "pandapower builder (agents extra)"
+  },
+  {
+    "problem": "H12",
+    "coverage": "not covered",
+    "skill": "skills/power/SKILL.md",
+    "workflow": "study-protection-setting",
+    "engine": "protection_study (generic)",
+    "commands": [
+      "electrical-engineer run study-protection-setting"
+    ],
+    "friction": [
+      "no per-unit base-conversion recipe"
+    ],
+    "agent_fallback": "pu base change algebra"
+  },
+  {
+    "problem": "H13",
+    "coverage": "Arc-covered",
+    "skill": "skills/power/SKILL.md",
+    "workflow": "simulate-power-fault",
+    "engine": "power_runner._sequence_fault + sequence networks",
+    "commands": [
+      "electrical-engineer run simulate-power-fault"
+    ],
+    "friction": [],
+    "agent_fallback": null
+  },
+  {
+    "problem": "H14",
+    "coverage": "not covered",
+    "skill": "skills/economic-dispatch-lambda/SKILL.md",
+    "workflow": "ed-lambda-study",
+    "engine": "ed_lambda.solve_lambda_ed",
+    "commands": [
+      "electrical-engineer run ed-lambda-study"
+    ],
+    "friction": [
+      "ed-lambda expects quadratic cost IC=b+2cP; sheet uses linear IC and differentiable loss"
+    ],
+    "agent_fallback": "loss-penalty iteration for linear IC"
+  },
+  {
+    "problem": "H15",
+    "coverage": "partly covered",
+    "skill": "skills/control/SKILL.md",
+    "workflow": "solve-control-problem",
+    "engine": "python-control + control_margins",
+    "commands": [
+      "electrical-engineer run solve-control-problem"
+    ],
+    "friction": [],
+    "agent_fallback": "control.dcgain / root-locus quadratic"
+  },
+  {
+    "problem": "H16",
+    "coverage": "partly covered",
+    "skill": "skills/signals/SKILL.md",
+    "workflow": "solve-digital-control-problem",
+    "engine": "digital_control.run_digital_plots",
+    "commands": [
+      "electrical-engineer run solve-digital-control-problem"
+    ],
+    "friction": [],
+    "agent_fallback": "causal convolution closed form"
+  }
+]
