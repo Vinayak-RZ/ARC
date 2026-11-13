@@ -1,4 +1,8 @@
-"""Arc Visual Kit design tokens (aligned with ui/src/tokens.css)."""
+"""Learning Lab design tokens — canonical palette for Arc Visual Kit plots.
+
+UI (`ui/src/tokens.css`) may mirror these on a stacked PR; keep plot colors here
+so diagram goldens and the redesigned Learning Lab stay merge-friendly.
+"""
 
 from __future__ import annotations
 
@@ -7,14 +11,57 @@ from typing import Literal
 
 ThemeName = Literal["light", "dark"]
 
+# --- Learning Lab light ---
+LL_CANVAS = "#FAFAF9"
+LL_SURFACE = "#FFFFFF"
+LL_INK = "#202020"
+LL_SECONDARY = "#5F5F5C"
+LL_BORDER = "#E4E4E2"
+LL_COBALT = "#2F6FEB"
+LL_COBALT_700 = "#1D47A3"
+LL_COPPER = "#E07A3F"
+LL_SUCCESS = "#2F9E6A"
+LL_WARNING = "#E0A526"
+LL_CRITICAL = "#D0312D"
+LL_GRID = "#EEECEA"
+
+FONT_SANS_STACK: tuple[str, ...] = ("Geist", "Inter", "DejaVu Sans", "Liberation Sans", "sans-serif")
+SCHEMDRAW_FONT = "Inter"
+
+# --- Learning Lab dark (matched contrast / hue) ---
+DK_CANVAS = "#121211"
+DK_SURFACE = "#1A1A18"
+DK_INK = "#F4F4F3"
+DK_SECONDARY = "#A3A39E"
+DK_BORDER = "#353532"
+DK_COBALT = "#6B93F5"
+DK_COBALT_700 = "#2F6FEB"
+DK_COPPER = "#E8935F"
+DK_SUCCESS = "#3DB87E"
+DK_WARNING = "#E8B84A"
+DK_CRITICAL = "#E85A56"
+DK_GRID = "#2A2A28"
+
+
+def _rgba_hex(hex_color: str, alpha: float) -> tuple[float, float, float, float]:
+    h = hex_color.lstrip("#")
+    r, g, b = (int(h[i : i + 2], 16) for i in (0, 2, 4))
+    return (r / 255, g / 255, b / 255, alpha)
+
 
 @dataclass(frozen=True)
 class ArcTheme:
     name: ThemeName
-    bg: str
+    canvas: str
+    surface: str
     ink: str
     muted: str
     primary: str
+    primary_dark: str
+    copper: str
+    success: str
+    warning: str
+    critical: str
     accent: str
     fault: str
     post: str
@@ -25,6 +72,7 @@ class ArcTheme:
     grid: str
     hairline: str
     font_family: str
+    font_sans: tuple[str, ...]
     title_size: float
     label_size: float
     tick_size: float
@@ -33,23 +81,35 @@ class ArcTheme:
     fig_w: float
     fig_h: float
 
+    @property
+    def bg(self) -> str:
+        """Plot/card fill (surface). Legacy name used by schemdraw and patches."""
+        return self.surface
+
 
 LIGHT = ArcTheme(
     name="light",
-    bg="#ffffff",
-    ink="#0a0b0d",
-    muted="#5b616e",
-    primary="#0052ff",
-    accent="#05b169",
-    fault="#cf202f",
-    post="#0052ff",
-    pre="#3d4f7c",
-    mech="#0a0b0d",
-    area_accel=(207 / 255, 32 / 255, 47 / 255, 0.18),
-    area_decel=(5 / 255, 177 / 255, 105 / 255, 0.20),
-    grid="#eef0f3",
-    hairline="#dee1e6",
-    font_family="DejaVu Sans",
+    canvas=LL_CANVAS,
+    surface=LL_SURFACE,
+    ink=LL_INK,
+    muted=LL_SECONDARY,
+    primary=LL_COBALT,
+    primary_dark=LL_COBALT_700,
+    copper=LL_COPPER,
+    success=LL_SUCCESS,
+    warning=LL_WARNING,
+    critical=LL_CRITICAL,
+    accent=LL_COPPER,
+    fault=LL_CRITICAL,
+    post=LL_COBALT,
+    pre=LL_COBALT_700,
+    mech=LL_INK,
+    area_accel=_rgba_hex(LL_CRITICAL, 0.16),
+    area_decel=_rgba_hex(LL_SUCCESS, 0.18),
+    grid=LL_GRID,
+    hairline=LL_BORDER,
+    font_family=SCHEMDRAW_FONT,
+    font_sans=FONT_SANS_STACK,
     title_size=13.0,
     label_size=11.0,
     tick_size=9.5,
@@ -61,20 +121,27 @@ LIGHT = ArcTheme(
 
 DARK = ArcTheme(
     name="dark",
-    bg="#0a0b0d",
-    ink="#f7f7f7",
-    muted="#9aa0aa",
-    primary="#5b8cff",
-    accent="#3dd68c",
-    fault="#ff6b6b",
-    post="#5b8cff",
-    pre="#8fa4d4",
-    mech="#f7f7f7",
-    area_accel=(255 / 255, 107 / 255, 107 / 255, 0.22),
-    area_decel=(61 / 255, 214 / 255, 140 / 255, 0.24),
-    grid="#1c1f26",
-    hairline="#2a2f3a",
-    font_family="DejaVu Sans",
+    canvas=DK_CANVAS,
+    surface=DK_SURFACE,
+    ink=DK_INK,
+    muted=DK_SECONDARY,
+    primary=DK_COBALT,
+    primary_dark=DK_COBALT_700,
+    copper=DK_COPPER,
+    success=DK_SUCCESS,
+    warning=DK_WARNING,
+    critical=DK_CRITICAL,
+    accent=DK_COPPER,
+    fault=DK_CRITICAL,
+    post=DK_COBALT,
+    pre=DK_COBALT_700,
+    mech=DK_INK,
+    area_accel=_rgba_hex(DK_CRITICAL, 0.22),
+    area_decel=_rgba_hex(DK_SUCCESS, 0.24),
+    grid=DK_GRID,
+    hairline=DK_BORDER,
+    font_family=SCHEMDRAW_FONT,
+    font_sans=FONT_SANS_STACK,
     title_size=13.0,
     label_size=11.0,
     tick_size=9.5,

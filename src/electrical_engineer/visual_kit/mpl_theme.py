@@ -9,8 +9,8 @@ def apply_theme(ax: Any, theme) -> None:
     import matplotlib as mpl
 
     fig = ax.figure
-    fig.patch.set_facecolor(theme.bg)
-    ax.set_facecolor(theme.bg)
+    fig.patch.set_facecolor(theme.canvas)
+    ax.set_facecolor(theme.surface)
     ax.tick_params(colors=theme.muted, labelsize=theme.tick_size)
     for spine in ax.spines.values():
         spine.set_color(theme.hairline)
@@ -23,11 +23,12 @@ def apply_theme(ax: Any, theme) -> None:
     ax.grid(True, color=theme.grid, linewidth=0.6, alpha=0.9)
     mpl.rcParams.update(
         {
-            "font.family": theme.font_family,
+            "font.sans-serif": list(theme.font_sans),
+            "font.family": "sans-serif",
             "mathtext.fontset": "dejavusans",
             "figure.dpi": theme.dpi,
-            "savefig.facecolor": theme.bg,
-            "savefig.edgecolor": theme.bg,
+            "savefig.facecolor": theme.canvas,
+            "savefig.edgecolor": theme.canvas,
         }
     )
 
@@ -42,7 +43,7 @@ def direct_label(ax, x, y, text: str, theme, *, color: str | None = None, dy: in
         color=color or theme.ink,
         bbox={
             "boxstyle": "round,pad=0.2",
-            "facecolor": theme.bg,
+            "facecolor": theme.surface,
             "edgecolor": theme.hairline,
             "linewidth": 0.5,
         },

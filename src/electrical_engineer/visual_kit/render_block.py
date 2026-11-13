@@ -115,7 +115,7 @@ def render_control_block_diagram(
 
     out_dir.mkdir(parents=True, exist_ok=True)
     png = out_dir / "control.block_diagram.png"
-    fig.savefig(png, dpi=theme.dpi, bbox_inches="tight", facecolor=theme.bg)
+    fig.savefig(png, dpi=theme.dpi, bbox_inches="tight", facecolor=theme.canvas)
     plt.close(fig)
     return {
         "png": str(png),

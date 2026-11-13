@@ -31,7 +31,7 @@ def render_swing_fault_animation(out_dir: Path) -> dict[str, Any]:
     ax.set_xlabel("Time (s)")
     ax.set_ylabel(r"$\delta$ (deg)")
     ax.set_title("Rotor angle after fault clearing")
-    ax.legend(loc="upper right", fontsize=8, frameon=True, facecolor=theme.bg)
+    ax.legend(loc="upper right", fontsize=8, frameon=True, facecolor=theme.surface)
 
     t1 = [p[0] for p in cleared["trail"]]
     d1 = [math.degrees(p[1]) for p in cleared["trail"]]

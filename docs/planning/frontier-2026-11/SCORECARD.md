@@ -5,7 +5,7 @@
 | PSA eval CLI | 3/3 | **3/3 PASS** | done |
 | `eval --pack power` | exit 0 | **6/6 PASS** | done |
 | Full `electrical-engineer eval` | all runnable PASS | **20/20 PASS** | done |
-| pytest | green | **278 passed** | done |
+| pytest | green | **280 passed** | done |
 | Visual regression + sanity | image diff + size | **28 PASS** | done |
 | `check_psa_evals.py` | green | **16+ passed** | done |
 | Scripted pass^k (traps T1–T11) | ≥0.75 | **1.0** | done |

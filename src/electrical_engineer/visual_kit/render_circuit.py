@@ -24,7 +24,7 @@ def render_schematic_divider(out_dir: Path, *, theme_name: ThemeName = "light") 
         out_dir.mkdir(parents=True, exist_ok=True)
         png = out_dir / "schematic.divider.png"
         d = schemdraw.Drawing(show=False, unit=4.0, inches_per_unit=0.55)
-        d.config(color=theme.ink, bgcolor=theme.bg, font="DejaVu Sans", fontsize=13, lw=2.2)
+        d.config(color=theme.ink, bgcolor=theme.surface, font=theme.font_family, fontsize=13, lw=2.2)
         d += elm.SourceV().up().label(f"$V_{{in}}={v_in:.1f}$ V", loc="top")
         d += elm.Resistor().right().label(f"$R_1={int(r1)}\\,\\Omega$")
         d += elm.Dot().label(f"$V_{{out}}={v_out:.3f}$ V\n$I={i_a*1e3:.2f}$ mA", loc="right")
@@ -53,7 +53,7 @@ def render_schematic_rlc_series(out_dir: Path, *, theme_name: ThemeName = "light
         out_dir.mkdir(parents=True, exist_ok=True)
         png = out_dir / "schematic.rlc_series.png"
         d = schemdraw.Drawing(show=False, unit=3.5, inches_per_unit=0.5)
-        d.config(color=theme.ink, bgcolor=theme.bg, font="DejaVu Sans", fontsize=12, lw=2.2)
+        d.config(color=theme.ink, bgcolor=theme.surface, font=theme.font_family, fontsize=12, lw=2.2)
         d += elm.SourceV().up().label(f"$V_s={v_in:.0f}$ V", loc="top")
         d += elm.Resistor().right().label(f"$R={int(r_ohm)}\\,\\Omega$")
         d += elm.Inductor().right().label("$L=1$ mH")

@@ -78,7 +78,7 @@ def render_power_oneline(out_dir: Path, *, theme_name: ThemeName = "light") -> d
 
     out_dir.mkdir(parents=True, exist_ok=True)
     png = out_dir / "power.oneline_bus.png"
-    fig.savefig(png, dpi=theme.dpi, bbox_inches="tight", facecolor=theme.bg)
+    fig.savefig(png, dpi=theme.dpi, bbox_inches="tight", facecolor=theme.canvas)
     plt.close(fig)
     return {
         "png": str(png),

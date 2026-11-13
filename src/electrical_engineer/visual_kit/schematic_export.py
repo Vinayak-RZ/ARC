@@ -17,15 +17,15 @@ def save_schematic_figure(draw_obj, path: Path, theme) -> None:
     fig = getattr(draw_obj, "fig", None)
     if fig is not None:
         if hasattr(fig, "set_facecolor"):
-            fig.set_facecolor(theme.bg)
+            fig.set_facecolor(theme.canvas)
         elif hasattr(fig, "patch"):
-            fig.patch.set_facecolor(theme.bg)
+            fig.patch.set_facecolor(theme.canvas)
         for axis in getattr(fig, "axes", []):
-            axis.set_facecolor(theme.bg)
+            axis.set_facecolor(theme.surface)
     draw_obj.save(str(path), dpi=EXPORT_DPI)
     with Image.open(path) as img:
         if img.mode in ("RGBA", "LA") or (img.mode == "P" and "transparency" in img.info):
-            bg = Image.new("RGB", img.size, theme.bg)
+            bg = Image.new("RGB", img.size, theme.surface)
             bg.paste(img.convert("RGBA"), mask=img.convert("RGBA").split()[-1])
             img = bg
         elif theme.name == "light" and img.mode != "RGB":
