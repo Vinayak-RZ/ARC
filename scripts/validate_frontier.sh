@@ -5,6 +5,7 @@ cd "$ROOT"
 uv run ruff check .
 uv run pytest -q
 uv run python scripts/check_psa_evals.py
+uv run python scripts/check_circuit_evals.py
 uv run pytest -q tests/visual
 uv run electrical-engineer eval --pack power
 uv run python scripts/pass_k_traps.py

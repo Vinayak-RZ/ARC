@@ -1,0 +1,7 @@
+{
+  "schema": "arc.eval.expect.v2",
+  "engine": "circuit_unit",
+  "value": 2.7067056647322545,
+  "tol": 0.001,
+  "kind": "transient_rlc"
+}

@@ -7,7 +7,7 @@ def test_list_and_run_tools() -> None:
     names = {t["name"] for t in TOOLS}
     assert "list_workflows" in names
     assert "run_workflow" in names
-    assert 8 <= len(names) <= 25
+    assert 8 <= len(names) <= 30
     assert "control_studio_create_diagram" in names
     assert "arc_reference_search" in names
     assert "arc_web_evidence_request" in names

@@ -23,7 +23,8 @@ def test_host_path_names_capabilities() -> None:
     sim = yaml.safe_load(Path("workflows/circuits/simulate-circuit.yaml").read_text())
     assert sim["nodes"]["spice"]["activity"] == "lumped-circuit-sim"
     derive = yaml.safe_load(Path("workflows/circuits/derive-circuit.yaml").read_text())
-    assert derive["nodes"]["check"]["activity"] == "algebraic-check"
+    assert derive["nodes"]["derive"]["activity"] == "run-circuit-derive"
+    assert derive["nodes"]["spice"]["activity"] == "verify-circuit-spice"
     unmatched = yaml.safe_load(Path("workflows/_cross/unmatched-cosolver.yaml").read_text())
     assert unmatched["nodes"]["retrieve"]["activity"] == "retrieve-citation"
     assert "solve-explain" not in {n["activity"] for n in unmatched["nodes"].values()}

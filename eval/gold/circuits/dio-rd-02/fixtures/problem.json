@@ -1,0 +1,9 @@
+{
+  "kind": "diode_small_signal",
+  "id_a": 0.001,
+  "n": 1.5,
+  "vt_v": 0.026,
+  "value": 39.0,
+  "expected": 39.0,
+  "tol": 0.01
+}

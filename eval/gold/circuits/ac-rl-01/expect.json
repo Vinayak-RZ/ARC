@@ -1,0 +1,7 @@
+{
+  "schema": "arc.eval.expect.v2",
+  "engine": "circuit_unit",
+  "value": 0.17999940782724264,
+  "tol": 0.1,
+  "kind": "ac_rl_angle"
+}

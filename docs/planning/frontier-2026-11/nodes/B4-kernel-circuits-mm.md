@@ -15,7 +15,9 @@ Beat CircuitSense symbolic gap with **verify-after-derive** pipeline (report #02
 
 ## Contract
 
-**Output:** `{ "circuit_unit_pass_rate": 0.55, "multimodal_path_smoke": true }`
+**Output:** `{ "circuit_unit_pass_rate": <measured>, "multimodal_path_smoke": <bool> }`
+
+Run: `uv run python scripts/run_circuit_benchmark.py` (writes `artifacts/frontier/b4_contract.json`).
 
 ## Commits
 

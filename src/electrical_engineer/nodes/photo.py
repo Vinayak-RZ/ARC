@@ -39,13 +39,31 @@ def ocr_labels(_spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
 
 @register("draft-netlist")
 def draft_netlist(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
-    cir = "* draft\n"
-    graph = {"nodes": [], "edges": []}
+    from electrical_engineer.engines.circuit_multimodal import (
+        propose_netlist_from_component,
+        propose_netlist_from_image,
+    )
+
+    problem = _problem(spec)
+    prop: dict[str, Any]
+    if problem.get("component_id"):
+        prop = propose_netlist_from_component(str(problem["component_id"]))
+    elif problem.get("image_path"):
+        prop = propose_netlist_from_image(Path(str(problem["image_path"])))
+    elif problem.get("fixture") == "photo-stub-01":
+        from electrical_engineer.vision.fixtures import load_fixture
+
+        fix = load_fixture()
+        prop = {"ok": True, "cir": fix["cir"], "low_confidence": fix.get("low_confidence"), "confidence": 0.5}
+    else:
+        prop = {"ok": False, "error": "no schematic input", "low_confidence": True}
+    cir = str(prop.get("cir") or "* draft\n")
+    graph = prop.get("graph") or {"nodes": [], "edges": []}
     run_dir = spec.get("run_dir")
     if run_dir:
         Path(run_dir, "draft.cir").write_text(cir)
         Path(run_dir, "graph.json").write_text(json.dumps(graph))
-    return {"cir": cir, "graph": graph, **inputs}
+    return {"cir": cir, "graph": graph, "proposal": prop, **inputs}
 
 
 @register("confirm-topology")

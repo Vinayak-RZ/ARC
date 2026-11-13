@@ -1,0 +1,9 @@
+{
+  "kind": "dc_divider",
+  "vin": 5,
+  "r1": 2000,
+  "r2": 3000,
+  "value": 3.0,
+  "expected": 3.0,
+  "tol": 1e-06
+}

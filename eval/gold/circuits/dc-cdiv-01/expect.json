@@ -1,0 +1,7 @@
+{
+  "schema": "arc.eval.expect.v2",
+  "engine": "circuit_unit",
+  "value": 0.006666666666666667,
+  "tol": 1e-05,
+  "kind": "dc_current_divider"
+}

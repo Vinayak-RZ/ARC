@@ -1,11 +1,233 @@
 {
   "subset": "circuits",
-  "total": 1,
-  "passed": 1,
-  "items": [
+  "version": "0.2",
+  "engine_items": [
     {
-      "id": "divider-dc-01",
-      "ok": true
+      "id": "ac-rc-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "ac-rc-02",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "ac-rl-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "ac-rl-02",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "bjt-av-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "bjt-av-02",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "dc-cdiv-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "dc-div-02",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "dc-div-03",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "dc-div-04",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "dc-par-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "dc-par-02",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "dc-ser-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "dc-ser-02",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "dio-rd-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "dio-rd-02",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "op-inv-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "op-inv-02",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "op-ninv-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "op-ninv-02",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "thev-r-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "thev-v-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "tr-rc-02",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "tr-rc-03",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "tr-rl-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "tr-rl-02",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "tr-rlc-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "tr-rlc-02",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "z11-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    },
+    {
+      "id": "z11-02",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": true
+    }
+  ],
+  "engine_passed": 30,
+  "engine_total": 30,
+  "circuit_unit_pass_rate": 1.0,
+  "properties": {
+    "total": 3,
+    "passed": 3,
+    "items": [
+      {
+        "name": "superposition",
+        "ok": true
+      },
+      {
+        "name": "reciprocity",
+        "ok": true
+      },
+      {
+        "name": "power_balance",
+        "ok": true
+      }
+    ],
+    "ok": true
+  },
+  "multimodal_path_smoke": true,
+  "steps": [
+    {
+      "component": "schematic.divider",
+      "proposed": true,
+      "confirm": true,
+      "derive_ok": true,
+      "simulator": {
+        "available": false,
+        "backend": null,
+        "reason": "ngspice binary not on PATH"
+      }
+    },
+    {
+      "component": "schematic.rlc_series",
+      "proposed": true,
+      "confirm": true,
+      "netlist_ok": true,
+      "simulator": {
+        "available": false,
+        "backend": null,
+        "reason": "ngspice binary not on PATH"
+      }
     }
   ]
 }

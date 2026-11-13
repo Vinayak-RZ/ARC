@@ -1,0 +1,9 @@
+{
+  "kind": "opamp_inverting",
+  "vin": 0.1,
+  "rf": 10000,
+  "rin": 2000,
+  "value": -0.5,
+  "expected": -0.5,
+  "tol": 1e-06
+}

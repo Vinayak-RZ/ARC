@@ -57,6 +57,8 @@ PROVIDERS = frozenset(
         "run-rlc-analytic",
         "run-ee-v2-solver",
         "run-symmetrical-fault-base",
+        "run-circuit-derive",
+        "verify-circuit-spice",
         "web-verify",
     }
 )

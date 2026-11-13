@@ -1,0 +1,7 @@
+{
+  "schema": "arc.eval.expect.v2",
+  "engine": "circuit_unit",
+  "value": 125.0,
+  "tol": 0.001,
+  "kind": "two_port_z11"
+}

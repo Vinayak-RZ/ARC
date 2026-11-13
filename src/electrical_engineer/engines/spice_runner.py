@@ -10,9 +10,7 @@ from pathlib import Path
 from typing import Any
 
 
-def spice_available() -> bool:
-    if shutil.which("ngspice") is None:
-        return False
+def _pyspice_installed() -> bool:
     try:
         import PySpice  # noqa: F401
     except ImportError:
@@ -20,13 +18,45 @@ def spice_available() -> bool:
     return True
 
 
-def _ensure_control_block(cir: str, probe: str = "v(2)") -> str:
+def spice_available() -> bool:
+    return shutil.which("ngspice") is not None and _pyspice_installed()
+
+
+def simulator_status() -> dict[str, Any]:
+    ng = shutil.which("ngspice")
+    py = _pyspice_installed()
+    if ng and py:
+        return {"available": True, "backend": "ngspice", "reason": None}
+    if ng and not py:
+        return {"available": False, "backend": None, "reason": "PySpice not installed"}
+    if py and not ng:
+        return {"available": False, "backend": None, "reason": "ngspice binary not on PATH"}
+    return {"available": False, "backend": None, "reason": "ngspice and PySpice unavailable"}
+
+
+def _analysis_kind(cir: str, problem: dict[str, Any]) -> str:
+    hint = str(problem.get("analysis") or "").lower()
+    if hint in {"ac", "tran", "dc"}:
+        return hint
+    low = cir.lower()
+    if ".ac" in low:
+        return "ac"
+    if ".tran" in low:
+        return "tran"
+    return "dc"
+
+
+def _ensure_control_block(cir: str, probe: str = "v(2)", *, analysis: str = "dc") -> str:
     if ".control" in cir.lower():
         return cir
     text = cir.rstrip()
     if text.lower().endswith(".end"):
         text = text[:-4].rstrip()
-    return f"{text}\n.control\nrun\nprint {probe}\n.endc\n.end\n"
+    if analysis == "ac":
+        cmd = f"run\nprint mag({probe})\n"
+    else:
+        cmd = f"run\nprint {probe}\n"
+    return f"{text}\n.control\n{cmd}.endc\n.end\n"
 
 
 def _probe_node(problem: dict[str, Any], cir: str) -> str:
@@ -40,11 +70,15 @@ def _probe_node(problem: dict[str, Any], cir: str) -> str:
 
 def _parse_print_voltage(stdout: str, probe: str) -> float | None:
     needle = probe.replace(" ", "").lower()
+    mag_needle = f"mag({needle})" if not needle.startswith("mag(") else needle
     last: float | None = None
     in_table = False
     for line in stdout.splitlines():
         compact = line.lower().replace(" ", "")
-        if "time" in compact and needle in compact:
+        if "time" in compact and (needle in compact or mag_needle in compact):
+            in_table = True
+            continue
+        if mag_needle in compact and "mag" in compact:
             in_table = True
             continue
         if in_table:
@@ -86,16 +120,19 @@ def run_spice_netlist(
     run_dir: Path,
     problem: dict[str, Any],
 ) -> dict[str, Any]:
-    probe = _probe_node(problem, cir)
-    body = _ensure_control_block(cir, probe=probe)
+    probe = str(problem.get("probe") or _probe_node(problem, cir))
+    analysis = _analysis_kind(cir, problem)
+    body = _ensure_control_block(cir, probe=probe, analysis=analysis)
     net_path = run_dir / "netlist.cir"
     net_path.write_text(body, encoding="utf-8")
     if not spice_available():
+        st = simulator_status()
         return {
             "ok": False,
-            "error": "ngspice/PySpice not available",
+            "error": st.get("reason") or "ngspice/PySpice not available",
             "unchecked": True,
             "tool": "ngspice",
+            "simulator_skip": True,
         }
     with tempfile.TemporaryDirectory() as tmp:
         tmp_path = Path(tmp) / "run.cir"
