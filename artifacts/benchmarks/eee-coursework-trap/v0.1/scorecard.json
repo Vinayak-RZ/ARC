@@ -1,9 +1,9 @@
 {
-  "tarball_sha256": "8e4cad62d9c2e4b852de847dcd22269a84712822cca413d324795cc81787ac32",
+  "tarball_sha256": "ff44f9c731d279553113b7c1146459562ab625bf2914e7d75b5d82a9c9d99da5",
   "scorecard_rows": [
     {
       "metric": "benchmark_tarball_sha256",
-      "value": "8e4cad62d9c2e4b852de847dcd22269a84712822cca413d324795cc81787ac32",
+      "value": "ff44f9c731d279553113b7c1146459562ab625bf2914e7d75b5d82a9c9d99da5",
       "source": "scripts/build_benchmark_v01.py"
     },
     {
