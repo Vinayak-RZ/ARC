@@ -6,6 +6,7 @@ from typing import Any
 
 from electrical_engineer.reference.catalog import get_record
 from electrical_engineer.reference.engines.iec60909_peak import kappa_from_rx_ratio
+from electrical_engineer.reference.engines.nec_ampacity import ambient_correction_factor
 
 IEEE80_K_EXPECTED = {50: 0.116, 70: 0.157}
 KAPPA_RX_TOL = 1e-4
@@ -47,6 +48,28 @@ def crosscheck_tabulated_formulas() -> list[dict[str, Any]]:
                     "message": f"kappa at R/X={rx}",
                 }
             )
+    amb45 = ambient_correction_factor(ambient_c=45, insulation_column="90")
+    if amb45["ambient_factor"] != 0.87:
+        issues.append(
+            {
+                "record_id": "NEC_TABLE_310_15B1_AMBIENT",
+                "field": "factor_90 at 45 C",
+                "tabulated": amb45["ambient_factor"],
+                "formula_expected": 0.87,
+                "message": "NEC ambient 41-45 row at 90 C",
+            }
+        )
+    amb46 = ambient_correction_factor(ambient_c=46, insulation_column="90")
+    if amb46["ambient_factor"] != 0.82:
+        issues.append(
+            {
+                "record_id": "NEC_TABLE_310_15B1_AMBIENT",
+                "field": "factor_90 at 46 C",
+                "tabulated": amb46["ambient_factor"],
+                "formula_expected": 0.82,
+                "message": "NEC ambient 46-50 row at 90 C",
+            }
+        )
     return issues
 
 

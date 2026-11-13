@@ -80,8 +80,18 @@ def test_host_submit_validation():
                     "claim_id": "x",
                     "queries": ["a", "b", "c"],
                     "sources": [
-                        {"domain": "a.example", "snippet": "one"},
-                        {"domain": "b.example", "snippet": "two"},
+                        {
+                            "domain": "a.example",
+                            "url": "https://a.example/one",
+                            "snippet": "one",
+                            "retrieved_at": "2026-11-13T12:00:00Z",
+                        },
+                        {
+                            "domain": "b.example",
+                            "url": "https://b.example/two",
+                            "snippet": "two",
+                            "retrieved_at": "2026-11-13T12:01:00Z",
+                        },
                     ],
                 }
             ]

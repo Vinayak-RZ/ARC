@@ -55,6 +55,11 @@ def build_parser() -> argparse.ArgumentParser:
     ref_eng = ref_sub.add_parser("engine")
     ref_eng.add_argument("engine_name")
     ref_eng.add_argument("json_payload", nargs="?", default="{}")
+    prov = sub.add_parser("provenance", help="Audit answer/notes files for false web-verified labels")
+    prov_sub = prov.add_subparsers(dest="provenance_cmd")
+    prov_audit = prov_sub.add_parser("audit")
+    prov_audit.add_argument("path")
+    prov_audit.add_argument("--run-dir")
     hosts = sub.add_parser("hosts")
     hsub = hosts.add_subparsers(dest="hosts_cmd")
     inst = hsub.add_parser("install")
@@ -225,6 +230,24 @@ def main(argv: list[str] | None = None) -> int:
             dest.write_text(json.dumps(diagram, indent=2), encoding="utf-8")
             print(dest)
             return 0
+        return 2
+    if args.cmd == "provenance":
+        import json
+        from pathlib import Path
+
+        from electrical_engineer.web_verify.validate import audit_markdown_provenance
+
+        if args.provenance_cmd == "audit":
+            run_dir = Path(args.run_dir) if args.run_dir else None
+            text = Path(args.path).read_text(encoding="utf-8")
+            try:
+                audit_markdown_provenance(text, run_dir=run_dir)
+            except ValueError as exc:
+                print(str(exc), file=sys.stderr)
+                return 2
+            print(json.dumps({"ok": True, "path": args.path}, indent=2))
+            return 0
+        print("provenance audit <file>", file=sys.stderr)
         return 2
     if args.cmd == "reference":
         import json

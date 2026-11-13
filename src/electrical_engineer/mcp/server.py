@@ -125,7 +125,7 @@ TOOLS = [
     },
     {
         "name": "arc_web_evidence_submit",
-        "description": "Submit web_sources and similar_problems for a run after live search.",
+        "description": "Submit web_sources and similar_problems for a run after live search. Each claim source MUST include url (unless derived), quoted snippet, and fetched_at/retrieved_at timestamp. Answers must not say web-verified without this evidence in the same run.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -147,7 +147,7 @@ TOOLS = [
     },
     {
         "name": "arc_reference_get",
-        "description": "Fetch one reference record by id with units, source, license, verification.",
+        "description": "Fetch one reference record by id with units, source, license, verification. Curated records satisfy exam-grade constants; still call arc_web_evidence_submit or web-verify before labeling a value web-verified in the final answer.",
         "inputSchema": {
             "type": "object",
             "properties": {"id": {"type": "string"}},
