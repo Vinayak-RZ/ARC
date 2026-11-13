@@ -73,6 +73,10 @@ def score_retrieval(result: dict[str, Any], expect: dict[str, Any]) -> dict[str,
 
 def run_item(item: Path, *, run_root: Path | None = None) -> dict[str, Any]:
     expect = json.loads((item / "expect.json").read_text())
+    if expect.get("engine") and not expect.get("recipe_id"):
+        from electrical_engineer.eval_runner.psa_score import run_psa_item
+
+        return run_psa_item(item, expect)
     problem: dict[str, Any] = {}
     for name in ("problem.json", "payload.json"):
         path = item / "fixtures" / name
@@ -104,7 +108,8 @@ def run_pack(pack: str | None = None, *, cwd: Path | None = None, run_root: Path
     for item in items:
         row = run_item(item, run_root=run_root)
         mark = "PASS" if row["ok"] else "FAIL"
-        print(f"{mark} {item.name} recipe={row['expect'].get('recipe_id')}")
+        rid = row["expect"].get("recipe_id") or row["expect"].get("engine")
+        print(f"{mark} {item.name} recipe={rid}")
         if not row["ok"]:
             failed += 1
     print(f"{len(items) - failed}/{len(items)} passed")

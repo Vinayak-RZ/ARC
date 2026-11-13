@@ -1,4 +1,5 @@
 {
+  "schema": "arc.eval.expect.v2",
   "engine": "ed_lambda",
   "golden_file": "artifacts/eec301-lab-goldens/exp08.json",
   "cases": ["PD_450", "PD_500", "PD_300"],

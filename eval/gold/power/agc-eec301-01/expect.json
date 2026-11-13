@@ -1,4 +1,5 @@
 {
+  "schema": "arc.eval.expect.v2",
   "engine": "agc_two_area",
   "golden_file": "artifacts/eec301-lab-goldens/exp07.json",
   "primary_df1_Hz": -0.16,

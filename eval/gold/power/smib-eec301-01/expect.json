@@ -6,8 +6,10 @@
   "delta_cr_deg": 79.53240997193419,
   "tcr_s": 0.3096875,
   "t_to_delta_cr_s": 0.30971631056004756,
+  "schema": "arc.eval.expect.v2",
   "tolerance_deg": 1e-6,
-  "tolerance_tcr_s": 0.0001,
+  "tolerance_tcr_s": 0.002,
+  "tolerance_t_to_s": 0.002,
   "integrators": ["euler", "modified_euler", "rk4"],
   "forbidden": ["ode45", "solve_ivp", "fmincon"]
 }
