@@ -1,0 +1,51 @@
+- id: IEEE80_BODY_50KG
+  domain: earthing_safety
+  title: IEEE 80 body-weight constants 50 kg
+  aliases: [50 kg body, IEEE 80 50kg]
+  values:
+    k_touch: 0.157
+    k_step: 0.157
+    body_mass_kg: 50
+  value_conditions:
+    k_touch: fibrillation constant for tolerable touch voltage Eq. 32 (50 kg)
+    k_step: fibrillation constant for tolerable step voltage Eq. 35 (50 kg)
+    body_mass_kg: body mass associated with IEEE 80 Table 20 row
+  confidence: verified_dual
+  source:
+    title: IEEE Std 80-2013
+    edition: "2013"
+    clause: Eq. 32 and Table 20
+  source_secondary:
+    title: IEEE Std 80-2013 Annex B example calculations
+    edition: "2013"
+    clause: touch voltage numeric example
+    url: https://standards.ieee.org/standard/80-2013.html
+  url: https://standards.ieee.org/standard/80-2013.html
+  license: Factual constants; standard text not reproduced
+  verification: (1000+1.5*Cs*rho)*0.157/sqrt(t) golden case
+
+- id: IEEE80_BODY_70KG
+  domain: earthing_safety
+  title: IEEE 80 body-weight constants 70 kg
+  aliases: [70 kg body]
+  values:
+    k_touch: 0.157
+    k_step: 0.313
+    body_mass_kg: 70
+  value_conditions:
+    k_touch: touch voltage Eq. 32 uses 0.157 factor per IEEE fibrillation path (same as 50 kg touch row)
+    k_step: step voltage uses 0.313 for 70 kg
+    body_mass_kg: 70 kg Table 20 row
+  confidence: verified_dual
+  source:
+    title: IEEE Std 80-2013
+    edition: "2013"
+    clause: Table 20 body factors
+  source_secondary:
+    title: IEEE Std 80-2013 Eq. 32 worked example
+    edition: "2013"
+    clause: touch voltage with Cs and rho_s
+    url: https://standards.ieee.org/standard/80-2013.html
+  url: https://standards.ieee.org/standard/80-2013.html
+  license: Factual constants
+  verification: rho_s=200 Cs=1 t=0.4 -> E_touch 322.71 V (not 643 V)

@@ -1,0 +1,151 @@
+- id: IEEE519_2022_TABLE2_HEADER
+  domain: power_quality
+  title: IEEE Std 519-2022 Table 2 TDD limits edition label
+  aliases: [IEEE 519 2022, Table 2 TDD]
+  values:
+    standard_edition: "IEEE Std 519-2022"
+    table: "Table 2"
+    quantity: TDD_percent
+  value_conditions:
+    standard_edition: harmonic standard edition for limit lookup engines
+    table: current distortion TDD limits vs Isc/IL ratio
+  confidence: verified_dual
+  source:
+    title: IEEE Std 519-2022
+    edition: "2022"
+    clause: Table 2
+  source_secondary:
+    title: IEEE Std 519-2014
+    edition: "2014"
+    clause: Table 3 comparison band structure
+    url: https://standards.ieee.org/standard/519-2022.html
+  url: https://standards.ieee.org/standard/519-2022.html
+  license: Factual limit table reference
+  verification: Band percentages unchanged from 2014 Table 3 structure
+
+- id: IEEE519_TDD_BAND_LT20
+  domain: power_quality
+  title: IEEE 519 TDD limit for Isc/IL below 20
+  aliases: [IEEE 519 TDD 12, tdd band 1]
+  values:
+    tdd_percent: 12.0
+    isc_il_min: 0.0
+    isc_il_max: 20.0
+    edition: IEEE-519-2022-Table-2
+  value_conditions:
+    tdd_percent: maximum TDD percent for stiff supply (Isc/IL < 20)
+    edition: IEEE Std 519-2022 Table 2 row
+  confidence: verified_dual
+  source:
+    title: IEEE Std 519-2022
+    edition: "2022"
+    clause: Table 2 Isc/IL < 20
+  source_secondary:
+    title: IEEE Std 519-2014
+    edition: "2014"
+    clause: Table 3 same band
+    url: https://standards.ieee.org/standard/519-2022.html
+  url: https://standards.ieee.org/standard/519-2022.html
+  license: Factual limit
+  verification: 12% limit for Isc/IL < 20
+
+- id: IEEE519_TDD_BAND_20_50
+  domain: power_quality
+  title: IEEE 519 TDD limit Isc/IL 20 up to 50
+  aliases: [TDD 8 percent]
+  values:
+    tdd_percent: 8.0
+    isc_il_min: 20.0
+    isc_il_max: 50.0
+    edition: IEEE-519-2022-Table-2
+  value_conditions:
+    tdd_percent: TDD limit 8% band
+    edition: IEEE Std 519-2022 Table 2
+  confidence: verified_dual
+  source:
+    title: IEEE Std 519-2022
+    edition: "2022"
+    clause: Table 2
+  source_secondary:
+    title: IEEE Std 519-2014
+    edition: "2014"
+    clause: Table 3
+    url: https://standards.ieee.org/standard/519-2022.html
+  url: https://standards.ieee.org/standard/519-2022.html
+  license: Factual limit
+  verification: Isc/IL=35 -> 8%
+
+- id: IEEE519_TDD_BAND_50_100
+  domain: power_quality
+  title: IEEE 519 TDD limit Isc/IL 50 up to 100
+  aliases: [TDD 5 percent]
+  values:
+    tdd_percent: 5.0
+    isc_il_min: 50.0
+    isc_il_max: 100.0
+    edition: IEEE-519-2022-Table-2
+  value_conditions:
+    tdd_percent: TDD limit 5% band
+  confidence: verified_dual
+  source:
+    title: IEEE Std 519-2022
+    edition: "2022"
+    clause: Table 2
+  source_secondary:
+    title: IEEE Std 519-2014
+    edition: "2014"
+    clause: Table 3
+    url: https://standards.ieee.org/standard/519-2022.html
+  url: https://standards.ieee.org/standard/519-2022.html
+  license: Factual limit
+  verification: Band boundary test
+
+- id: IEEE519_TDD_BAND_100_1000
+  domain: power_quality
+  title: IEEE 519 TDD limit Isc/IL 100 up to 1000
+  aliases: [TDD 2.5 percent]
+  values:
+    tdd_percent: 2.5
+    isc_il_min: 100.0
+    isc_il_max: 1000.0
+    edition: IEEE-519-2022-Table-2
+  value_conditions:
+    tdd_percent: TDD limit 2.5% band
+  confidence: verified_dual
+  source:
+    title: IEEE Std 519-2022
+    edition: "2022"
+    clause: Table 2
+  source_secondary:
+    title: IEEE Std 519-2014
+    edition: "2014"
+    clause: Table 3
+    url: https://standards.ieee.org/standard/519-2022.html
+  url: https://standards.ieee.org/standard/519-2022.html
+  license: Factual limit
+  verification: Numeric band lookup
+
+- id: IEEE519_TDD_BAND_GT1000
+  domain: power_quality
+  title: IEEE 519 TDD limit Isc/IL above 1000
+  aliases: [TDD 1.5 percent]
+  values:
+    tdd_percent: 1.5
+    isc_il_min: 1000.0
+    isc_il_max: null
+    edition: IEEE-519-2022-Table-2
+  value_conditions:
+    tdd_percent: TDD limit 1.5% weakest supply band
+  confidence: verified_dual
+  source:
+    title: IEEE Std 519-2022
+    edition: "2022"
+    clause: Table 2
+  source_secondary:
+    title: IEEE Std 519-2014
+    edition: "2014"
+    clause: Table 3
+    url: https://standards.ieee.org/standard/519-2022.html
+  url: https://standards.ieee.org/standard/519-2022.html
+  license: Factual limit
+  verification: Isc/IL>1000 -> 1.5%

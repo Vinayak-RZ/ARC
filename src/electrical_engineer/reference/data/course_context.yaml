@@ -1,0 +1,71 @@
+- id: EEC301_EXP6_GOLDEN
+  domain: course_context
+  title: IIT Roorkee EEC-301 Experiment 6 SMIB golden pointer
+  aliases: [EEC301 exp6, SMIB lab, swing lab]
+  values:
+    artifact: artifacts/eec301-lab-goldens/exp06.json
+    engine: smib_swing.eec301_reference
+    workflow: smib-swing-study
+  value_conditions:
+    artifact: in-repo golden JSON for Exp 6
+  confidence: verified_dual
+  source:
+    title: Arc EEC-301 lab pack
+    edition: "in-repo"
+    clause: exp06.json
+  source_secondary:
+    title: eval/gold PSA smib-eec301-01
+    edition: "in-repo"
+    clause: expect.json
+    url: https://github.com/Vinayak-RZ/Electrical-Engineer
+  url: https://github.com/Vinayak-RZ/Electrical-Engineer
+  license: Apache-2.0
+  verification: PSA eval passes exp06 golden
+
+- id: EEC301_EXP7_AGC
+  domain: course_context
+  title: EEC-301 Experiment 7 two-area AGC pointer
+  aliases: [AGC lab, exp7]
+  values:
+    artifact: artifacts/eec301-lab-goldens/exp07.json
+    engine: agc_two_area
+    workflow: agc-two-area-study
+  value_conditions:
+    artifact: in-repo golden for Exp 7
+  confidence: verified_dual
+  source:
+    title: Arc EEC-301 pack
+    edition: "in-repo"
+    clause: exp07.json
+  source_secondary:
+    title: eval/gold agc-eec301-01
+    edition: "in-repo"
+    clause: expect.json
+    url: https://github.com/Vinayak-RZ/Electrical-Engineer
+  url: https://github.com/Vinayak-RZ/Electrical-Engineer
+  license: Apache-2.0
+  verification: PSA eval exp7
+
+- id: EEC301_EXP8_LAMBDA
+  domain: course_context
+  title: EEC-301 Experiment 8 economic dispatch lambda pointer
+  aliases: [lambda dispatch, exp8, ED lab]
+  values:
+    artifact: artifacts/eec301-lab-goldens/exp08.json
+    engine: ed_lambda
+    workflow: ed-lambda-study
+  value_conditions:
+    artifact: in-repo golden Exp 8
+  confidence: verified_dual
+  source:
+    title: Arc EEC-301 pack
+    edition: "in-repo"
+    clause: exp08.json
+  source_secondary:
+    title: eval/gold ed-eec301-01
+    edition: "in-repo"
+    clause: expect.json
+    url: https://github.com/Vinayak-RZ/Electrical-Engineer
+  url: https://github.com/Vinayak-RZ/Electrical-Engineer
+  license: Apache-2.0
+  verification: PSA eval exp8

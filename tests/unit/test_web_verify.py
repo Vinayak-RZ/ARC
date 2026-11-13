@@ -19,6 +19,36 @@ def _offline_provider(monkeypatch):
     monkeypatch.setenv("EE_WEB_VERIFY_PROVIDER", "offline")
 
 
+def test_reference_record_flows_to_answer_cited_md(tmp_path):
+    problem = {
+        "web_verify_fixture": "zebra_gmr",
+        "context_claims": [
+            {
+                "claim_id": "zebra_gmr",
+                "name": "ACSR Zebra GMR",
+                "reference_record_id": "ACSR_ZEBRA",
+                "record_value_key": "gmr_m",
+                "unit": "m",
+                "tolerance": 0.01,
+            }
+        ],
+    }
+    out = run_web_verify(
+        problem=problem,
+        solver_outputs={},
+        summary_lines=["Line parameter context check."],
+        run_dir=tmp_path,
+    )
+    cited = tmp_path / "evidence" / "answer_cited.md"
+    assert cited.is_file()
+    md = cited.read_text()
+    assert "0.01144" in md
+    assert "[1]" in md
+    assert "Similar solved problems" in md
+    assert out["web_sources"]["claims"][0].get("library_value") == 0.01144
+    assert out["web_sources"]["claims"][0].get("reference_record_id") == "ACSR_ZEBRA"
+
+
 def test_offline_catches_stale_library_value():
     problem = {
         "web_verify_fixture": "zebra_gmr",

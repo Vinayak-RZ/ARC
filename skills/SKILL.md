@@ -20,8 +20,11 @@ must not be forced through `simulate-circuit`.
 ## Verbs
 
 `list_workflows`, `retrieve`, `open_ui` / `clarify`, `simulate_attachment`,
-`propose_composition`, `label` / `summary`. `eval` is CLI. Pack skills load on
-domain match only (at most two).
+`propose_composition`, `label` / `summary`, `arc_reference_search`,
+`arc_reference_get`. `eval` is CLI; `reference search|get` on CLI. Pack skills
+load on domain match only (at most two). When a problem names a standard curve,
+conductor, IEEE case, or limit table, load `skills/reference/SKILL.md` and
+retrieve — do not assume constants.
 
 `propose_composition` names capability ids (preferred) or registered provider
 ids. Never invent `lookup_vout_guess`.
