@@ -1,0 +1,49 @@
+{
+  "p01": {
+    "loss_mw": 13.39
+  },
+  "p02": {
+    "backup_operating_time_s": 0.3375,
+    "primary_relay_tms": 0.0339
+  },
+  "p03": {
+    "ik3_symmetrical_ka": 38.811
+  },
+  "p04": {
+    "inductance_mh_per_km": 1.268
+  },
+  "p05": {
+    "magnetic_trip_lower_bound_a": 120
+  },
+  "p06": {
+    "tolerable_touch_v": 643.4
+  },
+  "p07": {
+    "tdd_percent": 8.39,
+    "meets_tdd_limit": 0
+  },
+  "p08": {
+    "hv_to_lv_phase_shift_deg": -30
+  },
+  "p09": {
+    "locked_rotor_current_a": 592.1
+  },
+  "p10": {
+    "permissible_band_hz": 0.15
+  },
+  "p11": {
+    "gen1_mw": 185.48,
+    "gen2_mw": 129.52,
+    "lambda_usd_per_mwh": 32.73
+  },
+  "p12": {
+    "conduction_loss_w": 11.088
+  },
+  "p13": {
+    "kappa_factor": 1.7222,
+    "peak_current_ka": 37.579
+  },
+  "p14": {
+    "line_line_drop_kv": 1.708
+  }
+}
