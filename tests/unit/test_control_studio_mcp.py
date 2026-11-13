@@ -1,6 +1,4 @@
-import json
 
-import pytest
 
 from electrical_engineer.control_studio.goldens import GOLDENS
 from electrical_engineer.control_studio.mcp_tools import handle_tool
