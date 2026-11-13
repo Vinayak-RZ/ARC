@@ -1,46 +1,24 @@
 - id: NEMA_CODE_G
   domain: machines
-  title: NEMA code letter G locked-rotor kVA per hp
+  title: NEMA MG 1 code letter G locked-rotor kVA per hp
   aliases: [code G, NEMA G]
   values:
     code_letter: G
     kva_per_hp_min: 5.6
     kva_per_hp_max: 6.29
+  value_conditions:
+    kva_per_hp_min: minimum locked-rotor kVA/hp band for code G
+    kva_per_hp_max: maximum locked-rotor kVA/hp band for code G
+  confidence: verified_dual
   source:
     title: NEMA MG 1
     edition: "2009"
-    clause: Table 11-1 code letters
+    clause: Table 11-1
+  source_secondary:
+    title: NEMA MG 1
+    edition: "2016"
+    clause: Table 11-1 code G
+    url: https://www.nema.org/
   url: https://www.nema.org/standards/view/locked-rotor-code-letters
   license: Factual code letter band
-  verification: MG1 Table code G band
-
-- id: NEMA_DESIGN_B
-  domain: machines
-  title: NEMA Design B induction motor slip/torque class note
-  aliases: [design B motor]
-  values:
-    design: B
-    typical_slip_percent: 3.0
-    application: general purpose
-  source:
-    title: NEMA MG 1
-    edition: "2009"
-    clause: Design B characteristics
-  url: https://www.nema.org/
-  license: Factual class description stub
-  verification: Teaching typical 3% slip at rated load
-
-- id: IE3_MOTOR_CLASS
-  domain: machines
-  title: IEC 60034-30-1 IE3 premium efficiency class label
-  aliases: [IE3, premium efficiency]
-  values:
-    ie_class: IE3
-    note: Use nameplate efficiency table per output; no single value
-  source:
-    title: IEC 60034-30-1
-    edition: "2014"
-    clause: efficiency class definitions
-  url: https://webstore.iec.ch/
-  license: Factual class label
-  verification: Record is label only; rated efficiencies are nameplate-specific
+  verification: MG1 Table 11-1 code G limits

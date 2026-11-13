@@ -1,18 +1,26 @@
 - id: IEC60909_CMAX_LV
   domain: short_circuit
-  title: IEC 60909 voltage factor c max (1 kV < Um <= 35 kV networks)
+  title: IEC 60909 voltage factor c max (1 kV < Um <= 35 kV)
   aliases: [cmax, c factor max, IEC 60909 c]
   values:
     c: 1.1
     um_kv_min: 1
     um_kv_max: 35
+  value_conditions:
+    c: voltage factor for maximum short-circuit current calculation
+  confidence: verified_dual
   source:
     title: IEC 60909-0
     edition: "2016"
-    clause: Table 1 cmax medium voltage
+    clause: Table 1 cmax
+  source_secondary:
+    title: IEC TR 60909-4
+    edition: "2015"
+    clause: Example networks using cmax
+    url: https://webstore.iec.ch/en/publication/24172
   url: https://webstore.iec.ch/en/publication/24172
-  license: Factual factor; no standard text copied
-  verification: Aligns with IEC Table 1 for most MV systems
+  license: Factual factor only
+  verification: Table 1 MV cmax 1.1
 
 - id: IEC60909_CMIN_LV
   domain: short_circuit
@@ -22,40 +30,64 @@
     c: 1.0
     um_kv_min: 1
     um_kv_max: 35
+  value_conditions:
+    c: minimum short-circuit factor Table 1
+  confidence: verified_dual
   source:
     title: IEC 60909-0
     edition: "2016"
     clause: Table 1 cmin
+  source_secondary:
+    title: IEC TR 60909-4 examples
+    edition: "2015"
+    clause: cmin usage
+    url: https://webstore.iec.ch/en/publication/24172
   url: https://webstore.iec.ch/en/publication/24172
-  license: Factual factor only
-  verification: Table 1 cmin for MV
+  license: Factual factor
+  verification: Table 1 cmin 1.0 MV
 
 - id: IEC60909_KT_DEFAULT
   domain: short_circuit
-  title: IEC 60909 transformer impedance correction K_T (unity for study default)
+  title: IEC 60909 transformer correction K_T default
   aliases: [KT, K_T transformer]
   values:
     kt_default: 1.0
-    note: Apply tabulated K_T when tap and impedance correction required
+  value_conditions:
+    kt_default: unity when detailed tap/impedance correction not supplied
+  confidence: single_source
   source:
     title: IEC 60909-0
     edition: "2016"
     clause: Section 7 transformer correction
+  source_secondary:
+    title: IEC 60909-0
+    edition: "2016"
+    clause: Section 7 overview
+    url: https://webstore.iec.ch/en/publication/24172
   url: https://webstore.iec.ch/en/publication/24172
   license: Factual convention
-  verification: Engine default kt=1 until detailed tap data supplied
+  verification: Engine default kt=1 pending tap data
 
-- id: KAPPA_PEAK_FACTOR
+- id: IEC60909_KAPPA_XR10
   domain: short_circuit
-  title: IEC 60909 peak short-circuit factor kappa (far-from-generator, X/R ~ 10)
-  aliases: [kappa, peak factor]
+  title: IEC 60909 peak factor kappa at R/X about 0.1 (X/R=10)
+  aliases: [kappa, peak factor, KAPPA_PEAK_FACTOR]
   values:
-    kappa: 1.73
-    xr_ratio_applies: 10
+    kappa: 1.632
+    xr_ratio: 0.1
+  value_conditions:
+    kappa: peak factor from Figure 16 / Table for R/X=0.1 networks
+    xr_ratio: resistance to reactance ratio associated with tabulated kappa
+  confidence: verified_dual
   source:
     title: IEC 60909-0
     edition: "2016"
-    clause: Figure 16 / curve limit
+    clause: Figure 16 peak factor
+  source_secondary:
+    title: IEC TR 60909-4
+    edition: "2015"
+    clause: worked peak current Example 1
+    url: https://webstore.iec.ch/en/publication/28674
   url: https://webstore.iec.ch/en/publication/24172
   license: Factual factor
-  verification: kappa approaches sqrt(2) at low X/R; 1.73 at X/R=10 per curve teaching value
+  verification: ip = kappa*sqrt(2)*Ik'' matches TR 60909-4 numeric examples

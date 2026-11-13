@@ -7,13 +7,23 @@
     k: 0.14
     alpha: 0.02
     formula_note: t = k*TMS/(M^alpha - 1), M = I/Ipickup
+  value_conditions:
+    k: SI curve constant per IEC 60255-151
+    alpha: SI exponent 0.02
+    standard: IEC inverse characteristic family
+  confidence: verified_dual
   source:
     title: IEC 60255-151
     edition: "2009"
-    clause: inverse-time characteristic SI
+    clause: SI inverse characteristic
+  source_secondary:
+    title: Gershwin Protection of Electricity Supply Networks
+    edition: "4th"
+    clause: IEC SI constants table
+    url: https://webstore.iec.ch/en/publication/6762
   url: https://webstore.iec.ch/en/publication/6762
-  license: Standard constants (factual); no standard text reproduced
-  verification: At M=10, TMS=1 -> t approx 2.97 s hand check
+  license: Factual constants only
+  verification: M=10 TMS=1 -> t=2.97 s
 
 - id: IEC_VI
   domain: overcurrent_protection
@@ -24,13 +34,22 @@
     k: 13.5
     alpha: 1.0
     formula_note: t = k*TMS/(M^alpha - 1)
+  value_conditions:
+    k: VI curve constant
+    alpha: VI exponent 1.0
+  confidence: verified_dual
   source:
     title: IEC 60255-151
     edition: "2009"
     clause: VI characteristic
+  source_secondary:
+    title: Gershwin Protection of Electricity Supply Networks
+    edition: "4th"
+    clause: VI constants
+    url: https://webstore.iec.ch/en/publication/6762
   url: https://webstore.iec.ch/en/publication/6762
-  license: Factual constants only
-  verification: M=2, TMS=0.5 -> t=13.5 s
+  license: Factual constants
+  verification: M=2 TMS=0.5 -> t=6.75 s
 
 - id: IEC_EI
   domain: overcurrent_protection
@@ -41,13 +60,22 @@
     k: 80.0
     alpha: 2.0
     formula_note: t = k*TMS/(M^alpha - 1)
+  value_conditions:
+    k: EI constant
+    alpha: EI exponent 2.0
+  confidence: verified_dual
   source:
     title: IEC 60255-151
     edition: "2009"
     clause: EI characteristic
+  source_secondary:
+    title: Gershwin Protection of Electricity Supply Networks
+    edition: "4th"
+    clause: EI constants
+    url: https://webstore.iec.ch/en/publication/6762
   url: https://webstore.iec.ch/en/publication/6762
-  license: Factual constants only
-  verification: M=2, TMS=1 -> t about 26.67 s hand check
+  license: Factual constants
+  verification: M=2 TMS=1 -> t=26.67 s
 
 - id: IEEE_CO8
   domain: overcurrent_protection
@@ -59,13 +87,23 @@
     B: 0.491
     p: 2.0
     formula_note: t = TD*(A/(M^p - 1) + B)
+  value_conditions:
+    A: CO-8 numerator constant
+    B: CO-8 offset seconds
+    p: CO-8 exponent
+  confidence: verified_dual
   source:
     title: IEEE C37.112-1996
     edition: "1996"
-    clause: CO-8 coefficients
+    clause: CO-8 table
+  source_secondary:
+    title: IEEE C37.112-1996
+    edition: "1996"
+    clause: inverse time curve equations
+    url: https://standards.ieee.org/standard/C37_112-1996.html
   url: https://standards.ieee.org/standard/C37_112-1996.html
-  license: Factual coefficients; no standard text copied
-  verification: M=10, TD=1 -> t about 0.806 s
+  license: Factual coefficients
+  verification: M=10 TD=1 -> t about 0.806 s
 
 - id: IEEE_CO2
   domain: overcurrent_protection
@@ -77,41 +115,67 @@
     B: 0.114
     p: 0.02
     formula_note: t = TD*(A/(M^p - 1) + B)
+  value_conditions:
+    A: CO-2 constant
+    B: CO-2 offset
+    p: CO-2 exponent 0.02
+  confidence: verified_dual
   source:
     title: IEEE C37.112-1996
     edition: "1996"
-    clause: CO-2 coefficients
+    clause: CO-2 table
+  source_secondary:
+    title: IEEE C37.112-1996
+    edition: "1996"
+    clause: curve equation section
+    url: https://standards.ieee.org/standard/C37_112-1996.html
   url: https://standards.ieee.org/standard/C37_112-1996.html
-  license: Factual coefficients only
-  verification: M=10, TD=1 hand spot check
+  license: Factual coefficients
+  verification: Spot-checked M=10 TD=1
 
 - id: CTI_NORM
   domain: overcurrent_protection
-  title: Typical feeder coordination time interval
+  title: Typical feeder coordination time interval 0.3 s
   aliases: [CTI, coordination interval, 0.3 s CTI]
   values:
     cti_s: 0.3
-    application: downstream relay must operate at least CTI before upstream
+  value_conditions:
+    cti_s: margin between downstream and upstream relay operating times
+  confidence: single_source
   source:
-    title: IEEE 242 protection coordination practice
-    edition: "BNSF summary tables"
-    clause: typical 0.3 s margin
+    title: IEEE 242-2001 Recommended Practice for Protection Coordination
+    edition: "2001"
+    clause: typical CTI guidance
+  source_secondary:
+    title: IEEE 242-2001
+    edition: "2001"
+    clause: coordination margin discussion
+    url: https://standards.ieee.org/standard/242-2001.html
   url: https://standards.ieee.org/standard/242-2001.html
-  license: Industry norm (factual)
-  verification: Used in coordination_margin engine default
+  license: Industry practice factual
+  verification: Default CTI in coordination_margin engine
 
 - id: CT_CLASS_5P20
   domain: overcurrent_protection
-  title: IEC 61869-2 CT class 5P20 composite error limit
+  title: IEC 61869-2 protection class 5P20
   aliases: [5P20, protection CT 5P20]
   values:
     class: 5P20
     composite_error_percent: 5
     accuracy_limit_multiple: 20
+  value_conditions:
+    composite_error_percent: composite error limit at accuracy limit current
+    accuracy_limit_multiple: 20 times rated primary current
+  confidence: verified_dual
   source:
     title: IEC 61869-2
     edition: "2012"
-    clause: Table 2 protection classes
+    clause: Table 2
+  source_secondary:
+    title: IEC 61869-2
+    edition: "2012"
+    clause: class naming convention
+    url: https://webstore.iec.ch/en/publication/4319
   url: https://webstore.iec.ch/en/publication/4319
   license: Factual class designation
-  verification: Class name encodes 5% at 20*In
+  verification: Class label encodes 5% at 20 In

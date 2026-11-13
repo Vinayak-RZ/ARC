@@ -1,10 +1,17 @@
-from electrical_engineer.reference.catalog import load_catalog, search_records
+from electrical_engineer.reference.catalog import clear_catalog_cache, load_catalog, search_records
+
+
+def setup_function() -> None:
+    clear_catalog_cache()
 from electrical_engineer.reference.schema import validate_record
 
 
 def test_all_reference_records_validate() -> None:
     catalog = load_catalog()
-    assert len(catalog) >= 30
+    assert len(catalog) >= 40
+    for rec in catalog.values():
+        assert rec["confidence"] in ("verified_dual", "single_source")
+        assert rec.get("source_secondary")
     for rid, rec in catalog.items():
         validate_record(rec, path=rid)
         assert rec["id"] == rid

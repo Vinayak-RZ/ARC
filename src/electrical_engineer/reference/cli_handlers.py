@@ -57,6 +57,33 @@ def cmd_engine(name: str, payload: dict[str, Any]) -> int:
             )
         elif name == "load_flow":
             out = ref_engines.run_case_load_flow(str(payload["case_id"]))
+        elif name == "economic_dispatch":
+            oos = payload.get("out_of_service_buses") or []
+            out = ref_engines.economic_dispatch(
+                str(payload["gencost_record_id"]),
+                total_load_mw=float(payload["total_load_mw"]),
+                out_of_service_buses=[int(b) for b in oos],
+            )
+        elif name == "iec60909_peak":
+            z = payload.get("z_ohm")
+            if isinstance(z, dict):
+                zc = complex(float(z["re"]), float(z.get("im", 0)))
+            else:
+                zc = complex(z)
+            out = ref_engines.peak_short_circuit_ka(
+                voltage_kv=float(payload["voltage_kv"]),
+                z_ohm=zc,
+                c_factor_id=str(payload.get("c_factor_id", "IEC60909_CMAX_LV")),
+                kt=float(payload.get("kt", 1.0)),
+                kappa_id=str(payload.get("kappa_id", "IEC60909_KAPPA_XR10")),
+            )
+        elif name == "nema_locked_rotor":
+            out = ref_engines.locked_rotor_current_a(
+                code_id=str(payload["code_id"]),
+                hp=float(payload["hp"]),
+                line_voltage_v=float(payload["line_voltage_v"]),
+                use=str(payload.get("use", "mid")),
+            )
         elif name == "ieee80":
             out = ref_engines.tolerable_voltages(
                 body_id=str(payload.get("body_id", "IEEE80_BODY_50KG")),
@@ -65,7 +92,12 @@ def cmd_engine(name: str, payload: dict[str, Any]) -> int:
                 t_s=float(payload.get("t_s", 1.0)),
             )
         elif name == "ieee519":
-            if payload.get("ratio_id"):
+            if payload.get("measured_tdd_percent") is not None:
+                out = ref_engines.tdd_compliance(
+                    isc_il_ratio=float(payload["isc_il_ratio"]),
+                    measured_tdd_percent=float(payload["measured_tdd_percent"]),
+                )
+            elif payload.get("ratio_id"):
                 out = ref_engines.tdd_limit_percent(ratio_id=str(payload["ratio_id"]))
             else:
                 out = ref_engines.tdd_limit_percent(isc_il_ratio=float(payload["isc_il_ratio"]))

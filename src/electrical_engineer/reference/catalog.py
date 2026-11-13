@@ -41,6 +41,15 @@ def _record_blob(rec: dict[str, Any]) -> str:
     return " ".join(parts).lower()
 
 
+def _condition_summary(rec: dict[str, Any]) -> dict[str, str]:
+    vals = rec.get("values") or {}
+    cond = dict(rec.get("value_conditions") or {})
+    for key in vals:
+        if key not in cond:
+            cond[key] = "see source clause; check units in key name"
+    return cond
+
+
 @lru_cache(maxsize=1)
 def load_catalog() -> dict[str, dict[str, Any]]:
     by_id: dict[str, dict[str, Any]] = {}
@@ -74,21 +83,29 @@ def get_record(record_id: str) -> dict[str, Any] | None:
 
 def _presentation(rec: dict[str, Any]) -> dict[str, Any]:
     src = rec["source"]
+    src2 = rec.get("source_secondary") or {}
     return {
         "id": rec["id"],
         "domain": rec["domain"],
         "title": rec["title"],
         "aliases": list(rec.get("aliases") or []),
         "values": rec["values"],
+        "value_conditions": _condition_summary(rec),
         "source": {
             "title": src["title"],
             "edition": src["edition"],
             "clause": src["clause"],
         },
+        "source_secondary": {
+            "title": src2["title"],
+            "edition": src2["edition"],
+            "clause": src2["clause"],
+            "url": src2.get("url", ""),
+        },
         "url": rec["url"],
         "license": rec["license"],
         "verification": rec["verification"],
-        "confidence": "curated_open_data",
+        "confidence": rec["confidence"],
     }
 
 
@@ -120,3 +137,7 @@ def search_records(query: str, *, limit: int = 20) -> list[dict[str, Any]]:
         item["score"] = score
         out.append(item)
     return out
+
+
+def clear_catalog_cache() -> None:
+    load_catalog.cache_clear()

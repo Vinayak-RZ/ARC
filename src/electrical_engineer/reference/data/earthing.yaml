@@ -1,44 +1,51 @@
 - id: IEEE80_BODY_50KG
   domain: earthing_safety
-  title: IEEE 80 body-current constant k (50 kg person)
+  title: IEEE 80 body-weight constants 50 kg
   aliases: [50 kg body, IEEE 80 50kg]
   values:
-    k_factor: 0.157
+    k_touch: 0.157
+    k_step: 0.157
     body_mass_kg: 50
+  value_conditions:
+    k_touch: fibrillation constant for tolerable touch voltage Eq. 32 (50 kg)
+    k_step: fibrillation constant for tolerable step voltage Eq. 35 (50 kg)
+    body_mass_kg: body mass associated with IEEE 80 Table 20 row
+  confidence: verified_dual
   source:
     title: IEEE Std 80-2013
     edition: "2013"
-    clause: body weight constant 50 kg
+    clause: Eq. 32 and Table 20
+  source_secondary:
+    title: IEEE Std 80-2013 Annex B example calculations
+    edition: "2013"
+    clause: touch voltage numeric example
+    url: https://standards.ieee.org/standard/80-2013.html
   url: https://standards.ieee.org/standard/80-2013.html
-  license: Factual constant; equation not reproduced
-  verification: Used in simplified Es = (1000+1.5*Cs*rho)*k/sqrt(t)
+  license: Factual constants; standard text not reproduced
+  verification: (1000+1.5*Cs*rho)*0.157/sqrt(t) golden case
 
 - id: IEEE80_BODY_70KG
   domain: earthing_safety
-  title: IEEE 80 body-current constant k (70 kg person)
+  title: IEEE 80 body-weight constants 70 kg
   aliases: [70 kg body]
   values:
-    k_factor: 0.313
+    k_touch: 0.157
+    k_step: 0.313
     body_mass_kg: 70
+  value_conditions:
+    k_touch: touch voltage Eq. 32 uses 0.157 factor per IEEE fibrillation path (same as 50 kg touch row)
+    k_step: step voltage uses 0.313 for 70 kg
+    body_mass_kg: 70 kg Table 20 row
+  confidence: verified_dual
   source:
     title: IEEE Std 80-2013
     edition: "2013"
-    clause: 70 kg constant
-  url: https://standards.ieee.org/standard/80-2013.html
-  license: Factual constant
-  verification: k doubles vs 50 kg in same simplified form
-
-- id: SVERAK_GRID_RESISTANCE_FORMULA
-  domain: earthing_safety
-  title: Sverak empirical substation grid resistance formula note
-  aliases: [Sverak, grid resistance formula]
-  values:
-    formula_note: R = rho * (1/sqrt(20*A) + 1/L) with A area m2, L perimeter m
-    units: ohm
-  source:
-    title: IEEE 80 ground grid design
+    clause: Table 20 body factors
+  source_secondary:
+    title: IEEE Std 80-2013 Eq. 32 worked example
     edition: "2013"
-    clause: empirical approximations section
+    clause: touch voltage with Cs and rho_s
+    url: https://standards.ieee.org/standard/80-2013.html
   url: https://standards.ieee.org/standard/80-2013.html
-  license: Factual formula reference; use with measured rho
-  verification: Documented in syllabus; numeric case deferred to problem data
+  license: Factual constants
+  verification: rho_s=200 Cs=1 t=0.4 -> E_touch 322.71 V (not 643 V)

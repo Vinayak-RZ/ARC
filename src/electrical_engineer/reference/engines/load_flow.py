@@ -32,6 +32,10 @@ def run_case_load_flow(case_id: str) -> dict[str, Any]:
         vm = float(net.res_bus.vm_pu.at[idx])
         buses.append({"bus": int(idx), "name": str(row.get("name", "")), "vm_pu": vm})
     worst = min(buses, key=lambda b: b["vm_pu"])
+    p_gen = float(net.res_gen.p_mw.sum()) if len(net.res_gen) else 0.0
+    p_ext = float(net.res_ext_grid.p_mw.sum()) if len(net.res_ext_grid) else 0.0
+    p_load = float(net.load.p_mw.sum()) if len(net.load) else 0.0
+    network_loss_mw = p_gen + p_ext - p_load
     return {
         "case_id": case_id,
         "loader": loader,
@@ -40,5 +44,9 @@ def run_case_load_flow(case_id: str) -> dict[str, Any]:
         "min_vm_pu": worst["vm_pu"],
         "min_vm_bus": worst["bus"],
         "converged": bool(net.converged),
+        "network_loss_mw": network_loss_mw,
+        "p_generation_mw": p_gen + p_ext,
+        "p_load_mw": p_load,
         "source_id": case_id,
+        "warning": "Do not use pandapower poly_cost for MATPOWER gencost; use economic_dispatch engine",
     }

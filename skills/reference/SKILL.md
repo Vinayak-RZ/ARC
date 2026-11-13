@@ -9,11 +9,14 @@ Use when a problem names a **standard symbol, curve, conductor, test case, or li
 | IEC SI / VI / EI, IEEE CO-8, "standard inverse" | `arc_reference_search` then `arc_reference_get`; run `reference engine idmt` with curve id |
 | IEC 60909, c factor, Ik'' | get `IEC60909_CMAX_LV` or `CMIN`; engine `iec60909` |
 | Dog / Wolf / Zebra / Drake ACSR | get conductor id (`ACSR_ZEBRA`); engine `line_params`; cite temp (20 °C vs 75 °C) |
-| IEEE 9 / 14 / 30 bus | get `IEEE_CASE_*`; engine `load_flow` when pandapower present |
+| IEEE 9 / 14 / 30 bus | get `IEEE_CASE_*`; `load_flow` (includes `network_loss_mw`) |
+| case9 economic dispatch | get `IEEE_CASE_9_GENCOST`; engine `economic_dispatch` — **not** pandapower poly_cost |
 | MCB type B/C/D trip | get `MCB_TYPE_*`; engine `mcb` |
 | IEEE 519 TDD | band id or `ieee519` with Isc/Il ratio |
 | Dyn11 / Yd1 | get `VECTOR_*`; engine `vector_group` — **do not flip sign** |
-| IEEE 80 touch/step | get body constant; engine `ieee80` with rho_s, Cs, t |
+| IEEE 80 touch/step | engine `ieee80` — touch uses `k_touch` (Eq. 32), step uses `k_step` |
+| IEC 60909 peak ip | engine `iec60909_peak` after Ik'' |
+| NEMA code letter I_lr | get `NEMA_CODE_*`; engine `nema_locked_rotor` |
 | EEC-301 Exp 6–8 | get `EEC301_EXP*` pointer; use existing PSA workflows |
 
 Never guess curve constants, conductor R, or c factors. If `get` returns missing, say so and check `docs/reference/GAPS.md`.

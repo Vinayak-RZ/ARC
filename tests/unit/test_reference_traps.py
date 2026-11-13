@@ -1,7 +1,12 @@
 """Regression traps for reference-backed engines (eval-aligned)."""
 
+from electrical_engineer.reference.catalog import clear_catalog_cache
 from electrical_engineer.reference.engines.idmt import idmt_operating_time_s
 from electrical_engineer.reference.engines.line_params import line_sequence_per_km
+
+
+def setup_function() -> None:
+    clear_catalog_cache()
 from electrical_engineer.reference.engines.vector_group import phase_shift_deg
 
 

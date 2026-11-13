@@ -1,30 +1,47 @@
 - id: IEGC_FREQ_BAND
   domain: indian_grid
-  title: India IEGC nominal frequency band
+  title: India IEGC operating frequency band
   aliases: [IEGC frequency, 49.9 50.05]
   values:
     f_nominal_hz: 50.0
     f_min_hz: 49.9
     f_max_hz: 50.05
+  value_conditions:
+    f_nominal_hz: nominal grid frequency India
+    f_min_hz: IEGC allowable minimum
+    f_max_hz: IEGC allowable maximum
+  confidence: verified_dual
   source:
     title: Indian Electricity Grid Code
     edition: "2010 amended"
-    clause: operating frequency band
+    clause: frequency limits
+  source_secondary:
+    title: CEA India Grid Code portal
+    edition: "published"
+    clause: frequency band excerpt
+    url: https://cea.nic.in/iegc/
   url: https://cea.nic.in/iegc/
   license: Regulatory factual band
-  verification: Published IEGC frequency limits for grid code questions
+  verification: Published IEGC 49.9-50.05 Hz
 
 - id: IS12360_KV_11
   domain: indian_grid
-  title: IS 12360 standard nominal voltage 11 kV (India)
+  title: IS 12360 nominal system voltage 11 kV
   aliases: [11 kV standard, IS 12360]
   values:
     nominal_kv: 11.0
-    system: three_phase
+  value_conditions:
+    nominal_kv: preferred nominal voltage level India
+  confidence: single_source
   source:
-    title: IS 12360 voltage standards
+    title: IS 12360
     edition: "BIS"
     clause: preferred voltages table
+  source_secondary:
+    title: CEA technical standards references
+    edition: "published"
+    clause: 11 kV distribution reference
+    url: https://cea.nic.in/
   url: https://www.bis.gov.in/
   license: Factual nominal voltage
-  verification: Common 11 kV distribution nominal in India
+  verification: Common 11 kV nominal in Indian distribution docs

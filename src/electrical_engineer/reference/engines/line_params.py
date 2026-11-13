@@ -33,20 +33,23 @@ def line_sequence_per_km(
     r_key = None
     if temp_c is not None and abs(temp_c - 75.0) < 0.5 and "r_ac_ohm_per_km_75c" in vals:
         r_key = "r_ac_ohm_per_km_75c"
-    elif temp_c is not None and abs(temp_c - 20.0) < 0.5 and "r_ac_ohm_per_km_20c" in vals:
-        r_key = "r_ac_ohm_per_km_20c"
+    elif temp_c is not None and abs(temp_c - 20.0) < 0.5 and "r_dc_ohm_per_km_20c" in vals:
+        r_key = "r_dc_ohm_per_km_20c"
+    elif "r_ac_ohm_per_km_75c" in vals:
+        r_key = "r_ac_ohm_per_km_75c"
+    elif "r_dc_ohm_per_km_20c" in vals:
+        r_key = "r_dc_ohm_per_km_20c"
     else:
-        r_key = "r_ac_ohm_per_km_75c" if "r_ac_ohm_per_km_75c" in vals else "r_ac_ohm_per_km_20c"
+        raise ValueError(f"no resistance key for {conductor_id}")
     r_per_km = float(vals[r_key])
     gmr_b = _bundled_gmr_m(gmr_m, n_bundled, spacing)
-    # L = mu0/(2pi) * ln(GMD/GMR); X_ohm_per_km = 2*pi*f*L with length in km -> factor 1000
     x_per_km = freq_hz * MU0 * math.log(spacing / gmr_b) * 1000.0
+    l_h_per_km = x_per_km / (2.0 * math.pi * freq_hz)
+    l_mh_per_km = l_h_per_km * 1000.0
     dia_m = float(vals.get("diameter_m", 0.02))
-    c_nf_per_km = None
     if "c_nf_per_km_nominal" in vals:
         c_nf_per_km = float(vals["c_nf_per_km_nominal"])
     else:
-        # crude parallel-plate equivalent; syllabus prefers named table when present
         c_nf_per_km = 24.0 / math.log(spacing / (dia_m / 2)) if spacing > dia_m / 2 else 10.0
     return {
         "conductor_id": conductor_id,
@@ -56,6 +59,7 @@ def line_sequence_per_km(
         "c_nF": c_nf_per_km * length_km,
         "r_ohm_per_km": r_per_km,
         "x_ohm_per_km": x_per_km,
+        "l_mh_per_km": l_mh_per_km,
         "c_nf_per_km": c_nf_per_km,
         "gmr_bundled_m": gmr_b,
         "temp_c_used": temp_c,
