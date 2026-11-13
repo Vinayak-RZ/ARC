@@ -361,9 +361,12 @@ def main() -> int:
                     pid.first.locator(".studio-block").click(force=True)
                 page.wait_for_timeout(400)
                 snap("studio-block-selected-after-simulate.png")
-                page.locator(".studio-window-segment button", has_text="Auto").click(force=True)
-                page.wait_for_timeout(600)
-                snap("studio-step-extended.png")
+                if args.round < 7:
+                    page.locator(".studio-canvas .react-flow__pane").click(position={"x": 40, "y": 40}, force=True)
+                    page.wait_for_timeout(200)
+                    page.locator(".studio-window-segment button", has_text="30 s").click(force=True)
+                    page.wait_for_timeout(1200)
+                    snap("studio-step-extended.png")
                 req_u = urllib.request.Request(
                     f"http://{HOST}:{PORT}/api/control-studio/sessions",
                     method="POST",
