@@ -1,0 +1,96 @@
+- id: MCB_TYPE_B
+  domain: low_voltage_protection
+  title: IEC 60898-1 Type B magnetic trip band
+  aliases: [MCB B, type B breaker]
+  values:
+    magnetic_multiple_min: 3.0
+    magnetic_multiple_max: 5.0
+  value_conditions:
+    magnetic_multiple_min: lower bound multiple of In for magnetic trip
+    magnetic_multiple_max: upper bound multiple of In for magnetic trip
+  confidence: verified_dual
+  source:
+    title: IEC 60898-1
+    edition: "2015"
+    clause: Table 3 type B
+  source_secondary:
+    title: IEC 60898-1
+    edition: "2015"
+    clause: instanteous trip definition
+    url: https://webstore.iec.ch/en/publication/4532
+  url: https://webstore.iec.ch/en/publication/4532
+  license: Factual band limits
+  verification: 3-5*In band
+
+- id: MCB_TYPE_C
+  domain: low_voltage_protection
+  title: IEC 60898-1 Type C magnetic trip band
+  aliases: [MCB C, type C]
+  values:
+    magnetic_multiple_min: 5.0
+    magnetic_multiple_max: 10.0
+  value_conditions:
+    magnetic_multiple_min: lower magnetic trip multiple of In (named field for agents)
+    magnetic_multiple_max: upper magnetic trip multiple
+  confidence: verified_dual
+  source:
+    title: IEC 60898-1
+    edition: "2015"
+    clause: type C band
+  source_secondary:
+    title: IEC 60898-1
+    edition: "2015"
+    clause: Table 3
+    url: https://webstore.iec.ch/en/publication/4532
+  url: https://webstore.iec.ch/en/publication/4532
+  license: Factual band
+  verification: 80 A on 16 A type C in magnetic band
+
+- id: MCB_TYPE_D
+  domain: low_voltage_protection
+  title: IEC 60898-1 Type D magnetic trip band
+  aliases: [MCB D, type D]
+  values:
+    magnetic_multiple_min: 10.0
+    magnetic_multiple_max: 20.0
+  value_conditions:
+    magnetic_multiple_min: lower bound 10*In
+    magnetic_multiple_max: upper bound 20*In
+  confidence: verified_dual
+  source:
+    title: IEC 60898-1
+    edition: "2015"
+    clause: type D band
+  source_secondary:
+    title: IEC 60898-1
+    edition: "2015"
+    clause: Table 3
+    url: https://webstore.iec.ch/en/publication/4532
+  url: https://webstore.iec.ch/en/publication/4532
+  license: Factual band
+  verification: 10-20*In
+
+- id: IEC60364_TN_DISCONNECTION_0_4S
+  domain: low_voltage_protection
+  title: IEC 60364-4-41 TN final-circuit disconnection time limit
+  aliases: [TN disconnection, 0.4 s touch]
+  values:
+    max_disconnection_s: 0.4
+    u0_v: 230
+    system: TN
+  value_conditions:
+    max_disconnection_s: maximum disconnection time for TN final circuits
+    u0_v: line-to-neutral voltage for table row
+  confidence: verified_dual
+  source:
+    title: IEC 60364-4-41
+    edition: "2017"
+    clause: Table 41.1
+  source_secondary:
+    title: IEC 60364-4-41
+    edition: "2017"
+    clause: TN-S auto disconnection
+    url: https://webstore.iec.ch/
+  url: https://webstore.iec.ch/
+  license: Factual time limit
+  verification: Table 41.1 0.4 s at 230 V

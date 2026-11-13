@@ -106,11 +106,48 @@ def recompute(problem: dict[str, Any], claims: list[dict[str, Any]]) -> dict[str
         out["L_mH_per_km"] = inductance_mh_per_km(gmd, gmr)
         return out
     if kind == "ieee80_touch_p06":
-        out["V_touch_V"] = ieee80_touch_v_70kg(
-            float(spec["ts_s"]),
-            rho_s_ohm_m=float(spec.get("rho_s_ohm_m", 100.0)),
-            cs=float(spec.get("cs", 1.0)),
+        from electrical_engineer.reference.engines.ieee80 import tolerable_voltage
+
+        ts_s = float(spec["ts_s"])
+        rho_s = float(spec.get("rho_s_ohm_m", 100.0))
+        cs_v = float(spec.get("cs", 1.0))
+        body_kg = int(spec.get("body_mass_kg", 70))
+        eng = tolerable_voltage(
+            kind="touch",
+            body_mass_kg=body_kg,
+            rho_s_ohm_m=rho_s,
+            cs=cs_v,
+            t_s=ts_s,
         )
+        out["V_touch_V"] = eng["e_v"]
+        out["standard_clause"] = eng["standard_clause"]
+        out["inputs_used"] = eng["inputs_used"]
+        out["equation"] = eng["equation"]
+        return out
+    if kind == "ieee80_step":
+        from electrical_engineer.reference.engines.ieee80 import tolerable_voltage
+
+        eng = tolerable_voltage(
+            kind="step",
+            body_mass_kg=int(spec["body_mass_kg"]),
+            rho_s_ohm_m=float(spec["rho_s_ohm_m"]),
+            cs=float(spec["cs"]),
+            t_s=float(spec["t_s"]),
+        )
+        out["e_v"] = eng["e_v"]
+        out["standard_clause"] = eng["standard_clause"]
+        out["inputs_used"] = eng["inputs_used"]
+        out["equation"] = eng["equation"]
+        return out
+    if kind == "ieee519_tdd":
+        from electrical_engineer.reference.engines.ieee519 import tdd_limit_percent
+
+        ratio = float(spec["isc_il_ratio"])
+        eng = tdd_limit_percent(isc_il_ratio=ratio)
+        out["tdd_limit_percent"] = eng["tdd_limit_percent"]
+        out["table_row_label"] = eng["table_row_label"]
+        out["standard_clause"] = eng["standard_clause"]
+        out["inputs_used"] = eng["inputs_used"]
         return out
     if kind == "case9_ed_p11":
         lam = float(spec["lambda_mwh"])

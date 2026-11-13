@@ -93,8 +93,10 @@ def validate_fixture_claim(claim: dict[str, Any]) -> None:
         if val is None:
             continue
         if (
-            not value_supported_by_snippet(str(src.get("snippet") or ""), float(val), src.get("unit"))
-            and role not in ("context_only",)
+            role not in ("context_only",)
+            and not value_supported_by_snippet(
+                str(src.get("snippet") or ""), float(val), src.get("unit")
+            )
         ):
             raise ValueError(
                 f"source {src.get('url')}: extracted_value {val} not supported by snippet"
