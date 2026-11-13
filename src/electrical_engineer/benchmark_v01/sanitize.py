@@ -24,8 +24,8 @@ GRADER_ONLY_KEYS = frozenset(
     }
 )
 
-_RE_ARTIFACT = re.compile(r"(`[^`]*artifacts[^`]*`|artifacts/[^\s]+)", re.I)
-_RE_ARC = re.compile(r"\b(Arc PSA|recipe_id|fixture case\.json|Run recipe)\b.*", re.I)
+_RE_ARTIFACT = re.compile(r"(`[^`]*artifacts[^`]*`|artifacts/[^\s]+)", re.IGNORECASE)
+_RE_ARC = re.compile(r"\b(Arc PSA|recipe_id|fixture case\.json|Run recipe)\b.*", re.IGNORECASE)
 
 
 def strip_grader_fields(obj: Any) -> Any:

@@ -74,7 +74,6 @@ def test_questions_tarball_has_no_answer_key_or_leaks() -> None:
     key = _load_key()
     banned = {"expected", "tol", "pick_sigma", "value_key", "solver", "check_kind"}
     for task in tasks:
-        blob = json.dumps({"q": task["question"], "g": task["givens"]})
         assert not any(b in task["givens"] for b in banned)
         ref = key[task["id"]]["reference"]
         schema = task.get("answer_schema") or {}
@@ -82,7 +81,6 @@ def test_questions_tarball_has_no_answer_key_or_leaks() -> None:
         if not key_fields:
             key_fields = list(ref.keys())
         tol_by = {f["name"]: float(f.get("tolerance", 1e-3)) for f in schema.get("fields", [])}
-        public_blob = (task["question"] + json.dumps(task["givens"], sort_keys=True)).lower()
         for fname in key_fields:
             val = ref.get(fname)
             if not isinstance(val, (int, float)) or isinstance(val, bool):
