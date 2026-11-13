@@ -82,6 +82,17 @@ def _clear_runs() -> None:
     RUNS.mkdir(parents=True, exist_ok=True)
 
 
+def _set_theme(page, mode: str) -> None:
+    page.evaluate(
+        """(mode) => {
+        document.documentElement.dataset.theme = mode;
+        localStorage.setItem('arc-theme', mode);
+    }""",
+        mode,
+    )
+    page.wait_for_timeout(200)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--round", type=int, default=1)
@@ -108,6 +119,7 @@ def main() -> int:
     )
     hashes: dict[str, str] = {}
     backup = None
+    measurements: dict[str, object] = {}
     try:
         _wait_server(server)
         backup = _backup_runs()
@@ -116,9 +128,10 @@ def main() -> int:
             browser = p.chromium.launch()
             page = browser.new_page(viewport={"width": W, "height": H})
 
-            def snap(name: str) -> None:
+            def snap(name: str, target=None) -> None:
+                shot = target or page
                 path = out_dir / name
-                page.screenshot(path=str(path), full_page=False)
+                shot.screenshot(path=str(path), full_page=False)
                 digest = _md5(path)
                 if digest in hashes.values():
                     dup = [k for k, v in hashes.items() if v == digest][0]
@@ -157,13 +170,13 @@ def main() -> int:
             page.wait_for_selector(".parameters-drawer", state="hidden", timeout=5000)
             page.get_by_role("tab", name="Diagram").click()
             page.wait_for_selector('.tab-underline[aria-selected="true"]:has-text("Diagram")', timeout=5000)
-            page.locator(".lab-surface").first.wait_for(state="visible", timeout=10000)
+            page.locator(".static-diagram, .diagram-shell svg").first.wait_for(state="visible", timeout=15000)
             snap("problem-answer.png")
 
             page.get_by_role("tab", name="Work").click()
             page.wait_for_selector('.tab-underline[aria-selected="true"]:has-text("Work")', timeout=5000)
-            page.wait_for_selector(".work-trail-step", timeout=10000)
-            page.locator(".work-trail").scroll_into_view_if_needed()
+            page.wait_for_selector(".step-timeline-row", timeout=10000)
+            page.locator(".step-timeline").scroll_into_view_if_needed()
             if page.locator(".parameters-drawer").is_visible():
                 page.click(".topbar-params-toggle")
             snap("problem-work-tab.png")
@@ -172,9 +185,38 @@ def main() -> int:
             page.wait_for_selector(".param-field input", timeout=10000)
             snap("problem-parameters-drawer.png")
 
+            page.locator("#param-r2").fill("2")
+            page.wait_for_selector(".stale-banner", timeout=5000)
+            snap("problem-parameters-stale.png")
+            page.keyboard.press("Escape")
+
+            go("?view=home")
+            page.locator(".composer-input").focus()
+            page.wait_for_timeout(100)
+            snap("focus-composer.png")
+
             go("?view=studio")
             page.wait_for_timeout(800)
             snap("studio.png")
+
+            page.locator(".studio-canvas .react-flow").wait_for(state="visible", timeout=15000)
+            page.locator(".studio-palette").scroll_into_view_if_needed()
+            chip = page.locator(".studio-palette-chip-compact").first
+            if chip.count() > 0:
+                chip.click(force=True)
+                page.wait_for_timeout(600)
+            nodes = page.locator(".react-flow__node")
+            if nodes.count() > 0:
+                box = nodes.last.bounding_box()
+                if box:
+                    page.mouse.click(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
+                page.wait_for_timeout(400)
+            snap("studio-block-selected.png")
+            sim = page.locator(".cs-simulate-btn")
+            if sim.count() > 0:
+                sim.click()
+                page.wait_for_timeout(2000)
+            snap("studio-after-simulate.png")
 
             go("?view=gallery")
             page.wait_for_selector(".gallery-card", timeout=10000)
@@ -188,9 +230,56 @@ def main() -> int:
             page.wait_for_selector(".settings-page", timeout=10000)
             snap("settings.png")
 
-            go("?view=home")
+            _clear_runs()
+            go("?view=problems")
+            page.wait_for_selector(".problems-empty", timeout=10000)
+            snap("problems-empty.png")
+
+            page.route("**/api/runs", lambda route: route.fulfill(status=500, body="{}"))
+            page.reload(wait_until="domcontentloaded")
+            page.wait_for_selector(".problems-error", timeout=15000)
+            snap("problems-error.png")
+            page.unroute("**/api/runs")
+
+            loading_page = browser.new_page(viewport={"width": W, "height": H})
+            held_runs: list = []
+
+            def hold_runs(route) -> None:
+                held_runs.append(route)
+
+            loading_page.route("**/api/runs", hold_runs)
+            loading_page.goto(f"http://{HOST}:{PORT}/?view=problems", wait_until="commit", timeout=60000)
+            loading_page.wait_for_selector(".problems-loading", timeout=10000)
+            loading_page.wait_for_timeout(150)
+            snap("problems-loading.png", loading_page)
+            if held_runs:
+                held_runs[0].fulfill(status=200, body=json.dumps({"runs": []}), headers={"Content-Type": "application/json"})
+            loading_page.close()
+
+            run_id = _run_example("divider")
+
+            go("?view=problems")
+            page.wait_for_selector(".problems-table", timeout=15000)
+            expanded_w = page.evaluate(
+                """() => {
+                const sb = document.querySelector('.product-sidebar');
+                const shell = document.querySelector('.product-shell');
+                return { sidebar: sb?.getBoundingClientRect().width ?? 0, shellCols: getComputedStyle(shell).gridTemplateColumns };
+            }"""
+            )
+            measurements["sidebar_expanded"] = expanded_w
+
             page.keyboard.press("Control+b")
             page.wait_for_selector(".product-sidebar.is-collapsed", timeout=5000)
+            page.wait_for_timeout(220)
+            collapsed_w = page.evaluate(
+                """() => {
+                const sb = document.querySelector('.product-sidebar');
+                const shell = document.querySelector('.product-shell');
+                return { sidebar: sb?.getBoundingClientRect().width ?? 0, shellCols: getComputedStyle(shell).gridTemplateColumns };
+            }"""
+            )
+            measurements["sidebar_collapsed"] = collapsed_w
             snap("sidebar-collapsed.png")
 
             page.keyboard.press("Control+b")
@@ -198,21 +287,32 @@ def main() -> int:
             page.keyboard.press("Control+k")
             page.wait_for_selector(".cmdk-root", timeout=5000)
             snap("cmdk-open.png")
+            page.locator(".cmdk-root [cmdk-input]").fill("divider")
+            page.wait_for_timeout(150)
+            snap("cmdk-query.png")
 
             page.keyboard.press("Escape")
+            _set_theme(page, "dark")
             go("?view=home")
-            page.evaluate(
-                """() => {
-                document.documentElement.dataset.theme = 'dark';
-                localStorage.setItem('arc-theme', 'dark');
-            }"""
-            )
-            page.wait_for_timeout(300)
             snap("dark-home.png")
+
+            if not run_id:
+                run_id = _run_example("divider")
+            go(f"?problem={run_id}")
+            page.wait_for_selector(".answer-line", timeout=30000)
+            snap("dark-problem.png")
+
+            go("?view=studio")
+            page.wait_for_timeout(800)
+            snap("dark-studio.png")
+
             browser.close()
 
         md5_lines = [f"{name}  {dig}" for name, dig in sorted(hashes.items())]
         (out_dir / "md5.txt").write_text("\n".join(md5_lines) + "\n", encoding="utf-8")
+        (out_dir / "sidebar-measurements.json").write_text(
+            json.dumps(measurements, indent=2) + "\n", encoding="utf-8"
+        )
         print("md5.txt written", out_dir / "md5.txt")
         return 0
     finally:

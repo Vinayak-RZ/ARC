@@ -14,6 +14,7 @@ def test_css_vars_match_design() -> None:
     assert "Geist" in css
     assert "JetBrains Mono" in css
     assert "--ee-border-input: #8c8c87" in css
+    assert "--ee-border-input-hover: #8a8a85" in css
     assert "--ee-color-hairline" in css
     assert ".status-badge" in css
     assert "var(--ee-color-surface-strong)" in css

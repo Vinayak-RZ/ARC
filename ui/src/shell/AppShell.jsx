@@ -20,7 +20,7 @@ export function AppShell() {
   const setRun = useLayout((s) => s.setRun);
   const setThemeMode = useLayout((s) => s.setThemeMode);
   const collapsed = useLayout((s) => s.sidebarCollapsed);
-  const { runs, reload } = useRunsList();
+  const { runs, loading: runsLoading, error: runsError, reload } = useRunsList();
   const { data } = useRun(id);
   useEffect(() => {
     const mode = getStoredTheme();
@@ -52,12 +52,10 @@ export function AppShell() {
     [setRun, setView],
   );
   const openProblem = (runId) => navigate({ view: "problems", runId });
+  const stale = useLayout((s) => s.parametersStale);
+  const runMeta = id ? runs.find((r) => r.id === id) || { id, title: data?.title, modified_at: data?.modified_at } : null;
   let primaryLabel = null;
   let onPrimary = null;
-  if (view === "home") {
-    primaryLabel = "New problem";
-    onPrimary = () => navigate({ view: "problems" });
-  }
   if (view === "problems" && id) {
     primaryLabel = "Run again";
     onPrimary = () => openProblem(id);
@@ -66,15 +64,21 @@ export function AppShell() {
   if (view === "home") workspace = <HomePage runs={runs} onRunsChange={reload} onOpenProblem={openProblem} />;
   else if (view === "problems" && !id) {
     workspace = (
-      <ProblemsPage runs={runs} onOpenProblem={openProblem} onTryExample={() => navigate({ view: "home" })} />
+      <ProblemsPage
+        runs={runs}
+        loading={runsLoading}
+        error={runsError}
+        onReload={reload}
+        onOpenProblem={openProblem}
+        onTryExample={() => navigate({ view: "home" })}
+      />
     );
   } else if (view === "problems" && id) {
-    workspace = <ProblemDetailPage id={id} data={data} />;
+    workspace = <ProblemDetailPage id={id} data={data} runMeta={runMeta} />;
   } else if (view === "studio") workspace = renderSlot("control.studio");
   else if (view === "gallery") workspace = renderSlot("visual.gallery");
   else if (view === "library") workspace = renderSlot("rag.inventory");
   else if (view === "settings") workspace = <SettingsPage />;
-  const runMeta = id ? runs.find((r) => r.id === id) || { id, title: data?.title } : null;
   return (
     <div className={collapsed ? "product-shell is-sidebar-collapsed" : "product-shell"}>
       <a className="skip" href="#workspace">
@@ -86,7 +90,12 @@ export function AppShell() {
         onNewProblem={() => navigate({ view: "home" })}
       />
       <div className="product-main">
-        <TopBar runMeta={runMeta} primaryLabel={primaryLabel} onPrimaryAction={onPrimary} />
+        <TopBar
+          runMeta={runMeta}
+          primaryLabel={primaryLabel}
+          onPrimaryAction={onPrimary}
+          runAgainPrimary={view === "problems" && id && stale}
+        />
         <main id="workspace" className="workspace product-workspace">
           {workspace}
         </main>

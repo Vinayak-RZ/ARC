@@ -4,6 +4,20 @@ import { useLayout } from "../store.js";
 import { displayTitle } from "../runDisplay.js";
 import { applyTheme, resolveTheme } from "./theme.js";
 
+const NAV = [
+  { id: "home", label: "Home", keys: "G H" },
+  { id: "problems", label: "Problems", keys: "G P" },
+  { id: "studio", label: "Studio", keys: "G S" },
+  { id: "gallery", label: "Gallery", keys: "G A" },
+  { id: "library", label: "Library", keys: "G L" },
+  { id: "settings", label: "Settings", keys: "G ," },
+];
+
+const ACTIONS = [
+  { id: "theme", label: "Toggle theme", keys: "T" },
+  { id: "sidebar", label: "Toggle sidebar", keys: "⌃B" },
+];
+
 export function CommandPalette({ runs, onNavigate }) {
   const open = useLayout((s) => s.commandOpen);
   const setOpen = useLayout((s) => s.setCommandOpen);
@@ -22,24 +36,14 @@ export function CommandPalette({ runs, onNavigate }) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [setOpen]);
-  const items = useMemo(() => {
-    const nav = [
-      { id: "home", label: "Go to Home" },
-      { id: "problems", label: "Go to Problems" },
-      { id: "studio", label: "Go to Studio" },
-      { id: "gallery", label: "Go to Gallery" },
-      { id: "library", label: "Go to Library" },
-      { id: "settings", label: "Go to Settings" },
-    ];
-    return [
-      ...nav,
-      ...runs.slice(0, 30).map((r) => ({
-        id: `problem-${r.id}`,
-        label: `Open ${displayTitle(r)}`,
-        runId: r.id,
+  const problems = useMemo(
+    () =>
+      runs.slice(0, 20).map((r) => ({
+        id: r.id,
+        label: displayTitle(r),
       })),
-    ];
-  }, [runs]);
+    [runs],
+  );
   if (!open) return null;
   return (
     <div className="cmdk-overlay" role="presentation" onClick={() => setOpen(false)}>
@@ -47,32 +51,65 @@ export function CommandPalette({ runs, onNavigate }) {
         <Command.Input value={query} onValueChange={setQuery} placeholder="Jump to a page or problem…" />
         <Command.List>
           <Command.Empty>No matches.</Command.Empty>
-          {items.map((item) => (
-            <Command.Item
-              key={item.id}
-              value={item.label}
-              onSelect={() => {
-                if (item.runId) onNavigate({ view: "problems", runId: item.runId });
-                else onNavigate({ view: item.id });
-                setOpen(false);
-              }}
-            >
-              {item.label}
-            </Command.Item>
-          ))}
-          <Command.Item
-            value="Toggle theme"
-            onSelect={() => {
-              const cur = resolveTheme(useLayout.getState().themeMode);
-              const next = cur === "dark" ? "light" : "dark";
-              useLayout.getState().setThemeMode(next);
-              applyTheme(next);
-              setOpen(false);
-            }}
-          >
-            Toggle theme
-          </Command.Item>
+          <Command.Group heading="Go to">
+            {NAV.map((item) => (
+              <Command.Item
+                key={item.id}
+                value={`${item.label} ${item.id}`}
+                onSelect={() => {
+                  onNavigate({ view: item.id });
+                  setOpen(false);
+                }}
+              >
+                <span>{item.label}</span>
+                <kbd className="cmdk-kbd">{item.keys}</kbd>
+              </Command.Item>
+            ))}
+          </Command.Group>
+          {problems.length > 0 ? (
+            <Command.Group heading="Recent problems">
+              {problems.map((item) => (
+                <Command.Item
+                  key={item.id}
+                  value={`${item.label} ${item.id}`}
+                  onSelect={() => {
+                    onNavigate({ view: "problems", runId: item.id });
+                    setOpen(false);
+                  }}
+                >
+                  <span>{item.label}</span>
+                </Command.Item>
+              ))}
+            </Command.Group>
+          ) : null}
+          <Command.Group heading="Actions">
+            {ACTIONS.map((item) => (
+              <Command.Item
+                key={item.id}
+                value={item.label}
+                onSelect={() => {
+                  if (item.id === "theme") {
+                    const cur = resolveTheme(useLayout.getState().themeMode);
+                    const next = cur === "dark" ? "light" : "dark";
+                    useLayout.getState().setThemeMode(next);
+                    applyTheme(next);
+                  } else if (item.id === "sidebar") {
+                    useLayout.getState().toggleSidebar();
+                  }
+                  setOpen(false);
+                }}
+              >
+                <span>{item.label}</span>
+                <kbd className="cmdk-kbd">{item.keys}</kbd>
+              </Command.Item>
+            ))}
+          </Command.Group>
         </Command.List>
+        <footer className="cmdk-footer">
+          <span>↑↓ navigate</span>
+          <span>↵ open</span>
+          <span>esc close</span>
+        </footer>
       </Command>
     </div>
   );

@@ -151,7 +151,7 @@ export function HomePage({ runs, onRunsChange, onOpenProblem }) {
           ref={areaRef}
           className="composer-input"
           value={prompt}
-          placeholder={PLACEHOLDERS.join("  ")}
+          placeholder={PLACEHOLDERS[0]}
           onChange={(e) => setPrompt(e.target.value)}
           rows={3}
         />
@@ -204,7 +204,7 @@ export function HomePage({ runs, onRunsChange, onOpenProblem }) {
       <section className="home-section agent-card">
         <h2>Agent</h2>
         <p className="hint">
-          Run <code>electrical-engineer mcp</code> in this repo and connect Cursor, Claude Code, or Codex. From the CLI:
+          Run <code>electrical-engineer mcp</code> in this repo and connect Cursor or Claude Code. CLI:{" "}
           <code className="home-cli">electrical-engineer run solve-circuit-problem</code>
         </p>
       </section>

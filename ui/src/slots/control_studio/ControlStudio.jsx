@@ -360,12 +360,8 @@ function ControlStudioInner({ sessionId, onSession }) {
 
   return (
     <section className="cs-app control-studio">
-      <header className="cs-header">
-        <div className="cs-header-title">
-          <h2>Control Studio</h2>
-          <p>{session?.diagram?.title || "PID · DC motor"}</p>
-        </div>
-        <span className="cs-session-id">{session?.session_id ? `Session ${session.session_id}` : null}</span>
+      <header className="cs-toolbar" aria-label="Studio actions">
+        <span className="visually-hidden">Studio workbench</span>
         {agentActive ? (
           <span className="cs-presence">
             <span className="cs-presence-dot" aria-hidden>
@@ -373,9 +369,7 @@ function ControlStudioInner({ sessionId, onSession }) {
             </span>{" "}
             Agent editing
           </span>
-        ) : (
-          <span className="cs-presence is-idle">Live sync (SSE)</span>
-        )}
+        ) : null}
         <div className="cs-toolbar-actions">
           {msg ? <span className="cs-status-msg">{msg}</span> : null}
           <button type="button" className="cs-btn cs-btn-secondary" onClick={undo}>
@@ -383,7 +377,7 @@ function ControlStudioInner({ sessionId, onSession }) {
           </button>
           <button
             type="button"
-            className={`cs-btn cs-btn-primary${resultsStale ? " is-stale" : ""}`}
+            className={`cs-btn cs-btn-primary cs-simulate-btn${resultsStale ? " is-stale" : ""}`}
             onClick={runSim}
           >
             {resultsStale ? "Simulate again" : "Simulate"}

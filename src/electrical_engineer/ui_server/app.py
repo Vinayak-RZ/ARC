@@ -162,7 +162,7 @@ _UI_EXAMPLES = (
         "title": "DC drive speed",
         "caption": "Steady speed for armature drive with load torque",
         "subject": "Machines",
-        "thumbnail": _golden_thumb("circuits/waveform.phasor.png"),
+        "thumbnail": _golden_thumb("circuits/schematic.rlc_series.png"),
         "recipe_id": "solve-drives-problem",
         "problem": {"kind": "dc", "v_dc": 120, "ra_ohm": 1, "k_torque": 0.5, "t_load_nm": 5},
     },
@@ -180,7 +180,7 @@ _UI_EXAMPLES = (
         "title": "Signals workout",
         "caption": "Solve a signals problem with checked numerics",
         "subject": "Signals",
-        "thumbnail": _golden_thumb("circuits/waveform.phasor.png"),
+        "thumbnail": _golden_thumb("control/control.bode.png"),
         "recipe_id": "solve-signals-problem",
         "problem": {"prompt": "find fundamental frequency of a 60 Hz sinusoid"},
     },
@@ -342,10 +342,15 @@ def create_app(root: Path | None = None) -> FastAPI:
         graph = _read_json(d / "graph.json")
         control_diagram = _read_json(d / "control_diagram.json")
         problem = _read_json(d / "problem.json")
+        try:
+            modified_at = d.stat().st_mtime
+        except OSError:
+            modified_at = 0.0
         return {
             "id": run_id,
             "title": _human_run_title(d, evid_obj),
             "problem": problem,
+            "modified_at": modified_at,
             "summary": evid_text,
             "evidentiary": evid_text,
             "argument": argument,

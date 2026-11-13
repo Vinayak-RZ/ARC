@@ -1,10 +1,9 @@
-import { useState } from "react";
 import { useLayout } from "../store.js";
 import { renderSlot } from "../slots/registry.js";
 import { EngineArtifacts } from "../slots/engine/EngineArtifacts.jsx";
-import { Inspector } from "../slots/canvas/Inspector.jsx";
-import { WorkTrail } from "../components/WorkTrail.jsx";
+import { StepTimeline, TraceDiagnostics } from "../components/StepTimeline.jsx";
 import { ParametersPanel } from "../components/ParametersPanel.jsx";
+import { ProblemHeader } from "../components/ProblemHeader.jsx";
 
 const TABS = [
   { id: "work", label: "Work" },
@@ -13,11 +12,12 @@ const TABS = [
   { id: "activity", label: "Activity" },
 ];
 
-export function ProblemDetailPage({ id, data }) {
+export function ProblemDetailPage({ id, data, runMeta }) {
   const tab = useLayout((s) => s.problemTab);
   const setTab = useLayout((s) => s.setProblemTab);
   const drawer = useLayout((s) => s.parametersOpen);
-  const [stale, setStale] = useState(false);
+  const stale = useLayout((s) => s.parametersStale);
+  const setStale = useLayout((s) => s.setParametersStale);
   let recipeId = "";
   try {
     const evid = JSON.parse(data?.summary || "{}");
@@ -29,7 +29,8 @@ export function ProblemDetailPage({ id, data }) {
 
   return (
     <div className="page-column problem-detail">
-      {renderSlot("run.result", { id })}
+      <ProblemHeader runMeta={runMeta} data={data} />
+      {renderSlot("run.result", { id, runMeta })}
       <div className="problem-tabs tabs-underline" role="tablist">
         {TABS.map((t) => (
           <button
@@ -46,21 +47,19 @@ export function ProblemDetailPage({ id, data }) {
       </div>
       <div className={`problem-detail-body${drawer ? " is-drawer-open" : ""}`}>
         <div className="problem-tab-panel">
-          {tab === "work" ? <WorkTrail data={data} /> : null}
+          {tab === "work" ? <StepTimeline data={data} /> : null}
           {tab === "figures" ? <EngineArtifacts id={id} recipeId={recipeId} /> : null}
           {tab === "diagram" ? (
-            <div className="diagram-layout">
-              <div className={hasStudy ? "lab-surface lab-surface-study" : "lab-surface lab-surface-circuit"}>
-                {renderSlot("run.canvas", { id })}
-              </div>
-              {!hasStudy ? (
-                <aside className="diagram-inspector" aria-label="Diagram inspector">
-                  <Inspector />
-                </aside>
-              ) : null}
+            <div className="diagram-shell">
+              {renderSlot("run.canvas", { id })}
             </div>
           ) : null}
-          {tab === "activity" ? renderSlot("run.more", { id }) : null}
+          {tab === "activity" ? (
+            <>
+              {renderSlot("run.more", { id })}
+              <TraceDiagnostics trace={data?.trace_excerpt} />
+            </>
+          ) : null}
         </div>
         {drawer ? (
           <aside className="parameters-drawer" aria-label="Parameters">

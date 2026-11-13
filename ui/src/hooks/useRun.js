@@ -29,16 +29,24 @@ export function useRun(id) {
 export function useRunsList() {
   const [runs, setRuns] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   function reload() {
     setLoading(true);
+    setError(false);
     fetch("/api/runs")
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error("failed");
+        return r.json();
+      })
       .then((d) => setRuns(d.runs || []))
-      .catch(() => setRuns([]))
+      .catch(() => {
+        setRuns([]);
+        setError(true);
+      })
       .finally(() => setLoading(false));
   }
   useEffect(() => {
     reload();
   }, []);
-  return { runs, loading, reload };
+  return { runs, loading, error, reload };
 }

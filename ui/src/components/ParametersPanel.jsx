@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
+import { formatResistanceOhms, formatVoltage, parseResistanceInput } from "../units/format.js";
 
 const FIELDS = {
   voltage_divider: [
-    { key: "vin", label: "Vin", unit: "V", scale: 1 },
-    { key: "r1", label: "R1", unit: "Ω", scale: 1 },
-    { key: "r2", label: "R2", unit: "Ω", scale: 1 },
+    { key: "vin", label: "Vin", kind: "voltage" },
+    { key: "r1", label: "R1", kind: "resistance" },
+    { key: "r2", label: "R2", kind: "resistance" },
   ],
   ohms_law: [
-    { key: "v", label: "V", unit: "V", scale: 1 },
-    { key: "r", label: "R", unit: "Ω", scale: 1 },
+    { key: "v", label: "V", kind: "voltage" },
+    { key: "r", label: "R", kind: "resistance" },
   ],
 };
 
@@ -20,18 +21,9 @@ function inferKind(problem) {
   return "";
 }
 
-function displayValue(key, raw, scale) {
-  const n = Number(raw);
-  if (Number.isNaN(n)) return raw ?? "";
-  if (key.startsWith("r") && n >= 1000) return (n / 1000).toFixed(3);
-  return String(n);
-}
-
-function parseInput(key, text, scale) {
-  const n = Number(text);
-  if (Number.isNaN(n)) return null;
-  if (key.startsWith("r") && n < 1000) return n * 1000;
-  return n;
+function displayField(kind, raw) {
+  if (kind === "voltage") return formatVoltage(raw);
+  return formatResistanceOhms(raw);
 }
 
 export function ParametersPanel({ problem, stale, onChange, onRunAgain }) {
@@ -49,9 +41,14 @@ export function ParametersPanel({ problem, stale, onChange, onRunAgain }) {
     return <p className="empty">No editable parameters for this problem type.</p>;
   }
 
-  function update(key, text) {
-    const next = parseInput(key, text, 1);
-    if (next == null) return;
+  function update(key, fieldKind, text, unit) {
+    let next;
+    if (fieldKind === "resistance") {
+      next = parseResistanceInput(text, unit);
+    } else {
+      next = Number(text);
+    }
+    if (next == null || Number.isNaN(next)) return;
     const merged = { ...draft, [key]: next, kind: kind || draft.kind };
     setDraft(merged);
     onChange?.(merged);
@@ -68,22 +65,34 @@ export function ParametersPanel({ problem, stale, onChange, onRunAgain }) {
         </div>
       ) : null}
       <ul className="param-fields">
-        {rows.map((f) => (
-          <li key={f.key} className="param-field">
-            <label htmlFor={`param-${f.key}`}>{f.label}</label>
-            <div className="param-input-wrap">
-              <input
-                id={`param-${f.key}`}
-                type="text"
-                inputMode="decimal"
-                value={displayValue(f.key, draft[f.key], f.scale)}
-                onChange={(e) => update(f.key, e.target.value)}
-              />
-              <span className="param-unit">{f.unit}</span>
-            </div>
-          </li>
-        ))}
+        {rows.map((f) => {
+          const fmt = displayField(f.kind, draft[f.key]);
+          return (
+            <li key={f.key} className="param-field">
+              <label htmlFor={`param-${f.key}`}>{f.label}</label>
+              <div className="param-input-suffix">
+                <input
+                  id={`param-${f.key}`}
+                  type="text"
+                  inputMode="decimal"
+                  value={fmt.value}
+                  onChange={(e) => update(f.key, f.kind, e.target.value, fmt.unit)}
+                />
+                <span className="param-suffix">{fmt.unit}</span>
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
+}
+
+export function inputsForWork(problem) {
+  const kind = inferKind(problem);
+  if (kind !== "voltage_divider") return [];
+  return FIELDS.voltage_divider.map((f) => {
+    const fmt = displayField(f.kind, problem[f.key]);
+    return { label: f.label, display: fmt.text };
+  });
 }

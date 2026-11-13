@@ -31,6 +31,7 @@ export const useLayout = create((set) => ({
   themeMode: "system",
   commandOpen: false,
   parametersOpen: false,
+  parametersStale: false,
   problemTab: "work",
   graphDirty: false,
   selectedNodeId: null,
@@ -48,7 +49,9 @@ export const useLayout = create((set) => ({
       flowNodes: [],
       flowEdges: [],
       parametersOpen: false,
+      parametersStale: false,
     }),
+  setParametersStale: (parametersStale) => set({ parametersStale }),
   setView: (view) => set({ view: normalizeView(view) }),
   toggleSidebar: () =>
     set((s) => {

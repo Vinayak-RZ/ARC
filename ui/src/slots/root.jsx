@@ -6,7 +6,7 @@ import { Library } from "./library.jsx";
 import { VisualGallery } from "./gallery.jsx";
 import { ControlStudio } from "./control_studio/ControlStudio.jsx";
 import { buildAnswerRows, verificationNote } from "../formatAnswer.js";
-import { AnswerLine } from "../components/AnswerLine.jsx";
+import { AnswerLine, VerificationStrip } from "../components/AnswerLine.jsx";
 import { displayTitle } from "../runDisplay.js";
 import { useRun } from "../hooks/useRun.js";
 
@@ -46,7 +46,6 @@ function Result({ id }) {
   }
   return (
     <article className="answer-card" aria-live="polite">
-      <h1>{error ? id : title || "Problem"}</h1>
       {error ? (
         <p className="answer-value">Run unavailable</p>
       ) : unchecked && rows.length === 0 ? (
@@ -62,16 +61,11 @@ function Result({ id }) {
       ) : (
         <p className="answer-line">Working…</p>
       )}
-      <div className="answer-status-row">
-        {error ? (
-          <span className="status-badge failed">Failed</span>
-        ) : unchecked ? (
-          <span className="status-badge unchecked">Unchecked</span>
-        ) : (
-          <span className="status-badge checked">Checked</span>
-        )}
+      {!error ? (
+        <VerificationStrip checked={!unchecked} unchecked={unchecked} modifiedAt={data?.modified_at} />
+      ) : (
         <p className="status-hint">{note}</p>
-      </div>
+      )}
       {live ? <p className="hint">{live}</p> : null}
     </article>
   );
