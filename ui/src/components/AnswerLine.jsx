@@ -1,3 +1,5 @@
+import { CheckCircle2, AlertCircle } from "lucide-react";
+
 /** Display-type answer: quantity with muted unit (tabular nums). */
 
 export function AnswerLine({ parts, checked }) {
@@ -23,6 +25,7 @@ export function VerificationStrip({ checked, unchecked, modifiedAt }) {
   if (unchecked) {
     return (
       <div className="verification-strip verification-warn" role="status">
+        <AlertCircle size={16} strokeWidth={1.5} className="verification-icon" aria-hidden="true" />
         <span className="status-tag">Unchecked</span>
         <span>Add a simulation or numeric check before you trust this value.</span>
       </div>
@@ -31,11 +34,11 @@ export function VerificationStrip({ checked, unchecked, modifiedAt }) {
   if (!checked) return null;
   return (
     <div className="verification-strip verification-ok" role="status">
-      <span className="status-tag checked-tag">Checked</span>
+      <CheckCircle2 size={16} strokeWidth={1.5} className="verification-icon" aria-hidden="true" />
       <span>
         Solved in SPICE and matched the hand calculation within 0.1%. Checked {relativeTimeShort(modifiedAt)}.
       </span>
-      <button type="button" className="link-quiet">
+      <button type="button" className="verification-link">
         View engine output
       </button>
     </div>

@@ -13,7 +13,7 @@ const TABS = [
 export function SettingsPage() {
   const themeMode = useLayout((s) => s.themeMode);
   const setThemeMode = useLayout((s) => s.setThemeMode);
-  const [tab, setTab] = useState("appearance");
+  const [tab, setTab] = useState("agents");
   const [scorecard, setScorecard] = useState("");
   useEffect(() => {
     fetch("/api/frontier/scorecard")
@@ -71,16 +71,16 @@ export function SettingsPage() {
       {tab === "appearance" ? (
         <section className="settings-section">
           <h2>Appearance</h2>
-          <div className="theme-toggle-row">
+          <div className="settings-segmented" role="group" aria-label="Theme">
             {["light", "dark", "system"].map((m) => (
               <button
                 key={m}
                 type="button"
-                className="gallery-filter-chip"
+                className="settings-segmented-btn"
                 aria-pressed={themeMode === m ? "true" : "false"}
                 onClick={() => setTheme(m)}
               >
-                {m}
+                {m.charAt(0).toUpperCase() + m.slice(1)}
               </button>
             ))}
           </div>

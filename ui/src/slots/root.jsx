@@ -9,6 +9,7 @@ import { buildAnswerRows, verificationNote } from "../formatAnswer.js";
 import { AnswerLine, VerificationStrip } from "../components/AnswerLine.jsx";
 import { displayTitle } from "../runDisplay.js";
 import { useRun } from "../hooks/useRun.js";
+import { useLayout } from "../store.js";
 
 function parseEvid(summary) {
   if (!summary) return {};
@@ -20,6 +21,7 @@ function parseEvid(summary) {
 }
 
 function Result({ id }) {
+  const stale = useLayout((s) => s.parametersStale);
   const { data, error } = useRun(id);
   const evid = parseEvid(data?.summary || "");
   const unchecked = evid.unchecked === true || evid.token === "unchecked";
@@ -45,7 +47,7 @@ function Result({ id }) {
     return <p className="loading-block" aria-live="polite">Loading run…</p>;
   }
   return (
-    <article className="answer-card" aria-live="polite">
+    <article className={`answer-card${stale ? " is-stale" : ""}`} aria-live="polite">
       {error ? (
         <p className="answer-value">Run unavailable</p>
       ) : unchecked && rows.length === 0 ? (

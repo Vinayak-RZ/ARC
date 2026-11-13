@@ -99,14 +99,26 @@ export function VoltageDividerSchematic({ graph }) {
           <line x1={xL} y1={yBot} x2={xJ} y2={yBot} />
         </g>
         <g className="schematic-parts" style={{ color: "var(--ee-color-ink)" }}>
-          <text x={xL - 8} y={56} textAnchor="end" fontSize="12" fontWeight="500">
-            {fmtVin(vin.refdes || "Vin", vin.value ?? 10)}
+          <text x={xL - 16} y={(yTop + yBot) / 2} textAnchor="end" fontSize="12" fontWeight="500" dominantBaseline="middle">
+            V<tspan baselineShift="sub" fontSize="9">
+              in
+            </tspan>
+            {" = "}
+            {Number(vin.value ?? 10)} V
           </text>
-          <text x={(xL + xJ) / 2} y={56} textAnchor="middle" fontSize="12" fontWeight="500">
-            {fmtResistor(r1.refdes || "R1", r1.value ?? 1000)}
+          <text x={(xL + xJ) / 2} y={50} textAnchor="middle" fontSize="12" fontWeight="500">
+            R<tspan baselineShift="sub" fontSize="9">
+              1
+            </tspan>
+            {" = "}
+            {Number(r1.value ?? 1000) >= 1000 ? `${Number(r1.value ?? 1000) / 1000} kΩ` : `${r1.value ?? 1000} Ω`}
           </text>
-          <text x={xJ + 20} y={(yTop + yBot) / 2} fontSize="12" fontWeight="500">
-            {fmtResistor(r2.refdes || "R2", r2.value ?? 1000)}
+          <text x={xJ + 20} y={(yTop + yBot) / 2} fontSize="12" fontWeight="500" dominantBaseline="middle">
+            R<tspan baselineShift="sub" fontSize="9">
+              2
+            </tspan>
+            {" = "}
+            {Number(r2.value ?? 1000) >= 1000 ? `${Number(r2.value ?? 1000) / 1000} kΩ` : `${r2.value ?? 1000} Ω`}
           </text>
           <ResistorH x1={xL + 8} x2={xJ - 8} y={yTop} />
           <ResistorV x={xJ} y1={yTop + 6} y2={yBot - 6} />

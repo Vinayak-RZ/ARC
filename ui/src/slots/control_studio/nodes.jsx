@@ -41,19 +41,28 @@ function shell(cls, selected, data, children, ports) {
 
 export function SumNode({ data, selected }) {
   const signs = String(data?.params?.signs || "+-");
+  const neg = signs.includes("-");
   return shell(
     "studio-sum",
     selected,
     data,
-    <span className="studio-sum-icon" aria-hidden>
-      Σ
-    </span>,
+    <>
+      <span className="studio-sum-icon" aria-hidden>
+        Σ
+      </span>
+      <span className="studio-sum-sign studio-sum-sign-plus" aria-hidden>
+        +
+      </span>
+      <span className="studio-sum-sign studio-sum-sign-minus" aria-hidden>
+        {neg ? "−" : "+"}
+      </span>
+    </>,
     <>
       <div className="studio-port-col studio-port-col-left">
-        <InPort id="in1" sign="+" />
+        <InPort id="in1" />
       </div>
       <div className="studio-port-col studio-port-col-bottom">
-        <InPort id="feedback" sign={signs.includes("-") ? "−" : "+"} position={Position.Bottom} />
+        <InPort id="feedback" position={Position.Bottom} />
       </div>
       <OutPort id="out" />
     </>,
@@ -112,8 +121,8 @@ export function PidNode({ data, selected }) {
     data,
     <>
       <span className="studio-block-kind">PID</span>
-      <span className="studio-param-line">
-        Kp={p.kp ?? 0} Ki={p.ki ?? 0} Kd={p.kd ?? 0}
+      <span className="studio-pid-line">
+        Kp {p.kp ?? 0} · Ki {p.ki ?? 0} · Kd {p.kd ?? 0}
       </span>
     </>,
     <>

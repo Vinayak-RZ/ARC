@@ -5,6 +5,7 @@ import {
   Background,
   MiniMap,
   ConnectionLineType,
+  MarkerType,
   addEdge,
   useEdgesState,
   useNodesState,
@@ -18,7 +19,7 @@ import { studioNodeTypes } from "./nodes.jsx";
 import { studioEdgeTypes } from "./edges.jsx";
 import { FitViewOnChange } from "./FitViewOnChange.jsx";
 import { diagramToFlow, flowToDiagram, issuesByBlock } from "./utils.js";
-import { MarginsSummary } from "../../control-studio/MarginsSummary.jsx";
+import { StudioToolbar } from "./StudioToolbar.jsx";
 import "../../control-studio/studio.css";
 
 const GRID = 16;
@@ -94,6 +95,19 @@ function applySimAndAnalyze(sid, sim, setResults, setMargins, setMsg, onSuccess)
   return true;
 }
 
+function FlowZoomHelpers({ fitRef, zoomApi, setZoomPct }) {
+  const { zoomIn, zoomOut, fitView } = useReactFlow();
+  useEffect(() => {
+    fitRef.current = () => fitView({ padding: 0.2, maxZoom: 1.25 });
+    zoomApi.current = {
+      in: () => zoomIn({ duration: 120 }),
+      out: () => zoomOut({ duration: 120 }),
+    };
+    setZoomPct((z) => z || 1);
+  }, [fitRef, fitView, setZoomPct, zoomApi, zoomIn, zoomOut]);
+  return null;
+}
+
 function CanvasDrop({ children, onDropBlock }) {
   const { screenToFlowPosition } = useReactFlow();
   return (
@@ -128,6 +142,10 @@ function ControlStudioInner({ sessionId, onSession }) {
   const [revision, setRevision] = useState(0);
   const [lastSimRevision, setLastSimRevision] = useState(null);
   const [connecting, setConnecting] = useState(false);
+  const [fitBump, setFitBump] = useState(0);
+  const [zoomPct, setZoomPct] = useState(1);
+  const fitRef = useRef(() => {});
+  const zoomApi = useRef({ in: () => {}, out: () => {} });
   const [validation, setValidation] = useState({ ok: true, issues: [], warnings: [] });
   const [highlight, setHighlight] = useState({ ids: new Set(), author: null });
   const diagramBase = useRef({});
@@ -235,6 +253,7 @@ function ControlStudioInner({ sessionId, onSession }) {
         const data = JSON.parse(ev.data);
         if (data.type === "hello") return;
         if ((data.revision || 0) > revision) {
+          setFitBump((n) => n + 1);
           loadSession(sid);
         }
       } catch {
@@ -358,72 +377,64 @@ function ControlStudioInner({ sessionId, onSession }) {
     (session?.presence?.agent_editing_until_ms && session.presence.agent_editing_until_ms > Date.now());
   const resultsStale = lastSimRevision != null && revision > lastSimRevision;
 
+  function redo() {
+    fetch(`/api/control-studio/sessions/${session.session_id}/redo`, { method: "POST", body: "{}" })
+      .then((r) => r.json())
+      .then(() => loadSession(session.session_id))
+      .catch(() => {});
+  }
+
   return (
-    <section className="cs-app control-studio">
-      <header className="cs-toolbar" aria-label="Studio actions">
-        <span className="visually-hidden">Studio workbench</span>
-        {agentActive ? (
-          <span className="cs-presence">
-            <span className="cs-presence-dot" aria-hidden>
-              ●
-            </span>{" "}
-            Agent editing
-          </span>
-        ) : null}
-        <div className="cs-toolbar-actions">
-          {msg ? <span className="cs-status-msg">{msg}</span> : null}
-          <button type="button" className="cs-btn cs-btn-secondary" onClick={undo}>
-            Undo
-          </button>
-          <button
-            type="button"
-            className={`cs-btn cs-btn-primary cs-simulate-btn${resultsStale ? " is-stale" : ""}`}
-            onClick={runSim}
-          >
-            {resultsStale ? "Simulate again" : "Simulate"}
-          </button>
-        </div>
-      </header>
-      <MarginsSummary margins={margins} stale={resultsStale} />
-      <div className="cs-workspace studio-layout">
-        <StudioPalette groups={groups} onDragStart={(item, opts) => opts?.placeCenter && placeBlock(item)} />
+    <section className="cs-app control-studio studio">
+      <ReactFlowProvider>
+        <StudioToolbar
+          title={session?.diagram?.title}
+          resultsStale={resultsStale}
+          zoomPct={zoomPct}
+          onUndo={undo}
+          onRedo={redo}
+          canRedo={false}
+          onSimulate={runSim}
+          onFit={() => fitRef.current?.()}
+          onZoomIn={() => zoomApi.current.in?.()}
+          onZoomOut={() => zoomApi.current.out?.()}
+        />
+        <StudioPalette groups={groups} onDragStart={(item) => placeBlock(item)} />
         <div className={`studio-canvas${connecting ? " is-connecting" : ""}`}>
-          <ReactFlowProvider>
-            <CanvasDrop onDropBlock={placeBlock}>
-              <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                nodeTypes={studioNodeTypes}
-                edgeTypes={studioEdgeTypes}
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
-                onConnect={onConnect}
-                onConnectStart={() => setConnecting(true)}
-                onConnectEnd={() => setConnecting(false)}
-                onNodeDragStop={onNodeDragStop}
-                connectionRadius={22}
-                defaultEdgeOptions={{ type: "signal", zIndex: 0 }}
-                snapToGrid
-                snapGrid={[GRID, GRID]}
-                connectionLineType={ConnectionLineType.SmoothStep}
-                minZoom={0.35}
-                maxZoom={1.5}
-                proOptions={{ hideAttribution: true }}
-              >
-                <Background gap={GRID} color="var(--cs-border)" size={1} />
-                <FitViewOnChange revision={revision} nodeCount={nodes.length} />
-                {nodes.length > 8 ? (
-                  <MiniMap
-                    className="studio-minimap"
-                    nodeColor={minimapColor}
-                    nodeStrokeWidth={2}
-                    pannable={false}
-                    zoomable={false}
-                  />
-                ) : null}
-              </ReactFlow>
-            </CanvasDrop>
-          </ReactFlowProvider>
+          <CanvasDrop onDropBlock={placeBlock}>
+            <FlowZoomHelpers fitRef={fitRef} zoomApi={zoomApi} setZoomPct={setZoomPct} />
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              nodeTypes={studioNodeTypes}
+              edgeTypes={studioEdgeTypes}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onConnect={onConnect}
+              onConnectStart={() => setConnecting(true)}
+              onConnectEnd={() => setConnecting(false)}
+              onNodeDragStop={onNodeDragStop}
+              onMove={(_, vp) => setZoomPct(vp.zoom)}
+              connectionRadius={22}
+              snapToGrid
+              snapGrid={[GRID, GRID]}
+              connectionLineType={ConnectionLineType.Straight}
+              elevateEdgesOnSelect={false}
+              elevateNodesOnSelect
+              defaultEdgeOptions={{
+                type: "signal",
+                zIndex: 0,
+                markerEnd: { type: MarkerType.ArrowClosed, color: "var(--cs-text)", width: 14, height: 14 },
+              }}
+              minZoom={0.2}
+              maxZoom={1.25}
+              proOptions={{ hideAttribution: true }}
+            >
+              <Background gap={8} color="var(--cs-border)" size={1} />
+              <Background gap={32} color="var(--cs-border-strong)" size={1} offset={0} />
+              <FitViewOnChange revision={revision} nodeCount={nodes.length} agentBump={fitBump} />
+            </ReactFlow>
+          </CanvasDrop>
         </div>
         <StudioInspector
           selected={selected}
@@ -432,20 +443,9 @@ function ControlStudioInner({ sessionId, onSession }) {
           onComment={pinComment}
           notes={session?.diagram?.notes}
         />
-      </div>
-      <ResultsDock results={results} stale={resultsStale} />
-      <section className="studio-oplog" aria-label="Operation log">
-        <h3>Operation log</h3>
-        <ul className="oplog-list">
-          {(session?.op_log || []).slice(-10).reverse().map((op) => (
-            <li key={op.id}>
-              <span className={`studio-author-badge is-${op.author}`}>{op.author}</span>
-              <span className="op-name">{formatOpSummary(op)}</span>
-              <time dateTime={new Date(op.ts_ms).toISOString()}>{formatOpTime(op.ts_ms)}</time>
-            </li>
-          ))}
-        </ul>
-      </section>
+        <ResultsDock results={results} margins={margins} stale={resultsStale} />
+        {msg ? <p className="studio-toast cs-status-msg">{msg}</p> : null}
+      </ReactFlowProvider>
     </section>
   );
 }
@@ -457,8 +457,13 @@ export function ControlStudio() {
   });
   useEffect(() => {
     const sync = () => setSessionId(new URLSearchParams(window.location.search).get("session") || "");
+    sync();
     window.addEventListener("popstate", sync);
-    return () => window.removeEventListener("popstate", sync);
+    window.addEventListener("arc-url", sync);
+    return () => {
+      window.removeEventListener("popstate", sync);
+      window.removeEventListener("arc-url", sync);
+    };
   }, []);
   return <ControlStudioInner sessionId={sessionId} onSession={setSessionId} />;
 }

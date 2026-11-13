@@ -17,6 +17,7 @@ export function TopBar({ runMeta, onPrimaryAction, primaryLabel, runAgainPrimary
   const drawer = useLayout((s) => s.parametersOpen);
   const setDrawer = useLayout((s) => s.setParametersOpen);
   const setView = useLayout((s) => s.setView);
+  const agentEditing = useLayout((s) => s.agentEditing);
   const crumbs = [];
   crumbs.push(VIEW_LABEL[view] || "Arc");
   if (view === "problems" && id && runMeta) {
@@ -35,7 +36,7 @@ export function TopBar({ runMeta, onPrimaryAction, primaryLabel, runAgainPrimary
         ))}
       </nav>
       <div className="topbar-actions">
-        <span className="presence-chip">Agent ready</span>
+        {agentEditing ? <span className="presence-chip">Agent editing</span> : null}
         {showParams ? (
           <>
             <button type="button" className="button-secondary button-compact" onClick={() => setView("studio")}>

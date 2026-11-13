@@ -1,51 +1,65 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import {
+  Activity,
+  FunctionSquare,
+  PlusCircle,
+  Sigma,
+  SlidersHorizontal,
+  Triangle,
+} from "lucide-react";
+
+const ICONS = {
+  gain: Triangle,
+  sum: PlusCircle,
+  transfer: FunctionSquare,
+  pid: SlidersHorizontal,
+  integrator: Sigma,
+  derivative: Activity,
+};
 
 export function StudioPalette({ groups, onDragStart }) {
-  const [open, setOpen] = useState(() => new Set(["linear"]));
-  function toggle(id) {
-    setOpen((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  }
+  const [q, setQ] = useState("");
+  const items = useMemo(
+    () => (groups || []).flatMap((g) => (g.items || []).map((item) => ({ ...item, group: g.label }))),
+    [groups],
+  );
+  const filtered = useMemo(() => {
+    const t = q.trim().toLowerCase();
+    if (!t) return items;
+    return items.filter((i) => i.label.toLowerCase().includes(t) || i.type.toLowerCase().includes(t));
+  }, [items, q]);
   return (
-    <aside className="studio-palette" aria-label="Block palette">
-      {(groups || []).map((g) => (
-        <details key={g.id} className="studio-palette-details" open={open.has(g.id)}>
-          <summary
-            onClick={(e) => {
-              e.preventDefault();
-              toggle(g.id);
-            }}
-          >
-            {g.label}
-          </summary>
-          <div className="studio-palette-grid">
-            {(g.items || []).map((item) => (
+    <aside className="studio-palette studio-palette-pane" aria-label="Block palette">
+      <input
+        className="studio-palette-search"
+        type="search"
+        placeholder="Search blocks"
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+      />
+      <ul className="studio-palette-rows">
+        {filtered.map((item) => {
+          const Icon = ICONS[item.type] || FunctionSquare;
+          return (
+            <li key={item.type}>
               <button
-                key={item.type}
                 type="button"
-                className="studio-palette-chip-compact"
+                className="studio-palette-row"
                 draggable
-                title={item.label}
+                aria-label={item.label}
                 onDragStart={(e) => {
                   e.dataTransfer.setData("application/control-studio-block", JSON.stringify(item));
                   e.dataTransfer.effectAllowed = "copy";
                   onDragStart?.(item);
                 }}
-                onClick={() => onDragStart?.(item, { placeCenter: true })}
               >
-                <span className="chip-icon" aria-hidden="true">
-                  {item.icon || "▣"}
-                </span>
+                <Icon size={18} strokeWidth={1.5} />
                 <span>{item.label}</span>
               </button>
-            ))}
-          </div>
-        </details>
-      ))}
+            </li>
+          );
+        })}
+      </ul>
     </aside>
   );
 }

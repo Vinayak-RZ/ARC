@@ -279,6 +279,27 @@ def _collect_series(start: str, by_id: dict[str, dict], wires: dict) -> list[str
 
 
 def open_loop_with_controller(diagram: dict[str, Any]):
-    """Controller times plant for loop shaping goldens."""
-    ol, meta = series_blocks_from_diagram(diagram)
-    return ol, meta
+    """Open-loop L(s) = C(s)G(s) along the forward path from the sum output (feedback broken)."""
+    import control
+
+    diagram = parse_diagram(diagram)
+    by_id = {b["id"]: b for b in diagram["blocks"]}
+    wires = _wire_index(diagram)
+    sums = [b for b in diagram["blocks"] if b["type"] == "sum"]
+    if not sums:
+        raise StudioError("no sum block for open-loop break")
+    sid = sums[0]["id"]
+    forward_start = None
+    for link in wires["out"].get(sid, []):
+        if link["port"] in ("out", "y"):
+            forward_start = link["peer"]
+            break
+    if not forward_start:
+        raise StudioError("sum has no forward output")
+    chain = _collect_series_from(forward_start, by_id, wires)
+    if not chain:
+        raise StudioError("empty forward chain from sum")
+    g = control.tf([1.0], [1.0])
+    for bid in chain:
+        g = control.series(g, _block_tf(by_id[bid]))
+    return g, {"mode": "open_loop_cg", "forward_chain": chain}

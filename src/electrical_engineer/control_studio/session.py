@@ -8,6 +8,7 @@ import uuid
 from pathlib import Path
 from typing import Any
 
+from electrical_engineer.control_studio.layout import layout_chain
 from electrical_engineer.control_studio.schema import StudioError, empty_diagram, parse_diagram
 from electrical_engineer.runner.runs import project_root
 
@@ -69,8 +70,7 @@ def create_session(
     if golden and golden in GOLDENS:
         diagram = parse_diagram(GOLDENS[golden]())
         diagram["title"] = title
-        if golden not in ("pid_dc_motor", "unity_first_order"):
-            diagram = auto_layout(diagram)
+        diagram = layout_chain(diagram)
     payload = {
         "session_id": sid,
         "revision": 0,
@@ -92,6 +92,17 @@ def create_session(
     return payload
 
 
+def _relative_time_ms(ts_ms: int) -> str:
+    delta = max(0, int(time.time() * 1000 - ts_ms) // 1000)
+    if delta < 60:
+        return "just now"
+    if delta < 3600:
+        return f"{delta // 60}m ago"
+    if delta < 86400:
+        return f"{delta // 3600}h ago"
+    return f"{delta // 86400}d ago"
+
+
 def list_sessions(root: Path | None = None, *, limit: int = 12) -> list[dict[str, Any]]:
     d = _studio_dir(root)
     items: list[dict[str, Any]] = []
@@ -105,15 +116,21 @@ def list_sessions(root: Path | None = None, *, limit: int = 12) -> list[dict[str
         if not isinstance(data, dict):
             continue
         diagram = data.get("diagram") or {}
-        title = str(diagram.get("title") or data.get("session_id"))
-        if title.startswith("unmatched") or "scratch" in title.lower():
+        sid = str(data.get("session_id") or path.stem)
+        title = str(diagram.get("title") or "").strip()
+        if not title or title == sid:
             continue
+        low = f"{sid} {title}".lower()
+        if low.startswith("unmatched") or "scratch" in low or "unmatched-cosolver" in low:
+            continue
+        updated = int(data.get("updated_at_ms") or 0)
         items.append(
             {
-                "session_id": data.get("session_id") or path.stem,
+                "session_id": sid,
                 "title": title,
+                "relative_time": _relative_time_ms(updated) if updated else "",
                 "revision": data.get("revision") or 0,
-                "updated_at_ms": data.get("updated_at_ms") or 0,
+                "updated_at_ms": updated,
             }
         )
         if len(items) >= limit:
@@ -227,17 +244,7 @@ def redo(session_id: str, *, author: str = "human", root: Path | None = None) ->
 
 
 def auto_layout(diagram: dict[str, Any]) -> dict[str, Any]:
-    d = parse_diagram(diagram)
-    x0, y0 = 80, 120
-    dx = 180
-    row = 0
-    for i, b in enumerate(d["blocks"]):
-        b["x"] = x0 + (i % 4) * dx
-        b["y"] = y0 + row * 120
-        if (i + 1) % 4 == 0:
-            row += 1
-    d["blocks"] = d["blocks"]
-    return d
+    return layout_chain(parse_diagram(diagram))
 
 
 def add_block(diagram: dict[str, Any], block: dict[str, Any]) -> dict[str, Any]:

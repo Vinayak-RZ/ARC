@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { Shortcut } from "../components/Shortcut.jsx";
 import { displayTitle, subjectTag } from "../runDisplay.js";
 
 const SUBJECTS = [
@@ -149,14 +150,16 @@ export function HomePage({ runs, onRunsChange, onOpenProblem }) {
         </div>
         <textarea
           ref={areaRef}
-          className="composer-input"
+          className="composer-input composer-input-inset"
           value={prompt}
           placeholder={PLACEHOLDERS[0]}
           onChange={(e) => setPrompt(e.target.value)}
           rows={3}
         />
         <div className="composer-footer">
-          <span className="hint">⌘ Enter to solve</span>
+          <span className="hint">
+            Press <Shortcut keys="Ctrl Enter" /> to solve
+          </span>
           <button id="home-solve-btn" type="submit" className="button-primary button-compact" disabled={busy || !prompt.trim()}>
             Solve
           </button>
@@ -173,7 +176,7 @@ export function HomePage({ runs, onRunsChange, onOpenProblem }) {
               disabled={busy}
               onClick={() => solveExample(ex.id)}
             >
-              <div className="example-thumb-wrap">
+              <div className="example-thumb-frame example-thumb-wrap">
                 {ex.thumbnail ? (
                   <img className="example-thumb" src={ex.thumbnail} alt="" loading="eager" decoding="async" />
                 ) : null}

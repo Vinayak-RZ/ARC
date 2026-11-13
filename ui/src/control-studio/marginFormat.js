@@ -4,7 +4,7 @@ export function marginLine(margins) {
     return { gm: d.gm_db, pm: d.pm_deg, wcg: d.wcg, wcp: d.wcp };
   }
   const fmt = (v, digits, unit) =>
-    v != null && Number.isFinite(v) ? `${v.toFixed(digits)}${unit}` : "—";
+    v != null && Number.isFinite(v) ? `${v.toFixed(digits)}${unit}` : "N/A";
   return {
     gm: fmt(margins?.gain_margin_db, 2, " dB"),
     pm: fmt(margins?.phase_margin_deg, 1, "°"),

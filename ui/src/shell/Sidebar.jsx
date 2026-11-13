@@ -1,5 +1,7 @@
 import {
+  AlertTriangle,
   BookOpen,
+  CircleCheck,
   Home,
   Images,
   LifeBuoy,
@@ -12,7 +14,7 @@ import {
   Workflow,
 } from "lucide-react";
 import { useLayout } from "../store.js";
-import { displayTitle, subjectTag } from "../runDisplay.js";
+import { displayTitle } from "../runDisplay.js";
 
 const PRIMARY = [
   { id: "home", label: "Home", icon: Home },
@@ -91,9 +93,15 @@ export function Sidebar({ runs, onNavigate, onNewProblem }) {
               aria-current={current === run.id ? "true" : undefined}
               onClick={() => onNavigate({ view: "problems", runId: run.id })}
             >
-              <span className={`status-dot ${statusDot(run)}`} aria-hidden="true" />
+              <span className={`subject-dot ${statusDot(run)}`} aria-hidden="true" />
               <span className="sidebar-recent-title">{displayTitle(run)}</span>
-              <span className="sidebar-recent-chip">{subjectTag(run)}</span>
+              <span className="sidebar-recent-status" aria-hidden="true">
+                {run.unchecked ? (
+                  <AlertTriangle size={16} strokeWidth={1.5} />
+                ) : (
+                  <CircleCheck size={16} strokeWidth={1.5} />
+                )}
+              </span>
             </button>
           ))}
         </div>

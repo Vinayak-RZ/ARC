@@ -28,6 +28,8 @@ export const useLayout = create((set) => ({
   currentRunId: null,
   view: "home",
   sidebarCollapsed: readSidebarCollapsed(),
+  sidebarLastToggledAt: 0,
+  agentEditing: false,
   themeMode: "system",
   commandOpen: false,
   parametersOpen: false,
@@ -53,11 +55,12 @@ export const useLayout = create((set) => ({
     }),
   setParametersStale: (parametersStale) => set({ parametersStale }),
   setView: (view) => set({ view: normalizeView(view) }),
+  setAgentEditing: (agentEditing) => set({ agentEditing }),
   toggleSidebar: () =>
     set((s) => {
       const sidebarCollapsed = !s.sidebarCollapsed;
       writeSidebarCollapsed(sidebarCollapsed);
-      return { sidebarCollapsed };
+      return { sidebarCollapsed, sidebarLastToggledAt: Date.now() };
     }),
   setSidebarCollapsed: (sidebarCollapsed) => {
     writeSidebarCollapsed(sidebarCollapsed);

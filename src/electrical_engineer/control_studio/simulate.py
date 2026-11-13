@@ -32,7 +32,7 @@ def simulate(diagram: dict[str, Any], *, run_dir: Path | None = None, t_final: f
     t_imp, y_imp = control.impulse_response(sys, T=t)
 
     for path, tt, yy, title in (
-        (step_png, t_step, y_step, "Step response"),
+        (step_png, t_step, y_step, "Closed-loop step response"),
         (impulse_png, t_imp, y_imp, "Impulse response"),
     ):
         _, ax = plt.subplots(figsize=(theme.fig_w, theme.fig_h))

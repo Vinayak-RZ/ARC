@@ -1,6 +1,13 @@
 import { useMemo, useState } from "react";
+import { ArrowUpRight, Copy, RotateCw } from "lucide-react";
 import { displayTitle, subjectTag } from "../runDisplay.js";
 import { relativeTime } from "../units/format.js";
+
+const STATUS_CHIPS = [
+  { id: "all", label: "All" },
+  { id: "checked", label: "Checked" },
+  { id: "unchecked", label: "Unchecked" },
+];
 
 function timeGroup(ts) {
   const delta = Date.now() / 1000 - Number(ts || 0);
@@ -9,9 +16,18 @@ function timeGroup(ts) {
   return "Earlier";
 }
 
+function titleCaseSubject(s) {
+  if (!s) return "Unknown";
+  return String(s)
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 export function ProblemsPage({ runs, loading, error, onOpenProblem, onTryExample, onReload }) {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
+  const [subjectFilter, setSubjectFilter] = useState("all");
+  const [madeByFilter, setMadeByFilter] = useState("all");
   const counts = useMemo(
     () => ({
       all: runs.length,
@@ -20,6 +36,14 @@ export function ProblemsPage({ runs, loading, error, onOpenProblem, onTryExample
     }),
     [runs],
   );
+  const subjects = useMemo(() => {
+    const set = new Set(runs.map((r) => r.subject || subjectTag(r)).filter(Boolean));
+    return ["all", ...[...set].sort()];
+  }, [runs]);
+  const madeByOptions = useMemo(() => {
+    const set = new Set(runs.map((r) => r.made_by || "Agent").filter(Boolean));
+    return ["all", ...[...set].sort()];
+  }, [runs]);
   const filtered = useMemo(() => {
     return runs.filter((run) => {
       const title = displayTitle(run).toLowerCase();
@@ -27,9 +51,13 @@ export function ProblemsPage({ runs, loading, error, onOpenProblem, onTryExample
       if (q && !title.includes(q) && !String(run.id).includes(q)) return false;
       if (status === "checked" && run.unchecked) return false;
       if (status === "unchecked" && !run.unchecked) return false;
+      const subj = run.subject || subjectTag(run);
+      if (subjectFilter !== "all" && subj !== subjectFilter) return false;
+      const made = run.made_by || "Agent";
+      if (madeByFilter !== "all" && made !== madeByFilter) return false;
       return true;
     });
-  }, [runs, query, status]);
+  }, [runs, query, status, subjectFilter, madeByFilter]);
   const groups = useMemo(() => {
     const m = new Map();
     for (const run of filtered) {
@@ -44,7 +72,11 @@ export function ProblemsPage({ runs, loading, error, onOpenProblem, onTryExample
     return (
       <div className="problems-page problems-loading" aria-busy="true">
         <h1>Problems</h1>
-        <p className="empty loading-shimmer">Loading problems…</p>
+        <div className="problems-skeleton" aria-hidden="true">
+          {Array.from({ length: 8 }, (_, i) => (
+            <div key={i} className="problems-skeleton-row" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -86,18 +118,48 @@ export function ProblemsPage({ runs, loading, error, onOpenProblem, onTryExample
           Press / to focus
         </span>
         <div className="gallery-filters" role="group" aria-label="Status">
-          {["all", "checked", "unchecked"].map((s) => (
+          {STATUS_CHIPS.map(({ id, label }) => (
             <button
-              key={s}
+              key={id}
               type="button"
               className="gallery-filter-chip"
-              aria-pressed={status === s ? "true" : "false"}
-              onClick={() => setStatus(s)}
+              aria-pressed={status === id ? "true" : "false"}
+              onClick={() => setStatus(id)}
             >
-              {s} ({counts[s]})
+              {label} ({counts[id]})
             </button>
           ))}
         </div>
+        <label className="problems-select-label">
+          <span className="hint">Subject</span>
+          <select
+            className="problems-select"
+            value={subjectFilter}
+            onChange={(e) => setSubjectFilter(e.target.value)}
+            aria-label="Filter by subject"
+          >
+            {subjects.map((s) => (
+              <option key={s} value={s}>
+                {s === "all" ? "All subjects" : titleCaseSubject(s)}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="problems-select-label">
+          <span className="hint">Made by</span>
+          <select
+            className="problems-select"
+            value={madeByFilter}
+            onChange={(e) => setMadeByFilter(e.target.value)}
+            aria-label="Filter by author"
+          >
+            {madeByOptions.map((s) => (
+              <option key={s} value={s}>
+                {s === "all" ? "Anyone" : s}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
       {groups.map(([label, items]) => (
         <section key={label} className="problems-group">
@@ -120,7 +182,7 @@ export function ProblemsPage({ runs, loading, error, onOpenProblem, onTryExample
                 <tr key={run.id} className="problems-row" onClick={() => onOpenProblem(run.id)} title={run.id}>
                   <td>{displayTitle(run)}</td>
                   <td>
-                    <span className="subject-tag">{run.subject || subjectTag(run)}</span>
+                    <span className="subject-tag">{titleCaseSubject(run.subject || subjectTag(run))}</span>
                   </td>
                   <td>
                     <span className={run.unchecked ? "status-badge unchecked" : "status-badge checked"}>
@@ -132,13 +194,36 @@ export function ProblemsPage({ runs, loading, error, onOpenProblem, onTryExample
                   <td className="problems-row-actions">
                     <button
                       type="button"
-                      className="button-secondary button-compact row-action"
+                      className="row-action-quiet"
+                      aria-label="Open problem"
                       onClick={(e) => {
                         e.stopPropagation();
                         onOpenProblem(run.id);
                       }}
                     >
-                      Open
+                      <ArrowUpRight size={16} strokeWidth={1.5} />
+                    </button>
+                    <button
+                      type="button"
+                      className="row-action-quiet"
+                      aria-label="Refresh list"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onReload();
+                      }}
+                    >
+                      <RotateCw size={16} strokeWidth={1.5} />
+                    </button>
+                    <button
+                      type="button"
+                      className="row-action-quiet"
+                      aria-label="Copy problem id"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        void navigator.clipboard?.writeText(run.id);
+                      }}
+                    >
+                      <Copy size={16} strokeWidth={1.5} />
                     </button>
                   </td>
                 </tr>

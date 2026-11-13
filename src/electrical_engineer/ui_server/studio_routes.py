@@ -91,11 +91,31 @@ def register_studio_routes(app: FastAPI, *, root: Path) -> None:
         except StudioError as exc:
             return JSONResponse({"error": str(exc)}, status_code=404)
 
+    def _write_studio_run_summary(run_dir: Path, diagram: dict, updated_at_ms: int | None) -> None:
+        import json
+        import time
+
+        title = str(diagram.get("title") or "Control Studio").strip()
+        run_dir.mkdir(parents=True, exist_ok=True)
+        run_dir.joinpath("summary.json").write_text(
+            json.dumps(
+                {
+                    "title": title,
+                    "recipe_id": "control-studio",
+                    "unchecked": False,
+                    "updated_at_ms": updated_at_ms or int(time.time() * 1000),
+                },
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+
     @app.post("/api/control-studio/sessions/{session_id}/simulate")
     def studio_sim(session_id: str) -> dict:
         try:
             payload = session_mod.load_session(session_id, root)
             run_dir = root / "runs" / session_id
+            _write_studio_run_summary(run_dir, payload.get("diagram") or {}, payload.get("updated_at_ms"))
             sim = simulate_mod.simulate(payload["diagram"], run_dir=run_dir)
             if not sim.get("ok"):
                 return sim
@@ -150,4 +170,8 @@ def register_studio_routes(app: FastAPI, *, root: Path) -> None:
         path = root / "runs" / session_id / f"studio_{safe}.png"
         if not path.is_file():
             return JSONResponse({"error": "missing"}, status_code=404)
-        return FileResponse(path, media_type="image/png")
+        return FileResponse(
+            path,
+            media_type="image/png",
+            headers={"Cache-Control": "no-store"},
+        )

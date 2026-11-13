@@ -200,23 +200,37 @@ def main() -> int:
             snap("studio.png")
 
             page.locator(".studio-canvas .react-flow").wait_for(state="visible", timeout=15000)
-            page.locator(".studio-palette").scroll_into_view_if_needed()
-            chip = page.locator(".studio-palette-chip-compact").first
-            if chip.count() > 0:
-                chip.click(force=True)
-                page.wait_for_timeout(600)
-            nodes = page.locator(".react-flow__node")
-            if nodes.count() > 0:
-                box = nodes.last.bounding_box()
-                if box:
-                    page.mouse.click(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
-                page.wait_for_timeout(400)
+            pid = page.locator('[data-testid="rf__node-pid1"], .react-flow__node-pid')
+            if pid.count() == 0:
+                pid = page.locator(".react-flow__node").nth(2)
+            pid.first.click(force=True)
+            page.wait_for_selector(".studio-inspector", timeout=10000)
+            page.wait_for_timeout(400)
             snap("studio-block-selected.png")
             sim = page.locator(".cs-simulate-btn")
             if sim.count() > 0:
                 sim.click()
                 page.wait_for_timeout(2000)
             snap("studio-after-simulate.png")
+
+            if args.round >= 3:
+                import urllib.request
+
+                req = urllib.request.Request(
+                    f"http://{HOST}:{PORT}/api/control-studio/sessions",
+                    method="POST",
+                    data=json.dumps({"title": "Low gain", "golden": "open_loop_low_gain"}).encode(),
+                    headers={"Content-Type": "application/json"},
+                )
+                with urllib.request.urlopen(req, timeout=60) as resp:
+                    low = json.loads(resp.read().decode())
+                sid = low["session_id"]
+                go(f"?view=studio&session={sid}")
+                page.wait_for_selector(".cs-simulate-btn", timeout=15000)
+                page.click(".cs-simulate-btn")
+                page.wait_for_selector(".studio-margin-table", timeout=60000)
+                page.wait_for_timeout(400)
+                snap("studio-margins-no-crossover.png")
 
             go("?view=gallery")
             page.wait_for_selector(".gallery-card", timeout=10000)
@@ -228,7 +242,20 @@ def main() -> int:
 
             go("?view=settings")
             page.wait_for_selector(".settings-page", timeout=10000)
-            snap("settings.png")
+            if args.round >= 3:
+                snap("settings-agents.png")
+                for tab, name in [
+                    ("Engines", "settings-engines.png"),
+                    ("Appearance", "settings-appearance.png"),
+                    ("Data", "settings-data.png"),
+                    ("About", "settings-about.png"),
+                ]:
+                    page.get_by_role("tab", name=tab).click()
+                    page.wait_for_timeout(200)
+                    snap(name)
+            else:
+                page.wait_for_selector(".settings-page", timeout=10000)
+                snap("settings.png")
 
             _clear_runs()
             go("?view=problems")
@@ -284,9 +311,20 @@ def main() -> int:
 
             page.keyboard.press("Control+b")
             page.wait_for_selector(".product-sidebar:not(.is-collapsed)", timeout=5000)
+            page.wait_for_function(
+                """() => {
+                const shell = document.querySelector('.product-shell');
+                const cols = getComputedStyle(shell).gridTemplateColumns || '';
+                return cols.startsWith('240px');
+            }""",
+                timeout=5000,
+            )
+            page.wait_for_timeout(220)
             page.keyboard.press("Control+k")
             page.wait_for_selector(".cmdk-root", timeout=5000)
             snap("cmdk-open.png")
+            cmdk_w = page.evaluate("() => document.querySelector('.product-sidebar')?.getBoundingClientRect().width")
+            measurements["sidebar_cmdk_open"] = {"sidebar": cmdk_w}
             page.locator(".cmdk-root [cmdk-input]").fill("divider")
             page.wait_for_timeout(150)
             snap("cmdk-query.png")
@@ -296,10 +334,45 @@ def main() -> int:
             go("?view=home")
             snap("dark-home.png")
 
+            if args.round >= 3:
+                run_id = _run_example("divider")
+                go("?view=home")
+                page.evaluate("() => document.querySelector('.agent-card')?.scrollIntoView({block: 'end'})")
+                page.wait_for_timeout(300)
+                snap("home-scrolled-1280.png")
+                wide = browser.new_page(viewport={"width": 1440, "height": H})
+                wide.goto(f"http://{HOST}:{PORT}/?view=home", wait_until="domcontentloaded")
+                wide.wait_for_selector(".example-grid-six", timeout=15000)
+                wide.evaluate("() => document.querySelector('.agent-card')?.scrollIntoView({block: 'end'})")
+                wide.wait_for_timeout(300)
+                snap("home-scrolled-1440.png", wide)
+                wide.close()
+
+                go("?view=problems")
+                page.wait_for_selector(".problems-row", timeout=15000)
+                page.locator(".problems-row").first.hover()
+                page.wait_for_timeout(150)
+                snap("problems-row-hover.png")
+
+                go(f"?problem={run_id}")
+                page.get_by_role("tab", name="Work").click()
+                page.locator(".tab-underline").first.focus()
+                snap("focus-tab.png")
+                go("?view=home")
+                page.locator(".example-card").first.focus()
+                snap("focus-tile.png")
+                go("?view=problems")
+                page.locator(".problems-row").first.focus()
+                snap("focus-table-row.png")
+                page.locator(".button-primary.button-compact").first.focus()
+                snap("focus-button.png")
+
             if not run_id:
                 run_id = _run_example("divider")
             go(f"?problem={run_id}")
             page.wait_for_selector(".answer-line", timeout=30000)
+            page.get_by_role("tab", name="Diagram").click()
+            page.wait_for_selector(".static-diagram", timeout=15000)
             snap("dark-problem.png")
 
             go("?view=studio")
