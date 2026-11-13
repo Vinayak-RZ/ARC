@@ -61,4 +61,6 @@ def test_cli_hosts_install(tmp_path: Path) -> None:
     assert main(["hosts", "install", "--into", str(tmp_path), "--host", "cursor"]) == 0
     assert (tmp_path / ".cursor" / "agents" / "ee-circuits.md").is_file()
     assert (tmp_path / ".cursor" / "agents" / "ee-simulink.md").is_file()
+    assert (tmp_path / ".cursor" / "mcp.json").is_file()
+    assert (tmp_path / ".cursor" / "skills" / "arc-ee-web-verify" / "SKILL.md").is_file()
     assert not (tmp_path / ".codex" / "agents").exists()
