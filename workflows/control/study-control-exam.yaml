@@ -1,0 +1,13 @@
+id: study-control-exam
+nodes:
+  solve:
+    activity: run-ee-v2-solver
+  check:
+    activity: check-numeric
+    needs: [solve]
+  label:
+    activity: label-unchecked
+    needs: [check]
+  summary:
+    activity: write-run-summary
+    needs: [label]

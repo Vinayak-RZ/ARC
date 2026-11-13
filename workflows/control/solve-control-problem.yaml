@@ -1,10 +1,15 @@
 id: solve-control-problem
 nodes:
+  exam:
+    activity: run-ee-v2-solver
   ctrl:
     activity: run-python-control
+  check:
+    activity: check-numeric
+    needs: [exam, ctrl]
   label:
     activity: label-unchecked
-    needs: [ctrl]
+    needs: [check, ctrl]
   summary:
     activity: write-run-summary
     needs: [label]

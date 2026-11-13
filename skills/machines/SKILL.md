@@ -8,9 +8,11 @@ Not FEA / Ansys Maxwell (`CD-MACHINES-FEA`). Not plant actuation.
 
 1. Name the machine, test or regime (no-load, blocked rotor, rated, starting).
 2. Draw the equivalent circuit; per-unit if the problem is in pu.
-3. Request `machine-model` (phasor / eq-circuit algebra). Optional numeric
+3. **Exam v2** (`study-machines-v2`): `transformer_regulation`, `dc_motor_shunt`,
+   `induction_air_gap_split` — see `docs/AGENT_ROUTING.md`.
+4. Request `machine-model` (phasor / eq-circuit algebra). Optional numeric
    provider if registered; otherwise `algebraic-check`.
-4. No live PLC / starter write. No full-wave magnetics as a promise.
+5. No live PLC / starter write. No full-wave magnetics as a promise.
 
 ## Genres
 

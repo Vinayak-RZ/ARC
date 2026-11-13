@@ -8,13 +8,16 @@ resonance, two-ports. Not device physics (electronics), not machines.
 1. Name Given / Find / assumptions (ideal elements, DC vs sinusoidal SS).
 2. Choose method: Ohm + KCL/KVL, nodal/mesh, Thevenin/Norton, superposition,
    phasor, Laplace transient — **before** a simulator.
-3. Request capabilities (do not mint ohms):
+3. **Exam v2 solvers** (`engines/ee_v2_runner.py`): put `solver` + inputs + `expected`/`tol` in
+   `problem.json`, run `study-circuits-v2` (CLI/MCP). Routing table: `docs/AGENT_ROUTING.md`.
+   Solvers: `rc_step`, `rl_step`, `rlc_natural`, `phasor_pfc`, `three_phase_balanced`, `z_inverse`.
+4. Request capabilities (do not mint ohms):
    - `algebraic-check` for hand/symbolic last lines
    - `lumped-circuit-sim` **only** with a netlist artifact
    - `render-figure` for library schematics
    - `ingest-figure` for homework photos (UI confirm, no silent sim)
    - `retrieve-citation` when a book claim is needed
-4. No installed provider → exact token `unchecked`.
+5. No installed provider → exact token `unchecked`.
 
 ## Genres
 

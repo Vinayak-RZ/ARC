@@ -103,9 +103,29 @@ def test_ablation_t12_pu_base_not_transformer_only() -> None:
     assert abs(impedance_pu_on_new_base(x_gen_50, s_old_mva=50, s_new_mva=100, v_old_kv=13.8, v_new_kv=13.8) - 0.1j) < 1e-12
 
 
+def test_ablation_t13_ed_penalty_beats_naive_lambda() -> None:
+    from electrical_engineer.engines.ed_lambda import EdCase
+    from electrical_engineer.engines.ee_v2_runner import ed_naive_dispatch
+    from electrical_engineer.engines.ee_v2_solvers import ed_with_losses
+
+    case = EdCase.eec301_default()
+    b = [
+        [1e-4, 2e-5, 1e-5],
+        [2e-5, 1.5e-4, 2e-5],
+        [1e-5, 2e-5, 1.2e-4],
+    ]
+    arc = ed_with_losses(case, b, 500.0)
+    naive = ed_naive_dispatch(case, 500.0)
+    assert abs(naive["lam"] - 7.3923) < 0.01
+    assert abs(arc["lam"] - naive["lam"]) > 0.3
+    assert abs(sum(naive["P"]) - 500.0) < 0.1
+    assert abs(arc["sum_P_minus_loss"] - 500.0) < 0.5
+
+
 def test_trap_prompts_catalog_loads() -> None:
     from pathlib import Path
 
     text = Path("proofs/ablation/trap_prompts.yaml").read_text(encoding="utf-8")
     data = yaml.safe_load(text)
-    assert "T1" in data["traps"] and "T6" in data["traps"] and "T11" in data["traps"] and "T12" in data["traps"]
+    traps = data["traps"]
+    assert "T1" in traps and "T6" in traps and "T11" in traps and "T12" in traps and "T13" in traps

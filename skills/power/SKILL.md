@@ -18,9 +18,9 @@ faults, protection as coursework (relay settings on paper), not EMS dispatch
    `I_phase_pu` (magnitude + angle vs prefault `Va`), not a single `sqrt(3)*V` scalar.
    Per-unit base trap: `symmetrical-fault-study` + `engines/pu_base` rescores every
    element onto the system MVA/kV before summing `Z1`.
-5. Exam-style kernels (transients, phasor/PF, 3φ, machines, PE CCM, ED penalty,
-   mini load flow, z⁻¹, type-0/1/2 errors): `engines/ee_v2_solvers.py` with
-   `check_kind` on `check-numeric` problems for independent recompute.
+5. Exam-style kernels: `docs/AGENT_ROUTING.md` + recipes `ed-penalty-study`,
+   pack workflows `study-*-v2`, `run-ee-v2-solver` with `solver` + `expected` in
+   `problem.json`.
 6. **SMIB transient / equal-area / CCT:** `skills/swing-equation/SKILL.md` +
    `engines/smib_swing` (goldens `artifacts/eec301-lab-goldens/exp06.json`).
 7. **Two-area AGC (Exp 7):** `skills/agc-two-area/SKILL.md` + `engines/agc_two_area`.

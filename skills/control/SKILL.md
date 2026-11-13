@@ -8,7 +8,10 @@ Bode/Nyquist/root locus, simple compensators. Not graduate optimal control.
 1. Name the plant (TF or SS), the unknown (pole, Gm/Pm, Kv, settling, PID
    gains), and assumptions (LTI, SISO unless stated).
 2. Write the characteristic equation / Routh / final-value **before** plots.
-3. Request capabilities:
+3. **Exam v2** (`study-control-exam` or `solve-control-problem` with `solver`):
+   `breakaway_real_axis` (`poles`, `pick_sigma`), `steady_state_error`
+   (`system_type`, `gain`, `error_key`). Routing: `docs/AGENT_ROUTING.md`.
+4. Request capabilities:
    - `algebraic-check` for Routh, residues, gain formulas
    - `lti-analysis` for step/Bode/Nyquist/rlocus (python-control or MATLAB)
    - `render-figure` for library plots — never invent a Bode bitmap
@@ -19,7 +22,7 @@ Bode/Nyquist/root locus, simple compensators. Not graduate optimal control.
      `unity_feedback` → composed plant → Bode/step via python-control.
    - **Digital intro:** `solve-digital-control-problem` with discrete `num`/`den`
      and `ts`, or `continuous_*` + ZOH sample — pole plot + discrete step.
-4. MATLAB-only toolboxes missing → `unchecked`, not a fake plot.
+5. MATLAB-only toolboxes missing → `unchecked`, not a fake plot.
 
 ## Genres
 

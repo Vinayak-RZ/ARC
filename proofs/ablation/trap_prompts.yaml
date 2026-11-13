@@ -20,3 +20,7 @@ traps:
     prompt: "Symmetrical fault at 13.8 kV, 100 MVA: Xd''=0.20 pu on 50 MVA gen plus X=0.10 pu xfmr on 100 MVA."
     bare_fail: "Uses X_total=0.10 pu (transformer only); drops rescaled generator reactance."
     arc_pass: "pu_base.aggregate_fault_impedance → X1=0.10+0.10=0.20 pu on system base with conversion table."
+  T13:
+    prompt: "ED for PD=500 MW with three units and B-matrix losses: set λ from equal IC without penalty factors."
+    bare_fail: "λ≈7.39 and ΣP=500 MW as if losses were not iterative (naive dispatch)."
+    arc_pass: "ed_with_losses → λ≈7.89 with P_loss embedded and IC·L equalized."

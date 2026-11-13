@@ -7,9 +7,11 @@ inverters, PWM, averaged models, duty-cycle algebra. Not HIL benches
 ## Any question in this pack
 
 1. Name topology, CCM/DCM, ideal vs ESR, the unknown (V, I, duty, ripple).
-2. Averaged algebra via `converter-model` / `algebraic-check` first.
-3. `lumped-circuit-sim` only if a switched/averaged netlist artifact exists.
-4. Waveform plots via `render-figure` from computed points or a provider —
+2. **Exam v2** (`study-power-electronics-v2`): `ccm_buck` with `problem.json` (`vin`, `vout`,
+   `l`, `c`, `fs`, `value_key`, `expected`). Table: `docs/AGENT_ROUTING.md`.
+3. Averaged algebra via `converter-model` / `algebraic-check` first.
+4. `lumped-circuit-sim` only if a switched/averaged netlist artifact exists.
+5. Waveform plots via `render-figure` from computed points or a provider —
    never a vision-invented switching PNG. No provider → exact token `unchecked`.
 
 ## Genres
