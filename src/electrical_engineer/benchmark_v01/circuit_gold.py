@@ -8,7 +8,12 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-from electrical_engineer.engines.spice_runner import spice_available
+from electrical_engineer.benchmark_v01.public_schema import values_close
+from electrical_engineer.engines.spice_runner import (
+    _ensure_control_block,
+    _parse_print_voltage,
+    spice_available,
+)
 
 
 def parallel_rlc_vc_independent(
@@ -45,17 +50,18 @@ def parallel_rlc_vc_ngspice(
 ) -> float | None:
     if not spice_available() or t <= 0:
         return None
-    cir = f"""* parallel RLC natural
+    probe = "v(1)"
+    base = f"""* parallel RLC natural
 R1 1 0 {r}
 C1 1 0 {c} IC={vc0}
 L1 1 0 {l} IC={i0}
 .tran {t / 200:.6g} {t:.6g} uic
-.print tran v(1)
 .end
 """
+    body = _ensure_control_block(base, probe=probe)
     with tempfile.TemporaryDirectory() as td:
         path = Path(td) / "rlc.cir"
-        path.write_text(cir, encoding="utf-8")
+        path.write_text(body, encoding="utf-8")
         try:
             proc = subprocess.run(
                 ["ngspice", "-b", str(path)],
@@ -66,15 +72,8 @@ L1 1 0 {l} IC={i0}
             )
         except OSError:
             return None
-    lines = (proc.stdout or "").splitlines()
-    for line in reversed(lines):
-        parts = line.split()
-        if len(parts) >= 2:
-            try:
-                return float(parts[-1])
-            except ValueError:
-                continue
-    return None
+    combined = (proc.stdout or "") + "\n" + (proc.stderr or "")
+    return _parse_print_voltage(combined, probe)
 
 
 def assert_circuit_gold_independent(item_name: str, givens: dict[str, Any], catalog_v: float) -> None:
@@ -83,7 +82,6 @@ def assert_circuit_gold_independent(item_name: str, givens: dict[str, Any], cata
     r, l, c = float(givens["r"]), float(givens["l"]), float(givens["c"])
     vc0, i0, t = float(givens["vc0"]), float(givens["i0"]), float(givens["t"])
     independent = parallel_rlc_vc_independent(r, l, c, vc0, i0, t)
-    from electrical_engineer.benchmark_v01.public_schema import values_close
 
     if not values_close(catalog_v, independent, {"tolerance_rel": 1e-9, "tolerance_abs": 1e-9}):
         raise AssertionError(
@@ -115,6 +113,9 @@ def circuit_gold_provenance(
         }
         if spice is not None:
             out["ngspice_V"] = spice
+            out["ngspice_agree"] = values_close(
+                catalog_value, spice, {"tolerance_rel": 0.01, "tolerance_abs": 5e-3}
+            )
         from electrical_engineer.benchmark_v01.round_public import _sigfig
 
         out["catalog_V_rounded"] = _sigfig(catalog_value)
