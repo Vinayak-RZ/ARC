@@ -1097,8 +1097,10 @@
   padding: 2px 6px;
   border-radius: 999px;
   position: absolute;
-  top: -10px;
-  right: -6px;
+  /* inside the block: .studio-block clips overflow, so a badge hung outside was cut off */
+  top: 3px;
+  right: 4px;
+  line-height: 1.2;
   font-weight: 600;
   letter-spacing: 0.04em;
 }
@@ -1186,6 +1188,8 @@
   padding: var(--cs-space-2) var(--cs-space-3);
   border: 1px solid var(--cs-border);
   border-radius: var(--cs-radius-sm);
+  background: var(--cs-surface);
+  color: var(--cs-text);
   font: inherit;
   font-size: var(--cs-type-body);
 }
