@@ -347,6 +347,10 @@ def create_app(root: Path | None = None) -> FastAPI:
             "goldens_base": "/api/visual-kit/golden/",
         }
 
+    from electrical_engineer.ui_server.studio_routes import register_studio_routes
+
+    register_studio_routes(app, root=cwd)
+
     @app.get("/api/visual-kit/golden/{rel_path:path}", response_model=None)
     def visual_golden(rel_path: str):
         base = (_repo_root() / "artifacts" / "visual-goldens").resolve()

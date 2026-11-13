@@ -6,6 +6,7 @@ import { Inspector } from "./canvas/Inspector.jsx";
 import { Library } from "./library.jsx";
 import { EngineArtifacts } from "./engine/EngineArtifacts.jsx";
 import { VisualGallery } from "./gallery.jsx";
+import { ControlStudio } from "./control_studio/ControlStudio.jsx";
 
 function Root() {
   return (
@@ -57,6 +58,7 @@ function Sidebar() {
     const viewQ = q.get("view");
     if (viewQ === "library") setView("library");
     if (viewQ === "gallery") setView("gallery");
+    if (viewQ === "control-studio") setView("control-studio");
     if (window.location.pathname === "/gallery") setView("gallery");
     const run = q.get("run");
     if (run) setRun(run);
@@ -90,6 +92,14 @@ function Sidebar() {
     window.history.replaceState({}, "", url);
     setOpen(false);
   }
+  function openControlStudio() {
+    setView("control-studio");
+    const url = new URL(window.location.href);
+    url.searchParams.set("view", "control-studio");
+    url.searchParams.delete("run");
+    window.history.replaceState({}, "", url);
+    setOpen(false);
+  }
   return (
     <>
       <button
@@ -111,6 +121,9 @@ function Sidebar() {
           </button>
           <button type="button" className="sidebar-switch-btn" aria-current={view === "gallery" ? "true" : undefined} onClick={openGallery}>
             Visuals
+          </button>
+          <button type="button" className="sidebar-switch-btn" aria-current={view === "control-studio" ? "true" : undefined} onClick={openControlStudio}>
+            Control
           </button>
         </div>
         {view === "library" ? (
@@ -161,6 +174,9 @@ function Workspace() {
   const { data } = useRun(id);
   if (view === "gallery") {
     return renderSlot("visual.gallery");
+  }
+  if (view === "control-studio") {
+    return renderSlot("control.studio");
   }
   if (view === "library") {
     return renderSlot("rag.inventory");
@@ -384,4 +400,5 @@ register("photo.confirm", function PhotoConfirm() {
 });
 register("rag.inventory", Library);
 register("visual.gallery", VisualGallery);
+register("control.studio", ControlStudio);
 

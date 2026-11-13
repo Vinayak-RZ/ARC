@@ -36,6 +36,7 @@
 | B9 | Tutoring mode | [nodes/B9-tutoring.md](nodes/B9-tutoring.md) |
 | B10 | Public benchmark release | [nodes/B10-benchmark-release.md](nodes/B10-benchmark-release.md) |
 | B11 | Arc Visual Kit | [nodes/B11-visual-kit.md](nodes/B11-visual-kit.md) |
+| B12 | Arc Control Studio | [nodes/B12-control-studio.md](nodes/B12-control-studio.md) |
 | M1 | Integrate + barrier | [nodes/M1-integrate.md](nodes/M1-integrate.md) |
 | E1 | Evaluate gates | [nodes/E1-evaluate.md](nodes/E1-evaluate.md) |
 | R1 | Run (boot smoke) | [nodes/R1-run.md](nodes/R1-run.md) |
@@ -53,7 +54,7 @@
 | Docs-in | D0 | [D0](nodes/D0-docs-in.md) |
 | Architecture | A1 | [A1](nodes/A1-architecture.md) |
 | Design / UI UX | U1 | [U1](nodes/U1-proof-ui.md) |
-| Build | B1..B11 | Linked above |
+| Build | B1..B12 | Linked above |
 | Integrate | M1 | [M1](nodes/M1-integrate.md) |
 | Evaluate | E1 | [E1](nodes/E1-evaluate.md) |
 | Run | R1 | [R1](nodes/R1-run.md) |
@@ -81,6 +82,7 @@ flowchart TB
   B9[B9_tutoring]
   B10[B10_benchmark_release]
   B11[B11_visual_kit]
+  B12[B12_control_studio]
   U1[U1_proof_ui]
   M1[M1_integrate]
   E1[E1_evaluate]

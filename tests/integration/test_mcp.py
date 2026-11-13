@@ -7,7 +7,8 @@ def test_list_and_run_tools() -> None:
     names = {t["name"] for t in TOOLS}
     assert "list_workflows" in names
     assert "run_workflow" in names
-    assert 5 <= len(names) <= 9
+    assert "control_studio_create_diagram" in names
+    assert len(names) >= 8
     listed = handle("tools/list", {})
     assert "tools" in listed
     started = handle(
