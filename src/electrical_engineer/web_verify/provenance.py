@@ -65,10 +65,7 @@ def downgrade_claim_provenance(claim: dict[str, Any]) -> dict[str, Any]:
     status = str(claim.get("status") or "").lower()
     if status in ("needs_review", "mismatch_library", "mismatch_solver", "pending_host", "unsupported"):
         return out
-    if status in ("verified", "pass"):
-        out["status"] = "unverified_from_memory"
-        out["provenance_note"] = "unverified (from memory) — no session evidence record"
-    elif status in ("", "unverified", "unverified_from_memory"):
+    if status in ("verified", "pass", "", "unverified", "unverified_from_memory"):
         out["status"] = "unverified_from_memory"
         out["provenance_note"] = "unverified (from memory) — no session evidence record"
     return out
