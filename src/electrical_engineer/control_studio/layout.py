@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 BLOCK_W = 96
+PID_W = 144
 BLOCK_H = 56
 GAP = 32
 GRID = 8
@@ -20,6 +21,14 @@ def _snap(value: float) -> float:
 
 def _block_height(_btype: str) -> float:
     return float(BLOCK_H)
+
+
+def _block_width(btype: str) -> float:
+    if btype == "sum":
+        return float(SUM_W)
+    if btype == "pid":
+        return float(PID_W)
+    return float(BLOCK_W)
 
 
 def _forward_order(diagram: dict[str, Any]) -> list[str]:
@@ -72,8 +81,8 @@ def layout_chain(diagram: dict[str, Any]) -> dict[str, Any]:
         b["x"] = _snap(float(x))
         b["y"] = _snap(float(PORT_RAIL_CENTER_Y - h / 2))
         placed.add(bid)
-        span = SUM_W if btype == "sum" else BLOCK_W
-        x += span + GAP
+        span = _block_width(btype)
+        x += int(span) + GAP
     for b in blocks:
         if b["id"] not in placed:
             b["x"] = _snap(float(x))

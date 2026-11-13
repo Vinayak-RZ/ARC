@@ -19,7 +19,6 @@ def _plot_bode_open_loop(sys, path: Path, margins: dict[str, Any]) -> None:
     import control
     import matplotlib.pyplot as plt
     import numpy as np
-    from matplotlib.ticker import LogFormatterSciNotation, LogLocator
 
     from electrical_engineer.visual_kit.design_tokens import get_theme
     from electrical_engineer.visual_kit.mpl_theme import apply_theme, direct_label
@@ -45,17 +44,31 @@ def _plot_bode_open_loop(sys, path: Path, margins: dict[str, Any]) -> None:
     ax_mag.axhline(0, color=theme.muted, linewidth=0.8, linestyle="--")
     ax_phase.axhline(-180, color=theme.muted, linewidth=0.8, linestyle="--")
 
+    ax_mag.set_title("")
+    fig.suptitle("")
     ax_mag.set_ylabel("Magnitude (dB)")
     ax_phase.set_ylabel("Phase (deg)")
     ax_phase.set_xlabel("ω (rad/s)")
     ax_mag.tick_params(axis="x", labelbottom=False)
     ax_mag.set_xticklabels([])
 
+    from matplotlib.ticker import FixedLocator, FuncFormatter
+
     x_lo, x_hi = 1e-2, 1e2
+    decades = [1e-2, 1e-1, 1e0, 1e1, 1e2]
+
+    def _decade_label(x: float, _pos: float) -> str:
+        if x <= 0:
+            return ""
+        p = round(math.log10(x))
+        return rf"$10^{{{p}}}$"
+
     for ax in (ax_mag, ax_phase):
         ax.set_xlim(x_lo, x_hi)
-        ax.xaxis.set_major_locator(LogLocator(base=10.0))
-    ax_phase.xaxis.set_major_formatter(LogFormatterSciNotation())
+        ax.set_xscale("log")
+        ax.xaxis.set_major_locator(FixedLocator(decades))
+    ax_phase.xaxis.set_major_formatter(FuncFormatter(_decade_label))
+    ax_phase.tick_params(axis="x", labelsize=theme.tick_size, colors=theme.ink, labelbottom=True)
 
     if wgc is not None and math.isfinite(wgc):
         ax_mag.axvline(wgc, color=theme.fault, linewidth=1.0, linestyle=":")

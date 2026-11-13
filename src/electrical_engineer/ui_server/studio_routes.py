@@ -170,4 +170,8 @@ def register_studio_routes(app: FastAPI, *, root: Path) -> None:
         path = root / "runs" / session_id / f"studio_{safe}.png"
         if not path.is_file():
             return JSONResponse({"error": "missing"}, status_code=404)
-        return FileResponse(path, media_type="image/png")
+        return FileResponse(
+            path,
+            media_type="image/png",
+            headers={"Cache-Control": "no-store"},
+        )

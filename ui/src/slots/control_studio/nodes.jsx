@@ -121,10 +121,8 @@ export function PidNode({ data, selected }) {
     data,
     <>
       <span className="studio-block-kind">PID</span>
-      <span className="studio-pid-grid" aria-label="PID gains">
-        <span>Kp {p.kp ?? 0}</span>
-        <span>Ki {p.ki ?? 0}</span>
-        <span>Kd {p.kd ?? 0}</span>
+      <span className="studio-pid-line">
+        Kp {p.kp ?? 0} · Ki {p.ki ?? 0} · Kd {p.kd ?? 0}
       </span>
     </>,
     <>

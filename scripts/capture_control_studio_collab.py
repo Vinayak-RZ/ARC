@@ -15,6 +15,22 @@ OUT.mkdir(parents=True, exist_ok=True)
 from electrical_engineer.control_studio.mcp_tools import handle_tool
 
 
+def assert_bode_png_fresh(path: Path) -> None:
+    """Reject stale matplotlib theme (orange phase, pre-cobalt captures)."""
+    from PIL import Image
+    import numpy as np
+
+    im = np.array(Image.open(path).convert("RGB"))
+    h = im.shape[0]
+    phase = im[h // 2 + 20 :, :]
+    orange = (phase[:, :, 0] > 175) & (phase[:, :, 1] < 130) & (phase[:, :, 2] < 95)
+    if float(orange.mean()) > 0.008:
+        raise SystemExit(f"bode stale (orange phase): {path}")
+    cobalt = (phase[:, :, 2] > 140) & (phase[:, :, 0] < 90) & (phase[:, :, 1] < 120)
+    if float(cobalt.mean()) < 0.004:
+        raise SystemExit(f"bode missing cobalt phase trace: {path}")
+
+
 def main() -> int:
     from playwright.sync_api import sync_playwright
 
@@ -25,6 +41,7 @@ def main() -> int:
         "control_studio_create_diagram", {"title": "PID · DC motor", "golden": "pid_dc_motor"}
     )["session_id"]
     handle_tool("control_studio_simulate", {"session_id": sid})
+    handle_tool("control_studio_analyze", {"session_id": sid})
     url_golden = f"{base}&session={sid}"
 
     build_sid = None
@@ -45,7 +62,7 @@ def main() -> int:
         }""",
             timeout=35000,
         )
-        page.wait_for_timeout(900)
+        page.wait_for_timeout(1600)
         viewport = page.evaluate(
             """() => {
             const pane = document.querySelector('.react-flow__pane');
@@ -78,8 +95,8 @@ def main() -> int:
             return 2
         ratio = float(viewport.get("ratio") or 0)
         ratio_h = float(viewport.get("ratioH") or 0)
-        if ratio < 0.7:
-            print(f"viewport-fill: diagram width ratio {ratio:.3f} < 0.7", file=sys.stderr)
+        if ratio < 0.76:
+            print(f"viewport-fill: diagram width ratio {ratio:.3f} < 0.76 (screen pixels)", file=sys.stderr)
             return 2
         if max(ratio, ratio_h) < 0.6:
             print(f"viewport-fill: max(w,h) ratio {max(ratio, ratio_h):.3f} < 0.6", file=sys.stderr)
@@ -87,8 +104,27 @@ def main() -> int:
         print(f"viewport-fill: width ratio {ratio:.3f}, height ratio {ratio_h:.3f}", file=sys.stderr)
         page.screenshot(path=str(populated), full_page=False)
         bode_shot = OUT / "control_studio_bode_1280x800.png"
+        handle_tool("control_studio_analyze", {"session_id": sid})
+        bode_path = ROOT / "runs" / sid / "studio_bode.png"
+        assert_bode_png_fresh(bode_path)
         page.locator(".studio-results-tabs button", has_text="Bode").click()
-        page.wait_for_timeout(600)
+        page.wait_for_timeout(400)
+        page.evaluate(
+            """(sid) => {
+            const ts = Date.now();
+            const img = document.querySelector('.studio-results-stage img');
+            if (img) img.src = `/api/control-studio/sessions/${sid}/plot/bode?t=${ts}`;
+        }""",
+            sid,
+        )
+        page.wait_for_function(
+            """() => {
+            const img = document.querySelector('.studio-results-stage img');
+            return img && img.complete && img.naturalHeight > 80;
+        }""",
+            timeout=15000,
+        )
+        page.wait_for_timeout(300)
         page.locator(".studio-results-stage").scroll_into_view_if_needed()
         page.evaluate(
             """() => {

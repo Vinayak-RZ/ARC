@@ -364,17 +364,14 @@
 .studio-block-body {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  flex: 1;
-  min-height: 0;
-  padding: 4px 6px;
   align-items: center;
   justify-content: center;
-  gap: 3px;
-  padding: 10px 12px;
-  min-height: 64px;
+  flex: 1;
+  gap: 2px;
+  padding: 4px 6px;
+  min-height: 0;
   text-align: center;
-  white-space: normal;
+  overflow: hidden;
 }
 
 .studio-block.is-selected {
@@ -395,14 +392,18 @@
   }
 }
 
-.studio-pid-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2px;
+.studio-pid.studio-block {
+  width: 144px;
+  min-width: 144px;
+  max-width: 144px;
+}
+
+.studio-pid-line {
+  display: block;
   font-size: 12px;
   font-weight: 600;
   color: var(--cs-text);
-  margin-top: 2px;
+  line-height: 1.2;
   white-space: nowrap;
 }
 

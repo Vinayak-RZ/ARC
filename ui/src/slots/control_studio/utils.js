@@ -4,6 +4,7 @@ import { wireLabel } from "./edges.jsx";
 
 const EDGE_MARKER = { type: MarkerType.ArrowClosed, color: "#202020", width: 14, height: 14 };
 const BOX_W = 96;
+const PID_W = 144;
 const BOX_H = 56;
 const SUM_W = 56;
 
@@ -21,7 +22,7 @@ export function diagramToFlow(diagram, { issuesByBlock = {}, notes = [], highlig
     id: b.id,
     type: nodeForType(b.type),
     position: { x: b.x || 0, y: b.y || 0 },
-    width: b.type === "sum" ? SUM_W : BOX_W,
+    width: b.type === "sum" ? SUM_W : b.type === "pid" ? PID_W : BOX_W,
     height: BOX_H,
     zIndex: 2,
     data: {
