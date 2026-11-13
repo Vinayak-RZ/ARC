@@ -40,6 +40,7 @@ def compose_control_blocks(spec: dict[str, Any], inputs: dict[str, Any]) -> dict
     return {
         "ok": True,
         "unchecked": False,
+        "value": float(sum(plant["num"]) / sum(plant["den"]) if plant.get("den") else 0.0),
         "plant": plant,
         "num": plant["num"],
         "den": plant["den"],

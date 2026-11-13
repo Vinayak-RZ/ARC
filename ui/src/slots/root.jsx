@@ -5,6 +5,7 @@ import { Canvas } from "./canvas/Canvas.jsx";
 import { Inspector } from "./canvas/Inspector.jsx";
 import { Library } from "./library.jsx";
 import { EngineArtifacts } from "./engine/EngineArtifacts.jsx";
+import { VisualGallery } from "./gallery.jsx";
 
 function Root() {
   return (
@@ -55,6 +56,8 @@ function Sidebar() {
     const q = new URLSearchParams(window.location.search);
     const viewQ = q.get("view");
     if (viewQ === "library") setView("library");
+    if (viewQ === "gallery") setView("gallery");
+    if (window.location.pathname === "/gallery") setView("gallery");
     const run = q.get("run");
     if (run) setRun(run);
   }, [setRun, setView]);
@@ -79,6 +82,14 @@ function Sidebar() {
     window.history.replaceState({}, "", url);
     setOpen(false);
   }
+  function openGallery() {
+    setView("gallery");
+    const url = new URL(window.location.href);
+    url.searchParams.set("view", "gallery");
+    url.searchParams.delete("run");
+    window.history.replaceState({}, "", url);
+    setOpen(false);
+  }
   return (
     <>
       <button
@@ -97,6 +108,9 @@ function Sidebar() {
           </button>
           <button type="button" className="sidebar-switch-btn" aria-current={view === "library" ? "true" : undefined} onClick={openBooks}>
             Books
+          </button>
+          <button type="button" className="sidebar-switch-btn" aria-current={view === "gallery" ? "true" : undefined} onClick={openGallery}>
+            Visuals
           </button>
         </div>
         {view === "library" ? (
@@ -145,6 +159,9 @@ function Workspace() {
   const view = useLayout((s) => s.view);
   const id = useLayout((s) => s.currentRunId);
   const { data } = useRun(id);
+  if (view === "gallery") {
+    return renderSlot("visual.gallery");
+  }
   if (view === "library") {
     return renderSlot("rag.inventory");
   }
@@ -366,4 +383,5 @@ register("photo.confirm", function PhotoConfirm() {
   return null;
 });
 register("rag.inventory", Library);
+register("visual.gallery", VisualGallery);
 

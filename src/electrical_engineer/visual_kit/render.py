@@ -2,107 +2,65 @@
 
 from __future__ import annotations
 
-import math
 from pathlib import Path
 from typing import Any
 
-from electrical_engineer.engines.agc_two_area import TwoAreaAgcCase, simulate_two_area
-from electrical_engineer.engines.ed_lambda import EdCase, solve_lambda_ed
-from electrical_engineer.engines.smib_swing import SmibCase, eec301_reference
+from electrical_engineer.engines.smib_swing import SmibCase
+from electrical_engineer.visual_kit.animation import render_swing_fault_animation
+from electrical_engineer.visual_kit.design_tokens import ThemeName
+from electrical_engineer.visual_kit.render_circuit import (
+    render_phasor_diagram,
+    render_schematic_divider,
+)
+from electrical_engineer.visual_kit.render_control import (
+    render_control_bode,
+    render_control_root_locus,
+    render_control_step,
+)
+from electrical_engineer.visual_kit.render_misc import (
+    render_control_block_diagram,
+    render_power_oneline,
+)
+from electrical_engineer.visual_kit.render_power import (
+    render_agc_trace,
+    render_dispatch_curve,
+    render_swing_equal_area,
+)
 
 
-def _require_mpl():
-    try:
-        import matplotlib
-
-        matplotlib.use("Agg")
-        import matplotlib.pyplot as plt
-    except ImportError as exc:
-        raise RuntimeError("matplotlib required for visual-kit render") from exc
-    return plt
+def _smib_case(props: dict[str, Any]) -> SmibCase | None:
+    fields = set(SmibCase.__dataclass_fields__)
+    data = {k: v for k, v in props.items() if k in fields}
+    return SmibCase(**data) if data else None
 
 
-def render_swing_equal_area(out_dir: Path, case: SmibCase | None = None) -> dict[str, Any]:
-    case = case or SmibCase()
-    ref = eec301_reference(case)
-    plt = _require_mpl()
-    fig, ax = plt.subplots(figsize=(6.4, 4.0), dpi=120)
-    deltas = [math.radians(x) for x in range(120)]
-    pe = [case.pmax_post_pu * math.sin(d) for d in deltas]
-    ax.plot([math.degrees(d) for d in deltas], pe, label="Pe post")
-    ax.axhline(case.pm_pu, color="C2", linestyle="--", label="Pm")
-    ax.axvline(ref["delta0_deg"], color="C3", linestyle=":", label=f"delta0={ref['delta0_deg']:.2f}")
-    ax.axvline(ref["delta_cr_deg"], color="C4", linestyle=":", label=f"dcr={ref['delta_cr_deg']:.2f}")
-    ax.set_xlabel("delta (deg)")
-    ax.set_ylabel("power (pu)")
-    ax.set_title("SMIB equal-area (engine-bound)")
-    ax.legend(fontsize=7, loc="upper right")
-    out_dir.mkdir(parents=True, exist_ok=True)
-    png = out_dir / "power.swing_equal_area.png"
-    fig.tight_layout()
-    fig.savefig(png)
-    plt.close(fig)
-    meta = {"component_id": "power.swing_equal_area", "props_source": "smib_swing", **ref}
-    return {"png": str(png), "meta": meta}
+def _theme(props: dict[str, Any]) -> ThemeName:
+    t = str(props.get("theme", "light"))
+    return "dark" if t == "dark" else "light"
 
 
-def render_agc_trace(out_dir: Path) -> dict[str, Any]:
-    case = TwoAreaAgcCase.eec301_default().with_k(0.3)
-    out = simulate_two_area(case, run="agc", t_end_s=20.0)
-    trail = out.get("trail") or []
-    plt = _require_mpl()
-    fig, ax = plt.subplots(figsize=(6.4, 3.2), dpi=120)
-    if trail:
-        f0 = case.f0_hz
-        t = [p[0] for p in trail]
-        f1 = [p[1][0] * f0 for p in trail]
-        ax.plot(t, f1, label="f1 (Hz)")
-    ax.set_xlabel("time (s)")
-    ax.set_ylabel("frequency (Hz)")
-    ax.set_title("Two-area AGC trace (engine-bound)")
-    ax.legend(fontsize=8)
-    out_dir.mkdir(parents=True, exist_ok=True)
-    png = out_dir / "power.agc_trace.png"
-    fig.tight_layout()
-    fig.savefig(png)
-    plt.close(fig)
-    steady = out.get("steady") or {}
-    return {
-        "png": str(png),
-        "meta": {"component_id": "power.agc_trace", "steady": steady, "props_source": "agc_two_area"},
-    }
-
-
-def render_dispatch_curve(out_dir: Path, pd_mw: float = 500.0) -> dict[str, Any]:
-    case = EdCase.eec301_default()
-    plt = _require_mpl()
-    fig, ax = plt.subplots(figsize=(6.4, 3.2), dpi=120)
-    for pd in (300.0, 450.0, 500.0):
-        row = solve_lambda_ed(case, pd)
-        p = row["P"]
-        ax.plot(p, [row["lam"]] * len(p), "o", label=f"PD={pd:.0f}")
-    ax.set_xlabel("generator P (MW)")
-    ax.set_ylabel("lambda")
-    ax.set_title("Lambda ED (engine-bound)")
-    ax.legend(fontsize=7)
-    out_dir.mkdir(parents=True, exist_ok=True)
-    png = out_dir / "power.dispatch_curve.png"
-    fig.tight_layout()
-    fig.savefig(png)
-    plt.close(fig)
-    return {
-        "png": str(png),
-        "meta": {"component_id": "power.dispatch_curve", "props_source": "ed_lambda", "pd_mw": pd_mw},
-    }
+_COMPONENTS = {
+    "power.swing_equal_area": lambda out, props: render_swing_equal_area(
+        out, _smib_case(props), theme_name=_theme(props)
+    ),
+    "power.agc_trace": lambda out, props: render_agc_trace(out, theme_name=_theme(props)),
+    "power.dispatch_curve": lambda out, props: render_dispatch_curve(
+        out, float(props.get("PD", 500.0)), theme_name=_theme(props)
+    ),
+    "power.swing_animation": lambda out, props: render_swing_fault_animation(out),
+    "control.bode": lambda out, props: render_control_bode(out, theme_name=_theme(props)),
+    "control.step": lambda out, props: render_control_step(out, theme_name=_theme(props)),
+    "control.root_locus": lambda out, props: render_control_root_locus(out, theme_name=_theme(props)),
+    "schematic.divider": lambda out, props: render_schematic_divider(out, theme_name=_theme(props)),
+    "waveform.phasor": lambda out, props: render_phasor_diagram(out, theme_name=_theme(props)),
+    "control.block_diagram": lambda out, props: render_control_block_diagram(out, theme_name=_theme(props)),
+    "power.oneline_bus": lambda out, props: render_power_oneline(out, theme_name=_theme(props)),
+}
 
 
 def render_component(component_id: str, out_dir: Path, props: dict[str, Any] | None = None) -> dict[str, Any]:
     props = props or {}
-    if component_id == "power.swing_equal_area":
-        case = SmibCase(**props) if props else SmibCase()
-        return render_swing_equal_area(out_dir, case)
-    if component_id == "power.agc_trace":
-        return render_agc_trace(out_dir)
-    if component_id == "power.dispatch_curve":
-        return render_dispatch_curve(out_dir, float(props.get("PD", 500.0)))
-    raise ValueError(f"unknown visual component: {component_id}")
+    fn = _COMPONENTS.get(component_id)
+    if fn is None:
+        raise ValueError(f"unknown visual component: {component_id}")
+    return fn(out_dir, props)

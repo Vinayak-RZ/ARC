@@ -1,35 +1,27 @@
 # PROGRESS: frontier-2026-11
 
-Branch: `cursor/frontier-execution-7a2f`
+Branch: `cursor/frontier-execution-7a2f` · PR [#49](https://github.com/Vinayak-RZ/ARC/pull/49)
 
 | Node | Status | Notes |
 |------|--------|-------|
-| D0 | **done** | Recipe counts, eval/gold README, `check_doc_drift.sh` |
-| A1 | **done** | `DECISIONS.md`, schema v2 |
-| B1 | **done** | PSA in eval CLI; trap_suite_index |
-| C1 | **partial** | CLEANUP_REPORT, BRANCH_INDEX; trials trim deferred |
-| B2 | **done** | PSA activities, workflows, MCP attachments |
-| B3 | **blocked** | ControlEval harness not run (scope) |
-| B4 | **blocked** | CIRCUIT subset / multimodal not started |
-| B5 | **partial** | trap index only; T4/T5 automation deferred |
-| B6 | **blocked** | `scripts/run_live_ab.py` writes blocked JSON (no keys) |
-| B7 | **partial** | `rlvr_env` importable manifest |
-| B8 | **blocked** | vertical pack not started |
-| B9 | **blocked** | P1 tutoring |
-| B10 | **blocked** | benchmark tarball |
-| B11 | **partial** | PSA visuals + MCP; regression CI not added |
-| U1 | **blocked** | UI scorecard not started |
+| D0 | **done** | Drift script, counts |
+| A1 | **done** | DECISIONS.md |
+| B1 | **done** | PSA eval CLI |
+| C1 | **partial** | BRANCH_INDEX; trials media trim still open |
+| B2 | **done** | PSA workflows + MCP |
+| B3 | **partial** | Control golds **18/18 eval**; ControlEval harness not wired |
+| B4 | **blocked** | CIRCUIT adapter not started |
+| B5 | **partial** | trap index; process graders partial |
+| B6 | **blocked** | Harness + `LIVE_AB.md`; keys missing |
+| B7 | **partial** | `rlvr_env` manifest |
+| B8 | **blocked** | Vertical pack |
+| B9 | **blocked** | P1 |
+| B10 | **partial** | `build_benchmark_v01.py` tarball |
+| B11 | **partial** | Design system, 11 components, regression CI, gallery API/UI |
+| U1 | **partial** | Visual gallery route + sidebar |
 | M1 | **pending** | |
-| E1 | **blocked** | validate_frontier not added |
-| R1/T1 | **blocked** | boot smoke / pass^k not run |
-| D1 | **partial** | SCORECARD.md stub with measured rows |
-| D2 | **pending** | terminal README refresh |
-
-| Wave | Status |
-|------|--------|
-| 0 Gate 0 | done |
-| 1 D0, A1 | done |
-| 2 B1 | done |
-| 2b C1 | partial |
-| 3 kernel + B11 | partial (B2 + B11 PSA slice) |
-| 4–10 | blocked or pending |
+| E1 | **partial** | `validate_frontier.sh` |
+| R1 | **partial** | UI built; boot smoke not recorded |
+| T1 | **partial** | `pass_k_traps.py` local pass^k=1.0 on ablation |
+| D1 | **partial** | SCORECARD |
+| D2 | **pending** | |

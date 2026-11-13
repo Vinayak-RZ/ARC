@@ -331,6 +331,25 @@ def create_app(root: Path | None = None) -> FastAPI:
                 filters[key] = val
         return retrieve(filters, query=query, cwd=cwd, hops=hops_n)
 
+    @app.get("/api/visual-kit")
+    def visual_kit() -> dict:
+        from electrical_engineer.visual_kit.registry import load_manifest
+
+        return {
+            "manifest_version": load_manifest().get("manifest_version"),
+            "components": load_manifest().get("components") or [],
+            "goldens_base": "/api/visual-kit/golden/",
+        }
+
+    @app.get("/api/visual-kit/golden/{rel_path:path}", response_model=None)
+    def visual_golden(rel_path: str):
+        base = (_repo_root() / "artifacts" / "visual-goldens").resolve()
+        target = (base / rel_path).resolve()
+        if not str(target).startswith(str(base)) or not target.is_file():
+            return JSONResponse({"error": "missing"}, status_code=404)
+        media = "image/gif" if target.suffix == ".gif" else "image/png"
+        return FileResponse(target, media_type=media)
+
     ui_dist = Path(__file__).resolve().parents[3] / "ui" / "dist"
     index = ui_dist / "index.html"
     if index.is_file():
@@ -338,6 +357,10 @@ def create_app(root: Path | None = None) -> FastAPI:
 
         @app.get("/")
         def spa() -> FileResponse:
+            return FileResponse(index)
+
+        @app.get("/gallery")
+        def gallery_spa() -> FileResponse:
             return FileResponse(index)
 
     return app
