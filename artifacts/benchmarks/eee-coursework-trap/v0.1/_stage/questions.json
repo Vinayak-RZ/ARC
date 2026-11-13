@@ -1,0 +1,3493 @@
+{
+  "schema": "arc.benchmark.questions.v0.1",
+  "tasks": [
+    {
+      "id": "power/agc-eec301-01-s118",
+      "domain": "power",
+      "seed": 118,
+      "question": "Two-area primary-frequency and AGC twin: using area parameters, tie gain, and load step in givens, report primary steady-state Area-1 frequency (Hz) and AGC steady-state Area-1 frequency (Hz) after load step.",
+      "givens": {
+        "f0_hz": 60.0,
+        "base_mva": 1000.0,
+        "tie_sync_gain": 2.0,
+        "dpl1_pu": 0.1231,
+        "dpl2_pu": 0.0,
+        "step_time_s": 1.0,
+        "h_s": 0.001,
+        "area1": {
+          "tg": 0.2,
+          "tt": 0.5,
+          "m": 10.0,
+          "d": 0.6,
+          "r": 0.05,
+          "b": 20.6,
+          "k": 0.0
+        },
+        "area2": {
+          "tg": 0.3,
+          "tt": 0.6,
+          "m": 8.0,
+          "d": 0.9,
+          "r": 0.0625,
+          "b": 16.9,
+          "k": 0.0
+        },
+        "t_end_s": 30.0,
+        "K_agc": 0.3,
+        "agc_t_end_s": 60.0
+      },
+      "givens_units": {
+        "f0_hz": "Hz",
+        "base_mva": "MVA",
+        "tie_sync_gain": "pu",
+        "dpl1_pu": "pu",
+        "dpl2_pu": "pu",
+        "step_time_s": "s",
+        "h_s": "s",
+        "area1.tg": "s",
+        "area1.tt": "s",
+        "area1.m": "s",
+        "area1.d": "pu",
+        "area1.r": "pu",
+        "area1.b": "pu",
+        "area1.k": "pu",
+        "area2.tg": "s",
+        "area2.tt": "s",
+        "area2.m": "s",
+        "area2.d": "pu",
+        "area2.r": "pu",
+        "area2.b": "pu",
+        "area2.k": "pu",
+        "t_end_s": "s",
+        "K_agc": "pu",
+        "agc_t_end_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "primary_df1_Hz",
+            "type": "float",
+            "unit": "Hz",
+            "tolerance": 0.002,
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.002
+          },
+          {
+            "name": "primary_P12_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance": 0.5,
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.5
+          },
+          {
+            "name": "agc_ss_df1_Hz",
+            "type": "float",
+            "unit": "Hz",
+            "tolerance": 0.002,
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.002
+          },
+          {
+            "name": "agc_ss_P12_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance": 0.05,
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); primary_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; primary_P12_MW [MW] within \u00b10.5% or \u00b10.5; agc_ss_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; agc_ss_P12_MW [MW] within \u00b10.5% or \u00b10.05"
+      }
+    },
+    {
+      "id": "power/agc-eec301-01-s149",
+      "domain": "power",
+      "seed": 149,
+      "question": "Two-area primary-frequency and AGC twin: using area parameters, tie gain, and load step in givens, report primary steady-state Area-1 frequency (Hz) and AGC steady-state Area-1 frequency (Hz) after load step.",
+      "givens": {
+        "f0_hz": 60.0,
+        "base_mva": 1000.0,
+        "tie_sync_gain": 2.0,
+        "dpl1_pu": 0.1311,
+        "dpl2_pu": 0.0,
+        "step_time_s": 1.0,
+        "h_s": 0.001,
+        "area1": {
+          "tg": 0.2,
+          "tt": 0.5,
+          "m": 10.0,
+          "d": 0.6,
+          "r": 0.05,
+          "b": 20.6,
+          "k": 0.0
+        },
+        "area2": {
+          "tg": 0.3,
+          "tt": 0.6,
+          "m": 8.0,
+          "d": 0.9,
+          "r": 0.0625,
+          "b": 16.9,
+          "k": 0.0
+        },
+        "t_end_s": 30.0,
+        "K_agc": 0.3,
+        "agc_t_end_s": 60.0
+      },
+      "givens_units": {
+        "f0_hz": "Hz",
+        "base_mva": "MVA",
+        "tie_sync_gain": "pu",
+        "dpl1_pu": "pu",
+        "dpl2_pu": "pu",
+        "step_time_s": "s",
+        "h_s": "s",
+        "area1.tg": "s",
+        "area1.tt": "s",
+        "area1.m": "s",
+        "area1.d": "pu",
+        "area1.r": "pu",
+        "area1.b": "pu",
+        "area1.k": "pu",
+        "area2.tg": "s",
+        "area2.tt": "s",
+        "area2.m": "s",
+        "area2.d": "pu",
+        "area2.r": "pu",
+        "area2.b": "pu",
+        "area2.k": "pu",
+        "t_end_s": "s",
+        "K_agc": "pu",
+        "agc_t_end_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "primary_df1_Hz",
+            "type": "float",
+            "unit": "Hz",
+            "tolerance": 0.002,
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.002
+          },
+          {
+            "name": "primary_P12_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance": 0.5,
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.5
+          },
+          {
+            "name": "agc_ss_df1_Hz",
+            "type": "float",
+            "unit": "Hz",
+            "tolerance": 0.002,
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.002
+          },
+          {
+            "name": "agc_ss_P12_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance": 0.05,
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); primary_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; primary_P12_MW [MW] within \u00b10.5% or \u00b10.5; agc_ss_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; agc_ss_P12_MW [MW] within \u00b10.5% or \u00b10.05"
+      }
+    },
+    {
+      "id": "power/ed-eec301-01-s120",
+      "domain": "power",
+      "seed": 120,
+      "question": "Three-unit economic dispatch with quadratic costs and limits in givens: for each PD (MW) case listed, report lambda (Rs/MWh) and unit MW allocations.",
+      "givens": {
+        "units": [
+          {
+            "a": 500.0,
+            "b": 5.3,
+            "c": 0.004,
+            "pmin": 50.0,
+            "pmax": 300.0
+          },
+          {
+            "a": 400.0,
+            "b": 5.5,
+            "c": 0.006,
+            "pmin": 30.0,
+            "pmax": 150.0
+          },
+          {
+            "a": 200.0,
+            "b": 5.8,
+            "c": 0.009,
+            "pmin": 20.0,
+            "pmax": 120.0
+          }
+        ],
+        "PD_MW": 525.2,
+        "PD_cases_MW": [
+          450.0,
+          500.0,
+          300.0
+        ]
+      },
+      "givens_units": {
+        "units[0].a": "Rs/MWh",
+        "units[0].b": "Rs/MWh",
+        "units[0].c": "Rs/MWh/MW^2",
+        "units[0].pmin": "MW",
+        "units[0].pmax": "MW",
+        "units[1].a": "Rs/MWh",
+        "units[1].b": "Rs/MWh",
+        "units[1].c": "Rs/MWh/MW^2",
+        "units[1].pmin": "MW",
+        "units[1].pmax": "MW",
+        "units[2].a": "Rs/MWh",
+        "units[2].b": "Rs/MWh",
+        "units[2].c": "Rs/MWh/MW^2",
+        "units[2].pmin": "MW",
+        "units[2].pmax": "MW",
+        "PD_MW": "MW"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "lam",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance": 0.05,
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          },
+          {
+            "name": "cases",
+            "type": "array"
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); lam [Rs/MWh] within \u00b10.5% or \u00b10.05; cases [1] within \u00b10.5% or \u00b10.0001"
+      }
+    },
+    {
+      "id": "power/ed-eec301-01-s151",
+      "domain": "power",
+      "seed": 151,
+      "question": "Three-unit economic dispatch with quadratic costs and limits in givens: for each PD (MW) case listed, report lambda (Rs/MWh) and unit MW allocations.",
+      "givens": {
+        "units": [
+          {
+            "a": 500.0,
+            "b": 5.307,
+            "c": 0.004,
+            "pmin": 50.0,
+            "pmax": 300.0
+          },
+          {
+            "a": 400.0,
+            "b": 5.5,
+            "c": 0.006,
+            "pmin": 30.0,
+            "pmax": 150.0
+          },
+          {
+            "a": 200.0,
+            "b": 5.8,
+            "c": 0.009,
+            "pmin": 20.0,
+            "pmax": 120.0
+          }
+        ],
+        "PD_MW": 540.8,
+        "PD_cases_MW": [
+          450.0,
+          500.0,
+          300.0
+        ]
+      },
+      "givens_units": {
+        "units[0].a": "Rs/MWh",
+        "units[0].b": "Rs/MWh",
+        "units[0].c": "Rs/MWh/MW^2",
+        "units[0].pmin": "MW",
+        "units[0].pmax": "MW",
+        "units[1].a": "Rs/MWh",
+        "units[1].b": "Rs/MWh",
+        "units[1].c": "Rs/MWh/MW^2",
+        "units[1].pmin": "MW",
+        "units[1].pmax": "MW",
+        "units[2].a": "Rs/MWh",
+        "units[2].b": "Rs/MWh",
+        "units[2].c": "Rs/MWh/MW^2",
+        "units[2].pmin": "MW",
+        "units[2].pmax": "MW",
+        "PD_MW": "MW"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "lam",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance": 0.05,
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          },
+          {
+            "name": "cases",
+            "type": "array"
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); lam [Rs/MWh] within \u00b10.5% or \u00b10.05; cases [1] within \u00b10.5% or \u00b10.0001"
+      }
+    },
+    {
+      "id": "power/ed-penalty-t13-01-s139",
+      "domain": "power",
+      "seed": 139,
+      "question": "Three generators with quadratic costs and loss matrix B; total demand Pd=500 MW. Run \u03bb-iteration with B-based penalty factors until MW balance converges. Report converged \u03bb (Rs/MWh).",
+      "givens": {
+        "pd_mw": 500,
+        "units": [
+          {
+            "a": 500.0,
+            "b": 5.3,
+            "c": 0.004,
+            "pmin": 50.0,
+            "pmax": 300.0
+          },
+          {
+            "a": 400.0,
+            "b": 5.5,
+            "c": 0.006,
+            "pmin": 30.0,
+            "pmax": 150.0
+          },
+          {
+            "a": 200.0,
+            "b": 5.8,
+            "c": 0.009,
+            "pmin": 20.0,
+            "pmax": 120.0
+          }
+        ],
+        "B": [
+          [
+            0.0001,
+            2e-05,
+            1e-05
+          ],
+          [
+            2e-05,
+            0.00015,
+            2e-05
+          ],
+          [
+            1e-05,
+            2e-05,
+            0.00012
+          ]
+        ]
+      },
+      "givens_units": {
+        "pd_mw": "MW",
+        "units[0].a": "Rs/MWh",
+        "units[0].b": "Rs/MWh",
+        "units[0].c": "Rs/MWh/MW^2",
+        "units[0].pmin": "MW",
+        "units[0].pmax": "MW",
+        "units[1].a": "Rs/MWh",
+        "units[1].b": "Rs/MWh",
+        "units[1].c": "Rs/MWh/MW^2",
+        "units[1].pmin": "MW",
+        "units[1].pmax": "MW",
+        "units[2].a": "Rs/MWh",
+        "units[2].b": "Rs/MWh",
+        "units[2].c": "Rs/MWh/MW^2",
+        "units[2].pmin": "MW",
+        "units[2].pmax": "MW",
+        "B": "loss coeff matrix"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "1",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.01
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.01"
+      }
+    },
+    {
+      "id": "power/lg-01-s127",
+      "domain": "power",
+      "seed": 127,
+      "question": "Sequence-network fault: type LG, V_pre=1.0 pu, Z1=0.1 pu, Z2=0.1 pu, Z0=0.3 pu. Report |Ifault| (pu).",
+      "givens": {
+        "fault_type": "LG",
+        "z1_pu": 0.1,
+        "z2_pu": 0.1,
+        "z0_pu": 0.3,
+        "v_prefault_pu": 1.0
+      },
+      "givens_units": {
+        "z1_pu": "pu",
+        "z2_pu": "pu",
+        "z0_pu": "pu",
+        "v_prefault_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "1",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+      }
+    },
+    {
+      "id": "power/ll-01-s134",
+      "domain": "power",
+      "seed": 134,
+      "question": "Sequence-network fault: type LL, V_pre=1.0 pu, Z1=0.1 pu, Z2=0.1 pu, Z0=0.3 pu. Report |Ifault| (pu).",
+      "givens": {
+        "fault_type": "LL",
+        "z1_pu": 0.1,
+        "z2_pu": 0.1,
+        "z0_pu": 0.3,
+        "v_prefault_pu": 1.0
+      },
+      "givens_units": {
+        "z1_pu": "pu",
+        "z2_pu": "pu",
+        "z0_pu": "pu",
+        "v_prefault_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "1",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+      }
+    },
+    {
+      "id": "power/llg-bc-01-s106",
+      "domain": "power",
+      "seed": 106,
+      "question": "Sequence-network fault: type LLG, V_pre=1.0 pu, Z1=0.2j pu, Z2=0.2j pu, Z0=0.2j pu. Report |Ifault| (pu).",
+      "givens": {
+        "sequence": true,
+        "fault_type": "LLG",
+        "faulted_phases": [
+          "b",
+          "c"
+        ],
+        "v_prefault_pu": 1.0,
+        "z1_pu": "0.2j",
+        "z2_pu": "0.2j",
+        "z0_pu": "0.2j",
+        "zf_pu": 0
+      },
+      "givens_units": {
+        "v_prefault_pu": "pu",
+        "z1_pu": "pu",
+        "z2_pu": "pu",
+        "z0_pu": "pu",
+        "zf_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "1",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+      }
+    },
+    {
+      "id": "power/protection-oc-01-s120",
+      "domain": "power",
+      "seed": 120,
+      "question": "OC relay: CT 300 A : 5 A, pickup 2.0 A secondary, fault current 800 A primary. Does the relay trip? Answer 1 if yes, 0 if no.",
+      "givens": {
+        "ct_primary_a": 300,
+        "ct_secondary_a": 5,
+        "relay_pickup_a": 2.0,
+        "fault_current_a": 800
+      },
+      "givens_units": {
+        "ct_primary_a": "A",
+        "ct_secondary_a": "A",
+        "relay_pickup_a": "A",
+        "fault_current_a": "A"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "1",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+      }
+    },
+    {
+      "id": "power/pu-base-12-01-s137",
+      "domain": "power",
+      "seed": 137,
+      "question": "Aggregate positive-sequence fault impedance at the fault bus from the per-unit element data and system base in givens. Report |Z1| (pu).",
+      "givens": {
+        "s_system_mva": 100,
+        "v_system_kv": 13.8,
+        "elements": [
+          {
+            "id": "gen",
+            "z_pu": "0.2j",
+            "s_base_mva": 50,
+            "sequence": "1"
+          },
+          {
+            "id": "xf",
+            "z_pu": "0.1j",
+            "s_base_mva": 100,
+            "sequence": "1"
+          }
+        ]
+      },
+      "givens_units": {
+        "s_system_mva": "MVA",
+        "v_system_kv": "kV"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "1",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+      }
+    },
+    {
+      "id": "power/smib-eec301-01-s127",
+      "domain": "power",
+      "seed": 127,
+      "question": "A synchronous machine on an infinite bus: using H, f0, Pm, and Pmax (pre-, during-, and post-fault) in the data, find prefault angle delta0 (deg), critical clearing angle delta_cr (deg), critical clearing time tcr (s), and the time to reach delta_cr during the fault t_to_delta_cr_s (s) at step h=0.001 s.",
+      "givens": {
+        "h_mj_mva": 5.0,
+        "f0_hz": 50.0,
+        "pm_pu": 0.954,
+        "pmax_pre_pu": 2.0,
+        "pmax_fault_pu": 0.5,
+        "pmax_post_pu": 1.5
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta0_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance": 0.02,
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.02
+          },
+          {
+            "name": "delta_cr_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance": 0.05,
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          },
+          {
+            "name": "tcr_s",
+            "type": "float",
+            "unit": "s",
+            "tolerance": 0.002,
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.002
+          },
+          {
+            "name": "t_to_delta_cr_s",
+            "type": "float",
+            "unit": "s",
+            "tolerance": 0.002,
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.002
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); delta0_deg [deg] within \u00b10.5% or \u00b10.02; delta_cr_deg [deg] within \u00b10.5% or \u00b10.05; tcr_s [s] within \u00b10.5% or \u00b10.002; t_to_delta_cr_s [s] within \u00b10.5% or \u00b10.002"
+      }
+    },
+    {
+      "id": "power/smib-eec301-01-s158",
+      "domain": "power",
+      "seed": 158,
+      "question": "A synchronous machine on an infinite bus: using H, f0, Pm, and Pmax (pre-, during-, and post-fault) in the data, find prefault angle delta0 (deg), critical clearing angle delta_cr (deg), critical clearing time tcr (s), and the time to reach delta_cr during the fault t_to_delta_cr_s (s) at step h=0.001 s.",
+      "givens": {
+        "h_mj_mva": 5.0,
+        "f0_hz": 50.0,
+        "pm_pu": 1.008,
+        "pmax_pre_pu": 2.0,
+        "pmax_fault_pu": 0.5,
+        "pmax_post_pu": 1.5
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta0_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance": 0.02,
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.02
+          },
+          {
+            "name": "delta_cr_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance": 0.05,
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          },
+          {
+            "name": "tcr_s",
+            "type": "float",
+            "unit": "s",
+            "tolerance": 0.002,
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.002
+          },
+          {
+            "name": "t_to_delta_cr_s",
+            "type": "float",
+            "unit": "s",
+            "tolerance": 0.002,
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.002
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); delta0_deg [deg] within \u00b10.5% or \u00b10.02; delta_cr_deg [deg] within \u00b10.5% or \u00b10.05; tcr_s [s] within \u00b10.5% or \u00b10.002; t_to_delta_cr_s [s] within \u00b10.5% or \u00b10.002"
+      }
+    },
+    {
+      "id": "control/block-feedback-01-s119",
+      "domain": "control",
+      "seed": 119,
+      "question": "Unity negative feedback: forward path G(s)=10/(s+1), feedback H(s)=1. Find closed-loop DC gain (value of C/R with unit step reference).",
+      "givens": {
+        "blocks": [
+          {
+            "id": "G",
+            "tf": "10/(s+1)"
+          },
+          {
+            "id": "H",
+            "tf": "1"
+          }
+        ],
+        "unity_feedback": {
+          "forward": "G",
+          "feedback": "H",
+          "negative": true
+        }
+      },
+      "givens_units": {},
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "1",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+      }
+    },
+    {
+      "id": "control/breakaway-3pole-01-s121",
+      "domain": "control",
+      "seed": 121,
+      "question": "Unity-feedback system: open-loop poles at [0, -3, -6] on the real axis. Find the breakaway point coordinate sigma on the real axis.",
+      "givens": {
+        "poles": [
+          0,
+          -3,
+          -6
+        ],
+        "zeros": []
+      },
+      "givens_units": {},
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "1",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+      }
+    },
+    {
+      "id": "control/digital-pole-01-s114",
+      "domain": "control",
+      "seed": 114,
+      "question": "Discrete plant G(z) with num=[0.104] den=[1.0, -0.5] and sample time Ts=0.01 s. Report max(|z|-plane pole|).",
+      "givens": {
+        "num": [
+          0.104
+        ],
+        "den": [
+          1.0,
+          -0.5
+        ],
+        "ts": 0.01
+      },
+      "givens_units": {
+        "num": "s-domain coeff",
+        "den": "s-domain coeff",
+        "ts": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "1",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+      }
+    },
+    {
+      "id": "control/digital-pole-01-s145",
+      "domain": "control",
+      "seed": 145,
+      "question": "Discrete plant G(z) with num=[0.11] den=[1.0, -0.5] and sample time Ts=0.01 s. Report max(|z|-plane pole|).",
+      "givens": {
+        "num": [
+          0.11
+        ],
+        "den": [
+          1.0,
+          -0.5
+        ],
+        "ts": 0.01
+      },
+      "givens_units": {
+        "num": "s-domain coeff",
+        "den": "s-domain coeff",
+        "ts": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "1",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+      }
+    },
+    {
+      "id": "control/margin-40-01-s147",
+      "domain": "control",
+      "seed": 147,
+      "question": "Plant G(s) has numerator coeffs [40.0] and denominator coeffs [1.0, 12.0, 20.0, 0.0] (s-domain). Report gain margin in dB for the unity-feedback loop.",
+      "givens": {
+        "num": [
+          40.0
+        ],
+        "den": [
+          1.0,
+          12.0,
+          20.0,
+          0.0
+        ]
+      },
+      "givens_units": {
+        "num": "s-domain coeff",
+        "den": "s-domain coeff"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "1",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+      }
+    },
+    {
+      "id": "control/margin-40-01-s178",
+      "domain": "control",
+      "seed": 178,
+      "question": "Plant G(s) has numerator coeffs [42.4] and denominator coeffs [1.0, 12.0, 20.0, 0.0] (s-domain). Report gain margin in dB for the unity-feedback loop.",
+      "givens": {
+        "num": [
+          42.4
+        ],
+        "den": [
+          1.0,
+          12.0,
+          20.0,
+          0.0
+        ]
+      },
+      "givens_units": {
+        "num": "s-domain coeff",
+        "den": "s-domain coeff"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "1",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+      }
+    },
+    {
+      "id": "control/steady-state-type1-01-s129",
+      "domain": "control",
+      "seed": 129,
+      "question": "Type-1 unity-feedback loop with gain K=4.0. Find ramp-error coefficient ess (dimensionless).",
+      "givens": {
+        "system_type": 1,
+        "gain": 4.0,
+        "error_key": "ess_ramp"
+      },
+      "givens_units": {
+        "system_type": "1",
+        "gain": "1"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "1",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+      }
+    },
+    {
+      "id": "circuits/divider-dc-01-s413",
+      "domain": "circuits",
+      "seed": 413,
+      "question": "A DC voltage divider has Vin=10.0 V, R1=1000.0 ohm, R2=1000.0 ohm. Find Vout at the R1-R2 junction (V).",
+      "givens": {
+        "vin_V": 10.0,
+        "r1_ohm": 1000.0,
+        "r2_ohm": 1000.0
+      },
+      "givens_units": {
+        "vin_V": "V",
+        "r1_ohm": "ohm",
+        "r2_ohm": "ohm"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "1",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.0001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.0001"
+      }
+    },
+    {
+      "id": "circuits/rc-step-01-s419",
+      "domain": "circuits",
+      "seed": 419,
+      "question": "A series RC circuit has V=11.5 V, R=1150 ohm, C=0.00115 F. Find the capacitor voltage (V) at t=1.15 s.",
+      "givens": {
+        "v": 11.5,
+        "r": 1150.0,
+        "c": 0.00115,
+        "t": 1.15,
+        "unit": "V"
+      },
+      "givens_units": {
+        "v": "V",
+        "r": "ohm",
+        "c": "F",
+        "t": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "1",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+      }
+    },
+    {
+      "id": "circuits/rc-step-01-s430",
+      "domain": "circuits",
+      "seed": 430,
+      "question": "A series RC circuit has V=10.2 V, R=1020 ohm, C=0.00102 F. Find the capacitor voltage (V) at t=1.02 s.",
+      "givens": {
+        "v": 10.2,
+        "r": 1020.0,
+        "c": 0.00102,
+        "t": 1.02,
+        "unit": "V"
+      },
+      "givens_units": {
+        "v": "V",
+        "r": "ohm",
+        "c": "F",
+        "t": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "1",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+      }
+    },
+    {
+      "id": "circuits/rl-step-01-s424",
+      "domain": "circuits",
+      "seed": 424,
+      "question": "A series RL circuit has V=26.4 V, R=132 ohm, L=0.165 H. Find the inductor current (A) at t=0.00227 s after the step at t=0.",
+      "givens": {
+        "v": 26.4,
+        "r": 132.0,
+        "l": 0.165,
+        "t": 0.00227
+      },
+      "givens_units": {
+        "v": "V",
+        "r": "ohm",
+        "l": "H",
+        "t": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "1",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.0001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.0001"
+      }
+    },
+    {
+      "id": "circuits/rl-step-01-s435",
+      "domain": "circuits",
+      "seed": 435,
+      "question": "A series RL circuit has V=24.24 V, R=121.2 ohm, L=0.1515 H. Find the inductor current (A) at t=0.003697 s after the step at t=0.",
+      "givens": {
+        "v": 24.24,
+        "r": 121.2,
+        "l": 0.1515,
+        "t": 0.003697
+      },
+      "givens_units": {
+        "v": "V",
+        "r": "ohm",
+        "l": "H",
+        "t": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "1",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.0001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.0001"
+      }
+    },
+    {
+      "id": "circuits/rlc-natural-01-s416",
+      "domain": "circuits",
+      "seed": 416,
+      "question": "A parallel RLC has R=212 ohm, L=0.106 H, C=1.06e-05 F, initial capacitor voltage vc0=12.72 V, inductor current i0=0.053 A (positive from the shared node through the inductor toward ground at t=0+). Find capacitor voltage (V) at t=0.00106 s.",
+      "givens": {
+        "r": 212.0,
+        "l": 0.106,
+        "c": 1.06e-05,
+        "vc0": 12.72,
+        "i0": 0.053,
+        "t": 0.00106
+      },
+      "givens_units": {
+        "r": "ohm",
+        "l": "H",
+        "c": "F",
+        "vc0": "V",
+        "i0": "A",
+        "t": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "1",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+      }
+    },
+    {
+      "id": "trap/T1-s217",
+      "domain": "trap",
+      "seed": 217,
+      "question": "A synchronous machine on an infinite bus experiences a fault and clearing sequence. Using H, f0, Pm, and Pmax (pre-, during-, and post-fault) in the data, find the critical clearing angle delta_cr (deg).",
+      "givens": {
+        "h_mj_mva": 5.46,
+        "f0_hz": 50.0,
+        "pm_pu": 0.889,
+        "pmax_pre_pu": 1.95,
+        "pmax_fault_pu": 0.475,
+        "pmax_post_pu": 1.468
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta_cr_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); delta_cr_deg [deg] within \u00b10.5% or \u00b10.05"
+      }
+    },
+    {
+      "id": "trap/T1-s218",
+      "domain": "trap",
+      "seed": 218,
+      "question": "A synchronous machine on an infinite bus experiences a fault and clearing sequence. Using H, f0, Pm, and Pmax (pre-, during-, and post-fault) in the data, find the critical clearing angle delta_cr (deg).",
+      "givens": {
+        "h_mj_mva": 4.8,
+        "f0_hz": 50.0,
+        "pm_pu": 0.884,
+        "pmax_pre_pu": 2.09,
+        "pmax_fault_pu": 0.485,
+        "pmax_post_pu": 1.441
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta_cr_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); delta_cr_deg [deg] within \u00b10.5% or \u00b10.05"
+      }
+    },
+    {
+      "id": "trap/T1-s219",
+      "domain": "trap",
+      "seed": 219,
+      "question": "A synchronous machine on an infinite bus experiences a fault and clearing sequence. Using H, f0, Pm, and Pmax (pre-, during-, and post-fault) in the data, find the critical clearing angle delta_cr (deg).",
+      "givens": {
+        "h_mj_mva": 5.2,
+        "f0_hz": 50.0,
+        "pm_pu": 0.894,
+        "pmax_pre_pu": 1.908,
+        "pmax_fault_pu": 0.521,
+        "pmax_post_pu": 1.421
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta_cr_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); delta_cr_deg [deg] within \u00b10.5% or \u00b10.05"
+      }
+    },
+    {
+      "id": "trap/T1-s220",
+      "domain": "trap",
+      "seed": 220,
+      "question": "A synchronous machine on an infinite bus experiences a fault and clearing sequence. Using H, f0, Pm, and Pmax (pre-, during-, and post-fault) in the data, find the critical clearing angle delta_cr (deg).",
+      "givens": {
+        "h_mj_mva": 5.25,
+        "f0_hz": 50.0,
+        "pm_pu": 0.889,
+        "pmax_pre_pu": 1.95,
+        "pmax_fault_pu": 0.478,
+        "pmax_post_pu": 1.48
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta_cr_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); delta_cr_deg [deg] within \u00b10.5% or \u00b10.05"
+      }
+    },
+    {
+      "id": "trap/T1-s221",
+      "domain": "trap",
+      "seed": 221,
+      "question": "A synchronous machine on an infinite bus experiences a fault and clearing sequence. Using H, f0, Pm, and Pmax (pre-, during-, and post-fault) in the data, find the critical clearing angle delta_cr (deg).",
+      "givens": {
+        "h_mj_mva": 4.75,
+        "f0_hz": 50.0,
+        "pm_pu": 0.884,
+        "pmax_pre_pu": 1.956,
+        "pmax_fault_pu": 0.532,
+        "pmax_post_pu": 1.446
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta_cr_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); delta_cr_deg [deg] within \u00b10.5% or \u00b10.05"
+      }
+    },
+    {
+      "id": "trap/T2-s234",
+      "domain": "trap",
+      "seed": 234,
+      "question": "SMIB with parameters and integration step h_integrator_s in the data: find the time (s) to reach the critical clearing angle while the fault is still applied.",
+      "givens": {
+        "h_mj_mva": 4.84,
+        "f0_hz": 50.0,
+        "pm_pu": 0.915,
+        "pmax_pre_pu": 2.072,
+        "pmax_fault_pu": 0.542,
+        "pmax_post_pu": 1.501,
+        "h_integrator_s": 0.001
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu",
+        "h_integrator_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "t_to_delta_cr_s",
+            "type": "float",
+            "unit": "s",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.002
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); t_to_delta_cr_s [s] within \u00b10.5% or \u00b10.002"
+      }
+    },
+    {
+      "id": "trap/T2-s235",
+      "domain": "trap",
+      "seed": 235,
+      "question": "SMIB with parameters and integration step h_integrator_s in the data: find the time (s) to reach the critical clearing angle while the fault is still applied.",
+      "givens": {
+        "h_mj_mva": 4.85,
+        "f0_hz": 50.0,
+        "pm_pu": 0.901,
+        "pmax_pre_pu": 1.907,
+        "pmax_fault_pu": 0.458,
+        "pmax_post_pu": 1.404,
+        "h_integrator_s": 0.001
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu",
+        "h_integrator_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "t_to_delta_cr_s",
+            "type": "float",
+            "unit": "s",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.002
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); t_to_delta_cr_s [s] within \u00b10.5% or \u00b10.002"
+      }
+    },
+    {
+      "id": "trap/T2-s236",
+      "domain": "trap",
+      "seed": 236,
+      "question": "SMIB with parameters and integration step h_integrator_s in the data: find the time (s) to reach the critical clearing angle while the fault is still applied.",
+      "givens": {
+        "h_mj_mva": 5.17,
+        "f0_hz": 50.0,
+        "pm_pu": 0.9,
+        "pmax_pre_pu": 2.046,
+        "pmax_fault_pu": 0.458,
+        "pmax_post_pu": 1.542,
+        "h_integrator_s": 0.001
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu",
+        "h_integrator_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "t_to_delta_cr_s",
+            "type": "float",
+            "unit": "s",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.002
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); t_to_delta_cr_s [s] within \u00b10.5% or \u00b10.002"
+      }
+    },
+    {
+      "id": "trap/T2-s237",
+      "domain": "trap",
+      "seed": 237,
+      "question": "SMIB with parameters and integration step h_integrator_s in the data: find the time (s) to reach the critical clearing angle while the fault is still applied.",
+      "givens": {
+        "h_mj_mva": 5.12,
+        "f0_hz": 50.0,
+        "pm_pu": 0.916,
+        "pmax_pre_pu": 2.094,
+        "pmax_fault_pu": 0.529,
+        "pmax_post_pu": 1.412,
+        "h_integrator_s": 0.001
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu",
+        "h_integrator_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "t_to_delta_cr_s",
+            "type": "float",
+            "unit": "s",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.002
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); t_to_delta_cr_s [s] within \u00b10.5% or \u00b10.002"
+      }
+    },
+    {
+      "id": "trap/T2-s238",
+      "domain": "trap",
+      "seed": 238,
+      "question": "SMIB with parameters and integration step h_integrator_s in the data: find the time (s) to reach the critical clearing angle while the fault is still applied.",
+      "givens": {
+        "h_mj_mva": 5.3,
+        "f0_hz": 50.0,
+        "pm_pu": 0.884,
+        "pmax_pre_pu": 2.044,
+        "pmax_fault_pu": 0.457,
+        "pmax_post_pu": 1.429,
+        "h_integrator_s": 0.001
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu",
+        "h_integrator_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "t_to_delta_cr_s",
+            "type": "float",
+            "unit": "s",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.002
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); t_to_delta_cr_s [s] within \u00b10.5% or \u00b10.002"
+      }
+    },
+    {
+      "id": "trap/T3-s251",
+      "domain": "trap",
+      "seed": 251,
+      "question": "For the SMIB data, report the swing acceleration coefficient (rad/s^2 per pu) and the initial rotor acceleration domega/dt (rad/s) at the prefault operating point.",
+      "givens": {
+        "h_mj_mva": 4.94,
+        "f0_hz": 50.0,
+        "pm_pu": 0.895,
+        "pmax_pre_pu": 2.016,
+        "pmax_fault_pu": 0.496,
+        "pmax_post_pu": 1.482
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "accel_coeff",
+            "type": "float",
+            "unit": "rad/s^2 per pu",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.0001
+          },
+          {
+            "name": "domega0_at_prefault",
+            "type": "float",
+            "unit": "rad/s",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.0001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); accel_coeff [rad/s^2 per pu] within \u00b10.5% or \u00b10.0001; domega0_at_prefault [rad/s] within \u00b10.5% or \u00b10.0001"
+      }
+    },
+    {
+      "id": "trap/T3-s252",
+      "domain": "trap",
+      "seed": 252,
+      "question": "For the SMIB data, report the swing acceleration coefficient (rad/s^2 per pu) and the initial rotor acceleration domega/dt (rad/s) at the prefault operating point.",
+      "givens": {
+        "h_mj_mva": 5.28,
+        "f0_hz": 50.0,
+        "pm_pu": 0.881,
+        "pmax_pre_pu": 2.037,
+        "pmax_fault_pu": 0.504,
+        "pmax_post_pu": 1.562
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "accel_coeff",
+            "type": "float",
+            "unit": "rad/s^2 per pu",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.0001
+          },
+          {
+            "name": "domega0_at_prefault",
+            "type": "float",
+            "unit": "rad/s",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.0001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); accel_coeff [rad/s^2 per pu] within \u00b10.5% or \u00b10.0001; domega0_at_prefault [rad/s] within \u00b10.5% or \u00b10.0001"
+      }
+    },
+    {
+      "id": "trap/T3-s253",
+      "domain": "trap",
+      "seed": 253,
+      "question": "For the SMIB data, report the swing acceleration coefficient (rad/s^2 per pu) and the initial rotor acceleration domega/dt (rad/s) at the prefault operating point.",
+      "givens": {
+        "h_mj_mva": 5.04,
+        "f0_hz": 50.0,
+        "pm_pu": 0.895,
+        "pmax_pre_pu": 2.073,
+        "pmax_fault_pu": 0.515,
+        "pmax_post_pu": 1.596
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "accel_coeff",
+            "type": "float",
+            "unit": "rad/s^2 per pu",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.0001
+          },
+          {
+            "name": "domega0_at_prefault",
+            "type": "float",
+            "unit": "rad/s",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.0001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); accel_coeff [rad/s^2 per pu] within \u00b10.5% or \u00b10.0001; domega0_at_prefault [rad/s] within \u00b10.5% or \u00b10.0001"
+      }
+    },
+    {
+      "id": "trap/T3-s254",
+      "domain": "trap",
+      "seed": 254,
+      "question": "For the SMIB data, report the swing acceleration coefficient (rad/s^2 per pu) and the initial rotor acceleration domega/dt (rad/s) at the prefault operating point.",
+      "givens": {
+        "h_mj_mva": 4.87,
+        "f0_hz": 50.0,
+        "pm_pu": 0.89,
+        "pmax_pre_pu": 2.032,
+        "pmax_fault_pu": 0.472,
+        "pmax_post_pu": 1.544
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "accel_coeff",
+            "type": "float",
+            "unit": "rad/s^2 per pu",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.0001
+          },
+          {
+            "name": "domega0_at_prefault",
+            "type": "float",
+            "unit": "rad/s",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.0001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); accel_coeff [rad/s^2 per pu] within \u00b10.5% or \u00b10.0001; domega0_at_prefault [rad/s] within \u00b10.5% or \u00b10.0001"
+      }
+    },
+    {
+      "id": "trap/T3-s255",
+      "domain": "trap",
+      "seed": 255,
+      "question": "For the SMIB data, report the swing acceleration coefficient (rad/s^2 per pu) and the initial rotor acceleration domega/dt (rad/s) at the prefault operating point.",
+      "givens": {
+        "h_mj_mva": 4.56,
+        "f0_hz": 50.0,
+        "pm_pu": 0.906,
+        "pmax_pre_pu": 2.059,
+        "pmax_fault_pu": 0.455,
+        "pmax_post_pu": 1.598
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "accel_coeff",
+            "type": "float",
+            "unit": "rad/s^2 per pu",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.0001
+          },
+          {
+            "name": "domega0_at_prefault",
+            "type": "float",
+            "unit": "rad/s",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.0001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); accel_coeff [rad/s^2 per pu] within \u00b10.5% or \u00b10.0001; domega0_at_prefault [rad/s] within \u00b10.5% or \u00b10.0001"
+      }
+    },
+    {
+      "id": "trap/T4-s268",
+      "domain": "trap",
+      "seed": 268,
+      "question": "A two-area system receives a load increase dpl1_pu at step_time_s (both areas described in the data, simulation horizon t_end_s). Report steady-state Area-1 frequency (Hz) and tie-line flow P12 (MW) without automatic generation control.",
+      "givens": {
+        "f0_hz": 60.0,
+        "base_mva": 1000.0,
+        "tie_sync_gain": 2.0,
+        "dpl1_pu": 0.11,
+        "dpl2_pu": 0.0,
+        "step_time_s": 1.0,
+        "h_s": 0.001,
+        "area1": {
+          "tg": 0.2,
+          "tt": 0.5,
+          "m": 10.0,
+          "d": 0.6,
+          "r": 0.05,
+          "b": 20.6,
+          "k": 0.0
+        },
+        "area2": {
+          "tg": 0.3,
+          "tt": 0.6,
+          "m": 8.0,
+          "d": 0.9,
+          "r": 0.0625,
+          "b": 16.9,
+          "k": 0.0
+        },
+        "t_end_s": 30.0
+      },
+      "givens_units": {
+        "f0_hz": "Hz",
+        "base_mva": "MVA",
+        "tie_sync_gain": "pu",
+        "dpl1_pu": "pu",
+        "dpl2_pu": "pu",
+        "step_time_s": "s",
+        "h_s": "s",
+        "area1.tg": "s",
+        "area1.tt": "s",
+        "area1.m": "s",
+        "area1.d": "pu",
+        "area1.r": "pu",
+        "area1.b": "pu",
+        "area1.k": "pu",
+        "area2.tg": "s",
+        "area2.tt": "s",
+        "area2.m": "s",
+        "area2.d": "pu",
+        "area2.r": "pu",
+        "area2.b": "pu",
+        "area2.k": "pu",
+        "t_end_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "primary_df1_Hz",
+            "type": "float",
+            "unit": "Hz",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.002
+          },
+          {
+            "name": "primary_P12_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.5
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); primary_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; primary_P12_MW [MW] within \u00b10.5% or \u00b10.5"
+      }
+    },
+    {
+      "id": "trap/T4-s269",
+      "domain": "trap",
+      "seed": 269,
+      "question": "A two-area system receives a load increase dpl1_pu at step_time_s (both areas described in the data, simulation horizon t_end_s). Report steady-state Area-1 frequency (Hz) and tie-line flow P12 (MW) without automatic generation control.",
+      "givens": {
+        "f0_hz": 60.0,
+        "base_mva": 1000.0,
+        "tie_sync_gain": 2.0,
+        "dpl1_pu": 0.082,
+        "dpl2_pu": 0.0,
+        "step_time_s": 1.0,
+        "h_s": 0.001,
+        "area1": {
+          "tg": 0.2,
+          "tt": 0.5,
+          "m": 10.0,
+          "d": 0.6,
+          "r": 0.05,
+          "b": 20.6,
+          "k": 0.0
+        },
+        "area2": {
+          "tg": 0.3,
+          "tt": 0.6,
+          "m": 8.0,
+          "d": 0.9,
+          "r": 0.0625,
+          "b": 16.9,
+          "k": 0.0
+        },
+        "t_end_s": 30.0
+      },
+      "givens_units": {
+        "f0_hz": "Hz",
+        "base_mva": "MVA",
+        "tie_sync_gain": "pu",
+        "dpl1_pu": "pu",
+        "dpl2_pu": "pu",
+        "step_time_s": "s",
+        "h_s": "s",
+        "area1.tg": "s",
+        "area1.tt": "s",
+        "area1.m": "s",
+        "area1.d": "pu",
+        "area1.r": "pu",
+        "area1.b": "pu",
+        "area1.k": "pu",
+        "area2.tg": "s",
+        "area2.tt": "s",
+        "area2.m": "s",
+        "area2.d": "pu",
+        "area2.r": "pu",
+        "area2.b": "pu",
+        "area2.k": "pu",
+        "t_end_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "primary_df1_Hz",
+            "type": "float",
+            "unit": "Hz",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.002
+          },
+          {
+            "name": "primary_P12_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.5
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); primary_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; primary_P12_MW [MW] within \u00b10.5% or \u00b10.5"
+      }
+    },
+    {
+      "id": "trap/T4-s270",
+      "domain": "trap",
+      "seed": 270,
+      "question": "A two-area system receives a load increase dpl1_pu at step_time_s (both areas described in the data, simulation horizon t_end_s). Report steady-state Area-1 frequency (Hz) and tie-line flow P12 (MW) without automatic generation control.",
+      "givens": {
+        "f0_hz": 60.0,
+        "base_mva": 1000.0,
+        "tie_sync_gain": 2.0,
+        "dpl1_pu": 0.114,
+        "dpl2_pu": 0.0,
+        "step_time_s": 1.0,
+        "h_s": 0.001,
+        "area1": {
+          "tg": 0.2,
+          "tt": 0.5,
+          "m": 10.0,
+          "d": 0.6,
+          "r": 0.05,
+          "b": 20.6,
+          "k": 0.0
+        },
+        "area2": {
+          "tg": 0.3,
+          "tt": 0.6,
+          "m": 8.0,
+          "d": 0.9,
+          "r": 0.0625,
+          "b": 16.9,
+          "k": 0.0
+        },
+        "t_end_s": 30.0
+      },
+      "givens_units": {
+        "f0_hz": "Hz",
+        "base_mva": "MVA",
+        "tie_sync_gain": "pu",
+        "dpl1_pu": "pu",
+        "dpl2_pu": "pu",
+        "step_time_s": "s",
+        "h_s": "s",
+        "area1.tg": "s",
+        "area1.tt": "s",
+        "area1.m": "s",
+        "area1.d": "pu",
+        "area1.r": "pu",
+        "area1.b": "pu",
+        "area1.k": "pu",
+        "area2.tg": "s",
+        "area2.tt": "s",
+        "area2.m": "s",
+        "area2.d": "pu",
+        "area2.r": "pu",
+        "area2.b": "pu",
+        "area2.k": "pu",
+        "t_end_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "primary_df1_Hz",
+            "type": "float",
+            "unit": "Hz",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.002
+          },
+          {
+            "name": "primary_P12_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.5
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); primary_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; primary_P12_MW [MW] within \u00b10.5% or \u00b10.5"
+      }
+    },
+    {
+      "id": "trap/T4-s271",
+      "domain": "trap",
+      "seed": 271,
+      "question": "A two-area system receives a load increase dpl1_pu at step_time_s (both areas described in the data, simulation horizon t_end_s). Report steady-state Area-1 frequency (Hz) and tie-line flow P12 (MW) without automatic generation control.",
+      "givens": {
+        "f0_hz": 60.0,
+        "base_mva": 1000.0,
+        "tie_sync_gain": 2.0,
+        "dpl1_pu": 0.099,
+        "dpl2_pu": 0.0,
+        "step_time_s": 1.0,
+        "h_s": 0.001,
+        "area1": {
+          "tg": 0.2,
+          "tt": 0.5,
+          "m": 10.0,
+          "d": 0.6,
+          "r": 0.05,
+          "b": 20.6,
+          "k": 0.0
+        },
+        "area2": {
+          "tg": 0.3,
+          "tt": 0.6,
+          "m": 8.0,
+          "d": 0.9,
+          "r": 0.0625,
+          "b": 16.9,
+          "k": 0.0
+        },
+        "t_end_s": 30.0
+      },
+      "givens_units": {
+        "f0_hz": "Hz",
+        "base_mva": "MVA",
+        "tie_sync_gain": "pu",
+        "dpl1_pu": "pu",
+        "dpl2_pu": "pu",
+        "step_time_s": "s",
+        "h_s": "s",
+        "area1.tg": "s",
+        "area1.tt": "s",
+        "area1.m": "s",
+        "area1.d": "pu",
+        "area1.r": "pu",
+        "area1.b": "pu",
+        "area1.k": "pu",
+        "area2.tg": "s",
+        "area2.tt": "s",
+        "area2.m": "s",
+        "area2.d": "pu",
+        "area2.r": "pu",
+        "area2.b": "pu",
+        "area2.k": "pu",
+        "t_end_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "primary_df1_Hz",
+            "type": "float",
+            "unit": "Hz",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.002
+          },
+          {
+            "name": "primary_P12_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.5
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); primary_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; primary_P12_MW [MW] within \u00b10.5% or \u00b10.5"
+      }
+    },
+    {
+      "id": "trap/T4-s272",
+      "domain": "trap",
+      "seed": 272,
+      "question": "A two-area system receives a load increase dpl1_pu at step_time_s (both areas described in the data, simulation horizon t_end_s). Report steady-state Area-1 frequency (Hz) and tie-line flow P12 (MW) without automatic generation control.",
+      "givens": {
+        "f0_hz": 60.0,
+        "base_mva": 1000.0,
+        "tie_sync_gain": 2.0,
+        "dpl1_pu": 0.119,
+        "dpl2_pu": 0.0,
+        "step_time_s": 1.0,
+        "h_s": 0.001,
+        "area1": {
+          "tg": 0.2,
+          "tt": 0.5,
+          "m": 10.0,
+          "d": 0.6,
+          "r": 0.05,
+          "b": 20.6,
+          "k": 0.0
+        },
+        "area2": {
+          "tg": 0.3,
+          "tt": 0.6,
+          "m": 8.0,
+          "d": 0.9,
+          "r": 0.0625,
+          "b": 16.9,
+          "k": 0.0
+        },
+        "t_end_s": 30.0
+      },
+      "givens_units": {
+        "f0_hz": "Hz",
+        "base_mva": "MVA",
+        "tie_sync_gain": "pu",
+        "dpl1_pu": "pu",
+        "dpl2_pu": "pu",
+        "step_time_s": "s",
+        "h_s": "s",
+        "area1.tg": "s",
+        "area1.tt": "s",
+        "area1.m": "s",
+        "area1.d": "pu",
+        "area1.r": "pu",
+        "area1.b": "pu",
+        "area1.k": "pu",
+        "area2.tg": "s",
+        "area2.tt": "s",
+        "area2.m": "s",
+        "area2.d": "pu",
+        "area2.r": "pu",
+        "area2.b": "pu",
+        "area2.k": "pu",
+        "t_end_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "primary_df1_Hz",
+            "type": "float",
+            "unit": "Hz",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.002
+          },
+          {
+            "name": "primary_P12_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.5
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); primary_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; primary_P12_MW [MW] within \u00b10.5% or \u00b10.5"
+      }
+    },
+    {
+      "id": "trap/T5-s285",
+      "domain": "trap",
+      "seed": 285,
+      "question": "Two-area model with integral AGC gain K_agc (agc horizon agc_t_end_s) after a load step dpl1_pu at step_time_s (all parameters in the data). Report steady-state Area-1 frequency (Hz) and tie flow P12 (MW).",
+      "givens": {
+        "f0_hz": 60.0,
+        "base_mva": 1000.0,
+        "tie_sync_gain": 2.0,
+        "dpl1_pu": 0.1,
+        "dpl2_pu": 0.0,
+        "step_time_s": 1.0,
+        "h_s": 0.001,
+        "area1": {
+          "tg": 0.2,
+          "tt": 0.5,
+          "m": 10.0,
+          "d": 0.6,
+          "r": 0.05,
+          "b": 20.6,
+          "k": 0.31
+        },
+        "area2": {
+          "tg": 0.3,
+          "tt": 0.6,
+          "m": 8.0,
+          "d": 0.9,
+          "r": 0.0625,
+          "b": 16.9,
+          "k": 0.31
+        },
+        "K_agc": 0.31,
+        "t_end_s": 30.0,
+        "agc_t_end_s": 60.0
+      },
+      "givens_units": {
+        "f0_hz": "Hz",
+        "base_mva": "MVA",
+        "tie_sync_gain": "pu",
+        "dpl1_pu": "pu",
+        "dpl2_pu": "pu",
+        "step_time_s": "s",
+        "h_s": "s",
+        "area1.tg": "s",
+        "area1.tt": "s",
+        "area1.m": "s",
+        "area1.d": "pu",
+        "area1.r": "pu",
+        "area1.b": "pu",
+        "area1.k": "pu",
+        "area2.tg": "s",
+        "area2.tt": "s",
+        "area2.m": "s",
+        "area2.d": "pu",
+        "area2.r": "pu",
+        "area2.b": "pu",
+        "area2.k": "pu",
+        "K_agc": "pu",
+        "t_end_s": "s",
+        "agc_t_end_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "agc_ss_df1_Hz",
+            "type": "float",
+            "unit": "Hz",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.002
+          },
+          {
+            "name": "agc_ss_P12_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); agc_ss_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; agc_ss_P12_MW [MW] within \u00b10.5% or \u00b10.05"
+      }
+    },
+    {
+      "id": "trap/T5-s286",
+      "domain": "trap",
+      "seed": 286,
+      "question": "Two-area model with integral AGC gain K_agc (agc horizon agc_t_end_s) after a load step dpl1_pu at step_time_s (all parameters in the data). Report steady-state Area-1 frequency (Hz) and tie flow P12 (MW).",
+      "givens": {
+        "f0_hz": 60.0,
+        "base_mva": 1000.0,
+        "tie_sync_gain": 2.0,
+        "dpl1_pu": 0.1,
+        "dpl2_pu": 0.0,
+        "step_time_s": 1.0,
+        "h_s": 0.001,
+        "area1": {
+          "tg": 0.2,
+          "tt": 0.5,
+          "m": 10.0,
+          "d": 0.6,
+          "r": 0.05,
+          "b": 20.6,
+          "k": 0.3
+        },
+        "area2": {
+          "tg": 0.3,
+          "tt": 0.6,
+          "m": 8.0,
+          "d": 0.9,
+          "r": 0.0625,
+          "b": 16.9,
+          "k": 0.3
+        },
+        "K_agc": 0.3,
+        "t_end_s": 30.0,
+        "agc_t_end_s": 60.0
+      },
+      "givens_units": {
+        "f0_hz": "Hz",
+        "base_mva": "MVA",
+        "tie_sync_gain": "pu",
+        "dpl1_pu": "pu",
+        "dpl2_pu": "pu",
+        "step_time_s": "s",
+        "h_s": "s",
+        "area1.tg": "s",
+        "area1.tt": "s",
+        "area1.m": "s",
+        "area1.d": "pu",
+        "area1.r": "pu",
+        "area1.b": "pu",
+        "area1.k": "pu",
+        "area2.tg": "s",
+        "area2.tt": "s",
+        "area2.m": "s",
+        "area2.d": "pu",
+        "area2.r": "pu",
+        "area2.b": "pu",
+        "area2.k": "pu",
+        "K_agc": "pu",
+        "t_end_s": "s",
+        "agc_t_end_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "agc_ss_df1_Hz",
+            "type": "float",
+            "unit": "Hz",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.002
+          },
+          {
+            "name": "agc_ss_P12_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); agc_ss_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; agc_ss_P12_MW [MW] within \u00b10.5% or \u00b10.05"
+      }
+    },
+    {
+      "id": "trap/T5-s288",
+      "domain": "trap",
+      "seed": 288,
+      "question": "Two-area model with integral AGC gain K_agc (agc horizon agc_t_end_s) after a load step dpl1_pu at step_time_s (all parameters in the data). Report steady-state Area-1 frequency (Hz) and tie flow P12 (MW).",
+      "givens": {
+        "f0_hz": 60.0,
+        "base_mva": 1000.0,
+        "tie_sync_gain": 2.0,
+        "dpl1_pu": 0.1,
+        "dpl2_pu": 0.0,
+        "step_time_s": 1.0,
+        "h_s": 0.001,
+        "area1": {
+          "tg": 0.2,
+          "tt": 0.5,
+          "m": 10.0,
+          "d": 0.6,
+          "r": 0.05,
+          "b": 20.6,
+          "k": 0.34
+        },
+        "area2": {
+          "tg": 0.3,
+          "tt": 0.6,
+          "m": 8.0,
+          "d": 0.9,
+          "r": 0.0625,
+          "b": 16.9,
+          "k": 0.34
+        },
+        "K_agc": 0.34,
+        "t_end_s": 30.0,
+        "agc_t_end_s": 60.0
+      },
+      "givens_units": {
+        "f0_hz": "Hz",
+        "base_mva": "MVA",
+        "tie_sync_gain": "pu",
+        "dpl1_pu": "pu",
+        "dpl2_pu": "pu",
+        "step_time_s": "s",
+        "h_s": "s",
+        "area1.tg": "s",
+        "area1.tt": "s",
+        "area1.m": "s",
+        "area1.d": "pu",
+        "area1.r": "pu",
+        "area1.b": "pu",
+        "area1.k": "pu",
+        "area2.tg": "s",
+        "area2.tt": "s",
+        "area2.m": "s",
+        "area2.d": "pu",
+        "area2.r": "pu",
+        "area2.b": "pu",
+        "area2.k": "pu",
+        "K_agc": "pu",
+        "t_end_s": "s",
+        "agc_t_end_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "agc_ss_df1_Hz",
+            "type": "float",
+            "unit": "Hz",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.002
+          },
+          {
+            "name": "agc_ss_P12_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); agc_ss_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; agc_ss_P12_MW [MW] within \u00b10.5% or \u00b10.05"
+      }
+    },
+    {
+      "id": "trap/T5-s289",
+      "domain": "trap",
+      "seed": 289,
+      "question": "Two-area model with integral AGC gain K_agc (agc horizon agc_t_end_s) after a load step dpl1_pu at step_time_s (all parameters in the data). Report steady-state Area-1 frequency (Hz) and tie flow P12 (MW).",
+      "givens": {
+        "f0_hz": 60.0,
+        "base_mva": 1000.0,
+        "tie_sync_gain": 2.0,
+        "dpl1_pu": 0.1,
+        "dpl2_pu": 0.0,
+        "step_time_s": 1.0,
+        "h_s": 0.001,
+        "area1": {
+          "tg": 0.2,
+          "tt": 0.5,
+          "m": 10.0,
+          "d": 0.6,
+          "r": 0.05,
+          "b": 20.6,
+          "k": 0.33
+        },
+        "area2": {
+          "tg": 0.3,
+          "tt": 0.6,
+          "m": 8.0,
+          "d": 0.9,
+          "r": 0.0625,
+          "b": 16.9,
+          "k": 0.33
+        },
+        "K_agc": 0.33,
+        "t_end_s": 30.0,
+        "agc_t_end_s": 60.0
+      },
+      "givens_units": {
+        "f0_hz": "Hz",
+        "base_mva": "MVA",
+        "tie_sync_gain": "pu",
+        "dpl1_pu": "pu",
+        "dpl2_pu": "pu",
+        "step_time_s": "s",
+        "h_s": "s",
+        "area1.tg": "s",
+        "area1.tt": "s",
+        "area1.m": "s",
+        "area1.d": "pu",
+        "area1.r": "pu",
+        "area1.b": "pu",
+        "area1.k": "pu",
+        "area2.tg": "s",
+        "area2.tt": "s",
+        "area2.m": "s",
+        "area2.d": "pu",
+        "area2.r": "pu",
+        "area2.b": "pu",
+        "area2.k": "pu",
+        "K_agc": "pu",
+        "t_end_s": "s",
+        "agc_t_end_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "agc_ss_df1_Hz",
+            "type": "float",
+            "unit": "Hz",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.002
+          },
+          {
+            "name": "agc_ss_P12_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); agc_ss_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; agc_ss_P12_MW [MW] within \u00b10.5% or \u00b10.05"
+      }
+    },
+    {
+      "id": "trap/T6-s302",
+      "domain": "trap",
+      "seed": 302,
+      "question": "Three thermal units have quadratic costs and MW limits in the data. For demand PD_MW, report unit-2 output (MW), unit-2 incremental cost (Rs/MWh), and system lambda (Rs/MWh).",
+      "givens": {
+        "units": [
+          {
+            "a": 500.0,
+            "b": 5.3,
+            "c": 0.004,
+            "pmin": 50.0,
+            "pmax": 300.0
+          },
+          {
+            "a": 400.0,
+            "b": 5.5,
+            "c": 0.006,
+            "pmin": 30.0,
+            "pmax": 150.0
+          },
+          {
+            "a": 200.0,
+            "b": 5.8,
+            "c": 0.009,
+            "pmin": 20.0,
+            "pmax": 120.0
+          }
+        ],
+        "PD_MW": 520.0
+      },
+      "givens_units": {
+        "units[0].a": "Rs/MWh",
+        "units[0].b": "Rs/MWh",
+        "units[0].c": "Rs/MWh/MW^2",
+        "units[0].pmin": "MW",
+        "units[0].pmax": "MW",
+        "units[1].a": "Rs/MWh",
+        "units[1].b": "Rs/MWh",
+        "units[1].c": "Rs/MWh/MW^2",
+        "units[1].pmin": "MW",
+        "units[1].pmax": "MW",
+        "units[2].a": "Rs/MWh",
+        "units[2].b": "Rs/MWh",
+        "units[2].c": "Rs/MWh/MW^2",
+        "units[2].pmin": "MW",
+        "units[2].pmax": "MW",
+        "PD_MW": "MW"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "unit2_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.01
+          },
+          {
+            "name": "unit2_IC",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.01
+          },
+          {
+            "name": "lambda",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.01
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); unit2_MW [MW] within \u00b10.5% or \u00b10.01; unit2_IC [Rs/MWh] within \u00b10.5% or \u00b10.01; lambda [Rs/MWh] within \u00b10.5% or \u00b10.01"
+      }
+    },
+    {
+      "id": "trap/T6-s303",
+      "domain": "trap",
+      "seed": 303,
+      "question": "Three thermal units have quadratic costs and MW limits in the data. For demand PD_MW, report unit-2 output (MW), unit-2 incremental cost (Rs/MWh), and system lambda (Rs/MWh).",
+      "givens": {
+        "units": [
+          {
+            "a": 500.0,
+            "b": 5.3,
+            "c": 0.004,
+            "pmin": 50.0,
+            "pmax": 300.0
+          },
+          {
+            "a": 400.0,
+            "b": 5.5,
+            "c": 0.006,
+            "pmin": 30.0,
+            "pmax": 150.0
+          },
+          {
+            "a": 200.0,
+            "b": 5.8,
+            "c": 0.009,
+            "pmin": 20.0,
+            "pmax": 120.0
+          }
+        ],
+        "PD_MW": 450.0
+      },
+      "givens_units": {
+        "units[0].a": "Rs/MWh",
+        "units[0].b": "Rs/MWh",
+        "units[0].c": "Rs/MWh/MW^2",
+        "units[0].pmin": "MW",
+        "units[0].pmax": "MW",
+        "units[1].a": "Rs/MWh",
+        "units[1].b": "Rs/MWh",
+        "units[1].c": "Rs/MWh/MW^2",
+        "units[1].pmin": "MW",
+        "units[1].pmax": "MW",
+        "units[2].a": "Rs/MWh",
+        "units[2].b": "Rs/MWh",
+        "units[2].c": "Rs/MWh/MW^2",
+        "units[2].pmin": "MW",
+        "units[2].pmax": "MW",
+        "PD_MW": "MW"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "unit2_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.01
+          },
+          {
+            "name": "unit2_IC",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.01
+          },
+          {
+            "name": "lambda",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.01
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); unit2_MW [MW] within \u00b10.5% or \u00b10.01; unit2_IC [Rs/MWh] within \u00b10.5% or \u00b10.01; lambda [Rs/MWh] within \u00b10.5% or \u00b10.01"
+      }
+    },
+    {
+      "id": "trap/T6-s304",
+      "domain": "trap",
+      "seed": 304,
+      "question": "Three thermal units have quadratic costs and MW limits in the data. For demand PD_MW, report unit-2 output (MW), unit-2 incremental cost (Rs/MWh), and system lambda (Rs/MWh).",
+      "givens": {
+        "units": [
+          {
+            "a": 500.0,
+            "b": 5.3,
+            "c": 0.004,
+            "pmin": 50.0,
+            "pmax": 300.0
+          },
+          {
+            "a": 400.0,
+            "b": 5.5,
+            "c": 0.006,
+            "pmin": 30.0,
+            "pmax": 150.0
+          },
+          {
+            "a": 200.0,
+            "b": 5.8,
+            "c": 0.009,
+            "pmin": 20.0,
+            "pmax": 120.0
+          }
+        ],
+        "PD_MW": 480.0
+      },
+      "givens_units": {
+        "units[0].a": "Rs/MWh",
+        "units[0].b": "Rs/MWh",
+        "units[0].c": "Rs/MWh/MW^2",
+        "units[0].pmin": "MW",
+        "units[0].pmax": "MW",
+        "units[1].a": "Rs/MWh",
+        "units[1].b": "Rs/MWh",
+        "units[1].c": "Rs/MWh/MW^2",
+        "units[1].pmin": "MW",
+        "units[1].pmax": "MW",
+        "units[2].a": "Rs/MWh",
+        "units[2].b": "Rs/MWh",
+        "units[2].c": "Rs/MWh/MW^2",
+        "units[2].pmin": "MW",
+        "units[2].pmax": "MW",
+        "PD_MW": "MW"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "unit2_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.01
+          },
+          {
+            "name": "unit2_IC",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.01
+          },
+          {
+            "name": "lambda",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.01
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); unit2_MW [MW] within \u00b10.5% or \u00b10.01; unit2_IC [Rs/MWh] within \u00b10.5% or \u00b10.01; lambda [Rs/MWh] within \u00b10.5% or \u00b10.01"
+      }
+    },
+    {
+      "id": "trap/T7-s319",
+      "domain": "trap",
+      "seed": 319,
+      "question": "For the three-unit cost data, find the incremental cost (Rs/MWh) of unit 1 when it produces unit1_MW.",
+      "givens": {
+        "units": [
+          {
+            "a": 500.0,
+            "b": 5.3,
+            "c": 0.004,
+            "pmin": 50.0,
+            "pmax": 300.0
+          },
+          {
+            "a": 400.0,
+            "b": 5.5,
+            "c": 0.006,
+            "pmin": 30.0,
+            "pmax": 150.0
+          },
+          {
+            "a": 200.0,
+            "b": 5.8,
+            "c": 0.009,
+            "pmin": 20.0,
+            "pmax": 120.0
+          }
+        ],
+        "unit1_MW": 107.1
+      },
+      "givens_units": {
+        "units[0].a": "Rs/MWh",
+        "units[0].b": "Rs/MWh",
+        "units[0].c": "Rs/MWh/MW^2",
+        "units[0].pmin": "MW",
+        "units[0].pmax": "MW",
+        "units[1].a": "Rs/MWh",
+        "units[1].b": "Rs/MWh",
+        "units[1].c": "Rs/MWh/MW^2",
+        "units[1].pmin": "MW",
+        "units[1].pmax": "MW",
+        "units[2].a": "Rs/MWh",
+        "units[2].b": "Rs/MWh",
+        "units[2].c": "Rs/MWh/MW^2",
+        "units[2].pmin": "MW",
+        "units[2].pmax": "MW",
+        "unit1_MW": "MW"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "unit1_IC",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.0001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); unit1_IC [Rs/MWh] within \u00b10.5% or \u00b10.0001"
+      }
+    },
+    {
+      "id": "trap/T7-s320",
+      "domain": "trap",
+      "seed": 320,
+      "question": "For the three-unit cost data, find the incremental cost (Rs/MWh) of unit 1 when it produces unit1_MW.",
+      "givens": {
+        "units": [
+          {
+            "a": 500.0,
+            "b": 5.3,
+            "c": 0.004,
+            "pmin": 50.0,
+            "pmax": 300.0
+          },
+          {
+            "a": 400.0,
+            "b": 5.5,
+            "c": 0.006,
+            "pmin": 30.0,
+            "pmax": 150.0
+          },
+          {
+            "a": 200.0,
+            "b": 5.8,
+            "c": 0.009,
+            "pmin": 20.0,
+            "pmax": 120.0
+          }
+        ],
+        "unit1_MW": 117.8
+      },
+      "givens_units": {
+        "units[0].a": "Rs/MWh",
+        "units[0].b": "Rs/MWh",
+        "units[0].c": "Rs/MWh/MW^2",
+        "units[0].pmin": "MW",
+        "units[0].pmax": "MW",
+        "units[1].a": "Rs/MWh",
+        "units[1].b": "Rs/MWh",
+        "units[1].c": "Rs/MWh/MW^2",
+        "units[1].pmin": "MW",
+        "units[1].pmax": "MW",
+        "units[2].a": "Rs/MWh",
+        "units[2].b": "Rs/MWh",
+        "units[2].c": "Rs/MWh/MW^2",
+        "units[2].pmin": "MW",
+        "units[2].pmax": "MW",
+        "unit1_MW": "MW"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "unit1_IC",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.0001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); unit1_IC [Rs/MWh] within \u00b10.5% or \u00b10.0001"
+      }
+    },
+    {
+      "id": "trap/T7-s321",
+      "domain": "trap",
+      "seed": 321,
+      "question": "For the three-unit cost data, find the incremental cost (Rs/MWh) of unit 1 when it produces unit1_MW.",
+      "givens": {
+        "units": [
+          {
+            "a": 500.0,
+            "b": 5.3,
+            "c": 0.004,
+            "pmin": 50.0,
+            "pmax": 300.0
+          },
+          {
+            "a": 400.0,
+            "b": 5.5,
+            "c": 0.006,
+            "pmin": 30.0,
+            "pmax": 150.0
+          },
+          {
+            "a": 200.0,
+            "b": 5.8,
+            "c": 0.009,
+            "pmin": 20.0,
+            "pmax": 120.0
+          }
+        ],
+        "unit1_MW": 111.0
+      },
+      "givens_units": {
+        "units[0].a": "Rs/MWh",
+        "units[0].b": "Rs/MWh",
+        "units[0].c": "Rs/MWh/MW^2",
+        "units[0].pmin": "MW",
+        "units[0].pmax": "MW",
+        "units[1].a": "Rs/MWh",
+        "units[1].b": "Rs/MWh",
+        "units[1].c": "Rs/MWh/MW^2",
+        "units[1].pmin": "MW",
+        "units[1].pmax": "MW",
+        "units[2].a": "Rs/MWh",
+        "units[2].b": "Rs/MWh",
+        "units[2].c": "Rs/MWh/MW^2",
+        "units[2].pmin": "MW",
+        "units[2].pmax": "MW",
+        "unit1_MW": "MW"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "unit1_IC",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.0001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); unit1_IC [Rs/MWh] within \u00b10.5% or \u00b10.0001"
+      }
+    },
+    {
+      "id": "trap/T7-s322",
+      "domain": "trap",
+      "seed": 322,
+      "question": "For the three-unit cost data, find the incremental cost (Rs/MWh) of unit 1 when it produces unit1_MW.",
+      "givens": {
+        "units": [
+          {
+            "a": 500.0,
+            "b": 5.3,
+            "c": 0.004,
+            "pmin": 50.0,
+            "pmax": 300.0
+          },
+          {
+            "a": 400.0,
+            "b": 5.5,
+            "c": 0.006,
+            "pmin": 30.0,
+            "pmax": 150.0
+          },
+          {
+            "a": 200.0,
+            "b": 5.8,
+            "c": 0.009,
+            "pmin": 20.0,
+            "pmax": 120.0
+          }
+        ],
+        "unit1_MW": 134.9
+      },
+      "givens_units": {
+        "units[0].a": "Rs/MWh",
+        "units[0].b": "Rs/MWh",
+        "units[0].c": "Rs/MWh/MW^2",
+        "units[0].pmin": "MW",
+        "units[0].pmax": "MW",
+        "units[1].a": "Rs/MWh",
+        "units[1].b": "Rs/MWh",
+        "units[1].c": "Rs/MWh/MW^2",
+        "units[1].pmin": "MW",
+        "units[1].pmax": "MW",
+        "units[2].a": "Rs/MWh",
+        "units[2].b": "Rs/MWh",
+        "units[2].c": "Rs/MWh/MW^2",
+        "units[2].pmin": "MW",
+        "units[2].pmax": "MW",
+        "unit1_MW": "MW"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "unit1_IC",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.0001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); unit1_IC [Rs/MWh] within \u00b10.5% or \u00b10.0001"
+      }
+    },
+    {
+      "id": "trap/T7-s323",
+      "domain": "trap",
+      "seed": 323,
+      "question": "For the three-unit cost data, find the incremental cost (Rs/MWh) of unit 1 when it produces unit1_MW.",
+      "givens": {
+        "units": [
+          {
+            "a": 500.0,
+            "b": 5.3,
+            "c": 0.004,
+            "pmin": 50.0,
+            "pmax": 300.0
+          },
+          {
+            "a": 400.0,
+            "b": 5.5,
+            "c": 0.006,
+            "pmin": 30.0,
+            "pmax": 150.0
+          },
+          {
+            "a": 200.0,
+            "b": 5.8,
+            "c": 0.009,
+            "pmin": 20.0,
+            "pmax": 120.0
+          }
+        ],
+        "unit1_MW": 129.3
+      },
+      "givens_units": {
+        "units[0].a": "Rs/MWh",
+        "units[0].b": "Rs/MWh",
+        "units[0].c": "Rs/MWh/MW^2",
+        "units[0].pmin": "MW",
+        "units[0].pmax": "MW",
+        "units[1].a": "Rs/MWh",
+        "units[1].b": "Rs/MWh",
+        "units[1].c": "Rs/MWh/MW^2",
+        "units[1].pmin": "MW",
+        "units[1].pmax": "MW",
+        "units[2].a": "Rs/MWh",
+        "units[2].b": "Rs/MWh",
+        "units[2].c": "Rs/MWh/MW^2",
+        "units[2].pmin": "MW",
+        "units[2].pmax": "MW",
+        "unit1_MW": "MW"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "unit1_IC",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.0001
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); unit1_IC [Rs/MWh] within \u00b10.5% or \u00b10.0001"
+      }
+    },
+    {
+      "id": "trap/T8-s336",
+      "domain": "trap",
+      "seed": 336,
+      "question": "Unity-feedback around the open-loop plant with numerator and denominator coefficients in the data: report gain margin (dB) and gain crossover frequency (rad/s).",
+      "givens": {
+        "num": [
+          35.1
+        ],
+        "den": [
+          1.0,
+          12.0,
+          20.0,
+          0.0
+        ]
+      },
+      "givens_units": {
+        "num": "s-domain coeff",
+        "den": "s-domain coeff"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "gain_margin_dB",
+            "type": "float",
+            "unit": "dB",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          },
+          {
+            "name": "gain_crossover_rad_s",
+            "type": "float",
+            "unit": "rad/s",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.02
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); gain_margin_dB [dB] within \u00b10.5% or \u00b10.05; gain_crossover_rad_s [rad/s] within \u00b10.5% or \u00b10.02"
+      }
+    },
+    {
+      "id": "trap/T8-s337",
+      "domain": "trap",
+      "seed": 337,
+      "question": "Unity-feedback around the open-loop plant with numerator and denominator coefficients in the data: report gain margin (dB) and gain crossover frequency (rad/s).",
+      "givens": {
+        "num": [
+          37.0
+        ],
+        "den": [
+          1.0,
+          12.0,
+          20.0,
+          0.0
+        ]
+      },
+      "givens_units": {
+        "num": "s-domain coeff",
+        "den": "s-domain coeff"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "gain_margin_dB",
+            "type": "float",
+            "unit": "dB",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          },
+          {
+            "name": "gain_crossover_rad_s",
+            "type": "float",
+            "unit": "rad/s",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.02
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); gain_margin_dB [dB] within \u00b10.5% or \u00b10.05; gain_crossover_rad_s [rad/s] within \u00b10.5% or \u00b10.02"
+      }
+    },
+    {
+      "id": "trap/T8-s338",
+      "domain": "trap",
+      "seed": 338,
+      "question": "Unity-feedback around the open-loop plant with numerator and denominator coefficients in the data: report gain margin (dB) and gain crossover frequency (rad/s).",
+      "givens": {
+        "num": [
+          36.1
+        ],
+        "den": [
+          1.0,
+          12.0,
+          20.0,
+          0.0
+        ]
+      },
+      "givens_units": {
+        "num": "s-domain coeff",
+        "den": "s-domain coeff"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "gain_margin_dB",
+            "type": "float",
+            "unit": "dB",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          },
+          {
+            "name": "gain_crossover_rad_s",
+            "type": "float",
+            "unit": "rad/s",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.02
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); gain_margin_dB [dB] within \u00b10.5% or \u00b10.05; gain_crossover_rad_s [rad/s] within \u00b10.5% or \u00b10.02"
+      }
+    },
+    {
+      "id": "trap/T8-s339",
+      "domain": "trap",
+      "seed": 339,
+      "question": "Unity-feedback around the open-loop plant with numerator and denominator coefficients in the data: report gain margin (dB) and gain crossover frequency (rad/s).",
+      "givens": {
+        "num": [
+          36.4
+        ],
+        "den": [
+          1.0,
+          12.0,
+          20.0,
+          0.0
+        ]
+      },
+      "givens_units": {
+        "num": "s-domain coeff",
+        "den": "s-domain coeff"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "gain_margin_dB",
+            "type": "float",
+            "unit": "dB",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          },
+          {
+            "name": "gain_crossover_rad_s",
+            "type": "float",
+            "unit": "rad/s",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.02
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); gain_margin_dB [dB] within \u00b10.5% or \u00b10.05; gain_crossover_rad_s [rad/s] within \u00b10.5% or \u00b10.02"
+      }
+    },
+    {
+      "id": "trap/T8-s340",
+      "domain": "trap",
+      "seed": 340,
+      "question": "Unity-feedback around the open-loop plant with numerator and denominator coefficients in the data: report gain margin (dB) and gain crossover frequency (rad/s).",
+      "givens": {
+        "num": [
+          39.0
+        ],
+        "den": [
+          1.0,
+          12.0,
+          20.0,
+          0.0
+        ]
+      },
+      "givens_units": {
+        "num": "s-domain coeff",
+        "den": "s-domain coeff"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "gain_margin_dB",
+            "type": "float",
+            "unit": "dB",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          },
+          {
+            "name": "gain_crossover_rad_s",
+            "type": "float",
+            "unit": "rad/s",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.02
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); gain_margin_dB [dB] within \u00b10.5% or \u00b10.05; gain_crossover_rad_s [rad/s] within \u00b10.5% or \u00b10.02"
+      }
+    },
+    {
+      "id": "trap/T9-s353",
+      "domain": "trap",
+      "seed": 353,
+      "question": "An SMIB clears a fault at tc_s. Using h_integrator_s, find rotor angle (deg) at t_query_s.",
+      "givens": {
+        "h_mj_mva": 4.6,
+        "f0_hz": 50.0,
+        "pm_pu": 0.895,
+        "pmax_pre_pu": 2.045,
+        "pmax_fault_pu": 0.509,
+        "pmax_post_pu": 1.481,
+        "tc_s": 0.15,
+        "t_query_s": 0.3,
+        "h_integrator_s": 0.01
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu",
+        "tc_s": "s",
+        "t_query_s": "s",
+        "h_integrator_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta_deg_at_t",
+            "type": "float",
+            "unit": "deg",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); delta_deg_at_t [deg] within \u00b10.5% or \u00b10.05"
+      }
+    },
+    {
+      "id": "trap/T9-s354",
+      "domain": "trap",
+      "seed": 354,
+      "question": "An SMIB clears a fault at tc_s. Using h_integrator_s, find rotor angle (deg) at t_query_s.",
+      "givens": {
+        "h_mj_mva": 4.71,
+        "f0_hz": 50.0,
+        "pm_pu": 0.883,
+        "pmax_pre_pu": 1.919,
+        "pmax_fault_pu": 0.526,
+        "pmax_post_pu": 1.527,
+        "tc_s": 0.15,
+        "t_query_s": 0.3,
+        "h_integrator_s": 0.01
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu",
+        "tc_s": "s",
+        "t_query_s": "s",
+        "h_integrator_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta_deg_at_t",
+            "type": "float",
+            "unit": "deg",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); delta_deg_at_t [deg] within \u00b10.5% or \u00b10.05"
+      }
+    },
+    {
+      "id": "trap/T9-s355",
+      "domain": "trap",
+      "seed": 355,
+      "question": "An SMIB clears a fault at tc_s. Using h_integrator_s, find rotor angle (deg) at t_query_s.",
+      "givens": {
+        "h_mj_mva": 4.66,
+        "f0_hz": 50.0,
+        "pm_pu": 0.905,
+        "pmax_pre_pu": 1.968,
+        "pmax_fault_pu": 0.455,
+        "pmax_post_pu": 1.511,
+        "tc_s": 0.15,
+        "t_query_s": 0.3,
+        "h_integrator_s": 0.01
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu",
+        "tc_s": "s",
+        "t_query_s": "s",
+        "h_integrator_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta_deg_at_t",
+            "type": "float",
+            "unit": "deg",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); delta_deg_at_t [deg] within \u00b10.5% or \u00b10.05"
+      }
+    },
+    {
+      "id": "trap/T9-s356",
+      "domain": "trap",
+      "seed": 356,
+      "question": "An SMIB clears a fault at tc_s. Using h_integrator_s, find rotor angle (deg) at t_query_s.",
+      "givens": {
+        "h_mj_mva": 5.15,
+        "f0_hz": 50.0,
+        "pm_pu": 0.899,
+        "pmax_pre_pu": 1.951,
+        "pmax_fault_pu": 0.494,
+        "pmax_post_pu": 1.489,
+        "tc_s": 0.15,
+        "t_query_s": 0.3,
+        "h_integrator_s": 0.01
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu",
+        "tc_s": "s",
+        "t_query_s": "s",
+        "h_integrator_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta_deg_at_t",
+            "type": "float",
+            "unit": "deg",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); delta_deg_at_t [deg] within \u00b10.5% or \u00b10.05"
+      }
+    },
+    {
+      "id": "trap/T9-s357",
+      "domain": "trap",
+      "seed": 357,
+      "question": "An SMIB clears a fault at tc_s. Using h_integrator_s, find rotor angle (deg) at t_query_s.",
+      "givens": {
+        "h_mj_mva": 4.68,
+        "f0_hz": 50.0,
+        "pm_pu": 0.917,
+        "pmax_pre_pu": 1.913,
+        "pmax_fault_pu": 0.541,
+        "pmax_post_pu": 1.454,
+        "tc_s": 0.15,
+        "t_query_s": 0.3,
+        "h_integrator_s": 0.01
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu",
+        "tc_s": "s",
+        "t_query_s": "s",
+        "h_integrator_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta_deg_at_t",
+            "type": "float",
+            "unit": "deg",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.05
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); delta_deg_at_t [deg] within \u00b10.5% or \u00b10.05"
+      }
+    },
+    {
+      "id": "trap/T10-s370",
+      "domain": "trap",
+      "seed": 370,
+      "question": "For the SMIB power-angle data, find the prefault rotor angle delta0 (deg) at mechanical\u2013electrical balance.",
+      "givens": {
+        "h_mj_mva": 4.62,
+        "f0_hz": 50.0,
+        "pm_pu": 0.913,
+        "pmax_pre_pu": 2.054,
+        "pmax_fault_pu": 0.509,
+        "pmax_post_pu": 1.456
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta0_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.02
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); delta0_deg [deg] within \u00b10.5% or \u00b10.02"
+      }
+    },
+    {
+      "id": "trap/T10-s371",
+      "domain": "trap",
+      "seed": 371,
+      "question": "For the SMIB power-angle data, find the prefault rotor angle delta0 (deg) at mechanical\u2013electrical balance.",
+      "givens": {
+        "h_mj_mva": 4.81,
+        "f0_hz": 50.0,
+        "pm_pu": 0.897,
+        "pmax_pre_pu": 2.022,
+        "pmax_fault_pu": 0.547,
+        "pmax_post_pu": 1.596
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta0_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.02
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); delta0_deg [deg] within \u00b10.5% or \u00b10.02"
+      }
+    },
+    {
+      "id": "trap/T10-s372",
+      "domain": "trap",
+      "seed": 372,
+      "question": "For the SMIB power-angle data, find the prefault rotor angle delta0 (deg) at mechanical\u2013electrical balance.",
+      "givens": {
+        "h_mj_mva": 4.62,
+        "f0_hz": 50.0,
+        "pm_pu": 0.919,
+        "pmax_pre_pu": 2.049,
+        "pmax_fault_pu": 0.474,
+        "pmax_post_pu": 1.506
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta0_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.02
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); delta0_deg [deg] within \u00b10.5% or \u00b10.02"
+      }
+    },
+    {
+      "id": "trap/T10-s373",
+      "domain": "trap",
+      "seed": 373,
+      "question": "For the SMIB power-angle data, find the prefault rotor angle delta0 (deg) at mechanical\u2013electrical balance.",
+      "givens": {
+        "h_mj_mva": 4.53,
+        "f0_hz": 50.0,
+        "pm_pu": 0.915,
+        "pmax_pre_pu": 2.049,
+        "pmax_fault_pu": 0.462,
+        "pmax_post_pu": 1.439
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta0_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.02
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); delta0_deg [deg] within \u00b10.5% or \u00b10.02"
+      }
+    },
+    {
+      "id": "trap/T10-s374",
+      "domain": "trap",
+      "seed": 374,
+      "question": "For the SMIB power-angle data, find the prefault rotor angle delta0 (deg) at mechanical\u2013electrical balance.",
+      "givens": {
+        "h_mj_mva": 4.83,
+        "f0_hz": 50.0,
+        "pm_pu": 0.909,
+        "pmax_pre_pu": 2.056,
+        "pmax_fault_pu": 0.463,
+        "pmax_post_pu": 1.575
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta0_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance_rel": 0.005,
+            "tolerance_abs": 0.02
+          }
+        ],
+        "rule": "Numeric submission (match givens precision); delta0_deg [deg] within \u00b10.5% or \u00b10.02"
+      }
+    }
+  ]
+}

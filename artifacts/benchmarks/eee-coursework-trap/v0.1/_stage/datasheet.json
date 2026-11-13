@@ -1,0 +1,18 @@
+{
+  "schema": "arc.benchmark.datasheet.v0.1",
+  "version": "v0.1",
+  "name": "eee-coursework-trap",
+  "task_counts_by_domain": {
+    "power": 12,
+    "control": 7,
+    "circuits": 6,
+    "trap": 47
+  },
+  "total_tasks": 72,
+  "unique_question_givens": 72,
+  "grading_tolerance_rules": "Submit only fields named in answer_schema within listed tolerances and units.",
+  "licence": "Apache-2.0; license-clean reconstructions only.",
+  "excluded": "live-ab, exam-v4/v5/v6, sealed REFERENCE.json",
+  "public_artifact": "eee-coursework-trap-v0.1-questions.tar.gz",
+  "private_artifact": "answer_key.json (not in questions tarball)"
+}

@@ -2,9 +2,12 @@ id: context-web-spotcheck
 nodes:
   web:
     activity: web-verify
+  trap:
+    activity: trap-verify
+    needs: [web]
   label:
     activity: label-unchecked
-    needs: [web]
+    needs: [trap, web]
   summary:
     activity: write-run-summary
     needs: [label]

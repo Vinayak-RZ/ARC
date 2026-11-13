@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
+from electrical_engineer.web_verify.provenance import source_timestamp
 from electrical_engineer.web_verify.source_evidence import validate_claim_sources
 
 
@@ -37,6 +39,21 @@ def validate_host_submit(payload: dict[str, Any]) -> None:
             raise ValueError("each source requires a quoted snippet")
         if len(snip) > 280:
             raise ValueError("snippet too long (max 280 chars)")
+        if not source_timestamp(s):
+            raise ValueError("each source requires fetched_at or retrieved_at timestamp")
+
+
+def audit_markdown_provenance(text: str, *, run_dir: Path | None = None) -> None:
+    """Raise when answer/notes text claims web verification without session evidence."""
+    from electrical_engineer.web_verify.provenance import audit_text_provenance
+
+    violations = audit_text_provenance(text, run_dir=run_dir)
+    if violations:
+        first = violations[0]
+        loc = f"line {first.line_no}" if first.line_no else "text"
+        raise ValueError(
+            f"provenance audit failed at {loc}: verification language without session evidence — {first.message}"
+        )
 
 
 def validate_similar_matches(matches: list[dict[str, Any]]) -> None:

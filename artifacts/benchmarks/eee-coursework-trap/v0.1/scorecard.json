@@ -1,0 +1,35 @@
+{
+  "tarball_sha256": "8ec236605ae805c73f7d4e1ed31eba989899f1c2270c68034d5916ad91073fd7",
+  "scorecard_rows": [
+    {
+      "metric": "benchmark_questions_sha256",
+      "value": "8ec236605ae805c73f7d4e1ed31eba989899f1c2270c68034d5916ad91073fd7",
+      "source": "scripts/build_benchmark_v01.py"
+    },
+    {
+      "metric": "benchmark_task_count",
+      "value": "82",
+      "source": "scripts/build_benchmark_v01.py"
+    },
+    {
+      "metric": "benchmark_oracle_grade",
+      "value": "82/82",
+      "source": "scripts/grade_benchmark_v01.py"
+    },
+    {
+      "metric": "benchmark_naive_trap_baseline",
+      "value": "0/82",
+      "source": "scripts/grade_benchmark_v01.py --naive"
+    },
+    {
+      "metric": "bare_agent",
+      "value": "pending live run",
+      "source": "owner"
+    },
+    {
+      "metric": "rlvr_dummy_rollout",
+      "value": "10/10",
+      "source": "scripts/rlvr_dummy_rollout.py"
+    }
+  ]
+}

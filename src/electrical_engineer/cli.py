@@ -55,6 +55,11 @@ def build_parser() -> argparse.ArgumentParser:
     ref_eng = ref_sub.add_parser("engine")
     ref_eng.add_argument("engine_name")
     ref_eng.add_argument("json_payload", nargs="?", default="{}")
+    prov = sub.add_parser("provenance", help="Audit answer/notes files for false web-verified labels")
+    prov_sub = prov.add_subparsers(dest="provenance_cmd")
+    prov_audit = prov_sub.add_parser("audit")
+    prov_audit.add_argument("path")
+    prov_audit.add_argument("--run-dir")
     hosts = sub.add_parser("hosts")
     hsub = hosts.add_subparsers(dest="hosts_cmd")
     inst = hsub.add_parser("install")
@@ -64,6 +69,12 @@ def build_parser() -> argparse.ArgumentParser:
         default="all",
         choices=("all", "cursor", "codex", "claude"),
     )
+    hsub.add_parser("uninstall", help="Remove vertical pack files listed in install state").add_argument(
+        "--into", required=True
+    )
+    hsub.add_parser("doctor", help="Report engines and optional backends")
+    smoke = hsub.add_parser("smoke", help="Install smoke + contract JSON for CI")
+    smoke.add_argument("--into", default=None, help="Temp homework dir (default: .vertical-pack-smoke)")
     cs = sub.add_parser("control-studio", help="Control Studio CLI (same model as UI/MCP)")
     cs.add_argument("action", nargs="?", default="create", choices=("create", "validate", "simulate", "analyze", "export"))
     cs.add_argument("--session", dest="session_id")
@@ -226,6 +237,24 @@ def main(argv: list[str] | None = None) -> int:
             print(dest)
             return 0
         return 2
+    if args.cmd == "provenance":
+        import json
+        from pathlib import Path
+
+        from electrical_engineer.web_verify.validate import audit_markdown_provenance
+
+        if args.provenance_cmd == "audit":
+            run_dir = Path(args.run_dir) if args.run_dir else None
+            text = Path(args.path).read_text(encoding="utf-8")
+            try:
+                audit_markdown_provenance(text, run_dir=run_dir)
+            except ValueError as exc:
+                print(str(exc), file=sys.stderr)
+                return 2
+            print(json.dumps({"ok": True, "path": args.path}, indent=2))
+            return 0
+        print("provenance audit <file>", file=sys.stderr)
+        return 2
     if args.cmd == "reference":
         import json
 
@@ -241,16 +270,28 @@ def main(argv: list[str] | None = None) -> int:
         print("reference search|get|engine", file=sys.stderr)
         return 2
     if args.cmd == "hosts":
+        import json
         from pathlib import Path as _Path
 
-        from electrical_engineer.hosts_install import install
+        from electrical_engineer import vertical_pack
 
-        if args.hosts_cmd != "install":
-            print("electrical-engineer hosts install --into <dir>", file=sys.stderr)
-            return 2
-        for path in install(_Path(args.into), host=args.host):
-            print(path)
-        return 0
+        if args.hosts_cmd == "install":
+            for path in vertical_pack.install_pack(_Path(args.into), host=args.host):
+                print(path)
+            return 0
+        if args.hosts_cmd == "uninstall":
+            for path in vertical_pack.uninstall_pack(_Path(args.into)):
+                print(path)
+            return 0
+        if args.hosts_cmd == "doctor":
+            print(json.dumps(vertical_pack.doctor(), indent=2))
+            return 0
+        if args.hosts_cmd == "smoke":
+            into = _Path(args.into) if args.into else None
+            print(json.dumps(vertical_pack.smoke_contract(into), indent=2))
+            return 0
+        print("electrical-engineer hosts install|uninstall|doctor|smoke", file=sys.stderr)
+        return 2
     print(args.cmd)
     return 0
 

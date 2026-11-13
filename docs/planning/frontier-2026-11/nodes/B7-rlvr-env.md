@@ -17,8 +17,17 @@ External researchers can train routers against Arc oracle (report #03 RLVR, #02 
 
 **Output:** `{ "rlvr_env_manifest": { "version": "0.1", "traps": 10 } }`
 
+Produce via:
+
+```bash
+uv run python -c "from electrical_engineer.rlvr_env import contract_json; print(contract_json())"
+uv run python scripts/rlvr_dummy_rollout.py
+```
+
+Package: `src/electrical_engineer/rlvr_env/` (`ArcRlvrEnv`, `rewards.py`, `ENVIRONMENT_CARD.md`, `seeds.json`).
+
 ## Commits
 
 | # | Commit | Gate |
 |---|--------|------|
-| 30-31 | package + card | `python -c import` |
+| 30-31 | package + card | `python -c import` + `scripts/rlvr_dummy_rollout.py` |

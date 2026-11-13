@@ -38,6 +38,57 @@ def _probe_node(problem: dict[str, Any], cir: str) -> str:
     return "v(1)"
 
 
+def _parse_tran_series(stdout: str, probe: str) -> list[tuple[float, float]]:
+    """Parse ngspice `print tran` table as (time_s, probe_value) rows."""
+    needle = probe.replace(" ", "").lower()
+    rows: list[tuple[float, float]] = []
+    in_table = False
+    for line in stdout.splitlines():
+        compact = line.lower().replace(" ", "")
+        if "time" in compact and needle in compact:
+            in_table = True
+            continue
+        if not in_table:
+            continue
+        if line.strip().startswith("Note:"):
+            break
+        parts = line.split()
+        if len(parts) >= 3:
+            try:
+                t_s = float(parts[-2])
+                v = float(parts[-1])
+            except ValueError:
+                continue
+            rows.append((t_s, v))
+        elif len(parts) == 2:
+            try:
+                rows.append((float(parts[0]), float(parts[1])))
+            except ValueError:
+                continue
+    return rows
+
+
+def _interp_series_at_t(rows: list[tuple[float, float]], t_query: float) -> float | None:
+    if not rows:
+        return None
+    if t_query <= rows[0][0]:
+        return rows[0][1]
+    for i in range(1, len(rows)):
+        t0, v0 = rows[i - 1]
+        t1, v1 = rows[i]
+        if t_query <= t1:
+            if abs(t1 - t0) <= 0.0:
+                return v1
+            frac = (t_query - t0) / (t1 - t0)
+            return v0 + frac * (v1 - v0)
+    t0, v0 = rows[-2] if len(rows) >= 2 else rows[-1]
+    t1, v1 = rows[-1]
+    if abs(t1 - t0) <= 0.0:
+        return v1
+    frac = (t_query - t0) / (t1 - t0)
+    return v0 + frac * (v1 - v0)
+
+
 def _parse_print_voltage(stdout: str, probe: str) -> float | None:
     needle = probe.replace(" ", "").lower()
     last: float | None = None

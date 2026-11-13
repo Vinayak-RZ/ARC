@@ -1,0 +1,33 @@
+{
+  "pack_id": "arc-ee-vertical",
+  "version": "0.1.0",
+  "description": "Arc undergraduate EE vertical pack: MCP, domain skills, benchmark pointers",
+  "skills": [
+    {"id": "root", "path": "skills/SKILL.md", "host_name": "arc-ee"},
+    {"id": "power", "path": "skills/power/SKILL.md", "host_name": "arc-ee-power"},
+    {"id": "psa-swing", "path": "skills/swing-equation/SKILL.md", "host_name": "arc-ee-psa-swing"},
+    {"id": "psa-agc", "path": "skills/agc-two-area/SKILL.md", "host_name": "arc-ee-psa-agc"},
+    {"id": "psa-ed", "path": "skills/economic-dispatch-lambda/SKILL.md", "host_name": "arc-ee-psa-ed"},
+    {"id": "control", "path": "skills/control/SKILL.md", "host_name": "arc-ee-control"},
+    {"id": "circuits", "path": "skills/circuits/SKILL.md", "host_name": "arc-ee-circuits"},
+    {"id": "machines", "path": "skills/machines/SKILL.md", "host_name": "arc-ee-machines"},
+    {"id": "power_electronics", "path": "skills/power_electronics/SKILL.md", "host_name": "arc-ee-power-electronics"},
+    {"id": "protection-standards", "path": "skills/protection-standards/SKILL.md", "host_name": "arc-ee-protection-standards"},
+    {"id": "web-verify", "path": "skills/web-verify/SKILL.md", "host_name": "arc-ee-web-verify"},
+    {"id": "reference", "path": "skills/reference/SKILL.md", "host_name": "arc-ee-reference"},
+    {"id": "cross", "path": "skills/_cross/SKILL.md", "host_name": "arc-ee-cross"}
+  ],
+  "benchmarks": [
+    {"id": "psa-goldens", "path": "artifacts/eec301-lab-goldens/", "note": "SMIB, AGC, ED lab goldens"},
+    {"id": "control-eval", "path": "eval/gold/", "note": "CI eval packs; electrical-engineer eval --pack control"},
+    {"id": "power-eval", "path": "eval/gold/", "note": "electrical-engineer eval --pack power"},
+    {"id": "psa-check", "path": "scripts/check_psa_evals.py", "note": "PSA regression script"},
+    {"id": "traps", "path": "knowledge/traps/", "note": "Trap catalog for ablations"},
+    {"id": "reference-coverage", "path": "docs/reference/COVERAGE.md", "note": "Reference library coverage"}
+  ],
+  "mcp": {
+    "server_name": "electrical-engineer",
+    "stdio_args": ["mcp"],
+    "matlab_note": "Do not add MATLAB MCP to host config. Arc calls matlab-mcp-server inside run-matlab-if-present when installed."
+  }
+}

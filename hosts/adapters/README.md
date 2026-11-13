@@ -8,7 +8,12 @@ Install per-pack wrappers into a **homework** tree:
 
 ```text
 electrical-engineer hosts install --into /path/to/homework --host all
+electrical-engineer hosts uninstall --into /path/to/homework
+electrical-engineer hosts doctor
+electrical-engineer hosts smoke
 ```
+
+Full vertical pack (MCP stubs + domain skills + agents): see `hosts/pack/manifest.json`.
 
 Canonical cards: [`../agents/INDEX.md`](../agents/INDEX.md) (12 specialists).
 That writes `.cursor/agents/ee-*.md`, `.codex/agents/ee_*.toml`,
