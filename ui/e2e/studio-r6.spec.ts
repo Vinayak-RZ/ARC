@@ -25,17 +25,37 @@ async function assertEdgePaths(page: Page, wires: number) {
     .toBe(true);
 }
 
-test("edge paths keep non-empty d before and after Simulate", async ({ page, request }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  const errors: string[] = [];
-  page.on("pageerror", (e) => errors.push(String(e)));
-  page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
-  const { wires } = await open(page, request);
-  await assertEdgePaths(page, wires);
-  await page.getByRole("button", { name: "Simulate" }).click();
-  await expect(page.locator(".studio-step-svg")).toBeVisible();
-  await assertEdgePaths(page, wires);
-  expect(errors, "console or page errors").toEqual([]);
+for (const width of [1280, 1440]) {
+  test(`edge paths keep non-empty d before and after Simulate (${width})`, async ({ page, request }) => {
+    await page.setViewportSize({ width, height: 900 });
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(String(e)));
+    page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+    const { wires } = await open(page, request);
+    await assertEdgePaths(page, wires);
+    await page.getByRole("button", { name: "Simulate" }).click();
+    await expect(page.locator(".studio-step-svg")).toBeVisible();
+    await assertEdgePaths(page, wires);
+    // wires must stay put: no flicker over a short idle window
+    for (let i = 0; i < 6; i++) {
+      await page.waitForTimeout(250);
+      await assertEdgePaths(page, wires);
+    }
+    expect(errors, "console or page errors").toEqual([]);
+  });
+}
+
+test("opening a session loads it once (no fetch/validate loop)", async ({ page, request }) => {
+  const r = await request.post(`${BASE}/api/control-studio/sessions`, { data: { title: "loop", golden: "pid_dc_motor" } });
+  const { session_id } = await r.json();
+  let validates = 0;
+  page.on("request", (q) => {
+    if (q.url().includes(`/sessions/${session_id}/validate`)) validates += 1;
+  });
+  await page.goto(`${BASE}/?view=studio&session=${session_id}`);
+  await expect(page.locator(".studio-canvas .react-flow__node").first()).toBeVisible();
+  await page.waitForTimeout(3000);
+  expect(validates, "validate calls in 3 s").toBeLessThanOrEqual(3);
 });
 
 for (const theme of ["light", "dark"]) {
@@ -105,6 +125,41 @@ test("step chart has ticks, size and one header row", async ({ page, request }) 
   const winTop = (await page.getByRole("button", { name: "Auto" }).boundingBox())!.y;
   expect(Math.abs(tabsTop - winTop), "tabs and window control share one row").toBeLessThan(12);
 });
+
+for (const theme of ["light", "dark"]) {
+  test(`step chart header type and axis title (${theme})`, async ({ page, request }) => {
+    await page.addInitScript((t) => localStorage.setItem("arc-theme", t), theme);
+    await open(page, request);
+    await page.getByRole("button", { name: "Simulate" }).click();
+    await page.waitForSelector(".studio-step-svg");
+    await page.getByRole("button", { name: "30 s" }).click();
+    await expect(page.locator(".studio-step-axis").first()).toContainText("30 s window");
+    const info = await page.evaluate(() => {
+      const fs = (el: Element) => getComputedStyle(el).fontSize;
+      const tab = document.querySelector(".studio-results-tabs button")!;
+      const win = document.querySelector(".studio-window-segment button")!;
+      const svg = document.querySelector(".studio-step-svg")!.getBoundingClientRect();
+      const plot = document.querySelector(".studio-step-plot")!.getBoundingClientRect();
+      const title = [...document.querySelectorAll(".studio-step-axis")].find((n) => /Time/.test(n.textContent || ""))!;
+      const tb = title.getBoundingClientRect();
+      const ticks = [...document.querySelectorAll("text.studio-step-tick")].map((n) => n.getBoundingClientRect());
+      const tickBottom = Math.max(...ticks.map((r) => r.bottom));
+      return {
+        tabFs: fs(tab), winFs: fs(win),
+        tabH: tab.getBoundingClientRect().height, winH: win.parentElement!.getBoundingClientRect().height,
+        winColor: getComputedStyle(document.querySelector(".studio-window-segment button:not(.is-active)")!).color,
+        titleBottomInSvg: svg.bottom - tb.bottom, titleBottomInPlot: plot.bottom - tb.bottom,
+        titleAboveTicks: tb.top - tickBottom,
+      };
+    });
+    expect(info.winFs).toBe(info.tabFs);
+    expect(info.tabH).toBe(32);
+    expect(info.winH).toBe(32);
+    expect(info.titleBottomInSvg, "axis title inside svg").toBeGreaterThanOrEqual(2);
+    expect(info.titleBottomInPlot, "axis title inside plot box").toBeGreaterThanOrEqual(0);
+    expect(info.titleAboveTicks, "axis title does not touch tick numbers").toBeGreaterThanOrEqual(0);
+  });
+}
 
 test("inspector controls stay visible after Simulate", async ({ page, request }) => {
   await open(page, request);

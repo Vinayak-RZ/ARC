@@ -234,6 +234,8 @@
   justify-content: space-between;
   gap: 12px;
   min-height: 32px;
+  height: 32px;
+  flex: 0 0 auto;
   flex-wrap: wrap;
   position: relative;
   z-index: 2;
@@ -310,19 +312,32 @@
   overflow: hidden;
 }
 
+.studio-window-segment {
+  height: 32px;
+  box-sizing: border-box;
+}
+
 .studio-window-segment button {
   border: 0;
   background: transparent;
-  font-size: 12px;
-  padding: 4px 8px;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 0 10px;
   cursor: pointer;
   color: var(--cs-text-secondary);
-  font: inherit;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
 }
 
 .studio-window-segment button.is-active {
   background: var(--cs-surface-subtle);
   color: var(--cs-text);
+}
+
+.studio-window-segment button:not(.is-active) {
+  color: var(--cs-text-secondary);
 }
 
 .studio-bar {
@@ -965,12 +980,6 @@
   transform: translateX(-50%);
 }
 
-.studio-canvas .react-flow__arrowhead polyline,
-.studio-canvas .react-flow__arrowhead path {
-  fill: var(--cs-text);
-  stroke: var(--cs-text);
-}
-
 .studio-block-kind {
   font-size: 13px;
   font-weight: 600;
@@ -1217,7 +1226,11 @@
 .studio-results-tabs button {
   border: 1px solid var(--cs-border);
   border-radius: var(--cs-radius-sm);
-  padding: 4px var(--cs-space-3);
+  height: 32px;
+  box-sizing: border-box;
+  padding: 0 var(--cs-space-3);
+  font-family: inherit;
+  line-height: 1;
   font-size: 12px;
   font-weight: 500;
   background: var(--cs-surface-subtle);

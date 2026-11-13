@@ -171,6 +171,12 @@ function ControlStudioInner({ sessionId, onSession }) {
   const [highlight, setHighlight] = useState({ ids: new Set(), author: null });
   const diagramBase = useRef({});
   const blockIssues = useMemo(() => issuesByBlock(validation), [validation]);
+  // paint() must keep a stable identity: it feeds loadSession, which feeds the effect that
+  // fetches the session. If paint changed whenever validation changed, each validate response
+  // would trigger another session fetch and another validate, in an endless loop that
+  // re-creates every node and wire (the cause of wires disappearing).
+  const blockIssuesRef = useRef(blockIssues);
+  blockIssuesRef.current = blockIssues;
 
   const paint = useCallback(
     (payload, { author = null } = {}) => {
@@ -178,7 +184,7 @@ function ControlStudioInner({ sessionId, onSession }) {
       const presence = payload.presence || {};
       const ids = targetsFromLastOp(payload, presence);
       const flow = diagramToFlow(payload.diagram, {
-        issuesByBlock: blockIssues,
+        issuesByBlock: blockIssuesRef.current,
         notes: payload.diagram?.notes,
         highlightSet: ids,
         flashAuthor: ids.size ? presence.last_author || author : null,
@@ -190,7 +196,7 @@ function ControlStudioInner({ sessionId, onSession }) {
       setHighlight({ ids, author: presence.last_author });
       if (presence.agent_editing) setMsg("Agent editing…");
     },
-    [blockIssues, setNodes, setEdges, withSelection],
+    [setNodes, setEdges, withSelection],
   );
 
   const refreshValidation = useCallback(
@@ -477,7 +483,7 @@ function ControlStudioInner({ sessionId, onSession }) {
               defaultEdgeOptions={{
                 type: "signal",
                 zIndex: 0,
-                markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14 },
+                markerEnd: { type: MarkerType.ArrowClosed, color: "currentColor", width: 14, height: 14 },
               }}
               minZoom={0.2}
               maxZoom={1.25}

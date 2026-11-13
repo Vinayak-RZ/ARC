@@ -2,7 +2,7 @@ import { MarkerType } from "@xyflow/react";
 import { nodeForType } from "./nodes.jsx";
 import { wireLabel } from "./edges.jsx";
 
-const EDGE_MARKER = { type: MarkerType.ArrowClosed, width: 14, height: 14 };
+const EDGE_MARKER = { type: MarkerType.ArrowClosed, color: "currentColor", width: 14, height: 14 };
 const BOX_W = 96;
 const PID_W = 168;
 

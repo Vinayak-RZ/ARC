@@ -58,7 +58,8 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
 
   const w = size.w;
   const h = size.h;
-  const m = { l: 48, r: 16, t: 24, b: 40 };
+  // Bottom band: tick numbers (16 px under the plot) plus the axis title with room for descenders.
+  const m = { l: 48, r: 16, t: 24, b: 56 };
   const plotW = w - m.l - m.r;
   const plotH = h - m.t - m.b;
   const x = (time) => m.l + ((time - series.t0) / (series.t1 - series.t0 || 1)) * plotW;
@@ -141,7 +142,7 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
         <line x1={m.l} x2={w - m.r} y1={spY} y2={spY} className="studio-step-setpoint" strokeDasharray="4 3" />
         <path d={path} className="studio-step-line" fill="none" />
         {xTicks.map((tv) => (
-          <text key={tv} x={x(tv)} y={h - 10} className="studio-step-tick" textAnchor="middle">
+          <text key={tv} x={x(tv)} y={m.t + plotH + 16} className="studio-step-tick" textAnchor="middle">
             {fmt(tv, tv < 10 ? 1 : 0)}
           </text>
         ))}
@@ -150,7 +151,7 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
             {fmt(yv, 2)}
           </text>
         ))}
-        <text x={w / 2} y={h - 2} className="studio-step-axis" textAnchor="middle">
+        <text x={w / 2} y={h - 14} className="studio-step-axis" textAnchor="middle">
           {xLabel}
         </text>
         <text

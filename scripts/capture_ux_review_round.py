@@ -190,6 +190,52 @@ def _studio_wires_ready(page, minimum: int = 5, timeout_s: float = 60.0) -> None
     raise RuntimeError(f"studio wires not ready after {timeout_s:.0f}s (got {paths.count()})")
 
 
+def _studio_x_axis(page) -> dict:
+    """Axis title and last x tick of the step chart (proves a window change moved the axis)."""
+    return page.evaluate(
+        """() => {
+        const svg = document.querySelector('.studio-step-svg');
+        if (!svg) return null;
+        const title = [...svg.querySelectorAll('.studio-step-axis')].find((n) => /Time/.test(n.textContent || ''));
+        const ticks = [...svg.querySelectorAll('text.studio-step-tick')]
+          .map((n) => ({ x: n.getBoundingClientRect().x, t: (n.textContent || '').trim() }))
+          .filter((n) => /^-?\\d+(\\.\\d+)?$/.test(n.t))
+          .sort((a, b) => a.x - b.x);
+        return { title: title ? title.textContent : '', last_tick: ticks.length ? ticks[ticks.length - 1].t : '' };
+    }"""
+    )
+
+
+def _click_window(page, label: str) -> None:
+    before = _studio_x_axis(page)
+    page.locator(".studio-window-segment button", has_text=label).click(force=True)
+    deadline = time.time() + 30
+    while time.time() < deadline:
+        page.wait_for_timeout(250)
+        after = _studio_x_axis(page)
+        if after and before and after != before:
+            return
+    raise RuntimeError(f"x axis did not change after choosing {label}: {before} -> {after}")
+
+
+def _assert_studio_wires(page, name: str) -> None:
+    """Every Studio capture must show wires with real geometry and arrowheads."""
+    if page.locator(".studio-canvas").count() == 0:
+        return
+    info = page.evaluate(
+        """() => {
+        const paths = [...document.querySelectorAll('.studio-canvas .react-flow__edge-path')];
+        return {
+          n: paths.length,
+          empty: paths.filter((p) => (p.getAttribute('d') || '').trim().length < 5).length,
+          markers: paths.filter((p) => p.getAttribute('marker-end')).length,
+        };
+    }"""
+    )
+    if info["n"] < 1 or info["empty"] or info["markers"] < info["n"]:
+        raise RuntimeError(f"{name}: studio wires broken: {info}")
+
+
 def _set_theme(page, mode: str) -> None:
     page.evaluate(
         """(mode) => {
@@ -256,6 +302,7 @@ def main() -> int:
                     _set_theme(shot, use_theme)
                     shot.wait_for_timeout(250)
                 path = out_dir / name
+                _assert_studio_wires(shot, name)
                 shot.screenshot(path=str(path), full_page=False)
                 digest = _md5(path)
                 if digest in hashes.values():
@@ -408,8 +455,8 @@ def main() -> int:
                 page.locator(".cs-simulate-btn").click()
                 page.wait_for_selector(".studio-unsettled-pill", timeout=120000)
                 snap("studio-step-unsettled.png")
-                page.locator(".studio-window-segment button", has_text="30 s").click(force=True)
-                page.wait_for_timeout(1500)
+                _click_window(page, "30 s")
+                page.wait_for_timeout(300)
                 snap("studio-step-extended.png")
             if args.round >= 4:
                 wide_studio = browser.new_page(viewport={"width": 1440, "height": 900})
@@ -636,22 +683,37 @@ def main() -> int:
             with urllib.request.urlopen(req, timeout=60) as resp:
                 dark_sid = json.loads(resp.read().decode())["session_id"]
             go(f"?view=studio&session={dark_sid}")
+            _studio_wires_ready(page)
             page.wait_for_timeout(800)
-            snap("dark-studio-before-simulate.png")
+            snap("studio-before-simulate-dark.png")
+            if args.round >= 7:
+                page.locator(".react-flow__node", has_text="PID").click(force=True)
+                page.wait_for_function("() => document.querySelector('.studio.has-selection')", timeout=15000)
+                page.wait_for_timeout(500)
+                snap("studio-block-selected-dark.png")
+                page.locator(".studio-canvas .react-flow__pane").click(position={"x": 40, "y": 40}, force=True)
+                page.wait_for_timeout(200)
             page.locator(".cs-simulate-btn").click()
             page.wait_for_selector(
                 ".studio-results-stage .studio-step-svg, .studio-results-stage img",
                 timeout=120000,
             )
+            _studio_wires_ready(page)
             page.wait_for_timeout(400)
-            snap("dark-studio-after-simulate.png")
+            snap("studio-after-simulate-dark.png")
             if args.round >= 7:
-                page.locator(".react-flow__node", has_text="PID").click()
-                page.wait_for_timeout(500)
-                snap("studio-block-selected.png", theme="dark")
+                page.locator(".react-flow__node", has_text="PID").click(force=True)
+                for label, val in [("Kp", "0.08"), ("Ki", "0.02"), ("Kd", "0")]:
+                    field = page.get_by_label(label)
+                    if field.count():
+                        field.fill(val)
                 page.locator(".cs-simulate-btn").click()
-                page.wait_for_selector(".studio-unsettled-pill, .studio-step-svg", timeout=120000)
-                snap("studio-step-unsettled.png", theme="dark")
+                page.wait_for_selector(".studio-unsettled-pill", timeout=120000)
+                page.wait_for_timeout(400)
+                snap("studio-step-unsettled-dark.png")
+                _click_window(page, "30 s")
+                page.wait_for_timeout(300)
+                snap("studio-step-extended-dark.png")
 
             if args.round >= 5:
                 _set_theme(page, "dark")
@@ -677,6 +739,21 @@ def main() -> int:
                 page.locator(".problems-row").first.hover()
                 page.wait_for_timeout(150)
                 snap("problems-row-hover-dark.png")
+                if args.round >= 7:
+                    _set_theme(page, "dark")
+                    go(f"?problem={run_id}")
+                    page.get_by_role("tab", name="Work").click()
+                    for _ in range(6):
+                        page.keyboard.press("Tab")
+                        page.wait_for_timeout(80)
+                    snap("focus-tab-dark.png")
+                    go("?view=problems")
+                    page.wait_for_selector("tr.problems-row", timeout=15000)
+                    page.locator("tr.problems-row").first.click()
+                    for _ in range(3):
+                        page.keyboard.press("Tab")
+                        page.wait_for_timeout(80)
+                    snap("focus-button-dark.png")
                 page.keyboard.press("Control+b")
                 page.wait_for_selector(".product-sidebar.is-collapsed", timeout=5000)
                 page.wait_for_timeout(200)
