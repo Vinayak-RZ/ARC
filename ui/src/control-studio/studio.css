@@ -20,7 +20,7 @@
   padding: 0;
   gap: 0;
   grid-template-columns: 220px minmax(0, 1fr);
-  --studio-results-h: clamp(300px, 42vh, 400px);
+  --studio-results-h: clamp(320px, 44vh, 420px);
   grid-template-rows: 44px minmax(280px, 1fr) var(--studio-results-h);
   min-height: 560px;
   grid-template-areas:
