@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Arc prototype C — Answer-first run view</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono&display=swap" />
+  <style>
+    :root { --canvas:#FAFAF9; --surface:#fff; --subtle:#F5F5F4; --line:#E4E4E2; --ink:#202020; --sec:#5F5F5C; --cobalt:#2F6FEB; --success:#2F9E6A; }
+    body { margin:0; font-family:Inter,sans-serif; background:var(--canvas); padding:24px; max-width:960px; }
+    .answer { background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:20px 24px; }
+    .answer .value { font-family:"JetBrains Mono",monospace; font-size:22px; margin:8px 0; }
+    .status { display:inline-block; font-size:11px; font-weight:600; padding:4px 10px; border-radius:4px; background:#E8F5EE; color:var(--success); }
+    .plots { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:24px; }
+    .plot { border:1px solid var(--line); border-radius:6px; background:var(--subtle); min-height:220px; display:flex; align-items:center; justify-content:center; color:var(--sec); }
+  </style>
+</head>
+<body>
+  <article class="answer">
+    <h1 style="margin:0;font-size:20px;font-weight:600;">Series RLC transient</h1>
+    <p class="value">v_C peak = 1.24 V</p>
+    <span class="status">Checked simulation</span>
+    <p style="color:var(--sec);font-size:14px;margin:12px 0 0;">SPICE transient with stated initial conditions.</p>
+  </article>
+  <div class="plots">
+    <figure class="plot">Bode (full width in prod)</figure>
+    <figure class="plot">Step response</figure>
+  </div>
+</body>
+</html>

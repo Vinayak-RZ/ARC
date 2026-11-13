@@ -26,6 +26,10 @@ Product execution graph **complete through H1** on `cursor/ee-product-execution-
 - **README:** `readme` router — this repo’s landing is product-readme (OSS co-solver); internals companion is `extensive-readme`.
 - Inventory: [skills-manifest.json](skills-manifest.json)
 
+## UI and visual design
+
+Product UI work must follow [`docs/design/DESIGN.md`](docs/design/DESIGN.md) (Learning Lab / Cobalt tokens) and the `.cursor/skills/product-thinking` skill before changing layout or copy. Encode tokens once in `ui/src/tokens.css` and `ui/src/tokens.js`; keep `src/electrical_engineer/visual_kit/design_tokens.py` aligned for matplotlib output.
+
 ## Architecture (when designing)
 
 | Domain | Skill | Rule |
