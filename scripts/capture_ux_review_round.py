@@ -377,7 +377,7 @@ def main() -> int:
                     page.mouse.click(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
                 page.wait_for_timeout(900)
                 snap("studio-block-selected-after-simulate.png")
-                page.locator(".studio-window-segment button", has_text="Auto").click()
+                page.locator(".studio-window-segment button", has_text="Auto").click(force=True)
                 page.wait_for_timeout(600)
                 snap("studio-step-extended.png")
                 req_u = urllib.request.Request(
@@ -403,7 +403,7 @@ def main() -> int:
                 page.locator(".cs-simulate-btn").click()
                 page.wait_for_selector(".studio-settled-pill", timeout=120000)
                 snap("studio-step-settled.png")
-                page.locator(".react-flow__node", has_text="PID").click()
+                page.locator(".react-flow__node", has_text="PID").click(force=True)
                 for label, val in [("Kp", "0.5"), ("Ki", "0.1")]:
                     field = page.get_by_label(label)
                     if field.count():
@@ -411,7 +411,7 @@ def main() -> int:
                 page.locator(".cs-simulate-btn").click()
                 page.wait_for_selector(".studio-unsettled-pill", timeout=120000)
                 snap("studio-step-unsettled.png")
-                page.locator(".studio-window-segment button", has_text="30 s").click()
+                page.locator(".studio-window-segment button", has_text="30 s").click(force=True)
                 page.wait_for_timeout(1500)
                 snap("studio-step-extended.png")
             if args.round >= 4:

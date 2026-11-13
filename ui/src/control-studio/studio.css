@@ -239,6 +239,8 @@
   gap: 12px;
   min-height: 32px;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 2;
 }
 
 .studio-step-chart-head-right {
