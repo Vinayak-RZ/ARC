@@ -76,8 +76,10 @@ for (const vp of [
 
     if (process.env.NO_SIM) return;
     await page.locator(".cs-simulate-btn").click();
-    await page.locator(".studio-results-stage img").waitFor({ timeout: 120000 });
+    await page.locator(".studio-results-stage .studio-step-svg, .studio-results-stage img").first().waitFor({ timeout: 120000 });
     await page.waitForFunction(() => {
+      const svg = document.querySelector(".studio-results-stage .studio-step-svg");
+      if (svg) return svg.getBoundingClientRect().height >= 120;
       const i = document.querySelector<HTMLImageElement>(".studio-results-stage img");
       return !!i && i.complete && i.naturalWidth > 0;
     });
@@ -85,8 +87,9 @@ for (const vp of [
     await assertNoOverlap(page, "after Simulate");
 
     const r = (await page.locator(".studio-results").boundingBox())!;
-    const img = (await page.locator(".studio-results-stage img").boundingBox())!;
-    expect(img.y + img.height).toBeLessThanOrEqual(r.y + r.height + 0.5);
+    const stage = page.locator(".studio-results-stage .studio-step-svg, .studio-results-stage img").first();
+    const plot = (await stage.boundingBox())!;
+    expect(plot.y + plot.height).toBeLessThanOrEqual(r.y + r.height + 0.5);
     const th = page.locator(".studio-margin-table th");
     for (let i = 0; i < (await th.count()); i++) {
       const t = (await th.nth(i).boundingBox())!;

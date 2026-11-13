@@ -1,4 +1,4 @@
-import { CheckCircle2, AlertCircle } from "lucide-react";
+import { CheckCircle2, AlertCircle, AlertTriangle } from "lucide-react";
 
 /** Display-type answer: quantity with muted unit (tabular nums). */
 
@@ -21,7 +21,17 @@ export function AnswerLine({ parts, checked }) {
   );
 }
 
-export function VerificationStrip({ checked, unchecked, modifiedAt }) {
+export function VerificationStrip({ checked, unchecked, modifiedAt, stale }) {
+  if (stale && checked && !unchecked) {
+    return (
+      <div className="verification-strip verification-stale" role="status">
+        <AlertTriangle size={16} strokeWidth={1.5} className="verification-icon" aria-hidden="true" />
+        <span className="verification-body">
+          Out of date. Values changed after the last check. Run again to re-check.
+        </span>
+      </div>
+    );
+  }
   if (unchecked) {
     return (
       <div className="verification-strip verification-warn" role="status">

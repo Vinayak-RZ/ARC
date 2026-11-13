@@ -138,9 +138,13 @@ def main() -> int:
                     return f"{stem[5:]}-dark.png"
                 return f"{stem}-light.png"
 
-            def snap(name: str, target=None) -> None:
+            def snap(name: str, target=None, *, theme: str | None = None) -> None:
                 name = shot_name(name)
                 shot = target or page
+                if args.round >= 5:
+                    use_theme = theme or ("dark" if name.endswith("-dark.png") else "light")
+                    _set_theme(shot, use_theme)
+                    shot.wait_for_timeout(250)
                 path = out_dir / name
                 shot.screenshot(path=str(path), full_page=False)
                 digest = _md5(path)
@@ -239,7 +243,10 @@ def main() -> int:
             sim = page.locator(".cs-simulate-btn")
             if sim.count() > 0:
                 sim.click()
-                page.wait_for_selector(".studio-results-stage img", timeout=120000)
+                page.wait_for_selector(
+                    ".studio-results-stage .studio-step-svg, .studio-results-stage img",
+                    timeout=120000,
+                )
                 page.wait_for_timeout(800)
             snap("studio-layout-after-simulate.png")
             if args.round >= 4:
@@ -252,7 +259,10 @@ def main() -> int:
                 wide_studio.wait_for_timeout(500)
                 snap("studio-layout-before-simulate-1440.png", wide_studio)
                 wide_studio.locator(".cs-simulate-btn").click()
-                wide_studio.wait_for_selector(".studio-results-stage img", timeout=120000)
+                wide_studio.wait_for_selector(
+                    ".studio-results-stage .studio-step-svg, .studio-results-stage img",
+                    timeout=120000,
+                )
                 wide_studio.wait_for_timeout(400)
                 snap("studio-layout-after-simulate-1440.png", wide_studio)
                 wide_studio.close()
@@ -388,9 +398,7 @@ def main() -> int:
             snap("cmdk-query.png")
 
             page.keyboard.press("Escape")
-            _set_theme(page, "dark")
-            go("?view=home")
-            snap("dark-home.png")
+            _set_theme(page, "light")
 
             if args.round >= 3:
                 run_id = _run_example("divider")
@@ -419,17 +427,20 @@ def main() -> int:
                     page.wait_for_timeout(80)
                 snap("focus-tab.png")
                 go("?view=home")
-                page.locator(".example-card").first.click()
-                page.keyboard.press("Tab")
-                page.wait_for_timeout(150)
+                page.locator(".composer-input").click()
+                for _ in range(12):
+                    page.keyboard.press("Tab")
+                    page.wait_for_timeout(60)
                 snap("focus-tile.png")
                 go("?view=problems")
-                page.locator(".problems-row").first.click()
+                page.locator("tr.problems-row").first.click()
                 for _ in range(4):
                     page.keyboard.press("Tab")
                     page.wait_for_timeout(80)
                 snap("focus-table-row.png")
-                page.locator(".problems-row").first.click()
+                go("?view=problems")
+                page.wait_for_selector("tr.problems-row", timeout=15000)
+                page.locator("tr.problems-row").first.click()
                 for _ in range(3):
                     page.keyboard.press("Tab")
                     page.wait_for_timeout(80)
@@ -455,14 +466,91 @@ def main() -> int:
             page.wait_for_timeout(800)
             snap("dark-studio-before-simulate.png")
             page.locator(".cs-simulate-btn").click()
-            page.wait_for_selector(".studio-results-stage img", timeout=120000)
+            page.wait_for_selector(
+                ".studio-results-stage .studio-step-svg, .studio-results-stage img",
+                timeout=120000,
+            )
             page.wait_for_timeout(400)
             snap("dark-studio-after-simulate.png")
+
+            if args.round >= 5:
+                _set_theme(page, "dark")
+                go("?view=home")
+                snap("home-dark.png")
+                go("?view=home")
+                page.evaluate("() => document.querySelector('.agent-card')?.scrollIntoView({block: 'end'})")
+                page.wait_for_timeout(300)
+                snap("home-scrolled-dark.png")
+                go("?view=problems")
+                page.wait_for_selector(".problems-table", timeout=15000)
+                snap("problems-list-dark.png")
+                page.locator(".problems-row").first.hover()
+                page.wait_for_timeout(150)
+                snap("problems-row-hover-dark.png")
+                page.keyboard.press("Control+b")
+                page.wait_for_selector(".product-sidebar.is-collapsed", timeout=5000)
+                page.wait_for_timeout(200)
+                snap("sidebar-collapsed-dark.png")
+                page.keyboard.press("Control+b")
+                page.wait_for_timeout(200)
+                page.keyboard.press("Control+k")
+                page.wait_for_selector(".cmdk-root", timeout=5000)
+                snap("cmdk-open-dark.png")
+                go("?view=gallery")
+                page.wait_for_selector(".gallery-card", timeout=10000)
+                snap("gallery-dark.png")
+                go("?view=library")
+                page.wait_for_selector(".library", timeout=10000)
+                snap("library-dark.png")
+                go("?view=settings")
+                page.wait_for_selector(".settings-page", timeout=10000)
+                for tab, stem in [
+                    ("Agents", "settings-agents"),
+                    ("Engines", "settings-engines"),
+                    ("Appearance", "settings-appearance"),
+                    ("Data", "settings-data"),
+                    ("About", "settings-about"),
+                ]:
+                    page.get_by_role("tab", name=tab).click()
+                    page.wait_for_timeout(200)
+                    snap(f"{stem}-dark.png")
+                go(f"?problem={run_id}")
+                page.get_by_role("tab", name="Diagram").click()
+                page.wait_for_selector(".static-diagram", timeout=15000)
+                snap("problem-answer-dark.png")
+                page.get_by_role("tab", name="Work").click()
+                page.wait_for_selector(".step-timeline-row", timeout=10000)
+                snap("problem-work-dark.png")
+                page.click(".topbar-params-toggle")
+                page.locator("#param-r2").fill("2")
+                page.wait_for_selector(".stale-banner", timeout=5000)
+                snap("problem-stale-dark.png")
 
             browser.close()
 
         md5_lines = [f"{name}  {dig}" for name, dig in sorted(hashes.items())]
         (out_dir / "md5.txt").write_text("\n".join(md5_lines) + "\n", encoding="utf-8")
+        if args.round >= 5:
+            prev = ROOT / "artifacts" / "ux-review" / "round-4" / "md5.txt"
+            changed = []
+            if prev.is_file():
+                prev_map = {}
+                for line in prev.read_text(encoding="utf-8").splitlines():
+                    if "  " in line:
+                        n, d = line.split("  ", 1)
+                        prev_map[n] = d.strip()
+                for n, d in hashes.items():
+                    old = prev_map.get(n.replace("-light", "-light").replace("-dark", "-dark"))
+                    # map round-4 names without theme suffix
+                    legacy = n.replace("-light.png", ".png").replace("-dark.png", ".png")
+                    if prev_map.get(legacy) == d or old == d:
+                        changed.append(f"{n} unchanged from round 4")
+            (out_dir / "NOTES.md").write_text(
+                f"# Round {args.round} captures\n\n"
+                f"PNG count: {len(hashes)}\n\n"
+                + ("\n".join(changed) if changed else "All captures differ from round-4 md5 where compared.\n"),
+                encoding="utf-8",
+            )
         (out_dir / "sidebar-measurements.json").write_text(
             json.dumps(measurements, indent=2) + "\n", encoding="utf-8"
         )

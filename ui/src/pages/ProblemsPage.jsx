@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ArrowUpRight, Copy, RotateCw } from "lucide-react";
+import { AlertCircle, ArrowUpRight, Copy, FolderOpen, RotateCw } from "lucide-react";
 import { displayTitle, subjectTag } from "../runDisplay.js";
 import { relativeTime } from "../units/format.js";
 
@@ -72,6 +72,10 @@ export function ProblemsPage({ runs, loading, error, onOpenProblem, onTryExample
     return (
       <div className="problems-page problems-loading" aria-busy="true">
         <h1>Problems</h1>
+        <div className="problems-toolbar problems-toolbar-skeleton" aria-hidden="true">
+          <div className="problems-skeleton-row problems-skeleton-search" />
+          <div className="problems-skeleton-row problems-skeleton-chip" />
+        </div>
         <div className="problems-skeleton" aria-hidden="true">
           {Array.from({ length: 8 }, (_, i) => (
             <div key={i} className="problems-skeleton-row" />
@@ -82,21 +86,29 @@ export function ProblemsPage({ runs, loading, error, onOpenProblem, onTryExample
   }
   if (error) {
     return (
-      <div className="problems-page problems-error">
-        <h1>Problems</h1>
-        <p className="empty">Could not load problems. Check that the Arc server is running.</p>
-        <button type="button" className="button-primary" onClick={onReload}>
-          Try again
-        </button>
+      <div className="problems-page problems-error problems-centered">
+        <AlertCircle size={40} strokeWidth={1.5} className="problems-empty-icon" aria-hidden />
+        <h1>Problems did not load</h1>
+        <p className="empty">Check that the Arc server is running, then try again.</p>
+        <div className="problems-centered-actions">
+          <button type="button" className="button-secondary" onClick={onReload}>
+            Try again
+          </button>
+          <details>
+            <summary>Details</summary>
+            <p className="hint">{String(error)}</p>
+          </details>
+        </div>
       </div>
     );
   }
   if (runs.length === 0) {
     return (
-      <div className="problems-empty">
-        <h1>Problems</h1>
-        <p className="empty">No problems yet.</p>
-        <button type="button" className="button-primary" onClick={onTryExample}>
+      <div className="problems-page problems-empty problems-centered">
+        <FolderOpen size={40} strokeWidth={1.5} className="problems-empty-icon" aria-hidden />
+        <h1>No problems yet</h1>
+        <p className="empty">Try an example to see Arc check an answer.</p>
+        <button type="button" className="button-secondary" onClick={onTryExample}>
           Try an example
         </button>
       </div>
@@ -106,17 +118,19 @@ export function ProblemsPage({ runs, loading, error, onOpenProblem, onTryExample
     <div className="problems-page">
       <h1>Problems</h1>
       <div className="problems-toolbar">
-        <input
-          className="run-search"
-          type="search"
-          placeholder="Search problems"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          aria-keyshortcuts="/"
-        />
-        <span className="hint search-hint" aria-hidden="true">
-          Press / to focus
-        </span>
+        <div className="problems-search-wrap">
+          <input
+            className="run-search"
+            type="search"
+            placeholder="Search problems"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            aria-keyshortcuts="/"
+          />
+          <kbd className="search-kbd" aria-hidden="true">
+            /
+          </kbd>
+        </div>
         <div className="gallery-filters" role="group" aria-label="Status">
           {STATUS_CHIPS.map(({ id, label }) => (
             <button

@@ -111,12 +111,26 @@ def register_studio_routes(app: FastAPI, *, root: Path) -> None:
         )
 
     @app.post("/api/control-studio/sessions/{session_id}/simulate")
-    def studio_sim(session_id: str) -> dict:
+    async def studio_sim(session_id: str, request: Request) -> dict:
         try:
+            body = {}
+            try:
+                body = await request.json()
+            except Exception:
+                body = {}
+            if not isinstance(body, dict):
+                body = {}
             payload = session_mod.load_session(session_id, root)
             run_dir = root / "runs" / session_id
             _write_studio_run_summary(run_dir, payload.get("diagram") or {}, payload.get("updated_at_ms"))
-            sim = simulate_mod.simulate(payload["diagram"], run_dir=run_dir)
+            t_final = body.get("t_final", 10.0)
+            an_pre = analyze_mod.analyze(payload["diagram"], run_dir=run_dir) if t_final == "auto" else {}
+            sim = simulate_mod.simulate(
+                payload["diagram"],
+                run_dir=run_dir,
+                t_final=t_final,
+                margins=an_pre if an_pre.get("ok") else None,
+            )
             if not sim.get("ok"):
                 return sim
             an = analyze_mod.analyze(payload["diagram"], run_dir=run_dir)

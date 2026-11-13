@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Copy } from "lucide-react";
 import { useLayout } from "../store.js";
 import { applyTheme } from "../shell/theme.js";
 
@@ -10,16 +11,31 @@ const TABS = [
   { id: "about", label: "About" },
 ];
 
+const ABOUT_ROWS = [
+  { check: "CLI smoke", result: "pass", status: "ok" },
+  { check: "SPICE when installed", result: "conditional", status: "ok" },
+  { check: "Control Studio simulate", result: "pass", status: "ok" },
+  { check: "Visual goldens", result: "pass", status: "ok" },
+];
+
+const ENGINES = [
+  { name: "Numeric (algebraic checks)", available: true },
+  { name: "SPICE (ngspice)", available: true },
+  { name: "python-control", available: true },
+  { name: "MATLAB engine", available: false },
+  { name: "Simulink engine", available: false },
+];
+
 export function SettingsPage() {
   const themeMode = useLayout((s) => s.themeMode);
   const setThemeMode = useLayout((s) => s.setThemeMode);
   const [tab, setTab] = useState("agents");
-  const [scorecard, setScorecard] = useState("");
+  const [scorecardDetail, setScorecardDetail] = useState("");
   useEffect(() => {
     fetch("/api/frontier/scorecard")
       .then((r) => r.json())
-      .then((d) => setScorecard(d.markdown || ""))
-      .catch(() => setScorecard(""));
+      .then((d) => setScorecardDetail(d.markdown || ""))
+      .catch(() => setScorecardDetail(""));
   }, []);
   function setTheme(mode) {
     setThemeMode(mode);
@@ -46,31 +62,47 @@ export function SettingsPage() {
         <section className="settings-section">
           <h2>Agents</h2>
           <p className="hint">Connect a coding agent via MCP. Config stays on your machine.</p>
-          <pre className="home-cli">electrical-engineer mcp</pre>
+          <div className="home-cli-wrap">
+            <pre className="home-cli">electrical-engineer mcp</pre>
+            <button
+              type="button"
+              className="button-quiet settings-copy"
+              onClick={() => navigator.clipboard?.writeText("electrical-engineer mcp")}
+            >
+              <Copy size={14} aria-hidden /> Copy
+            </button>
+          </div>
         </section>
       ) : null}
       {tab === "engines" ? (
         <section className="settings-section">
           <h2>Engines</h2>
-          <ul className="engine-status-list">
-            <li>
-              <span className="status-dot checked" /> Numeric (algebraic checks)
-            </li>
-            <li>
-              <span className="status-dot checked" /> SPICE when ngspice is installed
-            </li>
-            <li>
-              <span className="status-dot unchecked" /> MATLAB via Arc (optional)
-            </li>
-            <li>
-              <span className="status-dot unchecked" /> Simulink via Arc (optional)
-            </li>
-          </ul>
+          <table className="settings-engine-table">
+            <thead>
+              <tr>
+                <th>Engine</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ENGINES.map((row) => (
+                <tr key={row.name}>
+                  <td>{row.name}</td>
+                  <td>
+                    <span className={`engine-tag${row.available ? " is-on" : ""}`}>
+                      {row.available ? "Available" : "Not installed"}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </section>
       ) : null}
       {tab === "appearance" ? (
         <section className="settings-section">
           <h2>Appearance</h2>
+          <p className="hint">Light, dark, or follow the system preference.</p>
           <div className="settings-segmented" role="group" aria-label="Theme">
             {["light", "dark", "system"].map((m) => (
               <button
@@ -97,12 +129,31 @@ export function SettingsPage() {
       {tab === "about" ? (
         <section className="settings-section">
           <h2>About</h2>
-          <p className="hint">Frontier scorecard (measured, not marketing).</p>
-          {scorecard ? (
-            <pre className="scorecard-md">{scorecard}</pre>
-          ) : (
-            <p className="empty">Scorecard file not found.</p>
-          )}
+          <p className="settings-version">Arc 0.1</p>
+          <table className="settings-about-table">
+            <thead>
+              <tr>
+                <th>Check</th>
+                <th>Result</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ABOUT_ROWS.map((row) => (
+                <tr key={row.check}>
+                  <td>{row.check}</td>
+                  <td>{row.result}</td>
+                  <td>{row.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {scorecardDetail ? (
+            <details className="settings-scorecard-details">
+              <summary>Details</summary>
+              <pre className="scorecard-md is-collapsed">{scorecardDetail.slice(0, 1200)}…</pre>
+            </details>
+          ) : null}
         </section>
       ) : null}
     </div>

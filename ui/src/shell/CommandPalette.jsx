@@ -1,24 +1,38 @@
 import { useEffect, useMemo, useState } from "react";
 import { Command } from "cmdk";
+import {
+  BookOpen,
+  FolderOpen,
+  Home,
+  Image,
+  LayoutGrid,
+  Moon,
+  PanelLeft,
+  Play,
+  Plus,
+  Settings,
+  SlidersHorizontal,
+} from "lucide-react";
 import { useLayout } from "../store.js";
 import { displayTitle } from "../runDisplay.js";
 import { applyTheme, resolveTheme } from "./theme.js";
 
-// Cmd+K waits out the 180ms sidebar grid transition (see .product-shell in tokens.css).
 const SIDEBAR_TRANSITION_MS = 180;
 
 const NAV = [
-  { id: "home", label: "Home", keys: "G H" },
-  { id: "problems", label: "Problems", keys: "G P" },
-  { id: "studio", label: "Studio", keys: "G S" },
-  { id: "gallery", label: "Gallery", keys: "G A" },
-  { id: "library", label: "Library", keys: "G L" },
-  { id: "settings", label: "Settings", keys: "G ," },
+  { id: "home", label: "Home", keys: "G H", Icon: Home },
+  { id: "problems", label: "Problems", keys: "G P", Icon: FolderOpen },
+  { id: "studio", label: "Studio", keys: "G S", Icon: SlidersHorizontal },
+  { id: "gallery", label: "Gallery", keys: "G A", Icon: Image },
+  { id: "library", label: "Library", keys: "G L", Icon: BookOpen },
+  { id: "settings", label: "Settings", keys: "G ,", Icon: Settings },
 ];
 
 const ACTIONS = [
-  { id: "theme", label: "Toggle theme", keys: "T" },
-  { id: "sidebar", label: "Toggle sidebar", keys: "⌃B" },
+  { id: "new", label: "New problem", keys: "G N", Icon: Plus },
+  { id: "studio", label: "Open in Studio", keys: "G S", Icon: LayoutGrid },
+  { id: "sidebar", label: "Toggle sidebar", keys: "⌃B", Icon: PanelLeft },
+  { id: "theme", label: "Toggle theme", keys: "T", Icon: Moon },
 ];
 
 export function CommandPalette({ runs, onNavigate }) {
@@ -82,6 +96,7 @@ export function CommandPalette({ runs, onNavigate }) {
                     setOpen(false);
                   }}
                 >
+                  <item.Icon size={16} strokeWidth={1.5} className="cmdk-row-icon" aria-hidden />
                   <span>{item.label}</span>
                   <kbd className="cmdk-kbd">{item.keys}</kbd>
                 </Command.Item>
@@ -98,6 +113,7 @@ export function CommandPalette({ runs, onNavigate }) {
                       setOpen(false);
                     }}
                   >
+                    <Play size={16} strokeWidth={1.5} className="cmdk-row-icon" aria-hidden />
                     <span>{item.label}</span>
                   </Command.Item>
                 ))}
@@ -116,10 +132,15 @@ export function CommandPalette({ runs, onNavigate }) {
                       applyTheme(next);
                     } else if (item.id === "sidebar") {
                       useLayout.getState().toggleSidebar();
+                    } else if (item.id === "studio") {
+                      onNavigate({ view: "studio" });
+                    } else if (item.id === "new") {
+                      onNavigate({ view: "home" });
                     }
                     setOpen(false);
                   }}
                 >
+                  <item.Icon size={16} strokeWidth={1.5} className="cmdk-row-icon" aria-hidden />
                   <span>{item.label}</span>
                   <kbd className="cmdk-kbd">{item.keys}</kbd>
                 </Command.Item>

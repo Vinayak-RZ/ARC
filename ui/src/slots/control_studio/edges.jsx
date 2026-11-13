@@ -1,7 +1,7 @@
 import { BaseEdge, EdgeLabelRenderer } from "@xyflow/react";
 
 function feedbackPath(sourceX, sourceY, targetX, targetY) {
-  const drop = 72;
+  const drop = 40;
   const midY = Math.max(sourceY, targetY) + drop;
   return `M ${sourceX} ${sourceY} V ${midY} H ${targetX} V ${targetY}`;
 }

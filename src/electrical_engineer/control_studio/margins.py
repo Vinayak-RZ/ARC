@@ -19,29 +19,63 @@ def _band_note(kind: str = "gain") -> str:
     return f"No crossing found from {lo_s} to {hi_s} rad/s."
 
 
-def _fmt_freq(x: float | None) -> tuple[str, str | None]:
+def _fmt_freq(x: float | None, *, phase_cross: bool = False) -> tuple[str, str | None]:
     if x is None or (isinstance(x, float) and math.isnan(x)):
-        return "No crossover in range", _band_note("gain")
+        return "No crossover in range", _phase_above_note() if phase_cross else None
     if math.isinf(x):
         return "Infinite", "The crossover lies beyond the analyzed frequency band."
     return f"{x:.4g} rad/s", None
 
 
+def _phase_never_minus180_note() -> str:
+    lo_s, hi_s = f"{SWEEP_MIN_RAD_S:g}", f"{SWEEP_MAX_RAD_S:,g}"
+    return f"Phase never reaches −180° from {lo_s} to {hi_s} rad/s."
+
+
+def _phase_above_note() -> str:
+    lo_s, hi_s = f"{SWEEP_MIN_RAD_S:g}", f"{SWEEP_MAX_RAD_S:,g}"
+    return f"Phase stays above −180° from {lo_s} to {hi_s} rad/s."
+
+
+def _gain_band_note_from_db(lo_db: float, hi_db: float) -> str:
+    lo_s, hi_s = f"{SWEEP_MIN_RAD_S:g}", f"{SWEEP_MAX_RAD_S:,g}"
+    if lo_db > 0.0 and hi_db > 0.0:
+        return f"Gain stays above 0 dB from {lo_s} to {hi_s} rad/s."
+    if lo_db < 0.0 and hi_db < 0.0:
+        return f"Gain stays below 0 dB from {lo_s} to {hi_s} rad/s."
+    return f"No crossing found from {lo_s} to {hi_s} rad/s."
+
+
+def _sweep_mag_db_ends(sys) -> tuple[float, float]:
+    import control
+    import numpy as np
+
+    w = np.logspace(math.log10(SWEEP_MIN_RAD_S), math.log10(SWEEP_MAX_RAD_S), 400)
+    mag, _, _ = control.bode(sys, omega=w, plot=False)
+    mag_db = 20.0 * np.log10(np.maximum(mag, 1e-15))
+    return float(mag_db[0]), float(mag_db[-1])
+
+
 def _fmt_gm_db(gm_db: float | None, gm_lin: float | None) -> tuple[str, str | None]:
     if gm_lin is not None and math.isinf(gm_lin):
-        return "Infinite", "Gain margin is infinite because open-loop gain stays above 0 dB in the analyzed band."
+        return "Infinite", _phase_never_minus180_note()
     if gm_db is not None and math.isinf(gm_db):
-        return "Infinite", "Gain margin is infinite because open-loop gain stays above 0 dB in the analyzed band."
+        return "Infinite", _phase_never_minus180_note()
     if gm_db is None or (isinstance(gm_db, float) and math.isnan(gm_db)):
         return "No crossover in range", _band_note("phase")
     return f"{gm_db:.2f} dB", None
 
 
-def _fmt_pm(pm: float | None) -> tuple[str, str | None]:
+def _fmt_pm(pm: float | None, *, w_gain_cross: float | None = None) -> tuple[str, str | None]:
+    if w_gain_cross is None:
+        if pm is None or (isinstance(pm, float) and math.isnan(pm)):
+            return "Not defined", "No gain crossover in range."
+        if math.isinf(pm):
+            return "Not defined", "No gain crossover in range."
     if pm is None or (isinstance(pm, float) and math.isnan(pm)):
-        return "No crossover in range", _band_note("gain")
+        return "No crossover in range", None
     if math.isinf(pm):
-        return "Infinite", "Phase margin is infinite because phase stays above −180° at the gain crossover."
+        return "Infinite", None
     return f"{pm:.1f}°", None
 
 
@@ -157,10 +191,16 @@ def extract_margins(sys) -> dict[str, Any]:
         gm_db = None
         gm_lin = None
 
+    lo_db, hi_db = _sweep_mag_db_ends(sys)
     gm_s, gm_note = _fmt_gm_db(gm_db, gm_lin if isinstance(gm_lin, float) else None)
-    pm_s, pm_note = _fmt_pm(pm_deg if isinstance(pm_deg, float) or pm_deg is None else float(pm_deg))
+    pm_s, pm_note = _fmt_pm(
+        pm_deg if isinstance(pm_deg, float) or pm_deg is None else float(pm_deg),
+        w_gain_cross=w_gain_cross,
+    )
     wcg_s, wcg_note = _fmt_freq(w_gain_cross)
-    wcp_s, wcp_note = _fmt_freq(w_phase_cross)
+    if wcg_note is None and wcg_s == "No crossover in range":
+        wcg_note = _gain_band_note_from_db(lo_db, hi_db)
+    wcp_s, wcp_note = _fmt_freq(w_phase_cross, phase_cross=True)
 
     return {
         "sweep_rad_s": [SWEEP_MIN_RAD_S, SWEEP_MAX_RAD_S],

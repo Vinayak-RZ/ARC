@@ -16,9 +16,10 @@ function Field({ label, type = "text", value, onChange, error }) {
   );
 }
 
-export function StudioInspector({ selected, blockIssues, onPatch, onComment, notes }) {
+export function StudioInspector({ selected, blockIssues, onPatch, onComment, notes, floating = false }) {
   const [comment, setComment] = useState("");
   if (!selected) {
+    if (floating) return null;
     return (
       <aside className="studio-inspector">
         <h3>Inspector</h3>
@@ -32,7 +33,7 @@ export function StudioInspector({ selected, blockIssues, onPatch, onComment, not
   const blockNotes = (notes || []).filter((n) => n.block_id === selected.id);
 
   return (
-    <aside className="studio-inspector">
+    <aside className={`studio-inspector${floating ? " studio-inspector-float" : ""}`}>
       <h3>{selected.data?.label || t}</h3>
       <p className="cs-margins-hint">{t}</p>
       {t === "pid" ? (

@@ -51,8 +51,8 @@ export function VisualGallery() {
   }, [data.components, pack]);
   return (
     <section className="visual-gallery" aria-label="Arc Visual Kit gallery">
-      <h1>Visuals</h1>
-      <p className="visual-gallery-lede">Engine-bound figures. Numbers come from Arc kernels, not prompts.</p>
+      <h1>Gallery</h1>
+      <p className="visual-gallery-lede">Figures checked by the engines.</p>
       <div className="gallery-filters" role="group" aria-label="Filter by subject">
         {Object.entries(PACK_LABELS).map(([key, label]) => (
           <button
@@ -77,7 +77,7 @@ export function VisualGallery() {
                 {isGif ? <span className="gallery-gif-badge">GIF</span> : null}
               </div>
               <figcaption>
-                <span className="gallery-card-title">{CAPTIONS[c.id] || c.id}</span>
+                <span className="gallery-card-title">{CAPTIONS[c.id] || c.title || c.id.split(".").pop()}</span>
                 <span className="hint">{c.id}</span>
               </figcaption>
             </figure>

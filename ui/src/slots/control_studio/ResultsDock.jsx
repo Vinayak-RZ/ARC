@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { marginLine } from "../../control-studio/marginFormat.js";
+import { StepChart } from "./StepChart.jsx";
 
 const TABS = [
   { id: "step", label: "Step" },
@@ -9,7 +10,7 @@ const TABS = [
 
 function isTextualKpi(value) {
   const s = String(value);
-  return s === "Infinite" || s.includes("No crossover");
+  return s === "Infinite" || s.includes("No crossover") || s === "Not defined";
 }
 
 function MarginTable({ margins, stale }) {
@@ -34,7 +35,7 @@ function MarginTable({ margins, stale }) {
     ["Phase crossover (rad/s)", m.wcp, tips.wcp],
   ];
   return (
-    <table className="studio-margin-table">
+    <table className="studio-margin-table studio-margin-grid-2x2">
       <thead>
         <tr>
           {rows.map(([label]) => (
@@ -44,10 +45,10 @@ function MarginTable({ margins, stale }) {
       </thead>
       <tbody>
         <tr>
-          {rows.map(([label, value, tip], i) => (
+          {rows.map(([label, value, tip]) => (
             <td key={label} className={stale ? "is-muted" : undefined} title={tip || undefined}>
               <span className={`studio-kpi tabular-nums${isTextualKpi(value) ? " is-textual" : ""}`}>{value}</span>
-              {tip && (value === "Infinite" || String(value).includes("No crossover")) ? (
+              {tip && (value === "Infinite" || String(value).includes("No crossover") || value === "Not defined") ? (
                 <span className="studio-margin-meta">{tip}</span>
               ) : null}
             </td>
@@ -70,38 +71,66 @@ function useUiTheme() {
   return theme;
 }
 
-export function ResultsDock({ results, margins, stale }) {
+export function ResultsDock({ results, stepData, margins, stale, sessionId, onResimulate }) {
   const [tab, setTab] = useState("step");
+  const [windowS, setWindowS] = useState(10);
   const uiTheme = useUiTheme();
   const ts = results?.ts || Date.now();
   const src = results ? results[tab] : null;
+
+  function pickWindow(choice) {
+    setWindowS(choice);
+    if (!sessionId) return;
+    const body =
+      choice === "auto"
+        ? { t_final: "auto" }
+        : { t_final: Number(choice) };
+    fetch(`/api/control-studio/sessions/${sessionId}/simulate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    })
+      .then((r) => r.json())
+      .then((sim) => onResimulate?.(sim))
+      .catch(() => {});
+  }
+
   return (
     <footer className={`studio-results${stale ? " is-stale" : ""}${results ? "" : " is-empty"}`} aria-label="Results">
-      <div className="studio-results-head">
-        <MarginTable margins={margins} stale={stale} />
-        {results ? (
-          <div className="studio-results-tabs" role="tablist">
-            {TABS.map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                role="tab"
-                aria-selected={tab === t.id}
-                className={tab === t.id ? "is-active" : ""}
-                onClick={() => setTab(t.id)}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-        ) : null}
-      </div>
-      <div className="studio-results-stage">
-        {!results ? null : src ? (
-          <img src={`${src}?t=${ts}&theme=${encodeURIComponent(uiTheme)}`} alt={`${tab} plot`} loading="eager" />
-        ) : (
-          <p className="cs-margins-hint">No plot.</p>
-        )}
+      <div className="studio-results-layout">
+        <div className="studio-results-margins-col">
+          <MarginTable margins={margins} stale={stale} />
+          {results ? (
+            <div className="studio-results-tabs" role="tablist">
+              {TABS.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={tab === t.id}
+                  className={tab === t.id ? "is-active" : ""}
+                  onClick={() => setTab(t.id)}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          ) : null}
+        </div>
+        <div className="studio-results-stage">
+          {!results ? null : tab === "step" && stepData ? (
+            <StepChart
+              data={stepData}
+              margins={margins}
+              windowS={windowS}
+              onWindowChange={pickWindow}
+            />
+          ) : src ? (
+            <img src={`${src}?t=${ts}&theme=${encodeURIComponent(uiTheme)}`} alt={`${tab} plot`} loading="eager" />
+          ) : (
+            <p className="cs-margins-hint">No plot.</p>
+          )}
+        </div>
       </div>
     </footer>
   );

@@ -14,7 +14,7 @@ const HUMAN_BLOCK_LABELS = {
   sum: "Sum",
   pid: "PID",
   plant_dc_motor: "DC motor",
-  plant_first_order: "First-order plant",
+  plant_first_order: "1st-order plant",
   scope: "Scope",
 };
 

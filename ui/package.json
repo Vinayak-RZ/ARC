@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "test:e2e": "playwright test -c e2e/playwright.config.ts"
+    "test:e2e": "playwright test -c e2e/playwright.config.ts",
+    "test:e2e:wire": "playwright test -c e2e/playwright.config.ts studio-wire-selection.spec.ts"
   },
   "dependencies": {
     "@xyflow/react": "^12.11.6",

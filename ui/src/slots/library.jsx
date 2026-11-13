@@ -94,10 +94,47 @@ export function Library() {
 
   return (
     <section className="library" aria-labelledby="library-title">
-      <h1 id="library-title">Books</h1>
-      <p className="hint">
-        Add a PDF you have rights to; it stays on this machine. Tagged books become available to retrieve.
-      </p>
+      <h1 id="library-title">Library</h1>
+      <p className="hint">Sources used for retrieve. Add textbooks and lab sheets you have rights to.</p>
+      <div className="library-sources-toolbar">
+        <input
+          className="run-search"
+          type="search"
+          placeholder="Search sources"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <button
+          type="button"
+          className="button-secondary library-add-btn"
+          onClick={() => document.querySelector(".library-form")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+        >
+          Add a source
+        </button>
+      </div>
+      <table className="library-sources-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Kind</th>
+            <th>Subject</th>
+            <th>Used in</th>
+          </tr>
+        </thead>
+        <tbody>
+          {items
+            .filter((row) => !query || String(row.book_id).toLowerCase().includes(query.toLowerCase()))
+            .slice(0, 40)
+            .map((row) => (
+              <tr key={`${row.book_id}-${row.chunk_id || row.id || Math.random()}`}>
+                <td>{row.book_id}</td>
+                <td>{row.licence_tag === "commercial-byo" ? "Textbook" : row.licence_tag || "—"}</td>
+                <td>{row.domain_tag === "circuits" ? "Circuits" : row.domain_tag || "—"}</td>
+                <td>{row.chapter_id || "—"}</td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
       {loading ? <p className="hint">Loading books.</p> : null}
       {!loading && items.length === 0 ? (
         <p className="empty">No books yet. Add a PDF you have rights to; it stays on this machine.</p>

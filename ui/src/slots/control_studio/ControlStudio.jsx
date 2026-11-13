@@ -73,7 +73,7 @@ function targetsFromLastOp(payload, presenceNow) {
   return ids;
 }
 
-function applySimAndAnalyze(sid, sim, setResults, setMargins, setMsg, onSuccess) {
+function applySimAndAnalyze(sid, sim, setResults, setMargins, setStepData, setMsg, onSuccess) {
   if (!sim?.ok) {
     setMsg(sim?.error || "simulate failed");
     return;
@@ -90,21 +90,21 @@ function applySimAndAnalyze(sid, sim, setResults, setMargins, setMsg, onSuccess)
     rlocus: `/api/control-studio/sessions/${sid}/plot/root_locus`,
   });
   setMargins(an);
+  if (sim.step_series) setStepData?.(sim.step_series);
   setMsg("");
   onSuccess?.();
   return true;
 }
 
-function FlowZoomHelpers({ fitRef, zoomApi, setZoomPct }) {
-  const { zoomIn, zoomOut, fitView } = useReactFlow();
+function FlowZoomHelpers({ zoomApi, setZoomPct }) {
+  const { zoomIn, zoomOut } = useReactFlow();
   useEffect(() => {
-    fitRef.current = () => fitView({ padding: 0.2, maxZoom: 1.25 });
     zoomApi.current = {
       in: () => zoomIn({ duration: 120 }),
       out: () => zoomOut({ duration: 120 }),
     };
     setZoomPct((z) => z || 1);
-  }, [fitRef, fitView, setZoomPct, zoomApi, zoomIn, zoomOut]);
+  }, [setZoomPct, zoomApi, zoomIn, zoomOut]);
   return null;
 }
 
@@ -138,14 +138,22 @@ function ControlStudioInner({ sessionId, onSession }) {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [msg, setMsg] = useState("");
   const [results, setResults] = useState(null);
+  const [stepData, setStepData] = useState(null);
   const [margins, setMargins] = useState(null);
   const [revision, setRevision] = useState(0);
   const [lastSimRevision, setLastSimRevision] = useState(null);
   const [connecting, setConnecting] = useState(false);
   const [fitBump, setFitBump] = useState(0);
   const [zoomPct, setZoomPct] = useState(1);
+  const [selectedId, setSelectedId] = useState(null);
+  const selectedIdRef = useRef(null);
+  selectedIdRef.current = selectedId;
   const fitRef = useRef(() => {});
   const zoomApi = useRef({ in: () => {}, out: () => {} });
+  const withSelection = useCallback(
+    (list) => list.map((n) => ({ ...n, selected: n.id === selectedIdRef.current })),
+    [],
+  );
   const [validation, setValidation] = useState({ ok: true, issues: [], warnings: [] });
   const [highlight, setHighlight] = useState({ ids: new Set(), author: null });
   const diagramBase = useRef({});
@@ -162,14 +170,14 @@ function ControlStudioInner({ sessionId, onSession }) {
         highlightSet: ids,
         flashAuthor: ids.size ? presence.last_author || author : null,
       });
-      setNodes(flow.nodes);
+      setNodes(withSelection(flow.nodes));
       setEdges(flow.edges);
       setRevision(payload.revision || 0);
       setSession(payload);
       setHighlight({ ids, author: presence.last_author });
       if (presence.agent_editing) setMsg("Agent editing…");
     },
-    [blockIssues, setNodes, setEdges],
+    [blockIssues, setNodes, setEdges, withSelection],
   );
 
   const refreshValidation = useCallback(
@@ -223,7 +231,7 @@ function ControlStudioInner({ sessionId, onSession }) {
         fetch(`/api/control-studio/sessions/${p.session_id}/simulate`, { method: "POST" })
           .then((r) => r.json())
           .then((sim) =>
-            applySimAndAnalyze(p.session_id, sim, setResults, setMargins, setMsg, () =>
+            applySimAndAnalyze(p.session_id, sim, setResults, setMargins, setStepData, setMsg, () =>
               setLastSimRevision(p.revision || 0),
             ),
           );
@@ -240,9 +248,9 @@ function ControlStudioInner({ sessionId, onSession }) {
       highlightSet: highlight.ids,
       flashAuthor: highlight.author,
     });
-    setNodes(flow.nodes);
+    setNodes(withSelection(flow.nodes));
     setEdges(flow.edges);
-  }, [validation, session?.diagram, session?.presence, highlight, blockIssues, setNodes, setEdges]);
+  }, [validation, session?.diagram, session?.presence, highlight.ids.size, blockIssues, setNodes, setEdges, withSelection]);
 
   useEffect(() => {
     if (!session?.session_id) return undefined;
@@ -337,7 +345,7 @@ function ControlStudioInner({ sessionId, onSession }) {
         return fetch(`/api/control-studio/sessions/${sid}/simulate`, { method: "POST" })
           .then((r) => r.json())
           .then((sim) =>
-            applySimAndAnalyze(sid, sim, setResults, setMargins, setMsg, () => setLastSimRevision(simRev)),
+            applySimAndAnalyze(sid, sim, setResults, setMargins, setStepData, setMsg, () => setLastSimRevision(simRev)),
           );
       })
       .catch(() => setMsg("Save failed"));
@@ -349,7 +357,7 @@ function ControlStudioInner({ sessionId, onSession }) {
       .then(() => loadSession(session.session_id));
   }
 
-  const selected = nodes.find((n) => n.selected);
+  const selected = useMemo(() => nodes.find((n) => n.id === selectedId) ?? null, [nodes, selectedId]);
   function patchSelected(params) {
     if (!selected) return;
     const next = nodes.map((n) =>
@@ -386,7 +394,7 @@ function ControlStudioInner({ sessionId, onSession }) {
 
   return (
     <section
-      className={`cs-app control-studio studio${results ? "" : " is-empty"}${selected ? " has-selection" : ""}`}
+      className={`cs-app control-studio studio${results ? "" : " is-empty"}${selected ? " has-selection" : ""}${selected ? " studio-has-floating-inspector" : ""}`}
     >
       <ReactFlowProvider>
         <StudioToolbar
@@ -404,7 +412,7 @@ function ControlStudioInner({ sessionId, onSession }) {
         <StudioPalette groups={groups} onDragStart={(item) => placeBlock(item)} />
         <div className={`studio-canvas${connecting ? " is-connecting" : ""}`}>
           <CanvasDrop onDropBlock={placeBlock}>
-            <FlowZoomHelpers fitRef={fitRef} zoomApi={zoomApi} setZoomPct={setZoomPct} />
+            <FlowZoomHelpers zoomApi={zoomApi} setZoomPct={setZoomPct} />
             <ReactFlow
               nodes={nodes}
               edges={edges}
@@ -417,9 +425,13 @@ function ControlStudioInner({ sessionId, onSession }) {
               onConnectEnd={() => setConnecting(false)}
               onNodeDragStop={onNodeDragStop}
               onNodeClick={(_, node) => {
+                setSelectedId(node.id);
                 setNodes((nds) => nds.map((n) => ({ ...n, selected: n.id === node.id })));
               }}
-              onPaneClick={() => setNodes((nds) => nds.map((n) => ({ ...n, selected: false })))}
+              onPaneClick={() => {
+                setSelectedId(null);
+                setNodes((nds) => nds.map((n) => ({ ...n, selected: false })));
+              }}
               onMove={(_, vp) => setZoomPct(vp.zoom)}
               connectionRadius={22}
               snapToGrid
@@ -438,18 +450,36 @@ function ControlStudioInner({ sessionId, onSession }) {
             >
               <Background gap={8} color="var(--cs-border)" size={1} />
               <Background gap={32} color="var(--cs-border-strong)" size={1} offset={0} />
-              <FitViewOnChange revision={revision} nodeCount={nodes.length} agentBump={fitBump} />
+              <FitViewOnChange revision={revision} nodeCount={nodes.length} agentBump={fitBump} fitRef={fitRef} />
             </ReactFlow>
           </CanvasDrop>
+          <StudioInspector
+            selected={selected}
+            blockIssues={blockIssues}
+            onPatch={patchSelected}
+            onComment={pinComment}
+            notes={session?.diagram?.notes}
+            floating
+          />
         </div>
-        <StudioInspector
-          selected={selected}
-          blockIssues={blockIssues}
-          onPatch={patchSelected}
-          onComment={pinComment}
-          notes={session?.diagram?.notes}
+        <ResultsDock
+          results={results}
+          stepData={stepData}
+          margins={margins}
+          stale={resultsStale}
+          sessionId={session?.session_id}
+          onResimulate={(sim) => {
+            if (!sim?.ok) {
+              setMsg(sim?.error || "simulate failed");
+              return;
+            }
+            const an = sim.analyze?.ok ? sim.analyze : sim.analyze || sim;
+            setMargins(an);
+            if (sim.step_series) setStepData(sim.step_series);
+            setResults((prev) => ({ ...prev, ts: Date.now() }));
+            setMsg("");
+          }}
         />
-        <ResultsDock results={results} margins={margins} stale={resultsStale} />
         {msg ? <p className="studio-toast cs-status-msg">{msg}</p> : null}
       </ReactFlowProvider>
     </section>

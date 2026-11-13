@@ -58,8 +58,8 @@ export function ParametersPanel({ problem, stale, onChange, onRunAgain }) {
     <div className="parameters-panel">
       {stale ? (
         <div className="stale-banner" role="status">
-          Answer is stale after your edit.
-          <button type="button" className="button-primary button-compact" onClick={onRunAgain}>
+          Answer is stale after your edit.{" "}
+          <button type="button" className="text-link" onClick={onRunAgain}>
             Run again
           </button>
         </div>

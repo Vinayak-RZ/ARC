@@ -64,7 +64,12 @@ function Result({ id }) {
         <p className="answer-line">Working…</p>
       )}
       {!error ? (
-        <VerificationStrip checked={!unchecked} unchecked={unchecked} modifiedAt={data?.modified_at} />
+        <VerificationStrip
+          checked={!unchecked}
+          unchecked={unchecked}
+          modifiedAt={data?.modified_at}
+          stale={stale}
+        />
       ) : (
         <p className="status-hint">{note}</p>
       )}
