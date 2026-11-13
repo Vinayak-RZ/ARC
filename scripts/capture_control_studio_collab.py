@@ -46,28 +46,47 @@ def main() -> int:
             timeout=35000,
         )
         page.wait_for_timeout(900)
-        clipped = page.evaluate(
+        viewport = page.evaluate(
             """() => {
             const pane = document.querySelector('.react-flow__pane');
-            if (!pane) return true;
+            if (!pane) return { clip: true, ratio: 0 };
             const paneRect = pane.getBoundingClientRect();
-            const pad = 3;
+            const pad = 8;
             const nodes = document.querySelectorAll('.react-flow__node .studio-block');
-            if (!nodes.length) return true;
+            if (!nodes.length) return { clip: true, ratio: 0 };
+            let minL = Infinity;
+            let maxR = -Infinity;
+            let clipped = false;
             for (const n of nodes) {
                 const r = n.getBoundingClientRect();
-                if (r.left < paneRect.left + pad || r.right > paneRect.right - pad) return true;
+                minL = Math.min(minL, r.left);
+                maxR = Math.max(maxR, r.right);
+                if (r.left < paneRect.left + pad || r.right > paneRect.right - pad) clipped = true;
             }
-            return false;
+            const ratio = paneRect.width > 0 ? (maxR - minL) / paneRect.width : 0;
+            return { clip: clipped, ratio };
         }"""
         )
-        if clipped:
+        if viewport.get("clip"):
             print("viewport-clip: node bbox extends past pane", file=sys.stderr)
             return 2
+        ratio = float(viewport.get("ratio") or 0)
+        if ratio < 0.7:
+            print(f"viewport-fill: diagram width ratio {ratio:.3f} < 0.7", file=sys.stderr)
+            return 2
+        print(f"viewport-fill: diagram width ratio {ratio:.3f}", file=sys.stderr)
         page.screenshot(path=str(populated), full_page=False)
         bode_shot = OUT / "control_studio_bode_1280x800.png"
         page.locator(".studio-results-tabs button", has_text="Bode").click()
-        page.wait_for_timeout(800)
+        page.wait_for_timeout(600)
+        page.locator(".studio-results-stage").scroll_into_view_if_needed()
+        page.evaluate(
+            """() => {
+            const stage = document.querySelector('.studio-results-stage');
+            if (stage) stage.scrollIntoView({ block: 'end', behavior: 'instant' });
+        }"""
+        )
+        page.wait_for_timeout(400)
         page.screenshot(path=str(bode_shot), full_page=False)
 
         sid2 = handle_tool("control_studio_create_diagram", {"title": "Agent build", "golden": None})["session_id"]
@@ -180,6 +199,7 @@ def main() -> int:
         "frames": [str(f) for f in frames],
         "populated": str(populated),
         "bode": str(OUT / "control_studio_bode_1280x800.png"),
+        "viewport_width_ratio": ratio,
         "gif": str(gif_path) if gif_path else None,
     }
     (OUT / "control_studio_capture_meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")

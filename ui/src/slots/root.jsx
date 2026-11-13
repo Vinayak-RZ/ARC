@@ -139,13 +139,28 @@ function Sidebar() {
             ) : null}
             {runs.map((run) => {
               const id = run.id || run;
-              const title = run.title || id;
+              const isStudio = run.is_studio_session || String(id).startsWith("cs-");
+              const title = run.title && run.title !== id ? run.title : null;
+              if (isStudio && !title) return null;
+              const label = title || (isStudio ? null : id);
+              if (!label) return null;
               return (
                 <button
                   key={id}
                   className="asset-row"
                   aria-current={current === id ? "true" : undefined}
                   onClick={() => {
+                    if (isStudio) {
+                      openControlStudio();
+                      const url = new URL(window.location.href);
+                      url.searchParams.set("view", "control-studio");
+                      url.searchParams.set("session", id);
+                      url.searchParams.delete("run");
+                      window.history.replaceState({}, "", url);
+                      window.dispatchEvent(new Event("arc-url"));
+                      setOpen(false);
+                      return;
+                    }
                     setRun(id);
                     const url = new URL(window.location.href);
                     url.searchParams.set("run", id);
@@ -154,9 +169,10 @@ function Sidebar() {
                     setOpen(false);
                   }}
                 >
-                  <span className="asset-title">{title}</span>
-                  {run.recipe_id ? <span className="hint">{run.recipe_id}</span> : null}
-                  <span className="hint">{id}</span>
+                  <span className="asset-title">{label}</span>
+                  {run.relative_time ? <span className="hint">{run.relative_time}</span> : null}
+                  {run.recipe_id && !isStudio ? <span className="hint">{run.recipe_id}</span> : null}
+                  {!isStudio ? <span className="hint">{id}</span> : null}
                   {run.unchecked ? <span className="badge-pill">unchecked</span> : null}
                 </button>
               );

@@ -92,6 +92,17 @@ def create_session(
     return payload
 
 
+def _relative_time_ms(ts_ms: int) -> str:
+    delta = max(0, int(time.time() * 1000 - ts_ms) // 1000)
+    if delta < 60:
+        return "just now"
+    if delta < 3600:
+        return f"{delta // 60}m ago"
+    if delta < 86400:
+        return f"{delta // 3600}h ago"
+    return f"{delta // 86400}d ago"
+
+
 def list_sessions(root: Path | None = None, *, limit: int = 12) -> list[dict[str, Any]]:
     d = _studio_dir(root)
     items: list[dict[str, Any]] = []
@@ -106,16 +117,20 @@ def list_sessions(root: Path | None = None, *, limit: int = 12) -> list[dict[str
             continue
         diagram = data.get("diagram") or {}
         sid = str(data.get("session_id") or path.stem)
-        title = str(diagram.get("title") or sid)
+        title = str(diagram.get("title") or "").strip()
+        if not title or title == sid:
+            continue
         low = f"{sid} {title}".lower()
         if low.startswith("unmatched") or "scratch" in low or "unmatched-cosolver" in low:
             continue
+        updated = int(data.get("updated_at_ms") or 0)
         items.append(
             {
-                "session_id": data.get("session_id") or path.stem,
+                "session_id": sid,
                 "title": title,
+                "relative_time": _relative_time_ms(updated) if updated else "",
                 "revision": data.get("revision") or 0,
-                "updated_at_ms": data.get("updated_at_ms") or 0,
+                "updated_at_ms": updated,
             }
         )
         if len(items) >= limit:

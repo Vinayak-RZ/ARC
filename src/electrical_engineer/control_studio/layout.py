@@ -9,6 +9,12 @@ BLOCK_H = 64
 GAP = 44
 ORIGIN_X = 56
 ORIGIN_Y = 96
+# Align port centers (handles at 50% height) on the forward path.
+PORT_RAIL_CENTER_Y = ORIGIN_Y + BLOCK_H / 2
+
+
+def _block_height(btype: str) -> float:
+    return 56.0 if btype == "sum" else float(BLOCK_H)
 
 
 def _forward_order(diagram: dict[str, Any]) -> list[str]:
@@ -51,25 +57,22 @@ def layout_chain(diagram: dict[str, Any]) -> dict[str, Any]:
     by_id = {b["id"]: b for b in blocks}
     order = _forward_order(diagram)
     x = ORIGIN_X
-    y_stack = ORIGIN_Y
     placed: set[str] = set()
     for bid in order:
         b = by_id.get(bid)
         if not b:
             continue
         btype = b.get("type")
+        h = _block_height(btype)
         b["x"] = float(x)
-        if btype == "sum":
-            b["y"] = float(y_stack)
-        else:
-            b["y"] = float(y_stack)
+        b["y"] = float(PORT_RAIL_CENTER_Y - h / 2)
         placed.add(bid)
         span = 56 if btype == "sum" else BLOCK_W
         x += span + GAP
     for b in blocks:
         if b["id"] not in placed:
             b["x"] = float(x)
-            b["y"] = float(y_stack + 48)
+            b["y"] = float(PORT_RAIL_CENTER_Y - BLOCK_H / 2)
             x += BLOCK_W + GAP
     out = dict(diagram)
     out["blocks"] = blocks

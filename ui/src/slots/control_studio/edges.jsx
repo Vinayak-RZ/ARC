@@ -1,4 +1,4 @@
-import { BaseEdge, EdgeLabelRenderer, getSmoothStepPath } from "@xyflow/react";
+import { BaseEdge, EdgeLabelRenderer, getStraightPath } from "@xyflow/react";
 
 function feedbackPath(sourceX, sourceY, targetX, targetY) {
   const drop = 72;
@@ -41,15 +41,11 @@ export function SignalEdge({
       </>
     );
   }
-  const [path, labelX, labelY] = getSmoothStepPath({
+  const [path, labelX, labelY] = getStraightPath({
     sourceX,
     sourceY,
-    sourcePosition,
     targetX,
     targetY,
-    targetPosition,
-    borderRadius: 0,
-    offset: 1,
   });
   return (
     <>

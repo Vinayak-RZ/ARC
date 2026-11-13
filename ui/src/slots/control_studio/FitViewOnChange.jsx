@@ -1,21 +1,29 @@
 import { useEffect } from "react";
-import { useNodesInitialized, useReactFlow } from "@xyflow/react";
+import { useReactFlow } from "@xyflow/react";
 
 export function FitViewOnChange({ revision, nodeCount, agentBump = 0 }) {
   const { fitView } = useReactFlow();
-  const ready = useNodesInitialized();
   useEffect(() => {
-    if (!ready || nodeCount < 1) return undefined;
-    const t = window.setTimeout(() => {
-      fitView({
-        padding: 0.1,
-        includeHiddenNodes: false,
-        minZoom: 0.35,
-        maxZoom: 2.2,
-        duration: 300,
-      });
-    }, 50);
-    return () => window.clearTimeout(t);
-  }, [ready, revision, nodeCount, agentBump, fitView]);
+    if (nodeCount < 1) return undefined;
+    let cancelled = false;
+    const run = (delay) => {
+      window.setTimeout(() => {
+        if (cancelled) return;
+        fitView({
+          padding: 0.1,
+          includeHiddenNodes: false,
+          minZoom: 0.25,
+          maxZoom: 3,
+          duration: 200,
+        });
+      }, delay);
+    };
+    run(80);
+    run(450);
+    run(1200);
+    return () => {
+      cancelled = true;
+    };
+  }, [revision, nodeCount, agentBump, fitView]);
   return null;
 }

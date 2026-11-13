@@ -413,7 +413,7 @@ function ControlStudioInner({ sessionId, onSession }) {
                 connectionRadius={22}
                 snapToGrid
                 snapGrid={[GRID, GRID]}
-                connectionLineType={ConnectionLineType.SmoothStep}
+                connectionLineType={ConnectionLineType.Straight}
                 elevateEdgesOnSelect={false}
                 elevateNodesOnSelect
                 defaultEdgeOptions={{
@@ -421,8 +421,8 @@ function ControlStudioInner({ sessionId, onSession }) {
                   zIndex: 0,
                   markerEnd: { type: MarkerType.ArrowClosed, color: "#202020", width: 14, height: 14 },
                 }}
-                minZoom={0.55}
-                maxZoom={1.5}
+                minZoom={0.25}
+                maxZoom={3}
                 proOptions={{ hideAttribution: true }}
               >
                 <Background gap={GRID} color="var(--cs-border)" size={1} />
@@ -472,8 +472,13 @@ export function ControlStudio() {
   });
   useEffect(() => {
     const sync = () => setSessionId(new URLSearchParams(window.location.search).get("session") || "");
+    sync();
     window.addEventListener("popstate", sync);
-    return () => window.removeEventListener("popstate", sync);
+    window.addEventListener("arc-url", sync);
+    return () => {
+      window.removeEventListener("popstate", sync);
+      window.removeEventListener("arc-url", sync);
+    };
   }, []);
   return <ControlStudioInner sessionId={sessionId} onSession={setSessionId} />;
 }

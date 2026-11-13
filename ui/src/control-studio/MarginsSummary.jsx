@@ -39,8 +39,8 @@ export function MarginsSummary({ margins, stale }) {
       <dl className="cs-margin-grid">
         <Cell label="Gain margin" value={m.gm} tip={tips.gm_db} stale={stale} />
         <Cell label="Phase margin" value={m.pm} tip={tips.pm_deg} stale={stale} />
-        <Cell label="ω gain cross" value={m.wcg} tip={tips.wcg} stale={stale} />
-        <Cell label="ω phase cross" value={m.wcp} tip={tips.wcp} stale={stale} />
+        <Cell label="Gain crossover ωcg" value={m.wcg} tip={tips.wcg} stale={stale} />
+        <Cell label="Phase crossover ωcp" value={m.wcp} tip={tips.wcp} stale={stale} />
       </dl>
     </div>
   );

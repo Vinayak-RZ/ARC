@@ -35,7 +35,7 @@ def _plot_bode_open_loop(sys, path: Path, margins: dict[str, Any]) -> None:
     phase_deg = np.degrees(phase)
 
     fig_w = max(theme.fig_w, 10.0)
-    fig, (ax_mag, ax_phase) = plt.subplots(2, 1, figsize=(fig_w, fig_w * 0.62), sharex=True)
+    fig, (ax_mag, ax_phase) = plt.subplots(2, 1, figsize=(fig_w, fig_w * 0.52), sharex=True)
     apply_theme(ax_mag, theme)
     apply_theme(ax_phase, theme)
     ax_mag.semilogx(omega_out, mag_db, color=theme.primary, linewidth=2.0)
@@ -52,11 +52,13 @@ def _plot_bode_open_loop(sys, path: Path, margins: dict[str, Any]) -> None:
     if pm is not None and math.isfinite(pm):
         bits.append(f"PM={pm:.1f}°")
     if bits:
-        title += " — " + ", ".join(bits)
+        title += ", " + ", ".join(bits)
     ax_mag.set_title(title)
     ax_mag.set_ylabel("Magnitude (dB)")
     ax_phase.set_ylabel("Phase (deg)")
     ax_phase.set_xlabel("ω (rad/s)")
+    ax_mag.tick_params(axis="x", labelbottom=False)
+    ax_mag.set_xticklabels([])
 
     if wgc is not None and math.isfinite(wgc):
         ax_mag.axvline(wgc, color=theme.fault, linewidth=1.0, linestyle=":")
@@ -78,7 +80,7 @@ def _plot_bode_open_loop(sys, path: Path, margins: dict[str, Any]) -> None:
             direct_label(ax_mag, wpc, mag_pc, f"GM={gm_db:.1f} dB", theme, color=theme.warning)
         direct_label(ax_phase, wpc, ph_pc, f"ωcp={wpc:.2g} rad/s", theme, color=theme.warning)
 
-    fig.subplots_adjust(hspace=0.12, left=0.1, right=0.98, top=0.92, bottom=0.1)
+    fig.subplots_adjust(hspace=0.08, left=0.1, right=0.98, top=0.9, bottom=0.14)
     fig.savefig(path, dpi=theme.dpi, bbox_inches="tight", facecolor=theme.canvas)
     plt.close(fig)
 

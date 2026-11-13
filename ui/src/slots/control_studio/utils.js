@@ -19,7 +19,7 @@ export function diagramToFlow(diagram, { issuesByBlock = {}, notes = [], highlig
     type: nodeForType(b.type),
     position: { x: b.x || 0, y: b.y || 0 },
     width: b.type === "sum" ? 56 : 132,
-    height: 64,
+    height: b.type === "sum" ? 56 : 64,
     zIndex: 2,
     data: {
       blockId: b.id,
