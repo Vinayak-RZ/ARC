@@ -1,4 +1,4 @@
-import { BaseEdge, EdgeLabelRenderer, getStraightPath } from "@xyflow/react";
+import { BaseEdge, EdgeLabelRenderer } from "@xyflow/react";
 
 function feedbackPath(sourceX, sourceY, targetX, targetY) {
   const drop = 72;
@@ -41,12 +41,10 @@ export function SignalEdge({
       </>
     );
   }
-  const [path, labelX, labelY] = getStraightPath({
-    sourceX,
-    sourceY,
-    targetX,
-    targetY,
-  });
+  const railY = sourceY;
+  const path = `M ${sourceX} ${railY} L ${targetX} ${railY}`;
+  const labelX = (sourceX + targetX) / 2;
+  const labelY = railY;
   return (
     <>
       <BaseEdge id={id} path={path} markerEnd={markerEnd} style={{ stroke: "var(--cs-text)", strokeWidth: 2, zIndex: 0 }} />

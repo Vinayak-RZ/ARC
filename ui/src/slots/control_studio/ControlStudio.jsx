@@ -421,8 +421,8 @@ function ControlStudioInner({ sessionId, onSession }) {
                   zIndex: 0,
                   markerEnd: { type: MarkerType.ArrowClosed, color: "#202020", width: 14, height: 14 },
                 }}
-                minZoom={0.25}
-                maxZoom={3}
+                minZoom={0.2}
+                maxZoom={4}
                 proOptions={{ hideAttribution: true }}
               >
                 <Background gap={GRID} color="var(--cs-border)" size={1} />

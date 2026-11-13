@@ -56,25 +56,35 @@ def main() -> int:
             if (!nodes.length) return { clip: true, ratio: 0 };
             let minL = Infinity;
             let maxR = -Infinity;
+            let minT = Infinity;
+            let maxB = -Infinity;
             let clipped = false;
             for (const n of nodes) {
                 const r = n.getBoundingClientRect();
                 minL = Math.min(minL, r.left);
                 maxR = Math.max(maxR, r.right);
+                minT = Math.min(minT, r.top);
+                maxB = Math.max(maxB, r.bottom);
                 if (r.left < paneRect.left + pad || r.right > paneRect.right - pad) clipped = true;
+                if (r.top < paneRect.top + pad || r.bottom > paneRect.bottom - pad) clipped = true;
             }
-            const ratio = paneRect.width > 0 ? (maxR - minL) / paneRect.width : 0;
-            return { clip: clipped, ratio };
+            const ratioW = paneRect.width > 0 ? (maxR - minL) / paneRect.width : 0;
+            const ratioH = paneRect.height > 0 ? (maxB - minT) / paneRect.height : 0;
+            return { clip: clipped, ratio: ratioW, ratioH };
         }"""
         )
         if viewport.get("clip"):
             print("viewport-clip: node bbox extends past pane", file=sys.stderr)
             return 2
         ratio = float(viewport.get("ratio") or 0)
+        ratio_h = float(viewport.get("ratioH") or 0)
         if ratio < 0.7:
             print(f"viewport-fill: diagram width ratio {ratio:.3f} < 0.7", file=sys.stderr)
             return 2
-        print(f"viewport-fill: diagram width ratio {ratio:.3f}", file=sys.stderr)
+        if max(ratio, ratio_h) < 0.6:
+            print(f"viewport-fill: max(w,h) ratio {max(ratio, ratio_h):.3f} < 0.6", file=sys.stderr)
+            return 2
+        print(f"viewport-fill: width ratio {ratio:.3f}, height ratio {ratio_h:.3f}", file=sys.stderr)
         page.screenshot(path=str(populated), full_page=False)
         bode_shot = OUT / "control_studio_bode_1280x800.png"
         page.locator(".studio-results-tabs button", has_text="Bode").click()
@@ -200,6 +210,7 @@ def main() -> int:
         "populated": str(populated),
         "bode": str(OUT / "control_studio_bode_1280x800.png"),
         "viewport_width_ratio": ratio,
+        "viewport_height_ratio": ratio_h,
         "gif": str(gif_path) if gif_path else None,
     }
     (OUT / "control_studio_capture_meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")

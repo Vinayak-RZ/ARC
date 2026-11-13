@@ -345,22 +345,29 @@
 
 .studio-block {
   position: relative;
-  overflow: visible;
-  width: 132px;
-  min-width: 132px;
-  min-height: 64px;
+  overflow: hidden;
+  width: 96px;
+  min-width: 96px;
+  max-width: 96px;
+  height: 56px;
+  min-height: 56px;
+  max-height: 56px;
   background: var(--cs-surface);
   border: 1px solid var(--cs-border-strong);
   border-radius: var(--cs-radius-md);
   box-shadow: 0 1px 2px rgba(32, 32, 32, 0.06), 0 6px 16px rgba(32, 32, 32, 0.06);
-  font-size: 13px;
-  line-height: 1.4;
+  font-size: 12px;
+  line-height: 1.25;
   box-sizing: border-box;
 }
 
 .studio-block-body {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  min-height: 0;
+  padding: 4px 6px;
   align-items: center;
   justify-content: center;
   gap: 3px;
@@ -388,11 +395,25 @@
   }
 }
 
+.studio-pid-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cs-text);
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
 .studio-sum.studio-block {
   width: 56px;
   min-width: 56px;
+  max-width: 56px;
   height: 56px;
   min-height: 56px;
+  max-height: 56px;
+  overflow: visible;
   border-radius: 50%;
   border-width: 2px;
 }
@@ -435,7 +456,7 @@
 }
 
 .studio-block-kind {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -443,7 +464,7 @@
 }
 
 .studio-param-line {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--cs-text);
   line-height: 1.25;

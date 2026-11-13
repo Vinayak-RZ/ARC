@@ -4,17 +4,22 @@ from __future__ import annotations
 
 from typing import Any
 
-BLOCK_W = 132
-BLOCK_H = 64
-GAP = 44
+BLOCK_W = 96
+BLOCK_H = 56
+GAP = 32
+GRID = 8
 ORIGIN_X = 56
 ORIGIN_Y = 96
-# Align port centers (handles at 50% height) on the forward path.
 PORT_RAIL_CENTER_Y = ORIGIN_Y + BLOCK_H / 2
+SUM_W = 56
 
 
-def _block_height(btype: str) -> float:
-    return 56.0 if btype == "sum" else float(BLOCK_H)
+def _snap(value: float) -> float:
+    return round(value / GRID) * GRID
+
+
+def _block_height(_btype: str) -> float:
+    return float(BLOCK_H)
 
 
 def _forward_order(diagram: dict[str, Any]) -> list[str]:
@@ -64,15 +69,15 @@ def layout_chain(diagram: dict[str, Any]) -> dict[str, Any]:
             continue
         btype = b.get("type")
         h = _block_height(btype)
-        b["x"] = float(x)
-        b["y"] = float(PORT_RAIL_CENTER_Y - h / 2)
+        b["x"] = _snap(float(x))
+        b["y"] = _snap(float(PORT_RAIL_CENTER_Y - h / 2))
         placed.add(bid)
-        span = 56 if btype == "sum" else BLOCK_W
+        span = SUM_W if btype == "sum" else BLOCK_W
         x += span + GAP
     for b in blocks:
         if b["id"] not in placed:
-            b["x"] = float(x)
-            b["y"] = float(PORT_RAIL_CENTER_Y - BLOCK_H / 2)
+            b["x"] = _snap(float(x))
+            b["y"] = _snap(float(PORT_RAIL_CENTER_Y - BLOCK_H / 2))
             x += BLOCK_W + GAP
     out = dict(diagram)
     out["blocks"] = blocks

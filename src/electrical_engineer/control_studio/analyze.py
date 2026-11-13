@@ -19,6 +19,7 @@ def _plot_bode_open_loop(sys, path: Path, margins: dict[str, Any]) -> None:
     import control
     import matplotlib.pyplot as plt
     import numpy as np
+    from matplotlib.ticker import LogFormatterSciNotation, LogLocator
 
     from electrical_engineer.visual_kit.design_tokens import get_theme
     from electrical_engineer.visual_kit.mpl_theme import apply_theme, direct_label
@@ -38,27 +39,23 @@ def _plot_bode_open_loop(sys, path: Path, margins: dict[str, Any]) -> None:
     fig, (ax_mag, ax_phase) = plt.subplots(2, 1, figsize=(fig_w, fig_w * 0.52), sharex=True)
     apply_theme(ax_mag, theme)
     apply_theme(ax_phase, theme)
-    ax_mag.semilogx(omega_out, mag_db, color=theme.primary, linewidth=2.0)
-    ax_phase.semilogx(omega_out, phase_deg, color=theme.accent, linewidth=1.75)
+    cobalt = "#2F6FEB"
+    ax_mag.semilogx(omega_out, mag_db, color=cobalt, linewidth=2.0)
+    ax_phase.semilogx(omega_out, phase_deg, color=cobalt, linewidth=1.75)
     ax_mag.axhline(0, color=theme.muted, linewidth=0.8, linestyle="--")
     ax_phase.axhline(-180, color=theme.muted, linewidth=0.8, linestyle="--")
 
-    title = "Open loop L(s) = C(s)G(s)"
-    bits: list[str] = []
-    if gm_db is not None and math.isfinite(gm_db):
-        bits.append(f"GM={gm_db:.2f} dB")
-    elif margins.get("gain_margin_infinite"):
-        bits.append("GM=∞")
-    if pm is not None and math.isfinite(pm):
-        bits.append(f"PM={pm:.1f}°")
-    if bits:
-        title += ", " + ", ".join(bits)
-    ax_mag.set_title(title)
     ax_mag.set_ylabel("Magnitude (dB)")
     ax_phase.set_ylabel("Phase (deg)")
     ax_phase.set_xlabel("ω (rad/s)")
     ax_mag.tick_params(axis="x", labelbottom=False)
     ax_mag.set_xticklabels([])
+
+    x_lo, x_hi = 1e-2, 1e2
+    for ax in (ax_mag, ax_phase):
+        ax.set_xlim(x_lo, x_hi)
+        ax.xaxis.set_major_locator(LogLocator(base=10.0))
+    ax_phase.xaxis.set_major_formatter(LogFormatterSciNotation())
 
     if wgc is not None and math.isfinite(wgc):
         ax_mag.axvline(wgc, color=theme.fault, linewidth=1.0, linestyle=":")
@@ -80,7 +77,7 @@ def _plot_bode_open_loop(sys, path: Path, margins: dict[str, Any]) -> None:
             direct_label(ax_mag, wpc, mag_pc, f"GM={gm_db:.1f} dB", theme, color=theme.warning)
         direct_label(ax_phase, wpc, ph_pc, f"ωcp={wpc:.2g} rad/s", theme, color=theme.warning)
 
-    fig.subplots_adjust(hspace=0.08, left=0.1, right=0.98, top=0.9, bottom=0.14)
+    fig.subplots_adjust(hspace=0.08, left=0.1, right=0.98, top=0.96, bottom=0.16)
     fig.savefig(path, dpi=theme.dpi, bbox_inches="tight", facecolor=theme.canvas)
     plt.close(fig)
 
