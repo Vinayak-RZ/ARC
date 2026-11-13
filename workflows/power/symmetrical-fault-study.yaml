@@ -5,9 +5,12 @@ nodes:
   flow:
     activity: run-load-flow
     needs: [base]
+  web:
+    activity: web-verify
+    needs: [flow]
   label:
     activity: check-numeric
-    needs: [base, flow]
+    needs: [base, web]
   summary:
     activity: write-run-summary
     needs: [label]

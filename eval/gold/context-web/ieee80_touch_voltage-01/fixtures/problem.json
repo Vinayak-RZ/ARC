@@ -1,0 +1,18 @@
+{
+  "web_verify_fixture": "ieee80_touch_voltage",
+  "context_claims": [
+    {
+      "claim_id": "ieee80_touch_voltage",
+      "name": "IEEE 80 touch voltage limit",
+      "library_value": 643.4,
+      "unit": "V",
+      "tolerance": 0.02
+    }
+  ],
+  "recompute": {
+    "kind": "ieee80_touch_p06",
+    "ts_s": 0.4,
+    "rho_s_ohm_m": 200.0,
+    "cs": 1.0
+  }
+}

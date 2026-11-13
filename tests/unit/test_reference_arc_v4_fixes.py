@@ -1,0 +1,139 @@
+"""Regression tests for arc-v4 reference engine fixes."""
+
+from __future__ import annotations
+
+import math
+
+import pytest
+
+from electrical_engineer.reference.catalog import clear_catalog_cache
+from electrical_engineer.reference.catalog_crosscheck import (
+    assert_catalog_formula_consistency,
+    crosscheck_tabulated_formulas,
+)
+from electrical_engineer.reference.conductors import check_conductor_resistance_consistency
+from electrical_engineer.reference.engines.iec60909_peak import (
+    kappa_from_rx_ratio,
+    peak_short_circuit_ka,
+)
+from electrical_engineer.reference.engines.ieee80 import tolerable_voltage
+from electrical_engineer.reference.engines.ieee519 import BOUNDARY_POLICY, tdd_limit_percent
+from electrical_engineer.web_verify.citations import append_standard_formula_lines
+
+
+@pytest.fixture(autouse=True)
+def _fresh_catalog() -> None:
+    clear_catalog_cache()
+
+
+@pytest.mark.parametrize(
+    ("kind", "body_kg", "k"),
+    [
+        ("touch", 50, 0.116),
+        ("step", 50, 0.116),
+        ("touch", 70, 0.157),
+        ("step", 70, 0.157),
+    ],
+)
+def test_ieee80_four_kind_body_combinations(kind: str, body_kg: int, k: float) -> None:
+    rho, cs, t = 250.0, 1.0, 0.35
+    out = tolerable_voltage(kind=kind, body_mass_kg=body_kg, rho_s_ohm_m=rho, cs=cs, t_s=t)
+    assert out["kind"] == kind
+    assert out["body_mass_kg"] == body_kg
+    rs_coeff = 1.5 if kind == "touch" else 6.0
+    expected = (1000.0 + rs_coeff * cs * rho) * k / math.sqrt(t)
+    assert out["e_v"] == pytest.approx(expected, rel=1e-6)
+    assert out["k_used"] == k
+
+
+def test_ieee80_blind_exam_step_50kg() -> None:
+    out = tolerable_voltage(kind="step", body_mass_kg=50, rho_s_ohm_m=250.0, cs=1.0, t_s=0.35)
+    assert out["e_v"] == pytest.approx(490.2, rel=1e-3)
+
+
+def test_ieee80_step_70kg_annex_style() -> None:
+    out = tolerable_voltage(kind="step", body_mass_kg=70, rho_s_ohm_m=250.0, cs=1.0, t_s=0.35)
+    assert out["e_v"] == pytest.approx(663.4, rel=1e-3)
+    assert "Eq. 33" in out["standard_clause"]
+
+
+@pytest.mark.parametrize(
+    ("kind", "body_kg", "eq_snippet"),
+    [
+        ("touch", 50, "Eq. 29"),
+        ("touch", 70, "Eq. 30"),
+        ("step", 50, "Eq. 32"),
+        ("step", 70, "Eq. 33"),
+    ],
+)
+def test_ieee80_clause_numbers(kind: str, body_kg: int, eq_snippet: str) -> None:
+    out = tolerable_voltage(
+        kind=kind, body_mass_kg=body_kg, rho_s_ohm_m=100.0, cs=1.0, t_s=1.0
+    )
+    assert eq_snippet in out["standard_clause"]
+
+
+def test_ieee80_requires_kind_and_mass() -> None:
+    with pytest.raises(ValueError, match="kind"):
+        tolerable_voltage(kind="bad", body_mass_kg=50, rho_s_ohm_m=100.0, cs=1.0, t_s=1.0)
+    with pytest.raises(ValueError, match="body_mass_kg"):
+        tolerable_voltage(kind="touch", body_mass_kg=60, rho_s_ohm_m=100.0, cs=1.0, t_s=1.0)
+
+
+@pytest.mark.parametrize(
+    ("ratio", "limit", "band"),
+    [
+        (15.0, 5.0, "IEEE519_TDD_BAND_LT20"),
+        (20.0, 8.0, "IEEE519_TDD_BAND_20_50"),
+        (50.0, 12.0, "IEEE519_TDD_BAND_50_100"),
+        (100.0, 15.0, "IEEE519_TDD_BAND_100_1000"),
+        (1000.0, 20.0, "IEEE519_TDD_BAND_GT1000"),
+        (1500.0, 20.0, "IEEE519_TDD_BAND_GT1000"),
+    ],
+)
+def test_ieee519_table2_boundaries(ratio: float, limit: float, band: str) -> None:
+    out = tdd_limit_percent(isc_il_ratio=ratio)
+    assert out["tdd_limit_percent"] == limit
+    assert out["ratio_id"] == band
+    assert out["boundary_policy"] == BOUNDARY_POLICY
+
+
+def test_ieee519_boundary_1000_in_gt_band() -> None:
+    """Ratio exactly 1000 is not in [100, 1000); it maps to the >1000 row (20%)."""
+    out = tdd_limit_percent(isc_il_ratio=1000.0)
+    assert out["ratio_id"] == "IEEE519_TDD_BAND_GT1000"
+    assert out["tdd_limit_percent"] == 20.0
+
+
+def test_iec60909_kappa_formula_at_xr10() -> None:
+    z = 0.05 + 0.5j
+    peak = peak_short_circuit_ka(voltage_kv=11.0, z_ohm=z)
+    assert peak["kappa_method"] == "IEC60909-0_figure_formula"
+    assert peak["kappa"] == pytest.approx(1.746, rel=1e-3)
+    assert peak["kappa"] == pytest.approx(kappa_from_rx_ratio(0.1), rel=1e-9)
+
+
+def test_catalog_formula_crosscheck() -> None:
+    assert crosscheck_tabulated_formulas() == []
+    assert_catalog_formula_consistency()
+
+
+def test_conductor_catalog_resistance_consistency() -> None:
+    issues = check_conductor_resistance_consistency()
+    assert issues == [], issues
+
+
+def test_web_verify_standard_formula_section() -> None:
+    lines: list[str] = ["Answer line"]
+    append_standard_formula_lines(
+        lines,
+        {
+            "standard_clause": "IEEE Std 80-2013 Eq. 32",
+            "inputs_used": {"kind": "step", "body_mass_kg": 50, "t_s": 0.35},
+            "e_v": 490.2,
+        },
+    )
+    text = "\n".join(lines)
+    assert "Standard formula check" in text
+    assert "Eq. 32" in text
+    assert "body_mass_kg=50" in text

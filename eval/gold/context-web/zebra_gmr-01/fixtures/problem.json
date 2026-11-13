@@ -1,0 +1,16 @@
+{
+  "web_verify_fixture": "zebra_gmr",
+  "context_claims": [
+    {
+      "claim_id": "zebra_gmr",
+      "name": "ACSR Zebra GMR",
+      "library_value": 0.01058,
+      "unit": "m",
+      "tolerance": 0.01
+    }
+  ],
+  "recompute": {
+    "kind": "zebra_inductance_p04",
+    "gmd_m": 5.961
+  }
+}

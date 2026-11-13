@@ -1,0 +1,122 @@
+- id: IEEE_CASE_9
+  domain: standard_test_systems
+  title: IEEE 9-bus test case (MATPOWER case9)
+  aliases: [case9, WSCC 9 bus, nine bus]
+  values:
+    pandapower_loader: case9
+    buses: 9
+    matpower_name: case9
+    sn_mva: 100
+    economic_dispatch_record: IEEE_CASE_9_GENCOST
+  value_conditions:
+    pandapower_loader: loads pandapower.networks case; do not use poly_cost for ED
+    economic_dispatch_record: MATPOWER mpc.gencost rows for lambda dispatch
+  confidence: verified_dual
+  source:
+    title: MATPOWER case9.m
+    edition: "7.1"
+    clause: mpc.bus gen gencost
+  source_secondary:
+    title: Anderson & Fouad Power System Control and Stability
+    edition: "1990"
+    clause: 9-bus example
+    url: https://github.com/MATPOWER/matpower/blob/master/data/case9.m
+  url: https://github.com/MATPOWER/matpower/blob/master/data/case9.m
+  license: BSD-3-Clause (MATPOWER)
+  verification: Bus/gen counts and gencost rows match case9.m
+
+- id: IEEE_CASE_9_GENCOST
+  domain: standard_test_systems
+  title: MATPOWER case9 quadratic generator costs by bus
+  aliases: [case9 gencost, case9 economic dispatch]
+  values:
+    total_load_mw_default: 315
+    generators:
+      - bus: 1
+        c2: 0.11
+        c1: 5
+        c0: 150
+        pmin_mw: 10
+        pmax_mw: 250
+      - bus: 2
+        c2: 0.085
+        c1: 1.2
+        c0: 600
+        pmin_mw: 10
+        pmax_mw: 300
+      - bus: 3
+        c2: 0.1225
+        c1: 1
+        c0: 335
+        pmin_mw: 10
+        pmax_mw: 270
+  value_conditions:
+    c2: quadratic coefficient on P^2 (MATPOWER gencost model 2)
+    c1: linear coefficient on P
+    c0: fixed cost term per hour
+    pmin_mw: generator active power minimum from mpc.gen
+    pmax_mw: generator active power maximum from mpc.gen
+    total_load_mw_default: sum bus Pd for case9 (90+100+125 MW)
+  confidence: verified_dual
+  source:
+    title: MATPOWER case9.m
+    edition: "7.1"
+    clause: mpc.gencost and mpc.gen
+  source_secondary:
+    title: Chow Time-Scale Modeling of Dynamic Networks case 9 data
+    edition: "1982"
+    clause: generator cost reproduction
+    url: https://github.com/MATPOWER/matpower/blob/master/data/case9.m
+  url: https://github.com/MATPOWER/matpower/blob/master/data/case9.m
+  license: BSD-3-Clause
+  verification: ED lambda=33.06 MW/MW yields P1=127.56 P2=187.44 with gen3 OOS
+
+- id: IEEE_CASE_14
+  domain: standard_test_systems
+  title: IEEE 14-bus test case (MATPOWER case14)
+  aliases: [case14, fourteen bus]
+  values:
+    pandapower_loader: case14
+    buses: 14
+    matpower_name: case14
+    sn_mva: 100
+  value_conditions:
+    pandapower_loader: pandapower.networks.case14 network
+  confidence: verified_dual
+  source:
+    title: MATPOWER case14.m
+    edition: "7.1"
+    clause: full case
+  source_secondary:
+    title: University of Washington Power Systems Test Case Archive
+    edition: "IEEE 14-bus"
+    clause: case14 benchmark
+    url: https://labs.ece.uw.edu/pstca/
+  url: https://github.com/MATPOWER/matpower/blob/master/data/case14.m
+  license: BSD-3-Clause
+  verification: Pandapower converges 14-bus case
+
+- id: IEEE_CASE_30
+  domain: standard_test_systems
+  title: IEEE 30-bus test case (MATPOWER case30)
+  aliases: [case30, thirty bus]
+  values:
+    pandapower_loader: case30
+    buses: 30
+    matpower_name: case30
+    sn_mva: 100
+  value_conditions:
+    pandapower_loader: pandapower.networks.case30 network
+  confidence: verified_dual
+  source:
+    title: MATPOWER case30.m
+    edition: "7.1"
+    clause: full case
+  source_secondary:
+    title: UW PSTCA 30-bus archive
+    edition: "IEEE 30-bus"
+    clause: benchmark case
+    url: https://labs.ece.uw.edu/pstca/
+  url: https://github.com/MATPOWER/matpower/blob/master/data/case30.m
+  license: BSD-3-Clause
+  verification: Pandapower converges 30-bus case

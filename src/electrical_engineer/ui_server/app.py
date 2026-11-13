@@ -204,12 +204,39 @@ def create_app(root: Path | None = None) -> FastAPI:
         state = "waiting-human" if waiting else "done"
         graph = _read_json(d / "graph.json")
         control_diagram = _read_json(d / "control_diagram.json")
+        web_sources = _read_json(d / "evidence" / "web_sources.json")
+        similar_probs = _read_json(d / "evidence" / "similar_problems.json")
+        answer_cited = (
+            (d / "evidence" / "answer_cited.md").read_text(encoding="utf-8")
+            if (d / "evidence" / "answer_cited.md").is_file()
+            else ""
+        )
+        wv = evid_obj.get("web_verification") or {}
+        source_chips = []
+        for c in web_sources.get("citations") or evid_obj.get("citations") or []:
+            if not isinstance(c, dict):
+                continue
+            source_chips.append(
+                {
+                    "id": c.get("citation_id"),
+                    "domain": c.get("domain"),
+                    "title": c.get("title") or c.get("url"),
+                    "url": c.get("url"),
+                }
+            )
+        disagreement = wv.get("disagreement_banner") or evid_obj.get("disagreement_banner")
         return {
             "id": run_id,
             "title": str(evid_obj.get("title") or run_id),
             "summary": evid_text,
             "evidentiary": evid_text,
-            "argument": argument,
+            "argument": argument or answer_cited,
+            "answer_markdown": evid_obj.get("answer_markdown") or answer_cited or None,
+            "web_verification": wv or None,
+            "web_sources": web_sources or None,
+            "similar_problems": similar_probs or None,
+            "source_chips": source_chips,
+            "disagreement_banner": disagreement,
             "plan": plan,
             "observation": observation,
             "observation_excerpt": observation_excerpt,

@@ -1,0 +1,24 @@
+- id: NEMA_CODE_G
+  domain: machines
+  title: NEMA MG 1 code letter G locked-rotor kVA per hp
+  aliases: [code G, NEMA G]
+  values:
+    code_letter: G
+    kva_per_hp_min: 5.6
+    kva_per_hp_max: 6.29
+  value_conditions:
+    kva_per_hp_min: minimum locked-rotor kVA/hp band for code G
+    kva_per_hp_max: maximum locked-rotor kVA/hp band for code G
+  confidence: verified_dual
+  source:
+    title: NEMA MG 1
+    edition: "2009"
+    clause: Table 11-1
+  source_secondary:
+    title: NEMA MG 1
+    edition: "2016"
+    clause: Table 11-1 code G
+    url: https://www.nema.org/
+  url: https://www.nema.org/standards/view/locked-rotor-code-letters
+  license: Factual code letter band
+  verification: MG1 Table 11-1 code G limits

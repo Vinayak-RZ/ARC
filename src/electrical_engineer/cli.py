@@ -7,7 +7,18 @@ import sys
 
 from electrical_engineer import __version__
 
-COMMANDS = ("run", "workflows", "mcp", "eval", "ui", "rag", "memory", "hosts", "control-studio")
+COMMANDS = (
+    "run",
+    "workflows",
+    "mcp",
+    "eval",
+    "ui",
+    "rag",
+    "memory",
+    "hosts",
+    "control-studio",
+    "reference",
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -35,6 +46,15 @@ def build_parser() -> argparse.ArgumentParser:
     rag.add_argument("--hops", type=int, default=1)
     mem = sub.add_parser("memory")
     mem.add_argument("action", nargs="?", default="list")
+    ref = sub.add_parser("reference")
+    ref_sub = ref.add_subparsers(dest="reference_cmd")
+    ref_search = ref_sub.add_parser("search")
+    ref_search.add_argument("query")
+    ref_get = ref_sub.add_parser("get")
+    ref_get.add_argument("record_id")
+    ref_eng = ref_sub.add_parser("engine")
+    ref_eng.add_argument("engine_name")
+    ref_eng.add_argument("json_payload", nargs="?", default="{}")
     hosts = sub.add_parser("hosts")
     hsub = hosts.add_subparsers(dest="hosts_cmd")
     inst = hsub.add_parser("install")
@@ -205,6 +225,20 @@ def main(argv: list[str] | None = None) -> int:
             dest.write_text(json.dumps(diagram, indent=2), encoding="utf-8")
             print(dest)
             return 0
+        return 2
+    if args.cmd == "reference":
+        import json
+
+        from electrical_engineer.reference.cli_handlers import cmd_engine, cmd_get, cmd_search
+
+        if args.reference_cmd == "search":
+            return cmd_search(args.query)
+        if args.reference_cmd == "get":
+            return cmd_get(args.record_id)
+        if args.reference_cmd == "engine":
+            payload = json.loads(args.json_payload or "{}")
+            return cmd_engine(args.engine_name, payload)
+        print("reference search|get|engine", file=sys.stderr)
         return 2
     if args.cmd == "hosts":
         from pathlib import Path as _Path

@@ -1,0 +1,47 @@
+- id: IEEE80_BODY_50KG
+  domain: earthing_safety
+  title: IEEE 80 body-weight constants 50 kg
+  aliases: [50 kg body, IEEE 80 50kg]
+  values:
+    k: 0.116
+    body_mass_kg: 50
+  value_conditions:
+    k: fibrillation path constant k; same for touch (Eq. 29) and step (Eq. 32) at 50 kg
+    body_mass_kg: body mass associated with IEEE 80 Table 20 / clause 8.4 row
+  confidence: verified_dual
+  source:
+    title: IEEE Std 80-2013
+    edition: "2013"
+    clause: Eq. 29 touch and Eq. 32 step (50 kg), clause 8.4
+  source_secondary:
+    title: IEEE Std 80-2013 Annex B example calculations
+    edition: "2013"
+    clause: touch voltage numeric example
+    url: https://standards.ieee.org/standard/80-2013.html
+  url: https://standards.ieee.org/standard/80-2013.html
+  license: Factual constants; standard text not reproduced
+  verification: k=0.116; step (1000+6*Cs*rho)*0.116/sqrt(t) -> 490.2 V at rho=250 Cs=1 t=0.35
+
+- id: IEEE80_BODY_70KG
+  domain: earthing_safety
+  title: IEEE 80 body-weight constants 70 kg
+  aliases: [70 kg body]
+  values:
+    k: 0.157
+    body_mass_kg: 70
+  value_conditions:
+    k: fibrillation path constant k; same for touch (Eq. 30) and step (Eq. 33) at 70 kg
+    body_mass_kg: 70 kg clause 8.4 row (Annex B default for fenced substations)
+  confidence: verified_dual
+  source:
+    title: IEEE Std 80-2013
+    edition: "2013"
+    clause: Eq. 30 touch and Eq. 33 step (70 kg), clause 8.4
+  source_secondary:
+    title: windfarmbop.com IEEE 80 tolerable voltage worked example
+    edition: "2013"
+    clause: Eq. 30 and 33 with k=0.157
+    url: https://www.windfarmbop.com/substation-earthing-design-per-ieee-80-step-by-step/
+  url: https://standards.ieee.org/standard/80-2013.html
+  license: Factual constants
+  verification: rho_s=200 Cs=1 t=0.4 -> E_touch 322.71 V; step 663.4 V at rho=250 t=0.35

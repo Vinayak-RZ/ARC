@@ -17,8 +17,8 @@ from electrical_engineer.control_studio.mcp_tools import handle_tool
 
 def assert_bode_png_fresh(path: Path) -> None:
     """Reject stale matplotlib theme (orange phase, pre-cobalt captures)."""
-    from PIL import Image
     import numpy as np
+    from PIL import Image
 
     im = np.array(Image.open(path).convert("RGB"))
     h = im.shape[0]
