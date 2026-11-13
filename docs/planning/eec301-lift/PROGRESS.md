@@ -1,5 +1,7 @@
 # PROGRESS — EEC-301 → Arc system lift
 
+**Closed for execution:** PSA kernel and traps are on `main`. Frontier net-new work lives in `docs/planning/frontier-2026-11/`.
+
 **Branch:** `cursor/eec301-system-lift-b2f6`  
 **Commit floor:** ≥30 on landing PR · **Planned:** 36  
 **PR:** #43
