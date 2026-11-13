@@ -195,7 +195,7 @@ def _wait_studio_edges(page, minimum: int = 5, timeout_ms: int = 180000) -> None
                 fit.click()
             page.wait_for_timeout(500)
             remaining -= slice_ms
-    page.wait_for_function(expr, timeout=5000)
+    page.wait_for_function(expr, timeout=30000)
 
 
 def _set_theme(page, mode: str) -> None:
@@ -344,6 +344,17 @@ def main() -> int:
             page.wait_for_timeout(800)
             snap("studio-layout-before-simulate.png")
 
+            sim = page.locator(".cs-simulate-btn")
+            if sim.count() > 0:
+                sim.click()
+                page.wait_for_selector(
+                    ".studio-results-stage .studio-step-svg, .studio-results-stage img",
+                    timeout=120000,
+                )
+                page.wait_for_timeout(3500)
+                _wait_studio_edges(page)
+            snap("studio-layout-after-simulate.png")
+
             page.locator(".studio-canvas .react-flow").wait_for(state="visible", timeout=15000)
             pid = page.locator(".react-flow__node[data-id='pid1']")
             if pid.count() == 0:
@@ -360,18 +371,6 @@ def main() -> int:
             page.wait_for_timeout(300)
             page.wait_for_timeout(400)
             snap("studio-block-selected.png")
-            sim = page.locator(".cs-simulate-btn")
-            if sim.count() > 0:
-                page.locator(".studio-canvas .react-flow__pane").click(position={"x": 40, "y": 40}, force=True)
-                page.wait_for_timeout(200)
-                sim.click()
-                page.wait_for_selector(
-                    ".studio-results-stage .studio-step-svg, .studio-results-stage img",
-                    timeout=120000,
-                )
-                page.wait_for_timeout(3500)
-                _wait_studio_edges(page)
-            snap("studio-layout-after-simulate.png")
             if args.round >= 6:
                 pid = page.locator(".react-flow__node[data-id='pid1']")
                 box = pid.first.bounding_box()
