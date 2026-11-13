@@ -1,0 +1,44 @@
+{
+  "P1": {
+    "delta0_deg": 24.9011,
+    "delta_cr_deg": 78.3172,
+    "t_cr_s": 0.2966
+  },
+  "P2": {
+    "stable": true,
+    "max_rotor_angle_deg": 102.0623
+  },
+  "P3": {
+    "P1_MW": 350.0,
+    "P2_MW": 250,
+    "P3_MW": 300,
+    "lambda_Rs_per_MWh": 9.8
+  },
+  "P4": {
+    "steady_state_frequency_deviation_Hz": -0.05952,
+    "Delta_P12_MW": -25.0
+  },
+  "P5": {
+    "gain_crossover_rad_per_s": 1.55869,
+    "phase_margin_deg": 43.21,
+    "phase_crossover_rad_per_s": 4.47214,
+    "gain_margin_dB": 15.563
+  },
+  "P6": {
+    "damping_type": "underdamped",
+    "zeta": 0.4,
+    "Vc_peak_V": 15.0459,
+    "t_Vc_peak_s": 0.3428,
+    "settling_time_2pct_s": 0.8409
+  },
+  "P7": {
+    "I_fault_pu": 4.2857,
+    "I_fault_kA": 7.4981
+  },
+  "P8": {
+    "rotor_speed_rpm": 1440.0,
+    "stator_current_A": 23.4561,
+    "developed_torque_Nm": 44.0502,
+    "slip_at_max_torque": 0.16625
+  }
+}

@@ -53,6 +53,8 @@ PROVIDERS = frozenset(
         "run-smib-swing",
         "run-agc-two-area",
         "run-ed-lambda",
+        "run-primary-steady",
+        "run-rlc-analytic",
     }
 )
 

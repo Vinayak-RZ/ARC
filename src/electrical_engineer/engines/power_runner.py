@@ -5,8 +5,28 @@ from __future__ import annotations
 import cmath
 import json
 import math
+import re
 from pathlib import Path
 from typing import Any
+
+
+def _parse_complex(val: Any) -> complex:
+    if isinstance(val, complex):
+        return val
+    if isinstance(val, (int, float)):
+        return complex(float(val))
+    s = str(val).strip().replace(" ", "")
+    if not s:
+        raise ValueError("empty complex")
+    s = s.replace("J", "j")
+    m = re.match(r"^([+-]?)j(.*)$", s)
+    if m:
+        sign, rest = m.group(1) or "+", m.group(2)
+        coeff = rest if rest not in ("", "+", "-") else "1"
+        s = f"{sign}{coeff}j"
+    elif s in ("j", "+j", "-j"):
+        s = s.replace("j", "1j")
+    return complex(s)
 
 
 def pandapower_available() -> bool:
@@ -107,11 +127,11 @@ def run_power_study(run_dir: Path, problem: dict[str, Any]) -> dict[str, Any]:
                 "tool": "pandapower",
             }
 
-    v_pre = complex(float(problem.get("v_prefault_pu", 1.0)))
-    z1 = complex(problem.get("z1_pu", 0.1))
-    z2 = complex(problem.get("z2_pu", 0.1))
-    z0 = complex(problem.get("z0_pu", 0.3))
-    zf = complex(problem.get("zf_pu", 0.0))
+    v_pre = _parse_complex(problem.get("v_prefault_pu", 1.0))
+    z1 = _parse_complex(problem.get("z1_pu", 0.1))
+    z2 = _parse_complex(problem.get("z2_pu", 0.1))
+    z0 = _parse_complex(problem.get("z0_pu", 0.3))
+    zf = _parse_complex(problem.get("zf_pu", 0.0))
     try:
         i_fault = _sequence_fault(fault_type, v_pre, z1, z2, z0, zf)
     except ValueError as exc:

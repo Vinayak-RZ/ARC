@@ -1,0 +1,12 @@
+{
+  "kind": "im_ec",
+  "f_hz": 50,
+  "poles": 4,
+  "v_line_v": 415,
+  "r1_ohm": 0.5,
+  "x1_ohm": 1.2,
+  "r2p_ohm": 0.4,
+  "x2p_ohm": 1.2,
+  "xm_ohm": 30,
+  "slip": 0.04
+}

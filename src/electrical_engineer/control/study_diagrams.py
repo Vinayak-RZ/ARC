@@ -12,11 +12,13 @@ def _equip(eid: str, label: str, detail: str, x: float, y: float) -> dict[str, A
 
 
 def power_oneline_diagram(problem: dict[str, Any] | None) -> dict[str, Any]:
+    from electrical_engineer.engines.power_runner import _parse_complex
+
     problem = problem or {}
     fault = str(problem.get("fault_type") or "LG")
-    z1 = float(problem.get("z1_pu") or 0.1)
-    z2 = float(problem.get("z2_pu") or 0.1)
-    z0 = float(problem.get("z0_pu") or 0.3)
+    z1 = abs(_parse_complex(problem.get("z1_pu", 0.1)))
+    z2 = abs(_parse_complex(problem.get("z2_pu", 0.1)))
+    z0 = abs(_parse_complex(problem.get("z0_pu", 0.3)))
     nodes = [
         _equip("gen", "Generator", "1.0 pu", 48, 100),
         _equip("bus", "Bus 1", "slack", 200, 100),

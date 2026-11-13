@@ -24,8 +24,10 @@ DC drive chain in the UI: **`skills/ui-diagrams/SKILL.md`** (`diagramKind: drive
 
 **UG drives (OSS):** `solve-drives-problem` — DC (`kind: dc`, `v_dc`, `ra_ohm`,
 `k_torque`, `t_load_nm`) or IM slip line (`kind: im`, `t_rated_nm`, `slip_rated`,
-`t_load_nm`). Checked steady-state speed (rpm). Full Simulink drive plant remains
-optional MATLAB/Simulink, not required for coursework numbers.
+`t_load_nm`) or **exact per-phase EC** (`kind: im_ec` with `r1_ohm`, `x1_ohm`,
+`r2p_ohm`, `x2p_ohm`, `xm_ohm`, `slip`, `v_line_v`, `poles`, `f_hz`). Engine
+exports `developed_torque_Nm`, `stator_current_A`, `slip_at_max_torque`, and
+`rotor_speed_rpm` (3-phase air-gap power). Full Simulink plant remains optional.
 
 ## Spawn
 

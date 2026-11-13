@@ -167,12 +167,41 @@ def simulate_two_area(
     }
 
 
-def analytic_primary_steady(dpl1_pu: float, beta1: float = 20.6, beta2: float = 16.9) -> dict[str, float]:
+def analytic_primary_steady(
+    dpl1_pu: float,
+    beta1: float = 20.6,
+    beta2: float = 16.9,
+    *,
+    f0_hz: float = 60.0,
+    s_base_mva: float = 1000.0,
+) -> dict[str, float]:
     df = -dpl1_pu / (beta1 + beta2)
     p12 = -beta2 / (beta1 + beta2) * dpl1_pu
     pm1 = dpl1_pu + p12
     pm2 = -p12
-    return {"df_pu": df, "df_hz": df * 60.0, "P12_pu": p12, "Pm1_pu": pm1, "Pm2_pu": pm2}
+    return {
+        "df_pu": df,
+        "df_hz": df * f0_hz,
+        "P12_pu": p12,
+        "P12_MW": p12 * s_base_mva,
+        "Pm1_pu": pm1,
+        "Pm2_pu": pm2,
+        "beta1": beta1,
+        "beta2": beta2,
+        "f0_hz": f0_hz,
+    }
+
+
+def primary_response_from_load_step(
+    dpl_mw: float,
+    *,
+    beta1: float,
+    beta2: float,
+    f0_hz: float,
+    s_base_mva: float = 1000.0,
+) -> dict[str, float]:
+    dpl_pu = dpl_mw / s_base_mva
+    return analytic_primary_steady(dpl_pu, beta1, beta2, f0_hz=f0_hz, s_base_mva=s_base_mva)
 
 
 def gain_sweep(

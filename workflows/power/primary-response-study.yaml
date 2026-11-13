@@ -1,0 +1,7 @@
+id: primary-response-study
+nodes:
+  primary:
+    activity: run-primary-steady
+  summary:
+    activity: write-run-summary
+    needs: [primary]

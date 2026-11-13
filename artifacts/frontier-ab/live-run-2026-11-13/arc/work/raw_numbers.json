@@ -1,0 +1,57 @@
+{
+  "P1": {
+    "delta0_deg": 24.901062370366965,
+    "delta_cr_deg": 78.31719753697801,
+    "t_cr_s": 0.2965846061706543,
+    "t_to_delta_cr_s": 0.29659000000015584,
+    "step_h_s": 1e-05
+  },
+  "P2": {
+    "stable": true,
+    "max_delta_deg": 102.06232146790454,
+    "exceeds_180_at_s": null,
+    "unstable_flag": false
+  },
+  "P3": {
+    "P1_MW": 350.00000000000006,
+    "P2_MW": 250.0,
+    "P3_MW": 300.0,
+    "lambda_Rs_per_MWh": 9.8,
+    "status": [
+      "free",
+      "at_max",
+      "at_max"
+    ]
+  },
+  "P4": {
+    "df_hz": -0.05952380952380953,
+    "dP12_MW": -25.0,
+    "arc_analytic_f0_bug": "analytic_primary_steady scales Hz with 60 not 50"
+  },
+  "P5": {
+    "gain_crossover_rad_s": 4.47213595499958,
+    "phase_margin_deg": 43.209845307369534,
+    "phase_crossover_rad_s": 1.558686400848468,
+    "gain_margin_dB": 6.000000000000002
+  },
+  "P6": {
+    "damping": "underdamped",
+    "zeta": 0.4,
+    "wn_rad_s": 10.0,
+    "vc_peak_V": 6.211853881553472,
+    "t_peak_s": 0.12648776123910593,
+    "t_settle_2pct_s": 1.0
+  },
+  "P7": {
+    "i_fault_pu": 4.285714285714286,
+    "i_fault_kA": 7.498055444021114,
+    "i_base_kA": 1.7495462702715934
+  },
+  "P8": {
+    "rpm": 1440.0,
+    "n_sync_rpm": 1500.0,
+    "I_stator_A": 23.456116655053975,
+    "torque_Nm": 88.10049292522135,
+    "s_at_max_torque": 0.10919011780260321
+  }
+}
