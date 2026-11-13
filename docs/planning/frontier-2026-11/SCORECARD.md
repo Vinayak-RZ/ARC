@@ -12,7 +12,7 @@
 | LIVE A/B held-out (first Arc run) | ≥ bare | **21/25** (lost) | documented |
 | LIVE A/B engine rerun | 25/25 | **25/25** | done |
 | Visual Kit components | P0+P1 | **13** ids | done |
-| Benchmark questions tarball | 82 tasks | `scripts/build_benchmark_v01.py` | done |
+| Benchmark questions tarball | 70 unique tasks | `scripts/build_benchmark_v01.py` | done |
 | Benchmark oracle grader | 82/82 | `scripts/grade_benchmark_v01.py` | done |
 | Benchmark naive baseline | 0/82 | `grade_benchmark_v01.py --naive` | done |
 | Bare agent (live) | pending | owner | pending |
