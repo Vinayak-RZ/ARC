@@ -1,0 +1,21 @@
+{
+  "p01_bus25_vm_pu": 0.9824,
+  "p01_total_loss_mw": 30.372,
+  "p02_relay_current_a": 20.0,
+  "p02_trip_time_s": 0.675,
+  "p03_ik_ka": 12.973,
+  "p03_xr_ratio": 2.5,
+  "p04_touch_tolerance_v": 707.6,
+  "p05_tdd_limit_pct": 8,
+  "p06_vf_max_v": 0.855,
+  "p06_conduction_loss_mw": 4.49,
+  "p07_allowable_ampacity_a": 66,
+  "p08_max_current_a": 242,
+  "p09_lv_shift_deg": 30,
+  "p10_electrical_power_pu": 0.461,
+  "p11_sync_speed_rpm": 1800,
+  "p11_slip_percent": 4.17,
+  "p12_betz_pct": 59.26,
+  "p13_ratio_error_pct": -2.4,
+  "p14_sil_mw": 410.4
+}
