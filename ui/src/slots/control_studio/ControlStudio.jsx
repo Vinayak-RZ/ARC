@@ -157,6 +157,7 @@ function ControlStudioInner({ sessionId, onSession }) {
   const [lastSimRevision, setLastSimRevision] = useState(null);
   const [connecting, setConnecting] = useState(false);
   const [fitBump, setFitBump] = useState(0);
+  const [flowKey, setFlowKey] = useState(0);
   const [zoomPct, setZoomPct] = useState(1);
   const [selectedId, setSelectedId] = useState(null);
   const selectedIdRef = useRef(null);
@@ -278,11 +279,26 @@ function ControlStudioInner({ sessionId, onSession }) {
     if (!results) return undefined;
     const diagram = diagramBase.current;
     if (!diagram?.blocks?.length) return undefined;
-    const timers = [0, 80, 250, 600, 1200, 2000, 3500].map((ms) =>
-      setTimeout(() => resyncFlowFromDiagram(diagram), ms),
-    );
+    resyncFlowFromDiagram(diagram);
+    setFlowKey((n) => n + 1);
+    const timers = [50, 250, 800].map((ms) => setTimeout(() => resyncFlowFromDiagram(diagram), ms));
     return () => timers.forEach(clearTimeout);
   }, [results?.ts, resyncFlowFromDiagram]);
+
+  const onEdgesChangeGuarded = useCallback(
+    (changes) => {
+      if (results) {
+        const keep = changes.filter((c) => c.type !== "remove");
+        if (!keep.length) {
+          return;
+        }
+        onEdgesChange(keep);
+        return;
+      }
+      onEdgesChange(changes);
+    },
+    [onEdgesChange, results],
+  );
 
   useEffect(() => {
     if (!selectedId) return undefined;
@@ -464,12 +480,13 @@ function ControlStudioInner({ sessionId, onSession }) {
           <CanvasDrop onDropBlock={placeBlock}>
             <FlowZoomHelpers zoomApi={zoomApi} setZoomPct={setZoomPct} />
             <ReactFlow
+              key={flowKey}
               nodes={nodes}
               edges={edges}
               nodeTypes={studioNodeTypes}
               edgeTypes={studioEdgeTypes}
               onNodesChange={onNodesChange}
-              onEdgesChange={onEdgesChange}
+              onEdgesChange={onEdgesChangeGuarded}
               onConnect={onConnect}
               onConnectStart={() => setConnecting(true)}
               onConnectEnd={() => setConnecting(false)}
