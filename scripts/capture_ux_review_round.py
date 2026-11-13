@@ -541,7 +541,7 @@ def main() -> int:
                 req_u = urllib.request.Request(
                     f"http://{HOST}:{PORT}/api/control-studio/sessions",
                     method="POST",
-                    data=json.dumps({"golden": "unity_first_order"}).encode(),
+                    data=json.dumps({"title": "HW 3 · Unity feedback, K = 10", "golden": "unity_first_order"}).encode(),
                     headers={"Content-Type": "application/json"},
                 )
                 with urllib.request.urlopen(req_u, timeout=60) as resp:
