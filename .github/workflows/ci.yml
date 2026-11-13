@@ -19,8 +19,8 @@ jobs:
       - name: UI build and Studio layout (Playwright)
         run: |
           uv sync --extra dev --extra control
-          cd ui && npm ci && npm run build
-          uv run playwright install chromium
+          cd ui && npm ci && npx playwright install --with-deps chromium && npm run build
+          cd ..
           EE_NO_BROWSER=1 uv run electrical-engineer ui &
           for i in $(seq 1 60); do curl -sf http://127.0.0.1:8765/api/health && break; sleep 1; done
-          STUDIO_URL=http://127.0.0.1:8765/?view=studio npm run test:e2e
+          cd ui && STUDIO_URL=http://127.0.0.1:8765/?view=studio npm run test:e2e
