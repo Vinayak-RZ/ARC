@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 
 from electrical_engineer.eval_runner.score import run_item, run_pack, score

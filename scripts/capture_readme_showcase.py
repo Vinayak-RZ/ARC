@@ -1,11 +1,9 @@
-#!/usr/bin/env python3
 """Capture README showcase images at 2x scale into docs/assets/readme/."""
 
 from __future__ import annotations
 
 import subprocess
 import sys
-import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
