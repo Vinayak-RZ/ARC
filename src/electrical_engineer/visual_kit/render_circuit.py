@@ -59,9 +59,9 @@ def render_schematic_rlc_series(out_dir: Path, *, theme_name: ThemeName = "light
         d += elm.Inductor().right().label("$L=1$ mH")
         d += elm.Capacitor().down().label("$C=1$ µF")
         d += elm.Ground()
-        d += elm.Line().left().length(3)
+        d += elm.Line().left().length(3.2)
         d += elm.Line().up()
-        d += elm.Dot().label(rf"$\omega_0 \approx {omega0:.0f}$ rad/s", loc="right")
+        d += elm.Label().label(rf"$\omega_0 \approx {omega0:.0f}$ rad/s", ofst=(0, -0.6))
         save_schematic_figure(d, png, theme)
         return {
             "png": str(png),
