@@ -1,24 +1,24 @@
-# Node plan: D1: docs-out
+# Node plan: D1: scorecard and execution proof
 
 | Field | Value |
 |-------|-------|
 | **Node id** | `D1` |
-| **Job** | README frontier section + DOMAIN_KERNEL metrics update |
+| **Job** | Publish SCORECARD, PROGRESS cutover, execution evidence paths (not final README) |
 | **Wave** | 9 |
-| **Depends on (data)** | `proof_artifacts_bundle`, `readme_media_manifest` from B11 |
-| **Write paths** | `README.md`, `docs/DOMAIN_KERNEL_CAPABILITIES.md` |
+| **Depends on (data)** | `proof_artifacts_bundle` from T1; B10 benchmark tarball |
+| **Write paths** | `artifacts/benchmarks/SCORECARD.md`, `docs/planning/frontier-2026-11/PROGRESS.md` |
 | **Model** | inherit |
 
 ## Objective
 
-Shipped product documented with numbers, not intentions (LIFECYCLE D1).
+Internal and PR proof artifacts are frozen with numbers. **Final user-facing README lives in D2.**
 
 ## Contract
 
-**Output:** `{ "readme_updated": true, "metrics_table": true }`
+**Output:** `{ "scorecard_published": true, "progress_complete": true }`
 
 ## Commits
 
 | # | Commit | Gate |
 |---|--------|------|
-| 39-40 | README + DOMAIN_KERNEL (may coalesce) | review |
+| 1 | `docs(bench): SCORECARD actuals and PROGRESS complete` | validate_frontier.sh |

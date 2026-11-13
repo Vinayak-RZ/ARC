@@ -71,4 +71,4 @@ May coalesce with U1 commits to honor 36 budget.
 
 ## Return to graph
 
-Feeds **U1** (scorecard + gallery), **B9** (tutoring figures), **B10** (benchmark screenshots), **D1** (README media), **B2/B3** (data contracts).
+Feeds **U1** (scorecard + gallery), **B9** (tutoring figures), **B10** (benchmark screenshots), **D2** (README media manifest), **B2/B3** (data contracts).

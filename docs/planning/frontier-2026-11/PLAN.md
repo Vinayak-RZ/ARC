@@ -51,7 +51,8 @@ When complete: eval CLI and CI prove PSA + expanded kernel depth; public benchma
 - `artifacts/benchmarks/` public release + README scorecard.
 - LIVE A/B harness + held-out trap set.
 - **Arc Visual Kit:** registry + MCP + engine-bound components + visual goldens (report #05, node B11).
-- Docs: frontier proof section in product README with media from Visual Kit.
+- **C1 repo cleanup** (audit #04): dead paths, doc drift, trials media trim; pytest + PSA green every commit.
+- **D1** scorecard + execution proof; **D2** final README and authority doc refresh (terminal node).
 
 ### Non-goals
 
@@ -64,7 +65,7 @@ When complete: eval CLI and CI prove PSA + expanded kernel depth; public benchma
 
 | Priority | Items |
 |----------|-------|
-| **P0** | B1 proof foundation, B2 PSA wire, **B11 Arc Visual Kit**, B6 LIVE A/B infra, B10 benchmark release, U1 proof gallery, E1 eval gates |
+| **P0** | B1 proof foundation, **C1 repo cleanup**, B2 PSA wire, **B11 Arc Visual Kit**, B6 LIVE A/B infra, B10 benchmark release, U1 proof gallery, E1 eval gates, **D2** doc ship |
 | **P1** | B3 control, B4 circuits/mm, B5 verifier, B8 vertical pack |
 | **P2** | B7 RLVR env polish, B9 tutoring, ANDES optional provider |
 
@@ -154,15 +155,18 @@ flowchart TB
 | WS-BENCH | Public benchmarks | `artifacts/benchmarks/` | B6, B7 | Owner declines public release (Q7) |
 | WS-TUTOR | Socratic mode | `skills/_cross/`, gold explain | B11, P1 | Defer whole node |
 | WS-VISUAL | **Arc Visual Kit** | `packages/visual-kit/**`, `artifacts/visual-goldens/**`, `skills/visual-kit/` | B2/B3 contracts | Visual regression flake 3x → demote component |
+| WS-CLEANUP | **Repo cleanup** | `docs/**`, `docs/media/trials/`, `docs/planning/archive/`, drifted README paths | B1 schema (recommended) | PSA/pytest regression → revert commit |
+| WS-DOCS-FINAL | **Final documentation** | `README.md`, authority docs, visual-kit docs, benchmark README | **All build nodes + T1** | Ship blocked until D2 checklist green |
 
 ### Phases (workstream summary)
 
 | Phase | Weeks (technical, not calendar) | Workstreams | Exit |
 |-------|--------------------------------|-------------|------|
-| P0 | Gate 0 (done) + wave 1 to 2 | D0, A1, B1 | eval CLI no crash |
+| P0 | Gate 0 (done) + wave 1 to 2 | D0, A1, B1, **C1** | eval CLI no crash; cleanup report filed |
 | P1 | Wave 3 | B2, B3, B4, B5, **B11**, B8, U1 | M1 ready; **≥8** visual components with goldens |
 | P2 | Wave 4 to 6 | B6, B7, B9, M1, B10 | benchmarks tarball |
 | P3 | Wave 7 to 9 | E1, R1, T1, D1 | scorecard published |
+| P4 | Wave **10** | **D2** | README + authority docs match shipped product |
 
 ### Cut / keep / double-down
 
@@ -231,7 +235,8 @@ flowchart LR
   G0[Gate_0] --> P0[Phase_0_foundation]
   P0 --> P1[Phase_1_kernel_parallel]
   P1 --> P2[Phase_2_proof_public]
-  P2 --> P3[Phase_3_validate_ship]
+  P2 --> P3[Phase_3_validate_scorecard]
+  P3 --> P4[Phase_4_docs_final_D2]
 ```
 
 | Phase | Objective | Commits | Exit gate |
@@ -239,7 +244,8 @@ flowchart LR
 | 0 | Gate 0 + D0 + A1 + B1 | 6 | `eval` no KeyError |
 | 1 | Kernel + verifier + pack + UI | 18 | `pytest` + PSA CLI PASS |
 | 2 | LIVE AB + RLVR + bench release | 8 | `artifacts/benchmarks/` v0.1 |
-| 3 | E1, R1, T1, D1 | 4 | Scorecard + proof README |
+| 3 | E1, R1, T1, D1 | 4 | SCORECARD frozen |
+| 4 | D2 | 2 | Final README + full doc sync (last) |
 
 ---
 
@@ -265,6 +271,9 @@ todos:
   - id: wave-2-b1
     content: B1 eval foundation fix
     status: pending
+  - id: wave-2b-c1
+    content: C1 repo cleanup (audit 04, PSA pytest gate)
+    status: pending
   - id: wave-3-kernel
     content: B2 B3 B4 B5 B8 U1 parallel
     status: pending
@@ -278,7 +287,10 @@ todos:
     content: B10 public benchmark release
     status: pending
   - id: wave-7-9-ship
-    content: E1 R1 T1 D1 validate and document
+    content: E1 R1 T1 D1 validate and scorecard
+    status: pending
+  - id: wave-10-d2
+    content: D2 final README and documentation refresh
     status: pending
 ```
 
@@ -298,6 +310,13 @@ todos:
 | 4 | A1 | `feat(eval): unify gold expect schema v2` | score.py contract | unit tests |
 | 5 | B1 | `fix(eval): power pack recipe_id KeyError` | gold JSON + scorer | `eval --pack power` |
 | 6 | B1 | `test(eval): regression for all pack eval` | integration test | full eval |
+
+### Phase 0b cleanup (C1; coalesce with D0 row 2 if budget tight)
+
+| # | WS | Commit | Contents | Gate |
+|---|-----|--------|----------|------|
+| 6b | C1 | `chore(repo): sync counts archive stale planning trim trials` | audit #04 list | pytest + PSA |
+| 6c | C1 | `chore(repo): dead imports and layout tidy` | grep-proven only | ruff + pytest |
 
 ### Phase 1 kernel (18 commits)
 
@@ -348,10 +367,11 @@ todos:
 | 36 | E1 | `chore: scripts/validate_frontier.sh` | orchestrator | exit 0 |
 | 37 | R1 | `test: boot smoke localhost ui` | e2e | smoke |
 | 38 | T1 | `test: pass^k trial report artifact` | JSON | thresholds |
-| 39 | D1 | `docs: README frontier proof section` | README | review |
-| 40 | D1 | `docs: DOMAIN_KERNEL metrics update` | capabilities md | review |
+| 39 | D1 | `docs(bench): SCORECARD actuals and PROGRESS complete` | SCORECARD | validate_frontier |
+| 40 | D2 | `docs: frontier README rewrite scorecard and visuals` | README | no em dash |
+| 41 | D2 | `docs: sync ARCHITECTURE DOMAIN_KERNEL CANNOT_DO visual-kit` | authority set | link check |
 
-**Note:** Rows 39 to 40 coalesce into one commit if budget must stay 36 exactly (coalesce D1 docs). Default graph assumes owner accepts 36 to 40 range; **coalesce T1+D1** to hit 36.
+**Note:** C1 rows **6b to 6c** coalesce with D0 drift sync or drop **6c** to honor **36** cap. D2 rows **40 to 41** replace old README-in-D1 scope; **coalesce 40+41** if needed. Default graph allows **36 to 41** execution commits after plan merge.
 
 **Coalesced 36-row version:** merge commits 14+15, 24+25, 37+38, 39+40 → **36 rows**.
 
@@ -387,8 +407,8 @@ todos:
 |-------|--------|
 | Gate 0 answered | DECISIONS.md |
 | Wave done | PROGRESS.md + EXECUTION_GRAPH wave status |
-| Benchmark release | SCORECARD.md + README |
-| Ship | DOMAIN_KERNEL_CAPABILITIES.md metrics |
+| Benchmark release | SCORECARD.md (D1) |
+| Ship | **D2:** README + ARCHITECTURE + DOMAIN_KERNEL + CANNOT_DO + visual-kit docs |
 
 ---
 
@@ -399,7 +419,7 @@ todos:
 | Eval CLI full green | end B1 | wave 3 |
 | `eval --pack power` 3/3 PSA | end B2 | M1 |
 | LIVE AB artifact exists | end B6 | B10 |
-| pass^k thresholds | end T1 | D1 |
+| pass^k thresholds | end T1 | D1, D2 |
 | validate_frontier.sh | pre merge | main PR |
 
 ---

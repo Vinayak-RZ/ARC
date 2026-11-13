@@ -25,6 +25,7 @@
 | A1 | Architecture freeze | [nodes/A1-architecture.md](nodes/A1-architecture.md) |
 | U1 | Proof surfaces UX | [nodes/U1-proof-ui.md](nodes/U1-proof-ui.md) |
 | B1 | Proof foundation fix | [nodes/B1-proof-foundation.md](nodes/B1-proof-foundation.md) |
+| C1 | Repo cleanup | [nodes/C1-repo-cleanup.md](nodes/C1-repo-cleanup.md) |
 | B2 | Kernel PSA wire | [nodes/B2-kernel-psa.md](nodes/B2-kernel-psa.md) |
 | B3 | Kernel control depth | [nodes/B3-kernel-control.md](nodes/B3-kernel-control.md) |
 | B4 | Circuits + multimodal | [nodes/B4-kernel-circuits-mm.md](nodes/B4-kernel-circuits-mm.md) |
@@ -39,7 +40,8 @@
 | E1 | Evaluate gates | [nodes/E1-evaluate.md](nodes/E1-evaluate.md) |
 | R1 | Run (boot smoke) | [nodes/R1-run.md](nodes/R1-run.md) |
 | T1 | Trials pass^k | [nodes/T1-trials.md](nodes/T1-trials.md) |
-| D1 | Docs-out + PR proof | [nodes/D1-docs-out.md](nodes/D1-docs-out.md) |
+| D1 | Scorecard + execution proof | [nodes/D1-docs-out.md](nodes/D1-docs-out.md) |
+| D2 | Final README + documentation refresh | [nodes/D2-final-docs.md](nodes/D2-final-docs.md) |
 
 ---
 
@@ -56,7 +58,7 @@
 | Evaluate | E1 | [E1](nodes/E1-evaluate.md) |
 | Run | R1 | [R1](nodes/R1-run.md) |
 | Trials | T1 | [T1](nodes/T1-trials.md) |
-| Docs-out | D1 | [D1](nodes/D1-docs-out.md) |
+| Docs-out | D1, D2 | D1 scorecard; **D2 final README (last)** |
 
 ---
 
@@ -68,6 +70,7 @@ flowchart TB
   D0[D0_docs_in]
   A1[A1_architecture]
   B1[B1_proof_foundation]
+  C1[C1_repo_cleanup]
   B2[B2_kernel_psa]
   B3[B3_kernel_control]
   B4[B4_circuits_mm]
@@ -83,7 +86,8 @@ flowchart TB
   E1[E1_evaluate]
   R1[R1_run]
   T1[T1_trials]
-  D1[D1_docs_out]
+  D1[D1_scorecard]
+  D2[D2_final_docs]
 
   G0 --> D0
   G0 --> A1
@@ -100,7 +104,8 @@ flowchart TB
   B11 --> U1
   B11 --> B9
   B11 --> B10
-  B11 --> D1
+  B1 --> C1
+  C1 --> B2
   B1 --> B2
   B1 --> B6
   B2 --> M1
@@ -118,7 +123,24 @@ flowchart TB
   E1 --> R1
   R1 --> T1
   T1 --> D1
+  D1 --> D2
+  B2 --> D2
+  B3 --> D2
+  B4 --> D2
+  B5 --> D2
+  B6 --> D2
+  B7 --> D2
+  B8 --> D2
+  B10 --> D2
+  B11 --> D2
+  U1 --> D2
+  M1 --> D2
+  E1 --> D2
+  R1 --> D2
+  T1 --> D2
 ```
+
+**D2 is the terminal node.** It runs only after trials pass and all build artifacts exist. Remove README marketing edits from B11/D1 scope; D2 owns user-facing copy.
 
 **Edges cut (no arrow):** B3, B4, B5, B11 are parallel until M1 (B11 reads engine contracts from B2/B3 but does not block their start). B7 can start after B1 schema. B9 is P1; needs B11 component ids for figure-backed tutoring.
 
@@ -131,13 +153,15 @@ flowchart TB
 | 0 | GATE_0 | no | yes | **done** | Locked in GATE_0_QUESTIONS.md |
 | 1 | D0, A1 | yes | no | pending | DECISIONS + Visual Kit ADR |
 | 2 | B1 | no | no | pending | n/a |
+| 2b | C1 | no | no | pending | PSA + pytest gate every commit |
 | 3 | B2, B3, B4, B5, B8, B11, U1 | yes | no | pending | B11 owns `packages/visual-kit/**` |
 | 4 | B6, B7, B9 | yes | no | pending | B9 optional P1 |
 | 5 | M1 | no | yes | pending | Merge + conflict resolve |
 | 6 | B10 | no | no | pending | Consumes B6 + B7 artifacts |
 | 7 | E1 | no | no | pending | n/a |
 | 8 | R1, T1 | yes | no | pending | n/a |
-| 9 | D1 | no | no | pending | Frontier PR + scorecard |
+| 9 | D1 | no | no | pending | SCORECARD frozen |
+| 10 | D2 | no | yes | pending | **Last:** README + all authority docs |
 
 ---
 
@@ -154,13 +178,19 @@ flowchart TB
 | B11 | U1 | `visual_manifest` | agent |
 | B11 | B10 | `benchmark_figure_bundle` | agent |
 | B11 | D1 | `readme_media_manifest` | agent |
+| B1 | C1 | `eval_schema_v2` | agent |
 | B1 | B2 | `eval_schema_v2` | agent |
+| C1 | B2.. | `cleanup_report` | plumbing |
 | B1 | B6 | `trap_suite_index` | agent |
 | B2 | M1 | `psa_dag_wiring` | agent |
 | B6 | B10 | `live_ab_results` | agent |
 | B7 | B10 | `rlvr_env_manifest` | agent |
 | M1 | E1 | `integrated_manifest` | plumbing |
 | T1 | D1 | `proof_artifacts_bundle` | agent |
+| D1 | D2 | `scorecard` | agent |
+| M1 | D2 | `integrated_manifest` | agent |
+| B10 | D2 | `benchmark_bundle` | agent |
+| B11 | D2 | `readme_media_manifest` | agent |
 
 ---
 
@@ -179,6 +209,7 @@ flowchart TB
 | D0 | 1 | `scripts/check_doc_drift.sh` (new) |
 | A1 | 2 | ADR review |
 | B1 | 3 | `electrical-engineer eval` no KeyError |
+| C1 | 3 | pytest + PSA after each cleanup commit |
 | B2 | 4 | PSA gold CLI PASS |
 | B3 | 4 | ControlEval subset green |
 | B4 | 5 | CIRCUIT subset + ngspice |
@@ -194,7 +225,8 @@ flowchart TB
 | E1 | 1 | validate frontier |
 | R1 | 1 | boot smoke |
 | T1 | 1 | pass^k report |
-| D1 | 2 | readme proof section |
+| D1 | 1 | SCORECARD |
+| D2 | 2 | full doc sync + README |
 
 Lead owns git. One matrix row per commit. See [PLAN.md](PLAN.md) §9 for full table.
 

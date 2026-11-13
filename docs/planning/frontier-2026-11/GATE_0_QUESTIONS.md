@@ -149,6 +149,8 @@ Execution may begin after plan merge; this PR updates the plan only.
 | T5 | RLVR env only (CONSISTENCY) |
 | 11 to 15 | All defaults |
 | **Visual Kit** | Engine-bound props; registry + MCP; visual goldens in CI; textbook/IITR parity review |
+| **C1 repo cleanup** | Early wave 2b after B1; audit #04 source list; archive don't delete history; pytest + PSA green; no user-facing break |
+| **D2 final docs** | Terminal wave 10; depends on all build nodes; pip-first README, Visual Kit media, scorecard actuals |
 
 ## Approval record
 
