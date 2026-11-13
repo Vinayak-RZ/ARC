@@ -1,0 +1,27 @@
+{
+  "manifest_version": "0.1",
+  "design_tokens": "DESIGN-coinbase",
+  "components": [
+    {
+      "id": "power.swing_equal_area",
+      "description": "SMIB equal-area diagram with engine-sourced angles",
+      "schema": "schemas/power.swing_equal_area.json",
+      "engine": "smib_swing",
+      "pack": "power"
+    },
+    {
+      "id": "power.agc_trace",
+      "description": "Two-area AGC frequency trace",
+      "schema": "schemas/power.agc_trace.json",
+      "engine": "agc_two_area",
+      "pack": "power"
+    },
+    {
+      "id": "power.dispatch_curve",
+      "description": "Lambda economic dispatch curve",
+      "schema": "schemas/power.dispatch_curve.json",
+      "engine": "ed_lambda",
+      "pack": "power"
+    }
+  ]
+}
