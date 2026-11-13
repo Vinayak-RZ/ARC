@@ -1,0 +1,166 @@
+{
+  "schema": "arc.trap_prm.fixtures.v1",
+  "cases": [
+    {
+      "id": "t1-arc-good",
+      "label": "arc_pass",
+      "trap_ids": ["T1"],
+      "trace": {
+        "trap_ids": ["T1"],
+        "topic": "smib",
+        "steps": [
+          {
+            "id": "equal-area",
+            "text": "Stage Pmax pre/post/fault for equal-area",
+            "delta_cr_deg": 79.53240997193419
+          }
+        ],
+        "final": {
+          "delta_cr_deg": 79.53240997193419,
+          "expected": { "delta_cr_deg": 79.53240997193419 },
+          "outcome_tolerance": 0.01
+        }
+      }
+    },
+    {
+      "id": "t1-bare-bad",
+      "label": "bare_trap",
+      "trap_ids": ["T1"],
+      "trace": {
+        "trap_ids": ["T1"],
+        "topic": "smib",
+        "steps": [
+          {
+            "id": "shortcut",
+            "text": "Bolted fault Pmax=0 parabola for delta_cr",
+            "delta_cr_deg": 92.0
+          }
+        ],
+        "final": {
+          "delta_cr_deg": 92.0,
+          "text": "single Pmax equal-area shortcut",
+          "expected": { "delta_cr_deg": 79.53240997193419 },
+          "outcome_tolerance": 0.01
+        }
+      }
+    },
+    {
+      "id": "t2-ode45-bad",
+      "label": "bare_trap",
+      "trap_ids": ["T2"],
+      "trace": {
+        "trap_ids": ["T2"],
+        "topic": "smib",
+        "steps": [
+          {
+            "id": "integrate",
+            "text": "Simulate fault with ode45 to clearing angle"
+          }
+        ],
+        "final": {
+          "cct_s": 0.309688,
+          "expected": { "cct_s": 0.309688 },
+          "outcome_tolerance": 0.001
+        }
+      }
+    },
+    {
+      "id": "t4-ace-sign-bad",
+      "label": "bare_trap",
+      "trap_ids": ["T4"],
+      "trace": {
+        "trap_ids": ["T4"],
+        "topic": "agc",
+        "steps": [
+          {
+            "id": "ace",
+            "text": "ACE1 = B*Δf - ΔP12 with B=1/R only"
+          }
+        ],
+        "final": {
+          "delta_f1_hz": -0.16,
+          "delta_p12_mw": -45.07,
+          "expected": { "delta_f1_hz": -0.16, "delta_p12_mw": -45.07 },
+          "outcome_tolerance": 0.02
+        }
+      }
+    },
+    {
+      "id": "t5-agc-dip-bad",
+      "label": "bare_trap",
+      "trap_ids": ["T5"],
+      "trace": {
+        "trap_ids": ["T5"],
+        "topic": "agc",
+        "steps": [],
+        "final": {
+          "text": "AGC removes the first dip and zeros initial frequency swing",
+          "agc_removes_first_dip": true,
+          "first_dip_delta_f1_hz": 0.0,
+          "outcome_pass": true
+        }
+      }
+    },
+    {
+      "id": "t6-limits-bad",
+      "label": "bare_trap",
+      "trap_ids": ["T6"],
+      "trace": {
+        "trap_ids": ["T6"],
+        "topic": "ed",
+        "steps": [
+          {
+            "id": "dispatch",
+            "text": "Ignore limits and set equal IC"
+          }
+        ],
+        "final": {
+          "P2_mw": 175.0,
+          "lambda": 7.392308,
+          "expected": { "P2_mw": 150.0, "lambda": 7.392308 },
+          "outcome_tolerance": 0.05
+        }
+      }
+    },
+    {
+      "id": "t6-arc-good",
+      "label": "arc_pass",
+      "trap_ids": ["T6"],
+      "trace": {
+        "trap_ids": ["T6"],
+        "topic": "ed",
+        "steps": [
+          {
+            "id": "lambda-ed",
+            "text": "λ-iteration with P2 limit at 150 MW",
+            "P2_mw": 150.0,
+            "lam": 7.392308
+          }
+        ],
+        "final": {
+          "P2_mw": 150.0,
+          "lambda": 7.392308,
+          "expected": { "P2_mw": 150.0, "lambda": 7.392308 },
+          "outcome_tolerance": 0.01
+        }
+      }
+    },
+    {
+      "id": "t3-h-m-bad",
+      "label": "bare_trap",
+      "trap_ids": ["T3"],
+      "trace": {
+        "trap_ids": ["T3"],
+        "topic": "smib",
+        "steps": [
+          {
+            "id": "base",
+            "text": "Use M=H/2π for swing equation accel term",
+            "accel_coeff": 0.42
+          }
+        ],
+        "final": { "outcome_pass": true }
+      }
+    }
+  ]
+}

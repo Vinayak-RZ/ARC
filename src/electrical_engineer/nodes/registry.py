@@ -29,6 +29,22 @@ def _nested_payloads(node: dict[str, Any]) -> list[Any]:
     return []
 
 
+def _trap_blocks_checked(inputs: Mapping[str, Any]) -> bool:
+    frontier = list(inputs.values())
+    steps = 0
+    while frontier and steps < 64:
+        steps += 1
+        v = frontier.pop()
+        if not isinstance(v, dict):
+            continue
+        if v.get("tool") == "trap-verify" and (
+            v.get("ok") is False or v.get("process_pass") is False
+        ):
+            return True
+        frontier.extend(_nested_payloads(v))
+    return False
+
+
 def _web_blocks_checked(inputs: Mapping[str, Any]) -> bool:
     frontier = list(inputs.values())
     steps = 0
@@ -51,7 +67,7 @@ def _web_blocks_checked(inputs: Mapping[str, Any]) -> bool:
 
 def _walk_checked(inputs: Mapping[str, Any]) -> bool:
     """True when an upstream verifier (including through explain nodes) produced a checked value."""
-    if _web_blocks_checked(inputs):
+    if _trap_blocks_checked(inputs) or _web_blocks_checked(inputs):
         return False
     frontier = list(inputs.values())
     steps = 0
@@ -124,6 +140,7 @@ def write_run_summary(_spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str
         citations.extend(v.get("citations") or [])
         frontier.extend(_nested_payloads(v))
     web_excerpt: dict[str, Any] = {}
+    trap_excerpt: dict[str, Any] = {}
     answer_md = ""
     frontier2 = list(inputs.values())
     steps2 = 0
@@ -132,6 +149,14 @@ def write_run_summary(_spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str
         v = frontier2.pop()
         if not isinstance(v, dict):
             continue
+        if v.get("tool") == "trap-verify":
+            trap_excerpt = {
+                "outcome_pass": v.get("outcome_pass"),
+                "process_pass": v.get("process_pass"),
+                "outcome_score": v.get("outcome_score"),
+                "process_score": v.get("process_score"),
+                "checks": v.get("checks"),
+            }
         if v.get("tool") == "web-verify":
             web_excerpt = {
                 "status": v.get("web_verify_status"),
@@ -152,6 +177,7 @@ def write_run_summary(_spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str
         "paths": paths,
         "citations": citations,
         "web_verification": web_excerpt or None,
+        "trap_verification": trap_excerpt or None,
         "answer_markdown": answer_md or None,
     }
     run_dir = _spec.get("run_dir")
