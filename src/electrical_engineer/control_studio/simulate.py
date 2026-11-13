@@ -46,22 +46,19 @@ def _step_metrics(t, y, setpoint: float, window_s: float) -> dict[str, Any]:
             "value_at_end": float(y[-1]) if len(y) else None,
             "setpoint": setpoint,
         }
-    band = 0.02 * sp
-    settle_idx = len(y) - 1
-    for i in range(len(y) - 1, -1, -1):
-        if abs(float(y[i]) - setpoint) > band:
-            settle_idx = i
-            break
-    t_settle = float(t[settle_idx]) if settle_idx < len(t) else float(t[-1])
-    peak = float(np.max(y)) if len(y) else setpoint
-    overshoot_pct = max(0.0, (peak - setpoint) / sp * 100.0) if sp > 0 else None
+    # Flatness first: a response that has stopped moving has a final value y_ss.
     tail_n = max(3, int(len(y) * 0.1))
     tail = y[-tail_n:]
-    flat = float(tail.max() - tail.min()) <= 0.01 * max(abs(float(tail.mean())), 1e-9)
-    sse = abs(setpoint - float(y[-1])) / sp
+    y_ss = float(tail.mean())
+    flat = float(tail.max() - tail.min()) <= 0.01 * max(abs(y_ss), 1e-9)
+    # Textbook definitions (Ogata, Nise, Franklin and Powell): settling time and percent
+    # overshoot are measured against the FINAL value, not the setpoint. The setpoint only
+    # enters through the steady-state error e_ss = (setpoint - y_ss) / setpoint.
+    sse_pct = abs(setpoint - y_ss) / sp * 100.0
+    on_target = sse_pct <= 2.0
     if not flat:
         status = "not_settled"
-    elif sse <= 0.02:
+    elif on_target:
         status = "settled"
     else:
         status = "settled_off_target"
@@ -69,13 +66,29 @@ def _step_metrics(t, y, setpoint: float, window_s: float) -> dict[str, Any]:
         "status": status,
         "settled": status == "settled",
         "window_s": window_s,
-        "final_value": float(y[-1]),
+        "final_value": y_ss if flat else float(y[-1]),
         "value_at_end": float(y[-1]),
         "setpoint": setpoint,
-        "steady_state_error_pct": round(sse * 100.0, 1) if status == "settled_off_target" else None,
-        "t_settle_s": t_settle if status == "settled" else None,
-        "overshoot_pct": round(overshoot_pct, 2) if status == "settled" and overshoot_pct is not None else None,
+        "steady_state_error_pct": round(sse_pct, 1) if flat else None,
+        "on_target": on_target if flat else None,
+        "t_settle_s": None,
+        "overshoot_pct": None,
+        "band_pct": 2.0 if flat else None,
     }
+    if flat:
+        band = 0.02 * max(abs(y_ss), 1e-9)
+        settle_idx = 0
+        for i in range(len(y) - 1, -1, -1):
+            if abs(float(y[i]) - y_ss) > band:
+                settle_idx = i
+                break
+        peak = float(np.max(y)) if y_ss >= 0 else float(np.min(y))
+        over = (peak - y_ss) / abs(y_ss) * 100.0 if y_ss >= 0 else (y_ss - peak) / abs(y_ss) * 100.0
+        peak_idx = int(np.argmax(y)) if y_ss >= 0 else int(np.argmin(y))
+        metrics["t_settle_s"] = float(t[settle_idx])
+        metrics["overshoot_pct"] = round(max(0.0, over), 2)
+        metrics["peak_t_s"] = float(t[peak_idx])
+        metrics["peak_value"] = peak
     if status == "not_settled":
         slope = float((y[-1] - y[-tail_n]) / max(float(t[-1] - t[-tail_n]), 1e-9))
         metrics["tail_slope"] = slope
@@ -84,14 +97,17 @@ def _step_metrics(t, y, setpoint: float, window_s: float) -> dict[str, Any]:
             f"at {y[-1]:.3g} toward setpoint {setpoint:g}"
         )
     elif status == "settled_off_target":
-        pct = metrics["steady_state_error_pct"]
-        direction = "below" if float(y[-1]) < setpoint else "above"
-        y_end = float(y[-1])
+        direction = "below" if y_ss < setpoint else "above"
+        metrics["direction"] = direction
         metrics["aria_summary"] = (
-            f"Step response settles at {y_end:.3g}, {pct:.1f}% {direction} setpoint"
+            f"Step response settles in {metrics['t_settle_s']:.2g} s at a final value of {y_ss:.3g}, "
+            f"{sse_pct:.1f}% {direction} setpoint"
         )
     else:
-        metrics["aria_summary"] = f"Closed-loop step response settled near {setpoint:g} within {window_s:.0f} s"
+        metrics["aria_summary"] = (
+            f"Closed-loop step response settled in {metrics['t_settle_s']:.2g} s "
+            f"at {y_ss:.3g} within {window_s:.0f} s"
+        )
     return metrics
 
 

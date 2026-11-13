@@ -12,6 +12,11 @@ function fmt(v, d = 2) {
   return Number(v).toFixed(d);
 }
 
+function fmtTime(v) {
+  if (v == null || Number.isNaN(v)) return "—";
+  return v < 0.1 ? Number(v).toPrecision(2) : Number(v).toFixed(2);
+}
+
 export function niceTicks(min, max, n = 5) {
   const step0 = (max - min) / Math.max(n - 1, 1);
   const mag = 10 ** Math.floor(Math.log10(step0 || 1));
@@ -66,11 +71,32 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
   const ypx = (val) => m.t + plotH - ((val - series.ymin) / (series.ymax - series.ymin || 1)) * plotH;
   const path = series.points.map((p, i) => `${i === 0 ? "M" : "L"} ${x(p.t).toFixed(1)} ${ypx(p.y).toFixed(1)}`).join(" ");
   const spY = ypx(setpoint);
-  const bandLo = setpoint * 0.98;
-  const bandHi = setpoint * 1.02;
+  // Settling band, settle time and overshoot are measured against the FINAL value y_ss.
+  // The setpoint is a separate line; their gap is the steady-state error e_ss.
+  const flat = status !== "not_settled";
+  const yss = flat ? Number(metrics.final_value) : null;
+  const offTarget = flat && metrics.on_target === false;
+  const bandLo = flat ? yss - 0.02 * Math.abs(yss) : null;
+  const bandHi = flat ? yss + 0.02 * Math.abs(yss) : null;
+  const unitSfx = unit ? ` ${unit}` : "";
+  const finalText = flat ? `${Number(yss).toPrecision(3)}${unitSfx}` : "";
+  // One summary line, drawn inside the plot's top margin so it can never wrap into the controls.
+  const summary =
+    flat && metrics.t_settle_s != null
+      ? `Settling time ${fmtTime(metrics.t_settle_s)} s` +
+        (offTarget
+          ? ` · Final value ${finalText} · ${fmt(metrics.steady_state_error_pct, 1)}% ${metrics.direction || "below"} setpoint`
+          : metrics.overshoot_pct != null
+            ? ` · Overshoot ${fmt(metrics.overshoot_pct, 1)}%`
+            : "")
+      : "";
+  const peak =
+    flat && metrics.overshoot_pct > 0.05 && metrics.peak_t_s != null
+      ? { px: x(metrics.peak_t_s), py: ypx(metrics.peak_value) }
+      : null;
   const ts = metrics.t_settle_s;
   const settleX =
-    status === "settled" && ts != null && ts >= series.t0 && ts <= series.t1 ? x(ts) : null;
+    flat && ts != null && ts >= series.t0 && ts <= series.t1 ? x(ts) : null;
   const xTicks = niceTicks(series.t0, series.t1, 5);
   const yTicks = niceTicks(series.ymin, series.ymax, 4);
   const aria = metrics.aria_summary || `Step response to ${fmt(setpoint)} ${unit}`.trim();
@@ -97,16 +123,9 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
               Not settled within {fmt(metrics.window_s || 10, 0)} s
             </span>
           ) : null}
-          {status === "settled_off_target" ? (
-            <span className="studio-offtarget-pill" role="status">
-              Settles at {Number(metrics.final_value ?? metrics.value_at_end).toPrecision(3)},{" "}
-              {fmt(metrics.steady_state_error_pct, 1)}% below the setpoint
-            </span>
-          ) : null}
-          {status === "settled" && metrics.t_settle_s != null ? (
-            <span className="studio-settled-pill" role="status">
-              Settled at {fmt(metrics.t_settle_s, 2)} s
-              {metrics.overshoot_pct != null ? ` · Overshoot ${fmt(metrics.overshoot_pct, 1)}%` : ""}
+          {summary ? (
+            <span className="studio-settled-pill visually-hidden" role="status">
+              {summary}
             </span>
           ) : null}
         </div>
@@ -135,19 +154,42 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
           const gy = ypx(yv);
           return <line key={yv} x1={m.l} x2={w - m.r} y1={gy} y2={gy} className="studio-step-grid" />;
         })}
-        <rect
-          x={m.l}
-          y={ypx(bandHi)}
-          width={plotW}
-          height={Math.max(0, ypx(bandLo) - ypx(bandHi))}
-          className="studio-step-band"
-        />
-        <line x1={m.l} x2={w - m.r} y1={ypx(bandHi)} y2={ypx(bandHi)} className="studio-step-band-edge" />
-        <line x1={m.l} x2={w - m.r} y1={ypx(bandLo)} y2={ypx(bandLo)} className="studio-step-band-edge" />
-        <text x={w - m.r - 4} y={ypx(bandHi) - 5} className="studio-step-band-label" textAnchor="end">
-          ±2% band
-        </text>
+        {summary ? (
+          <text x={m.l} y={15} className="studio-step-summary">
+            {summary}
+          </text>
+        ) : null}
+        {flat ? (
+          <>
+            <rect
+              x={m.l}
+              y={ypx(bandHi)}
+              width={plotW}
+              height={Math.max(0, ypx(bandLo) - ypx(bandHi))}
+              className="studio-step-band"
+            />
+            <line x1={m.l} x2={w - m.r} y1={ypx(bandHi)} y2={ypx(bandHi)} className="studio-step-band-edge" />
+            <line x1={m.l} x2={w - m.r} y1={ypx(bandLo)} y2={ypx(bandLo)} className="studio-step-band-edge" />
+            <text x={m.l + plotW * 0.62} y={ypx(bandLo) + 14} className="studio-step-band-label">
+              ±2% of final value
+            </text>
+          </>
+        ) : null}
         <line x1={m.l} x2={w - m.r} y1={spY} y2={spY} className="studio-step-setpoint" strokeDasharray="4 3" />
+        <text x={w - m.r - 4} y={spY - 6} className="studio-step-ref-label" textAnchor="end">
+          Setpoint {fmt(setpoint, 2)}
+        </text>
+        {offTarget ? (
+          <>
+            <line x1={m.l} x2={w - m.r} y1={ypx(yss)} y2={ypx(yss)} className="studio-step-final" />
+            <text x={w - m.r - 4} y={ypx(yss) + 15} className="studio-step-ref-label" textAnchor="end">
+              Final value {finalText}
+            </text>
+            <text x={w - m.r - 4} y={ypx(yss) + 30} className="studio-step-sse" textAnchor="end">
+              e_ss = {fmt(metrics.steady_state_error_pct, 1)}%
+            </text>
+          </>
+        ) : null}
         {settleX != null ? (
           <>
             <line x1={settleX} x2={settleX} y1={m.t} y2={m.t + plotH} className="studio-step-settle" />
@@ -157,11 +199,19 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
               className="studio-step-settle-label"
               textAnchor={settleX > w - m.r - 60 ? "end" : "start"}
             >
-              {fmt(metrics.t_settle_s, 2)} s
+              {fmtTime(metrics.t_settle_s)} s
             </text>
           </>
         ) : null}
         <path d={path} className="studio-step-line" fill="none" />
+        {peak ? (
+          <>
+            <circle cx={peak.px} cy={peak.py} r={3.5} className="studio-step-peak" />
+            <text x={peak.px + 8} y={peak.py + 4} className="studio-step-peak-label">
+              {fmt(metrics.overshoot_pct, 1)}%
+            </text>
+          </>
+        ) : null}
         {xTicks.map((tv) => (
           <text key={tv} x={x(tv)} y={m.t + plotH + 16} className="studio-step-tick" textAnchor="middle">
             {fmt(tv, tv < 10 ? 1 : 0)}

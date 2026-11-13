@@ -60,7 +60,11 @@ export function StepTimeline({ data }) {
       : [
           { title: "Solve", result: unchecked ? "Pending verification" : "Numeric check passed", author: "Engine" },
         ];
-  const [open, setOpen] = useState(null);
+  // The working is the point of the Work tab: until the student chooses, the first step that
+  // has a body (step 2 for a divider) is open. Derived, so it holds when data arrives late.
+  const [choice, setChoice] = useState(undefined);
+  const defaultOpen = steps.findIndex((st) => st.body);
+  const open = choice !== undefined ? choice : defaultOpen >= 0 ? defaultOpen : null;
   return (
     <section className="step-timeline" aria-label="Work steps">
       <ol className="step-timeline-list">
@@ -79,9 +83,10 @@ export function StepTimeline({ data }) {
                 <button
                   type="button"
                   className="step-expand"
-                  aria-label="Show working"
+                  aria-label={open === i ? "Hide working" : "Show working"}
+                  title={open === i ? "Hide working" : "Show working"}
                   aria-expanded={open === i}
-                  onClick={() => setOpen(open === i ? null : i)}
+                  onClick={() => setChoice(open === i ? null : i)}
                 >
                   <ChevronDown size={16} />
                 </button>

@@ -162,7 +162,7 @@
   line-height: 16px;
   color: var(--cs-text-muted);
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -278,8 +278,27 @@
   stroke-dasharray: 2 3;
 }
 
+.studio-step-final {
+  stroke: var(--cs-text-secondary);
+  stroke-width: 1;
+  stroke-dasharray: 1 3;
+}
+
+.studio-step-peak {
+  fill: var(--cs-accent);
+}
+
+.studio-step-svg text.studio-step-summary {
+  font-size: 12px;
+  font-weight: 600;
+  fill: var(--cs-text);
+}
+
 .studio-step-svg text.studio-step-settle-label,
-.studio-step-svg text.studio-step-band-label {
+.studio-step-svg text.studio-step-band-label,
+.studio-step-svg text.studio-step-ref-label,
+.studio-step-svg text.studio-step-sse,
+.studio-step-svg text.studio-step-peak-label {
   font-size: 11px;
   fill: var(--cs-text-secondary);
 }

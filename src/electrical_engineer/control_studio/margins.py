@@ -13,10 +13,10 @@ def _band_note(kind: str = "gain") -> str:
     lo, hi = SWEEP_MIN_RAD_S, SWEEP_MAX_RAD_S
     lo_s, hi_s = f"{lo:g}", f"{hi:,g}"
     if kind == "gain":
-        return f"Gain stays above 0 dB from {lo_s} to {hi_s} rad/s."
+        return f"Gain above 0 dB over {lo_s} to {hi_s} rad/s."
     if kind == "phase":
-        return f"Phase stays above −180° from {lo_s} to {hi_s} rad/s."
-    return f"No crossing found from {lo_s} to {hi_s} rad/s."
+        return f"Phase above −180° over {lo_s} to {hi_s} rad/s."
+    return f"No crossing in {lo_s} to {hi_s} rad/s."
 
 
 def _fmt_freq(x: float | None, *, phase_cross: bool = False) -> tuple[str, str | None]:
@@ -29,21 +29,21 @@ def _fmt_freq(x: float | None, *, phase_cross: bool = False) -> tuple[str, str |
 
 def _phase_never_minus180_note() -> str:
     lo_s, hi_s = f"{SWEEP_MIN_RAD_S:g}", f"{SWEEP_MAX_RAD_S:,g}"
-    return f"Phase never reaches −180° from {lo_s} to {hi_s} rad/s."
+    return f"No −180° crossing in {lo_s} to {hi_s} rad/s."
 
 
 def _phase_above_note() -> str:
     lo_s, hi_s = f"{SWEEP_MIN_RAD_S:g}", f"{SWEEP_MAX_RAD_S:,g}"
-    return f"Phase stays above −180° from {lo_s} to {hi_s} rad/s."
+    return f"Phase above −180° over {lo_s} to {hi_s} rad/s."
 
 
 def _gain_band_note_from_db(lo_db: float, hi_db: float) -> str:
     lo_s, hi_s = f"{SWEEP_MIN_RAD_S:g}", f"{SWEEP_MAX_RAD_S:,g}"
     if lo_db > 0.0 and hi_db > 0.0:
-        return f"Gain stays above 0 dB from {lo_s} to {hi_s} rad/s."
+        return f"Gain above 0 dB over {lo_s} to {hi_s} rad/s."
     if lo_db < 0.0 and hi_db < 0.0:
-        return f"Gain stays below 0 dB from {lo_s} to {hi_s} rad/s."
-    return f"No crossing found from {lo_s} to {hi_s} rad/s."
+        return f"Gain below 0 dB over {lo_s} to {hi_s} rad/s."
+    return f"No crossing in {lo_s} to {hi_s} rad/s."
 
 
 def _sweep_mag_db_ends(sys) -> tuple[float, float]:

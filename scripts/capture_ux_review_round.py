@@ -54,7 +54,7 @@ def _preflight(out_dir: Path) -> dict:
     req = urllib.request.Request(
         f"http://{HOST}:{PORT}/api/control-studio/sessions",
         method="POST",
-        data=json.dumps({"golden": "pid_dc_motor"}).encode(),
+        data=json.dumps({"title": "Lab 4 · DC motor PID", "golden": "pid_dc_motor"}).encode(),
         headers={"Content-Type": "application/json"},
     )
     with urllib.request.urlopen(req, timeout=60) as resp:
@@ -78,7 +78,7 @@ def _preflight(out_dir: Path) -> dict:
     req_low = urllib.request.Request(
         f"http://{HOST}:{PORT}/api/control-studio/sessions",
         method="POST",
-        data=json.dumps({"title": "Low gain", "golden": "open_loop_low_gain"}).encode(),
+        data=json.dumps({"title": "HW 3 · Open-loop gain", "golden": "open_loop_low_gain"}).encode(),
         headers={"Content-Type": "application/json"},
     )
     with urllib.request.urlopen(req_low, timeout=60) as resp:
@@ -92,6 +92,23 @@ def _preflight(out_dir: Path) -> dict:
     with urllib.request.urlopen(low_sim, timeout=180) as resp:
         low_payload = json.loads(resp.read().decode())
     low_pm = str(((low_payload.get("analyze") or {}).get("display") or {}).get("pm_deg", ""))
+    req_fin = urllib.request.Request(
+        f"http://{HOST}:{PORT}/api/control-studio/sessions",
+        method="POST",
+        data=json.dumps({"title": "HW 3 · Unity feedback, K = 10", "golden": "unity_first_order"}).encode(),
+        headers={"Content-Type": "application/json"},
+    )
+    with urllib.request.urlopen(req_fin, timeout=60) as resp:
+        fin_sid = json.loads(resp.read().decode())["session_id"]
+    fin_req = urllib.request.Request(
+        f"http://{HOST}:{PORT}/api/control-studio/sessions/{fin_sid}/simulate",
+        method="POST",
+        data=b"{}",
+        headers={"Content-Type": "application/json"},
+    )
+    with urllib.request.urlopen(fin_req, timeout=180) as resp:
+        fin_payload = json.loads(resp.read().decode())
+    fin_m = (fin_payload.get("step_series") or {}).get("metrics") or {}
     data = {
         "git_sha": sha,
         "git_sha_short": sha_short,
@@ -103,6 +120,13 @@ def _preflight(out_dir: Path) -> dict:
         "step_series": bool(sim.get("step_series")),
         "gain_margin_caption": gm_tip,
         "low_gain_pm_deg": low_pm,
+        "finite_crossover": {
+            "status": fin_m.get("status"),
+            "final_value": fin_m.get("final_value"),
+            "t_settle_s": fin_m.get("t_settle_s"),
+            "overshoot_pct": fin_m.get("overshoot_pct"),
+            "steady_state_error_pct": fin_m.get("steady_state_error_pct"),
+        },
     }
     if kp != 50:
         raise RuntimeError(f"preflight kp={kp}, expected 50 (stale backend?)")
@@ -112,6 +136,10 @@ def _preflight(out_dir: Path) -> dict:
         raise RuntimeError(f"preflight: gain margin caption missing −180: {gm_tip!r}")
     if low_pm != "Not defined":
         raise RuntimeError(f"preflight low_gain pm_deg={low_pm!r}, expected Not defined")
+    if fin_m.get("status") != "settled_off_target" or fin_m.get("t_settle_s") is None:
+        raise RuntimeError(f"preflight finite crossover: {fin_m}")
+    if abs(float(fin_m.get("final_value", 0)) - 10 / 11) > 5e-3:
+        raise RuntimeError(f"preflight finite crossover final value {fin_m.get('final_value')}")
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "preflight.json").write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
     print("preflight.json", data)
@@ -458,7 +486,7 @@ def main() -> int:
             req = urllib.request.Request(
                 f"http://{HOST}:{PORT}/api/control-studio/sessions",
                 method="POST",
-                data=json.dumps({"title": "PID DC motor", "golden": "pid_dc_motor"}).encode(),
+                data=json.dumps({"title": "Lab 4 · DC motor PID", "golden": "pid_dc_motor"}).encode(),
                 headers={"Content-Type": "application/json"},
             )
             with urllib.request.urlopen(req, timeout=60) as resp:
@@ -551,7 +579,7 @@ def main() -> int:
                 req1440 = urllib.request.Request(
                     f"http://{HOST}:{PORT}/api/control-studio/sessions",
                     method="POST",
-                    data=json.dumps({"title": "PID DC motor", "golden": "pid_dc_motor"}).encode(),
+                    data=json.dumps({"title": "Lab 4 · DC motor PID", "golden": "pid_dc_motor"}).encode(),
                     headers={"Content-Type": "application/json"},
                 )
                 with urllib.request.urlopen(req1440, timeout=60) as resp:
@@ -583,7 +611,7 @@ def main() -> int:
                 req = urllib.request.Request(
                     f"http://{HOST}:{PORT}/api/control-studio/sessions",
                     method="POST",
-                    data=json.dumps({"title": "Low gain", "golden": "open_loop_low_gain"}).encode(),
+                    data=json.dumps({"title": "HW 3 · Open-loop gain", "golden": "open_loop_low_gain"}).encode(),
                     headers={"Content-Type": "application/json"},
                 )
                 with urllib.request.urlopen(req, timeout=60) as resp:
@@ -602,7 +630,7 @@ def main() -> int:
                 req = urllib.request.Request(
                     f"http://{HOST}:{PORT}/api/control-studio/sessions",
                     method="POST",
-                    data=json.dumps({"title": "Finite crossover", "golden": "unity_first_order"}).encode(),
+                    data=json.dumps({"title": "HW 3 · Unity feedback, K = 10", "golden": "unity_first_order"}).encode(),
                     headers={"Content-Type": "application/json"},
                 )
                 with urllib.request.urlopen(req, timeout=60) as resp:
@@ -776,7 +804,7 @@ def main() -> int:
             req = urllib.request.Request(
                 f"http://{HOST}:{PORT}/api/control-studio/sessions",
                 method="POST",
-                data=json.dumps({"title": "PID DC motor", "golden": "pid_dc_motor"}).encode(),
+                data=json.dumps({"title": "Lab 4 · DC motor PID", "golden": "pid_dc_motor"}).encode(),
                 headers={"Content-Type": "application/json"},
             )
             with urllib.request.urlopen(req, timeout=60) as resp:
@@ -859,12 +887,21 @@ def main() -> int:
                             page.keyboard.press("Tab")
                             page.wait_for_timeout(80)
                         snap("focus-button-dark.png")
+                if args.round >= 9:
+                    # Fresh page and route per capture: no leftover drawer, focus ring or filter.
+                    go(f"?problem={run_id}")
+                    page.wait_for_selector(".answer-line", timeout=30000)
+                    page.evaluate("() => document.activeElement && document.activeElement.blur()")
                 page.keyboard.press("Control+b")
                 page.wait_for_selector(".product-sidebar.is-collapsed", timeout=5000)
                 page.wait_for_timeout(200)
                 snap("sidebar-collapsed-dark.png")
                 page.keyboard.press("Control+b")
                 page.wait_for_timeout(200)
+                if args.round >= 9:
+                    go("?view=problems")
+                    page.wait_for_selector("tr.problems-row", timeout=15000)
+                    page.evaluate("() => document.activeElement && document.activeElement.blur()")
                 page.keyboard.press("Control+k")
                 page.wait_for_selector(".cmdk-root", timeout=5000)
                 snap("cmdk-open-dark.png")

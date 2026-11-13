@@ -44,6 +44,11 @@ test("margins never collide or clip", async ({ page, request }) => {
     els.filter((e) => e.scrollWidth > e.clientWidth + 1).map((e) => e.textContent),
   );
   expect(clipped).toEqual([]);
+  // vertical overflow too: a line-clamped caption cut mid-sentence has scrollHeight > clientHeight
+  const cutOff = await page.locator(".studio-margin-meta").evaluateAll((els) =>
+    els.filter((e) => e.scrollHeight > e.clientHeight + 1).map((e) => e.textContent),
+  );
+  expect(cutOff, "margin captions cut off vertically").toEqual([]);
   const cells = await box(page, ".studio-margin");
   for (let i = 0; i < cells.length; i += 1) {
     for (let j = i + 1; j < cells.length; j += 1) expect(hit(cells[i], cells[j])).toBe(false);
