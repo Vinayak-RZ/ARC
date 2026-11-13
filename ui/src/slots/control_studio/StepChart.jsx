@@ -15,7 +15,7 @@ function fmt(v, d = 2) {
 export function StepChart({ data, margins, onWindowChange, windowS }) {
   const [cursor, setCursor] = useState(null);
   const { t, y, setpoint = 1, unit = "", metrics = {} } = data || {};
-  const settled = metrics.settled === true;
+  const status = metrics.status || (metrics.settled ? "settled" : "not_settled");
   const yLabel = unit ? `Speed (${unit})` : "Output";
   const xLabel = metrics.window_s && metrics.window_s !== 10
     ? `Time (s), window ${fmt(metrics.window_s, 0)} s`
@@ -33,7 +33,7 @@ export function StepChart({ data, margins, onWindowChange, windowS }) {
   if (!series) return <p className="cs-margins-hint">No step data.</p>;
 
   const w = 640;
-  const h = 220;
+  const h = 160;
   const m = { l: 48, r: 16, t: 28, b: 36 };
   const plotW = w - m.l - m.r;
   const plotH = h - m.t - m.b;
@@ -58,9 +58,15 @@ export function StepChart({ data, margins, onWindowChange, windowS }) {
             </button>
           ))}
         </div>
-        {!settled ? (
+        {status === "not_settled" ? (
           <span className="studio-unsettled-pill" role="status">
             Not settled within {fmt(metrics.window_s || 10, 0)} s
+          </span>
+        ) : null}
+        {status === "settled_off_target" ? (
+          <span className="studio-offtarget-pill" role="status">
+            Settles at {fmt(metrics.final_value ?? metrics.value_at_end, 2)}, {fmt(metrics.steady_state_error_pct, 0)}%
+            below the setpoint
           </span>
         ) : null}
       </div>
@@ -114,9 +120,9 @@ export function StepChart({ data, margins, onWindowChange, windowS }) {
           </>
         ) : null}
       </svg>
-      {!settled && metrics.rising_at_end ? (
+      {status === "not_settled" && (metrics.tail_slope ?? 0) > 0 ? (
         <p className="studio-step-foot">
-          Still rising at {fmt(metrics.window_s || 10, 0)} s: {fmt(metrics.rising_at_end)} of a setpoint of {fmt(setpoint)}.
+          Still rising at {fmt(metrics.window_s || 10, 0)} s: {fmt(metrics.value_at_end)} of a setpoint of {fmt(setpoint)}.
         </p>
       ) : null}
     </div>

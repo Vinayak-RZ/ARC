@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { Shortcut } from "../components/Shortcut.jsx";
+import { ExampleThumb } from "../components/ExampleThumb.jsx";
+import { relativeTime } from "../units/format.js";
 import { displayTitle, subjectTag } from "../runDisplay.js";
 
 const SUBJECTS = [
@@ -177,9 +179,7 @@ export function HomePage({ runs, onRunsChange, onOpenProblem }) {
               onClick={() => solveExample(ex.id)}
             >
               <div className="example-thumb-frame example-thumb-wrap">
-                {ex.thumbnail ? (
-                  <img className="example-thumb" src={ex.thumbnail} alt="" loading="eager" decoding="async" />
-                ) : null}
+                <ExampleThumb id={ex.id} />
               </div>
               <span className="subject-chip-muted">{ex.subject}</span>
               <span className="example-card-title">{ex.title}</span>
@@ -196,6 +196,7 @@ export function HomePage({ runs, onRunsChange, onOpenProblem }) {
               <button key={run.id} type="button" className="continue-card" onClick={() => onOpenProblem(run.id)}>
                 <span className="subject-chip-muted">{run.subject || subjectTag(run)}</span>
                 <span className="example-card-title">{displayTitle(run)}</span>
+                <span className="hint continue-meta">{relativeTime(run.modified_at)}</span>
                 <span className={run.unchecked ? "status-badge unchecked" : "status-badge checked"}>
                   {run.unchecked ? "Unchecked" : "Checked"}
                 </span>
@@ -206,8 +207,9 @@ export function HomePage({ runs, onRunsChange, onOpenProblem }) {
       ) : null}
       <section className="home-section agent-card">
         <h2>Agent</h2>
+        <p className="hint">Connect your coding agent.</p>
         <p className="hint">
-          Run <code>electrical-engineer mcp</code> in this repo and connect Cursor or Claude Code. CLI:{" "}
+          <kbd className="home-agent-cmd">electrical-engineer mcp</kbd> — then connect Cursor or Claude Code. CLI:{" "}
           <code className="home-cli">electrical-engineer run solve-circuit-problem</code>
         </p>
       </section>

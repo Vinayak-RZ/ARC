@@ -1,20 +1,37 @@
 import { useMemo, useState } from "react";
 import {
   Activity,
+  AudioWaveform,
+  CircleDot,
+  Filter,
   FunctionSquare,
+  Gauge,
+  LineChart,
   PlusCircle,
   Sigma,
   SlidersHorizontal,
+  Timer,
   Triangle,
+  Waves,
+  Zap,
 } from "lucide-react";
 
 const ICONS = {
+  step: CircleDot,
+  ramp: LineChart,
+  sine: Waves,
   gain: Triangle,
   sum: PlusCircle,
-  transfer: FunctionSquare,
+  transfer_function: Filter,
+  transfer: Filter,
   pid: SlidersHorizontal,
   integrator: Sigma,
   derivative: Activity,
+  saturation: Gauge,
+  delay: Timer,
+  scope: AudioWaveform,
+  plant_first_order: Zap,
+  plant_dc_motor: Gauge,
 };
 
 export function StudioPalette({ groups, onDragStart }) {

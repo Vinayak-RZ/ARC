@@ -98,7 +98,13 @@ export function CommandPalette({ runs, onNavigate }) {
                 >
                   <item.Icon size={16} strokeWidth={1.5} className="cmdk-row-icon" aria-hidden />
                   <span>{item.label}</span>
-                  <kbd className="cmdk-kbd">{item.keys}</kbd>
+                  <span className="cmdk-kbd-row">
+                    {item.keys.split(/\s+/).map((k) => (
+                      <kbd key={k} className="cmdk-kbd">
+                        {k}
+                      </kbd>
+                    ))}
+                  </span>
                 </Command.Item>
               ))}
             </Command.Group>
@@ -142,7 +148,13 @@ export function CommandPalette({ runs, onNavigate }) {
                 >
                   <item.Icon size={16} strokeWidth={1.5} className="cmdk-row-icon" aria-hidden />
                   <span>{item.label}</span>
-                  <kbd className="cmdk-kbd">{item.keys}</kbd>
+                  <span className="cmdk-kbd-row">
+                    {item.keys.split(/\s+/).map((k) => (
+                      <kbd key={k} className="cmdk-kbd">
+                        {k}
+                      </kbd>
+                    ))}
+                  </span>
                 </Command.Item>
               ))}
             </Command.Group>

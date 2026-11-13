@@ -57,9 +57,10 @@ for (const vp of [
     const b = await pid.boundingBox();
     if (b) await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2);
     await page.waitForSelector(".studio-block.is-selected", { timeout: 5000 });
+    await page.waitForTimeout(1200);
     await contentOutsideCanvas(page, "after select");
     await page.locator(".cs-simulate-btn").click();
-    await page.waitForTimeout(1200);
+    await page.waitForTimeout(2000);
     expect(await page.locator(".studio-block.is-selected").count()).toBe(1);
     await contentOutsideCanvas(page, "after simulate with selection");
   });

@@ -20,6 +20,80 @@ HOST = "127.0.0.1"
 W, H = 1280, 800
 
 
+def _kill_port(port: int) -> None:
+    try:
+        subprocess.run(
+            ["fuser", "-k", f"{port}/tcp"],
+            cwd=ROOT,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+        )
+    except FileNotFoundError:
+        pass
+    time.sleep(0.3)
+
+
+def _prepare_capture_env() -> None:
+    subprocess.check_call(["uv", "pip", "install", "-q", "-e", "."], cwd=ROOT)
+    subprocess.check_call(["npm", "run", "build"], cwd=ROOT / "ui")
+
+
+def _preflight(out_dir: Path) -> dict:
+    import urllib.request
+
+    import electrical_engineer
+
+    sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    sha_short = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, text=True).strip()
+    dist = ROOT / "ui" / "dist" / "index.html"
+    dist_mtime = dist.stat().st_mtime if dist.is_file() else None
+    pkg_path = str(Path(electrical_engineer.__file__).resolve())
+    if "/src/" not in pkg_path.replace("\\", "/"):
+        raise RuntimeError(f"electrical_engineer not editable from src: {pkg_path}")
+    req = urllib.request.Request(
+        f"http://{HOST}:{PORT}/api/control-studio/sessions",
+        method="POST",
+        data=json.dumps({"golden": "pid_dc_motor"}).encode(),
+        headers={"Content-Type": "application/json"},
+    )
+    with urllib.request.urlopen(req, timeout=60) as resp:
+        sess = json.loads(resp.read().decode())
+    sid = sess["session_id"]
+    with urllib.request.urlopen(f"http://{HOST}:{PORT}/api/control-studio/sessions/{sid}", timeout=60) as resp:
+        payload = json.loads(resp.read().decode())
+    pid = next((b for b in payload.get("diagram", {}).get("blocks", []) if b.get("id") == "pid1"), {})
+    kp = float((pid.get("params") or {}).get("kp", 0))
+    sim_req = urllib.request.Request(
+        f"http://{HOST}:{PORT}/api/control-studio/sessions/{sid}/simulate",
+        method="POST",
+        data=b"{}",
+        headers={"Content-Type": "application/json"},
+    )
+    with urllib.request.urlopen(sim_req, timeout=180) as resp:
+        sim = json.loads(resp.read().decode())
+    gm_tip = str((sim.get("analyze") or {}).get("margin_tooltips", {}).get("gm_db", ""))
+    data = {
+        "git_sha": sha,
+        "git_sha_short": sha_short,
+        "package_path": pkg_path,
+        "dist_index_mtime": dist_mtime,
+        "kp": kp,
+        "step_series": bool(sim.get("step_series")),
+        "gain_margin_caption": gm_tip,
+    }
+    if kp != 50:
+        raise RuntimeError(f"preflight kp={kp}, expected 50 (stale backend?)")
+    if not sim.get("step_series"):
+        raise RuntimeError("preflight: simulate response missing step_series")
+    if "180" not in gm_tip and "−180" not in gm_tip:
+        raise RuntimeError(f"preflight: gain margin caption missing −180: {gm_tip!r}")
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / "preflight.json").write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+    print("preflight.json", data)
+    return data
+
+
 def _md5(path: Path) -> str:
     return hashlib.md5(path.read_bytes()).hexdigest()
 
@@ -106,8 +180,8 @@ def main() -> int:
         print("pip install playwright && playwright install chromium", file=sys.stderr)
         return 1
 
-    if not (ROOT / "ui" / "dist" / "index.html").is_file():
-        subprocess.check_call(["npm", "run", "build"], cwd=ROOT / "ui")
+    _kill_port(PORT)
+    _prepare_capture_env()
 
     env = {**os.environ, "EE_NO_BROWSER": "1"}
     server = subprocess.Popen(
@@ -122,6 +196,8 @@ def main() -> int:
     measurements: dict[str, object] = {}
     try:
         _wait_server(server)
+        if args.round >= 6:
+            _preflight(out_dir)
         backup = _backup_runs()
 
         with sync_playwright() as p:
@@ -249,6 +325,34 @@ def main() -> int:
                 )
                 page.wait_for_timeout(800)
             snap("studio-layout-after-simulate.png")
+            if args.round >= 6:
+                pid = page.locator(".react-flow__node[data-id='pid1']")
+                box = pid.first.bounding_box()
+                if box:
+                    page.mouse.click(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
+                page.wait_for_timeout(900)
+                snap("studio-block-selected-after-simulate.png")
+                page.locator(".studio-window-segment button", has_text="Auto").click()
+                page.wait_for_timeout(600)
+                snap("studio-step-extended.png")
+                req_u = urllib.request.Request(
+                    f"http://{HOST}:{PORT}/api/control-studio/sessions",
+                    method="POST",
+                    data=json.dumps({"golden": "unity_first_order"}).encode(),
+                    headers={"Content-Type": "application/json"},
+                )
+                with urllib.request.urlopen(req_u, timeout=60) as resp:
+                    u_sid = json.loads(resp.read().decode())["session_id"]
+                go(f"?view=studio&session={u_sid}")
+                page.locator(".cs-simulate-btn").click()
+                page.wait_for_selector(".studio-step-svg", timeout=120000)
+                page.wait_for_timeout(400)
+                snap("studio-step-offtarget.png")
+                page.set_viewport_size({"width": 1280, "height": 680})
+                go(f"?view=studio&session={pid_sess}")
+                page.wait_for_timeout(800)
+                snap("studio-after-resize.png")
+                page.set_viewport_size({"width": W, "height": H})
             if args.round >= 4:
                 wide_studio = browser.new_page(viewport={"width": 1440, "height": 900})
                 wide_studio.goto(
@@ -280,7 +384,7 @@ def main() -> int:
                 go(f"?view=studio&session={sid}")
                 page.wait_for_selector(".cs-simulate-btn", timeout=15000)
                 page.click(".cs-simulate-btn")
-                page.wait_for_selector(".studio-margin-table", timeout=60000)
+                page.wait_for_selector(".studio-margins .studio-margin", timeout=60000)
                 page.wait_for_timeout(400)
                 snap("studio-margins-no-crossover.png")
 
@@ -296,7 +400,7 @@ def main() -> int:
                 go(f"?view=studio&session={fin}")
                 page.wait_for_selector(".cs-simulate-btn", timeout=15000)
                 page.click(".cs-simulate-btn")
-                page.wait_for_selector(".studio-margin-table", timeout=120000)
+                page.wait_for_selector(".studio-margins .studio-margin", timeout=120000)
                 page.wait_for_timeout(400)
                 snap("studio-margins-finite.png")
 
@@ -481,6 +585,16 @@ def main() -> int:
                 page.evaluate("() => document.querySelector('.agent-card')?.scrollIntoView({block: 'end'})")
                 page.wait_for_timeout(300)
                 snap("home-scrolled-dark.png")
+                _clear_runs()
+                go("?view=problems")
+                page.wait_for_selector(".problems-empty", timeout=10000)
+                snap("problems-empty-dark.png")
+                page.route("**/api/runs", lambda route: route.fulfill(status=500, body="{}"))
+                page.reload(wait_until="domcontentloaded")
+                page.wait_for_selector(".problems-error", timeout=15000)
+                snap("problems-error-dark.png")
+                page.unroute("**/api/runs")
+                run_id = _run_example("divider")
                 go("?view=problems")
                 page.wait_for_selector(".problems-table", timeout=15000)
                 snap("problems-list-dark.png")

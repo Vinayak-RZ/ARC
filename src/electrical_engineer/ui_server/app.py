@@ -106,6 +106,19 @@ def _subject_tag(recipe_id: str, folder_name: str) -> str:
     return "General"
 
 
+def _dedupe_run_items(items: list[dict]) -> list[dict]:
+    """Keep the newest run per display title (Recent / Continue / Problems)."""
+    best: dict[str, dict] = {}
+    for item in items:
+        key = str(item.get("display_title") or item.get("title") or item.get("id") or "").strip().lower()
+        if not key:
+            continue
+        prev = best.get(key)
+        if prev is None or float(item.get("modified_at") or 0) > float(prev.get("modified_at") or 0):
+            best[key] = item
+    return sorted(best.values(), key=lambda x: -float(x.get("modified_at") or 0))
+
+
 def _run_list_item(folder: Path) -> dict:
     evid = _read_json(folder / "evidentiary.json") or _read_json(folder / "summary.json")
     try:
@@ -253,6 +266,7 @@ def create_app(root: Path | None = None) -> FastAPI:
         items = []
         if runs.is_dir():
             items = [_run_list_item(p) for p in sorted(runs.iterdir()) if p.is_dir()]
+        items = _dedupe_run_items(items)
         return {"runs": items}
 
     @app.get("/api/examples")

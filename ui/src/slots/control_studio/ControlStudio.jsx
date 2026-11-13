@@ -24,6 +24,34 @@ import "../../control-studio/studio.css";
 
 const GRID = 16;
 
+function useWireStroke() {
+  const [color, setColor] = useState("#1A1A18");
+  useEffect(() => {
+    const read = () => {
+      const v = getComputedStyle(document.documentElement).getPropertyValue("--cs-wire").trim();
+      setColor(v || "#1A1A18");
+    };
+    read();
+    const obs = new MutationObserver(read);
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => obs.disconnect();
+  }, []);
+  return color;
+}
+
+function useNarrowViewport() {
+  const [narrow, setNarrow] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia("(max-width: 1199px)").matches : false,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1199px)");
+    const fn = () => setNarrow(mq.matches);
+    mq.addEventListener("change", fn);
+    return () => mq.removeEventListener("change", fn);
+  }, []);
+  return narrow;
+}
+
 function formatOpTime(tsMs) {
   if (!tsMs) return "";
   try {
@@ -253,6 +281,16 @@ function ControlStudioInner({ sessionId, onSession }) {
   }, [validation, session?.diagram, session?.presence, highlight.ids.size, blockIssues, setNodes, setEdges, withSelection]);
 
   useEffect(() => {
+    if (!selectedId) return undefined;
+    const t1 = setTimeout(() => fitRef.current?.(0), 60);
+    const t2 = setTimeout(() => fitRef.current?.(0), 450);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [selectedId]);
+
+  useEffect(() => {
     if (!session?.session_id) return undefined;
     const sid = session.session_id;
     const es = new EventSource(`/api/control-studio/sessions/${sid}/events`);
@@ -384,6 +422,9 @@ function ControlStudioInner({ sessionId, onSession }) {
     session?.presence?.agent_editing ||
     (session?.presence?.agent_editing_until_ms && session.presence.agent_editing_until_ms > Date.now());
   const resultsStale = lastSimRevision != null && revision > lastSimRevision;
+  const wireStroke = useWireStroke();
+  const narrowViewport = useNarrowViewport();
+  const inspectorFloating = Boolean(selected) && narrowViewport;
 
   function redo() {
     fetch(`/api/control-studio/sessions/${session.session_id}/redo`, { method: "POST", body: "{}" })
@@ -394,7 +435,7 @@ function ControlStudioInner({ sessionId, onSession }) {
 
   return (
     <section
-      className={`cs-app control-studio studio${results ? "" : " is-empty"}${selected ? " has-selection" : ""}${selected ? " studio-has-floating-inspector" : ""}`}
+      className={`cs-app control-studio studio${results ? "" : " is-empty"}${selected ? " has-selection" : ""}`}
     >
       <ReactFlowProvider>
         <StudioToolbar
@@ -442,7 +483,7 @@ function ControlStudioInner({ sessionId, onSession }) {
               defaultEdgeOptions={{
                 type: "signal",
                 zIndex: 0,
-                markerEnd: { type: MarkerType.ArrowClosed, color: "var(--cs-text)", width: 14, height: 14 },
+                markerEnd: { type: MarkerType.ArrowClosed, color: wireStroke, width: 14, height: 14 },
               }}
               minZoom={0.2}
               maxZoom={1.25}
@@ -453,15 +494,15 @@ function ControlStudioInner({ sessionId, onSession }) {
               <FitViewOnChange revision={revision} nodeCount={nodes.length} agentBump={fitBump} fitRef={fitRef} />
             </ReactFlow>
           </CanvasDrop>
-          <StudioInspector
-            selected={selected}
-            blockIssues={blockIssues}
-            onPatch={patchSelected}
-            onComment={pinComment}
-            notes={session?.diagram?.notes}
-            floating
-          />
         </div>
+        <StudioInspector
+          selected={selected}
+          blockIssues={blockIssues}
+          onPatch={patchSelected}
+          onComment={pinComment}
+          notes={session?.diagram?.notes}
+          floating={inspectorFloating}
+        />
         <ResultsDock
           results={results}
           stepData={stepData}

@@ -35,24 +35,45 @@ def _step_metrics(t, y, setpoint: float, window_s: float) -> dict[str, Any]:
 
     t = np.asarray(t, dtype=float)
     y = np.asarray(y, dtype=float)
+    sp = abs(setpoint or 1.0)
     if len(y) < 2:
-        return {"settled": False, "window_s": window_s, "rising_at_end": float(y[-1]) if len(y) else None}
+        return {
+            "status": "not_settled",
+            "settled": False,
+            "window_s": window_s,
+            "value_at_end": float(y[-1]) if len(y) else None,
+            "setpoint": setpoint,
+        }
     tail_n = max(3, int(len(y) * 0.1))
-    band = 0.02 * abs(setpoint or 1.0)
     tail = y[-tail_n:]
-    settled = bool(np.all(np.abs(tail - setpoint) <= band))
+    flat = float(tail.max() - tail.min()) <= 0.01 * max(abs(float(tail.mean())), 1e-9)
+    sse = abs(setpoint - float(y[-1])) / sp
+    if not flat:
+        status = "not_settled"
+    elif sse <= 0.02:
+        status = "settled"
+    else:
+        status = "settled_off_target"
     metrics: dict[str, Any] = {
-        "settled": settled,
+        "status": status,
+        "settled": status == "settled",
         "window_s": window_s,
         "final_value": float(y[-1]),
+        "value_at_end": float(y[-1]),
         "setpoint": setpoint,
+        "steady_state_error_pct": round(sse * 100.0, 1) if status == "settled_off_target" else None,
     }
-    if not settled:
-        metrics["rising_at_end"] = float(y[-1])
+    if status == "not_settled":
+        slope = float((y[-1] - y[-tail_n]) / max(float(t[-1] - t[-tail_n]), 1e-9))
+        metrics["tail_slope"] = slope
         metrics["aria_summary"] = (
             f"Closed-loop step response, not settled within {window_s:.0f} s, "
-            f"still at {y[-1]:.3g} toward setpoint {setpoint:g}"
+            f"at {y[-1]:.3g} toward setpoint {setpoint:g}"
         )
+    elif status == "settled_off_target":
+        pct = metrics["steady_state_error_pct"]
+        direction = "below" if float(y[-1]) < setpoint else "above"
+        metrics["aria_summary"] = f"Step response settles at {y[-1]:.2g}, {pct:g}% {direction} setpoint"
     else:
         metrics["aria_summary"] = f"Closed-loop step response settled near {setpoint:g} within {window_s:.0f} s"
     return metrics

@@ -37,6 +37,24 @@ export function Library() {
   const [hit, setHit] = useState(null);
 
   const books = useMemo(() => bookIds(items), [items]);
+  const sourceRows = useMemo(() => {
+    const byBook = new Map();
+    for (const row of items) {
+      const bid = row.book_id;
+      if (!bid) continue;
+      const prev = byBook.get(bid);
+      const chapters = new Set(prev?.chapters || []);
+      if (row.chapter_id) chapters.add(row.chapter_id);
+      byBook.set(bid, {
+        book_id: bid,
+        licence_tag: row.licence_tag,
+        domain_tag: row.domain_tag,
+        chapters,
+        count: (prev?.count || 0) + 1,
+      });
+    }
+    return [...byBook.values()];
+  }, [items]);
 
   function load() {
     setLoading(true);
@@ -122,15 +140,15 @@ export function Library() {
           </tr>
         </thead>
         <tbody>
-          {items
+          {sourceRows
             .filter((row) => !query || String(row.book_id).toLowerCase().includes(query.toLowerCase()))
             .slice(0, 40)
             .map((row) => (
-              <tr key={`${row.book_id}-${row.chunk_id || row.id || Math.random()}`}>
+              <tr key={row.book_id}>
                 <td>{row.book_id}</td>
                 <td>{row.licence_tag === "commercial-byo" ? "Textbook" : row.licence_tag || "—"}</td>
                 <td>{row.domain_tag === "circuits" ? "Circuits" : row.domain_tag || "—"}</td>
-                <td>{row.chapter_id || "—"}</td>
+                <td>{[...row.chapters].join(", ") || `${row.count} chunk${row.count === 1 ? "" : "s"}`}</td>
               </tr>
             ))}
         </tbody>
