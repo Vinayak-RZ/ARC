@@ -93,7 +93,7 @@ export function Sidebar({ runs, onNavigate, onNewProblem }) {
             >
               <span className={`status-dot ${statusDot(run)}`} aria-hidden="true" />
               <span className="sidebar-recent-title">{displayTitle(run)}</span>
-              <span className="hint">{subjectTag(run)}</span>
+              <span className="sidebar-recent-chip">{subjectTag(run)}</span>
             </button>
           ))}
         </div>

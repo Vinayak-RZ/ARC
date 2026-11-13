@@ -6,6 +6,7 @@ import { Library } from "./library.jsx";
 import { VisualGallery } from "./gallery.jsx";
 import { ControlStudio } from "./control_studio/ControlStudio.jsx";
 import { buildAnswerRows, verificationNote } from "../formatAnswer.js";
+import { AnswerLine } from "../components/AnswerLine.jsx";
 import { displayTitle } from "../runDisplay.js";
 import { useRun } from "../hooks/useRun.js";
 
@@ -39,7 +40,7 @@ function Result({ id }) {
           : "";
   const { rows } = buildAnswerRows(evid, data);
   const verifierRaw = evid.verifier ? String(evid.verifier) : "";
-  const note = verificationNote({ unchecked: error ? false : unchecked, error, verifierRaw });
+  const note = verificationNote({ unchecked: error ? false : unchecked, error, verifierRaw, evid });
   if (loading) {
     return <p className="loading-block" aria-live="polite">Loading run…</p>;
   }
@@ -51,19 +52,15 @@ function Result({ id }) {
       ) : unchecked && rows.length === 0 ? (
         <p className="answer-value">Pending verification</p>
       ) : rows.length > 1 ? (
-        <table className="answer-table" aria-label="Results">
-          <tbody>
-            {rows.map((row) => (
-              <tr key={row.label}>
-                <td className="answer-value">{row.display}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="answer-lines">
+          {rows.map((row) => (
+            <AnswerLine key={row.name} parts={row} checked={!unchecked} />
+          ))}
+        </div>
       ) : rows.length === 1 ? (
-        <p className={unchecked ? "answer-value" : "answer-value is-checked"}>{rows[0].display}</p>
+        <AnswerLine parts={rows[0]} checked={!unchecked && !error} />
       ) : (
-        <p className="answer-value">Working…</p>
+        <p className="answer-line">Working…</p>
       )}
       <div className="answer-status-row">
         {error ? (

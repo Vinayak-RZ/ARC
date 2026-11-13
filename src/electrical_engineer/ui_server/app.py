@@ -63,11 +63,13 @@ def _opaque_title(title: str, folder_name: str) -> bool:
         return True
     if text.startswith("cs-") and len(text) <= 16:
         return True
-    return bool(len(text) <= 20 and "-" in text and " " not in text and text.lower() == text)
+    if "-" in text and " " not in text and text.lower() == text:
+        return True
+    return False
 
 
 def _human_run_title(folder: Path, evid: dict) -> str:
-    from electrical_engineer.circuit.title import run_title
+    from electrical_engineer.circuit.title import run_title, title_with_value
 
     title = str(evid.get("title") or "").strip()
     if title and not _opaque_title(title, folder.name):
@@ -76,15 +78,16 @@ def _human_run_title(folder: Path, evid: dict) -> str:
     recipe_id = str(evid.get("recipe_id") or problem.get("recipe_id") or "")
     if problem:
         derived = run_title(recipe_id or "solve-circuit-problem", problem)
-        if derived:
+        if derived and not _opaque_title(derived, folder.name):
             return derived
     diagram = _read_json(folder / "control_diagram.json")
     if isinstance(diagram.get("title"), str) and diagram["title"].strip():
         return str(diagram["title"]).strip()
     if folder.name.startswith("cs-"):
         return "PID on DC motor"
+    val = evid.get("value")
     if recipe_id:
-        return recipe_id.replace("-", " ")
+        return title_with_value(recipe_id, problem, val, bool(evid.get("unchecked")))
     return "Untitled run"
 
 
@@ -338,9 +341,11 @@ def create_app(root: Path | None = None) -> FastAPI:
         state = "waiting-human" if waiting else "done"
         graph = _read_json(d / "graph.json")
         control_diagram = _read_json(d / "control_diagram.json")
+        problem = _read_json(d / "problem.json")
         return {
             "id": run_id,
             "title": _human_run_title(d, evid_obj),
+            "problem": problem,
             "summary": evid_text,
             "evidentiary": evid_text,
             "argument": argument,

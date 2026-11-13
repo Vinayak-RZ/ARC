@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { useLayout } from "../store.js";
 import { renderSlot } from "../slots/registry.js";
 import { EngineArtifacts } from "../slots/engine/EngineArtifacts.jsx";
 import { Inspector } from "../slots/canvas/Inspector.jsx";
+import { WorkTrail } from "../components/WorkTrail.jsx";
+import { ParametersPanel } from "../components/ParametersPanel.jsx";
 
 const TABS = [
   { id: "work", label: "Work" },
@@ -14,7 +17,7 @@ export function ProblemDetailPage({ id, data }) {
   const tab = useLayout((s) => s.problemTab);
   const setTab = useLayout((s) => s.setProblemTab);
   const drawer = useLayout((s) => s.parametersOpen);
-  const setDrawer = useLayout((s) => s.setParametersOpen);
+  const [stale, setStale] = useState(false);
   let recipeId = "";
   try {
     const evid = JSON.parse(data?.summary || "{}");
@@ -23,33 +26,38 @@ export function ProblemDetailPage({ id, data }) {
     recipeId = "";
   }
   const hasStudy = Boolean(data?.control_diagram?.nodes?.length);
+
   return (
-    <div className="problem-detail">
+    <div className="page-column problem-detail">
       {renderSlot("run.result", { id })}
-      <div className="problem-tabs" role="tablist">
+      <div className="problem-tabs tabs-underline" role="tablist">
         {TABS.map((t) => (
           <button
             key={t.id}
             type="button"
             role="tab"
             aria-selected={tab === t.id}
-            className="problem-tab"
+            className="tab-underline"
             onClick={() => setTab(t.id)}
           >
             {t.label}
           </button>
         ))}
-        <button type="button" className="button-secondary problem-params-toggle" onClick={() => setDrawer(!drawer)}>
-          Parameters
-        </button>
       </div>
-      <div className="problem-detail-body">
+      <div className={`problem-detail-body${drawer ? " is-drawer-open" : ""}`}>
         <div className="problem-tab-panel">
-          {tab === "work" ? renderSlot("run.argument", { id }) : null}
+          {tab === "work" ? <WorkTrail data={data} /> : null}
           {tab === "figures" ? <EngineArtifacts id={id} recipeId={recipeId} /> : null}
           {tab === "diagram" ? (
-            <div className={hasStudy ? "lab-surface lab-surface-study" : "lab-surface lab-surface-circuit"}>
-              {renderSlot("run.canvas", { id })}
+            <div className="diagram-layout">
+              <div className={hasStudy ? "lab-surface lab-surface-study" : "lab-surface lab-surface-circuit"}>
+                {renderSlot("run.canvas", { id })}
+              </div>
+              {!hasStudy ? (
+                <aside className="diagram-inspector" aria-label="Diagram inspector">
+                  <Inspector />
+                </aside>
+              ) : null}
             </div>
           ) : null}
           {tab === "activity" ? renderSlot("run.more", { id }) : null}
@@ -57,8 +65,12 @@ export function ProblemDetailPage({ id, data }) {
         {drawer ? (
           <aside className="parameters-drawer" aria-label="Parameters">
             <h2>Parameters</h2>
-            <p className="hint">Edits mark the answer stale. Re-run from your agent or Studio.</p>
-            {!hasStudy ? <Inspector /> : <p className="empty">Use Studio for this diagram type.</p>}
+            <ParametersPanel
+              problem={data?.problem}
+              stale={stale}
+              onChange={() => setStale(true)}
+              onRunAgain={() => setStale(false)}
+            />
           </aside>
         ) : null}
       </div>

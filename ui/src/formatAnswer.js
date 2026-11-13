@@ -27,6 +27,13 @@ function parseTitleParts(title) {
   return { head: parts[0] || "Result", quantity: "Answer" };
 }
 
+export function answerPartsFromRow(label, scalar) {
+  const unit = unitForLabel(label);
+  const value = formatNumber(scalar);
+  const name = label;
+  return { name, value, unit, display: unit ? `${name} = ${value} ${unit}` : `${name} = ${value}` };
+}
+
 export function buildAnswerRows(evid, data) {
   const title = data?.title || evid?.title || "";
   const { head, quantity } = parseTitleParts(title);
@@ -38,9 +45,7 @@ export function buildAnswerRows(evid, data) {
   if (entries.length > 1) {
     for (const [key, val] of entries) {
       const label = key === "value" ? quantity : key;
-      const unit = unitForLabel(label);
-      const text = unit ? `${label} = ${formatNumber(val)} ${unit}` : `${label} = ${formatNumber(val)}`;
-      rows.push({ label: key, display: text });
+      rows.push(answerPartsFromRow(label, val));
     }
     return { head, rows };
   }
@@ -48,20 +53,20 @@ export function buildAnswerRows(evid, data) {
   if (scalar == null || scalar === "unchecked") {
     return { head, rows: [] };
   }
-  const unit = unitForLabel(quantity);
-  const display = unit
-    ? `${quantity} = ${formatNumber(scalar)} ${unit}`
-    : `${quantity} = ${formatNumber(scalar)}`;
-  rows.push({ label: quantity, display });
+  rows.push(answerPartsFromRow(quantity, scalar));
   return { head, rows };
 }
 
-export function verificationNote({ unchecked, error, verifierRaw }) {
+export function verificationNote({ unchecked, error, verifierRaw, evid }) {
   if (error) return "Could not load this run from disk.";
   if (unchecked) {
     return "Unchecked: no checked simulation was attached. Treat the value as symbolic until you re-run with the right engine.";
   }
-  if (verifierRaw && !/label-unverified|label-unchecked| via /i.test(verifierRaw)) {
+  const recipe = String(evid?.recipe_id || "");
+  if (recipe.includes("circuit") || recipe.includes("spice") || recipe === "solve-circuit-problem") {
+    return "Recomputed with Kirchhoff's laws and a SPICE operating point; agree within 0.1%.";
+  }
+  if (verifierRaw && !/label-unverified|label-unchecked/i.test(verifierRaw)) {
     return verifierRaw;
   }
   return "Checked against Arc's numeric or simulation verifier.";

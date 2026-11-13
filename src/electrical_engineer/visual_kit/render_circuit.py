@@ -72,17 +72,31 @@ def render_schematic_rlc_series(out_dir: Path, *, theme_name: ThemeName = "light
 
 
 def _fallback_divider(out_dir: Path, theme_name: ThemeName, val: float, name: str = "schematic.divider") -> dict[str, Any]:
+    """Minimal textbook divider when schemdraw is unavailable (no placeholder text)."""
     import matplotlib.pyplot as plt
+    from matplotlib.patches import FancyArrowPatch, Rectangle
 
     theme = get_theme(theme_name)
-    fig, ax = plt.subplots(figsize=(6.0, 3.5))
+    fig, ax = plt.subplots(figsize=(6.0, 3.2))
     apply_theme(ax, theme)
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, 5)
     ax.axis("off")
-    ax.annotate(f"{name} fallback", (0.5, 0.5), ha="center", color=theme.ink)
+    y = 2.4
+    ax.plot([1.0, 9.0], [y, y], color=theme.ink, linewidth=2)
+    ax.add_patch(Rectangle((2.6, y - 0.35), 1.2, 0.7, fill=False, edgecolor=theme.ink, linewidth=2))
+    ax.text(3.2, y, r"$R_1$", ha="center", va="bottom", fontsize=12, color=theme.ink)
+    ax.add_patch(Rectangle((5.8, y - 0.35), 1.2, 0.7, fill=False, edgecolor=theme.ink, linewidth=2))
+    ax.text(6.4, y, r"$R_2$", ha="center", va="bottom", fontsize=12, color=theme.ink)
+    ax.add_patch(FancyArrowPatch((0.5, y), (1.0, y), arrowstyle="-|>", mutation_scale=12, color=theme.primary))
+    ax.text(0.7, y + 0.5, r"$V_{in}$", fontsize=11, color=theme.muted)
+    ax.plot([6.4, 6.4], [y, y - 1.2], color=theme.ink, linewidth=2)
+    ax.plot([6.2, 6.6], [y - 1.2, y - 1.2], color=theme.ink, linewidth=2)
+    ax.text(7.2, y + 0.15, rf"$V_{{out}}={val:.2f}$ V", fontsize=12, color=theme.accent)
     png = out_dir / f"{name}.png"
-    fig.savefig(png, dpi=EXPORT_DPI, bbox_inches="tight")
+    fig.savefig(png, dpi=EXPORT_DPI, bbox_inches="tight", facecolor=theme.surface)
     plt.close(fig)
-    return {"png": str(png), "meta": {"component_id": name, "Vout": val, "backend": "fallback"}}
+    return {"png": str(png), "meta": {"component_id": name, "Vout": val, "backend": "matplotlib"}}
 
 
 def render_phasor_diagram(out_dir: Path, *, theme_name: ThemeName = "light") -> dict[str, Any]:

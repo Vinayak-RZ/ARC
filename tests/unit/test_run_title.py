@@ -10,7 +10,7 @@ def test_voltage_divider_title() -> None:
 
 
 def test_recipe_fallback_without_kind() -> None:
-    assert run_title("photo-to-netlist", {}) == "photo to netlist"
+    assert run_title("photo-to-netlist", {}) == "Photo to netlist"
 
 
 def test_explicit_find() -> None:

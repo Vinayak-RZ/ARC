@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""Capture PRODUCT_SPEC section 5 screenshots at 1280x800."""
+"""Capture PRODUCT_SPEC section 5 screenshots at 1280x800 (distinct states + MD5 guard)."""
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
+import shutil
 import subprocess
 import sys
 import time
@@ -12,9 +14,14 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = Path("/opt/cursor/artifacts")
+RUNS = ROOT / "runs"
 PORT = 8765
 HOST = "127.0.0.1"
 W, H = 1280, 800
+
+
+def _md5(path: Path) -> str:
+    return hashlib.md5(path.read_bytes()).hexdigest()
 
 
 def _wait_server(proc: subprocess.Popen, timeout: float = 45.0) -> None:
@@ -50,6 +57,31 @@ def _run_example(example_id: str) -> str:
     return str(rid)
 
 
+def _backup_runs() -> Path | None:
+    if not RUNS.is_dir() or not any(RUNS.iterdir()):
+        return None
+    dest = OUT / "_runs_backup"
+    if dest.exists():
+        shutil.rmtree(dest)
+    shutil.copytree(RUNS, dest)
+    return dest
+
+
+def _restore_runs(backup: Path | None) -> None:
+    if RUNS.is_dir():
+        shutil.rmtree(RUNS)
+    if backup and backup.is_dir():
+        shutil.copytree(backup, RUNS)
+    else:
+        RUNS.mkdir(parents=True, exist_ok=True)
+
+
+def _clear_runs() -> None:
+    if RUNS.is_dir():
+        shutil.rmtree(RUNS)
+    RUNS.mkdir(parents=True, exist_ok=True)
+
+
 def main() -> int:
     try:
         from playwright.sync_api import sync_playwright
@@ -70,10 +102,10 @@ def main() -> int:
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
+    hashes: dict[str, str] = {}
     try:
         _wait_server(server)
-        run_id = _run_example("divider")
-        shots: list[tuple[str, callable]] = []
+        backup = _backup_runs()
 
         with sync_playwright() as p:
             browser = p.chromium.launch()
@@ -82,42 +114,68 @@ def main() -> int:
             def snap(name: str) -> None:
                 path = OUT / name
                 page.screenshot(path=str(path), full_page=False)
-                print(f"wrote {path}")
+                digest = _md5(path)
+                if digest in hashes.values():
+                    dup = [k for k, v in hashes.items() if v == digest][0]
+                    raise RuntimeError(f"duplicate screenshot: {name} matches {dup} (md5={digest})")
+                hashes[name] = digest
+                print(f"wrote {path} md5={digest}")
 
             def go(query: str = "") -> None:
                 page.goto(f"http://{HOST}:{PORT}/{query}", wait_until="domcontentloaded", timeout=60000)
                 page.wait_for_selector(".product-shell", timeout=30000)
-                page.wait_for_timeout(600)
+                page.wait_for_timeout(400)
+
+            # 01-home-empty: no Continue section
+            _clear_runs()
+            go("?view=home")
+            page.wait_for_selector(".composer-card", timeout=10000)
+            if page.locator(".continue-section").count() > 0:
+                raise RuntimeError("home-empty must not show Continue")
+            for img in page.locator("img.example-thumb").all():
+                img.wait_for_element_state("visible", timeout=15000)
+            snap("01-home-empty.png")
+
+            run_id = _run_example("divider")
+            if not (RUNS / run_id).is_dir():
+                raise RuntimeError(f"run {run_id} missing after example")
 
             go("?view=home")
-            snap("01-home-empty.png")
-            go(f"?problem={run_id}")
-            page.wait_for_selector(".answer-card", timeout=30000)
-            go("?view=home")
-            page.wait_for_selector(".continue-grid", timeout=10000)
+            page.wait_for_selector(".continue-section", timeout=15000)
             snap("01-home-with-continue.png")
+
             go(f"?problem={run_id}")
-            page.wait_for_selector(".answer-card", timeout=30000)
+            page.wait_for_selector(".answer-line", timeout=30000)
+            if page.locator(".parameters-drawer").is_visible():
+                page.click(".topbar-params-toggle")
+            page.wait_for_selector(".parameters-drawer", state="hidden", timeout=5000)
             snap("05-problem-answer.png")
-            if page.locator(".parameters-drawer").count() == 0:
-                page.click("button.problem-params-toggle")
-            page.wait_for_selector(".parameters-drawer", timeout=10000)
-            snap("07-problem-parameters.png")
-            page.click('button.problem-tab:has-text("Work")')
-            page.wait_for_timeout(400)
+
+            page.get_by_role("tab", name="Work").click()
+            page.wait_for_selector(".work-trail-step", timeout=10000)
+            if page.locator(".parameters-drawer").is_visible():
+                page.click(".topbar-params-toggle")
             snap("06-problem-work-tab.png")
+
+            page.click(".topbar-params-toggle")
+            page.wait_for_selector(".param-field input", timeout=10000)
+            snap("07-problem-parameters.png")
+
             go("?view=problems")
+            page.wait_for_selector(".problems-table", timeout=10000)
             snap("02-problems-list.png")
             go("?view=studio")
             snap("03-studio.png")
             go("?view=gallery")
+            page.wait_for_selector(".gallery-card", timeout=10000)
             snap("04-gallery.png")
             go("?view=settings")
             snap("08-settings.png")
-            page.keyboard.press("Control+b")
-            page.wait_for_timeout(250)
-            snap("09-sidebar-collapsed.png")
             go("?view=home")
+            page.keyboard.press("Control+b")
+            page.wait_for_selector(".product-sidebar.is-collapsed", timeout=5000)
+            snap("09-sidebar-collapsed.png")
+            page.keyboard.press("Control+b")
             page.keyboard.press("Control+k")
             page.wait_for_selector(".cmdk-root", timeout=5000)
             snap("10-cmdk-open.png")
@@ -129,11 +187,13 @@ def main() -> int:
                 localStorage.setItem('arc-theme', 'dark');
             }"""
             )
-            page.wait_for_timeout(200)
+            page.wait_for_timeout(250)
             snap("11-dark-home.png")
             browser.close()
         return 0
     finally:
+        if "backup" in dir() and backup is not None:
+            _restore_runs(backup)
         server.terminate()
         try:
             server.wait(timeout=5)

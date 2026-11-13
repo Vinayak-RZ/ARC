@@ -47,7 +47,7 @@ export const useLayout = create((set) => ({
       capMessage: "",
       flowNodes: [],
       flowEdges: [],
-      parametersOpen: true,
+      parametersOpen: false,
     }),
   setView: (view) => set({ view: normalizeView(view) }),
   toggleSidebar: () =>

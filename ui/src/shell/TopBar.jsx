@@ -1,3 +1,4 @@
+import { SlidersHorizontal } from "lucide-react";
 import { useLayout } from "../store.js";
 import { displayTitle } from "../runDisplay.js";
 
@@ -13,11 +14,14 @@ const VIEW_LABEL = {
 export function TopBar({ runMeta, onPrimaryAction, primaryLabel }) {
   const view = useLayout((s) => s.view);
   const id = useLayout((s) => s.currentRunId);
+  const drawer = useLayout((s) => s.parametersOpen);
+  const setDrawer = useLayout((s) => s.setParametersOpen);
   const crumbs = [];
   crumbs.push(VIEW_LABEL[view] || "Arc");
   if (view === "problems" && id && runMeta) {
     crumbs.push(displayTitle(runMeta));
   }
+  const showParams = view === "problems" && Boolean(id);
   return (
     <header className="product-topbar">
       <nav className="breadcrumb" aria-label="Breadcrumb">
@@ -32,8 +36,19 @@ export function TopBar({ runMeta, onPrimaryAction, primaryLabel }) {
         <span className="presence-chip" title="Live collaboration">
           Agent ready
         </span>
+        {showParams ? (
+          <button
+            type="button"
+            className={drawer ? "button-secondary button-compact is-active" : "button-secondary button-compact topbar-params-toggle"}
+            aria-pressed={drawer ? "true" : "false"}
+            onClick={() => setDrawer(!drawer)}
+          >
+            <SlidersHorizontal size={16} strokeWidth={1.5} />
+            Parameters
+          </button>
+        ) : null}
         {primaryLabel ? (
-          <button type="button" className="button-primary" onClick={onPrimaryAction}>
+          <button type="button" className="button-primary button-compact" onClick={onPrimaryAction}>
             {primaryLabel}
           </button>
         ) : null}
