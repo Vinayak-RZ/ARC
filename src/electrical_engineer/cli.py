@@ -7,7 +7,18 @@ import sys
 
 from electrical_engineer import __version__
 
-COMMANDS = ("run", "workflows", "mcp", "eval", "ui", "rag", "memory", "hosts", "reference")
+COMMANDS = (
+    "run",
+    "workflows",
+    "mcp",
+    "eval",
+    "ui",
+    "rag",
+    "memory",
+    "hosts",
+    "control-studio",
+    "reference",
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -53,6 +64,11 @@ def build_parser() -> argparse.ArgumentParser:
         default="all",
         choices=("all", "cursor", "codex", "claude"),
     )
+    cs = sub.add_parser("control-studio", help="Control Studio CLI (same model as UI/MCP)")
+    cs.add_argument("action", nargs="?", default="create", choices=("create", "validate", "simulate", "analyze", "export"))
+    cs.add_argument("--session", dest="session_id")
+    cs.add_argument("--title", default="Control Studio")
+    cs.add_argument("--out")
     return p
 
 
@@ -172,6 +188,44 @@ def main(argv: list[str] | None = None) -> int:
             return 0 if not out.get("empty") else 1
         print(args.action)
         return 0
+    if args.cmd == "control-studio":
+        import json
+        from pathlib import Path
+
+        from electrical_engineer.control_studio import analyze as cs_analyze
+        from electrical_engineer.control_studio import session as cs_session
+        from electrical_engineer.control_studio import simulate as cs_simulate
+        from electrical_engineer.control_studio.validate import validate
+        from electrical_engineer.runner.runs import project_root
+
+        root = project_root()
+        sid = args.session_id
+        if args.action == "create":
+            payload = cs_session.create_session(args.title, root)
+            print(payload["session_id"])
+            print(json.dumps(payload["diagram"], indent=2))
+            return 0
+        if not sid:
+            print("--session required", file=sys.stderr)
+            return 2
+        payload = cs_session.load_session(sid, root)
+        diagram = payload["diagram"]
+        if args.action == "validate":
+            print(json.dumps(validate(diagram), indent=2))
+            return 0
+        run_dir = root / "runs" / sid
+        if args.action == "simulate":
+            print(json.dumps(cs_simulate.simulate(diagram, run_dir=run_dir), indent=2))
+            return 0
+        if args.action == "analyze":
+            print(json.dumps(cs_analyze.analyze(diagram, run_dir=run_dir), indent=2))
+            return 0
+        if args.action == "export":
+            dest = Path(args.out) if args.out else Path(f"{sid}.diagram.json")
+            dest.write_text(json.dumps(diagram, indent=2), encoding="utf-8")
+            print(dest)
+            return 0
+        return 2
     if args.cmd == "reference":
         import json
 

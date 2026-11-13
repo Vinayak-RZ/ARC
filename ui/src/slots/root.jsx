@@ -6,6 +6,7 @@ import { Inspector } from "./canvas/Inspector.jsx";
 import { Library } from "./library.jsx";
 import { EngineArtifacts } from "./engine/EngineArtifacts.jsx";
 import { VisualGallery } from "./gallery.jsx";
+import { ControlStudio } from "./control_studio/ControlStudio.jsx";
 
 function Root() {
   return (
@@ -57,6 +58,7 @@ function Sidebar() {
     const viewQ = q.get("view");
     if (viewQ === "library") setView("library");
     if (viewQ === "gallery") setView("gallery");
+    if (viewQ === "control-studio") setView("control-studio");
     if (window.location.pathname === "/gallery") setView("gallery");
     const run = q.get("run");
     if (run) setRun(run);
@@ -90,6 +92,14 @@ function Sidebar() {
     window.history.replaceState({}, "", url);
     setOpen(false);
   }
+  function openControlStudio() {
+    setView("control-studio");
+    const url = new URL(window.location.href);
+    url.searchParams.set("view", "control-studio");
+    url.searchParams.delete("run");
+    window.history.replaceState({}, "", url);
+    setOpen(false);
+  }
   return (
     <>
       <button
@@ -112,6 +122,9 @@ function Sidebar() {
           <button type="button" className="sidebar-switch-btn" aria-current={view === "gallery" ? "true" : undefined} onClick={openGallery}>
             Visuals
           </button>
+          <button type="button" className="sidebar-switch-btn" aria-current={view === "control-studio" ? "true" : undefined} onClick={openControlStudio}>
+            Control
+          </button>
         </div>
         {view === "library" ? (
           <p className="hint">Ingest and tag books in the workspace. Files stay on this machine.</p>
@@ -126,13 +139,28 @@ function Sidebar() {
             ) : null}
             {runs.map((run) => {
               const id = run.id || run;
-              const title = run.title || id;
+              const isStudio = run.is_studio_session || String(id).startsWith("cs-");
+              const title = run.title && run.title !== id ? run.title : null;
+              if (isStudio && !title) return null;
+              const label = title || (isStudio ? null : id);
+              if (!label) return null;
               return (
                 <button
                   key={id}
                   className="asset-row"
                   aria-current={current === id ? "true" : undefined}
                   onClick={() => {
+                    if (isStudio) {
+                      openControlStudio();
+                      const url = new URL(window.location.href);
+                      url.searchParams.set("view", "control-studio");
+                      url.searchParams.set("session", id);
+                      url.searchParams.delete("run");
+                      window.history.replaceState({}, "", url);
+                      window.dispatchEvent(new Event("arc-url"));
+                      setOpen(false);
+                      return;
+                    }
                     setRun(id);
                     const url = new URL(window.location.href);
                     url.searchParams.set("run", id);
@@ -141,9 +169,10 @@ function Sidebar() {
                     setOpen(false);
                   }}
                 >
-                  <span className="asset-title">{title}</span>
-                  {run.recipe_id ? <span className="hint">{run.recipe_id}</span> : null}
-                  <span className="hint">{id}</span>
+                  <span className="asset-title">{label}</span>
+                  {run.relative_time ? <span className="hint">{run.relative_time}</span> : null}
+                  {run.recipe_id && !isStudio ? <span className="hint">{run.recipe_id}</span> : null}
+                  {!isStudio ? <span className="hint">{id}</span> : null}
                   {run.unchecked ? <span className="badge-pill">unchecked</span> : null}
                 </button>
               );
@@ -161,6 +190,9 @@ function Workspace() {
   const { data } = useRun(id);
   if (view === "gallery") {
     return renderSlot("visual.gallery");
+  }
+  if (view === "control-studio") {
+    return renderSlot("control.studio");
   }
   if (view === "library") {
     return renderSlot("rag.inventory");
@@ -384,4 +416,5 @@ register("photo.confirm", function PhotoConfirm() {
 });
 register("rag.inventory", Library);
 register("visual.gallery", VisualGallery);
+register("control.studio", ControlStudio);
 

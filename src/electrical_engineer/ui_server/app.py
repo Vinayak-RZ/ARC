@@ -57,13 +57,56 @@ def _read_json(path: Path) -> dict:
     return data if isinstance(data, dict) else {}
 
 
+def _relative_time_label(folder: Path, evid: dict) -> str:
+    import time
+
+    raw = evid.get("updated_at_ms")
+    try:
+        ts = float(raw) / 1000.0 if raw is not None else folder.stat().st_mtime
+    except (OSError, TypeError, ValueError):
+        return ""
+    delta = max(0, int(time.time() - ts))
+    if delta < 60:
+        return "just now"
+    if delta < 3600:
+        return f"{delta // 60}m ago"
+    if delta < 86400:
+        return f"{delta // 3600}h ago"
+    return f"{delta // 86400}d ago"
+
+
+def _run_list_hidden(folder: Path) -> bool:
+    name = folder.name
+    if name.startswith(("_", "unmatched")):
+        return True
+    evid = _read_json(folder / "evidentiary.json") or _read_json(folder / "summary.json")
+    title = str(evid.get("title") or "").strip()
+    recipe = str(evid.get("recipe_id") or "")
+    if name.startswith("cs-") and (not title or title == name):
+        return True
+    low = (title or name).lower()
+    if low.startswith("unmatched") or "scratch" in low or "scratch" in name.lower():
+        return True
+    return recipe == "unmatched-cosolver"
+
+
 def _run_list_item(folder: Path) -> dict:
     evid = _read_json(folder / "evidentiary.json") or _read_json(folder / "summary.json")
+    name = folder.name
+    title = str(evid.get("title") or "").strip()
+    if name.startswith("cs-") and title and title != name:
+        display_title = title
+    elif not name.startswith("cs-"):
+        display_title = title or name
+    else:
+        display_title = title or name
     return {
-        "id": folder.name,
-        "title": str(evid.get("title") or folder.name),
+        "id": name,
+        "title": display_title,
+        "relative_time": _relative_time_label(folder, evid),
         "unchecked": bool(evid.get("unchecked")),
         "recipe_id": str(evid.get("recipe_id") or ""),
+        "is_studio_session": name.startswith("cs-"),
     }
 
 
@@ -108,7 +151,11 @@ def create_app(root: Path | None = None) -> FastAPI:
     def list_runs() -> dict:
         items = []
         if runs.is_dir():
-            items = [_run_list_item(p) for p in sorted(runs.iterdir()) if p.is_dir()]
+            items = [
+                _run_list_item(p)
+                for p in sorted(runs.iterdir())
+                if p.is_dir() and not _run_list_hidden(p)
+            ]
         return {"runs": items}
 
     @app.get("/api/runs/{run_id}")
@@ -373,6 +420,10 @@ def create_app(root: Path | None = None) -> FastAPI:
             "components": load_manifest().get("components") or [],
             "goldens_base": "/api/visual-kit/golden/",
         }
+
+    from electrical_engineer.ui_server.studio_routes import register_studio_routes
+
+    register_studio_routes(app, root=cwd)
 
     @app.get("/api/visual-kit/golden/{rel_path:path}", response_model=None)
     def visual_golden(rel_path: str):

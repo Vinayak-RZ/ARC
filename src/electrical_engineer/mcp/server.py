@@ -10,6 +10,8 @@ from typing import Any
 from electrical_engineer.capabilities import CapabilityError, bind
 from electrical_engineer.catalog import list_workflow_ids
 from electrical_engineer.compose.graph import ComposeError, compose
+from electrical_engineer.control_studio.mcp_tools import TOOL_DEFS as CONTROL_STUDIO_TOOLS
+from electrical_engineer.control_studio.mcp_tools import handle_tool as control_studio_handle
 from electrical_engineer.rag.retrieve import retrieve
 from electrical_engineer.runner.fsm import parse_recipe
 from electrical_engineer.runner.runs import create_run_dir, new_run_id, project_root
@@ -152,7 +154,7 @@ TOOLS = [
             "required": ["id"],
         },
     },
-]
+] + CONTROL_STUDIO_TOOLS
 
 
 def fail_closed(run_id: str | None = None) -> dict[str, Any]:
@@ -411,6 +413,8 @@ def handle(method: str, params: dict[str, Any] | None) -> Any:
                 return _ok({"error": "not_found", "id": rid, "waits": False}, error=True)
             rec["waits"] = False
             return _ok(rec)
+        if name.startswith("control_studio_"):
+            return _ok(control_studio_handle(name, args))
         return _ok({"error": f"unknown tool {name}", "waits": False}, error=True)
     if method == "notifications/initialized":
         return None

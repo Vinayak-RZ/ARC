@@ -1,0 +1,34 @@
+/* Cobalt UI tokens scoped to Control Studio — swap-friendly when shell tokens land. */
+.cs-app {
+  --cs-canvas: #fafaf9;
+  --cs-surface: #ffffff;
+  --cs-surface-subtle: #f5f5f4;
+  --cs-surface-sunken: #efefed;
+  --cs-border: #e4e4e2;
+  --cs-border-strong: #d4d4d1;
+  --cs-text: #202020;
+  --cs-text-secondary: #5f5f5c;
+  --cs-text-muted: #8a8a86;
+  --cs-text-inverse: #ffffff;
+  --cs-accent: #2f6feb;
+  --cs-accent-hover: #2459c9;
+  --cs-accent-50: #eef3fe;
+  --cs-accent-700: #1d47a3;
+  --cs-copper: #e07a3f;
+  --cs-success: #2f9e6a;
+  --cs-warning: #e0a526;
+  --cs-critical: #d0312d;
+  --cs-radius-sm: 4px;
+  --cs-radius-md: 6px;
+  --cs-space-1: 4px;
+  --cs-space-2: 8px;
+  --cs-space-3: 12px;
+  --cs-space-4: 16px;
+  --cs-space-5: 24px;
+  --cs-space-6: 32px;
+  --cs-font: "Geist", "Inter", system-ui, sans-serif;
+  --cs-type-title: 20px;
+  --cs-type-body: 14px;
+  --cs-type-label: 11px;
+  --cs-type-mono: ui-monospace, "SF Mono", Menlo, monospace;
+}
