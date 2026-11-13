@@ -70,7 +70,7 @@ def rlc_natural(r: float, l: float, c: float, vc0: float, i0: float, t: float) -
     }
 
 
-def phasor_pfc(v_line: float, z_load: complex | float) -> dict[str, float]:
+def phasor_pfc(v_line: float, z_load: complex) -> dict[str, float]:
     if v_line <= 0:
         raise ValueError("V_line must be positive")
     z = complex(z_load) if not isinstance(z_load, complex) else z_load

@@ -84,7 +84,10 @@ def test_ablation_t11_margin_crossover_names() -> None:
 
 
 def test_ablation_t12_pu_base_not_transformer_only() -> None:
-    from electrical_engineer.engines.pu_base import aggregate_fault_impedance, impedance_pu_on_new_base
+    from electrical_engineer.engines.pu_base import (
+        aggregate_fault_impedance,
+        impedance_pu_on_new_base,
+    )
 
     x_gen_50 = 0.2j
     x_xf_100 = 0.1j
