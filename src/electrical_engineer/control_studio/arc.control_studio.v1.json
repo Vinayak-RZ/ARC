@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arc.control_studio.v1",
+  "title": "Arc Control Studio diagram",
+  "type": "object",
+  "required": ["schema", "blocks", "wires"],
+  "properties": {
+    "schema": { "const": "arc.control_studio.v1" },
+    "id": { "type": "string" },
+    "title": { "type": "string" },
+    "blocks": {
+      "type": "array",
+      "maxItems": 64,
+      "items": { "$ref": "#/$defs/block" }
+    },
+    "wires": {
+      "type": "array",
+      "maxItems": 96,
+      "items": { "$ref": "#/$defs/wire" }
+    },
+    "notes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/note" }
+    },
+    "meta": { "type": "object" }
+  },
+  "$defs": {
+    "blockType": {
+      "enum": [
+        "step",
+        "ramp",
+        "sine",
+        "gain",
+        "sum",
+        "transfer_function",
+        "state_space",
+        "pid",
+        "integrator",
+        "derivative",
+        "saturation",
+        "delay",
+        "zoh",
+        "discrete_tf",
+        "scope",
+        "plant_dc_motor",
+        "plant_first_order",
+        "plant_agc_area",
+        "library"
+      ]
+    },
+    "block": {
+      "type": "object",
+      "required": ["id", "type"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-zA-Z][a-zA-Z0-9_-]*$" },
+        "type": { "$ref": "#/$defs/blockType" },
+        "label": { "type": "string" },
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "params": { "type": "object" },
+        "ports": { "type": "object" }
+      },
+      "additionalProperties": true
+    },
+    "wire": {
+      "type": "object",
+      "required": ["id", "from", "to"],
+      "properties": {
+        "id": { "type": "string" },
+        "from": { "type": "string", "pattern": "^[^:]+:[a-zA-Z0-9_]+$" },
+        "to": { "type": "string", "pattern": "^[^:]+:[a-zA-Z0-9_]+$" }
+      }
+    },
+    "note": {
+      "type": "object",
+      "required": ["id", "block_id", "text"],
+      "properties": {
+        "id": { "type": "string" },
+        "block_id": { "type": "string" },
+        "text": { "type": "string" },
+        "author": { "enum": ["human", "agent", "system"] }
+      }
+    }
+  }
+}

@@ -13,6 +13,7 @@ dist/
 .electrical-engineer/corpus/
 .electrical-engineer/rag/
 .electrical-engineer/rag_storage/
+.electrical-engineer/control_studio/
 
 # Kernel-harden raw run dirs (traces are bulky); CORPUS_INDEX.jsonl is committed
 artifacts/kernel-harden/raw/
