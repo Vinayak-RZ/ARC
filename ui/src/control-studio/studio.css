@@ -38,14 +38,6 @@
     "palette results inspector";
 }
 
-.cs-app.control-studio.studio.is-empty .studio-results-stage {
-  min-height: 96px;
-}
-
-.cs-app.control-studio.studio.is-empty .studio-margins + .studio-results-chart-col {
-  display: none;
-}
-
 .cs-app.control-studio.studio:not(.has-selection) .studio-inspector {
   display: none;
 }
@@ -103,6 +95,10 @@
 
 .studio-results {
   resize: none;
+  min-height: 0;
+  height: 100%;
+  max-height: var(--studio-results-h);
+  overflow: hidden;
 }
 
 .studio-results-layout {
@@ -1260,10 +1256,18 @@
 }
 
 .studio-results.is-empty .studio-results-stage {
-  flex: 0 0 auto;
-  min-height: 0;
-  background: transparent;
-  border: 0;
+  min-height: 160px;
+  background: var(--cs-surface);
+  border: 1px solid var(--cs-border);
+  border-radius: var(--cs-radius-md);
+}
+
+.studio-results-placeholder {
+  margin: 0;
+  padding: 48px 16px;
+  text-align: center;
+  font-size: var(--cs-type-body);
+  color: var(--cs-text-muted);
 }
 
 .studio-oplog {

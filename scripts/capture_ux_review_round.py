@@ -180,24 +180,6 @@ def _clear_runs() -> None:
     RUNS.mkdir(parents=True, exist_ok=True)
 
 
-def _wait_studio_edges(page, minimum: int = 5, timeout_ms: int = 180000) -> None:
-    """Wait until React Flow draws every signal wire (fresh pages can need Fit)."""
-    expr = f"() => document.querySelectorAll('.studio-canvas .react-flow__edge-path').length >= {minimum}"
-    fit = page.get_by_role("button", name="Fit")
-    remaining = timeout_ms
-    while remaining > 0:
-        slice_ms = min(5000, remaining)
-        try:
-            page.wait_for_function(expr, timeout=slice_ms)
-            return
-        except Exception:
-            if fit.count():
-                fit.click()
-            page.wait_for_timeout(500)
-            remaining -= slice_ms
-    page.wait_for_function(expr, timeout=30000)
-
-
 def _set_theme(page, mode: str) -> None:
     page.evaluate(
         """(mode) => {
@@ -339,9 +321,8 @@ def main() -> int:
             with urllib.request.urlopen(req, timeout=60) as resp:
                 pid_sess = json.loads(resp.read().decode())["session_id"]
             go(f"?view=studio&session={pid_sess}")
-            page.wait_for_selector(".studio-canvas .react-flow__node", timeout=60000)
-            _wait_studio_edges(page)
-            page.wait_for_timeout(800)
+            page.locator(".studio-canvas .react-flow__edge-path").nth(4).wait_for(timeout=60000)
+            page.wait_for_timeout(400)
             snap("studio-layout-before-simulate.png")
 
             sim = page.locator(".cs-simulate-btn")
@@ -351,8 +332,7 @@ def main() -> int:
                     ".studio-results-stage .studio-step-svg, .studio-results-stage img",
                     timeout=120000,
                 )
-                page.wait_for_timeout(3500)
-                _wait_studio_edges(page)
+                page.locator(".studio-canvas .react-flow__edge-path").nth(4).wait_for(timeout=60000)
             snap("studio-layout-after-simulate.png")
 
             page.locator(".studio-canvas .react-flow").wait_for(state="visible", timeout=15000)
@@ -422,16 +402,15 @@ def main() -> int:
                     wait_until="domcontentloaded",
                 )
                 wide_studio.wait_for_selector(".studio-canvas", timeout=15000)
-                _wait_studio_edges(wide_studio)
-                wide_studio.wait_for_timeout(1200)
+                wide_studio.locator(".studio-canvas .react-flow__edge-path").nth(4).wait_for(timeout=60000)
+                wide_studio.wait_for_timeout(400)
                 snap("studio-layout-before-simulate-1440.png", wide_studio)
                 wide_studio.locator(".cs-simulate-btn").click()
                 wide_studio.wait_for_selector(
                     ".studio-results-stage .studio-step-svg, .studio-results-stage img",
                     timeout=120000,
                 )
-                wide_studio.wait_for_timeout(3500)
-                _wait_studio_edges(wide_studio)
+                wide_studio.locator(".studio-canvas .react-flow__edge-path").nth(4).wait_for(timeout=60000)
                 snap("studio-layout-after-simulate-1440.png", wide_studio)
                 wide_studio.close()
 

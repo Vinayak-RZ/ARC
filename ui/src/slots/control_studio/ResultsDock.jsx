@@ -105,7 +105,9 @@ export function ResultsDock({ results, stepData, margins, stale, sessionId, onRe
         <MarginsStrip margins={margins} stale={stale} />
         <div className="studio-results-chart-col">
           <div className="studio-results-stage">
-            {!results ? null : tab === "step" && stepData ? (
+            {!results ? (
+              <p className="studio-results-placeholder cs-margins-hint">Run Simulate to see the step response and margins.</p>
+            ) : tab === "step" && stepData ? (
               <StepChart
                 data={stepData}
                 margins={margins}

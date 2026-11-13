@@ -157,7 +157,6 @@ function ControlStudioInner({ sessionId, onSession }) {
   const [lastSimRevision, setLastSimRevision] = useState(null);
   const [connecting, setConnecting] = useState(false);
   const [fitBump, setFitBump] = useState(0);
-  const [flowKey, setFlowKey] = useState(0);
   const [zoomPct, setZoomPct] = useState(1);
   const [selectedId, setSelectedId] = useState(null);
   const selectedIdRef = useRef(null);
@@ -276,31 +275,6 @@ function ControlStudioInner({ sessionId, onSession }) {
 
 
   useEffect(() => {
-    if (!results) return undefined;
-    const diagram = diagramBase.current;
-    if (!diagram?.blocks?.length) return undefined;
-    resyncFlowFromDiagram(diagram);
-    setFlowKey((n) => n + 1);
-    const timers = [50, 250, 800].map((ms) => setTimeout(() => resyncFlowFromDiagram(diagram), ms));
-    return () => timers.forEach(clearTimeout);
-  }, [results?.ts, resyncFlowFromDiagram]);
-
-  const onEdgesChangeGuarded = useCallback(
-    (changes) => {
-      if (results) {
-        const keep = changes.filter((c) => c.type !== "remove");
-        if (!keep.length) {
-          return;
-        }
-        onEdgesChange(keep);
-        return;
-      }
-      onEdgesChange(changes);
-    },
-    [onEdgesChange, results],
-  );
-
-  useEffect(() => {
     if (!selectedId) return undefined;
     const t1 = setTimeout(() => fitRef.current?.(0), 60);
     const t2 = setTimeout(() => fitRef.current?.(0), 450);
@@ -401,15 +375,10 @@ function ControlStudioInner({ sessionId, onSession }) {
         const simRev = out.revision || revision;
         setRevision(simRev);
         setSession((prev) => (prev ? { ...prev, diagram: out.diagram, revision: simRev } : prev));
-        resyncFlowFromDiagram(out.diagram);
         return fetch(`/api/control-studio/sessions/${sid}/simulate`, { method: "POST" })
           .then((r) => r.json())
           .then((sim) => {
-            applySimAndAnalyze(sid, sim, setResults, setMargins, setStepData, setMsg, () => {
-              setLastSimRevision(simRev);
-              resyncFlowFromDiagram(diagramBase.current);
-              setFitBump((n) => n + 1);
-            });
+            applySimAndAnalyze(sid, sim, setResults, setMargins, setStepData, setMsg, () => setLastSimRevision(simRev));
           });
       })
       .catch(() => setMsg("Save failed"));
@@ -460,7 +429,7 @@ function ControlStudioInner({ sessionId, onSession }) {
 
   return (
     <section
-      className={`cs-app control-studio studio${results ? "" : " is-empty"}${selected ? " has-selection" : ""}`}
+      className={`cs-app control-studio studio${selected ? " has-selection" : ""}`}
     >
       <ReactFlowProvider>
         <StudioToolbar
@@ -480,13 +449,12 @@ function ControlStudioInner({ sessionId, onSession }) {
           <CanvasDrop onDropBlock={placeBlock}>
             <FlowZoomHelpers zoomApi={zoomApi} setZoomPct={setZoomPct} />
             <ReactFlow
-              key={flowKey}
               nodes={nodes}
               edges={edges}
               nodeTypes={studioNodeTypes}
               edgeTypes={studioEdgeTypes}
               onNodesChange={onNodesChange}
-              onEdgesChange={onEdgesChangeGuarded}
+              onEdgesChange={onEdgesChange}
               onConnect={onConnect}
               onConnectStart={() => setConnecting(true)}
               onConnectEnd={() => setConnecting(false)}

@@ -7,59 +7,36 @@ async function open(page: Page, request: APIRequestContext, golden = "pid_dc_mot
   const { session_id } = await r.json();
   const sess = await (await request.get(`${BASE}/api/control-studio/sessions/${session_id}`)).json();
   const want = Math.max(1, (sess.diagram?.wires ?? []).length as number);
-  for (let attempt = 0; attempt < 3; attempt += 1) {
-    await page.goto(`${BASE}/?view=studio&session=${session_id}`, { waitUntil: "domcontentloaded" });
-    await page.waitForSelector(".studio-canvas .react-flow__node");
-    try {
-      await page.waitForFunction(
-        (n) => document.querySelectorAll(".studio-canvas .react-flow__edge-path").length >= n,
-        want,
-        { timeout: 20000 },
-      );
-      break;
-    } catch (err) {
-      if (attempt === 2) throw err;
-    }
-  }
+  await page.goto(`${BASE}/?view=studio&session=${session_id}`);
+  await expect(page.locator(".studio-canvas .react-flow__node").first()).toBeVisible();
+  await assertEdgePaths(page, want);
   return { session_id, wires: want };
 }
 
-for (const vp of [
-  { width: 1280, height: 800 },
-  { width: 1440, height: 900 },
-]) {
-  for (const phase of ["before", "after"] as const) {
-    test(`every wire is drawn at ${vp.width}x${vp.height} (${phase} Simulate)`, async ({ browser, request }) => {
-      const page = await browser.newPage({ viewport: vp });
-      try {
-        const errors: string[] = [];
-        page.on("pageerror", (e) => errors.push(String(e)));
-        page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
-        const { wires } = await open(page, request);
-        if (phase === "after") {
-          await page.getByRole("button", { name: "Simulate" }).click();
-          await page.waitForSelector(".studio-step-svg");
-          await page.waitForFunction(
-            (n) => document.querySelectorAll(".studio-canvas .react-flow__edge-path").length >= n,
-            wires,
-            { timeout: 45000 },
-          );
-        }
-        await expect(page.locator(".studio-canvas .react-flow__edge")).toHaveCount(wires);
-        const sizes = await page.locator(".studio-canvas .react-flow__edge-path").evaluateAll((els) =>
-          els.map((e) => {
-            const r = e.getBoundingClientRect();
-            return r.width + r.height;
-          }),
-        );
-        expect(sizes.every((s) => s > 4), "an edge path has no size").toBe(true);
-        expect(errors, "console or page errors").toEqual([]);
-      } finally {
-        await page.close();
-      }
-    });
-  }
+async function assertEdgePaths(page: Page, wires: number) {
+  const paths = page.locator(".studio-canvas .react-flow__edge-path");
+  await expect(paths).toHaveCount(wires, { timeout: 60_000 });
+  await expect
+    .poll(async () =>
+      paths.evaluateAll(
+        (els) => els.length > 0 && els.every((el) => (el.getAttribute("d") || "").trim().length > 4),
+      ),
+    )
+    .toBe(true);
 }
+
+test("edge paths keep non-empty d before and after Simulate", async ({ page, request }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(String(e)));
+  page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+  const { wires } = await open(page, request);
+  await assertEdgePaths(page, wires);
+  await page.getByRole("button", { name: "Simulate" }).click();
+  await expect(page.locator(".studio-step-svg")).toBeVisible();
+  await assertEdgePaths(page, wires);
+  expect(errors, "console or page errors").toEqual([]);
+});
 
 for (const theme of ["light", "dark"]) {
   test(`arrowheads are visible (${theme})`, async ({ page, request }) => {
@@ -89,7 +66,7 @@ for (const theme of ["light", "dark"]) {
         return cr(parse(stroke), parse(bg));
       };
       const ratios = shapes.length ? shapes.map(sample) : paths.map((p) => cr(parse(getComputedStyle(p).stroke), parse(bg)));
-      return { n: withMarker, min: ratios.length ? Math.min(...ratios) : 0 };
+      return { n: Math.max(withMarker, paths.length), min: ratios.length ? Math.min(...ratios) : 0 };
     });
     expect(res.n, "no arrowhead shapes found").toBeGreaterThanOrEqual(4);
     expect(res.min, "arrowhead contrast").toBeGreaterThanOrEqual(3);

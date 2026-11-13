@@ -53,7 +53,7 @@ export function FitViewOnChange({ revision, nodeCount, agentBump = 0, fitRef }) 
     let t;
     const ro = new ResizeObserver(() => {
       clearTimeout(t);
-      t = setTimeout(() => fit(0), 450);
+      t = setTimeout(() => fit(0), 200);
     });
     ro.observe(pane);
     return () => {
