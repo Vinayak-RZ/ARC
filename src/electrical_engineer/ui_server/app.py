@@ -119,8 +119,42 @@ def _dedupe_run_items(items: list[dict]) -> list[dict]:
     return sorted(best.values(), key=lambda x: -float(x.get("modified_at") or 0))
 
 
+def _relative_time_label(folder: Path, evid: dict) -> str:
+    import time
+
+    raw = evid.get("updated_at_ms")
+    try:
+        ts = float(raw) / 1000.0 if raw is not None else folder.stat().st_mtime
+    except (OSError, TypeError, ValueError):
+        return ""
+    delta = max(0, int(time.time() - ts))
+    if delta < 60:
+        return "just now"
+    if delta < 3600:
+        return f"{delta // 60}m ago"
+    if delta < 86400:
+        return f"{delta // 3600}h ago"
+    return f"{delta // 86400}d ago"
+
+
+def _run_list_hidden(folder: Path) -> bool:
+    name = folder.name
+    if name.startswith(("_", "unmatched")):
+        return True
+    evid = _read_json(folder / "evidentiary.json") or _read_json(folder / "summary.json")
+    title = str(evid.get("title") or "").strip()
+    recipe = str(evid.get("recipe_id") or "")
+    if name.startswith("cs-") and (not title or title == name):
+        return True
+    low = (title or name).lower()
+    if low.startswith("unmatched") or "scratch" in low or "scratch" in name.lower():
+        return True
+    return recipe == "unmatched-cosolver"
+
+
 def _run_list_item(folder: Path) -> dict:
     evid = _read_json(folder / "evidentiary.json") or _read_json(folder / "summary.json")
+    name = folder.name
     try:
         modified_at = folder.stat().st_mtime
     except OSError:
@@ -128,13 +162,15 @@ def _run_list_item(folder: Path) -> dict:
     recipe_id = str(evid.get("recipe_id") or "")
     display_title = _human_run_title(folder, evid)
     return {
-        "id": folder.name,
+        "id": name,
         "title": display_title,
         "display_title": display_title,
-        "subject": _subject_tag(recipe_id, folder.name),
+        "subject": _subject_tag(recipe_id, name),
+        "relative_time": _relative_time_label(folder, evid),
         "unchecked": bool(evid.get("unchecked")),
         "recipe_id": recipe_id,
         "modified_at": modified_at,
+        "is_studio_session": name.startswith("cs-"),
     }
 
 
@@ -265,7 +301,11 @@ def create_app(root: Path | None = None) -> FastAPI:
     def list_runs() -> dict:
         items = []
         if runs.is_dir():
-            items = [_run_list_item(p) for p in sorted(runs.iterdir()) if p.is_dir()]
+            items = [
+                _run_list_item(p)
+                for p in sorted(runs.iterdir())
+                if p.is_dir() and not _run_list_hidden(p)
+            ]
         items = _dedupe_run_items(items)
         return {"runs": items}
 
@@ -360,6 +400,27 @@ def create_app(root: Path | None = None) -> FastAPI:
             modified_at = d.stat().st_mtime
         except OSError:
             modified_at = 0.0
+        web_sources = _read_json(d / "evidence" / "web_sources.json")
+        similar_probs = _read_json(d / "evidence" / "similar_problems.json")
+        answer_cited = (
+            (d / "evidence" / "answer_cited.md").read_text(encoding="utf-8")
+            if (d / "evidence" / "answer_cited.md").is_file()
+            else ""
+        )
+        wv = evid_obj.get("web_verification") or {}
+        source_chips = []
+        for c in web_sources.get("citations") or evid_obj.get("citations") or []:
+            if not isinstance(c, dict):
+                continue
+            source_chips.append(
+                {
+                    "id": c.get("citation_id"),
+                    "domain": c.get("domain"),
+                    "title": c.get("title") or c.get("url"),
+                    "url": c.get("url"),
+                }
+            )
+        disagreement = wv.get("disagreement_banner") or evid_obj.get("disagreement_banner")
         return {
             "id": run_id,
             "title": _human_run_title(d, evid_obj),
@@ -367,7 +428,13 @@ def create_app(root: Path | None = None) -> FastAPI:
             "modified_at": modified_at,
             "summary": evid_text,
             "evidentiary": evid_text,
-            "argument": argument,
+            "argument": argument or answer_cited,
+            "answer_markdown": evid_obj.get("answer_markdown") or answer_cited or None,
+            "web_verification": wv or None,
+            "web_sources": web_sources or None,
+            "similar_problems": similar_probs or None,
+            "source_chips": source_chips,
+            "disagreement_banner": disagreement,
             "plan": plan,
             "observation": observation,
             "observation_excerpt": observation_excerpt,

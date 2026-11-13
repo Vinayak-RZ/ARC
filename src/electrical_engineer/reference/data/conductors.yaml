@@ -1,0 +1,126 @@
+- id: ACSR_ZEBRA
+  domain: overhead_conductors
+  title: ACSR Zebra per IS 398 Part II 1996
+  aliases: [Zebra, ACSR Zebra, IS 398 Zebra]
+  values:
+    diameter_m: 0.02862
+    gmr_m: 0.01144
+    r_dc_ohm_per_km_20c: 0.06886
+    r_ac_ohm_per_km_75c: 0.0856
+    r_75c_resistance_basis: ac_tabulated_skin_effect
+    default_spacing_m: 0.6
+    stranding: "54 Al / 3.18 mm + 7 St / 3.18 mm"
+  value_conditions:
+    diameter_m: overall conductor diameter at 20 C per IS 398 Table
+    gmr_m: geometric mean radius (GMR) per IS 398 Part II Table, not conductor radius
+    r_dc_ohm_per_km_20c: DC resistance maximum at 20 C
+    r_ac_ohm_per_km_75c: AC resistance at 75 C from IS table (includes skin effect vs DC temp correction)
+    r_75c_resistance_basis: ac_tabulated_skin_effect documents why R75 exceeds R20*(1+alpha*dT)
+    default_spacing_m: assumed bundled phase spacing for line-parameter engine only
+  confidence: verified_dual
+  source:
+    title: IS 398 (Part II) 1996
+    edition: "1996"
+    clause: Code word Zebra row
+  source_secondary:
+    title: Janaki Cable IS 398 Part II tabulation
+    edition: "1996"
+    clause: Zebra row
+    url: https://janakicable.com/media/hlmpxhae/basic-data-for-aluminium-conductors-steel-reinforced-acsr-as-per-is-398-part-ii-1996.pdf
+  url: https://luminoindustries.com/wp-content/uploads/2024/04/IS-398-PART-II-1996.pdf
+  license: Factual tabular data from Indian Standard; no prose copied
+  verification: GMR 11.44 mm and R75 0.0856 ohm/km match IS 398 Zebra column
+
+- id: ACSR_DOG
+  domain: overhead_conductors
+  title: ACSR Dog per IS 398 Part II 1996
+  aliases: [Dog, dog conductor]
+  values:
+    diameter_m: 0.01415
+    gmr_m: 0.00556
+    r_dc_ohm_per_km_20c: 0.2792
+    r_ac_ohm_per_km_75c: 0.3412
+    r_75c_resistance_basis: dc_temperature_corrected
+    default_spacing_m: 0.45
+    stranding: "6 Al / 4.72 mm + 1 St / 4.72 mm"
+  value_conditions:
+    diameter_m: overall diameter IS 398 Dog row (14.15 mm)
+    gmr_m: GMR from IS 398 Part II table (mm converted to m)
+    r_dc_ohm_per_km_20c: DC resistance maximum at 20 C (ohms/km); not AC
+    r_ac_ohm_per_km_75c: DC resistance corrected to 75 C via alpha=0.00403/C — not an AC/skin tabulation
+    r_75c_resistance_basis: dc_temperature_corrected means R75 = R20*(1+alpha*(75-20))
+  value_sources:
+    r_dc_ohm_per_km_20c:
+      title: IS 398 (Part II) 1996
+      edition: "1996"
+      clause: Dog row Resistance AT 20 deg C
+    r_ac_ohm_per_km_75c:
+      title: IS 398 practice + TEMP_COEFF_AL
+      edition: "1996"
+      clause: R20*(1+0.00403*(75-20)); Janaki/Lumino tabulations give R20 only
+  confidence: verified_dual
+  source:
+    title: IS 398 (Part II) 1996
+    edition: "1996"
+    clause: Dog row
+  source_secondary:
+    title: Janaki Cable IS 398 Part II tabulation
+    edition: "1996"
+    clause: Dog row R20 and diameter
+    url: https://janakicable.com/media/hlmpxhae/basic-data-for-aluminium-conductors-steel-reinforced-acsr-as-per-is-398-part-ii-1996.pdf
+  url: https://luminoindustries.com/wp-content/uploads/2024/04/IS-398-PART-II-1996.pdf
+  license: Factual tabular data
+  verification: R20 0.2792 ohm/km dual-source; R75 0.3412 ohm/km DC-corrected (not 0.347 miscopy)
+
+
+- id: ACSR_DRAKE
+  domain: overhead_conductors
+  title: ACSR Drake 26/7 (North America)
+  aliases: [Drake, Drake conductor]
+  values:
+    diameter_m: 0.02814
+    gmr_m: 0.01155
+    r_dc_ohm_per_km_20c: 0.069
+    default_spacing_m: 0.5
+    stranding: "26 Al + 7 St"
+  value_conditions:
+    gmr_m: GMR 0.0379 ft from manufacturer table converted to metres
+    r_dc_ohm_per_km_20c: AC/DC resistance at 25 C converted to 20 C label per handbook mile conversion
+    diameter_m: outside diameter inches to metres
+  confidence: verified_dual
+  source:
+    title: Southwire ACSR transmission conductor data
+    edition: "public"
+    clause: Drake 26/7 row
+  source_secondary:
+    title: IEEE Std 738 worked line parameter tables
+    edition: "2012"
+    clause: sample ACSR Drake row
+    url: https://standards.ieee.org/standard/738-2012.html
+  url: https://www.southwire.com/transmission-acsr
+  license: Manufacturer factual data
+  verification: GMR 0.0379 ft -> 0.01155 m; R order matches Drake mile-to-km tables
+
+- id: TEMP_COEFF_AL
+  domain: overhead_conductors
+  title: Aluminium resistance temperature coefficient
+  aliases: [aluminum temp coeff, alpha Al]
+  values:
+    alpha_per_c: 0.00403
+    base_temp_c: 20
+  value_conditions:
+    alpha_per_c: linear coefficient for aluminium conductor alloys per IS 398 practice
+    base_temp_c: reference temperature for R20
+  confidence: verified_dual
+  source:
+    title: IS 398 (Part II) 1996
+    edition: "1996"
+    clause: resistance temperature note
+  source_secondary:
+    title: CRC Handbook of Chemistry and Physics
+    edition: "103rd"
+    clause: aluminium resistivity vs temperature
+    url: https://hbcp.chemnetbase.com/
+  url: https://luminoindustries.com/wp-content/uploads/2024/04/IS-398-PART-II-1996.pdf
+  license: Factual physical constant
+  verification: alpha 0.00403/deg C used in IS 398 R75 columns

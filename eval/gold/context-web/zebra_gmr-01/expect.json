@@ -1,0 +1,8 @@
+{
+  "recipe_id": "context-web-spotcheck",
+  "stale_context_flagged": true,
+  "recomputed": {
+    "L_mH_per_km": 1.2525
+  },
+  "tol": 0.01
+}

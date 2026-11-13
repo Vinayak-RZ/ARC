@@ -4,12 +4,20 @@ Load for UG converters and drives-adjacent courses: rectifiers, buck/boost/buck-
 inverters, PWM, averaged models, duty-cycle algebra. Not HIL benches
 (`CD-PE-HIL`).
 
+## Web-verify
+
+MOSFET/diode datasheet values belong in `context_claims` for **`web-verify`**
+(Rds(on), Vf, Qg). Cite sources as `[n]`; similar converter homework pages go under
+**Similar solved problems**.
+
 ## Any question in this pack
 
 1. Name topology, CCM/DCM, ideal vs ESR, the unknown (V, I, duty, ripple).
-2. Averaged algebra via `converter-model` / `algebraic-check` first.
-3. `lumped-circuit-sim` only if a switched/averaged netlist artifact exists.
-4. Waveform plots via `render-figure` from computed points or a provider —
+2. **Exam v2** (`study-power-electronics-v2`): `ccm_buck` with `problem.json` (`vin`, `vout`,
+   `l`, `c`, `fs`, `value_key`, `expected`). Table: `docs/AGENT_ROUTING.md`.
+3. Averaged algebra via `converter-model` / `algebraic-check` first.
+4. `lumped-circuit-sim` only if a switched/averaged netlist artifact exists.
+5. Waveform plots via `render-figure` from computed points or a provider —
    never a vision-invented switching PNG. No provider → exact token `unchecked`.
 
 ## Genres

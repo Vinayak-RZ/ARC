@@ -1,0 +1,10 @@
+id: context-web-spotcheck
+nodes:
+  web:
+    activity: web-verify
+  label:
+    activity: label-unchecked
+    needs: [web]
+  summary:
+    activity: write-run-summary
+    needs: [label]

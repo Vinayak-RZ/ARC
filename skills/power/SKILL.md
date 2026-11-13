@@ -13,17 +13,26 @@ faults, protection as coursework (relay settings on paper), not EMS dispatch
 3. `power-network-study` only with a **network artifact** (case file / typed
    bus list). Unmatched text is not a pandapower case.
 4. Named fault study: `simulate-power-fault` with `problem.json` fields
-   `fault_type` (`LG`, `LL`, `LLG`, `3PH`), `z1_pu`, `z2_pu`, `z0_pu`.
-   Sequence-network currents are checked; pandapower load flow runs when installed.
-5. **SMIB transient / equal-area / CCT:** `skills/swing-equation/SKILL.md` +
+   `fault_type` (`LG`, `LL`, `LLG`, `3PH`), `faulted_phases` when not the canonical
+   a-ground / a–b pair, `z1_pu`, `z2_pu`, `z0_pu`. Engine returns `I0/I1/I2` and
+   `I_phase_pu` (magnitude + angle vs prefault `Va`), not a single `sqrt(3)*V` scalar.
+   Per-unit base trap: `symmetrical-fault-study` + `engines/pu_base` rescores every
+   element onto the system MVA/kV before summing `Z1`.
+5. After every solve/study engine step, **`web-verify`** runs: list stale-risk
+   constants in `context_claims`, search the web (host MCP) or offline fixtures,
+   cite with `[n]` in the answer, and file similar worked problems.
+6. Exam-style kernels: `docs/AGENT_ROUTING.md` + recipes `ed-penalty-study`,
+   pack workflows `study-*-v2`, `run-ee-v2-solver` with `solver` + `expected` in
+   `problem.json`.
+7. **SMIB transient / equal-area / CCT:** `skills/swing-equation/SKILL.md` +
    `engines/smib_swing` (goldens `artifacts/eec301-lab-goldens/exp06.json`).
-6. **Two-area AGC (Exp 7):** `skills/agc-two-area/SKILL.md` + `engines/agc_two_area`.
-7. **Economic dispatch λ (Exp 8):** `skills/economic-dispatch-lambda/SKILL.md` +
+8. **Two-area AGC (Exp 7):** `skills/agc-two-area/SKILL.md` + `engines/agc_two_area`.
+9. **Economic dispatch λ (Exp 8):** `skills/economic-dispatch-lambda/SKILL.md` +
    `engines/ed_lambda`.
-8. Study-level protection (no EMS): `study-protection-setting` with CT ratio,
+10. Study-level protection (no EMS): `study-protection-setting` with CT ratio,
    relay pickup (secondary A), fault current; optional `zone_reach_ohm` +
    `v_line_kv` for simple distance zone check.
-9. Missing provider → `unchecked`, never a fluent “converged” voltage.
+11. Missing provider → `unchecked`, never a fluent “converged” voltage.
 
 ## UI construction
 
@@ -41,10 +50,13 @@ Never call `evaluate_matlab_code`. Host talks only to Arc MCP.
 
 ## Retrieve (scaffold)
 
-When: a citation, page, or handbook claim is needed.
-Filters: book_id, chapter_id, domain_tag, folder_tag.
-Index: TBD (empty this graph). Call `retrieve` anyway. Empty is visible. Do not
-dump `knowledge/`.
+**RAG** when: citation, page, or handbook claim. Filters: book_id, chapter_id,
+domain_tag, folder_tag. Index: TBD (empty this graph). Call `retrieve` anyway.
+
+**Reference library** when: IEC/IEEE curve, IEC 60909 c, ACSR name, IEEE 9/14/30,
+IEEE 519 TDD, MCB type, Dyn11, IEEE 80 limit — `arc_reference_search/get` or
+`electrical-engineer reference search/get`; see `skills/reference/SKILL.md`.
+Never guess IDMT constants or conductor R at unstated temperature.
 
 ## Knowledge
 

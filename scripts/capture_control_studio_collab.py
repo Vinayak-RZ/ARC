@@ -15,6 +15,22 @@ OUT.mkdir(parents=True, exist_ok=True)
 from electrical_engineer.control_studio.mcp_tools import handle_tool
 
 
+def assert_bode_png_fresh(path: Path) -> None:
+    """Reject stale matplotlib theme (orange phase, pre-cobalt captures)."""
+    import numpy as np
+    from PIL import Image
+
+    im = np.array(Image.open(path).convert("RGB"))
+    h = im.shape[0]
+    phase = im[h // 2 + 20 :, :]
+    orange = (phase[:, :, 0] > 175) & (phase[:, :, 1] < 130) & (phase[:, :, 2] < 95)
+    if float(orange.mean()) > 0.008:
+        raise SystemExit(f"bode stale (orange phase): {path}")
+    cobalt = (phase[:, :, 2] > 140) & (phase[:, :, 0] < 90) & (phase[:, :, 1] < 120)
+    if float(cobalt.mean()) < 0.004:
+        raise SystemExit(f"bode missing cobalt phase trace: {path}")
+
+
 def main() -> int:
     from playwright.sync_api import sync_playwright
 
@@ -25,6 +41,7 @@ def main() -> int:
         "control_studio_create_diagram", {"title": "PID · DC motor", "golden": "pid_dc_motor"}
     )["session_id"]
     handle_tool("control_studio_simulate", {"session_id": sid})
+    handle_tool("control_studio_analyze", {"session_id": sid})
     url_golden = f"{base}&session={sid}"
 
     build_sid = None
@@ -38,12 +55,85 @@ def main() -> int:
         page.wait_for_function(
             """() => {
             const cells = Array.from(document.querySelectorAll('.cs-margin-grid dd'));
-            return cells.some((el) => (el.textContent || '').includes('dB'));
+            return cells.some((el) => {
+              const t = (el.textContent || '').trim();
+              return t.includes('dB') || t === 'Infinite' || t === 'No crossover';
+            });
         }""",
             timeout=35000,
         )
-        page.wait_for_timeout(400)
+        page.wait_for_timeout(1600)
+        viewport = page.evaluate(
+            """() => {
+            const pane = document.querySelector('.react-flow__pane');
+            if (!pane) return { clip: true, ratio: 0 };
+            const paneRect = pane.getBoundingClientRect();
+            const pad = 8;
+            const nodes = document.querySelectorAll('.react-flow__node .studio-block');
+            if (!nodes.length) return { clip: true, ratio: 0 };
+            let minL = Infinity;
+            let maxR = -Infinity;
+            let minT = Infinity;
+            let maxB = -Infinity;
+            let clipped = false;
+            for (const n of nodes) {
+                const r = n.getBoundingClientRect();
+                minL = Math.min(minL, r.left);
+                maxR = Math.max(maxR, r.right);
+                minT = Math.min(minT, r.top);
+                maxB = Math.max(maxB, r.bottom);
+                if (r.left < paneRect.left + pad || r.right > paneRect.right - pad) clipped = true;
+                if (r.top < paneRect.top + pad || r.bottom > paneRect.bottom - pad) clipped = true;
+            }
+            const ratioW = paneRect.width > 0 ? (maxR - minL) / paneRect.width : 0;
+            const ratioH = paneRect.height > 0 ? (maxB - minT) / paneRect.height : 0;
+            return { clip: clipped, ratio: ratioW, ratioH };
+        }"""
+        )
+        if viewport.get("clip"):
+            print("viewport-clip: node bbox extends past pane", file=sys.stderr)
+            return 2
+        ratio = float(viewport.get("ratio") or 0)
+        ratio_h = float(viewport.get("ratioH") or 0)
+        if ratio < 0.76:
+            print(f"viewport-fill: diagram width ratio {ratio:.3f} < 0.76 (screen pixels)", file=sys.stderr)
+            return 2
+        if max(ratio, ratio_h) < 0.6:
+            print(f"viewport-fill: max(w,h) ratio {max(ratio, ratio_h):.3f} < 0.6", file=sys.stderr)
+            return 2
+        print(f"viewport-fill: width ratio {ratio:.3f}, height ratio {ratio_h:.3f}", file=sys.stderr)
         page.screenshot(path=str(populated), full_page=False)
+        bode_shot = OUT / "control_studio_bode_1280x800.png"
+        handle_tool("control_studio_analyze", {"session_id": sid})
+        bode_path = ROOT / "runs" / sid / "studio_bode.png"
+        assert_bode_png_fresh(bode_path)
+        page.locator(".studio-results-tabs button", has_text="Bode").click()
+        page.wait_for_timeout(400)
+        page.evaluate(
+            """(sid) => {
+            const ts = Date.now();
+            const img = document.querySelector('.studio-results-stage img');
+            if (img) img.src = `/api/control-studio/sessions/${sid}/plot/bode?t=${ts}`;
+        }""",
+            sid,
+        )
+        page.wait_for_function(
+            """() => {
+            const img = document.querySelector('.studio-results-stage img');
+            return img && img.complete && img.naturalHeight > 80;
+        }""",
+            timeout=15000,
+        )
+        page.wait_for_timeout(300)
+        page.locator(".studio-results-stage").scroll_into_view_if_needed()
+        page.evaluate(
+            """() => {
+            const stage = document.querySelector('.studio-results-stage');
+            if (stage) stage.scrollIntoView({ block: 'end', behavior: 'instant' });
+        }"""
+        )
+        page.wait_for_timeout(400)
+        page.screenshot(path=str(bode_shot), full_page=False)
 
         sid2 = handle_tool("control_studio_create_diagram", {"title": "Agent build", "golden": None})["session_id"]
         build_sid = sid2
@@ -63,6 +153,7 @@ def main() -> int:
             lambda: handle_tool("control_studio_connect", {"session_id": sid2, "wire_id": "w3", "from": "g1:out", "to": "p1:in"}),
             lambda: handle_tool("control_studio_connect", {"session_id": sid2, "wire_id": "w4", "from": "p1:out", "to": "y:in"}),
             lambda: handle_tool("control_studio_connect", {"session_id": sid2, "wire_id": "w5", "from": "p1:tap", "to": "sum1:feedback"}),
+            lambda: handle_tool("control_studio_auto_layout", {"session_id": sid2}),
             lambda: handle_tool("control_studio_simulate", {"session_id": sid2}),
         ]
         for i, step in enumerate(steps, start=1):
@@ -153,6 +244,9 @@ def main() -> int:
         "build_session": build_sid,
         "frames": [str(f) for f in frames],
         "populated": str(populated),
+        "bode": str(OUT / "control_studio_bode_1280x800.png"),
+        "viewport_width_ratio": ratio,
+        "viewport_height_ratio": ratio_h,
         "gif": str(gif_path) if gif_path else None,
     }
     (OUT / "control_studio_capture_meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")

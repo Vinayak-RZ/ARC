@@ -77,19 +77,20 @@ def _sequence_fault(
     z2: complex,
     z0: complex,
     zf: complex = 0j,
+    *,
+    faulted_phases: tuple[str, ...] | None = None,
 ) -> complex:
-    """Symmetrical-component bolted fault currents (per-unit on common base)."""
-    ft = fault_type.upper().replace(" ", "")
-    if ft in {"3PH", "LLL", "THREE_PHASE"}:
-        return v_prefault / z1
-    if ft in {"LG", "SLG", "1LG"}:
-        return 3.0 * v_prefault / (z1 + z2 + z0 + 3.0 * zf)
-    if ft in {"LL", "2LL"}:
-        return cmath.sqrt(3) * v_prefault / (z1 + z2)
-    if ft in {"LLG", "2LLG", "DLG"}:
-        den = z1 + z2 * (z0 + 3.0 * zf) / (z2 + z0 + 3.0 * zf)
-        return cmath.sqrt(3) * v_prefault / den
-    raise ValueError(f"unsupported fault type {fault_type}")
+    from electrical_engineer.engines.sequence_fault import legacy_scalar_current
+
+    return legacy_scalar_current(
+        fault_type,
+        v_prefault,
+        z1,
+        z2,
+        z0,
+        zf,
+        faulted_phases=faulted_phases,
+    )
 
 
 def run_power_study(run_dir: Path, problem: dict[str, Any]) -> dict[str, Any]:
@@ -132,15 +133,36 @@ def run_power_study(run_dir: Path, problem: dict[str, Any]) -> dict[str, Any]:
     z2 = _parse_complex(problem.get("z2_pu", 0.1))
     z0 = _parse_complex(problem.get("z0_pu", 0.3))
     zf = _parse_complex(problem.get("zf_pu", 0.0))
+    phases = problem.get("faulted_phases") or problem.get("phases")
+    phase_tuple = tuple(phases) if isinstance(phases, (list, tuple)) else None
     try:
-        i_fault = _sequence_fault(fault_type, v_pre, z1, z2, z0, zf)
+        from electrical_engineer.engines.sequence_fault import analyze_sequence_fault
+
+        seq = analyze_sequence_fault(
+            fault_type=fault_type,
+            faulted_phases=phase_tuple,
+            v_prefault_pu=v_pre,
+            z1_pu=z1,
+            z2_pu=z2,
+            z0_pu=z0,
+            zf_pu=zf,
+        )
+        i_fault = _sequence_fault(fault_type, v_pre, z1, z2, z0, zf, faulted_phases=phase_tuple)
     except ValueError as exc:
         return {"ok": False, "error": str(exc), "unchecked": True, "tool": "sequence"}
 
     fault_row = {
         "fault_type": fault_type,
+        "faulted_phases": seq.get("faulted_phases"),
         "i_fault_pu": float(abs(i_fault)),
         "i_fault_angle_deg": float(math.degrees(cmath.phase(i_fault))),
+        "sequence": {
+            "I0_pu": seq["I0_pu"],
+            "I1_pu": seq["I1_pu"],
+            "I2_pu": seq["I2_pu"],
+            "I_phase_pu": seq["I_phase_pu"],
+            "verified": seq.get("verified"),
+        },
     }
     table.append({"fault": fault_row})
 

@@ -5,12 +5,15 @@ nodes:
   solve:
     activity: solve-explain
     needs: [retrieve]
+  web:
+    activity: web-verify
+    needs: [retrieve, solve]
   check:
     activity: check-numeric
-    needs: [solve]
+    needs: [solve, web]
   label:
     activity: label-unchecked
-    needs: [check]
+    needs: [check, web]
   summary:
     activity: write-run-summary
     needs: [label]

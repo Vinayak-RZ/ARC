@@ -1,0 +1,43 @@
+- id: VECTOR_DYN11
+  domain: transformers
+  title: Dyn11 vector group HV-to-LV phase shift
+  aliases: [Dyn11, delta star 11, Dy11]
+  values:
+    phase_shift_hv_to_lv_deg: -30.0
+  value_conditions:
+    phase_shift_hv_to_lv_deg: clock 11 => -30 deg HV leads; LV lags HV 30 deg
+  confidence: verified_dual
+  source:
+    title: IEC 60076-1
+    edition: "2011"
+    clause: vector group clock number
+  source_secondary:
+    title: IEC 60076-1
+    edition: "2011"
+    clause: phase displacement definition
+    url: https://webstore.iec.ch/en/publication/28
+  url: https://webstore.iec.ch/en/publication/28
+  license: Factual phase relationship
+  verification: Dyn11 trap -30 not +30
+
+- id: VECTOR_YD1
+  domain: transformers
+  title: Yd1 vector group phase shift
+  aliases: [Yd1, star delta 1]
+  values:
+    phase_shift_hv_to_lv_deg: 30.0
+  value_conditions:
+    phase_shift_hv_to_lv_deg: clock 1 => +30 deg
+  confidence: verified_dual
+  source:
+    title: IEC 60076-1
+    edition: "2011"
+    clause: clock 1
+  source_secondary:
+    title: IEC 60076-1
+    edition: "2011"
+    clause: vector groups
+    url: https://webstore.iec.ch/en/publication/28
+  url: https://webstore.iec.ch/en/publication/28
+  license: Factual phase shift
+  verification: +30 deg for Yd1

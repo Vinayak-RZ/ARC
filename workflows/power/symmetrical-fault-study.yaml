@@ -1,0 +1,16 @@
+id: symmetrical-fault-study
+nodes:
+  base:
+    activity: run-symmetrical-fault-base
+  flow:
+    activity: run-load-flow
+    needs: [base]
+  web:
+    activity: web-verify
+    needs: [flow]
+  label:
+    activity: check-numeric
+    needs: [base, web]
+  summary:
+    activity: write-run-summary
+    needs: [label]

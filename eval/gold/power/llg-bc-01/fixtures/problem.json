@@ -1,0 +1,10 @@
+{
+  "sequence": true,
+  "fault_type": "LLG",
+  "faulted_phases": ["b", "c"],
+  "v_prefault_pu": 1.0,
+  "z1_pu": "0.2j",
+  "z2_pu": "0.2j",
+  "z0_pu": "0.2j",
+  "zf_pu": 0
+}

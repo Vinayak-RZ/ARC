@@ -38,6 +38,13 @@ PASS divider-dc-01 recipe=solve-circuit-problem
 1/1 passed
 ```
 
+If `python -m venv` fails (common on Debian/Ubuntu without `python3-venv`), install the `python3-venv` package or use a user install instead:
+
+```text
+pip install --user -e ".[dev]"
+electrical-engineer eval --pack circuits
+```
+
 That eval is the product check. Gold `eval/gold/circuits/divider-dc-01` expects divider `Vout = 5.0` from `Vin=10`, `R1=R2=1k`.
 
 ## Domain kernel

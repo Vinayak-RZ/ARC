@@ -1,0 +1,54 @@
+- id: MOSFET_IRF540N_RDSON
+  domain: semiconductors
+  title: Infineon IRF540N channel on-resistance RDS(on)
+  aliases: [IRF540N, MOSFET rdson]
+  values:
+    rds_on_ohm_max_25c_vgs10: 0.044
+    rds_on_ohm_typ_25c_vgs10: 0.044
+    rds_on_ohm_typ_100c_vgs10: 0.098
+    v_gs_v: 10
+    id_a_test_condition: 17
+    t_j_c_for_typ_hot: 100
+  value_conditions:
+    rds_on_ohm_max_25c_vgs10: max RDS(on) at VGS=10 V, ID=17 A, TJ=25 C
+    rds_on_ohm_typ_25c_vgs10: typ RDS(on) same bias at TJ=25 C
+    rds_on_ohm_typ_100c_vgs10: typ RDS(on) at TJ=100 C, VGS=10 V (hot)
+    v_gs_v: gate drive for on-resistance test
+    id_a_test_condition: test current for RDS(on) specification
+    t_j_c_for_typ_hot: junction temperature for hot typical row
+  confidence: verified_dual
+  source:
+    title: Infineon IRF540N datasheet
+    edition: "public"
+    clause: Electrical characteristics RDS(on)
+  source_secondary:
+    title: International Rectifier IRF540N legacy datasheet mirror
+    edition: "v2"
+    clause: Static drain-source on-resistance table
+    url: https://www.vishay.com/docs/91064/91064.pdf
+  url: https://www.infineon.com/cms/en/product/power/metal-oxide-semiconductor-field-effect-transistor/irf540n/
+  license: Manufacturer open datasheet factual parameters
+  verification: Max 44 mOhm at 25 C supersedes erroneous 77 mOhm entry
+
+- id: DIODE_LOSS_FORMULA_COND
+  domain: semiconductors
+  title: Diode conduction loss P = Vf * I_avg
+  aliases: [diode conduction loss]
+  values:
+    formula: P_cond = Vf * I_avg
+    units: W
+  value_conditions:
+    formula: piecewise linear on-state model; Vf from device record or problem data
+  confidence: single_source
+  source:
+    title: Mohan Undeland Robbins Power Electronics
+    edition: "3rd"
+    clause: conduction loss section
+  source_secondary:
+    title: Mohan Undeland Robbins Power Electronics
+    edition: "3rd"
+    clause: conduction loss section
+    url: https://open.umn.edu/opentextbooks/textbooks/
+  url: https://open.umn.edu/opentextbooks/textbooks/
+  license: Factual formula reference only
+  verification: Algebraic identity P=Vf*I; no numeric device value asserted

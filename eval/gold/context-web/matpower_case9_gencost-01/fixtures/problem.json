@@ -1,0 +1,17 @@
+{
+  "web_verify_fixture": "matpower_case9_gencost",
+  "context_claims": [
+    {
+      "claim_id": "case9_gencost",
+      "name": "case9 gen1 cost c2",
+      "library_value": 0.085,
+      "unit": "",
+      "tolerance": 0.001
+    }
+  ],
+  "recompute": {
+    "kind": "case9_ed_p11",
+    "lambda_mwh": 33.06,
+    "use_swapped_costs": false
+  }
+}

@@ -55,6 +55,9 @@ PROVIDERS = frozenset(
         "run-ed-lambda",
         "run-primary-steady",
         "run-rlc-analytic",
+        "run-ee-v2-solver",
+        "run-symmetrical-fault-base",
+        "web-verify",
     }
 )
 

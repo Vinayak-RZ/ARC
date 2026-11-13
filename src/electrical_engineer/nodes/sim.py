@@ -151,6 +151,11 @@ def run_spice(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
                         break
             else:
                 last = _missing("ngspice/PySpice", spec, inputs)
+                last["hint"] = (
+                    "ngspice/PySpice not installed; for RLC use run-rlc-analytic "
+                    "or problem keys r_ohm, l_h, c_f, v_step"
+                )
+                last["analytic_recipe"] = "run-rlc-analytic"
             continue
         if run_dir is None:
             last = _missing("ngspice/PySpice", spec, inputs)
@@ -376,6 +381,82 @@ def run_ed_lambda(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any
     }
 
 
+@register("run-ee-v2-solver")
+def run_ee_v2_solver(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
+    from electrical_engineer.engines.ee_v2_runner import SOLVER_IDS, solve_ee_v2, solver_id
+
+    run_dir_s = spec.get("run_dir")
+    problem = _problem(spec)
+    sid = solver_id(problem)
+    if not sid or sid not in SOLVER_IDS:
+        return {
+            "ok": True,
+            "skipped": True,
+            "unchecked": True,
+            "tool": "ee_v2",
+            "reason": "no solver in problem.json",
+        }
+    try:
+        out = solve_ee_v2(problem)
+    except (ValueError, TypeError, KeyError, ZeroDivisionError) as exc:
+        return {"ok": False, "error": str(exc), "unchecked": True, "tool": "ee_v2"}
+    if run_dir_s:
+        payload = {**out, "result": out["result"]}
+        _write_run_json(Path(run_dir_s), "ee_v2_result.json", _json_safe(payload))
+    return {
+        "ok": True,
+        "unchecked": False,
+        "tool": "ee_v2",
+        "solver": out["solver"],
+        "value": out["value"],
+        "unit": out.get("unit"),
+        "value_key": out.get("value_key"),
+        "result": out["result"],
+        "capability": "algebraic-check",
+    }
+
+
+def _json_safe(data: Any) -> Any:
+    if isinstance(data, dict):
+        return {k: _json_safe(v) for k, v in data.items()}
+    if isinstance(data, list):
+        return [_json_safe(v) for v in data]
+    if isinstance(data, complex):
+        return {"re": float(data.real), "im": float(data.imag)}
+    if isinstance(data, (int, float, str, bool)) or data is None:
+        return data
+    return str(data)
+
+
+@register("run-symmetrical-fault-base")
+def run_symmetrical_fault_base(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
+    from electrical_engineer.engines.pu_base import aggregate_fault_impedance
+
+    run_dir_s = spec.get("run_dir")
+    if not run_dir_s:
+        return _missing("symmetrical-fault-base", spec, inputs)
+    problem = _problem(spec)
+    try:
+        agg = aggregate_fault_impedance(
+            problem.get("elements", []),
+            s_system_mva=float(problem.get("s_system_mva", 100)),
+            v_system_kv=float(problem.get("v_system_kv", 13.8)),
+        )
+    except (ValueError, TypeError, KeyError) as exc:
+        return {"ok": False, "error": str(exc), "unchecked": True, "tool": "pu_base"}
+    run_dir = Path(run_dir_s)
+    json_safe = {k: v for k, v in agg.items() if k not in ("z1_pu", "z2_pu", "z0_pu")}
+    _write_run_json(run_dir, "sym_fault_impedance.json", json_safe)
+    return {
+        "ok": True,
+        "unchecked": False,
+        "tool": "pu_base",
+        "value": float(agg["z1_pu_mag"]),
+        "result": agg,
+        "capability": "power-network-study",
+    }
+
+
 @register("run-load-flow")
 def run_load_flow(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
     from electrical_engineer.engines.power_runner import pandapower_available, run_power_study
@@ -393,30 +474,46 @@ def run_load_flow(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any
 def check_numeric(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
     problem = _problem(spec)
     computed = _hand_value(problem)
-    actual = computed
-    if actual is None:
-        for v in inputs.values():
-            if not isinstance(v, dict):
-                continue
-            if v.get("unchecked") is False and v.get("value") is not None:
-                actual = v.get("value")
-                break
+    tol = float(problem.get("tol", 1e-6))
+    expected = problem.get("expected")
+    child_value: float | None = None
     for v in inputs.values():
         if not isinstance(v, dict) or v.get("value") is None:
             continue
+        if v.get("skipped"):
+            continue
+        child_value = float(v["value"])
+        if expected is not None and computed is not None:
+            ok_exp = abs(computed - float(expected)) <= tol
+            ok_child = abs(child_value - computed) <= tol
+            if ok_exp and ok_child:
+                return {
+                    "ok": True,
+                    "value": child_value,
+                    "unchecked": False,
+                    "capability": "algebraic-check",
+                    "recomputed": computed,
+                }
+            return {
+                "ok": False,
+                "unchecked": True,
+                "token": UNCHECKED,
+                "actual": child_value,
+                "expected": expected,
+                "recomputed": computed,
+            }
         if v.get("ok") is True or v.get("unchecked") is False:
             return {
                 "ok": True,
-                "value": v.get("value"),
+                "value": child_value,
                 "unchecked": False,
                 "capability": "algebraic-check",
             }
-    expected = problem.get("expected")
+    actual = child_value if child_value is not None else computed
     if expected is None:
         expected = computed
     if expected is None or actual is None:
         return {"ok": False, "unchecked": True, "token": UNCHECKED, "reason": "no expected value"}
-    tol = float(problem.get("tol", 1e-6))
     ok = abs(float(actual) - float(expected)) <= tol
     if ok:
         return {"ok": True, "value": actual, "unchecked": False, "capability": "algebraic-check"}
@@ -429,7 +526,28 @@ def check_numeric(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any
     }
 
 
+def _recompute_scalar(problem: dict[str, Any]) -> float | None:
+    from electrical_engineer.engines.ee_v2_runner import recompute_scalar
+
+    rec = recompute_scalar(problem)
+    if rec is not None:
+        return rec
+    if str(problem.get("check_kind") or "") == "sym_fault_z1":
+        from electrical_engineer.engines.pu_base import aggregate_fault_impedance
+
+        agg = aggregate_fault_impedance(
+            problem["elements"],
+            s_system_mva=float(problem.get("s_system_mva", 100)),
+            v_system_kv=float(problem.get("v_system_kv", 13.8)),
+        )
+        return float(agg["z1_pu_mag"])
+    return None
+
+
 def _hand_value(problem: dict[str, Any]) -> float | None:
+    rec = _recompute_scalar(problem)
+    if rec is not None:
+        return rec
     kind = str(problem.get("kind") or "")
     if kind == "ohms_law" and "v" in problem and "r" in problem:
         r = float(problem["r"])
