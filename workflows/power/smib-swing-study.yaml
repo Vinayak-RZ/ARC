@@ -1,0 +1,10 @@
+id: smib-swing-study
+nodes:
+  swing:
+    activity: run-smib-swing
+  label:
+    activity: label-unchecked
+    needs: [swing]
+  summary:
+    activity: write-run-summary
+    needs: [label]

@@ -50,6 +50,9 @@ PROVIDERS = frozenset(
         "run-digital-control",
         "run-protection-study",
         "run-drives-study",
+        "run-smib-swing",
+        "run-agc-two-area",
+        "run-ed-lambda",
     }
 )
 

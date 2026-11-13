@@ -1,0 +1,10 @@
+id: agc-two-area-study
+nodes:
+  agc:
+    activity: run-agc-two-area
+  label:
+    activity: label-unchecked
+    needs: [agc]
+  summary:
+    activity: write-run-summary
+    needs: [label]

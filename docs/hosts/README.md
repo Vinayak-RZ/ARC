@@ -24,7 +24,7 @@ labeled. Same lab does not mean identical IDE screens.
 **Tools the assistant can call:** list lab recipes, look up a citation, open
 the local window, run a short simulation, propose a combination of allowed
 checks, read the labeled result. Replay a named recipe is the command-line /
-test path. This checkout has 31 named lab recipes. If none fits, the assistant
+test path. This checkout has 34 named lab recipes. If none fits, the assistant
 proposes allowed checks and Arc validates then runs. Photo / compose /
 control-diagram never wait in chat: you get a
 link to the local window. On a large assignment the assistant writes

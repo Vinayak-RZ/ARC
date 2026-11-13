@@ -192,6 +192,93 @@ def run_simulink_if_present(spec: dict[str, Any], inputs: dict[str, Any]) -> dic
     }
 
 
+def _write_run_json(run_dir: Path, name: str, data: dict[str, Any]) -> None:
+    import json
+
+    (run_dir / name).write_text(json.dumps(data, indent=2))
+
+
+@register("run-smib-swing")
+def run_smib_swing(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
+    from electrical_engineer.engines.smib_swing import (
+        SmibCase,
+        critical_clearing_time_bisection,
+        eec301_reference,
+    )
+
+    run_dir_s = spec.get("run_dir")
+    if not run_dir_s:
+        return _missing("smib_swing", spec, inputs)
+    problem = _problem(spec)
+    case = SmibCase(**{k: problem[k] for k in problem if k in SmibCase.__dataclass_fields__})
+    ref = eec301_reference(case)
+    tcr = critical_clearing_time_bisection(case, h_s=0.001, tol_s=1e-6, t_hi=0.35)
+    payload = {**ref, "tcr_s": tcr, "engine": "smib_swing"}
+    run_dir = Path(run_dir_s)
+    _write_run_json(run_dir, "psa_smib.json", payload)
+    return {
+        "ok": True,
+        "unchecked": False,
+        "value": ref["delta_cr_deg"],
+        "engine": "smib_swing",
+        "psa": payload,
+        "capability": "smib-swing",
+    }
+
+
+@register("run-agc-two-area")
+def run_agc_two_area(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
+    from electrical_engineer.engines.agc_two_area import TwoAreaAgcCase, simulate_two_area
+
+    run_dir_s = spec.get("run_dir")
+    if not run_dir_s:
+        return _missing("agc_two_area", spec, inputs)
+    problem = _problem(spec)
+    k = float(problem.get("K", 0.3))
+    case = TwoAreaAgcCase.eec301_default().with_k(k)
+    primary = simulate_two_area(TwoAreaAgcCase.eec301_default(), run="primary", t_end_s=30.0)
+    agc = simulate_two_area(case, run="agc", t_end_s=60.0)
+    payload = {
+        "engine": "agc_two_area",
+        "primary_steady": primary["steady"],
+        "agc_steady": agc["steady"],
+        "diverged": agc.get("diverged"),
+    }
+    run_dir = Path(run_dir_s)
+    _write_run_json(run_dir, "psa_agc.json", payload)
+    return {
+        "ok": True,
+        "unchecked": False,
+        "value": agc["steady"]["df1_hz"],
+        "engine": "agc_two_area",
+        "psa": payload,
+        "capability": "agc-two-area",
+    }
+
+
+@register("run-ed-lambda")
+def run_ed_lambda(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
+    from electrical_engineer.engines.ed_lambda import EdCase, solve_lambda_ed
+
+    run_dir_s = spec.get("run_dir")
+    if not run_dir_s:
+        return _missing("ed_lambda", spec, inputs)
+    problem = _problem(spec)
+    pd = float(problem.get("PD", 500.0))
+    result = solve_lambda_ed(EdCase.eec301_default(), pd)
+    payload = {"engine": "ed_lambda", "PD": pd, **result}
+    run_dir = Path(run_dir_s)
+    _write_run_json(run_dir, "psa_ed.json", payload)
+    return {
+        "ok": True,
+        "unchecked": False,
+        "value": result["lam"],
+        "engine": "ed_lambda",
+        "psa": payload,
+        "capability": "economic-dispatch-lambda",
+    }
+
+
 @register("run-load-flow")
 def run_load_flow(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
     from electrical_engineer.engines.power_runner import pandapower_available, run_power_study

@@ -30,6 +30,6 @@ OpenMontage analog: domain cards live in this tree; host dirs are copies.
 | [ee-simulink.md](ee-simulink.md) | `ee-simulink` | `.slx` / block-diagram labs via Arc MCP only |
 
 Skills (method, parent window) stay under `skills/<pack>/SKILL.md`. Do not
-confuse the 12 spawnable agents with 10 undergraduate packs or 31 recipes.
+confuse the 12 spawnable agents with 10 undergraduate packs or 34 recipes.
 
 At most two live children. Local same-checkout only. No nested Task.

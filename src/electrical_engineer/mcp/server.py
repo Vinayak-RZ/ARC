@@ -21,6 +21,9 @@ HOST_ATTACHMENTS = frozenset(
         "simulate-circuit",
         "unmatched-cosolver",
         "derive-circuit",
+        "smib-swing-study",
+        "agc-two-area-study",
+        "ed-lambda-study",
     }
 )
 
@@ -89,6 +92,24 @@ TOOLS = [
             "type": "object",
             "properties": {"workflow_id": {"type": "string"}},
             "required": ["workflow_id"],
+        },
+    },
+    {
+        "name": "list_visual_components",
+        "description": "List Arc Visual Kit component ids (engine-bound figures).",
+        "inputSchema": {"type": "object", "properties": {}},
+    },
+    {
+        "name": "render_visual",
+        "description": "Render a Visual Kit component to PNG under a run directory.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "component_id": {"type": "string"},
+                "run_id": {"type": "string"},
+                "props": {"type": "object"},
+            },
+            "required": ["component_id"],
         },
     },
 ]
@@ -275,6 +296,28 @@ def handle(method: str, params: dict[str, Any] | None) -> Any:
                     "paths": [str(Path(result["run_dir"]) / "evidentiary.json")],
                 }
             )
+        if name == "list_visual_components":
+            from electrical_engineer.visual_kit.registry import list_component_ids, load_manifest
+
+            return _ok(
+                {
+                    "components": list_component_ids(),
+                    "manifest_version": load_manifest().get("manifest_version"),
+                    "waits": False,
+                }
+            )
+        if name == "render_visual":
+            from electrical_engineer.visual_kit.render import render_component
+
+            cid = str(args.get("component_id") or "")
+            rid = str(args.get("run_id") or new_run_id())
+            run_dir = create_run_dir(project_root(), rid)
+            props = args.get("props") if isinstance(args.get("props"), dict) else {}
+            try:
+                out = render_component(cid, run_dir / "visual", props)
+            except (ValueError, RuntimeError) as exc:
+                return _ok({"error": str(exc), "waits": False}, error=True)
+            return _ok({"run_id": rid, "paths": [out["png"]], "meta": out["meta"], "waits": False})
         return _ok({"error": f"unknown tool {name}", "waits": False}, error=True)
     if method == "notifications/initialized":
         return None
