@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 export const useLayout = create((set) => ({
   currentRunId: null,
-  view: "runs",
+  view: "home",
   graphDirty: false,
   selectedNodeId: null,
   capMessage: "",

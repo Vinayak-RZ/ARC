@@ -15,8 +15,8 @@ export function VisualGallery() {
   }, []);
   return (
     <section className="visual-gallery" aria-label="Arc Visual Kit gallery">
-      <h2>Visual Kit</h2>
-      <p className="muted">Engine-bound figures. Numbers come from Arc kernels, not prompts.</p>
+      <h1>Visuals</h1>
+      <p className="visual-gallery-lede">Engine-bound figures from the Visual Kit. Numbers come from Arc kernels, not prompts.</p>
       {scorecard ? (
         <details className="scorecard-panel">
           <summary>Frontier scorecard (measured)</summary>
