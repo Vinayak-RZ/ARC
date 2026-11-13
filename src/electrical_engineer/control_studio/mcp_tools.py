@@ -142,11 +142,12 @@ def handle_tool(name: str, args: dict[str, Any]) -> dict[str, Any]:
     try:
         if name == "control_studio_create_diagram":
             title = str(args.get("title") or "Control Studio")
+            golden = str(args.get("golden") or "") or None
             if args.get("session_id"):
                 sid = str(args["session_id"])
                 payload = session_mod.load_session(sid)
             else:
-                payload = session_mod.create_session(title)
+                payload = session_mod.create_session(title, golden=golden)
                 sid = payload["session_id"]
             if args.get("seed_diagram"):
                 payload = session_mod.apply_diagram(sid, args["seed_diagram"], author="agent", op="seed")

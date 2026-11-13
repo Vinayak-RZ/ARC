@@ -37,11 +37,11 @@ def pid_dc_motor() -> dict[str, Any]:
         "id": "golden-pid-dc-motor",
         "title": "PID on DC motor",
         "blocks": [
-            {"id": "r", "type": "step", "x": 40, "y": 140, "params": {}},
-            {"id": "sum1", "type": "sum", "x": 180, "y": 140, "params": {"signs": "+-"}},
-            {"id": "pid1", "type": "pid", "x": 320, "y": 140, "params": {"kp": 2.0, "ki": 0.5, "kd": 0.1}},
-            {"id": "motor", "type": "plant_dc_motor", "x": 480, "y": 140, "params": {}},
-            {"id": "y", "type": "scope", "x": 640, "y": 140, "params": {}},
+            {"id": "r", "type": "step", "x": 24, "y": 160, "params": {}, "label": "Step"},
+            {"id": "sum1", "type": "sum", "x": 160, "y": 156, "params": {"signs": "+-"}},
+            {"id": "pid1", "type": "pid", "x": 300, "y": 148, "params": {"kp": 2.0, "ki": 0.5, "kd": 0.1}},
+            {"id": "motor", "type": "plant_dc_motor", "x": 460, "y": 148, "params": {}, "label": "DC motor"},
+            {"id": "y", "type": "scope", "x": 620, "y": 156, "params": {}},
         ],
         "wires": [
             {"id": "w1", "from": "r:out", "to": "sum1:in1"},

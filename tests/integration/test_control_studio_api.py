@@ -9,7 +9,7 @@ def test_studio_api_smoke(tmp_path) -> None:
     pal = client.get("/api/control-studio/palette")
     assert pal.status_code == 200
     assert "palette" in pal.json()
-    created = client.post("/api/control-studio/sessions", json={"title": "test"})
+    created = client.post("/api/control-studio/sessions", json={"title": "test", "seed_golden": False})
     assert created.status_code == 200
     sid = created.json()["session_id"]
     diagram = GOLDENS["unity_first_order"]()
