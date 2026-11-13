@@ -3,12 +3,15 @@
   "context_claims": [
     {
       "claim_id": "case9_gencost",
-      "name": "case9 gencost row to bus mapping",
-      "library_value": "gencost row 2 is bus 3",
+      "name": "case9 gen1 cost c2",
+      "library_value": 0.085,
       "unit": "",
-      "conditions": "MATPOWER case9",
-      "tolerance": 0.0,
-      "solver_value": "gencost row 2 is bus 3"
+      "tolerance": 0.001
     }
-  ]
+  ],
+  "recompute": {
+    "kind": "case9_ed_p11",
+    "lambda_mwh": 33.06,
+    "use_swapped_costs": false
+  }
 }

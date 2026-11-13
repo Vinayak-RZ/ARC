@@ -1,11 +1,8 @@
 {
   "recipe_id": "context-web-spotcheck",
-  "unchecked": true,
-  "token": "unchecked",
-  "web_verification": {
-    "needs_review": true,
-    "caught_stale": true
+  "stale_context_flagged": true,
+  "recomputed": {
+    "V_touch_V": 322.71
   },
-  
-  "tol": 1e-6
+  "tol": 0.5
 }

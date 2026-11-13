@@ -3,12 +3,16 @@
   "context_claims": [
     {
       "claim_id": "ieee80_touch_voltage",
-      "name": "IEEE 80 allowable touch voltage",
-      "library_value": 70.0,
+      "name": "IEEE 80 touch voltage limit",
+      "library_value": 643.4,
       "unit": "V",
-      "conditions": "body resistance 1000 ohm, 0.5 s duration, rural soil",
-      "tolerance": 0.03,
-      "solver_value": 70.0
+      "tolerance": 0.02
     }
-  ]
+  ],
+  "recompute": {
+    "kind": "ieee80_touch_p06",
+    "ts_s": 0.31547309943938223,
+    "rho_s_ohm_m": 100.0,
+    "cs": 1.03
+  }
 }

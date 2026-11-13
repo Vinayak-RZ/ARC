@@ -1,36 +1,44 @@
 {
-  "topic": "Overhead line ac resistance temperature",
-  "status": "offline_pass",
+  "recorded_at": "2026-11-13T11:42:00Z",
+  "topic": "ACSR Zebra AC resistance at 75 C",
+  "queries": [
+    "Zebra ac resistance 0.0856 ohm per km 75 C",
+    "ACSR Zebra resistance temperature 75 degree",
+    "IS 398 Zebra resistance 20 C upptcl"
+  ],
   "claims": [
     {
       "claim_id": "zebra_r_ac_75c",
-      "name": "Zebra conductor R_ac at 75 C",
-      "library_value": 0.31,
-      "authoritative_value": 0.337,
+      "name": "Zebra R_ac at 75 C",
       "unit": "ohm/km",
-      "conditions": "ACSR Zebra, 75 C conductor",
+      "conditions": "ACSR Zebra per IS 398, conductor temperature 75 C",
       "tolerance": 0.02,
-      "queries": [
-        "ACSR Zebra resistance 75C ohm per km",
-        "overhead line conductor temperature resistance table",
-        "allaboutcircuits line resistance temperature"
-      ],
+      "authoritative_value": 0.0856,
       "sources": [
         {
-          "url": "https://www.allaboutcircuits.com/technical-articles/example-line-resistance/",
-          "domain": "allaboutcircuits.com",
-          "snippet": "Zebra at 75 °C is often tabulated near 0.337 Ω/km for AC resistance.",
-          "extracted_value": 0.337,
-          "unit": "ohm/km"
+          "url": "https://www.engineeringdevotion.com/electric-power-systems/solved-problems/bundled-conductors-problems.html",
+          "domain": "engineeringdevotion.com",
+          "title": "220 kV Zebra line parameters",
+          "retrieved_at": "2026-11-13T11:37:36Z",
+          "http_status": 200,
+          "snippet": "ac resistance 0.0856 Ohm/km at 75 C",
+          "extracted_value": 0.0856,
+          "unit": "ohm/km",
+          "source_class": "worked_example"
         },
         {
-          "url": "https://nptel.ac.in/courses/overhead-lines",
-          "domain": "nptel.ac.in",
-          "snippet": "Temperature-corrected ac resistance for Zebra at 75 °C ≈ 0.336–0.338 Ω/km.",
-          "extracted_value": 0.337,
-          "unit": "ohm/km"
+          "url": "http://upptcl.org/upptcl/en/article/conduct-current-carrying-21-iv",
+          "domain": "upptcl.org",
+          "title": "UPPTCL Zebra conductor table",
+          "retrieved_at": "2026-11-13T11:39:04Z",
+          "http_status": 200,
+          "snippet": "Resistance at 200 C 0.06888 ohns/Km",
+          "extracted_value": 0.06888,
+          "unit": "ohm/km",
+          "source_class": "utility_table"
         }
       ]
     }
-  ]
+  ],
+  "similar_problems": []
 }

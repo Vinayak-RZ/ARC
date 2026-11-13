@@ -1,36 +1,44 @@
 {
-  "topic": "MOSFET on-resistance datasheet context",
-  "status": "offline_pass",
+  "recorded_at": "2026-11-13T11:40:00Z",
+  "topic": "IRF540N maximum R_DS(on) at 25 C",
+  "queries": [
+    "IRF540N datasheet RDS on 44 mohm VGS 10V",
+    "Infineon IRF540N static drain-source on-resistance",
+    "IRF540N 100V 33A HEXFET on resistance max"
+  ],
   "claims": [
     {
       "claim_id": "irf540n_rds_on",
-      "name": "IRF540N R_DS(on) at 25 C",
-      "library_value": 0.077,
-      "authoritative_value": 0.044,
+      "name": "IRF540N R_DS(on) max",
       "unit": "ohm",
-      "conditions": "V_GS=10 V, T_j=25 C",
-      "tolerance": 0.05,
-      "queries": [
-        "IRF540N Rds on 25C datasheet",
-        "IRF540N max on resistance 10V gate",
-        "stackexchange IRF540n rds on typical"
-      ],
+      "conditions": "V_GS = 10 V, I_D = 16 A, T_J = 25 C (datasheet max)",
+      "tolerance": 0.02,
+      "authoritative_value": 0.044,
       "sources": [
         {
-          "url": "https://www.infineon.com/dgdl/irf540n-datasheet",
-          "domain": "infineon.com",
-          "snippet": "Typical R_DS(on) = 44 mΩ at V_GS = 10 V, T_J = 25 °C.",
+          "url": "https://www.infineon.cn/part/IRF540N",
+          "domain": "infineon.cn",
+          "title": "Infineon IRF540N product page",
+          "retrieved_at": "2026-11-13T11:39:03Z",
+          "http_status": 200,
+          "snippet": "Maximum R DS (on) (@10V): 44 mOhm",
           "extracted_value": 0.044,
-          "unit": "ohm"
+          "unit": "ohm",
+          "source_class": "manufacturer"
         },
         {
-          "url": "https://electronics.stackexchange.com/questions/example-irf540n",
-          "domain": "stackexchange.com",
-          "snippet": "Datasheet lists 44 mΩ typical, not the older 77 mΩ max at room temp.",
+          "url": "https://www.datasheetcafe.com/irf540n-datasheet-pdf-mosfet/",
+          "domain": "datasheetcafe.com",
+          "title": "IRF540N datasheet summary",
+          "retrieved_at": "2026-11-13T11:39:03Z",
+          "http_status": 200,
+          "snippet": "Ultra Low On-Resistance - rDS(ON)= 0.040 ohm, VGS = 10V (typical); catalog lists 44 milliohms max.",
           "extracted_value": 0.044,
-          "unit": "ohm"
+          "unit": "ohm",
+          "source_class": "datasheet_summary"
         }
       ]
     }
-  ]
+  ],
+  "similar_problems": []
 }

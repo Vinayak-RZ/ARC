@@ -25,13 +25,13 @@ def test_offline_catches_stale_library_value():
         "context_claims": [
             {
                 "claim_id": "zebra_gmr",
-                "name": "Zebra GMR",
-                "library_value": 0.95,
-                "solver_value": 0.95,
-                "unit": "T",
-                "tolerance": 0.02,
+                "name": "ACSR Zebra GMR",
+                "library_value": 0.01058,
+                "unit": "m",
+                "tolerance": 0.01,
             }
         ],
+        "recompute": {"kind": "zebra_inductance_p04", "gmd_m": 5.961},
     }
     out = run_web_verify(problem=problem, solver_outputs={}, summary_lines=[], run_dir=None)
     assert out["needs_review"] is True
@@ -40,6 +40,7 @@ def test_offline_catches_stale_library_value():
     assert "Similar solved problems" in md
     claims = out["web_sources"]["claims"]
     assert claims[0]["status"] == "needs_review"
+    assert abs(out["recomputed"]["L_mH_per_km"] - 1.2525) < 0.01
 
 
 def test_host_submit_validation():

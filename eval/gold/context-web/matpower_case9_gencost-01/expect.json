@@ -1,11 +1,10 @@
 {
   "recipe_id": "context-web-spotcheck",
-  "unchecked": true,
-  "token": "unchecked",
-  "web_verification": {
-    "needs_review": true,
-    "caught_stale": true
+  "stale_context_flagged": true,
+  "recomputed": {
+    "P1_MW": 127.56,
+    "P2_MW": 187.44,
+    "lambda_Rs_per_MWh": 33.06
   },
-  
-  "tol": 1e-6
+  "tol": 0.05
 }

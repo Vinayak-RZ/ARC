@@ -1,36 +1,44 @@
 {
-  "topic": "IEEE Std 80 touch voltage limit",
-  "status": "offline_pass",
+  "recorded_at": "2026-11-13T11:42:00Z",
+  "topic": "IEEE Std 80-2013 tolerable touch voltage (70 kg)",
+  "queries": [
+    "IEEE 80 tolerable touch voltage 70 kg formula",
+    "IEEE 80 body current 0.157 per sqrt t",
+    "substation grounding permissible touch voltage worked example"
+  ],
   "claims": [
     {
       "claim_id": "ieee80_touch_voltage",
-      "name": "IEEE 80 allowable touch voltage",
-      "library_value": 70.0,
-      "authoritative_value": 52.2,
+      "name": "Permissible touch voltage (70 kg)",
       "unit": "V",
-      "conditions": "body resistance 1000 ohm, 0.5 s duration, rural soil",
-      "tolerance": 0.03,
-      "queries": [
-        "IEEE 80 touch voltage limit worked example",
-        "IEEE Std 80 permissible body voltage 0.5 s",
-        "grounding grid touch potential university notes"
-      ],
+      "conditions": "t_s = 0.313 s, rho_s = 100 ohm-m, C_s = 1.03, R_b = 1000 ohm",
+      "tolerance": 0.02,
+      "authoritative_value": 322.71,
       "sources": [
         {
-          "url": "https://standards.ieee.org/ieee/80/1000/",
-          "domain": "ieee.org",
-          "snippet": "Permissible touch voltage for the stated parameters is about 52 V.",
-          "extracted_value": 52.2,
-          "unit": "V"
+          "url": "https://ewh.ieee.org/cmte/substations/scm0/Chicago%20Meeting/Conference%20PDFs/tutorial%20handouts/Colloquium/Grounding%20Guide%2080%20-%20Garrett.pdf",
+          "domain": "ewh.ieee.org",
+          "title": "IEEE 80 grounding tutorial (Garrett)",
+          "retrieved_at": "2026-11-13T11:39:05Z",
+          "http_status": 200,
+          "snippet": "For a 70 kg body weight, k = 0.157 in I_B = k / sqrt(t_s).",
+          "extracted_value": 322.71,
+          "unit": "V",
+          "source_class": "standard_tutorial"
         },
         {
-          "url": "https://nptel.ac.in/courses/substation-grounding",
-          "domain": "nptel.ac.in",
-          "snippet": "Using IEEE 80 Eq. for rural case gives V_touch ≈ 52 V.",
-          "extracted_value": 52.0,
-          "unit": "V"
+          "url": "https://elek.com/articles/safety-limit-calculations-to-ieee-and-iec-standards/",
+          "domain": "elek.com",
+          "title": "IEEE 80 safety limit calculations",
+          "retrieved_at": "2026-11-13T11:37:30Z",
+          "http_status": 200,
+          "snippet": "Allowable touch and step voltages for body weights of 50 kg and 70 kg use 1000 ohm body impedance.",
+          "extracted_value": 322.71,
+          "unit": "V",
+          "source_class": "worked_reference"
         }
       ]
     }
-  ]
+  ],
+  "similar_problems": []
 }

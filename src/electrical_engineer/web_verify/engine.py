@@ -10,6 +10,7 @@ from electrical_engineer.web_verify.citations import index_citations, render_ans
 from electrical_engineer.web_verify.config import load_web_verify_config
 from electrical_engineer.web_verify.providers import get_provider
 from electrical_engineer.web_verify.reconcile import overall_status, reconcile_claim, reconcile_similar_match
+from electrical_engineer.web_verify.recompute import recompute
 
 
 def extract_context_claims(problem: dict[str, Any], solver_outputs: dict[str, Any]) -> list[dict[str, Any]]:
@@ -58,7 +59,19 @@ def run_web_verify(
         }
     provider = get_provider(cfg)
     web_raw = provider.verify_claims(claims, problem=problem, run_dir=run_dir)
-    claims_out = [reconcile_claim(c) for c in web_raw.get("claims") or []]
+    incoming = {str(c.get("claim_id")): c for c in claims if c.get("claim_id")}
+    claims_out = []
+    for c in web_raw.get("claims") or []:
+        cid = str(c.get("claim_id") or "")
+        if cid in incoming:
+            if incoming[cid].get("library_value") is not None:
+                c["library_value"] = incoming[cid]["library_value"]
+            if incoming[cid].get("tolerance") is not None:
+                c["tolerance"] = incoming[cid]["tolerance"]
+        row = reconcile_claim(c)
+        if row.get("web_value") is not None:
+            row["substituted_value"] = row.get("web_value")
+        claims_out.append(row)
     web_bundle = {**web_raw, "claims": claims_out}
     similar_raw = provider.find_similar_problems(
         problem, arc_result=arc_primary_result, run_dir=run_dir
@@ -72,6 +85,12 @@ def run_web_verify(
     web_bundle["citations"] = citations
     status = overall_status(claims_out, similar_matches, str(web_raw.get("status") or ""))
     answer_md = render_answer_section(summary_lines or [], web_bundle, similar_bundle, citations)
+    recomputed: dict[str, Any] = {}
+    try:
+        if problem.get("recompute"):
+            recomputed = recompute(problem, claims_out)
+    except (ValueError, KeyError, TypeError):
+        recomputed = {"error": "recompute_failed"}
 
     evidence_dir = (run_dir / "evidence") if run_dir else None
     if evidence_dir:
@@ -83,6 +102,8 @@ def run_web_verify(
             json.dumps(similar_bundle, indent=2), encoding="utf-8"
         )
         (evidence_dir / "answer_cited.md").write_text(answer_md, encoding="utf-8")
+        if recomputed:
+            (evidence_dir / "recomputed.json").write_text(json.dumps(recomputed, indent=2), encoding="utf-8")
 
     return {
         "status": status,
@@ -93,4 +114,5 @@ def run_web_verify(
         "answer_markdown": answer_md,
         "needs_review": status == "needs_review",
         "offline_unverified": status == "offline_pass" and cfg.provider == "offline",
+        "recomputed": recomputed,
     }

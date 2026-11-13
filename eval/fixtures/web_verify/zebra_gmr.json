@@ -1,59 +1,57 @@
 {
-  "topic": "Permanent-magnet machine air-gap flux density",
-  "status": "offline_pass",
+  "recorded_at": "2026-11-13T11:40:00Z",
+  "url_policy": "fixtures must use resolvable primary or catalog URLs; no example hosts",
+  "topic": "ACSR Zebra geometric mean radius (GMR)",
   "queries": [
-    "Zebra PM motor air gap flux density GMR",
-    "NdFeB remanence typical flux density air gap",
-    "permanent magnet machine Bg calculation example"
+    "IS 398 ACSR Zebra GMR geometric mean radius",
+    "bundled conductor Zebra GMR 1.144 cm",
+    "ACSR Zebra 54/3.18 GMR catalogue"
   ],
   "claims": [
     {
       "claim_id": "zebra_gmr",
-      "name": "Zebra GMR (stale library)",
-      "library_value": 0.95,
-      "authoritative_value": 1.23,
-      "unit": "T",
-      "conditions": "rated speed, 25 C ambient",
-      "tolerance": 0.02,
-      "queries": [
-        "Zebra electric motor GMR specification",
-        "PM motor air gap flux 1.2 tesla textbook",
-        "IEEE PM machine worked example Bg"
-      ],
+      "name": "ACSR Zebra GMR",
+      "unit": "m",
+      "conditions": "IS 398 Part II Zebra, 54 Al / 7 steel, 3.18 mm",
+      "tolerance": 0.01,
+      "authoritative_value": 0.01144,
       "sources": [
         {
-          "url": "https://nptel.ac.in/courses/example-pm-machine-flux",
-          "domain": "nptel.ac.in",
-          "title": "NPTEL PM machine flux linkage",
-          "snippet": "Worked example gives air-gap flux density Bg ≈ 1.23 T for the stated pole geometry.",
-          "extracted_value": 1.23,
-          "unit": "T",
-          "source_class": "course_notes"
+          "url": "https://www.engineeringdevotion.com/electric-power-systems/solved-problems/bundled-conductors-problems.html",
+          "domain": "engineeringdevotion.com",
+          "title": "Bundled conductors worked example (Zebra)",
+          "retrieved_at": "2026-11-13T11:37:36Z",
+          "http_status": 200,
+          "snippet": "ACSR Zebra, overall diameter 28.62 mm, GMR 1.144 cm",
+          "extracted_value": 0.01144,
+          "unit": "m",
+          "source_class": "worked_example"
         },
         {
-          "url": "https://ocw.mit.edu/example-electrical-machines",
-          "domain": "ocw.mit.edu",
-          "title": "MIT OCW electrical machines sample",
-          "snippet": "Using the given magnet grade, Bg is about 1.2–1.25 T.",
-          "extracted_value": 1.24,
-          "unit": "T",
-          "source_class": "textbook"
+          "url": "https://upptcl.org/upptcl/en/article/table-14-i",
+          "domain": "upptcl.org",
+          "title": "UPPTCL Table 14-I ACSR Zebra",
+          "retrieved_at": "2026-11-13T11:37:30Z",
+          "http_status": 200,
+          "snippet": "ACSR 'Zebra' ... Overall diameter 28.62 mm (IS 398 Part II)",
+          "extracted_value": 0.01144,
+          "unit": "m",
+          "source_class": "utility_table"
         }
       ]
     }
   ],
   "similar_problems": [
     {
-      "url": "https://www.allaboutcircuits.com/textbook/example-pm-flux/",
-      "domain": "allaboutcircuits.com",
-      "title": "PM flux density quick estimate",
-      "similarity_score": 0.88,
-      "diff_note": "Uses ferrite magnets; Arc uses NdFeB at 25 C.",
-      "their_result": 1.18,
-      "their_unit": "T",
-      "arc_result": 1.23,
-      "agrees_after_adjustment": true,
-      "snippet": "For NdFeB the example rounds to about 1.2 T in the gap."
+      "url": "https://www.engineeringdevotion.com/electric-power-systems/solved-problems/bundled-conductors-problems.html",
+      "domain": "engineeringdevotion.com",
+      "title": "Triple bundle Zebra D_sb calculation",
+      "similarity_score": 0.91,
+      "diff_note": "Bundle geometry with 45 cm spacing; Arc v3 flat 11 m uses a different GMD.",
+      "their_result": 13.23,
+      "their_unit": "cm D_sb",
+      "agrees_after_adjustment": null,
+      "snippet": "D_sb = (3 x 1.144 x 25.98^2)^(1/3) = 13.23 cm"
     }
   ]
 }

@@ -114,6 +114,7 @@ def execute(
         "web_verification": web_block.get("web_verification"),
         "answer_markdown": summary_node.get("answer_markdown"),
         "similar_problems": web_block.get("similar_problems"),
+        "recomputed": web_block.get("recomputed"),
         "nodes": {
             k: {"unchecked": v.get("unchecked"), "ok": v.get("ok")} for k, v in completed.items()
         },
@@ -200,7 +201,11 @@ def _web_verification(summary_node: dict[str, Any], completed: dict[str, Any]) -
         }
         similar = v.get("similar_problems")
         paths.extend(v.get("paths") or [])
-    return {"web_verification": web, "similar_problems": similar, "evidence_paths": paths}
+    recomputed = None
+    for v in completed.values():
+        if isinstance(v, dict) and v.get("tool") == "web-verify":
+            recomputed = v.get("recomputed")
+    return {"web_verification": web, "similar_problems": similar, "evidence_paths": paths, "recomputed": recomputed}
 
 
 def _retrieve_seed(completed: dict[str, Any]) -> dict[str, Any]:

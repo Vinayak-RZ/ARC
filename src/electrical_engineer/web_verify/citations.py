@@ -61,7 +61,7 @@ def render_answer_section(
         for m in matches:
             ref = f" [{m['citation_id']}]" if m.get("citation_id") else ""
             agree = m.get("agrees_after_adjustment")
-            flag = " (disagrees — needs review)" if agree is False else ""
+            flag = " (disagrees, needs review)" if agree is False else ""
             title = m.get("title") or m.get("url")
             lines.append(f"- [{title}]({m.get('url')}){ref}: {m.get('diff_note', '')}{flag}")
     if citations:
@@ -71,7 +71,7 @@ def render_answer_section(
             cid = c.get("citation_id")
             url = c.get("url") or ""
             title = c.get("title") or url
-            lines.append(f"[{cid}] {title} — {url}")
+            lines.append(f"[{cid}] {title} - {url}")
     return "\n".join(lines)
 
 

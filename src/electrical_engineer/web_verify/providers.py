@@ -46,10 +46,13 @@ class OfflineProvider(WebSearchProvider):
         if not fix_id:
             fix_id = str(claims[0].get("claim_id")) if claims else ""
         data = self._load(fix_id)
+        incoming = {str(c.get("claim_id")): c for c in claims if c.get("claim_id")}
         enriched: list[dict[str, Any]] = []
         citation_id = 1
         all_citations: list[dict[str, Any]] = []
         for row in data.get("claims", []):
+            cid = str(row.get("claim_id") or "")
+            lib = (incoming.get(cid) or {}).get("library_value", row.get("library_value"))
             sources = []
             for src in row.get("sources", []):
                 rec = {**src, "citation_id": citation_id, "retrieved_at": src.get("retrieved_at") or _now()}
@@ -59,6 +62,7 @@ class OfflineProvider(WebSearchProvider):
             enriched.append(
                 {
                     **row,
+                    "library_value": lib,
                     "queries": row.get("queries") or data.get("queries") or [],
                     "sources": sources,
                     "web_value": row.get("authoritative_value"),
@@ -131,18 +135,24 @@ class HostProvider(WebSearchProvider):
 
 
 class BuiltinProvider(WebSearchProvider):
-    """HTTP fetch + optional search API (minimal; falls back to offline when no key)."""
+    """Brave/Tavily search plus direct fetch when API keys are configured."""
+
+    def __init__(self, cfg: WebVerifyConfig) -> None:
+        from electrical_engineer.web_verify.builtin_provider import BuiltinProviderImpl
+
+        self._impl = BuiltinProviderImpl(cfg)
 
     def verify_claims(
         self, claims: list[dict[str, Any]], *, problem: dict[str, Any], run_dir: Path | None
     ) -> dict[str, Any]:
-        # Without configured search URL, fail closed to pending.
-        return {"provider": "builtin", "status": "unsupported", "claims": claims, "citations": []}
+        if not self._impl._cfg.search_api_key:
+            return {"provider": "builtin", "status": "unsupported", "claims": claims, "citations": []}
+        return self._impl.verify_claims(claims, problem=problem, run_dir=run_dir)
 
     def find_similar_problems(
         self, problem: dict[str, Any], *, arc_result: Any, run_dir: Path | None
     ) -> dict[str, Any]:
-        return {"provider": "builtin", "topic": problem.get("topic") or "", "matches": []}
+        return self._impl.find_similar_problems(problem, arc_result=arc_result, run_dir=run_dir)
 
 
 def get_provider(cfg: WebVerifyConfig) -> WebSearchProvider:
@@ -150,5 +160,5 @@ def get_provider(cfg: WebVerifyConfig) -> WebSearchProvider:
         root = cfg.offline_fixtures_root or Path(__file__).resolve().parents[3] / "eval" / "fixtures" / "web_verify"
         return OfflineProvider(root)
     if cfg.provider == "builtin":
-        return BuiltinProvider()
+        return BuiltinProvider(cfg)
     return HostProvider()

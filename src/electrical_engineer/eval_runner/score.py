@@ -59,6 +59,17 @@ def score(summary: dict[str, Any], expect: dict[str, Any]) -> dict[str, Any]:
         md = str(summary.get("answer_markdown") or "")
         for needle in expect["answer_markdown_contains"]:
             ok = ok and needle in md
+    if expect.get("stale_context_flagged"):
+        wv = summary.get("web_verification") or {}
+        ok = ok and bool(wv.get("needs_review"))
+    want = expect.get("recomputed") or {}
+    got = summary.get("recomputed") or {}
+    tol = float(expect.get("tol", 1e-3))
+    for key, target in want.items():
+        if key not in got:
+            ok = False
+            continue
+        ok = ok and abs(float(got[key]) - float(target)) <= tol
     return {"ok": bool(ok), "summary": summary, "expect": expect}
 
 
@@ -109,6 +120,9 @@ def run_item(item: Path, *, run_root: Path | None = None) -> dict[str, Any]:
     result = execute(expect["recipe_id"], run_root=run_root, problem=problem or None)
     evid_path = Path(result["run_dir"]) / "evidentiary.json"
     summary = json.loads(evid_path.read_text()) if evid_path.is_file() else result["summary"]
+    recomp = Path(result["run_dir"]) / "evidence" / "recomputed.json"
+    if recomp.is_file():
+        summary = {**summary, "recomputed": json.loads(recomp.read_text())}
     scored = score(summary, expect)
     scored["item"] = str(item)
     scored["run_id"] = result["run_id"]

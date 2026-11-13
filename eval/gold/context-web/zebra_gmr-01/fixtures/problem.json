@@ -3,12 +3,14 @@
   "context_claims": [
     {
       "claim_id": "zebra_gmr",
-      "name": "Zebra GMR (stale library)",
-      "library_value": 0.95,
-      "unit": "T",
-      "conditions": "rated speed, 25 C ambient",
-      "tolerance": 0.02,
-      "solver_value": 0.95
+      "name": "ACSR Zebra GMR",
+      "library_value": 0.01058,
+      "unit": "m",
+      "tolerance": 0.01
     }
-  ]
+  ],
+  "recompute": {
+    "kind": "zebra_inductance_p04",
+    "gmd_m": 5.961
+  }
 }

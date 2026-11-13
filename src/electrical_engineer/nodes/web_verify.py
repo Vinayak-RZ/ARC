@@ -83,6 +83,7 @@ def web_verify(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
         "verified_values": verified_values,
         "similar_problems": result.get("similar_problems"),
         "web_sources": result.get("web_sources"),
+        "recomputed": result.get("recomputed"),
         "disagreement_banner": disagreement,
         "value": _primary_value(inputs),
         "inputs": inputs,

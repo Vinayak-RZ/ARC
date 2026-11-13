@@ -43,7 +43,12 @@ def load_web_verify_config(cwd: Path | None = None) -> WebVerifyConfig:
         or "host"
     )
     search_url = os.environ.get("EE_WEB_SEARCH_URL") or section.get("search_url")
-    search_api_key = os.environ.get("EE_WEB_SEARCH_API_KEY") or section.get("search_api_key")
+    search_api_key = (
+        os.environ.get("EE_WEB_SEARCH_API_KEY")
+        or os.environ.get("BRAVE_SEARCH_API_KEY")
+        or os.environ.get("TAVILY_API_KEY")
+        or section.get("search_api_key")
+    )
     fixtures = os.environ.get("EE_WEB_VERIFY_FIXTURES")
     fix_path = Path(fixtures) if fixtures else root / "eval" / "fixtures" / "web_verify"
     return WebVerifyConfig(

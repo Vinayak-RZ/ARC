@@ -3,12 +3,15 @@
   "context_claims": [
     {
       "claim_id": "zebra_r_ac_75c",
-      "name": "Zebra conductor R_ac at 75 C",
-      "library_value": 0.31,
+      "name": "Zebra R_ac at 75 C",
+      "library_value": 0.0789,
       "unit": "ohm/km",
-      "conditions": "ACSR Zebra, 75 C conductor",
-      "tolerance": 0.02,
-      "solver_value": 0.31
+      "tolerance": 0.02
     }
-  ]
+  ],
+  "recompute": {
+    "kind": "zebra_drop_p14",
+    "i_a": 1000.0,
+    "length_km": 12.498
+  }
 }
