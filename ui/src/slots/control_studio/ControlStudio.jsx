@@ -16,7 +16,10 @@ import { StudioInspector } from "./Inspector.jsx";
 import { ResultsDock } from "./ResultsDock.jsx";
 import { studioNodeTypes } from "./nodes.jsx";
 import { studioEdgeTypes } from "./edges.jsx";
+import { FitViewOnChange } from "./FitViewOnChange.jsx";
 import { diagramToFlow, flowToDiagram, issuesByBlock } from "./utils.js";
+import { MarginsSummary } from "../../control-studio/MarginsSummary.jsx";
+import "../../control-studio/studio.css";
 
 const GRID = 16;
 
@@ -27,6 +30,68 @@ function formatOpTime(tsMs) {
   } catch {
     return "";
   }
+}
+
+function formatOpSummary(op) {
+  const bits = [op.op || "edit"];
+  if (op.target) bits.push(op.target);
+  if (op.detail && typeof op.detail === "object") {
+    const params = Object.entries(op.detail)
+      .map(([k, v]) => `${k}=${v}`)
+      .join(", ");
+    if (params) bits.push(params);
+  }
+  return bits.join(" · ");
+}
+
+function minimapColor(node) {
+  switch (node.type) {
+    case "sum":
+      return "var(--cs-accent)";
+    case "pid":
+      return "#0d9488";
+    case "plant":
+      return "var(--cs-copper)";
+    case "scope":
+      return "var(--cs-text)";
+    case "source":
+      return "#6366f1";
+    default:
+      return "var(--cs-text-muted)";
+  }
+}
+
+function targetsFromLastOp(payload, presenceNow) {
+  const ids = new Set();
+  const now = Date.now();
+  if (!presenceNow?.highlight_until_ms || presenceNow.highlight_until_ms <= now) {
+    return ids;
+  }
+  const last = (payload.op_log || []).slice(-1)[0];
+  if (last?.target) ids.add(String(last.target));
+  return ids;
+}
+
+function applySimAndAnalyze(sid, sim, setResults, setMargins, setMsg, onSuccess) {
+  if (!sim?.ok) {
+    setMsg(sim?.error || "simulate failed");
+    return;
+  }
+  const an = sim.analyze?.ok ? sim.analyze : sim.analyze || sim;
+  if (sim.analyze && !sim.analyze.ok) {
+    setMsg(sim.analyze.error || "analyze failed");
+  }
+  const ts = Date.now();
+  setResults({
+    ts,
+    step: `/api/control-studio/sessions/${sid}/plot/step`,
+    bode: `/api/control-studio/sessions/${sid}/plot/bode`,
+    rlocus: `/api/control-studio/sessions/${sid}/plot/root_locus`,
+  });
+  setMargins(an);
+  setMsg("");
+  onSuccess?.();
+  return true;
 }
 
 function CanvasDrop({ children, onDropBlock }) {
@@ -61,6 +126,7 @@ function ControlStudioInner({ sessionId, onSession }) {
   const [results, setResults] = useState(null);
   const [margins, setMargins] = useState(null);
   const [revision, setRevision] = useState(0);
+  const [lastSimRevision, setLastSimRevision] = useState(null);
   const [validation, setValidation] = useState({ ok: true, issues: [], warnings: [] });
   const [highlight, setHighlight] = useState({ ids: new Set(), author: null });
   const diagramBase = useRef({});
@@ -70,16 +136,12 @@ function ControlStudioInner({ sessionId, onSession }) {
     (payload, { author = null } = {}) => {
       diagramBase.current = payload.diagram || {};
       const presence = payload.presence || {};
-      const now = Date.now();
-      const ids = new Set();
-      if (presence.highlight_until_ms && presence.highlight_until_ms > now) {
-        (payload.diagram?.blocks || []).forEach((b) => ids.add(b.id));
-      }
+      const ids = targetsFromLastOp(payload, presence);
       const flow = diagramToFlow(payload.diagram, {
         issuesByBlock: blockIssues,
         notes: payload.diagram?.notes,
         highlightSet: ids,
-        flashAuthor: presence.last_author || author,
+        flashAuthor: ids.size ? presence.last_author || author : null,
       });
       setNodes(flow.nodes);
       setEdges(flow.edges);
@@ -141,22 +203,11 @@ function ControlStudioInner({ sessionId, onSession }) {
         refreshValidation(p.session_id);
         fetch(`/api/control-studio/sessions/${p.session_id}/simulate`, { method: "POST" })
           .then((r) => r.json())
-          .then(() =>
-            fetch(`/api/control-studio/sessions/${p.session_id}/analyze`, { method: "POST" }).then((r) => r.json()),
-          )
-          .then((an) => {
-            if (an.ok) {
-              const sid = p.session_id;
-              const ts = Date.now();
-              setResults({
-                ts,
-                step: `/api/control-studio/sessions/${sid}/plot/step`,
-                bode: `/api/control-studio/sessions/${sid}/plot/bode`,
-                rlocus: `/api/control-studio/sessions/${sid}/plot/root_locus`,
-              });
-              setMargins(an);
-            }
-          });
+          .then((sim) =>
+            applySimAndAnalyze(p.session_id, sim, setResults, setMargins, setMsg, () =>
+              setLastSimRevision(p.revision || 0),
+            ),
+          );
       })
       .catch(() => setMsg("Could not create session"));
     return undefined;
@@ -193,13 +244,14 @@ function ControlStudioInner({ sessionId, onSession }) {
   }, [session?.session_id, revision, loadSession]);
 
   const persist = useCallback(
-    (diagram, op = "edit") => {
+    (diagram, meta = {}) => {
+      const { op = "edit", target = null, detail = null } = typeof meta === "string" ? { op: meta } : meta;
       const sid = session?.session_id;
       if (!sid) return;
       fetch(`/api/control-studio/sessions/${sid}/diagram`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ diagram, author: "human", op }),
+        body: JSON.stringify({ diagram, author: "human", op, target, detail }),
       })
         .then((r) => r.json())
         .then((out) => {
@@ -216,7 +268,10 @@ function ControlStudioInner({ sessionId, onSession }) {
     (conn) => {
       setEdges((eds) => {
         const next = addEdge({ ...conn, id: `w-${eds.length + 1}`, type: "signal" }, eds);
-        persist(flowToDiagram(nodes, next, diagramBase.current), "connect");
+        persist(flowToDiagram(nodes, next, diagramBase.current), {
+          op: "connect",
+          target: `${conn.source}→${conn.target}`,
+        });
         return next;
       });
     },
@@ -224,7 +279,7 @@ function ControlStudioInner({ sessionId, onSession }) {
   );
 
   const onNodeDragStop = useCallback(() => {
-    persist(flowToDiagram(nodes, edges, diagramBase.current), "move");
+    persist(flowToDiagram(nodes, edges, diagramBase.current), { op: "move" });
   }, [nodes, edges, persist]);
 
   function placeBlock(item, position) {
@@ -242,35 +297,30 @@ function ControlStudioInner({ sessionId, onSession }) {
     };
     const nextNodes = [...nodes, nx];
     setNodes(nextNodes);
-    persist(flowToDiagram(nextNodes, edges, diagramBase.current), "add_block");
+    persist(flowToDiagram(nextNodes, edges, diagramBase.current), { op: "add_block", target: id });
   }
 
   function runSim() {
     const sid = session?.session_id;
     if (!sid) return;
-    persist(flowToDiagram(nodes, edges, diagramBase.current));
-    fetch(`/api/control-studio/sessions/${sid}/simulate`, { method: "POST" })
+    const diagram = flowToDiagram(nodes, edges, diagramBase.current);
+    fetch(`/api/control-studio/sessions/${sid}/diagram`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ diagram, author: "human", op: "edit" }),
+    })
       .then((r) => r.json())
-      .then((sim) => {
-        if (!sim.ok) {
-          setMsg(sim.error || "simulate failed");
-          return null;
-        }
-        return fetch(`/api/control-studio/sessions/${sid}/analyze`, { method: "POST" }).then((r) => r.json());
+      .then((out) => {
+        diagramBase.current = out.diagram;
+        const simRev = out.revision || revision;
+        setRevision(simRev);
+        return fetch(`/api/control-studio/sessions/${sid}/simulate`, { method: "POST" })
+          .then((r) => r.json())
+          .then((sim) =>
+            applySimAndAnalyze(sid, sim, setResults, setMargins, setMsg, () => setLastSimRevision(simRev)),
+          );
       })
-      .then((an) => {
-        if (an?.ok) {
-          const ts = Date.now();
-          setResults({
-            ts,
-            step: `/api/control-studio/sessions/${sid}/plot/step`,
-            bode: `/api/control-studio/sessions/${sid}/plot/bode`,
-            rlocus: `/api/control-studio/sessions/${sid}/plot/root_locus`,
-          });
-          setMargins(an);
-          setMsg("");
-        }
-      });
+      .catch(() => setMsg("Save failed"));
   }
 
   function undo() {
@@ -286,7 +336,11 @@ function ControlStudioInner({ sessionId, onSession }) {
       n.id === selected.id ? { ...n, data: { ...n.data, params: { ...n.data.params, ...params } } } : n,
     );
     setNodes(next);
-    persist(flowToDiagram(next, edges, diagramBase.current), "set_param");
+    persist(flowToDiagram(next, edges, diagramBase.current), {
+      op: "set_param",
+      target: selected.id,
+      detail: params,
+    });
   }
 
   function pinComment(text) {
@@ -301,25 +355,42 @@ function ControlStudioInner({ sessionId, onSession }) {
   const agentActive =
     session?.presence?.agent_editing ||
     (session?.presence?.agent_editing_until_ms && session.presence.agent_editing_until_ms > Date.now());
+  const resultsStale = lastSimRevision != null && revision > lastSimRevision;
 
   return (
-    <section className="control-studio">
-      <header className="studio-toolbar">
-        <div>
+    <section className="cs-app control-studio">
+      <header className="cs-header">
+        <div className="cs-header-title">
           <h2>Control Studio</h2>
-          <p className="hint">{session?.diagram?.title || "PID · DC motor"}</p>
+          <p>{session?.diagram?.title || "PID · DC motor"}</p>
         </div>
-        <span className="hint">session {session?.session_id}</span>
-        {agentActive ? <span className="studio-presence">● Agent editing</span> : <span className="studio-presence idle">● Live sync (SSE)</span>}
-        <button type="button" className="button-secondary" onClick={undo}>
-          Undo
-        </button>
-        <button type="button" className="palette-btn" onClick={runSim}>
-          Simulate
-        </button>
-        {msg ? <span className="hint">{msg}</span> : null}
+        <span className="cs-session-id">{session?.session_id ? `Session ${session.session_id}` : null}</span>
+        {agentActive ? (
+          <span className="cs-presence">
+            <span className="cs-presence-dot" aria-hidden>
+              ●
+            </span>{" "}
+            Agent editing
+          </span>
+        ) : (
+          <span className="cs-presence is-idle">Live sync (SSE)</span>
+        )}
+        <div className="cs-toolbar-actions">
+          {msg ? <span className="cs-status-msg">{msg}</span> : null}
+          <button type="button" className="cs-btn cs-btn-secondary" onClick={undo}>
+            Undo
+          </button>
+          <button
+            type="button"
+            className={`cs-btn cs-btn-primary${resultsStale ? " is-stale" : ""}`}
+            onClick={runSim}
+          >
+            {resultsStale ? "Simulate again" : "Simulate"}
+          </button>
+        </div>
       </header>
-      <div className="studio-layout">
+      <MarginsSummary margins={margins} stale={resultsStale} />
+      <div className="cs-workspace studio-layout">
         <StudioPalette groups={groups} onDragStart={(item, opts) => opts?.placeCenter && placeBlock(item)} />
         <div className="studio-canvas">
           <ReactFlowProvider>
@@ -336,11 +407,21 @@ function ControlStudioInner({ sessionId, onSession }) {
                 snapToGrid
                 snapGrid={[GRID, GRID]}
                 connectionLineType={ConnectionLineType.SmoothStep}
-                fitView
+                minZoom={0.35}
+                maxZoom={1.5}
                 proOptions={{ hideAttribution: true }}
               >
-                <Background gap={GRID} color="var(--ee-color-hairline)" size={1} />
-                <MiniMap className="studio-minimap" pannable zoomable />
+                <Background gap={GRID} color="var(--cs-border)" size={1} />
+                <FitViewOnChange revision={revision} nodeCount={nodes.length} />
+                {nodes.length > 8 ? (
+                  <MiniMap
+                    className="studio-minimap"
+                    nodeColor={minimapColor}
+                    nodeStrokeWidth={2}
+                    pannable={false}
+                    zoomable={false}
+                  />
+                ) : null}
               </ReactFlow>
             </CanvasDrop>
           </ReactFlowProvider>
@@ -353,14 +434,14 @@ function ControlStudioInner({ sessionId, onSession }) {
           notes={session?.diagram?.notes}
         />
       </div>
-      <ResultsDock sessionId={session?.session_id} results={results} margins={margins} />
+      <ResultsDock results={results} stale={resultsStale} />
       <section className="studio-oplog" aria-label="Operation log">
         <h3>Operation log</h3>
         <ul className="oplog-list">
           {(session?.op_log || []).slice(-10).reverse().map((op) => (
             <li key={op.id}>
               <span className={`studio-author-badge is-${op.author}`}>{op.author}</span>
-              <span className="op-name">{op.op}</span>
+              <span className="op-name">{formatOpSummary(op)}</span>
               <time dateTime={new Date(op.ts_ms).toISOString()}>{formatOpTime(op.ts_ms)}</time>
             </li>
           ))}
@@ -375,5 +456,10 @@ export function ControlStudio() {
     const q = new URLSearchParams(window.location.search);
     return q.get("session") || "";
   });
+  useEffect(() => {
+    const sync = () => setSessionId(new URLSearchParams(window.location.search).get("session") || "");
+    window.addEventListener("popstate", sync);
+    return () => window.removeEventListener("popstate", sync);
+  }, []);
   return <ControlStudioInner sessionId={sessionId} onSession={setSessionId} />;
 }
