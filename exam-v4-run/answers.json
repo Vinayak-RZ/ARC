@@ -1,0 +1,16 @@
+{
+  "p01": {"loss_mw": 2.44},
+  "p02": {"backup_operating_time_s": 0.5334, "primary_relay_tms": 0.647},
+  "p03": {"ik3_symmetrical_ka": 74.849},
+  "p04": {"inductance_mh_per_km": 1.313},
+  "p05": {"derated_ampacity_a": 31.7},
+  "p06": {"tolerable_step_v": 364.9},
+  "p07": {"tdd_percent": 7.55, "meets_tdd_limit": 1},
+  "p08": {"hv_to_lv_phase_shift_deg": -150},
+  "p09": {"synchronous_speed_rpm": 1500, "slip_percent": 1.6},
+  "p10": {"loss_mw": 43.64},
+  "p11": {"gen1_mw": 84.96, "gen2_mw": 104.24, "lambda_usd_per_mwh": 5.40},
+  "p12": {"conduction_loss_w": 116.0},
+  "p13": {"kappa_factor": 1.5231, "peak_current_ka": 81.61},
+  "p14": {"line_line_drop_kv": 2.254}
+}
