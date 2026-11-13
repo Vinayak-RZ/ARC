@@ -8,10 +8,10 @@ export function FitViewOnChange({ revision, nodeCount, agentBump = 0 }) {
     if (!ready || nodeCount < 1) return undefined;
     const t = window.setTimeout(() => {
       fitView({
-        padding: 0.1,
+        padding: 0.12,
         includeHiddenNodes: false,
-        minZoom: 0.95,
-        maxZoom: 1.35,
+        minZoom: 0.6,
+        maxZoom: 1.05,
         duration: 300,
       });
     }, 50);

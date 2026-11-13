@@ -49,6 +49,7 @@ export function SignalEdge({
     targetY,
     targetPosition,
     borderRadius: 0,
+    offset: 1,
   });
   return (
     <>

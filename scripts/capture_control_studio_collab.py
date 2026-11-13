@@ -45,7 +45,25 @@ def main() -> int:
         }""",
             timeout=35000,
         )
-        page.wait_for_timeout(600)
+        page.wait_for_timeout(900)
+        clipped = page.evaluate(
+            """() => {
+            const pane = document.querySelector('.react-flow__pane');
+            if (!pane) return true;
+            const paneRect = pane.getBoundingClientRect();
+            const pad = 3;
+            const nodes = document.querySelectorAll('.react-flow__node');
+            if (!nodes.length) return true;
+            for (const n of nodes) {
+                const r = n.getBoundingClientRect();
+                if (r.left < paneRect.left + pad || r.right > paneRect.right - pad) return true;
+            }
+            return false;
+        }"""
+        )
+        if clipped:
+            print("viewport-clip: node bbox extends past pane", file=sys.stderr)
+            return 2
         page.screenshot(path=str(populated), full_page=False)
         bode_shot = OUT / "control_studio_bode_1280x800.png"
         page.locator(".studio-results-tabs button", has_text="Bode").click()

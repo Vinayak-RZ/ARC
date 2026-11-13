@@ -2,7 +2,7 @@ import { MarkerType } from "@xyflow/react";
 import { nodeForType } from "./nodes.jsx";
 import { wireLabel } from "./edges.jsx";
 
-const EDGE_MARKER = { type: MarkerType.ArrowClosed, color: "var(--ee-color-ink)" };
+const EDGE_MARKER = { type: MarkerType.ArrowClosed, color: "#202020", width: 14, height: 14 };
 
 export function paramLine(params) {
   if (!params || typeof params !== "object") return "";

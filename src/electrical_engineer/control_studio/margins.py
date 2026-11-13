@@ -6,30 +6,29 @@ import math
 from typing import Any
 
 
-def _fmt_freq(x: float | None, *, note_key: str | None = None) -> tuple[str, str | None]:
-    notes: dict[str, str] = {}
+def _fmt_freq(x: float | None) -> tuple[str, str | None]:
     if x is None or (isinstance(x, float) and math.isnan(x)):
-        return "No crossover", notes.get(note_key or "w") or "No frequency where the open-loop condition is met."
+        return "No crossover", "There is no crossover frequency in the analyzed band."
     if math.isinf(x):
-        return "Infinite", "Crossover occurs beyond the analyzed band."
+        return "Infinite", "The crossover lies beyond the analyzed frequency band."
     return f"{x:.2f} rad/s", None
 
 
 def _fmt_gm_db(gm_db: float | None, gm_lin: float | None) -> tuple[str, str | None]:
     if gm_lin is not None and math.isinf(gm_lin):
-        return "Infinite", "Open-loop magnitude at the phase crossover exceeds 0 dB (very stable in gain)."
+        return "Infinite", "Gain margin is infinite because open-loop gain stays above 0 dB in the analyzed band."
     if gm_db is not None and math.isinf(gm_db):
-        return "Infinite", "Open-loop magnitude at the phase crossover exceeds 0 dB (very stable in gain)."
+        return "Infinite", "Gain margin is infinite because open-loop gain stays above 0 dB in the analyzed band."
     if gm_db is None or (isinstance(gm_db, float) and math.isnan(gm_db)):
-        return "No crossover", "Phase never crosses −180° in the analyzed band; gain margin is undefined."
+        return "No crossover", "Gain margin is undefined because phase never crosses −180° in the analyzed band."
     return f"{gm_db:.2f} dB", None
 
 
 def _fmt_pm(pm: float | None) -> tuple[str, str | None]:
     if pm is None or (isinstance(pm, float) and math.isnan(pm)):
-        return "No crossover", "Open-loop gain never crosses 0 dB in the analyzed band; phase margin is undefined."
+        return "No crossover", "The loop gain never reaches 0 dB, so phase margin is not defined."
     if math.isinf(pm):
-        return "Infinite", "Phase stays below −180° at all 0 dB crossings in the analyzed band."
+        return "Infinite", "Phase margin is infinite because phase stays above −180° at the gain crossover."
     return f"{pm:.1f}°", None
 
 
@@ -133,26 +132,10 @@ def extract_margins(sys) -> dict[str, Any]:
         gm_db = None
         gm_lin = None
 
-    notes: list[str] = []
     gm_s, gm_note = _fmt_gm_db(gm_db, gm_lin if isinstance(gm_lin, float) else None)
     pm_s, pm_note = _fmt_pm(pm_deg if isinstance(pm_deg, float) or pm_deg is None else float(pm_deg))
     wcg_s, wcg_note = _fmt_freq(w_gain_cross)
     wcp_s, wcp_note = _fmt_freq(w_phase_cross)
-
-    for bit in (gm_note, pm_note, wcg_note, wcp_note):
-        if bit and bit not in notes:
-            notes.append(bit)
-
-    if (
-        (gm_lin is not None and math.isinf(gm_lin))
-        or (pm_deg is not None and math.isinf(pm_deg))
-        or (w_gain_cross is None and w_phase_cross is None)
-    ):
-        margin_note = "No gain or phase crossover in the analyzed band; margins show Infinite or No crossover."
-    elif notes and all("No frequency" in n or "undefined" in n or "analyzed band" in n for n in notes):
-        margin_note = "No gain or phase crossover in the open-loop band; margins reported as Infinite / No crossover."
-    else:
-        margin_note = notes[0] if len(notes) == 1 else ("; ".join(notes) if notes else None)
 
     return {
         "gain_margin_linear": float(gm_lin) if gm_lin is not None and math.isfinite(gm_lin) else None,
@@ -162,7 +145,6 @@ def extract_margins(sys) -> dict[str, Any]:
         "phase_margin_infinite": bool(pm_deg is not None and math.isinf(pm_deg)),
         "phase_crossover_rad_s": float(w_phase_cross) if w_phase_cross is not None and math.isfinite(w_phase_cross) else None,
         "gain_crossover_rad_s": float(w_gain_cross) if w_gain_cross is not None and math.isfinite(w_gain_cross) else None,
-        "margin_note": margin_note,
         "margin_tooltips": {
             "gm_db": gm_note,
             "pm_deg": pm_note,

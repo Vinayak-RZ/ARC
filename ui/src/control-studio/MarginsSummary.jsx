@@ -1,10 +1,14 @@
 import { marginLine } from "./marginFormat.js";
 
 function Cell({ label, value, tip, stale }) {
+  const showCaption = tip && (value === "Infinite" || value === "No crossover");
   return (
-    <div title={tip || undefined}>
+    <div>
       <dt>{label}</dt>
-      <dd className={stale ? "is-muted" : undefined}>{value}</dd>
+      <dd className={stale ? "is-muted" : undefined} title={!showCaption && tip ? tip : undefined}>
+        {value}
+      </dd>
+      {showCaption ? <p className="cs-margin-caption">{tip}</p> : null}
     </div>
   );
 }
@@ -29,18 +33,12 @@ export function MarginsSummary({ margins, stale }) {
   }
   const m = marginLine(margins);
   const tips = margins.margin_tooltips || {};
-  const note = margins.margin_note;
   return (
     <div className={`cs-margins${stale ? " is-stale" : ""}`} role="status" aria-live="polite">
       {stale ? <p className="cs-stale-banner">Diagram changed since last run. Simulate again for fresh margins.</p> : null}
-      {note && !stale ? (
-        <p className="cs-margins-footnote" title={note}>
-          {note.length > 120 ? `${note.slice(0, 117)}…` : note}
-        </p>
-      ) : null}
       <dl className="cs-margin-grid">
-        <Cell label="Gain margin" value={m.gm} tip={tips.gm_db || note} stale={stale} />
-        <Cell label="Phase margin" value={m.pm} tip={tips.pm_deg || note} stale={stale} />
+        <Cell label="Gain margin" value={m.gm} tip={tips.gm_db} stale={stale} />
+        <Cell label="Phase margin" value={m.pm} tip={tips.pm_deg} stale={stale} />
         <Cell label="ω gain cross" value={m.wcg} tip={tips.wcg} stale={stale} />
         <Cell label="ω phase cross" value={m.wcp} tip={tips.wcp} stale={stale} />
       </dl>

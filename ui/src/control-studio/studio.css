@@ -111,7 +111,7 @@
 
 .cs-workspace {
   display: grid;
-  grid-template-columns: 148px 1fr 248px;
+  grid-template-columns: 56px 1fr 248px;
   gap: var(--cs-space-3);
   flex: 1;
   min-height: min(58vh, 540px);
@@ -180,6 +180,41 @@
   border-radius: var(--cs-radius-md);
   padding: var(--cs-space-2);
   background: var(--cs-surface);
+}
+
+.studio-palette-icons {
+  max-height: min(62vh, 560px);
+  padding: var(--cs-space-1);
+}
+
+.studio-palette-icons-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.studio-palette-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--cs-border);
+  border-radius: var(--cs-radius-sm);
+  background: var(--cs-surface-subtle);
+  cursor: grab;
+  padding: 0;
+}
+
+.studio-palette-icon-btn:active {
+  cursor: grabbing;
+}
+
+.studio-palette-icon-btn .chip-icon {
+  font-size: 16px;
 }
 
 .studio-palette-heading {
@@ -410,7 +445,7 @@
 .studio-port-col-left {
   position: absolute;
   left: 0;
-  top: 38%;
+  top: 50%;
   transform: translate(-50%, -50%);
 }
 
@@ -530,11 +565,18 @@
   background: rgba(255, 255, 255, 0.88);
 }
 
-.cs-margins-footnote {
-  margin: 0 0 var(--cs-space-2);
-  font-size: 12px;
+.cs-margin-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cs-margin-caption {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.35;
   color: var(--cs-text-secondary);
-  max-width: 72rem;
+  max-width: 14rem;
 }
 
 .studio-inspector {

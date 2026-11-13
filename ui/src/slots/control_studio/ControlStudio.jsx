@@ -419,9 +419,9 @@ function ControlStudioInner({ sessionId, onSession }) {
                 defaultEdgeOptions={{
                   type: "signal",
                   zIndex: 0,
-                  markerEnd: { type: MarkerType.ArrowClosed, color: "#202020", width: 20, height: 20 },
+                  markerEnd: { type: MarkerType.ArrowClosed, color: "#202020", width: 14, height: 14 },
                 }}
-                minZoom={0.75}
+                minZoom={0.55}
                 maxZoom={1.5}
                 proOptions={{ hideAttribution: true }}
               >
