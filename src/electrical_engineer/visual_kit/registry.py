@@ -31,6 +31,7 @@ GOLDEN_MAP: dict[str, str] = {
     "control.nyquist": "control",
     "control.block_diagram": "control",
     "schematic.divider": "circuits",
+    "schematic.rlc_series": "circuits",
     "waveform.phasor": "circuits",
 }
 

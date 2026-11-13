@@ -11,6 +11,7 @@ from electrical_engineer.visual_kit.design_tokens import ThemeName
 from electrical_engineer.visual_kit.render_circuit import (
     render_phasor_diagram,
     render_schematic_divider,
+    render_schematic_rlc_series,
 )
 from electrical_engineer.visual_kit.render_control import (
     render_control_bode,
@@ -54,6 +55,7 @@ _COMPONENTS = {
     "control.root_locus": lambda out, props: render_control_root_locus(out, theme_name=_theme(props)),
     "control.nyquist": lambda out, props: render_control_nyquist(out, theme_name=_theme(props)),
     "schematic.divider": lambda out, props: render_schematic_divider(out, theme_name=_theme(props)),
+    "schematic.rlc_series": lambda out, props: render_schematic_rlc_series(out, theme_name=_theme(props)),
     "waveform.phasor": lambda out, props: render_phasor_diagram(out, theme_name=_theme(props)),
     "control.block_diagram": lambda out, props: render_control_block_diagram(
         out, theme_name=_theme(props), props=props

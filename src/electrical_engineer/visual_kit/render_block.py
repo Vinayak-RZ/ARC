@@ -13,25 +13,22 @@ from electrical_engineer.visual_kit.design_tokens import ThemeName, get_theme
 from electrical_engineer.visual_kit.mpl_theme import apply_theme
 
 
-def _h_line(ax, x0, x1, y, color, lw=1.6):
-    ax.plot([x0, x1], [y, y], color=color, linewidth=lw, solid_capstyle="round")
+def _h(ax, x0, x1, y, color, lw=1.8, z=6):
+    ax.plot([x0, x1], [y, y], color=color, linewidth=lw, solid_capstyle="round", zorder=z)
 
 
-def _v_line(ax, x, y0, y1, color, lw=1.6):
-    ax.plot([x, x], [y0, y1], color=color, linewidth=lw, solid_capstyle="round")
+def _v(ax, x, y0, y1, color, lw=1.8, z=6):
+    ax.plot([x, x], [y0, y1], color=color, linewidth=lw, solid_capstyle="round", zorder=z)
 
 
-def _arrow(ax, x0, y0, x1, y1, color):
+def _arrowhead(ax, x, y, color):
     ax.annotate(
         "",
-        xy=(x1, y1),
-        xytext=(x0, y0),
-        arrowprops={"arrowstyle": "-|>", "color": color, "lw": 1.4, "shrinkA": 0, "shrinkB": 0},
+        xy=(x, y),
+        xytext=(x - 0.35, y),
+        arrowprops={"arrowstyle": "-|>", "color": color, "lw": 1.6, "shrinkA": 0, "shrinkB": 0},
+        zorder=2,
     )
-
-
-def _signal(ax, x, y, text: str, theme, ha="center"):
-    ax.text(x, y, text, ha=ha, va="center", fontsize=theme.annotation_size, color=theme.ink)
 
 
 def render_control_block_diagram(
@@ -43,72 +40,78 @@ def render_control_block_diagram(
     problem = unity_feedback_problem(props)
     meta = plant_meta(problem)
     theme = get_theme(theme_name)
-    fig, ax = plt.subplots(figsize=(theme.fig_w, theme.fig_h * 0.62))
+    fig, ax = plt.subplots(figsize=(10.0, 4.2))
     apply_theme(ax, theme)
-    ax.set_xlim(0, 10)
-    ax.set_ylim(0, 4.2)
+    ax.set_xlim(0, 11)
+    ax.set_ylim(0, 4.6)
     ax.axis("off")
     ax.set_title("Unity negative feedback")
 
-    y_main = 2.6
-    y_fb = 0.85
-    x_r = 0.35
-    x_sum = 2.0
-    x_g = 4.2
-    x_tap = 7.55
-    x_h = 4.2
+    y = 3.2
+    y_fb = 0.95
+    x_r0 = 0.4
+    x_sum = 2.15
+    r_sum = 0.32
+    x_g = 3.55
+    g_w, g_h = 1.85, 0.78
+    x_g_out = x_g + g_w
+    x_y_end = 9.2
+    x_h0 = x_g
+    h_w = g_w
+    x_tap = x_g_out
 
-    # Reference input wire
-    _h_line(ax, x_r + 0.3, x_sum - 0.28, y_main, theme.ink)
-    _signal(ax, (x_r + x_sum) / 2, y_main + 0.22, r"$R(s)$", theme)
+    # R(s) reference on wire (not a block)
+    _h(ax, x_r0, x_sum - r_sum, y, theme.ink)
+    ax.text((x_r0 + x_sum - r_sum) / 2, y + 0.25, r"$R(s)$", ha="center", fontsize=theme.annotation_size, color=theme.ink)
 
-    # Summing junction
-    circ = Circle((x_sum, y_main), 0.28, fill=False, edgecolor=theme.primary, linewidth=2.0)
-    ax.add_patch(circ)
-    ax.text(x_sum, y_main, r"$\Sigma$", ha="center", va="center", fontsize=theme.label_size, color=theme.ink)
-    ax.text(x_sum - 0.42, y_main + 0.12, r"$+$", fontsize=theme.label_size, color=theme.accent)
-    ax.text(x_sum - 0.42, y_main - 0.22, r"$-$", fontsize=theme.label_size, color=theme.fault)
+    # Summer (+ / -)
+    ax.add_patch(Circle((x_sum, y), r_sum, fill=False, edgecolor=theme.primary, linewidth=2.2, zorder=3))
+    ax.text(x_sum, y, r"$\Sigma$", ha="center", va="center", fontsize=theme.label_size, color=theme.ink, zorder=4)
+    ax.text(x_sum - r_sum - 0.12, y + 0.08, r"$+$", fontsize=theme.label_size, color=theme.ink)
+    ax.text(x_sum - r_sum * 0.35, y - r_sum - 0.14, r"$-$", fontsize=theme.label_size, color=theme.ink, ha="center")
 
-    # Forward path E(s) -> G(s) -> Y(s)
-    _h_line(ax, x_sum + 0.28, x_g - 0.15, y_main, theme.ink)
-    _signal(ax, (x_sum + x_g) / 2, y_main + 0.22, r"$E(s)$", theme)
-    g_w, g_h = 1.65, 0.72
-    rect = FancyBboxPatch(
-        (x_g, y_main - g_h / 2),
-        g_w,
-        g_h,
-        boxstyle="round,pad=0.06",
-        edgecolor=theme.primary,
-        facecolor=theme.bg,
-        linewidth=1.5,
+    # E(s) -> G(s)
+    _h(ax, x_sum + r_sum, x_g, y, theme.ink)
+    ax.text((x_sum + r_sum + x_g) / 2, y + 0.25, r"$E(s)$", ha="center", fontsize=theme.annotation_size, color=theme.ink)
+    ax.add_patch(
+        FancyBboxPatch(
+            (x_g, y - g_h / 2),
+            g_w,
+            g_h,
+            boxstyle="round,pad=0.06",
+            edgecolor=theme.primary,
+            facecolor=theme.bg,
+            linewidth=1.6,
+            zorder=3,
+        )
     )
-    ax.add_patch(rect)
-    ax.text(x_g + g_w / 2, y_main, rf"$G(s)={meta['G_tf']}$", ha="center", va="center", fontsize=theme.annotation_size)
-    _h_line(ax, x_g + g_w, x_tap, y_main, theme.ink)
-    _signal(ax, (x_g + g_w + x_tap) / 2, y_main + 0.22, r"$Y(s)$", theme)
+    ax.text(x_g + g_w / 2, y, rf"$G(s)={meta['G_tf']}$", ha="center", va="center", fontsize=theme.annotation_size, zorder=4)
 
-    # Feedback takeoff at output
-    _v_line(ax, x_tap, y_fb + 0.5, y_main, theme.ink)
-    _h_line(ax, x_h + 0.82, x_tap, y_fb, theme.ink)
-    _v_line(ax, x_h + 0.82, y_fb, y_fb + 0.36, theme.ink)
+    # Y(s) on output wire
+    _h(ax, x_g_out, x_y_end, y, theme.ink)
+    ax.text((x_g_out + x_y_end) / 2, y + 0.25, r"$Y(s)$", ha="center", fontsize=theme.annotation_size, color=theme.ink)
+    _arrowhead(ax, x_y_end, y, theme.ink)
 
-    h_w, h_h = 1.1, 0.65
-    hrect = FancyBboxPatch(
-        (x_h - 0.1, y_fb - h_h / 2),
-        h_w,
-        h_h,
-        boxstyle="round,pad=0.05",
-        edgecolor=theme.accent,
-        facecolor=theme.bg,
-        linewidth=1.3,
+    # Takeoff at G output -> down -> H (R->L under G) -> B(s) up to summer minus
+    ax.plot(x_tap, y, "o", color=theme.ink, markersize=5, zorder=4)
+    _v(ax, x_tap, y_fb, y, theme.ink)
+    _h(ax, x_h0, x_tap, y_fb, theme.ink)
+    _h(ax, x_h0, x_sum, y_fb, theme.ink)
+    ax.add_patch(
+        FancyBboxPatch(
+            (x_h0, y_fb - 0.42),
+            h_w,
+            0.84,
+            boxstyle="round,pad=0.05",
+            edgecolor=theme.primary,
+            facecolor=theme.bg,
+            linewidth=1.4,
+            zorder=3,
+        )
     )
-    ax.add_patch(hrect)
-    ax.text(x_h + h_w / 2 - 0.1, y_fb, rf"$H(s)={meta['H_tf']}$", ha="center", va="center", fontsize=theme.annotation_size)
-    _h_line(ax, x_h + h_w + 0.02, x_sum, y_fb, theme.ink)
-    _v_line(ax, x_sum, y_fb, y_main - 0.28, theme.ink)
-    _signal(ax, x_sum + 0.55, (y_fb + y_main) / 2, r"$B(s)$", theme)
-
-    _arrow(ax, x_tap, y_main, x_tap + 0.35, y_main, theme.ink)
+    ax.text(x_h0 + h_w / 2, y_fb, rf"$H(s)={meta['H_tf']}$", ha="center", va="center", fontsize=theme.annotation_size, zorder=4)
+    _v(ax, x_sum, y_fb, y - r_sum, theme.ink)
+    ax.text(x_sum + 0.35, (y_fb + y) / 2, r"$B(s)$", fontsize=theme.annotation_size, color=theme.ink)
 
     out_dir.mkdir(parents=True, exist_ok=True)
     png = out_dir / "control.block_diagram.png"
@@ -116,5 +119,10 @@ def render_control_block_diagram(
     plt.close(fig)
     return {
         "png": str(png),
-        "meta": {"component_id": "control.block_diagram", "props_source": "block_diagram", **meta},
+        "meta": {
+            "component_id": "control.block_diagram",
+            "props_source": "block_diagram",
+            "wire_segments": 8,
+            **meta,
+        },
     }

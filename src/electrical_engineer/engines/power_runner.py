@@ -46,6 +46,7 @@ def _default_network():
         max_i_ka=1.0,
     )
     pp.create_load(net, b1, p_mw=5.0, q_mvar=1.0)
+    pp.create_load(net, b2, p_mw=0.5, q_mvar=0.15, name="fault_shunt")
     return net
 
 

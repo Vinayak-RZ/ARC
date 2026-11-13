@@ -13,6 +13,7 @@
     {"id": "control.root_locus", "engine": "control_runner", "pack": "control", "golden": "control/control.root_locus.png"},
     {"id": "control.block_diagram", "engine": "block_diagram", "pack": "control", "golden": "control/control.block_diagram.png"},
     {"id": "schematic.divider", "engine": "spice_runner", "pack": "circuits", "golden": "circuits/schematic.divider.png"},
+    {"id": "schematic.rlc_series", "engine": "spice_runner", "pack": "circuits", "golden": "circuits/schematic.rlc_series.png"},
     {"id": "waveform.phasor", "engine": "algebraic-check", "pack": "circuits", "golden": "circuits/waveform.phasor.png"}
   ]
 }
