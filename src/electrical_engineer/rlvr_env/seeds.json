@@ -1,0 +1,6 @@
+{
+  "schema": "arc.rlvr.seeds.v0.1",
+  "default_seed": 42,
+  "ci_seed": 0,
+  "episode_seeds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+}

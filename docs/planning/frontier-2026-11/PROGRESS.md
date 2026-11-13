@@ -13,10 +13,10 @@ Branch: `cursor/frontier-execution-7a2f` · PR [#49](https://github.com/Vinayak-
 | B4 | **partial** | `run_circuit_benchmark.py`; multimodal confirm path existing |
 | B5 | **partial** | trap index; process graders partial |
 | B6 | **blocked** | Harness + LIVE_AB.md (keys) |
-| B7 | **partial** | `rlvr_env` manifest |
+| B7 | **done** | `rlvr_env` v0.1, oracle rollout CI |
 | B8 | **partial** | `ee-vertical-pack` skill |
 | B9 | **blocked** | P1 |
-| B10 | **partial** | benchmark v0.1 tarball script |
+| B10 | **done** | `eee-coursework-trap` v0.1 tarball + grader |
 | B11 | **done** | Design system, Nyquist, dark goldens, regression, gallery |
 | U1 | **done** | Gallery + scorecard panel |
 | M1 | **done** | validate_frontier.sh |
