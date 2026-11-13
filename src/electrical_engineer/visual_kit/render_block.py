@@ -27,7 +27,23 @@ def _arrowhead(ax, x, y, color):
         xy=(x, y),
         xytext=(x - 0.35, y),
         arrowprops={"arrowstyle": "-|>", "color": color, "lw": 1.6, "shrinkA": 0, "shrinkB": 0},
-        zorder=2,
+        zorder=7,
+    )
+
+
+def _arrow_into(ax, x, y, color, *, direction: str) -> None:
+    if direction == "left":
+        xy, xytext = (x, y), (x + 0.28, y)
+    elif direction == "up":
+        xy, xytext = (x, y), (x, y - 0.28)
+    else:
+        raise ValueError(direction)
+    ax.annotate(
+        "",
+        xy=xy,
+        xytext=xytext,
+        arrowprops={"arrowstyle": "-|>", "color": color, "lw": 1.6, "shrinkA": 0, "shrinkB": 0},
+        zorder=7,
     )
 
 
@@ -92,11 +108,10 @@ def render_control_block_diagram(
     ax.text((x_g_out + x_y_end) / 2, y + 0.25, r"$Y(s)$", ha="center", fontsize=theme.annotation_size, color=theme.ink)
     _arrowhead(ax, x_y_end, y, theme.ink)
 
-    # Takeoff at G output -> down -> H (R->L under G) -> B(s) up to summer minus
+    # Feedback: tap -> down -> into H right -> out H left -> summer minus
+    x_h_left = x_h0
+    x_h_right = x_h0 + h_w
     ax.plot(x_tap, y, "o", color=theme.ink, markersize=5, zorder=4)
-    _v(ax, x_tap, y_fb, y, theme.ink)
-    _h(ax, x_h0, x_tap, y_fb, theme.ink)
-    _h(ax, x_h0, x_sum, y_fb, theme.ink)
     ax.add_patch(
         FancyBboxPatch(
             (x_h0, y_fb - 0.42),
@@ -106,12 +121,17 @@ def render_control_block_diagram(
             edgecolor=theme.primary,
             facecolor=theme.bg,
             linewidth=1.4,
-            zorder=3,
+            zorder=5,
         )
     )
-    ax.text(x_h0 + h_w / 2, y_fb, rf"$H(s)={meta['H_tf']}$", ha="center", va="center", fontsize=theme.annotation_size, zorder=4)
+    ax.text(x_h0 + h_w / 2, y_fb, rf"$H(s)={meta['H_tf']}$", ha="center", va="center", fontsize=theme.annotation_size, zorder=6)
+    _v(ax, x_tap, y_fb, y, theme.ink)
+    _h(ax, x_h_right, x_tap, y_fb, theme.ink)
+    _arrow_into(ax, x_h_right, y_fb, theme.ink, direction="left")
+    _h(ax, x_sum, x_h_left, y_fb, theme.ink)
+    ax.text((x_sum + x_h_left) / 2, y_fb - 0.22, r"$B(s)$", ha="center", fontsize=theme.annotation_size, color=theme.ink)
     _v(ax, x_sum, y_fb, y - r_sum, theme.ink)
-    ax.text(x_sum + 0.35, (y_fb + y) / 2, r"$B(s)$", fontsize=theme.annotation_size, color=theme.ink)
+    _arrow_into(ax, x_sum, y - r_sum, theme.ink, direction="up")
 
     out_dir.mkdir(parents=True, exist_ok=True)
     png = out_dir / "control.block_diagram.png"

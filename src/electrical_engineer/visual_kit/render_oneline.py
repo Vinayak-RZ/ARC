@@ -33,8 +33,11 @@ def render_power_oneline(out_dir: Path, *, theme_name: ThemeName = "light") -> d
         ("Bus 2", 5.4, "load"),
         ("Bus 3", 8.2, "fault"),
     ]
-    # Continuous backbone
-    ax.plot([0.8, 9.6], [y, y], color=theme.ink, linewidth=1.4, zorder=0)
+    bus3_x = 8.2
+    bus_bar_w = 1.15
+    line_end = bus3_x + bus_bar_w / 2
+    # Continuous backbone (ends at Bus 3 bar, not past it)
+    ax.plot([0.8, line_end], [y, y], color=theme.ink, linewidth=1.4, zorder=0)
 
     # Generator
     ax.add_patch(Circle((0.8, y), 0.28, fill=False, edgecolor=theme.primary, linewidth=2))
@@ -47,11 +50,19 @@ def render_power_oneline(out_dir: Path, *, theme_name: ThemeName = "light") -> d
 
     by_name = {b["name"]: b for b in snap["buses"]}
     for label, x, key in buses:
-        _bus_bar(ax, x, y, 1.15, theme)
-        ax.text(x, y + 0.38, label, ha="center", fontsize=theme.label_size, color=theme.ink)
+        _bus_bar(ax, x, y, bus_bar_w, theme)
+        ax.text(x, y + 0.28, label, ha="center", va="bottom", fontsize=theme.label_size, color=theme.ink)
         b = by_name.get(key)
         if b:
-            ax.text(x, y + 0.58, rf"$V={b['vm_pu']:.3f}$ pu", ha="center", fontsize=theme.annotation_size, color=theme.muted)
+            ax.text(
+                x,
+                y - 0.26,
+                rf"$V={b['vm_pu']:.3f}$ pu",
+                ha="center",
+                va="top",
+                fontsize=theme.annotation_size,
+                color=theme.muted,
+            )
 
     # Load at Bus 2
     ax.plot([5.4, 5.4], [y - 0.06, 1.55], color=theme.fault, linewidth=1.4)
