@@ -1,0 +1,1925 @@
+{
+  "schema": "arc.trap_prm.eval.v1",
+  "cases": [
+    {
+      "id": "correct-smib-0",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T1",
+          "T2",
+          "T3"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 5.594,
+          "f0_hz": 50.0,
+          "pm_pu": 0.745,
+          "pmax_pre_pu": 2.1,
+          "pmax_fault_pu": 0.483,
+          "pmax_post_pu": 1.382,
+          "h_s": 0.015
+        },
+        "steps": [
+          {
+            "id": "eq",
+            "text": "equal-area",
+            "delta_cr_deg": 88.05170840804766,
+            "accel_coeff": 28.08002014291914
+          }
+        ],
+        "final": {
+          "delta_cr_deg": 88.05170840804766,
+          "t_to_dcr_s": 0.42000000000000026,
+          "accel_coeff": 28.08002014291914
+        }
+      }
+    },
+    {
+      "id": "wrong-t1-smib-0",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T1"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T1"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 5.594,
+          "f0_hz": 50.0,
+          "pm_pu": 0.745,
+          "pmax_pre_pu": 2.1,
+          "pmax_fault_pu": 0.483,
+          "pmax_post_pu": 1.382,
+          "h_s": 0.015
+        },
+        "final": {
+          "delta_cr_deg": 96.97925055557408,
+          "used_single_pmax_equal_area": true
+        }
+      }
+    },
+    {
+      "id": "correct-smib-1",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T1",
+          "T2",
+          "T3"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 4.762,
+          "f0_hz": 60.0,
+          "pm_pu": 0.712,
+          "pmax_pre_pu": 1.631,
+          "pmax_fault_pu": 0.654,
+          "pmax_post_pu": 1.255,
+          "h_s": 0.001
+        },
+        "steps": [
+          {
+            "id": "eq",
+            "text": "equal-area",
+            "delta_cr_deg": 103.10103899858346,
+            "accel_coeff": 39.583275769715996
+          }
+        ],
+        "final": {
+          "delta_cr_deg": 103.10103899858346,
+          "t_to_dcr_s": 0.47800000000000037,
+          "accel_coeff": 39.583275769715996
+        }
+      }
+    },
+    {
+      "id": "wrong-t1-smib-1",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T1"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T1"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 4.762,
+          "f0_hz": 60.0,
+          "pm_pu": 0.712,
+          "pmax_pre_pu": 1.631,
+          "pmax_fault_pu": 0.654,
+          "pmax_post_pu": 1.255,
+          "h_s": 0.001
+        },
+        "final": {
+          "delta_cr_deg": 115.66994701017435,
+          "used_single_pmax_equal_area": true
+        }
+      }
+    },
+    {
+      "id": "correct-smib-2",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T1",
+          "T2",
+          "T3"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 6.358,
+          "f0_hz": 60.0,
+          "pm_pu": 0.886,
+          "pmax_pre_pu": 2.012,
+          "pmax_fault_pu": 0.621,
+          "pmax_post_pu": 1.452,
+          "h_s": 0.01
+        },
+        "steps": [
+          {
+            "id": "eq",
+            "text": "equal-area",
+            "delta_cr_deg": 83.77878775767047,
+            "accel_coeff": 29.646989495971624
+          }
+        ],
+        "final": {
+          "delta_cr_deg": 83.77878775767047,
+          "t_to_dcr_s": 0.36000000000000015,
+          "accel_coeff": 29.646989495971624
+        }
+      }
+    },
+    {
+      "id": "wrong-t1-smib-2",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T1"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T1"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 6.358,
+          "f0_hz": 60.0,
+          "pm_pu": 0.886,
+          "pmax_pre_pu": 2.012,
+          "pmax_fault_pu": 0.621,
+          "pmax_post_pu": 1.452,
+          "h_s": 0.01
+        },
+        "final": {
+          "delta_cr_deg": 97.71136558624362,
+          "used_single_pmax_equal_area": true
+        }
+      }
+    },
+    {
+      "id": "correct-smib-3",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T1",
+          "T2",
+          "T3"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 6.011,
+          "f0_hz": 50.0,
+          "pm_pu": 0.799,
+          "pmax_pre_pu": 2.011,
+          "pmax_fault_pu": 0.443,
+          "pmax_post_pu": 1.341,
+          "h_s": 0.01
+        },
+        "steps": [
+          {
+            "id": "eq",
+            "text": "equal-area",
+            "delta_cr_deg": 77.77420996730055,
+            "accel_coeff": 26.132030058141684
+          }
+        ],
+        "final": {
+          "delta_cr_deg": 77.77420996730055,
+          "t_to_dcr_s": 0.36000000000000015,
+          "accel_coeff": 26.132030058141684
+        }
+      }
+    },
+    {
+      "id": "wrong-t1-smib-3",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T1"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T1"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 6.011,
+          "f0_hz": 50.0,
+          "pm_pu": 0.799,
+          "pmax_pre_pu": 2.011,
+          "pmax_fault_pu": 0.443,
+          "pmax_post_pu": 1.341,
+          "h_s": 0.01
+        },
+        "final": {
+          "delta_cr_deg": 87.66248237576168,
+          "used_single_pmax_equal_area": true
+        }
+      }
+    },
+    {
+      "id": "correct-smib-4",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T1",
+          "T2",
+          "T3"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 5.654,
+          "f0_hz": 60.0,
+          "pm_pu": 0.799,
+          "pmax_pre_pu": 1.915,
+          "pmax_fault_pu": 0.441,
+          "pmax_post_pu": 1.459,
+          "h_s": 0.01
+        },
+        "steps": [
+          {
+            "id": "eq",
+            "text": "equal-area",
+            "delta_cr_deg": 85.39987017009726,
+            "accel_coeff": 33.33844344099533
+          }
+        ],
+        "final": {
+          "delta_cr_deg": 85.39987017009726,
+          "t_to_dcr_s": 0.35000000000000014,
+          "accel_coeff": 33.33844344099533
+        }
+      }
+    },
+    {
+      "id": "wrong-t1-smib-4",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T1"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T1"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 5.654,
+          "f0_hz": 60.0,
+          "pm_pu": 0.799,
+          "pmax_pre_pu": 1.915,
+          "pmax_fault_pu": 0.441,
+          "pmax_post_pu": 1.459,
+          "h_s": 0.01
+        },
+        "final": {
+          "delta_cr_deg": 94.09095774389067,
+          "used_single_pmax_equal_area": true
+        }
+      }
+    },
+    {
+      "id": "correct-smib-5",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T1",
+          "T2",
+          "T3"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 5.751,
+          "f0_hz": 50.0,
+          "pm_pu": 0.909,
+          "pmax_pre_pu": 1.616,
+          "pmax_fault_pu": 0.33,
+          "pmax_post_pu": 1.571,
+          "h_s": 0.01
+        },
+        "steps": [
+          {
+            "id": "eq",
+            "text": "equal-area",
+            "delta_cr_deg": 80.83643647793262,
+            "accel_coeff": 27.31344682307245
+          }
+        ],
+        "final": {
+          "delta_cr_deg": 80.83643647793262,
+          "t_to_dcr_s": 0.3000000000000001,
+          "accel_coeff": 27.31344682307245
+        }
+      }
+    },
+    {
+      "id": "wrong-t1-smib-5",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T1"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T1"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 5.751,
+          "f0_hz": 50.0,
+          "pm_pu": 0.909,
+          "pmax_pre_pu": 1.616,
+          "pmax_fault_pu": 0.33,
+          "pmax_post_pu": 1.571,
+          "h_s": 0.01
+        },
+        "final": {
+          "delta_cr_deg": 95.6622467092875,
+          "used_single_pmax_equal_area": true
+        }
+      }
+    },
+    {
+      "id": "correct-smib-6",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T1",
+          "T2",
+          "T3"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 4.518,
+          "f0_hz": 60.0,
+          "pm_pu": 0.828,
+          "pmax_pre_pu": 1.832,
+          "pmax_fault_pu": 0.337,
+          "pmax_post_pu": 1.539,
+          "h_s": 0.015
+        },
+        "steps": [
+          {
+            "id": "eq",
+            "text": "equal-area",
+            "delta_cr_deg": 83.08724995509033,
+            "accel_coeff": 41.721017975960066
+          }
+        ],
+        "final": {
+          "delta_cr_deg": 83.08724995509033,
+          "t_to_dcr_s": 0.28500000000000014,
+          "accel_coeff": 41.721017975960066
+        }
+      }
+    },
+    {
+      "id": "wrong-t1-smib-6",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T1"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T1"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 4.518,
+          "f0_hz": 60.0,
+          "pm_pu": 0.828,
+          "pmax_pre_pu": 1.832,
+          "pmax_fault_pu": 0.337,
+          "pmax_post_pu": 1.539,
+          "h_s": 0.015
+        },
+        "final": {
+          "delta_cr_deg": 96.37316272009893,
+          "used_single_pmax_equal_area": true
+        }
+      }
+    },
+    {
+      "id": "correct-smib-7",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T1",
+          "T2",
+          "T3"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 5.516,
+          "f0_hz": 60.0,
+          "pm_pu": 0.917,
+          "pmax_pre_pu": 2.165,
+          "pmax_fault_pu": 0.626,
+          "pmax_post_pu": 1.278,
+          "h_s": 0.015
+        },
+        "steps": [
+          {
+            "id": "eq",
+            "text": "equal-area",
+            "delta_cr_deg": 63.71704563728423,
+            "accel_coeff": 34.172508922296515
+          }
+        ],
+        "final": {
+          "delta_cr_deg": 63.71704563728423,
+          "t_to_dcr_s": 0.27000000000000013,
+          "accel_coeff": 34.172508922296515
+        }
+      }
+    },
+    {
+      "id": "wrong-t1-smib-7",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T1"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T1"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 5.516,
+          "f0_hz": 60.0,
+          "pm_pu": 0.917,
+          "pmax_pre_pu": 2.165,
+          "pmax_fault_pu": 0.626,
+          "pmax_post_pu": 1.278,
+          "h_s": 0.015
+        },
+        "final": {
+          "delta_cr_deg": 76.04116297106303,
+          "used_single_pmax_equal_area": true
+        }
+      }
+    },
+    {
+      "id": "correct-smib-8",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T1",
+          "T2",
+          "T3"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 5.769,
+          "f0_hz": 50.0,
+          "pm_pu": 0.716,
+          "pmax_pre_pu": 1.683,
+          "pmax_fault_pu": 0.636,
+          "pmax_post_pu": 1.209,
+          "h_s": 0.001
+        },
+        "steps": [
+          {
+            "id": "eq",
+            "text": "equal-area",
+            "delta_cr_deg": 96.89852537688837,
+            "accel_coeff": 27.228225460129945
+          }
+        ],
+        "final": {
+          "delta_cr_deg": 96.89852537688837,
+          "t_to_dcr_s": 0.5290000000000004,
+          "accel_coeff": 27.228225460129945
+        }
+      }
+    },
+    {
+      "id": "wrong-t1-smib-8",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T1"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T1"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 5.769,
+          "f0_hz": 50.0,
+          "pm_pu": 0.716,
+          "pmax_pre_pu": 1.683,
+          "pmax_fault_pu": 0.636,
+          "pmax_post_pu": 1.209,
+          "h_s": 0.001
+        },
+        "final": {
+          "delta_cr_deg": 111.06251702823207,
+          "used_single_pmax_equal_area": true
+        }
+      }
+    },
+    {
+      "id": "correct-smib-9",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T1",
+          "T2",
+          "T3"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 5.324,
+          "f0_hz": 60.0,
+          "pm_pu": 0.913,
+          "pmax_pre_pu": 2.183,
+          "pmax_fault_pu": 0.424,
+          "pmax_post_pu": 1.268,
+          "h_s": 0.001
+        },
+        "steps": [
+          {
+            "id": "eq",
+            "text": "equal-area",
+            "delta_cr_deg": 55.72188284161869,
+            "accel_coeff": 35.40487588568512
+          }
+        ],
+        "final": {
+          "delta_cr_deg": 55.72188284161869,
+          "t_to_dcr_s": 0.20900000000000016,
+          "accel_coeff": 35.40487588568512
+        }
+      }
+    },
+    {
+      "id": "wrong-t1-smib-9",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T1"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T1"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 5.324,
+          "f0_hz": 60.0,
+          "pm_pu": 0.913,
+          "pmax_pre_pu": 2.183,
+          "pmax_fault_pu": 0.424,
+          "pmax_post_pu": 1.268,
+          "h_s": 0.001
+        },
+        "final": {
+          "delta_cr_deg": 68.22510973887799,
+          "used_single_pmax_equal_area": true
+        }
+      }
+    },
+    {
+      "id": "correct-smib-10",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T1",
+          "T2",
+          "T3"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 5.867,
+          "f0_hz": 60.0,
+          "pm_pu": 0.939,
+          "pmax_pre_pu": 1.601,
+          "pmax_fault_pu": 0.443,
+          "pmax_post_pu": 1.49,
+          "h_s": 0.015
+        },
+        "steps": [
+          {
+            "id": "eq",
+            "text": "equal-area",
+            "delta_cr_deg": 78.67880149113824,
+            "accel_coeff": 32.12809940606572
+          }
+        ],
+        "final": {
+          "delta_cr_deg": 78.67880149113824,
+          "t_to_dcr_s": 0.27000000000000013,
+          "accel_coeff": 32.12809940606572
+        }
+      }
+    },
+    {
+      "id": "wrong-t1-smib-10",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T1"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T1"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 5.867,
+          "f0_hz": 60.0,
+          "pm_pu": 0.939,
+          "pmax_pre_pu": 1.601,
+          "pmax_fault_pu": 0.443,
+          "pmax_post_pu": 1.49,
+          "h_s": 0.015
+        },
+        "final": {
+          "delta_cr_deg": 89.28948994454446,
+          "used_single_pmax_equal_area": true
+        }
+      }
+    },
+    {
+      "id": "correct-smib-11",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T1",
+          "T2",
+          "T3"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 4.581,
+          "f0_hz": 50.0,
+          "pm_pu": 0.712,
+          "pmax_pre_pu": 2.059,
+          "pmax_fault_pu": 0.353,
+          "pmax_post_pu": 1.252,
+          "h_s": 0.01
+        },
+        "steps": [
+          {
+            "id": "eq",
+            "text": "equal-area",
+            "delta_cr_deg": 77.56011488040812,
+            "accel_coeff": 34.28937626707916
+          }
+        ],
+        "final": {
+          "delta_cr_deg": 77.56011488040812,
+          "t_to_dcr_s": 0.3300000000000001,
+          "accel_coeff": 34.28937626707916
+        }
+      }
+    },
+    {
+      "id": "wrong-t1-smib-11",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T1"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T1"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 4.581,
+          "f0_hz": 50.0,
+          "pm_pu": 0.712,
+          "pmax_pre_pu": 2.059,
+          "pmax_fault_pu": 0.353,
+          "pmax_post_pu": 1.252,
+          "h_s": 0.01
+        },
+        "final": {
+          "delta_cr_deg": 87.30941689351133,
+          "used_single_pmax_equal_area": true
+        }
+      }
+    },
+    {
+      "id": "correct-ed-0",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T6"
+        ],
+        "givens": {
+          "domain": "ed",
+          "pd_mw": 685.7,
+          "units": [
+            {
+              "a": 530.5,
+              "b": 5.75,
+              "c": 0.0048,
+              "pmin": 22.9,
+              "pmax": 251.9
+            },
+            {
+              "a": 467.9,
+              "b": 4.76,
+              "c": 0.0085,
+              "pmin": 26.4,
+              "pmax": 213.8
+            },
+            {
+              "a": 322.8,
+              "b": 5.28,
+              "c": 0.0052,
+              "pmin": 55.5,
+              "pmax": 290.9
+            }
+          ]
+        },
+        "final": {
+          "lambda": 7.996906365951257,
+          "P_mw": [
+            234.05274645325596,
+            190.40625682066218,
+            261.24099672608236
+          ]
+        }
+      }
+    },
+    {
+      "id": "wrong-t6-ed-0",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T6"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T6"
+        ],
+        "givens": {
+          "domain": "ed",
+          "pd_mw": 685.7,
+          "units": [
+            {
+              "a": 530.5,
+              "b": 5.75,
+              "c": 0.0048,
+              "pmin": 22.9,
+              "pmax": 251.9
+            },
+            {
+              "a": 467.9,
+              "b": 4.76,
+              "c": 0.0085,
+              "pmin": 26.4,
+              "pmax": 213.8
+            },
+            {
+              "a": 322.8,
+              "b": 5.28,
+              "c": 0.0052,
+              "pmin": 55.5,
+              "pmax": 290.9
+            }
+          ]
+        },
+        "final": {
+          "lambda": 7.996906365951257,
+          "P_mw": [
+            234.05274645325596,
+            220.40625682066218,
+            261.24099672608236
+          ],
+          "ignore_limits": true
+        }
+      }
+    },
+    {
+      "id": "correct-ed-1",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T6"
+        ],
+        "givens": {
+          "domain": "ed",
+          "pd_mw": 566.8,
+          "units": [
+            {
+              "a": 583.1,
+              "b": 6.42,
+              "c": 0.0088,
+              "pmin": 50.1,
+              "pmax": 209.8
+            },
+            {
+              "a": 368.3,
+              "b": 6.25,
+              "c": 0.0093,
+              "pmin": 44.3,
+              "pmax": 186.8
+            },
+            {
+              "a": 522.8,
+              "b": 5.13,
+              "c": 0.0081,
+              "pmin": 25.3,
+              "pmax": 223.6
+            }
+          ]
+        },
+        "final": {
+          "lambda": 9.440937900552486,
+          "P_mw": [
+            171.64419889502759,
+            171.55580110497237,
+            223.6
+          ]
+        }
+      }
+    },
+    {
+      "id": "wrong-t6-ed-1",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T6"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T6"
+        ],
+        "givens": {
+          "domain": "ed",
+          "pd_mw": 566.8,
+          "units": [
+            {
+              "a": 583.1,
+              "b": 6.42,
+              "c": 0.0088,
+              "pmin": 50.1,
+              "pmax": 209.8
+            },
+            {
+              "a": 368.3,
+              "b": 6.25,
+              "c": 0.0093,
+              "pmin": 44.3,
+              "pmax": 186.8
+            },
+            {
+              "a": 522.8,
+              "b": 5.13,
+              "c": 0.0081,
+              "pmin": 25.3,
+              "pmax": 223.6
+            }
+          ]
+        },
+        "final": {
+          "lambda": 9.440937900552486,
+          "P_mw": [
+            171.64419889502759,
+            201.55580110497237,
+            223.6
+          ],
+          "ignore_limits": true
+        }
+      }
+    },
+    {
+      "id": "correct-ed-2",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T6"
+        ],
+        "givens": {
+          "domain": "ed",
+          "pd_mw": 457.9,
+          "units": [
+            {
+              "a": 504.9,
+              "b": 5.11,
+              "c": 0.0062,
+              "pmin": 26.6,
+              "pmax": 108.5
+            },
+            {
+              "a": 435.5,
+              "b": 5.69,
+              "c": 0.0075,
+              "pmin": 39.5,
+              "pmax": 232.1
+            },
+            {
+              "a": 531.3,
+              "b": 6.39,
+              "c": 0.0044,
+              "pmin": 27.5,
+              "pmax": 190.3
+            }
+          ]
+        },
+        "final": {
+          "lambda": 8.076500000000001,
+          "P_mw": [
+            108.5,
+            159.10000000000005,
+            190.3
+          ]
+        }
+      }
+    },
+    {
+      "id": "wrong-t6-ed-2",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T6"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T6"
+        ],
+        "givens": {
+          "domain": "ed",
+          "pd_mw": 457.9,
+          "units": [
+            {
+              "a": 504.9,
+              "b": 5.11,
+              "c": 0.0062,
+              "pmin": 26.6,
+              "pmax": 108.5
+            },
+            {
+              "a": 435.5,
+              "b": 5.69,
+              "c": 0.0075,
+              "pmin": 39.5,
+              "pmax": 232.1
+            },
+            {
+              "a": 531.3,
+              "b": 6.39,
+              "c": 0.0044,
+              "pmin": 27.5,
+              "pmax": 190.3
+            }
+          ]
+        },
+        "final": {
+          "lambda": 8.076500000000001,
+          "P_mw": [
+            108.5,
+            189.10000000000005,
+            190.3
+          ],
+          "ignore_limits": true
+        }
+      }
+    },
+    {
+      "id": "correct-ed-3",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T6"
+        ],
+        "givens": {
+          "domain": "ed",
+          "pd_mw": 432.6,
+          "units": [
+            {
+              "a": 585.1,
+              "b": 6.25,
+              "c": 0.006,
+              "pmin": 21.0,
+              "pmax": 119.6
+            },
+            {
+              "a": 559.3,
+              "b": 4.68,
+              "c": 0.0056,
+              "pmin": 59.7,
+              "pmax": 213.2
+            },
+            {
+              "a": 368.6,
+              "b": 4.91,
+              "c": 0.0083,
+              "pmin": 35.3,
+              "pmax": 157.8
+            }
+          ]
+        },
+        "final": {
+          "lambda": 7.215890909090911,
+          "P_mw": [
+            80.49090909090924,
+            213.2,
+            138.90909090909102
+          ]
+        }
+      }
+    },
+    {
+      "id": "wrong-t6-ed-3",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T6"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T6"
+        ],
+        "givens": {
+          "domain": "ed",
+          "pd_mw": 432.6,
+          "units": [
+            {
+              "a": 585.1,
+              "b": 6.25,
+              "c": 0.006,
+              "pmin": 21.0,
+              "pmax": 119.6
+            },
+            {
+              "a": 559.3,
+              "b": 4.68,
+              "c": 0.0056,
+              "pmin": 59.7,
+              "pmax": 213.2
+            },
+            {
+              "a": 368.6,
+              "b": 4.91,
+              "c": 0.0083,
+              "pmin": 35.3,
+              "pmax": 157.8
+            }
+          ]
+        },
+        "final": {
+          "lambda": 7.215890909090911,
+          "P_mw": [
+            80.49090909090924,
+            243.2,
+            138.90909090909102
+          ],
+          "ignore_limits": true
+        }
+      }
+    },
+    {
+      "id": "correct-ed-4",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T6"
+        ],
+        "givens": {
+          "domain": "ed",
+          "pd_mw": 494.7,
+          "units": [
+            {
+              "a": 466.2,
+              "b": 4.71,
+              "c": 0.0075,
+              "pmin": 53.4,
+              "pmax": 131.9
+            },
+            {
+              "a": 470.6,
+              "b": 5.27,
+              "c": 0.0067,
+              "pmin": 57.1,
+              "pmax": 313.4
+            },
+            {
+              "a": 320.1,
+              "b": 5.7,
+              "c": 0.0099,
+              "pmin": 27.9,
+              "pmax": 136.3
+            }
+          ]
+        },
+        "final": {
+          "lambda": 8.342894457831324,
+          "P_mw": [
+            131.9,
+            229.32048192771077,
+            133.4795180722891
+          ]
+        }
+      }
+    },
+    {
+      "id": "wrong-t6-ed-4",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T6"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T6"
+        ],
+        "givens": {
+          "domain": "ed",
+          "pd_mw": 494.7,
+          "units": [
+            {
+              "a": 466.2,
+              "b": 4.71,
+              "c": 0.0075,
+              "pmin": 53.4,
+              "pmax": 131.9
+            },
+            {
+              "a": 470.6,
+              "b": 5.27,
+              "c": 0.0067,
+              "pmin": 57.1,
+              "pmax": 313.4
+            },
+            {
+              "a": 320.1,
+              "b": 5.7,
+              "c": 0.0099,
+              "pmin": 27.9,
+              "pmax": 136.3
+            }
+          ]
+        },
+        "final": {
+          "lambda": 8.342894457831324,
+          "P_mw": [
+            131.9,
+            259.3204819277108,
+            133.4795180722891
+          ],
+          "ignore_limits": true
+        }
+      }
+    },
+    {
+      "id": "correct-ed-5",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T6"
+        ],
+        "givens": {
+          "domain": "ed",
+          "pd_mw": 463.2,
+          "units": [
+            {
+              "a": 330.6,
+              "b": 4.64,
+              "c": 0.0116,
+              "pmin": 53.0,
+              "pmax": 105.3
+            },
+            {
+              "a": 419.9,
+              "b": 5.17,
+              "c": 0.005,
+              "pmin": 34.6,
+              "pmax": 111.0
+            },
+            {
+              "a": 470.8,
+              "b": 5.72,
+              "c": 0.0053,
+              "pmin": 42.7,
+              "pmax": 307.8
+            }
+          ]
+        },
+        "final": {
+          "lambda": 8.33714,
+          "P_mw": [
+            105.3,
+            111.0,
+            246.9
+          ]
+        }
+      }
+    },
+    {
+      "id": "wrong-t6-ed-5",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T6"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T6"
+        ],
+        "givens": {
+          "domain": "ed",
+          "pd_mw": 463.2,
+          "units": [
+            {
+              "a": 330.6,
+              "b": 4.64,
+              "c": 0.0116,
+              "pmin": 53.0,
+              "pmax": 105.3
+            },
+            {
+              "a": 419.9,
+              "b": 5.17,
+              "c": 0.005,
+              "pmin": 34.6,
+              "pmax": 111.0
+            },
+            {
+              "a": 470.8,
+              "b": 5.72,
+              "c": 0.0053,
+              "pmin": 42.7,
+              "pmax": 307.8
+            }
+          ]
+        },
+        "final": {
+          "lambda": 8.33714,
+          "P_mw": [
+            105.3,
+            141.0,
+            246.9
+          ],
+          "ignore_limits": true
+        }
+      }
+    },
+    {
+      "id": "correct-ed-6",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T6"
+        ],
+        "givens": {
+          "domain": "ed",
+          "pd_mw": 592.3,
+          "units": [
+            {
+              "a": 564.7,
+              "b": 5.74,
+              "c": 0.0031,
+              "pmin": 20.8,
+              "pmax": 318.5
+            },
+            {
+              "a": 398.5,
+              "b": 6.26,
+              "c": 0.0035,
+              "pmin": 59.7,
+              "pmax": 246.5
+            },
+            {
+              "a": 355.5,
+              "b": 5.77,
+              "c": 0.0092,
+              "pmin": 24.3,
+              "pmax": 116.4
+            }
+          ]
+        },
+        "final": {
+          "lambda": 7.603946793349168,
+          "P_mw": [
+            300.63657957244646,
+            191.99239904988121,
+            99.6710213776722
+          ]
+        }
+      }
+    },
+    {
+      "id": "wrong-t6-ed-6",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T6"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T6"
+        ],
+        "givens": {
+          "domain": "ed",
+          "pd_mw": 592.3,
+          "units": [
+            {
+              "a": 564.7,
+              "b": 5.74,
+              "c": 0.0031,
+              "pmin": 20.8,
+              "pmax": 318.5
+            },
+            {
+              "a": 398.5,
+              "b": 6.26,
+              "c": 0.0035,
+              "pmin": 59.7,
+              "pmax": 246.5
+            },
+            {
+              "a": 355.5,
+              "b": 5.77,
+              "c": 0.0092,
+              "pmin": 24.3,
+              "pmax": 116.4
+            }
+          ]
+        },
+        "final": {
+          "lambda": 7.603946793349168,
+          "P_mw": [
+            300.63657957244646,
+            221.99239904988121,
+            99.6710213776722
+          ],
+          "ignore_limits": true
+        }
+      }
+    },
+    {
+      "id": "correct-ed-7",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T6"
+        ],
+        "givens": {
+          "domain": "ed",
+          "pd_mw": 517.5,
+          "units": [
+            {
+              "a": 406.2,
+              "b": 6.33,
+              "c": 0.0045,
+              "pmin": 58.5,
+              "pmax": 106.8
+            },
+            {
+              "a": 508.9,
+              "b": 5.15,
+              "c": 0.007,
+              "pmin": 52.6,
+              "pmax": 291.8
+            },
+            {
+              "a": 343.9,
+              "b": 6.04,
+              "c": 0.0096,
+              "pmin": 51.9,
+              "pmax": 150.6
+            }
+          ]
+        },
+        "final": {
+          "lambda": 8.850486746987952,
+          "P_mw": [
+            106.8,
+            264.3204819277109,
+            146.37951807228922
+          ]
+        }
+      }
+    },
+    {
+      "id": "wrong-t6-ed-7",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T6"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T6"
+        ],
+        "givens": {
+          "domain": "ed",
+          "pd_mw": 517.5,
+          "units": [
+            {
+              "a": 406.2,
+              "b": 6.33,
+              "c": 0.0045,
+              "pmin": 58.5,
+              "pmax": 106.8
+            },
+            {
+              "a": 508.9,
+              "b": 5.15,
+              "c": 0.007,
+              "pmin": 52.6,
+              "pmax": 291.8
+            },
+            {
+              "a": 343.9,
+              "b": 6.04,
+              "c": 0.0096,
+              "pmin": 51.9,
+              "pmax": 150.6
+            }
+          ]
+        },
+        "final": {
+          "lambda": 8.850486746987952,
+          "P_mw": [
+            106.8,
+            294.3204819277109,
+            146.37951807228922
+          ],
+          "ignore_limits": true
+        }
+      }
+    },
+    {
+      "id": "correct-agc-0",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T4",
+          "T5"
+        ],
+        "givens": {
+          "domain": "agc",
+          "agc_preset": "eec301",
+          "k": 0.3
+        },
+        "final": {
+          "delta_f1_hz": -0.1600066533087677,
+          "delta_p12_mw": -45.06425588476877,
+          "first_dip_delta_f1_hz": -0.4111297530823944,
+          "text": "Note: AGC does not remove the first dip; we did not use ode45."
+        }
+      }
+    },
+    {
+      "id": "wrong-t5-agc-0",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T5"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T5"
+        ],
+        "givens": {
+          "domain": "agc",
+          "agc_preset": "eec301",
+          "k": 0.3
+        },
+        "final": {
+          "agc_removes_first_dip": true,
+          "first_dip_delta_f1_hz": 0.0
+        }
+      }
+    },
+    {
+      "id": "correct-agc-1",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T4",
+          "T5"
+        ],
+        "givens": {
+          "domain": "agc",
+          "agc_preset": "eec301",
+          "k": 0.3
+        },
+        "final": {
+          "delta_f1_hz": -0.1600066533087677,
+          "delta_p12_mw": -45.06425588476877,
+          "first_dip_delta_f1_hz": -0.4111297530823944,
+          "text": "Note: AGC does not remove the first dip; we did not use ode45."
+        }
+      }
+    },
+    {
+      "id": "wrong-t5-agc-1",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T5"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T5"
+        ],
+        "givens": {
+          "domain": "agc",
+          "agc_preset": "eec301",
+          "k": 0.3
+        },
+        "final": {
+          "agc_removes_first_dip": true,
+          "first_dip_delta_f1_hz": 0.0
+        }
+      }
+    },
+    {
+      "id": "correct-agc-2",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T4",
+          "T5"
+        ],
+        "givens": {
+          "domain": "agc",
+          "agc_preset": "eec301",
+          "k": 0.3
+        },
+        "final": {
+          "delta_f1_hz": -0.1600066533087677,
+          "delta_p12_mw": -45.06425588476877,
+          "first_dip_delta_f1_hz": -0.4111297530823944,
+          "text": "Note: AGC does not remove the first dip; we did not use ode45."
+        }
+      }
+    },
+    {
+      "id": "wrong-t5-agc-2",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T5"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T5"
+        ],
+        "givens": {
+          "domain": "agc",
+          "agc_preset": "eec301",
+          "k": 0.3
+        },
+        "final": {
+          "agc_removes_first_dip": true,
+          "first_dip_delta_f1_hz": 0.0
+        }
+      }
+    },
+    {
+      "id": "correct-agc-3",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T4",
+          "T5"
+        ],
+        "givens": {
+          "domain": "agc",
+          "agc_preset": "eec301",
+          "k": 0.3
+        },
+        "final": {
+          "delta_f1_hz": -0.1600066533087677,
+          "delta_p12_mw": -45.06425588476877,
+          "first_dip_delta_f1_hz": -0.4111297530823944,
+          "text": "Note: AGC does not remove the first dip; we did not use ode45."
+        }
+      }
+    },
+    {
+      "id": "wrong-t5-agc-3",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T5"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T5"
+        ],
+        "givens": {
+          "domain": "agc",
+          "agc_preset": "eec301",
+          "k": 0.3
+        },
+        "final": {
+          "agc_removes_first_dip": true,
+          "first_dip_delta_f1_hz": 0.0
+        }
+      }
+    },
+    {
+      "id": "correct-agc-4",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T4",
+          "T5"
+        ],
+        "givens": {
+          "domain": "agc",
+          "agc_preset": "eec301",
+          "k": 0.3
+        },
+        "final": {
+          "delta_f1_hz": -0.1600066533087677,
+          "delta_p12_mw": -45.06425588476877,
+          "first_dip_delta_f1_hz": -0.4111297530823944,
+          "text": "Note: AGC does not remove the first dip; we did not use ode45."
+        }
+      }
+    },
+    {
+      "id": "wrong-t5-agc-4",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T5"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T5"
+        ],
+        "givens": {
+          "domain": "agc",
+          "agc_preset": "eec301",
+          "k": 0.3
+        },
+        "final": {
+          "agc_removes_first_dip": true,
+          "first_dip_delta_f1_hz": 0.0
+        }
+      }
+    },
+    {
+      "id": "correct-agc-5",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T4",
+          "T5"
+        ],
+        "givens": {
+          "domain": "agc",
+          "agc_preset": "eec301",
+          "k": 0.3
+        },
+        "final": {
+          "delta_f1_hz": -0.1600066533087677,
+          "delta_p12_mw": -45.06425588476877,
+          "first_dip_delta_f1_hz": -0.4111297530823944,
+          "text": "Note: AGC does not remove the first dip; we did not use ode45."
+        }
+      }
+    },
+    {
+      "id": "wrong-t5-agc-5",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T5"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T5"
+        ],
+        "givens": {
+          "domain": "agc",
+          "agc_preset": "eec301",
+          "k": 0.3
+        },
+        "final": {
+          "agc_removes_first_dip": true,
+          "first_dip_delta_f1_hz": 0.0
+        }
+      }
+    },
+    {
+      "id": "negation-text-smib-0",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T2",
+          "T9"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 4.361,
+          "f0_hz": 50.0,
+          "pm_pu": 0.86,
+          "pmax_pre_pu": 2.066,
+          "pmax_fault_pu": 0.588,
+          "pmax_post_pu": 1.414,
+          "h_s": 0.015
+        },
+        "steps": [
+          {
+            "id": "n",
+            "text": "We did not use ode45; RK4 only."
+          }
+        ],
+        "final": {
+          "delta_cr_deg": 82.12037520576757,
+          "solver_used": "rk4"
+        }
+      }
+    },
+    {
+      "id": "negation-text-smib-1",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T2",
+          "T9"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 4.748,
+          "f0_hz": 60.0,
+          "pm_pu": 0.865,
+          "pmax_pre_pu": 2.163,
+          "pmax_fault_pu": 0.613,
+          "pmax_post_pu": 1.471,
+          "h_s": 0.015
+        },
+        "steps": [
+          {
+            "id": "n",
+            "text": "We did not use ode45; RK4 only."
+          }
+        ],
+        "final": {
+          "delta_cr_deg": 85.57523106868295,
+          "solver_used": "rk4"
+        }
+      }
+    },
+    {
+      "id": "negation-text-smib-2",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T2",
+          "T9"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 4.316,
+          "f0_hz": 60.0,
+          "pm_pu": 0.742,
+          "pmax_pre_pu": 1.79,
+          "pmax_fault_pu": 0.335,
+          "pmax_post_pu": 1.672,
+          "h_s": 0.001
+        },
+        "steps": [
+          {
+            "id": "n",
+            "text": "We did not use ode45; RK4 only."
+          }
+        ],
+        "final": {
+          "delta_cr_deg": 95.59994556581609,
+          "solver_used": "rk4"
+        }
+      }
+    },
+    {
+      "id": "negation-text-smib-3",
+      "expect": "correct",
+      "trace": {
+        "trap_ids": [
+          "T2",
+          "T9"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 5.36,
+          "f0_hz": 50.0,
+          "pm_pu": 0.889,
+          "pmax_pre_pu": 1.994,
+          "pmax_fault_pu": 0.305,
+          "pmax_post_pu": 1.596,
+          "h_s": 0.001
+        },
+        "steps": [
+          {
+            "id": "n",
+            "text": "We did not use ode45; RK4 only."
+          }
+        ],
+        "final": {
+          "delta_cr_deg": 78.45584458392622,
+          "solver_used": "rk4"
+        }
+      }
+    },
+    {
+      "id": "empty-trace-0",
+      "expect": "empty",
+      "trace": {}
+    },
+    {
+      "id": "empty-trace-1",
+      "expect": "empty",
+      "trace": {
+        "final": {
+          "text": ""
+        }
+      }
+    },
+    {
+      "id": "wrong-t2-solver-0",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T2"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T2"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 6.046,
+          "f0_hz": 60.0,
+          "pm_pu": 0.843,
+          "pmax_pre_pu": 1.622,
+          "pmax_fault_pu": 0.553,
+          "pmax_post_pu": 1.626,
+          "h_s": 0.01
+        },
+        "final": {
+          "solver_used": "ode45",
+          "text": "Integrated with ode45 for clearing."
+        }
+      }
+    },
+    {
+      "id": "wrong-t2-solver-1",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T2"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T2"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 4.904,
+          "f0_hz": 50.0,
+          "pm_pu": 0.841,
+          "pmax_pre_pu": 1.74,
+          "pmax_fault_pu": 0.498,
+          "pmax_post_pu": 1.649,
+          "h_s": 0.015
+        },
+        "final": {
+          "solver_used": "ode45",
+          "text": "Integrated with ode45 for clearing."
+        }
+      }
+    },
+    {
+      "id": "wrong-t2-solver-2",
+      "expect": "wrong",
+      "expect_fail_traps": [
+        "T2"
+      ],
+      "trace": {
+        "trap_ids": [
+          "T2"
+        ],
+        "givens": {
+          "domain": "smib",
+          "h_mj_mva": 4.776,
+          "f0_hz": 50.0,
+          "pm_pu": 0.827,
+          "pmax_pre_pu": 1.604,
+          "pmax_fault_pu": 0.693,
+          "pmax_post_pu": 1.375,
+          "h_s": 0.015
+        },
+        "final": {
+          "solver_used": "ode45",
+          "text": "Integrated with ode45 for clearing."
+        }
+      }
+    }
+  ]
+}

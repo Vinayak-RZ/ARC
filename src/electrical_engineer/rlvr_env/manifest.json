@@ -3,6 +3,8 @@
   "traps": [
     {"id": "T1", "engine": "smib_swing"},
     {"id": "T2", "engine": "smib_swing"},
+    {"id": "T4", "engine": "agc_two_area"},
+    {"id": "T5", "engine": "agc_two_area"},
     {"id": "T6", "engine": "ed_lambda"}
   ],
   "reward": "trap_regression_pass",

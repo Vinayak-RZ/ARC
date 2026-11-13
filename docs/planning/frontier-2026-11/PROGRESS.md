@@ -11,7 +11,7 @@ Branch: `cursor/frontier-execution-7a2f` · PR [#49](https://github.com/Vinayak-
 | B2 | **done** | PSA workflows + MCP |
 | B3 | **done** | Control eval 18/18; block diagram gold |
 | B4 | **partial** | `run_circuit_benchmark.py`; multimodal confirm path existing |
-| B5 | **partial** | trap index; process graders partial |
+| B5 | **done** | trap PRM (`trap-verify`), `docs/hosts/trap_hooks.md`, ablation via `scripts/trap_prm_contract.py` |
 | B6 | **blocked** | Harness + LIVE_AB.md (keys) |
 | B7 | **partial** | `rlvr_env` manifest |
 | B8 | **partial** | `ee-vertical-pack` skill |

@@ -1,0 +1,101 @@
+{
+  "traps_automated": [
+    "T1",
+    "T10",
+    "T2",
+    "T3",
+    "T4",
+    "T5",
+    "T6",
+    "T7",
+    "T9"
+  ],
+  "hook_contract_path": "docs/hosts/trap_hooks.md",
+  "eval_cases": 61,
+  "eval_metrics": {
+    "eval_cases": 61,
+    "correct_cases": 30,
+    "false_positives_on_correct": 0,
+    "false_positive_rate_on_correct": 0.0,
+    "abstain_rate": 0.086,
+    "empty_not_unchecked": 0,
+    "per_trap": {
+      "T1": {
+        "tp": 12,
+        "fp": 0,
+        "fn": 0,
+        "abstain": 0,
+        "scored": 24,
+        "precision": 1.0,
+        "recall": 1.0,
+        "false_positive_rate_on_correct": 0.0
+      },
+      "T2": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "abstain": 4,
+        "scored": 15,
+        "precision": 1.0,
+        "recall": 1.0,
+        "false_positive_rate_on_correct": 0.0
+      },
+      "T3": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "abstain": 0,
+        "scored": 12,
+        "precision": null,
+        "recall": null,
+        "false_positive_rate_on_correct": 0.0
+      },
+      "T4": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "abstain": 0,
+        "scored": 6,
+        "precision": null,
+        "recall": null,
+        "false_positive_rate_on_correct": 0.0
+      },
+      "T5": {
+        "tp": 6,
+        "fp": 0,
+        "fn": 0,
+        "abstain": 0,
+        "scored": 12,
+        "precision": 1.0,
+        "recall": 1.0,
+        "false_positive_rate_on_correct": 0.0
+      },
+      "T6": {
+        "tp": 8,
+        "fp": 0,
+        "fn": 0,
+        "abstain": 0,
+        "scored": 16,
+        "precision": 1.0,
+        "recall": 1.0,
+        "false_positive_rate_on_correct": 0.0
+      },
+      "T9": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "abstain": 4,
+        "scored": 0,
+        "precision": null,
+        "recall": null,
+        "false_positive_rate_on_correct": 0.0
+      }
+    },
+    "substance_empty_count": 2
+  },
+  "legacy_ablation": {
+    "cases": 8,
+    "outcome_only_pass_rate": 0.75,
+    "with_verifier_pass_rate": 0.0
+  }
+}

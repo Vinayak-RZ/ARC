@@ -10,9 +10,12 @@ nodes:
   check:
     activity: check-numeric
     needs: [exam, ctrl, web]
+  trap:
+    activity: trap-verify
+    needs: [exam, ctrl, web]
   label:
     activity: label-unchecked
-    needs: [check, ctrl, web]
+    needs: [trap, check, ctrl, web]
   summary:
     activity: write-run-summary
     needs: [label]

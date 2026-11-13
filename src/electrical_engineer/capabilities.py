@@ -58,6 +58,7 @@ PROVIDERS = frozenset(
         "run-ee-v2-solver",
         "run-symmetrical-fault-base",
         "web-verify",
+        "trap-verify",
     }
 )
 
