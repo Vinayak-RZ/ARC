@@ -1770,7 +1770,8 @@ a { color: var(--ee-color-primary); }
   background: var(--ee-color-surface-card);
   box-shadow: 0 -12px 16px var(--ee-color-surface-card);
 }
-.problems-row:hover .problems-row-actions { opacity: 1; }
+.problems-row:hover .problems-row-actions,
+.problems-row:focus-within .problems-row-actions { opacity: 1; }
 .problems-row-actions {
   opacity: 0;
   transition: opacity 120ms ease;
@@ -1879,3 +1880,19 @@ a { color: var(--ee-color-primary); }
 .step-expand:hover { background: var(--ee-color-surface-strong); color: var(--ee-color-ink); }
 .step-expand svg { transition: transform 120ms ease; }
 .step-expand[aria-expanded="true"] svg { transform: rotate(180deg); }
+
+/* Inline text button (stale banner "Run again"): no native chrome in either theme. */
+.text-link {
+  font: inherit;
+  font-weight: 600;
+  padding: 2px 6px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ee-color-link, var(--ee-color-primary-ink));
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.text-link:hover { background: var(--ee-color-surface-strong); }

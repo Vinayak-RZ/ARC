@@ -533,6 +533,8 @@ def main() -> int:
                 page.locator(".cs-simulate-btn").click()
                 page.wait_for_selector(".studio-settled-pill", timeout=120000)
                 snap("studio-step-settled.png")
+                if args.round >= 8:
+                    snap("studio-step-settled-dark.png")
                 page.locator(".react-flow__node", has_text="PID").click(force=True)
                 for label, val in [("Kp", "0.08"), ("Ki", "0.02"), ("Kd", "0")]:
                     field = page.get_by_label(label)
@@ -593,6 +595,8 @@ def main() -> int:
                 page.wait_for_selector(".studio-margins .studio-margin", timeout=60000)
                 page.wait_for_timeout(400)
                 snap("studio-margins-no-crossover.png")
+                if args.round >= 8:
+                    snap("studio-margins-no-crossover-dark.png")
 
             if args.round >= 4:
                 req = urllib.request.Request(
@@ -609,6 +613,8 @@ def main() -> int:
                 page.wait_for_selector(".studio-margins .studio-margin", timeout=120000)
                 page.wait_for_timeout(400)
                 snap("studio-margins-finite.png")
+                if args.round >= 8:
+                    snap("studio-margins-finite-dark.png")
 
             go("?view=gallery")
             page.wait_for_selector(".gallery-card", timeout=10000)
