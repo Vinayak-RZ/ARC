@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from electrical_engineer.benchmark_v01.round_public import format_stem_number
 from electrical_engineer.benchmark_v01.sanitize import clean_question_text
 
 
@@ -14,19 +15,28 @@ def _fmt_task_dir(name: str) -> str:
 def _template_question(item_name: str, pack: str, givens: dict[str, Any]) -> str | None:
     if item_name == "rl-step-01":
         return (
-            f"A series RL circuit has V={givens['v']} V, R={givens['r']} ohm, L={givens['l']} H. "
-            f"Find the inductor current (A) at t={givens['t']} s after the step at t=0."
+            f"A series RL circuit has V={format_stem_number(float(givens['v']))} V, "
+            f"R={format_stem_number(float(givens['r']))} ohm, "
+            f"L={format_stem_number(float(givens['l']))} H. "
+            f"Find the inductor current (A) at t={format_stem_number(float(givens['t']))} s "
+            "after the step at t=0."
         )
     if item_name == "rlc-natural-01":
         return (
-            f"A parallel RLC has R={givens['r']} ohm, L={givens['l']} H, C={givens['c']} F, "
-            f"initial capacitor voltage vc0={givens['vc0']} V, inductor current i0={givens['i0']} A. "
-            f"Find capacitor voltage (V) at t={givens['t']} s."
+            f"A parallel RLC has R={format_stem_number(float(givens['r']))} ohm, "
+            f"L={format_stem_number(float(givens['l']))} H, "
+            f"C={format_stem_number(float(givens['c']))} F, "
+            f"initial capacitor voltage vc0={format_stem_number(float(givens['vc0']))} V, "
+            f"inductor current i0={format_stem_number(float(givens['i0']))} A "
+            "(positive from the shared node through the inductor toward ground at t=0+). "
+            f"Find capacitor voltage (V) at t={format_stem_number(float(givens['t']))} s."
         )
     if item_name == "rc-step-01":
         return (
-            f"A series RC circuit has V={givens['v']} V, R={givens['r']} ohm, "
-            f"C={givens['c']} F. Find the capacitor voltage (V) at t={givens['t']} s."
+            f"A series RC circuit has V={format_stem_number(float(givens['v']))} V, "
+            f"R={format_stem_number(float(givens['r']))} ohm, "
+            f"C={format_stem_number(float(givens['c']))} F. "
+            f"Find the capacitor voltage (V) at t={format_stem_number(float(givens['t']))} s."
         )
     if item_name == "divider-dc-01":
         return (

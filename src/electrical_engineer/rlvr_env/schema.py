@@ -52,9 +52,18 @@ TRAP_VERIFIER_NOTES: dict[str, str] = {
 
 
 def trap_public_schema(trap_id: str) -> dict[str, Any]:
-    from electrical_engineer.benchmark_v01.public_schema import public_answer_schema
+    from electrical_engineer.benchmark_v01.public_schema import (
+        field_tolerance,
+        public_answer_schema,
+    )
 
-    return public_answer_schema(_trap_fields(trap_id))
+    fields = []
+    for row in _trap_fields(trap_id):
+        f = dict(row)
+        if "tolerance" in f:
+            f.update(field_tolerance(f.pop("tolerance")))
+        fields.append(f)
+    return public_answer_schema(fields)
 
 
 TRAP_ANSWER_SCHEMAS: dict[str, dict[str, Any]] = {

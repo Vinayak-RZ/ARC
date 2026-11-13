@@ -18,7 +18,7 @@ _TRAP_QUESTION: dict[str, str] = {
         "find the critical clearing angle delta_cr (deg)."
     ),
     "T2": (
-        "For the same SMIB data with integration step h_integrator_s, find the time (s) "
+        "SMIB with parameters and integration step h_integrator_s in the data: find the time (s) "
         "to reach the critical clearing angle while the fault is still applied."
     ),
     "T3": (
@@ -31,8 +31,9 @@ _TRAP_QUESTION: dict[str, str] = {
         "and tie-line flow P12 (MW) without automatic generation control."
     ),
     "T5": (
-        "The same two-area case uses integral AGC gain K_agc (agc horizon agc_t_end_s) after "
-        "a load step dpl1_pu at step_time_s. Report steady-state Area-1 frequency (Hz) and tie flow P12 (MW)."
+        "Two-area model with integral AGC gain K_agc (agc horizon agc_t_end_s) after "
+        "a load step dpl1_pu at step_time_s (all parameters in the data). "
+        "Report steady-state Area-1 frequency (Hz) and tie flow P12 (MW)."
     ),
     "T6": (
         "Three thermal units have quadratic costs and MW limits in the data. "

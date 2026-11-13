@@ -51,7 +51,6 @@ def main() -> int:
         "version": "v0.1",
         "name": "eee-coursework-trap",
         "task_counts_by_domain": by_domain,
-        "difficulty_tiers": catalog_meta.get("difficulty_tiers", {}),
         "total_tasks": len(questions),
         "unique_question_givens": catalog_meta["unique_question_givens"],
         "grading_tolerance_rules": "Submit only fields named in answer_schema within listed tolerances and units.",
@@ -103,7 +102,6 @@ def main() -> int:
         "total_tasks": len(questions),
         "unique_question_givens": catalog_meta["unique_question_givens"],
         "task_counts_by_domain": by_domain,
-        "difficulty_tiers": catalog_meta.get("difficulty_tiers", {}),
     }
     (OUT_DIR / "manifest.json").write_text(json.dumps(release_manifest, indent=2))
     print(
@@ -114,7 +112,6 @@ def main() -> int:
                 "tasks": len(questions),
                 "unique_tasks": catalog_meta["unique_question_givens"],
                 "by_domain": by_domain,
-                "difficulty_tiers": catalog_meta.get("difficulty_tiers", {}),
             }
         )
     )

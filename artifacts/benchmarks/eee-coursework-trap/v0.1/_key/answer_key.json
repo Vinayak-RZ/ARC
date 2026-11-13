@@ -1,13 +1,13 @@
 {
   "schema": "arc.benchmark.answer_key.v0.1",
-  "key_sha256": "753fc0516d5c3c94b6428ba2991117a0e473348178d969700fb58c5dfd986ac1",
+  "key_sha256": "e48e33a61988c9cdd8c8c74d485fa1fb530b882e1c8283b5a05674f9913d48e0",
   "answers": {
     "power/agc-eec301-01-s118": {
       "reference": {
-        "primary_df1_Hz": -0.19743370659823573,
-        "primary_P12_MW": -55.326148867856304,
-        "agc_ss_df1_Hz": 4.551534288000267e-08,
-        "agc_ss_P12_MW": -1.6120359216170598e-05
+        "primary_df1_Hz": -0.1974,
+        "primary_P12_MW": -55.32,
+        "agc_ss_df1_Hz": 4.551e-08,
+        "agc_ss_P12_MW": -1.612e-05
       },
       "grading": {
         "solver": null,
@@ -26,7 +26,7 @@
           "f0_hz": 60.0,
           "base_mva": 1000.0,
           "tie_sync_gain": 2.0,
-          "dpl1_pu": 0.12312000000000001,
+          "dpl1_pu": 0.1231,
           "dpl2_pu": 0.0,
           "step_time_s": 1.0,
           "h_s": 0.001,
@@ -51,15 +51,52 @@
           "t_end_s": 30.0,
           "K_agc": 0.3,
           "agc_t_end_s": 60.0
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "primary_df1_Hz",
+              "type": "float",
+              "unit": "Hz",
+              "tolerance": 0.002,
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.002
+            },
+            {
+              "name": "primary_P12_MW",
+              "type": "float",
+              "unit": "MW",
+              "tolerance": 0.5,
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.5
+            },
+            {
+              "name": "agc_ss_df1_Hz",
+              "type": "float",
+              "unit": "Hz",
+              "tolerance": 0.002,
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.002
+            },
+            {
+              "name": "agc_ss_P12_MW",
+              "type": "float",
+              "unit": "MW",
+              "tolerance": 0.05,
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); primary_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; primary_P12_MW [MW] within \u00b10.5% or \u00b10.5; agc_ss_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; agc_ss_P12_MW [MW] within \u00b10.5% or \u00b10.05"
         }
       }
     },
     "power/agc-eec301-01-s149": {
       "reference": {
-        "primary_df1_Hz": -0.21023033572960176,
-        "primary_P12_MW": -58.91210296114334,
-        "agc_ss_df1_Hz": 4.846541045624819e-08,
-        "agc_ss_P12_MW": -1.7165197231888173e-05
+        "primary_df1_Hz": -0.2102,
+        "primary_P12_MW": -58.91,
+        "agc_ss_df1_Hz": 4.847e-08,
+        "agc_ss_P12_MW": -1.717e-05
       },
       "grading": {
         "solver": null,
@@ -103,6 +140,43 @@
           "t_end_s": 30.0,
           "K_agc": 0.3,
           "agc_t_end_s": 60.0
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "primary_df1_Hz",
+              "type": "float",
+              "unit": "Hz",
+              "tolerance": 0.002,
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.002
+            },
+            {
+              "name": "primary_P12_MW",
+              "type": "float",
+              "unit": "MW",
+              "tolerance": 0.5,
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.5
+            },
+            {
+              "name": "agc_ss_df1_Hz",
+              "type": "float",
+              "unit": "Hz",
+              "tolerance": 0.002,
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.002
+            },
+            {
+              "name": "agc_ss_P12_MW",
+              "type": "float",
+              "unit": "MW",
+              "tolerance": 0.05,
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); primary_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; primary_P12_MW [MW] within \u00b10.5% or \u00b10.5; agc_ss_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; agc_ss_P12_MW [MW] within \u00b10.5% or \u00b10.05"
         }
       }
     },
@@ -137,7 +211,7 @@
             ]
           }
         ],
-        "lam": 7.173684210526315
+        "lam": 7.174
       },
       "grading": {
         "solver": null,
@@ -183,6 +257,23 @@
             500.0,
             300.0
           ]
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "lam",
+              "type": "float",
+              "unit": "Rs/MWh",
+              "tolerance": 0.05,
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            },
+            {
+              "name": "cases",
+              "type": "array"
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); lam [Rs/MWh] within \u00b10.5% or \u00b10.05; cases [1] within \u00b10.5% or \u00b10.0001"
         }
       }
     },
@@ -191,33 +282,33 @@
         "cases": [
           {
             "case": "PD_450",
-            "lam": 7.1770311387459165,
+            "lam": 7.177,
             "P": [
-              233.7456751741781,
-              139.75259489549305,
-              76.50172993032871
+              233.7499999999999,
+              139.74999999999997,
+              76.5
             ]
           },
           {
             "case": "PD_500",
-            "lam": 7.397199356628648,
+            "lam": 7.397153846153846,
             "P": [
-              261.26670240951955,
+              261.2692307692307,
               150.0,
-              88.73329759048046
+              88.73076923076924
             ]
           },
           {
             "case": "PD_300",
-            "lam": 6.608610086114338,
+            "lam": 6.608578947368421,
             "P": [
-              162.69304359523085,
-              92.38417384286153,
-              44.9227825619077
+              162.69736842105254,
+              92.38157894736838,
+              44.92105263157894
             ]
           }
         ],
-        "lam": 7.1770311387459165
+        "lam": 7.177
       },
       "grading": {
         "solver": null,
@@ -237,7 +328,7 @@
           "units": [
             {
               "a": 500.0,
-              "b": 5.307065737352492,
+              "b": 5.307,
               "c": 0.004,
               "pmin": 50.0,
               "pmax": 300.0
@@ -257,78 +348,35 @@
               "pmax": 120.0
             }
           ],
-          "PD_MW": 540.8000000000001,
+          "PD_MW": 540.8,
           "PD_cases_MW": [
             450.0,
             500.0,
             300.0
           ]
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "lam",
+              "type": "float",
+              "unit": "Rs/MWh",
+              "tolerance": 0.05,
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            },
+            {
+              "name": "cases",
+              "type": "array"
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); lam [Rs/MWh] within \u00b10.5% or \u00b10.05; cases [1] within \u00b10.5% or \u00b10.0001"
         }
       }
     },
     "power/ed-penalty-t13-01-s139": {
       "reference": {
-        "value": 7.889047286508207
-      },
-      "grading": {
-        "solver": "ed_with_losses",
-        "tol": 0.01,
-        "engine": null,
-        "recipe_id": "ed-penalty-study",
-        "expect": {
-          "recipe_id": "ed-penalty-study",
-          "unchecked": false,
-          "value": 7.889,
-          "tol": 0.01
-        },
-        "public_givens": {
-          "pd_mw": 500,
-          "units": [
-            {
-              "a": 500.0,
-              "b": 5.300015101727801,
-              "c": 0.004,
-              "pmin": 50.0,
-              "pmax": 300.0
-            },
-            {
-              "a": 400.0,
-              "b": 5.5,
-              "c": 0.006,
-              "pmin": 30.0,
-              "pmax": 150.0
-            },
-            {
-              "a": 200.0,
-              "b": 5.8,
-              "c": 0.009,
-              "pmin": 20.0,
-              "pmax": 120.0
-            }
-          ],
-          "B": [
-            [
-              0.0001,
-              2e-05,
-              1e-05
-            ],
-            [
-              2e-05,
-              0.00015,
-              2e-05
-            ],
-            [
-              1e-05,
-              2e-05,
-              0.00012
-            ]
-          ]
-        }
-      }
-    },
-    "power/ed-penalty-t13-01-s170": {
-      "reference": {
-        "value": 7.889036594226772
+        "value": 7.889
       },
       "grading": {
         "solver": "ed_with_losses",
@@ -383,6 +431,18 @@
               0.00012
             ]
           ]
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.01
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.01"
         }
       }
     },
@@ -406,12 +466,24 @@
           "z2_pu": 0.1,
           "z0_pu": 0.3,
           "v_prefault_pu": 1.0
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
         }
       }
     },
     "power/ll-01-s134": {
       "reference": {
-        "value": 8.660254037844386
+        "value": 8.66
       },
       "grading": {
         "solver": null,
@@ -429,12 +501,24 @@
           "z2_pu": 0.1,
           "z0_pu": 0.3,
           "v_prefault_pu": 1.0
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
         }
       }
     },
     "power/llg-bc-01-s106": {
       "reference": {
-        "value": 4.999999999999999
+        "value": 5.0
       },
       "grading": {
         "solver": null,
@@ -458,6 +542,18 @@
           "z2_pu": "0.2j",
           "z0_pu": "0.2j",
           "zf_pu": 0
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
         }
       }
     },
@@ -480,6 +576,18 @@
           "ct_secondary_a": 5,
           "relay_pickup_a": 2.0,
           "fault_current_a": 800
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
         }
       }
     },
@@ -514,15 +622,27 @@
               "sequence": "1"
             }
           ]
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
         }
       }
     },
     "power/smib-eec301-01-s127": {
       "reference": {
-        "delta0_deg": 28.489649897934452,
-        "delta_cr_deg": 74.44678818096753,
-        "tcr_s": 0.27750000953674314,
-        "t_to_delta_cr_s": 0.2780000000000002
+        "delta0_deg": 28.49,
+        "delta_cr_deg": 74.45,
+        "tcr_s": 0.2775,
+        "t_to_delta_cr_s": 0.278
       },
       "grading": {
         "solver": null,
@@ -553,19 +673,56 @@
         "public_givens": {
           "h_mj_mva": 5.0,
           "f0_hz": 50.0,
-          "pm_pu": 0.9540000000000001,
+          "pm_pu": 0.954,
           "pmax_pre_pu": 2.0,
           "pmax_fault_pu": 0.5,
           "pmax_post_pu": 1.5
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "delta0_deg",
+              "type": "float",
+              "unit": "deg",
+              "tolerance": 0.02,
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.02
+            },
+            {
+              "name": "delta_cr_deg",
+              "type": "float",
+              "unit": "deg",
+              "tolerance": 0.05,
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            },
+            {
+              "name": "tcr_s",
+              "type": "float",
+              "unit": "s",
+              "tolerance": 0.002,
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.002
+            },
+            {
+              "name": "t_to_delta_cr_s",
+              "type": "float",
+              "unit": "s",
+              "tolerance": 0.002,
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.002
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); delta0_deg [deg] within \u00b10.5% or \u00b10.02; delta_cr_deg [deg] within \u00b10.5% or \u00b10.05; tcr_s [s] within \u00b10.5% or \u00b10.002; t_to_delta_cr_s [s] within \u00b10.5% or \u00b10.002"
         }
       }
     },
     "power/smib-eec301-01-s158": {
       "reference": {
-        "delta0_deg": 30.264992610998046,
-        "delta_cr_deg": 69.58631780598874,
-        "tcr_s": 0.24850001335144037,
-        "t_to_delta_cr_s": 0.2490000000000002
+        "delta0_deg": 30.26,
+        "delta_cr_deg": 69.59,
+        "tcr_s": 0.2485,
+        "t_to_delta_cr_s": 0.249
       },
       "grading": {
         "solver": null,
@@ -596,16 +753,53 @@
         "public_givens": {
           "h_mj_mva": 5.0,
           "f0_hz": 50.0,
-          "pm_pu": 1.0080000000000002,
+          "pm_pu": 1.008,
           "pmax_pre_pu": 2.0,
           "pmax_fault_pu": 0.5,
           "pmax_post_pu": 1.5
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "delta0_deg",
+              "type": "float",
+              "unit": "deg",
+              "tolerance": 0.02,
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.02
+            },
+            {
+              "name": "delta_cr_deg",
+              "type": "float",
+              "unit": "deg",
+              "tolerance": 0.05,
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            },
+            {
+              "name": "tcr_s",
+              "type": "float",
+              "unit": "s",
+              "tolerance": 0.002,
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.002
+            },
+            {
+              "name": "t_to_delta_cr_s",
+              "type": "float",
+              "unit": "s",
+              "tolerance": 0.002,
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.002
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); delta0_deg [deg] within \u00b10.5% or \u00b10.02; delta_cr_deg [deg] within \u00b10.5% or \u00b10.05; tcr_s [s] within \u00b10.5% or \u00b10.002; t_to_delta_cr_s [s] within \u00b10.5% or \u00b10.002"
         }
       }
     },
     "control/block-feedback-01-s119": {
       "reference": {
-        "value": 0.8333333333333334
+        "value": 0.8333
       },
       "grading": {
         "solver": null,
@@ -632,12 +826,24 @@
             "feedback": "H",
             "negative": true
           }
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
         }
       }
     },
     "control/breakaway-3pole-01-s121": {
       "reference": {
-        "value": -4.732050807568877
+        "value": -4.732
       },
       "grading": {
         "solver": "breakaway_real_axis",
@@ -657,6 +863,18 @@
             -6
           ],
           "zeros": []
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
         }
       }
     },
@@ -676,13 +894,25 @@
         },
         "public_givens": {
           "num": [
-            0.10400000000000001
+            0.104
           ],
           "den": [
             1.0,
             -0.5
           ],
           "ts": 0.01
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
         }
       }
     },
@@ -702,19 +932,31 @@
         },
         "public_givens": {
           "num": [
-            0.11000000000000001
+            0.11
           ],
           "den": [
             1.0,
             -0.5
           ],
           "ts": 0.01
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
         }
       }
     },
     "control/margin-40-01-s147": {
       "reference": {
-        "value": 15.563025007672875
+        "value": 15.56
       },
       "grading": {
         "solver": null,
@@ -737,12 +979,24 @@
             20.0,
             0.0
           ]
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
         }
       }
     },
     "control/margin-40-01-s178": {
       "reference": {
-        "value": 15.056907702377469
+        "value": 15.06
       },
       "grading": {
         "solver": null,
@@ -757,7 +1011,7 @@
         },
         "public_givens": {
           "num": [
-            42.400000000000006
+            42.4
           ],
           "den": [
             1.0,
@@ -765,6 +1019,18 @@
             20.0,
             0.0
           ]
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
         }
       }
     },
@@ -786,6 +1052,18 @@
           "system_type": 1,
           "gain": 4.0,
           "error_key": "ess_ramp"
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
         }
       }
     },
@@ -808,12 +1086,28 @@
           "vin_V": 10.0,
           "r1_ohm": 1000.0,
           "r2_ohm": 1000.0
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.0001"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_analytic",
+          "ok": true
         }
       }
     },
     "circuits/rc-step-01-s419": {
       "reference": {
-        "value": 6.67996197045779
+        "value": 6.68
       },
       "grading": {
         "solver": "rc_step",
@@ -831,12 +1125,28 @@
           "c": 0.00115,
           "t": 1.15,
           "unit": "V"
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_analytic",
+          "ok": true
         }
       }
     },
     "circuits/rc-step-01-s430": {
       "reference": {
-        "value": 6.373327741787959
+        "value": 6.373
       },
       "grading": {
         "solver": "rc_step",
@@ -854,12 +1164,28 @@
           "c": 0.00102,
           "t": 1.02,
           "unit": "V"
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_analytic",
+          "ok": true
         }
       }
     },
     "circuits/rl-step-01-s424": {
       "reference": {
-        "value": 0.19999999545590802
+        "value": 0.1675
       },
       "grading": {
         "solver": "rl_step",
@@ -872,16 +1198,32 @@
           "tol": 0.0001
         },
         "public_givens": {
-          "v": 26.400000000000002,
+          "v": 26.4,
           "r": 132.0,
           "l": 0.165,
-          "t": 0.022000000000000002
+          "t": 0.00227
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.0001"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_analytic",
+          "ok": true
         }
       }
     },
     "circuits/rl-step-01-s435": {
       "reference": {
-        "value": 0.19999998082076997
+        "value": 0.1896
       },
       "grading": {
         "solver": "rl_step",
@@ -894,16 +1236,32 @@
           "tol": 0.0001
         },
         "public_givens": {
-          "v": 24.240000000000002,
+          "v": 24.24,
           "r": 121.2,
           "l": 0.1515,
-          "t": 0.0202
+          "t": 0.003697
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.0001"
+        },
+        "gold_provenance": {
+          "method": "ee_v2_analytic",
+          "ok": true
         }
       }
     },
     "circuits/rlc-natural-01-s416": {
       "reference": {
-        "value": 11.324517383131038
+        "value": 0.09312
       },
       "grading": {
         "solver": "rlc_natural",
@@ -917,11 +1275,31 @@
         },
         "public_givens": {
           "r": 212.0,
-          "l": 0.10600000000000001,
-          "c": 1.0600000000000002e-05,
+          "l": 0.106,
+          "c": 1.06e-05,
           "vc0": 12.72,
-          "i0": 0.053000000000000005,
-          "t": 0.0010600000000000002
+          "i0": 0.053,
+          "t": 0.00106
+        },
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "float",
+              "unit": "1",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); value [1] within \u00b10.5% or \u00b10.001"
+        },
+        "gold_provenance": {
+          "method": "parallel_rlc_state_space",
+          "convention": "R||L||C at one node; i0_A is inductor current at t=0+ from the shared node through L toward ground",
+          "independent_V": 0.09312035050446156,
+          "catalog_V": 0.09312035050446156,
+          "catalog_V_rounded": 0.09312,
+          "ok": true
         }
       }
     },
@@ -939,7 +1317,19 @@
           "pmax_fault_pu": 0.475,
           "pmax_post_pu": 1.468
         },
-        "verifier_note": "critical_clearing_angle on SmibCase givens"
+        "verifier_note": "critical_clearing_angle on SmibCase givens",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "delta_cr_deg",
+              "type": "float",
+              "unit": "deg",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); delta_cr_deg [deg] within \u00b10.5% or \u00b10.05"
+        }
       },
       "naive": {
         "delta_cr_deg": 261.8514085828075
@@ -959,7 +1349,19 @@
           "pmax_fault_pu": 0.485,
           "pmax_post_pu": 1.441
         },
-        "verifier_note": "critical_clearing_angle on SmibCase givens"
+        "verifier_note": "critical_clearing_angle on SmibCase givens",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "delta_cr_deg",
+              "type": "float",
+              "unit": "deg",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); delta_cr_deg [deg] within \u00b10.5% or \u00b10.05"
+        }
       },
       "naive": {
         "delta_cr_deg": 270.98348334512184
@@ -979,7 +1381,19 @@
           "pmax_fault_pu": 0.521,
           "pmax_post_pu": 1.421
         },
-        "verifier_note": "critical_clearing_angle on SmibCase givens"
+        "verifier_note": "critical_clearing_angle on SmibCase givens",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "delta_cr_deg",
+              "type": "float",
+              "unit": "deg",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); delta_cr_deg [deg] within \u00b10.5% or \u00b10.05"
+        }
       },
       "naive": {
         "delta_cr_deg": 285.8934701367672
@@ -999,7 +1413,19 @@
           "pmax_fault_pu": 0.478,
           "pmax_post_pu": 1.48
         },
-        "verifier_note": "critical_clearing_angle on SmibCase givens"
+        "verifier_note": "critical_clearing_angle on SmibCase givens",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "delta_cr_deg",
+              "type": "float",
+              "unit": "deg",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); delta_cr_deg [deg] within \u00b10.5% or \u00b10.05"
+        }
       },
       "naive": {
         "delta_cr_deg": 257.0853432656229
@@ -1019,7 +1445,19 @@
           "pmax_fault_pu": 0.532,
           "pmax_post_pu": 1.446
         },
-        "verifier_note": "critical_clearing_angle on SmibCase givens"
+        "verifier_note": "critical_clearing_angle on SmibCase givens",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "delta_cr_deg",
+              "type": "float",
+              "unit": "deg",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); delta_cr_deg [deg] within \u00b10.5% or \u00b10.05"
+        }
       },
       "naive": {
         "delta_cr_deg": 267.73732435049664
@@ -1040,7 +1478,19 @@
           "pmax_post_pu": 1.501,
           "h_integrator_s": 0.001
         },
-        "verifier_note": "fault-interval time to critical angle at step h_integrator_s"
+        "verifier_note": "fault-interval time to critical angle at step h_integrator_s",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "t_to_delta_cr_s",
+              "type": "float",
+              "unit": "s",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.002
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); t_to_delta_cr_s [s] within \u00b10.5% or \u00b10.002"
+        }
       },
       "naive": {
         "t_to_delta_cr_s": 0.0
@@ -1061,7 +1511,19 @@
           "pmax_post_pu": 1.404,
           "h_integrator_s": 0.001
         },
-        "verifier_note": "fault-interval time to critical angle at step h_integrator_s"
+        "verifier_note": "fault-interval time to critical angle at step h_integrator_s",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "t_to_delta_cr_s",
+              "type": "float",
+              "unit": "s",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.002
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); t_to_delta_cr_s [s] within \u00b10.5% or \u00b10.002"
+        }
       },
       "naive": {
         "t_to_delta_cr_s": 0.0
@@ -1082,7 +1544,19 @@
           "pmax_post_pu": 1.542,
           "h_integrator_s": 0.001
         },
-        "verifier_note": "fault-interval time to critical angle at step h_integrator_s"
+        "verifier_note": "fault-interval time to critical angle at step h_integrator_s",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "t_to_delta_cr_s",
+              "type": "float",
+              "unit": "s",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.002
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); t_to_delta_cr_s [s] within \u00b10.5% or \u00b10.002"
+        }
       },
       "naive": {
         "t_to_delta_cr_s": 0.0
@@ -1103,7 +1577,19 @@
           "pmax_post_pu": 1.412,
           "h_integrator_s": 0.001
         },
-        "verifier_note": "fault-interval time to critical angle at step h_integrator_s"
+        "verifier_note": "fault-interval time to critical angle at step h_integrator_s",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "t_to_delta_cr_s",
+              "type": "float",
+              "unit": "s",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.002
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); t_to_delta_cr_s [s] within \u00b10.5% or \u00b10.002"
+        }
       },
       "naive": {
         "t_to_delta_cr_s": 0.0
@@ -1124,7 +1610,19 @@
           "pmax_post_pu": 1.429,
           "h_integrator_s": 0.001
         },
-        "verifier_note": "fault-interval time to critical angle at step h_integrator_s"
+        "verifier_note": "fault-interval time to critical angle at step h_integrator_s",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "t_to_delta_cr_s",
+              "type": "float",
+              "unit": "s",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.002
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); t_to_delta_cr_s [s] within \u00b10.5% or \u00b10.002"
+        }
       },
       "naive": {
         "t_to_delta_cr_s": 0.0
@@ -1145,7 +1643,26 @@
           "pmax_fault_pu": 0.496,
           "pmax_post_pu": 1.482
         },
-        "verifier_note": "accel_coeff pi*f0/H; domega0 at prefault equilibrium"
+        "verifier_note": "accel_coeff pi*f0/H; domega0 at prefault equilibrium",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "accel_coeff",
+              "type": "float",
+              "unit": "rad/s^2 per pu",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            },
+            {
+              "name": "domega0_at_prefault",
+              "type": "float",
+              "unit": "rad/s",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); accel_coeff [rad/s^2 per pu] within \u00b10.5% or \u00b10.0001; domega0_at_prefault [rad/s] within \u00b10.5% or \u00b10.0001"
+        }
       },
       "naive": {
         "accel_coeff": 15.898748246911907,
@@ -1167,7 +1684,26 @@
           "pmax_fault_pu": 0.504,
           "pmax_post_pu": 1.562
         },
-        "verifier_note": "accel_coeff pi*f0/H; domega0 at prefault equilibrium"
+        "verifier_note": "accel_coeff pi*f0/H; domega0 at prefault equilibrium",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "accel_coeff",
+              "type": "float",
+              "unit": "rad/s^2 per pu",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            },
+            {
+              "name": "domega0_at_prefault",
+              "type": "float",
+              "unit": "rad/s",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); accel_coeff [rad/s^2 per pu] within \u00b10.5% or \u00b10.0001; domega0_at_prefault [rad/s] within \u00b10.5% or \u00b10.0001"
+        }
       },
       "naive": {
         "accel_coeff": 14.874965215860763,
@@ -1189,7 +1725,26 @@
           "pmax_fault_pu": 0.515,
           "pmax_post_pu": 1.596
         },
-        "verifier_note": "accel_coeff pi*f0/H; domega0 at prefault equilibrium"
+        "verifier_note": "accel_coeff pi*f0/H; domega0 at prefault equilibrium",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "accel_coeff",
+              "type": "float",
+              "unit": "rad/s^2 per pu",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            },
+            {
+              "name": "domega0_at_prefault",
+              "type": "float",
+              "unit": "rad/s",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); accel_coeff [rad/s^2 per pu] within \u00b10.5% or \u00b10.0001; domega0_at_prefault [rad/s] within \u00b10.5% or \u00b10.0001"
+        }
       },
       "naive": {
         "accel_coeff": 15.583296892806514,
@@ -1211,7 +1766,26 @@
           "pmax_fault_pu": 0.472,
           "pmax_post_pu": 1.544
         },
-        "verifier_note": "accel_coeff pi*f0/H; domega0 at prefault equilibrium"
+        "verifier_note": "accel_coeff pi*f0/H; domega0 at prefault equilibrium",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "accel_coeff",
+              "type": "float",
+              "unit": "rad/s^2 per pu",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            },
+            {
+              "name": "domega0_at_prefault",
+              "type": "float",
+              "unit": "rad/s",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); accel_coeff [rad/s^2 per pu] within \u00b10.5% or \u00b10.0001; domega0_at_prefault [rad/s] within \u00b10.5% or \u00b10.0001"
+        }
       },
       "naive": {
         "accel_coeff": 16.127272349023578,
@@ -1233,7 +1807,26 @@
           "pmax_fault_pu": 0.455,
           "pmax_post_pu": 1.598
         },
-        "verifier_note": "accel_coeff pi*f0/H; domega0 at prefault equilibrium"
+        "verifier_note": "accel_coeff pi*f0/H; domega0 at prefault equilibrium",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "accel_coeff",
+              "type": "float",
+              "unit": "rad/s^2 per pu",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            },
+            {
+              "name": "domega0_at_prefault",
+              "type": "float",
+              "unit": "rad/s",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); accel_coeff [rad/s^2 per pu] within \u00b10.5% or \u00b10.0001; domega0_at_prefault [rad/s] within \u00b10.5% or \u00b10.0001"
+        }
       },
       "naive": {
         "accel_coeff": 17.22364393415457,
@@ -1275,7 +1868,26 @@
           },
           "t_end_s": 30.0
         },
-        "verifier_note": "two-area primary steady state after dpl1_pu step"
+        "verifier_note": "two-area primary steady state after dpl1_pu step",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "primary_df1_Hz",
+              "type": "float",
+              "unit": "Hz",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.002
+            },
+            {
+              "name": "primary_P12_MW",
+              "type": "float",
+              "unit": "MW",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.5
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); primary_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; primary_P12_MW [MW] within \u00b10.5% or \u00b10.5"
+        }
       },
       "naive": {
         "primary_df1_Hz": 0.0,
@@ -1317,7 +1929,26 @@
           },
           "t_end_s": 30.0
         },
-        "verifier_note": "two-area primary steady state after dpl1_pu step"
+        "verifier_note": "two-area primary steady state after dpl1_pu step",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "primary_df1_Hz",
+              "type": "float",
+              "unit": "Hz",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.002
+            },
+            {
+              "name": "primary_P12_MW",
+              "type": "float",
+              "unit": "MW",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.5
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); primary_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; primary_P12_MW [MW] within \u00b10.5% or \u00b10.5"
+        }
       },
       "naive": {
         "primary_df1_Hz": 0.0,
@@ -1359,7 +1990,26 @@
           },
           "t_end_s": 30.0
         },
-        "verifier_note": "two-area primary steady state after dpl1_pu step"
+        "verifier_note": "two-area primary steady state after dpl1_pu step",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "primary_df1_Hz",
+              "type": "float",
+              "unit": "Hz",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.002
+            },
+            {
+              "name": "primary_P12_MW",
+              "type": "float",
+              "unit": "MW",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.5
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); primary_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; primary_P12_MW [MW] within \u00b10.5% or \u00b10.5"
+        }
       },
       "naive": {
         "primary_df1_Hz": 0.0,
@@ -1401,7 +2051,26 @@
           },
           "t_end_s": 30.0
         },
-        "verifier_note": "two-area primary steady state after dpl1_pu step"
+        "verifier_note": "two-area primary steady state after dpl1_pu step",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "primary_df1_Hz",
+              "type": "float",
+              "unit": "Hz",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.002
+            },
+            {
+              "name": "primary_P12_MW",
+              "type": "float",
+              "unit": "MW",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.5
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); primary_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; primary_P12_MW [MW] within \u00b10.5% or \u00b10.5"
+        }
       },
       "naive": {
         "primary_df1_Hz": 0.0,
@@ -1443,7 +2112,26 @@
           },
           "t_end_s": 30.0
         },
-        "verifier_note": "two-area primary steady state after dpl1_pu step"
+        "verifier_note": "two-area primary steady state after dpl1_pu step",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "primary_df1_Hz",
+              "type": "float",
+              "unit": "Hz",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.002
+            },
+            {
+              "name": "primary_P12_MW",
+              "type": "float",
+              "unit": "MW",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.5
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); primary_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; primary_P12_MW [MW] within \u00b10.5% or \u00b10.5"
+        }
       },
       "naive": {
         "primary_df1_Hz": 0.0,
@@ -1487,7 +2175,26 @@
           "t_end_s": 30.0,
           "agc_t_end_s": 60.0
         },
-        "verifier_note": "AGC steady state with K_agc"
+        "verifier_note": "AGC steady state with K_agc",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "agc_ss_df1_Hz",
+              "type": "float",
+              "unit": "Hz",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.002
+            },
+            {
+              "name": "agc_ss_P12_MW",
+              "type": "float",
+              "unit": "MW",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); agc_ss_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; agc_ss_P12_MW [MW] within \u00b10.5% or \u00b10.05"
+        }
       },
       "naive": {
         "agc_ss_df1_Hz": -0.16,
@@ -1531,7 +2238,26 @@
           "t_end_s": 30.0,
           "agc_t_end_s": 60.0
         },
-        "verifier_note": "AGC steady state with K_agc"
+        "verifier_note": "AGC steady state with K_agc",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "agc_ss_df1_Hz",
+              "type": "float",
+              "unit": "Hz",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.002
+            },
+            {
+              "name": "agc_ss_P12_MW",
+              "type": "float",
+              "unit": "MW",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); agc_ss_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; agc_ss_P12_MW [MW] within \u00b10.5% or \u00b10.05"
+        }
       },
       "naive": {
         "agc_ss_df1_Hz": -0.16,
@@ -1575,7 +2301,26 @@
           "t_end_s": 30.0,
           "agc_t_end_s": 60.0
         },
-        "verifier_note": "AGC steady state with K_agc"
+        "verifier_note": "AGC steady state with K_agc",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "agc_ss_df1_Hz",
+              "type": "float",
+              "unit": "Hz",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.002
+            },
+            {
+              "name": "agc_ss_P12_MW",
+              "type": "float",
+              "unit": "MW",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); agc_ss_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; agc_ss_P12_MW [MW] within \u00b10.5% or \u00b10.05"
+        }
       },
       "naive": {
         "agc_ss_df1_Hz": -0.16,
@@ -1619,7 +2364,26 @@
           "t_end_s": 30.0,
           "agc_t_end_s": 60.0
         },
-        "verifier_note": "AGC steady state with K_agc"
+        "verifier_note": "AGC steady state with K_agc",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "agc_ss_df1_Hz",
+              "type": "float",
+              "unit": "Hz",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.002
+            },
+            {
+              "name": "agc_ss_P12_MW",
+              "type": "float",
+              "unit": "MW",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); agc_ss_df1_Hz [Hz] within \u00b10.5% or \u00b10.002; agc_ss_P12_MW [MW] within \u00b10.5% or \u00b10.05"
+        }
       },
       "naive": {
         "agc_ss_df1_Hz": -0.16,
@@ -1660,7 +2424,33 @@
           ],
           "PD_MW": 520.0
         },
-        "verifier_note": "lambda economic dispatch with unit limits"
+        "verifier_note": "lambda economic dispatch with unit limits",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "unit2_MW",
+              "type": "float",
+              "unit": "MW",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.01
+            },
+            {
+              "name": "unit2_IC",
+              "type": "float",
+              "unit": "Rs/MWh",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.01
+            },
+            {
+              "name": "lambda",
+              "type": "float",
+              "unit": "Rs/MWh",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.01
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); unit2_MW [MW] within \u00b10.5% or \u00b10.01; unit2_IC [Rs/MWh] within \u00b10.5% or \u00b10.01; lambda [Rs/MWh] within \u00b10.5% or \u00b10.01"
+        }
       },
       "naive": {
         "unit2_MW": 200.0,
@@ -1702,7 +2492,33 @@
           ],
           "PD_MW": 450.0
         },
-        "verifier_note": "lambda economic dispatch with unit limits"
+        "verifier_note": "lambda economic dispatch with unit limits",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "unit2_MW",
+              "type": "float",
+              "unit": "MW",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.01
+            },
+            {
+              "name": "unit2_IC",
+              "type": "float",
+              "unit": "Rs/MWh",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.01
+            },
+            {
+              "name": "lambda",
+              "type": "float",
+              "unit": "Rs/MWh",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.01
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); unit2_MW [MW] within \u00b10.5% or \u00b10.01; unit2_IC [Rs/MWh] within \u00b10.5% or \u00b10.01; lambda [Rs/MWh] within \u00b10.5% or \u00b10.01"
+        }
       },
       "naive": {
         "unit2_MW": 200.0,
@@ -1744,7 +2560,33 @@
           ],
           "PD_MW": 480.0
         },
-        "verifier_note": "lambda economic dispatch with unit limits"
+        "verifier_note": "lambda economic dispatch with unit limits",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "unit2_MW",
+              "type": "float",
+              "unit": "MW",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.01
+            },
+            {
+              "name": "unit2_IC",
+              "type": "float",
+              "unit": "Rs/MWh",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.01
+            },
+            {
+              "name": "lambda",
+              "type": "float",
+              "unit": "Rs/MWh",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.01
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); unit2_MW [MW] within \u00b10.5% or \u00b10.01; unit2_IC [Rs/MWh] within \u00b10.5% or \u00b10.01; lambda [Rs/MWh] within \u00b10.5% or \u00b10.01"
+        }
       },
       "naive": {
         "unit2_MW": 200.0,
@@ -1784,7 +2626,19 @@
           ],
           "unit1_MW": 107.1
         },
-        "verifier_note": "incremental cost unit 1 at unit1_MW"
+        "verifier_note": "incremental cost unit 1 at unit1_MW",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "unit1_IC",
+              "type": "float",
+              "unit": "Rs/MWh",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); unit1_IC [Rs/MWh] within \u00b10.5% or \u00b10.0001"
+        }
       },
       "naive": {
         "unit1_IC": 5.7284
@@ -1822,7 +2676,19 @@
           ],
           "unit1_MW": 117.8
         },
-        "verifier_note": "incremental cost unit 1 at unit1_MW"
+        "verifier_note": "incremental cost unit 1 at unit1_MW",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "unit1_IC",
+              "type": "float",
+              "unit": "Rs/MWh",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); unit1_IC [Rs/MWh] within \u00b10.5% or \u00b10.0001"
+        }
       },
       "naive": {
         "unit1_IC": 5.771199999999999
@@ -1860,7 +2726,19 @@
           ],
           "unit1_MW": 111.0
         },
-        "verifier_note": "incremental cost unit 1 at unit1_MW"
+        "verifier_note": "incremental cost unit 1 at unit1_MW",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "unit1_IC",
+              "type": "float",
+              "unit": "Rs/MWh",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); unit1_IC [Rs/MWh] within \u00b10.5% or \u00b10.0001"
+        }
       },
       "naive": {
         "unit1_IC": 5.744
@@ -1898,7 +2776,19 @@
           ],
           "unit1_MW": 134.9
         },
-        "verifier_note": "incremental cost unit 1 at unit1_MW"
+        "verifier_note": "incremental cost unit 1 at unit1_MW",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "unit1_IC",
+              "type": "float",
+              "unit": "Rs/MWh",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); unit1_IC [Rs/MWh] within \u00b10.5% or \u00b10.0001"
+        }
       },
       "naive": {
         "unit1_IC": 5.8396
@@ -1936,7 +2826,19 @@
           ],
           "unit1_MW": 129.3
         },
-        "verifier_note": "incremental cost unit 1 at unit1_MW"
+        "verifier_note": "incremental cost unit 1 at unit1_MW",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "unit1_IC",
+              "type": "float",
+              "unit": "Rs/MWh",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.0001
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); unit1_IC [Rs/MWh] within \u00b10.5% or \u00b10.0001"
+        }
       },
       "naive": {
         "unit1_IC": 5.8172
@@ -1960,7 +2862,26 @@
             0.0
           ]
         },
-        "verifier_note": "loop gain margin and crossover"
+        "verifier_note": "loop gain margin and crossover",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "gain_margin_dB",
+              "type": "float",
+              "unit": "dB",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            },
+            {
+              "name": "gain_crossover_rad_s",
+              "type": "float",
+              "unit": "rad/s",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.02
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); gain_margin_dB [dB] within \u00b10.5% or \u00b10.05; gain_crossover_rad_s [rad/s] within \u00b10.5% or \u00b10.02"
+        }
       },
       "naive": {
         "gain_margin_dB": 6.0,
@@ -1985,7 +2906,26 @@
             0.0
           ]
         },
-        "verifier_note": "loop gain margin and crossover"
+        "verifier_note": "loop gain margin and crossover",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "gain_margin_dB",
+              "type": "float",
+              "unit": "dB",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            },
+            {
+              "name": "gain_crossover_rad_s",
+              "type": "float",
+              "unit": "rad/s",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.02
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); gain_margin_dB [dB] within \u00b10.5% or \u00b10.05; gain_crossover_rad_s [rad/s] within \u00b10.5% or \u00b10.02"
+        }
       },
       "naive": {
         "gain_margin_dB": 6.0,
@@ -2010,7 +2950,26 @@
             0.0
           ]
         },
-        "verifier_note": "loop gain margin and crossover"
+        "verifier_note": "loop gain margin and crossover",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "gain_margin_dB",
+              "type": "float",
+              "unit": "dB",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            },
+            {
+              "name": "gain_crossover_rad_s",
+              "type": "float",
+              "unit": "rad/s",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.02
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); gain_margin_dB [dB] within \u00b10.5% or \u00b10.05; gain_crossover_rad_s [rad/s] within \u00b10.5% or \u00b10.02"
+        }
       },
       "naive": {
         "gain_margin_dB": 6.0,
@@ -2035,7 +2994,26 @@
             0.0
           ]
         },
-        "verifier_note": "loop gain margin and crossover"
+        "verifier_note": "loop gain margin and crossover",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "gain_margin_dB",
+              "type": "float",
+              "unit": "dB",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            },
+            {
+              "name": "gain_crossover_rad_s",
+              "type": "float",
+              "unit": "rad/s",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.02
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); gain_margin_dB [dB] within \u00b10.5% or \u00b10.05; gain_crossover_rad_s [rad/s] within \u00b10.5% or \u00b10.02"
+        }
       },
       "naive": {
         "gain_margin_dB": 6.0,
@@ -2060,7 +3038,26 @@
             0.0
           ]
         },
-        "verifier_note": "loop gain margin and crossover"
+        "verifier_note": "loop gain margin and crossover",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "gain_margin_dB",
+              "type": "float",
+              "unit": "dB",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            },
+            {
+              "name": "gain_crossover_rad_s",
+              "type": "float",
+              "unit": "rad/s",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.02
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); gain_margin_dB [dB] within \u00b10.5% or \u00b10.05; gain_crossover_rad_s [rad/s] within \u00b10.5% or \u00b10.02"
+        }
       },
       "naive": {
         "gain_margin_dB": 6.0,
@@ -2084,7 +3081,19 @@
           "t_query_s": 0.3,
           "h_integrator_s": 0.01
         },
-        "verifier_note": "rotor angle at t_query_s with clearing tc_s"
+        "verifier_note": "rotor angle at t_query_s with clearing tc_s",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "delta_deg_at_t",
+              "type": "float",
+              "unit": "deg",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); delta_deg_at_t [deg] within \u00b10.5% or \u00b10.05"
+        }
       },
       "naive": {
         "delta_deg_at_t": 0.895
@@ -2107,7 +3116,19 @@
           "t_query_s": 0.3,
           "h_integrator_s": 0.01
         },
-        "verifier_note": "rotor angle at t_query_s with clearing tc_s"
+        "verifier_note": "rotor angle at t_query_s with clearing tc_s",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "delta_deg_at_t",
+              "type": "float",
+              "unit": "deg",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); delta_deg_at_t [deg] within \u00b10.5% or \u00b10.05"
+        }
       },
       "naive": {
         "delta_deg_at_t": 0.883
@@ -2130,7 +3151,19 @@
           "t_query_s": 0.3,
           "h_integrator_s": 0.01
         },
-        "verifier_note": "rotor angle at t_query_s with clearing tc_s"
+        "verifier_note": "rotor angle at t_query_s with clearing tc_s",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "delta_deg_at_t",
+              "type": "float",
+              "unit": "deg",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); delta_deg_at_t [deg] within \u00b10.5% or \u00b10.05"
+        }
       },
       "naive": {
         "delta_deg_at_t": 0.905
@@ -2153,7 +3186,19 @@
           "t_query_s": 0.3,
           "h_integrator_s": 0.01
         },
-        "verifier_note": "rotor angle at t_query_s with clearing tc_s"
+        "verifier_note": "rotor angle at t_query_s with clearing tc_s",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "delta_deg_at_t",
+              "type": "float",
+              "unit": "deg",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); delta_deg_at_t [deg] within \u00b10.5% or \u00b10.05"
+        }
       },
       "naive": {
         "delta_deg_at_t": 0.899
@@ -2176,7 +3221,19 @@
           "t_query_s": 0.3,
           "h_integrator_s": 0.01
         },
-        "verifier_note": "rotor angle at t_query_s with clearing tc_s"
+        "verifier_note": "rotor angle at t_query_s with clearing tc_s",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "delta_deg_at_t",
+              "type": "float",
+              "unit": "deg",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.05
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); delta_deg_at_t [deg] within \u00b10.5% or \u00b10.05"
+        }
       },
       "naive": {
         "delta_deg_at_t": 0.917
@@ -2196,7 +3253,19 @@
           "pmax_fault_pu": 0.509,
           "pmax_post_pu": 1.456
         },
-        "verifier_note": "prefault power-angle equilibrium"
+        "verifier_note": "prefault power-angle equilibrium",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "delta0_deg",
+              "type": "float",
+              "unit": "deg",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.02
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); delta0_deg [deg] within \u00b10.5% or \u00b10.02"
+        }
       },
       "naive": {
         "pm_pu": 0.913,
@@ -2218,7 +3287,19 @@
           "pmax_fault_pu": 0.547,
           "pmax_post_pu": 1.596
         },
-        "verifier_note": "prefault power-angle equilibrium"
+        "verifier_note": "prefault power-angle equilibrium",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "delta0_deg",
+              "type": "float",
+              "unit": "deg",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.02
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); delta0_deg [deg] within \u00b10.5% or \u00b10.02"
+        }
       },
       "naive": {
         "pm_pu": 0.897,
@@ -2240,7 +3321,19 @@
           "pmax_fault_pu": 0.474,
           "pmax_post_pu": 1.506
         },
-        "verifier_note": "prefault power-angle equilibrium"
+        "verifier_note": "prefault power-angle equilibrium",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "delta0_deg",
+              "type": "float",
+              "unit": "deg",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.02
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); delta0_deg [deg] within \u00b10.5% or \u00b10.02"
+        }
       },
       "naive": {
         "pm_pu": 0.919,
@@ -2262,7 +3355,19 @@
           "pmax_fault_pu": 0.462,
           "pmax_post_pu": 1.439
         },
-        "verifier_note": "prefault power-angle equilibrium"
+        "verifier_note": "prefault power-angle equilibrium",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "delta0_deg",
+              "type": "float",
+              "unit": "deg",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.02
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); delta0_deg [deg] within \u00b10.5% or \u00b10.02"
+        }
       },
       "naive": {
         "pm_pu": 0.915,
@@ -2284,7 +3389,19 @@
           "pmax_fault_pu": 0.463,
           "pmax_post_pu": 1.575
         },
-        "verifier_note": "prefault power-angle equilibrium"
+        "verifier_note": "prefault power-angle equilibrium",
+        "answer_schema": {
+          "fields": [
+            {
+              "name": "delta0_deg",
+              "type": "float",
+              "unit": "deg",
+              "tolerance_rel": 0.005,
+              "tolerance_abs": 0.02
+            }
+          ],
+          "rule": "Numeric submission (match givens precision); delta0_deg [deg] within \u00b10.5% or \u00b10.02"
+        }
       },
       "naive": {
         "pm_pu": 0.909,

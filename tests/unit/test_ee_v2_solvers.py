@@ -34,11 +34,12 @@ def test_rl_step_one_tau() -> None:
     assert abs(r["i_A"] - 3.0 * (1.0 - math.exp(-1.0))) < 1e-6
 
 
-def test_rlc_natural_underdamped_t0() -> None:
-    r = rlc_natural(40.0, 0.1, 100e-6, 12.0, 0.0, 0.0)
+def test_rlc_natural_parallel_underdamped() -> None:
+    r = rlc_natural(200.0, 0.1, 1e-5, 12.0, 0.05, 0.001)
     assert r["damping"] == "underdamped"
-    assert abs(r["vc_V"] - 12.0) < 1e-9
-    assert abs(r["i_A"] - 0.0) < 1e-9
+    assert r["topology"] == "parallel"
+    assert abs(r["zeta"] - 0.25) < 1e-9
+    assert abs(r["vc_V"] + 0.004949) < 1e-3
 
 
 def test_phasor_pfc_series_rl() -> None:

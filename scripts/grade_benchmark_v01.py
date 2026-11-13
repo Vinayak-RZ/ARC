@@ -17,8 +17,17 @@ def _ensure_key() -> None:
         subprocess.check_call([sys.executable, str(ROOT / "scripts/build_benchmark_v01.py")], cwd=ROOT)
 
 
-def _close(a: float, b: float, tol: float) -> bool:
-    return abs(float(a) - float(b)) <= float(tol)
+def _schema_fields(entry: dict) -> list[dict]:
+    grading = entry.get("grading") or {}
+    schema = grading.get("answer_schema") or {}
+    return schema.get("fields") or []
+
+
+def _field_spec(fields: list[dict], name: str) -> dict:
+    for row in fields:
+        if row.get("name") == name:
+            return row
+    return {"tolerance_rel": 0.005, "tolerance_abs": 1e-4}
 
 
 def grade_trap_answer(submission: dict, entry: dict) -> bool:
@@ -32,19 +41,20 @@ def grade_trap_answer(submission: dict, entry: dict) -> bool:
 
 def grade_eval_answer(submission: dict, entry: dict) -> bool:
     from electrical_engineer.benchmark_v01.oracle_givens import oracle_eval
+    from electrical_engineer.benchmark_v01.public_schema import values_close
 
     grading = entry.get("grading") or {}
+    fields = _schema_fields(entry)
     givens = grading.get("public_givens") or grading.get("givens") or {}
     ref = oracle_eval(givens, grading) if givens else (entry.get("reference") or {})
     if grading.get("engine"):
-        tol = float(grading.get("tol") or 0.002)
         numeric = {k: v for k, v in ref.items() if isinstance(v, (int, float))}
         if not numeric:
             return submission.get("engine") == ref.get("engine")
         for key, want in numeric.items():
             if key not in submission:
                 return False
-            if not _close(float(submission[key]), float(want), tol):
+            if not values_close(float(submission[key]), float(want), _field_spec(fields, key)):
                 return False
         return True
     want = ref.get("value")
@@ -52,8 +62,7 @@ def grade_eval_answer(submission: dict, entry: dict) -> bool:
         return submission == ref
     if "value" not in submission:
         return False
-    tol = float(grading.get("tol") or 1e-6)
-    return _close(float(submission["value"]), float(want), tol)
+    return values_close(float(submission["value"]), float(want), _field_spec(fields, "value"))
 
 
 def grade_answers(answers: dict, *, mode: str = "oracle") -> dict:
