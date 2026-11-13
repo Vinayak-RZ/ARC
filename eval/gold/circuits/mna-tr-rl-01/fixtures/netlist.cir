@@ -1,0 +1,6 @@
+* rl tran
+V1 1 0 DC 12
+R1 1 2 100
+L1 2 0 200m
+.tran 1m 0.05
+.end

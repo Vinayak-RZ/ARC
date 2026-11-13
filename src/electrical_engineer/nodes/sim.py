@@ -97,6 +97,60 @@ def run_primary_steady(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str
     }
 
 
+@register("run-circuit-derive")
+def run_circuit_derive(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
+    from electrical_engineer.engines.circuit_derive import derive
+
+    problem = dict(_problem(spec))
+    for v in inputs.values():
+        if isinstance(v, dict) and v.get("cir"):
+            problem.setdefault("cir", v["cir"])
+    if problem.get("kind") and not problem.get("cir") and not problem.get("netlist_path"):
+        problem["allow_template_fallback"] = True
+    try:
+        out = derive(problem)
+    except ValueError as exc:
+        return {"ok": False, "error": str(exc), "unchecked": True, "capability": "algebraic-check"}
+    run_dir_s = spec.get("run_dir")
+    if run_dir_s:
+        _write_run_json(Path(run_dir_s), "circuit_derive.json", out)
+        net = Path(run_dir_s) / "netlist.cir"
+        net.write_text(str(out.get("cir") or ""), encoding="utf-8")
+    return {
+        "ok": True,
+        "unchecked": False,
+        "value": out.get("value"),
+        "unit": out.get("unit"),
+        "cir": out.get("cir"),
+        "capability": "algebraic-check",
+        "tool": "circuit_derive",
+        "derived": out,
+    }
+
+
+@register("verify-circuit-spice")
+def verify_circuit_spice(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
+    from electrical_engineer.engines.circuit_verify import verify_after_derive
+
+    problem = dict(_problem(spec))
+    for v in inputs.values():
+        if isinstance(v, dict) and v.get("derived"):
+            problem = {**problem, **(v["derived"] if isinstance(v["derived"], dict) else {})}
+        if isinstance(v, dict) and v.get("value") is not None and "kind" not in problem:
+            problem.update({k: v[k] for k in ("kind", "vin", "r1", "r2", "resistors") if k in v})
+    run_dir_s = spec.get("run_dir")
+    run_dir = Path(run_dir_s) if run_dir_s else None
+    out = verify_after_derive(problem, run_dir=run_dir, rel_tol=float(problem.get("rel_tol", 1e-3)))
+    if run_dir and out.get("spice"):
+        _write_run_json(run_dir, "circuit_verify.json", out)
+    if out.get("mismatch"):
+        out["label_message"] = "derive vs simulation mismatch"
+        out["spice_mismatch"] = True
+    if out.get("ok") and not out.get("unchecked"):
+        out["unchecked"] = False
+    return {**out, "capability": "lumped-circuit-sim", "tool": "circuit_verify"}
+
+
 @register("run-spice")
 def run_spice(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
     from electrical_engineer.engines.spice_runner import run_spice_netlist, spice_available

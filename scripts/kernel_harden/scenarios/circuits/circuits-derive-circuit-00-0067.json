@@ -4,15 +4,19 @@
   "recipe_id": "derive-circuit",
   "category": "circuits",
   "problem": {
-    "prompt": "Find the Thevenin equivalent seen by the load in a two-resistor bridge leg.",
+    "kind": "voltage_divider",
+    "vin": 12,
+    "r1": 2000,
+    "r2": 1000,
+    "expected": 4.0,
     "variant": 0,
     "n": 67
   },
   "host_path": "cli",
   "notes": "auto scenario 67",
   "expect": {
-    "unchecked": true,
-    "reason": "labeled",
+    "unchecked": false,
+    "reason": null,
     "requires": []
   }
 }

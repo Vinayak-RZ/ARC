@@ -98,6 +98,11 @@ def score_retrieval(result: dict[str, Any], expect: dict[str, Any]) -> dict[str,
 def run_item(item: Path, *, run_root: Path | None = None) -> dict[str, Any]:
     expect = json.loads((item / "expect.json").read_text())
     if expect.get("engine") and not expect.get("recipe_id"):
+        engine = str(expect.get("engine") or "")
+        if engine in {"circuit_unit", "circuit_verify"}:
+            from electrical_engineer.eval_runner.circuit_score import run_circuit_item
+
+            return run_circuit_item(item, expect, run_root=run_root)
         from electrical_engineer.eval_runner.psa_score import run_psa_item
 
         return run_psa_item(item, expect)

@@ -1,0 +1,7 @@
+* super
+V1 1 0 DC 6
+V2 3 0 DC 4
+R1 1 2 1k
+R2 2 3 1k
+R3 2 0 2k
+.end

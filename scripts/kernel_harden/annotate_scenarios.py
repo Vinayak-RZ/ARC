@@ -150,6 +150,7 @@ def is_verifiable(problem: dict[str, Any]) -> bool:
     return problem.get("expected") is not None and problem.get("kind") in {
         "voltage_divider",
         "ohms_law",
+        "dc_divider",
     }
 
 
@@ -179,7 +180,7 @@ def annotate(scenario: dict[str, Any]) -> dict[str, Any]:
     problem = dict(scenario.get("problem") or {})
     n = int(problem.get("n") or 0)
 
-    if recipe_id == "solve-circuit-problem" and pack != "injection":
+    if recipe_id == "solve-circuit-problem" and pack != "injection" or recipe_id == "derive-circuit" and pack == "circuits":
         problem = {**NUMERIC_CASES[n % len(NUMERIC_CASES)], **_carry(problem)}
     else:
         if pack == "injection":

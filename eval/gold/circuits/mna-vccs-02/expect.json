@@ -1,0 +1,8 @@
+{
+  "schema": "arc.eval.expect.v2",
+  "engine": "circuit_unit",
+  "value": 0.0,
+  "tol": 0.0001,
+  "require_spice": true,
+  "gold_provenance": "ngspice_oracle"
+}

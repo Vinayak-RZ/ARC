@@ -10,7 +10,7 @@ Branch: `cursor/b7-b10-benchmark-rlvr-ebaf` · PR [#56](https://github.com/Vinay
 | C1 | **done** | `trim_trials_media.sh` |
 | B2 | **done** | PSA workflows + MCP |
 | B3 | **done** | Control eval 18/18; block diagram gold |
-| B4 | **partial** | `run_circuit_benchmark.py`; multimodal confirm path existing |
+| B4 | **done** | MNA derive, ngspice verify, 30 independent netlist golds, honest benchmark metrics |
 | B5 | **done** | trap PRM (`trap-verify`), `docs/hosts/trap_hooks.md`, ablation via `scripts/trap_prm_contract.py` |
 | B6 | **blocked** | Harness + LIVE_AB.md (keys) |
 | B7 | **done** | `rlvr_env` v0.1, oracle rollout CI |

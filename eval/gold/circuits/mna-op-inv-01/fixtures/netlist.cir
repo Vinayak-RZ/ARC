@@ -1,0 +1,7 @@
+* op-inv
+V1 1 0 DC 0.1
+Rin 1 3 2k
+Rf 3 2 10k
+Eop 2 0 3 0 -5
+Rout 2 0 1
+.end

@@ -4,15 +4,19 @@
   "recipe_id": "derive-circuit",
   "category": "circuits",
   "problem": {
-    "prompt": "Use nodal analysis on a two-node resistive network and name the reference node.",
+    "kind": "voltage_divider",
+    "vin": 5,
+    "r1": 470,
+    "r2": 470,
+    "expected": 2.5,
     "variant": 0,
     "n": 9
   },
   "host_path": "cli",
   "notes": "auto scenario 9",
   "expect": {
-    "unchecked": true,
-    "reason": "labeled",
+    "unchecked": false,
+    "reason": null,
     "requires": []
   }
 }

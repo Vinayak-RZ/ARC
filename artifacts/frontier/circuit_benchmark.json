@@ -1,15 +1,237 @@
 {
   "subset": "circuits",
-  "total": 2,
-  "passed": 2,
-  "items": [
+  "version": "0.2",
+  "engine_items": [
     {
-      "id": "divider-dc-01",
-      "ok": true
+      "id": "mna-ac-mix-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
     },
     {
-      "id": "rc-step-01",
-      "ok": true
+      "id": "mna-ac-rc-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-ac-rc-02",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-ac-rl-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-bjt-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-bode-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-bridge-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-bridge-02",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-dio-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-ladder-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-ladder-02",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-maxpwr-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-mesh-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-mesh-02",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-op-ac-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-op-inv-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-op-ninv-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-super-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-super-02",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-thev-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-tr-rc-01",
+      "ok": true,
+      "mismatch": true,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-tr-rc-02",
+      "ok": true,
+      "mismatch": true,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-tr-rl-01",
+      "ok": true,
+      "mismatch": true,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-tr-rlc-01",
+      "ok": true,
+      "mismatch": true,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-tr-rlc-02",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-vccs-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-vccs-02",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-vcvs-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-vcvs-02",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    },
+    {
+      "id": "mna-zpi-01",
+      "ok": true,
+      "mismatch": false,
+      "spice_skipped": false
+    }
+  ],
+  "engine_passed": 30,
+  "engine_total": 30,
+  "circuit_unit_pass_rate": 1.0,
+  "derive_spice_agreement_rate": 0.8666666666666667,
+  "spice_items_ran": 30,
+  "properties": {
+    "total": 3,
+    "passed": 3,
+    "items": [
+      {
+        "name": "superposition",
+        "ok": true
+      },
+      {
+        "name": "reciprocity",
+        "ok": true
+      },
+      {
+        "name": "power_balance",
+        "ok": true
+      }
+    ],
+    "ok": true
+  },
+  "multimodal_path_smoke": true,
+  "steps": [
+    {
+      "component": "schematic.divider",
+      "proposed": true,
+      "confirm": true,
+      "derive_ok": true,
+      "simulator": {
+        "available": true,
+        "backend": "ngspice",
+        "reason": null,
+        "pyspice": false
+      }
+    },
+    {
+      "component": "schematic.rlc_series",
+      "proposed": true,
+      "confirm": true,
+      "netlist_ok": true,
+      "simulator": {
+        "available": true,
+        "backend": "ngspice",
+        "reason": null,
+        "pyspice": false
+      }
     }
   ]
 }

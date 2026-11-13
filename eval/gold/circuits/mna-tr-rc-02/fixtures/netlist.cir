@@ -1,0 +1,6 @@
+* rc tran
+V1 1 0 DC 5
+R1 1 2 2200
+C1 2 0 100u
+.tran 10m 0.5
+.end

@@ -1,0 +1,7 @@
+* op-ninv
+V1 1 0 DC 0.5
+Rg 1 0 1k
+Rf 1 2 5k
+Eop 2 0 1 0 6
+Rout 2 0 1
+.end
