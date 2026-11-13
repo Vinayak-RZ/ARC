@@ -51,6 +51,11 @@ def test_run_pack_circuits_zero(tmp_path) -> None:
     assert rc == 0
 
 
+def test_run_pack_power_psa_and_recipes_zero(tmp_path) -> None:
+    rc = run_pack("power", run_root=tmp_path)
+    assert rc == 0
+
+
 def test_signals_complete_path_item(tmp_path) -> None:
     item = Path("eval/gold/signals/lti-path-01")
     row = run_item(item, run_root=tmp_path)
