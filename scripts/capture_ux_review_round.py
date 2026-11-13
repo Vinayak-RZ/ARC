@@ -413,13 +413,21 @@ def main() -> int:
                 snap("studio-step-extended.png")
             if args.round >= 4:
                 wide_studio = browser.new_page(viewport={"width": 1440, "height": 900})
+                req1440 = urllib.request.Request(
+                    f"http://{HOST}:{PORT}/api/control-studio/sessions",
+                    method="POST",
+                    data=json.dumps({"title": "PID DC motor", "golden": "pid_dc_motor"}).encode(),
+                    headers={"Content-Type": "application/json"},
+                )
+                with urllib.request.urlopen(req1440, timeout=60) as resp:
+                    wide_sid = json.loads(resp.read().decode())["session_id"]
                 wide_studio.goto(
-                    f"http://{HOST}:{PORT}/?view=studio&session={pid_sess}",
+                    f"http://{HOST}:{PORT}/?view=studio&session={wide_sid}",
                     wait_until="domcontentloaded",
                 )
                 wide_studio.wait_for_selector(".studio-canvas", timeout=15000)
                 wide_studio.wait_for_selector(".studio-canvas .react-flow__node", timeout=60000)
-                _studio_wires_ready(wide_studio)
+                _studio_wires_ready(wide_studio, timeout_s=120.0)
                 wide_studio.wait_for_timeout(400)
                 snap("studio-layout-before-simulate-1440.png", wide_studio)
                 wide_studio.locator(".cs-simulate-btn").click()
@@ -428,7 +436,7 @@ def main() -> int:
                     timeout=120000,
                 )
                 wide_studio.wait_for_selector(".studio-canvas .react-flow__node", timeout=60000)
-                _studio_wires_ready(wide_studio)
+                _studio_wires_ready(wide_studio, timeout_s=120.0)
                 snap("studio-layout-after-simulate-1440.png", wide_studio)
                 wide_studio.close()
 
