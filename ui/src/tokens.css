@@ -1450,7 +1450,6 @@ a { color: var(--ee-color-primary); }
 .example-thumb-svg { width: 100%; height: 100%; display: block; }
 .example-thumb-bg { fill: var(--ee-color-surface-soft); }
 .example-thumb-ink { stroke: currentColor; color: var(--ee-color-ink); fill: none; }
-.example-thumb-accent { stroke: var(--ee-color-primary); color: var(--ee-color-primary); fill: var(--ee-color-primary); }
 .example-thumb-muted { stroke: var(--ee-color-muted); color: var(--ee-color-muted); fill: none; }
 .example-thumb-label { fill: var(--ee-color-muted); font-size: 11px; }
 .example-thumb-svg .th-line,
@@ -1805,7 +1804,7 @@ a { color: var(--ee-color-primary); }
   --cs-border-strong: var(--ee-color-hairline-strong);
   --cs-text: var(--ee-color-ink);
   --cs-text-secondary: var(--ee-color-muted);
-  --cs-text-muted: var(--ee-color-faint);
+  --cs-text-muted: var(--ee-color-muted);
   --cs-accent: var(--ee-color-primary);
   --cs-accent-hover: var(--ee-color-primary-active);
   --cs-accent-700: #1d47a3;
@@ -1839,7 +1838,7 @@ a { color: var(--ee-color-primary); }
   --ee-color-link: #8fb0f5;
   --ee-color-hairline: #353532;
   --ee-color-hairline-strong: #454542;
-  --ee-color-surface-soft: #1a1a18;
+  --ee-color-surface-soft: #121211;
   --ee-color-surface-card: #1a1a18;
   --ee-color-surface-strong: #252523;
 }
@@ -1856,3 +1855,27 @@ a { color: var(--ee-color-primary); }
   }
   .sidebar.is-open { display: flex; max-height: 50vh; overflow: auto; }
 }
+
+/* Keyboard focus: one visible cobalt ring everywhere (accent-400 in dark via the token). */
+:where(a, button, input, select, textarea, summary, [role="tab"], [tabindex]):focus-visible {
+  outline: 2px solid var(--ee-color-primary);
+  outline-offset: 2px;
+}
+
+/* Work step expander: tokens only, no native button chrome in either theme. */
+.step-expand {
+  width: 28px;
+  height: 28px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+  margin-top: 4px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ee-color-muted);
+  cursor: pointer;
+}
+.step-expand:hover { background: var(--ee-color-surface-strong); color: var(--ee-color-ink); }
+.step-expand svg { transition: transform 120ms ease; }
+.step-expand[aria-expanded="true"] svg { transform: rotate(180deg); }

@@ -236,6 +236,44 @@ def _assert_studio_wires(page, name: str) -> None:
         raise RuntimeError(f"{name}: studio wires broken: {info}")
 
 
+FOCUS_LOG: dict[str, dict] = {}
+
+_ACTIVE_DESC_JS = """() => {
+  const e = document.activeElement;
+  if (!e || e === document.body) return null;
+  return {
+    tag: e.tagName.toLowerCase(),
+    role: e.getAttribute('role'),
+    aria_label: e.getAttribute('aria-label'),
+    cls: e.className && e.className.baseVal === undefined ? String(e.className) : '',
+    text: (e.textContent || '').trim().slice(0, 40),
+    outline: getComputedStyle(e).outlineStyle + ' ' + getComputedStyle(e).outlineWidth + ' ' + getComputedStyle(e).outlineColor,
+  };
+}"""
+
+
+def _tab_to(page, name: str, start_selector: str, match_js: str, max_tabs: int = 60) -> dict:
+    """Click a non-focusable start point, then press real Tab keys until activeElement matches.
+
+    match_js is a JS arrow function taking the active element. Raises if it is never reached.
+    """
+    page.locator(start_selector).first.click()
+    for presses in range(1, max_tabs + 1):
+        page.keyboard.press("Tab")
+        page.wait_for_timeout(40)
+        if page.evaluate(f"({match_js})(document.activeElement)"):
+            desc = page.evaluate(_ACTIVE_DESC_JS)
+            desc["tab_presses"] = presses
+            FOCUS_LOG[name] = desc
+            return desc
+    raise RuntimeError(f"{name}: activeElement never matched after {max_tabs} Tab presses")
+
+
+def _assert_still_active(page, name: str, match_js: str) -> None:
+    if not page.evaluate(f"({match_js})(document.activeElement)"):
+        raise RuntimeError(f"{name}: focus moved before the screenshot was taken")
+
+
 def _set_theme(page, mode: str) -> None:
     page.evaluate(
         """(mode) => {
@@ -316,6 +354,53 @@ def main() -> int:
                 page.wait_for_selector(".product-shell", timeout=30000)
                 page.wait_for_timeout(500)
 
+            def focus_shot(name: str, start: str, match_js: str, query: str, prep=None) -> None:
+                """Tab to the intended element, assert it is active, then screenshot (theme from name)."""
+                go(query)
+                if prep:
+                    prep()
+                _tab_to(page, name, start, match_js)
+                snap(name)
+                _assert_still_active(page, name, match_js)
+
+            def focus_set(theme: str, run_id: str) -> None:
+                _set_theme(page, theme)
+                sfx = f"-{theme}.png"
+
+                def stale_params() -> None:
+                    page.click(".topbar-params-toggle")
+                    page.wait_for_selector(".param-field input", timeout=10000)
+                    page.locator("#param-r2").fill("2")
+                    page.wait_for_selector(".stale-banner", timeout=5000)
+                    page.keyboard.press("Escape")
+
+                focus_shot(
+                    "focus-composer" + sfx, "h1", "e => e.classList.contains('composer-input')", "?view=home"
+                )
+                focus_shot(
+                    "focus-tile" + sfx, "h1", "e => e.classList.contains('example-card')", "?view=home"
+                )
+                focus_shot(
+                    "focus-table-row" + sfx,
+                    "h1",
+                    "e => e.getAttribute('aria-label') === 'Open problem'",
+                    "?view=problems",
+                )
+                focus_shot(
+                    "focus-tab" + sfx,
+                    "h1, .answer-line, .problem-meta",
+                    "e => e.getAttribute('role') === 'tab' && e.textContent.trim() === 'Work'",
+                    f"?problem={run_id}",
+                    prep=lambda: page.get_by_role("tab", name="Work").click(),
+                )
+                focus_shot(
+                    "focus-button" + sfx,
+                    "h1, .answer-line, .problem-meta",
+                    "e => e.tagName === 'BUTTON' && /Run again/.test(e.textContent)",
+                    f"?problem={run_id}",
+                    prep=stale_params,
+                )
+
             _clear_runs()
             go("?view=home")
             page.wait_for_selector(".composer-card", timeout=10000)
@@ -362,10 +447,11 @@ def main() -> int:
             snap("problem-parameters-stale.png")
             page.keyboard.press("Escape")
 
-            go("?view=home")
-            page.locator(".composer-input").focus()
-            page.wait_for_timeout(100)
-            snap("focus-composer.png")
+            if args.round < 8:
+                go("?view=home")
+                page.locator(".composer-input").focus()
+                page.wait_for_timeout(100)
+                snap("focus-composer.png")
 
             import urllib.request
 
@@ -644,31 +730,34 @@ def main() -> int:
                 page.wait_for_timeout(150)
                 snap("problems-row-hover.png")
 
-                go(f"?problem={run_id}")
-                page.get_by_role("tab", name="Work").click()
-                for _ in range(6):
-                    page.keyboard.press("Tab")
-                    page.wait_for_timeout(80)
-                snap("focus-tab.png")
-                go("?view=home")
-                page.locator(".composer-input").click()
-                for _ in range(12):
-                    page.keyboard.press("Tab")
-                    page.wait_for_timeout(60)
-                snap("focus-tile.png")
-                go("?view=problems")
-                page.locator("tr.problems-row").first.click()
-                for _ in range(4):
-                    page.keyboard.press("Tab")
-                    page.wait_for_timeout(80)
-                snap("focus-table-row.png")
-                go("?view=problems")
-                page.wait_for_selector("tr.problems-row", timeout=15000)
-                page.locator("tr.problems-row").first.click()
-                for _ in range(3):
-                    page.keyboard.press("Tab")
-                    page.wait_for_timeout(80)
-                snap("focus-button.png")
+                if args.round >= 8:
+                    focus_set("light", run_id)
+                else:
+                    go(f"?problem={run_id}")
+                    page.get_by_role("tab", name="Work").click()
+                    for _ in range(6):
+                        page.keyboard.press("Tab")
+                        page.wait_for_timeout(80)
+                    snap("focus-tab.png")
+                    go("?view=home")
+                    page.locator(".composer-input").click()
+                    for _ in range(12):
+                        page.keyboard.press("Tab")
+                        page.wait_for_timeout(60)
+                    snap("focus-tile.png")
+                    go("?view=problems")
+                    page.locator("tr.problems-row").first.click()
+                    for _ in range(4):
+                        page.keyboard.press("Tab")
+                        page.wait_for_timeout(80)
+                    snap("focus-table-row.png")
+                    go("?view=problems")
+                    page.wait_for_selector("tr.problems-row", timeout=15000)
+                    page.locator("tr.problems-row").first.click()
+                    for _ in range(3):
+                        page.keyboard.press("Tab")
+                        page.wait_for_timeout(80)
+                    snap("focus-button.png")
 
             if not run_id:
                 run_id = _run_example("divider")
@@ -747,21 +836,23 @@ def main() -> int:
                 page.locator(".problems-row").first.hover()
                 page.wait_for_timeout(150)
                 snap("problems-row-hover-dark.png")
-                if args.round >= 7:
-                    _set_theme(page, "dark")
-                    go(f"?problem={run_id}")
-                    page.get_by_role("tab", name="Work").click()
-                    for _ in range(6):
-                        page.keyboard.press("Tab")
-                        page.wait_for_timeout(80)
-                    snap("focus-tab-dark.png")
-                    go("?view=problems")
-                    page.wait_for_selector("tr.problems-row", timeout=15000)
-                    page.locator("tr.problems-row").first.click()
-                    for _ in range(3):
-                        page.keyboard.press("Tab")
-                        page.wait_for_timeout(80)
-                    snap("focus-button-dark.png")
+                if args.round >= 8:
+                    focus_set("dark", run_id)
+                elif args.round >= 7:
+                        _set_theme(page, "dark")
+                        go(f"?problem={run_id}")
+                        page.get_by_role("tab", name="Work").click()
+                        for _ in range(6):
+                            page.keyboard.press("Tab")
+                            page.wait_for_timeout(80)
+                        snap("focus-tab-dark.png")
+                        go("?view=problems")
+                        page.wait_for_selector("tr.problems-row", timeout=15000)
+                        page.locator("tr.problems-row").first.click()
+                        for _ in range(3):
+                            page.keyboard.press("Tab")
+                            page.wait_for_timeout(80)
+                        snap("focus-button-dark.png")
                 page.keyboard.press("Control+b")
                 page.wait_for_selector(".product-sidebar.is-collapsed", timeout=5000)
                 page.wait_for_timeout(200)
@@ -806,7 +897,7 @@ def main() -> int:
         md5_lines = [f"{name}  {dig}" for name, dig in sorted(hashes.items())]
         (out_dir / "md5.txt").write_text("\n".join(md5_lines) + "\n", encoding="utf-8")
         if args.round >= 5:
-            prev = ROOT / "artifacts" / "ux-review" / "round-4" / "md5.txt"
+            prev = ROOT / "artifacts" / "ux-review" / f"round-{args.round - 1}" / "md5.txt"
             changed = []
             if prev.is_file():
                 prev_map = {}
@@ -819,13 +910,15 @@ def main() -> int:
                     # map round-4 names without theme suffix
                     legacy = n.replace("-light.png", ".png").replace("-dark.png", ".png")
                     if prev_map.get(legacy) == d or old == d:
-                        changed.append(f"{n} unchanged from round 4")
+                        changed.append(f"{n} unchanged from round {args.round - 1}")
             (out_dir / "NOTES.md").write_text(
                 f"# Round {args.round} captures\n\n"
                 f"PNG count: {len(hashes)}\n\n"
-                + ("\n".join(changed) if changed else "All captures differ from round-4 md5 where compared.\n"),
+                + ("\n".join(changed) if changed else f"All captures differ from round-{args.round - 1} md5 where compared.\n"),
                 encoding="utf-8",
             )
+        if FOCUS_LOG:
+            (out_dir / "focus-log.json").write_text(json.dumps(FOCUS_LOG, indent=2) + "\n", encoding="utf-8")
         (out_dir / "sidebar-measurements.json").write_text(
             json.dumps(measurements, indent=2) + "\n", encoding="utf-8"
         )

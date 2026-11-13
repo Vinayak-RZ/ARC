@@ -65,13 +65,35 @@ for (const phase of ["before", "after"] as const) {
   });
 }
 
-test("arrowheads are visible in dark", async ({ page, request }) => {
+test("arrowheads are visible in dark and match the wire colour", async ({ page, request }) => {
   await page.addInitScript(() => localStorage.setItem("arc-theme", "dark"));
   await openPid(page, request);
   const res = await page.evaluate(() => {
     const canvas = document.querySelector(".studio-canvas") as HTMLElement;
     const paths = [...canvas.querySelectorAll(".react-flow__edge-path")];
-    return paths.filter((p) => p.getAttribute("marker-end")).length;
+    // Each wire points at a <marker> by id; that marker's shape must be painted like the wire.
+    return paths.map((p) => {
+      const ref = p.getAttribute("marker-end") || "";
+      const id = ref.replace(/^url\(["']?#?/, "").replace(/["']?\)$/, "");
+      const marker = [...document.querySelectorAll("marker")].find((m) => m.id === id);
+      const shape = marker?.querySelector("polyline, polygon, path");
+      const st = shape ? getComputedStyle(shape) : null;
+      return {
+        ref,
+        hasMarker: !!marker,
+        wire: getComputedStyle(p).stroke,
+        fill: st?.fill ?? "",
+        stroke: st?.stroke ?? "",
+      };
+    });
   });
-  expect(res).toBeGreaterThanOrEqual(4);
+  expect(res.length, "wires").toBeGreaterThanOrEqual(5);
+  const norm = (c: string) => c.replace(/\s+/g, "");
+  for (const [i, w] of res.entries()) {
+    expect(w.ref, `wire ${i} marker-end`).not.toBe("");
+    expect(w.hasMarker, `wire ${i} marker ${w.ref} exists`).toBe(true);
+    const paints = [norm(w.fill), norm(w.stroke)];
+    expect(paints, `wire ${i}: head paint ${paints} vs wire ${w.wire}`).toContain(norm(w.wire));
+    expect(norm(w.wire), `wire ${i} colour`).not.toBe("none");
+  }
 });

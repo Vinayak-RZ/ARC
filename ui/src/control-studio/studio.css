@@ -263,7 +263,25 @@
 }
 
 .studio-step-band {
-  fill: color-mix(in srgb, var(--cs-accent) 12%, transparent);
+  fill: color-mix(in srgb, var(--cs-accent) 14%, transparent);
+}
+
+.studio-step-band-edge {
+  stroke: var(--cs-accent);
+  stroke-opacity: 0.45;
+  stroke-width: 1;
+}
+
+.studio-step-settle {
+  stroke: var(--cs-text-secondary);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+}
+
+.studio-step-svg text.studio-step-settle-label,
+.studio-step-svg text.studio-step-band-label {
+  font-size: 11px;
+  fill: var(--cs-text-secondary);
 }
 
 .studio-settled-pill {
@@ -530,14 +548,6 @@
 .studio-kpi.is-textual {
   font-size: 20px;
   line-height: 28px;
-}
-
-.studio-margin-meta {
-  display: block;
-  font-size: 11px;
-  color: var(--cs-text-muted);
-  margin-top: 2px;
-  max-width: 14rem;
 }
 
 .product-workspace .studio-oplog,

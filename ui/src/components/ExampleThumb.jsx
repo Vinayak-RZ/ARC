@@ -88,14 +88,42 @@ function ThumbStep() {
   );
 }
 
+/*
+ * DC motor speed: an under-damped speed response with a small overshoot, then a load
+ * step part-way along that dips the speed and recovers, so it cannot be mistaken for
+ * the first-order step tile.
+ */
+function motorSpeedPoints() {
+  const X0 = 24;
+  const X1 = 142;
+  const Y0 = 80;
+  const rise = 44;
+  const zeta = 0.45;
+  const wn = 11;
+  const wd = wn * Math.sqrt(1 - zeta * zeta);
+  const tLoad = 0.62;
+  const dip = 0.5;
+  const n = 90;
+  const pts = [];
+  for (let i = 0; i <= n; i += 1) {
+    const t = i / n;
+    let v = 1 - Math.exp(-zeta * wn * t) * (Math.cos(wd * t) + ((zeta * wn) / wd) * Math.sin(wd * t));
+    if (t > tLoad) {
+      const u = t - tLoad;
+      v -= dip * (1 - Math.exp(-14 * u)) * Math.exp(-7 * u);
+    }
+    pts.push(pt(X0 + t * (X1 - X0), Y0 - v * rise));
+  }
+  return { pts: pts.join(" "), final: Y0 - rise };
+}
+
 function ThumbMotorSpeed() {
-  const k = 3;
-  const final = 80 - (1 - Math.exp(-k)) * 54;
+  const { pts, final } = motorSpeedPoints();
   return (
     <Frame>
       {axes(24, 80, 146, 14)}
       <line className="th-dash" x1={24} y1={final} x2={146} y2={final} />
-      <polyline className="th-line" points={expCurve(k, { x1: 142 })} />
+      <polyline className="th-line" points={pts} />
     </Frame>
   );
 }

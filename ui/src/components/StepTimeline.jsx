@@ -79,6 +79,7 @@ export function StepTimeline({ data }) {
                 <button
                   type="button"
                   className="step-expand"
+                  aria-label="Show working"
                   aria-expanded={open === i}
                   onClick={() => setOpen(open === i ? null : i)}
                 >

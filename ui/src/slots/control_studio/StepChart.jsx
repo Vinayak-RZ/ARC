@@ -68,6 +68,9 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
   const spY = ypx(setpoint);
   const bandLo = setpoint * 0.98;
   const bandHi = setpoint * 1.02;
+  const ts = metrics.t_settle_s;
+  const settleX =
+    status === "settled" && ts != null && ts >= series.t0 && ts <= series.t1 ? x(ts) : null;
   const xTicks = niceTicks(series.t0, series.t1, 5);
   const yTicks = niceTicks(series.ymin, series.ymax, 4);
   const aria = metrics.aria_summary || `Step response to ${fmt(setpoint)} ${unit}`.trim();
@@ -139,7 +142,25 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
           height={Math.max(0, ypx(bandLo) - ypx(bandHi))}
           className="studio-step-band"
         />
+        <line x1={m.l} x2={w - m.r} y1={ypx(bandHi)} y2={ypx(bandHi)} className="studio-step-band-edge" />
+        <line x1={m.l} x2={w - m.r} y1={ypx(bandLo)} y2={ypx(bandLo)} className="studio-step-band-edge" />
+        <text x={w - m.r - 4} y={ypx(bandHi) - 5} className="studio-step-band-label" textAnchor="end">
+          ±2% band
+        </text>
         <line x1={m.l} x2={w - m.r} y1={spY} y2={spY} className="studio-step-setpoint" strokeDasharray="4 3" />
+        {settleX != null ? (
+          <>
+            <line x1={settleX} x2={settleX} y1={m.t} y2={m.t + plotH} className="studio-step-settle" />
+            <text
+              x={settleX + (settleX > w - m.r - 60 ? -5 : 5)}
+              y={m.t + plotH - 6}
+              className="studio-step-settle-label"
+              textAnchor={settleX > w - m.r - 60 ? "end" : "start"}
+            >
+              {fmt(metrics.t_settle_s, 2)} s
+            </text>
+          </>
+        ) : null}
         <path d={path} className="studio-step-line" fill="none" />
         {xTicks.map((tv) => (
           <text key={tv} x={x(tv)} y={m.t + plotH + 16} className="studio-step-tick" textAnchor="middle">
