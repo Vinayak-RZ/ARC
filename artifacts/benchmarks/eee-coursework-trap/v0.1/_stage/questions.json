@@ -1,0 +1,3010 @@
+{
+  "schema": "arc.benchmark.questions.v0.1",
+  "tasks": [
+    {
+      "id": "power/agc-eec301-01-v0",
+      "domain": "power",
+      "seed": 118,
+      "question": "# Exp 7 \u2014 two-area AGC OSS twin\n\nExpect primary droop steady state and AGC integral restoration per\n`artifacts/eec301-lab-goldens/exp07.json`.\n\nUse Arc PSA engine agc_two_area (fixture case.json).",
+      "givens": {},
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "primary_df1_Hz",
+            "type": "float",
+            "unit": "Hz"
+          },
+          {
+            "name": "agc_ss_df1_Hz",
+            "type": "float",
+            "unit": "Hz"
+          }
+        ],
+        "rule": "Arc agc_two_area simulate_two_area gold fields."
+      },
+      "grading_rule": "Arc agc_two_area simulate_two_area gold fields.",
+      "expect_mode": "engine",
+      "recipe_id": null,
+      "engine": "agc_two_area",
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "power/agc-eec301-01-v1",
+      "domain": "power",
+      "seed": 135,
+      "question": "# Exp 7 \u2014 two-area AGC OSS twin\n\nExpect primary droop steady state and AGC integral restoration per\n`artifacts/eec301-lab-goldens/exp07.json`.\n\nUse Arc PSA engine agc_two_area (fixture case.json).",
+      "givens": {},
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "primary_df1_Hz",
+            "type": "float",
+            "unit": "Hz"
+          },
+          {
+            "name": "agc_ss_df1_Hz",
+            "type": "float",
+            "unit": "Hz"
+          }
+        ],
+        "rule": "Arc agc_two_area simulate_two_area gold fields."
+      },
+      "grading_rule": "Arc agc_two_area simulate_two_area gold fields.",
+      "expect_mode": "engine",
+      "recipe_id": null,
+      "engine": "agc_two_area",
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "power/ed-eec301-01-v0",
+      "domain": "power",
+      "seed": 120,
+      "question": "# Exp 8 \u2014 \u03bb-iteration economic dispatch\n\nExpect PD 450/500/300 dispatch and Unit 2 at Pmax for PD=500 per exp08.json.\n\nUse Arc PSA engine ed_lambda (fixture case.json).",
+      "givens": {},
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "cases",
+            "type": "array"
+          },
+          {
+            "name": "lam",
+            "type": "float"
+          }
+        ],
+        "rule": "Arc ed_lambda solve_lambda_ed for PD cases in expect."
+      },
+      "grading_rule": "Arc ed_lambda solve_lambda_ed for PD cases in expect.",
+      "expect_mode": "engine",
+      "recipe_id": null,
+      "engine": "ed_lambda",
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "power/ed-eec301-01-v1",
+      "domain": "power",
+      "seed": 137,
+      "question": "# Exp 8 \u2014 \u03bb-iteration economic dispatch\n\nExpect PD 450/500/300 dispatch and Unit 2 at Pmax for PD=500 per exp08.json.\n\nUse Arc PSA engine ed_lambda (fixture case.json).",
+      "givens": {},
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "cases",
+            "type": "array"
+          },
+          {
+            "name": "lam",
+            "type": "float"
+          }
+        ],
+        "rule": "Arc ed_lambda solve_lambda_ed for PD cases in expect."
+      },
+      "grading_rule": "Arc ed_lambda solve_lambda_ed for PD cases in expect.",
+      "expect_mode": "engine",
+      "recipe_id": null,
+      "engine": "ed_lambda",
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "power/ed-penalty-t13-01-v0",
+      "domain": "power",
+      "seed": 139,
+      "question": "# T13 \u2014 economic dispatch with B losses (penalty factors)\n\nEEC-301 three-unit case, PD = 500 MW. \u03bb must come from `ed_with_losses` iteration, not naive `sum P = PD`.",
+      "givens": {
+        "problem.json": {
+          "solver": "ed_with_losses",
+          "check_kind": "ed_with_losses",
+          "pd_mw": 500,
+          "units": "eec301",
+          "B": [
+            [
+              0.0001,
+              2e-05,
+              1e-05
+            ],
+            [
+              2e-05,
+              0.00015,
+              2e-05
+            ],
+            [
+              1e-05,
+              2e-05,
+              0.00012
+            ]
+          ],
+          "value_key": "lam",
+          "expected": 7.889,
+          "tol": 0.15
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 0.01
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "ed-penalty-study",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "power/ed-penalty-t13-01-v1",
+      "domain": "power",
+      "seed": 156,
+      "question": "# T13 \u2014 economic dispatch with B losses (penalty factors)\n\nEEC-301 three-unit case, PD = 500 MW. \u03bb must come from `ed_with_losses` iteration, not naive `sum P = PD`.",
+      "givens": {
+        "problem.json": {
+          "solver": "ed_with_losses",
+          "check_kind": "ed_with_losses",
+          "pd_mw": 500,
+          "units": "eec301",
+          "B": [
+            [
+              0.0001,
+              2e-05,
+              1e-05
+            ],
+            [
+              2e-05,
+              0.00015,
+              2e-05
+            ],
+            [
+              1e-05,
+              2e-05,
+              0.00012
+            ]
+          ],
+          "value_key": "lam",
+          "expected": 7.889,
+          "tol": 0.15
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 0.01
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "ed-penalty-study",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "power/lg-01-v0",
+      "domain": "power",
+      "seed": 127,
+      "question": "# LG fault \u2014 sequence network gold\n\nExpect checked fault current for a bolted LG fault with given sequence impedances.",
+      "givens": {
+        "problem.json": {
+          "fault_type": "LG",
+          "z1_pu": 0.1,
+          "z2_pu": 0.1,
+          "z0_pu": 0.3,
+          "v_prefault_pu": 1.0
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 1e-06
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "simulate-power-fault",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "power/lg-01-v1",
+      "domain": "power",
+      "seed": 144,
+      "question": "# LG fault \u2014 sequence network gold\n\nExpect checked fault current for a bolted LG fault with given sequence impedances.",
+      "givens": {
+        "problem.json": {
+          "fault_type": "LG",
+          "z1_pu": 0.1,
+          "z2_pu": 0.1,
+          "z0_pu": 0.3,
+          "v_prefault_pu": 1.0
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 1e-06
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "simulate-power-fault",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "power/ll-01-v0",
+      "domain": "power",
+      "seed": 134,
+      "question": "# LL fault \u2014 sequence network gold",
+      "givens": {
+        "problem.json": {
+          "fault_type": "LL",
+          "z1_pu": 0.1,
+          "z2_pu": 0.1,
+          "z0_pu": 0.3,
+          "v_prefault_pu": 1.0
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 1e-06
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "simulate-power-fault",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "power/ll-01-v1",
+      "domain": "power",
+      "seed": 151,
+      "question": "# LL fault \u2014 sequence network gold",
+      "givens": {
+        "problem.json": {
+          "fault_type": "LL",
+          "z1_pu": 0.1,
+          "z2_pu": 0.1,
+          "z0_pu": 0.3,
+          "v_prefault_pu": 1.0
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 1e-06
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "simulate-power-fault",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "power/llg-bc-01-v0",
+      "domain": "power",
+      "seed": 106,
+      "question": "# LLG b\u2013c \u2014 full sequence output\n\nBolted double line-to-ground on phases b and c; prefault 1 pu. Phase-a magnitude must not equal 2|I1|.",
+      "givens": {
+        "problem.json": {
+          "sequence": true,
+          "fault_type": "LLG",
+          "faulted_phases": [
+            "b",
+            "c"
+          ],
+          "v_prefault_pu": 1.0,
+          "z1_pu": "0.2j",
+          "z2_pu": "0.2j",
+          "z0_pu": "0.2j",
+          "zf_pu": 0
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 1e-06
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "simulate-power-fault",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "power/llg-bc-01-v1",
+      "domain": "power",
+      "seed": 123,
+      "question": "# LLG b\u2013c \u2014 full sequence output\n\nBolted double line-to-ground on phases b and c; prefault 1 pu. Phase-a magnitude must not equal 2|I1|.",
+      "givens": {
+        "problem.json": {
+          "sequence": true,
+          "fault_type": "LLG",
+          "faulted_phases": [
+            "b",
+            "c"
+          ],
+          "v_prefault_pu": 1.0,
+          "z1_pu": "0.2j",
+          "z2_pu": "0.2j",
+          "z0_pu": "0.2j",
+          "zf_pu": 0
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 1e-06
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "simulate-power-fault",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "power/protection-oc-01-v0",
+      "domain": "power",
+      "seed": 120,
+      "question": "Run recipe study-protection-setting with givens: {\"ct_primary_a\": 300, \"ct_secondary_a\": 5, \"fault_current_a\": 800, \"relay_pickup_a\": 2.0}",
+      "givens": {
+        "problem.json": {
+          "ct_primary_a": 300,
+          "ct_secondary_a": 5,
+          "relay_pickup_a": 2.0,
+          "fault_current_a": 800
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 1e-06
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "study-protection-setting",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "power/protection-oc-01-v1",
+      "domain": "power",
+      "seed": 137,
+      "question": "Run recipe study-protection-setting with givens: {\"ct_primary_a\": 300, \"ct_secondary_a\": 5, \"fault_current_a\": 800, \"relay_pickup_a\": 2.0}",
+      "givens": {
+        "problem.json": {
+          "ct_primary_a": 300,
+          "ct_secondary_a": 5,
+          "relay_pickup_a": 2.0,
+          "fault_current_a": 800
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 1e-06
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "study-protection-setting",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "power/pu-base-12-01-v0",
+      "domain": "power",
+      "seed": 137,
+      "question": "# T12 \u2014 per-unit base change at symmetrical fault bus\n\nAggregate Xd'' (50 MVA) and transformer X (100 MVA) onto 100 MVA system base; |Z1| must include both.",
+      "givens": {
+        "problem.json": {
+          "s_system_mva": 100,
+          "v_system_kv": 13.8,
+          "elements": [
+            {
+              "id": "gen",
+              "z_pu": "0.2j",
+              "s_base_mva": 50,
+              "sequence": "1"
+            },
+            {
+              "id": "xf",
+              "z_pu": "0.1j",
+              "s_base_mva": 100,
+              "sequence": "1"
+            }
+          ],
+          "check_kind": "sym_fault_z1",
+          "expected": 0.2,
+          "tol": 0.001
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 1e-06
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "symmetrical-fault-study",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "power/pu-base-12-01-v1",
+      "domain": "power",
+      "seed": 154,
+      "question": "# T12 \u2014 per-unit base change at symmetrical fault bus\n\nAggregate Xd'' (50 MVA) and transformer X (100 MVA) onto 100 MVA system base; |Z1| must include both.",
+      "givens": {
+        "problem.json": {
+          "s_system_mva": 100,
+          "v_system_kv": 13.8,
+          "elements": [
+            {
+              "id": "gen",
+              "z_pu": "0.2j",
+              "s_base_mva": 50,
+              "sequence": "1"
+            },
+            {
+              "id": "xf",
+              "z_pu": "0.1j",
+              "s_base_mva": 100,
+              "sequence": "1"
+            }
+          ],
+          "check_kind": "sym_fault_z1",
+          "expected": 0.2,
+          "tol": 0.001
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 1e-06
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "symmetrical-fault-study",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "power/smib-eec301-01-v0",
+      "domain": "power",
+      "seed": 127,
+      "question": "# SMIB Exp 6 \u2014 equal-area and CCT gold\n\nUse Arc `smib_swing` helpers (not ode45) for IIT Roorkee EEC-301 Exp 6 default\nparameters. Expect \u03b4\u2080, \u03b4_cr, and t_cr within tolerances in\n`docs/planning/eec301-lift/EEC301_EXP6_GOLDEN.md`.\n\nUse Arc PSA engine smib_swing (fixture case.json).",
+      "givens": {
+        "case.json": {
+          "h_mj_mva": 5.0,
+          "f0_hz": 50.0,
+          "pm_pu": 0.9,
+          "pmax_pre_pu": 2.0,
+          "pmax_fault_pu": 0.5,
+          "pmax_post_pu": 1.5
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta0_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance": 0.01
+          },
+          {
+            "name": "delta_cr_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance": 0.01
+          },
+          {
+            "name": "tcr_s",
+            "type": "float",
+            "unit": "s",
+            "tolerance": 0.002
+          }
+        ],
+        "rule": "Arc smib_swing PSA engine on fixture case.json."
+      },
+      "grading_rule": "Arc smib_swing PSA engine on fixture case.json.",
+      "expect_mode": "engine",
+      "recipe_id": null,
+      "engine": "smib_swing",
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "power/smib-eec301-01-v1",
+      "domain": "power",
+      "seed": 144,
+      "question": "# SMIB Exp 6 \u2014 equal-area and CCT gold\n\nUse Arc `smib_swing` helpers (not ode45) for IIT Roorkee EEC-301 Exp 6 default\nparameters. Expect \u03b4\u2080, \u03b4_cr, and t_cr within tolerances in\n`docs/planning/eec301-lift/EEC301_EXP6_GOLDEN.md`.\n\nUse Arc PSA engine smib_swing (fixture case.json).",
+      "givens": {
+        "case.json": {
+          "h_mj_mva": 5.0,
+          "f0_hz": 50.0,
+          "pm_pu": 0.9,
+          "pmax_pre_pu": 2.0,
+          "pmax_fault_pu": 0.5,
+          "pmax_post_pu": 1.5
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta0_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance": 0.01
+          },
+          {
+            "name": "delta_cr_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance": 0.01
+          },
+          {
+            "name": "tcr_s",
+            "type": "float",
+            "unit": "s",
+            "tolerance": 0.002
+          }
+        ],
+        "rule": "Arc smib_swing PSA engine on fixture case.json."
+      },
+      "grading_rule": "Arc smib_swing PSA engine on fixture case.json.",
+      "expect_mode": "engine",
+      "recipe_id": null,
+      "engine": "smib_swing",
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "control/block-feedback-01-v0",
+      "domain": "control",
+      "seed": 119,
+      "question": "# Unity-feedback block diagram \u2192 Bode/step",
+      "givens": {
+        "problem.json": {
+          "blocks": [
+            {
+              "id": "G",
+              "tf": "10/(s+1)"
+            },
+            {
+              "id": "H",
+              "tf": "1"
+            }
+          ],
+          "unity_feedback": {
+            "forward": "G",
+            "feedback": "H",
+            "negative": true
+          }
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 1e-06
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "control-diagram-to-model",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "control/block-feedback-01-v1",
+      "domain": "control",
+      "seed": 136,
+      "question": "# Unity-feedback block diagram \u2192 Bode/step",
+      "givens": {
+        "problem.json": {
+          "blocks": [
+            {
+              "id": "G",
+              "tf": "10/(s+1)"
+            },
+            {
+              "id": "H",
+              "tf": "1"
+            }
+          ],
+          "unity_feedback": {
+            "forward": "G",
+            "feedback": "H",
+            "negative": true
+          }
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 1e-06
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "control-diagram-to-model",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "control/breakaway-3pole-01-v0",
+      "domain": "control",
+      "seed": 121,
+      "question": "Run recipe study-control-exam with givens: {\"check_kind\": \"breakaway_real_axis\", \"expected\": -1.268, \"pick_sigma\": -1.268, \"poles\": [0, -3, -6], \"solver\": \"breakaway_real_axis\", \"tol\": 0.02, \"value_key\": \"breakaway\", \"zeros\": []}",
+      "givens": {
+        "problem.json": {
+          "solver": "breakaway_real_axis",
+          "check_kind": "breakaway_real_axis",
+          "poles": [
+            0,
+            -3,
+            -6
+          ],
+          "zeros": [],
+          "pick_sigma": -1.268,
+          "value_key": "breakaway",
+          "expected": -1.268,
+          "tol": 0.02
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 0.001
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "study-control-exam",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "control/breakaway-3pole-01-v1",
+      "domain": "control",
+      "seed": 138,
+      "question": "Run recipe study-control-exam with givens: {\"check_kind\": \"breakaway_real_axis\", \"expected\": -1.268, \"pick_sigma\": -1.268, \"poles\": [0, -3, -6], \"solver\": \"breakaway_real_axis\", \"tol\": 0.02, \"value_key\": \"breakaway\", \"zeros\": []}",
+      "givens": {
+        "problem.json": {
+          "solver": "breakaway_real_axis",
+          "check_kind": "breakaway_real_axis",
+          "poles": [
+            0,
+            -3,
+            -6
+          ],
+          "zeros": [],
+          "pick_sigma": -1.268,
+          "value_key": "breakaway",
+          "expected": -1.268,
+          "tol": 0.02
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 0.001
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "study-control-exam",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "control/digital-pole-01-v0",
+      "domain": "control",
+      "seed": 114,
+      "question": "Run recipe solve-digital-control-problem with givens: {\"den\": [1.0, -0.5], \"num\": [0.1], \"ts\": 0.01}",
+      "givens": {
+        "problem.json": {
+          "num": [
+            0.1
+          ],
+          "den": [
+            1.0,
+            -0.5
+          ],
+          "ts": 0.01
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 1e-06
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "solve-digital-control-problem",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "control/digital-pole-01-v1",
+      "domain": "control",
+      "seed": 131,
+      "question": "Run recipe solve-digital-control-problem with givens: {\"den\": [1.0, -0.5], \"num\": [0.101], \"ts\": 0.01}",
+      "givens": {
+        "problem.json": {
+          "num": [
+            0.101
+          ],
+          "den": [
+            1.0,
+            -0.5
+          ],
+          "ts": 0.01
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 1e-06
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "solve-digital-control-problem",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "control/margin-40-01-v0",
+      "domain": "control",
+      "seed": 147,
+      "question": "Run recipe solve-control-problem with givens: {\"den\": [1.0, 12.0, 20.0, 0.0], \"margins\": true, \"num\": [40.0]}",
+      "givens": {
+        "problem.json": {
+          "num": [
+            40.0
+          ],
+          "den": [
+            1.0,
+            12.0,
+            20.0,
+            0.0
+          ],
+          "margins": true
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 0.001
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "solve-control-problem",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "control/margin-40-01-v1",
+      "domain": "control",
+      "seed": 164,
+      "question": "Run recipe solve-control-problem with givens: {\"den\": [1.0, 12.0, 20.0, 0.0], \"margins\": true, \"num\": [40.4]}",
+      "givens": {
+        "problem.json": {
+          "num": [
+            40.4
+          ],
+          "den": [
+            1.0,
+            12.0,
+            20.0,
+            0.0
+          ],
+          "margins": true
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 0.001
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "solve-control-problem",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "control/steady-state-type1-01-v0",
+      "domain": "control",
+      "seed": 129,
+      "question": "Run recipe study-control-exam with givens: {\"check_kind\": \"steady_state_error\", \"error_key\": \"ess_ramp\", \"expected\": 0.25, \"gain\": 4.0, \"solver\": \"steady_state_error\", \"system_type\": 1, \"tol\": 1e-06, \"value_key\": \"ess_ramp\"}",
+      "givens": {
+        "problem.json": {
+          "solver": "steady_state_error",
+          "check_kind": "steady_state_error",
+          "system_type": 1,
+          "gain": 4.0,
+          "error_key": "ess_ramp",
+          "value_key": "ess_ramp",
+          "expected": 0.25,
+          "tol": 1e-06
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 1e-06
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "study-control-exam",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "control/steady-state-type1-01-v1",
+      "domain": "control",
+      "seed": 146,
+      "question": "Run recipe study-control-exam with givens: {\"check_kind\": \"steady_state_error\", \"error_key\": \"ess_ramp\", \"expected\": 0.25, \"gain\": 4.0, \"solver\": \"steady_state_error\", \"system_type\": 1, \"tol\": 1e-06, \"value_key\": \"ess_ramp\"}",
+      "givens": {
+        "problem.json": {
+          "solver": "steady_state_error",
+          "check_kind": "steady_state_error",
+          "system_type": 1,
+          "gain": 4.0,
+          "error_key": "ess_ramp",
+          "value_key": "ess_ramp",
+          "expected": 0.25,
+          "tol": 1e-06
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 1e-06
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "study-control-exam",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "circuits/divider-dc-01-v0",
+      "domain": "circuits",
+      "seed": 303,
+      "question": "A DC voltage divider: Vin=10 V, R1=1 k\u03a9, R2=1 k\u03a9. Find Vout at the R1\u2013R2 junction.",
+      "givens": {
+        "problem.json": {
+          "kind": "voltage_divider",
+          "vin": 10,
+          "r1": 1000,
+          "r2": 1000,
+          "expected": 5.0,
+          "tol": 1e-06
+        },
+        "graph.json": {
+          "schema": "arc.circuit.v1",
+          "nodes": [
+            {
+              "id": "vin",
+              "type": "source_v",
+              "refdes": "Vin",
+              "value": 10,
+              "unit": "V",
+              "x": 80,
+              "y": 40
+            },
+            {
+              "id": "r1",
+              "type": "resistor",
+              "refdes": "R1",
+              "value": 1000,
+              "unit": "ohm",
+              "x": 220,
+              "y": 40
+            },
+            {
+              "id": "r2",
+              "type": "resistor",
+              "refdes": "R2",
+              "value": 1000,
+              "unit": "ohm",
+              "x": 220,
+              "y": 160,
+              "rot": 90
+            },
+            {
+              "id": "gnd",
+              "type": "ground",
+              "refdes": "Gnd",
+              "value": 0,
+              "unit": "",
+              "x": 80,
+              "y": 160
+            }
+          ],
+          "edges": [
+            {
+              "id": "e1",
+              "from": "vin.n1",
+              "to": "r1.n1"
+            },
+            {
+              "id": "e2",
+              "from": "r1.n2",
+              "to": "r2.n1"
+            },
+            {
+              "id": "e3",
+              "from": "r2.n2",
+              "to": "gnd.n1"
+            },
+            {
+              "id": "e4",
+              "from": "vin.n2",
+              "to": "gnd.n1"
+            }
+          ]
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 1e-06
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "solve-circuit-problem",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "circuits/divider-dc-01-v1",
+      "domain": "circuits",
+      "seed": 304,
+      "question": "A DC voltage divider: Vin=10 V, R1=1 k\u03a9, R2=1 k\u03a9. Find Vout at the R1\u2013R2 junction.",
+      "givens": {
+        "problem.json": {
+          "kind": "voltage_divider",
+          "vin": 10,
+          "r1": 1000,
+          "r2": 1000,
+          "expected": 5.0,
+          "tol": 1e-06
+        },
+        "graph.json": {
+          "schema": "arc.circuit.v1",
+          "nodes": [
+            {
+              "id": "vin",
+              "type": "source_v",
+              "refdes": "Vin",
+              "value": 10,
+              "unit": "V",
+              "x": 80,
+              "y": 40
+            },
+            {
+              "id": "r1",
+              "type": "resistor",
+              "refdes": "R1",
+              "value": 1000,
+              "unit": "ohm",
+              "x": 220,
+              "y": 40
+            },
+            {
+              "id": "r2",
+              "type": "resistor",
+              "refdes": "R2",
+              "value": 1000,
+              "unit": "ohm",
+              "x": 220,
+              "y": 160,
+              "rot": 90
+            },
+            {
+              "id": "gnd",
+              "type": "ground",
+              "refdes": "Gnd",
+              "value": 0,
+              "unit": "",
+              "x": 80,
+              "y": 160
+            }
+          ],
+          "edges": [
+            {
+              "id": "e1",
+              "from": "vin.n1",
+              "to": "r1.n1"
+            },
+            {
+              "id": "e2",
+              "from": "r1.n2",
+              "to": "r2.n1"
+            },
+            {
+              "id": "e3",
+              "from": "r2.n2",
+              "to": "gnd.n1"
+            },
+            {
+              "id": "e4",
+              "from": "vin.n2",
+              "to": "gnd.n1"
+            }
+          ]
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 1e-06
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "solve-circuit-problem",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "circuits/rc-step-01-v0",
+      "domain": "circuits",
+      "seed": 309,
+      "question": "Run recipe study-circuits-v2 with givens: {\"c\": 0.001, \"check_kind\": \"rc_step\", \"expected\": 6.321205588615618, \"r\": 1000, \"solver\": \"rc_step\", \"t\": 1.0, \"tol\": 0.0001, \"unit\": \"V\", \"v\": 10, \"value_key\": \"vc_V\"}",
+      "givens": {
+        "problem.json": {
+          "solver": "rc_step",
+          "check_kind": "rc_step",
+          "v": 10,
+          "r": 1000,
+          "c": 0.001,
+          "t": 1.0,
+          "value_key": "vc_V",
+          "unit": "V",
+          "expected": 6.321205588615618,
+          "tol": 0.0001
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 1e-06
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "study-circuits-v2",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "circuits/rc-step-01-v1",
+      "domain": "circuits",
+      "seed": 310,
+      "question": "Run recipe study-circuits-v2 with givens: {\"c\": 0.001, \"check_kind\": \"rc_step\", \"expected\": 6.321205588615618, \"r\": 1000, \"solver\": \"rc_step\", \"t\": 1.0, \"tol\": 0.0001, \"unit\": \"V\", \"v\": 10, \"value_key\": \"vc_V\"}",
+      "givens": {
+        "problem.json": {
+          "solver": "rc_step",
+          "check_kind": "rc_step",
+          "v": 10,
+          "r": 1000,
+          "c": 0.001,
+          "t": 1.0,
+          "value_key": "vc_V",
+          "unit": "V",
+          "expected": 6.321205588615618,
+          "tol": 0.0001
+        }
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "value",
+            "type": "float",
+            "unit": "SI or as stated",
+            "tolerance": 1e-06
+          }
+        ],
+        "rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded."
+      },
+      "grading_rule": "Recompute with the same recipe_id and givens; match within tolerance. Self-reported unchecked tokens are not graded.",
+      "expect_mode": "recipe",
+      "recipe_id": "study-circuits-v2",
+      "engine": null,
+      "source_note": "eval/gold license-clean; no repo paths required to attempt."
+    },
+    {
+      "id": "trap/T1-s210",
+      "domain": "trap",
+      "seed": 210,
+      "question": "SMIB equal-area: find critical clearing angle delta_cr (deg) for the given H (MJ/MVA), f0 (Hz), Pm (pu), and Pmax pre/fault/post (pu).",
+      "givens": {
+        "h_mj_mva": 5.18,
+        "f0_hz": 50.0,
+        "pm_pu": 0.895,
+        "pmax_pre_pu": 2.045,
+        "pmax_fault_pu": 0.491,
+        "pmax_post_pu": 1.434
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta_cr_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance": 0.05
+          }
+        ],
+        "rule": "Arc smib_swing.critical_clearing_angle on episode SmibCase givens."
+      },
+      "grading_rule": "Arc smib_swing.critical_clearing_angle on episode SmibCase givens."
+    },
+    {
+      "id": "trap/T1-s211",
+      "domain": "trap",
+      "seed": 211,
+      "question": "SMIB equal-area: find critical clearing angle delta_cr (deg) for the given H (MJ/MVA), f0 (Hz), Pm (pu), and Pmax pre/fault/post (pu).",
+      "givens": {
+        "h_mj_mva": 5.24,
+        "f0_hz": 50.0,
+        "pm_pu": 0.903,
+        "pmax_pre_pu": 1.904,
+        "pmax_fault_pu": 0.538,
+        "pmax_post_pu": 1.526
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta_cr_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance": 0.05
+          }
+        ],
+        "rule": "Arc smib_swing.critical_clearing_angle on episode SmibCase givens."
+      },
+      "grading_rule": "Arc smib_swing.critical_clearing_angle on episode SmibCase givens."
+    },
+    {
+      "id": "trap/T1-s212",
+      "domain": "trap",
+      "seed": 212,
+      "question": "SMIB equal-area: find critical clearing angle delta_cr (deg) for the given H (MJ/MVA), f0 (Hz), Pm (pu), and Pmax pre/fault/post (pu).",
+      "givens": {
+        "h_mj_mva": 5.48,
+        "f0_hz": 50.0,
+        "pm_pu": 0.896,
+        "pmax_pre_pu": 2.041,
+        "pmax_fault_pu": 0.456,
+        "pmax_post_pu": 1.512
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta_cr_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance": 0.05
+          }
+        ],
+        "rule": "Arc smib_swing.critical_clearing_angle on episode SmibCase givens."
+      },
+      "grading_rule": "Arc smib_swing.critical_clearing_angle on episode SmibCase givens."
+    },
+    {
+      "id": "trap/T1-s213",
+      "domain": "trap",
+      "seed": 213,
+      "question": "SMIB equal-area: find critical clearing angle delta_cr (deg) for the given H (MJ/MVA), f0 (Hz), Pm (pu), and Pmax pre/fault/post (pu).",
+      "givens": {
+        "h_mj_mva": 4.72,
+        "f0_hz": 50.0,
+        "pm_pu": 0.886,
+        "pmax_pre_pu": 1.904,
+        "pmax_fault_pu": 0.492,
+        "pmax_post_pu": 1.502
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta_cr_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance": 0.05
+          }
+        ],
+        "rule": "Arc smib_swing.critical_clearing_angle on episode SmibCase givens."
+      },
+      "grading_rule": "Arc smib_swing.critical_clearing_angle on episode SmibCase givens."
+    },
+    {
+      "id": "trap/T1-s214",
+      "domain": "trap",
+      "seed": 214,
+      "question": "SMIB equal-area: find critical clearing angle delta_cr (deg) for the given H (MJ/MVA), f0 (Hz), Pm (pu), and Pmax pre/fault/post (pu).",
+      "givens": {
+        "h_mj_mva": 4.86,
+        "f0_hz": 50.0,
+        "pm_pu": 0.901,
+        "pmax_pre_pu": 1.96,
+        "pmax_fault_pu": 0.504,
+        "pmax_post_pu": 1.488
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta_cr_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance": 0.05
+          }
+        ],
+        "rule": "Arc smib_swing.critical_clearing_angle on episode SmibCase givens."
+      },
+      "grading_rule": "Arc smib_swing.critical_clearing_angle on episode SmibCase givens."
+    },
+    {
+      "id": "trap/T2-s220",
+      "domain": "trap",
+      "seed": 220,
+      "question": "SMIB fault: time (s) for RK4 fault integration to reach the critical clearing angle from givens, step h in givens.",
+      "givens": {
+        "h_mj_mva": 4.73,
+        "f0_hz": 50.0,
+        "pm_pu": 0.91,
+        "pmax_pre_pu": 1.95,
+        "pmax_fault_pu": 0.478,
+        "pmax_post_pu": 1.48,
+        "h_integrator_s": 0.001
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "t_to_delta_cr_s",
+            "type": "float",
+            "unit": "s",
+            "tolerance": 0.002
+          }
+        ],
+        "rule": "RK4 fault trajectory to critical angle; not ode45."
+      },
+      "grading_rule": "RK4 fault trajectory to critical angle; not ode45."
+    },
+    {
+      "id": "trap/T2-s221",
+      "domain": "trap",
+      "seed": 221,
+      "question": "SMIB fault: time (s) for RK4 fault integration to reach the critical clearing angle from givens, step h in givens.",
+      "givens": {
+        "h_mj_mva": 4.59,
+        "f0_hz": 50.0,
+        "pm_pu": 0.89,
+        "pmax_pre_pu": 1.956,
+        "pmax_fault_pu": 0.532,
+        "pmax_post_pu": 1.446,
+        "h_integrator_s": 0.001
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "t_to_delta_cr_s",
+            "type": "float",
+            "unit": "s",
+            "tolerance": 0.002
+          }
+        ],
+        "rule": "RK4 fault trajectory to critical angle; not ode45."
+      },
+      "grading_rule": "RK4 fault trajectory to critical angle; not ode45."
+    },
+    {
+      "id": "trap/T2-s222",
+      "domain": "trap",
+      "seed": 222,
+      "question": "SMIB fault: time (s) for RK4 fault integration to reach the critical clearing angle from givens, step h in givens.",
+      "givens": {
+        "h_mj_mva": 4.74,
+        "f0_hz": 50.0,
+        "pm_pu": 0.911,
+        "pmax_pre_pu": 1.961,
+        "pmax_fault_pu": 0.453,
+        "pmax_post_pu": 1.445,
+        "h_integrator_s": 0.001
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "t_to_delta_cr_s",
+            "type": "float",
+            "unit": "s",
+            "tolerance": 0.002
+          }
+        ],
+        "rule": "RK4 fault trajectory to critical angle; not ode45."
+      },
+      "grading_rule": "RK4 fault trajectory to critical angle; not ode45."
+    },
+    {
+      "id": "trap/T2-s223",
+      "domain": "trap",
+      "seed": 223,
+      "question": "SMIB fault: time (s) for RK4 fault integration to reach the critical clearing angle from givens, step h in givens.",
+      "givens": {
+        "h_mj_mva": 4.94,
+        "f0_hz": 50.0,
+        "pm_pu": 0.893,
+        "pmax_pre_pu": 1.978,
+        "pmax_fault_pu": 0.503,
+        "pmax_post_pu": 1.5,
+        "h_integrator_s": 0.001
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "t_to_delta_cr_s",
+            "type": "float",
+            "unit": "s",
+            "tolerance": 0.002
+          }
+        ],
+        "rule": "RK4 fault trajectory to critical angle; not ode45."
+      },
+      "grading_rule": "RK4 fault trajectory to critical angle; not ode45."
+    },
+    {
+      "id": "trap/T2-s224",
+      "domain": "trap",
+      "seed": 224,
+      "question": "SMIB fault: time (s) for RK4 fault integration to reach the critical clearing angle from givens, step h in givens.",
+      "givens": {
+        "h_mj_mva": 4.69,
+        "f0_hz": 50.0,
+        "pm_pu": 0.883,
+        "pmax_pre_pu": 1.915,
+        "pmax_fault_pu": 0.504,
+        "pmax_post_pu": 1.445,
+        "h_integrator_s": 0.001
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "t_to_delta_cr_s",
+            "type": "float",
+            "unit": "s",
+            "tolerance": 0.002
+          }
+        ],
+        "rule": "RK4 fault trajectory to critical angle; not ode45."
+      },
+      "grading_rule": "RK4 fault trajectory to critical angle; not ode45."
+    },
+    {
+      "id": "trap/T3-s230",
+      "domain": "trap",
+      "seed": 230,
+      "question": "Swing equation: report accel coefficient pi*f0/H and domega/dt at prefault equilibrium (must be zero).",
+      "givens": {
+        "h_mj_mva": 4.8,
+        "f0_hz": 50.0,
+        "pm_pu": 0.908,
+        "pmax_pre_pu": 2.088,
+        "pmax_fault_pu": 0.539,
+        "pmax_post_pu": 1.507
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "accel_coeff",
+            "type": "float",
+            "unit": "rad/s^2 per pu",
+            "tolerance": 1e-06
+          },
+          {
+            "name": "domega0_at_prefault",
+            "type": "float",
+            "unit": "rad/s",
+            "tolerance": 1e-08
+          }
+        ],
+        "rule": "pi*f0/H and prefault acceleration zero at delta0."
+      },
+      "grading_rule": "pi*f0/H and prefault acceleration zero at delta0."
+    },
+    {
+      "id": "trap/T3-s231",
+      "domain": "trap",
+      "seed": 231,
+      "question": "Swing equation: report accel coefficient pi*f0/H and domega/dt at prefault equilibrium (must be zero).",
+      "givens": {
+        "h_mj_mva": 5.46,
+        "f0_hz": 50.0,
+        "pm_pu": 0.914,
+        "pmax_pre_pu": 2.065,
+        "pmax_fault_pu": 0.536,
+        "pmax_post_pu": 1.6
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "accel_coeff",
+            "type": "float",
+            "unit": "rad/s^2 per pu",
+            "tolerance": 1e-06
+          },
+          {
+            "name": "domega0_at_prefault",
+            "type": "float",
+            "unit": "rad/s",
+            "tolerance": 1e-08
+          }
+        ],
+        "rule": "pi*f0/H and prefault acceleration zero at delta0."
+      },
+      "grading_rule": "pi*f0/H and prefault acceleration zero at delta0."
+    },
+    {
+      "id": "trap/T3-s232",
+      "domain": "trap",
+      "seed": 232,
+      "question": "Swing equation: report accel coefficient pi*f0/H and domega/dt at prefault equilibrium (must be zero).",
+      "givens": {
+        "h_mj_mva": 4.73,
+        "f0_hz": 50.0,
+        "pm_pu": 0.891,
+        "pmax_pre_pu": 1.916,
+        "pmax_fault_pu": 0.536,
+        "pmax_post_pu": 1.454
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "accel_coeff",
+            "type": "float",
+            "unit": "rad/s^2 per pu",
+            "tolerance": 1e-06
+          },
+          {
+            "name": "domega0_at_prefault",
+            "type": "float",
+            "unit": "rad/s",
+            "tolerance": 1e-08
+          }
+        ],
+        "rule": "pi*f0/H and prefault acceleration zero at delta0."
+      },
+      "grading_rule": "pi*f0/H and prefault acceleration zero at delta0."
+    },
+    {
+      "id": "trap/T3-s233",
+      "domain": "trap",
+      "seed": 233,
+      "question": "Swing equation: report accel coefficient pi*f0/H and domega/dt at prefault equilibrium (must be zero).",
+      "givens": {
+        "h_mj_mva": 5.13,
+        "f0_hz": 50.0,
+        "pm_pu": 0.907,
+        "pmax_pre_pu": 2.005,
+        "pmax_fault_pu": 0.53,
+        "pmax_post_pu": 1.497
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "accel_coeff",
+            "type": "float",
+            "unit": "rad/s^2 per pu",
+            "tolerance": 1e-06
+          },
+          {
+            "name": "domega0_at_prefault",
+            "type": "float",
+            "unit": "rad/s",
+            "tolerance": 1e-08
+          }
+        ],
+        "rule": "pi*f0/H and prefault acceleration zero at delta0."
+      },
+      "grading_rule": "pi*f0/H and prefault acceleration zero at delta0."
+    },
+    {
+      "id": "trap/T3-s234",
+      "domain": "trap",
+      "seed": 234,
+      "question": "Swing equation: report accel coefficient pi*f0/H and domega/dt at prefault equilibrium (must be zero).",
+      "givens": {
+        "h_mj_mva": 5.37,
+        "f0_hz": 50.0,
+        "pm_pu": 0.894,
+        "pmax_pre_pu": 2.072,
+        "pmax_fault_pu": 0.542,
+        "pmax_post_pu": 1.501
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "accel_coeff",
+            "type": "float",
+            "unit": "rad/s^2 per pu",
+            "tolerance": 1e-06
+          },
+          {
+            "name": "domega0_at_prefault",
+            "type": "float",
+            "unit": "rad/s",
+            "tolerance": 1e-08
+          }
+        ],
+        "rule": "pi*f0/H and prefault acceleration zero at delta0."
+      },
+      "grading_rule": "pi*f0/H and prefault acceleration zero at delta0."
+    },
+    {
+      "id": "trap/T4-s240",
+      "domain": "trap",
+      "seed": 240,
+      "question": "Two-area tie-line: primary response Area-1 frequency (Hz) and tie flow P12 (MW) after load step in givens.",
+      "givens": {
+        "load_step_area1_MW": 54.0,
+        "t_end_s": 30.0
+      },
+      "givens_units": {
+        "load_step_area1_MW": "MW",
+        "t_end_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "primary_df1_Hz",
+            "type": "float",
+            "unit": "Hz",
+            "tolerance": 0.002
+          },
+          {
+            "name": "primary_P12_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance": 0.5
+          }
+        ],
+        "rule": "Two-area primary frequency and tie after load step (Exp 7 signs)."
+      },
+      "grading_rule": "Two-area primary frequency and tie after load step (Exp 7 signs)."
+    },
+    {
+      "id": "trap/T4-s241",
+      "domain": "trap",
+      "seed": 241,
+      "question": "Two-area tie-line: primary response Area-1 frequency (Hz) and tie flow P12 (MW) after load step in givens.",
+      "givens": {
+        "load_step_area1_MW": 55.0,
+        "t_end_s": 30.0
+      },
+      "givens_units": {
+        "load_step_area1_MW": "MW",
+        "t_end_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "primary_df1_Hz",
+            "type": "float",
+            "unit": "Hz",
+            "tolerance": 0.002
+          },
+          {
+            "name": "primary_P12_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance": 0.5
+          }
+        ],
+        "rule": "Two-area primary frequency and tie after load step (Exp 7 signs)."
+      },
+      "grading_rule": "Two-area primary frequency and tie after load step (Exp 7 signs)."
+    },
+    {
+      "id": "trap/T4-s242",
+      "domain": "trap",
+      "seed": 242,
+      "question": "Two-area tie-line: primary response Area-1 frequency (Hz) and tie flow P12 (MW) after load step in givens.",
+      "givens": {
+        "load_step_area1_MW": 52.0,
+        "t_end_s": 30.0
+      },
+      "givens_units": {
+        "load_step_area1_MW": "MW",
+        "t_end_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "primary_df1_Hz",
+            "type": "float",
+            "unit": "Hz",
+            "tolerance": 0.002
+          },
+          {
+            "name": "primary_P12_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance": 0.5
+          }
+        ],
+        "rule": "Two-area primary frequency and tie after load step (Exp 7 signs)."
+      },
+      "grading_rule": "Two-area primary frequency and tie after load step (Exp 7 signs)."
+    },
+    {
+      "id": "trap/T4-s243",
+      "domain": "trap",
+      "seed": 243,
+      "question": "Two-area tie-line: primary response Area-1 frequency (Hz) and tie flow P12 (MW) after load step in givens.",
+      "givens": {
+        "load_step_area1_MW": 54.0,
+        "t_end_s": 30.0
+      },
+      "givens_units": {
+        "load_step_area1_MW": "MW",
+        "t_end_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "primary_df1_Hz",
+            "type": "float",
+            "unit": "Hz",
+            "tolerance": 0.002
+          },
+          {
+            "name": "primary_P12_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance": 0.5
+          }
+        ],
+        "rule": "Two-area primary frequency and tie after load step (Exp 7 signs)."
+      },
+      "grading_rule": "Two-area primary frequency and tie after load step (Exp 7 signs)."
+    },
+    {
+      "id": "trap/T4-s244",
+      "domain": "trap",
+      "seed": 244,
+      "question": "Two-area tie-line: primary response Area-1 frequency (Hz) and tie flow P12 (MW) after load step in givens.",
+      "givens": {
+        "load_step_area1_MW": 55.0,
+        "t_end_s": 30.0
+      },
+      "givens_units": {
+        "load_step_area1_MW": "MW",
+        "t_end_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "primary_df1_Hz",
+            "type": "float",
+            "unit": "Hz",
+            "tolerance": 0.002
+          },
+          {
+            "name": "primary_P12_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance": 0.5
+          }
+        ],
+        "rule": "Two-area primary frequency and tie after load step (Exp 7 signs)."
+      },
+      "grading_rule": "Two-area primary frequency and tie after load step (Exp 7 signs)."
+    },
+    {
+      "id": "trap/T5-s250",
+      "domain": "trap",
+      "seed": 250,
+      "question": "Two-area AGC: steady-state Area-1 frequency (Hz) and tie P12 (MW) with K in givens.",
+      "givens": {
+        "K_agc": 0.29,
+        "t_end_s": 60.0
+      },
+      "givens_units": {
+        "K_agc": "pu",
+        "t_end_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "agc_ss_df1_Hz",
+            "type": "float",
+            "unit": "Hz",
+            "tolerance": 0.002
+          },
+          {
+            "name": "agc_ss_P12_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance": 0.05
+          }
+        ],
+        "rule": "AGC steady state with K given in episode givens."
+      },
+      "grading_rule": "AGC steady state with K given in episode givens."
+    },
+    {
+      "id": "trap/T5-s251",
+      "domain": "trap",
+      "seed": 251,
+      "question": "Two-area AGC: steady-state Area-1 frequency (Hz) and tie P12 (MW) with K in givens.",
+      "givens": {
+        "K_agc": 0.29,
+        "t_end_s": 60.0
+      },
+      "givens_units": {
+        "K_agc": "pu",
+        "t_end_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "agc_ss_df1_Hz",
+            "type": "float",
+            "unit": "Hz",
+            "tolerance": 0.002
+          },
+          {
+            "name": "agc_ss_P12_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance": 0.05
+          }
+        ],
+        "rule": "AGC steady state with K given in episode givens."
+      },
+      "grading_rule": "AGC steady state with K given in episode givens."
+    },
+    {
+      "id": "trap/T5-s252",
+      "domain": "trap",
+      "seed": 252,
+      "question": "Two-area AGC: steady-state Area-1 frequency (Hz) and tie P12 (MW) with K in givens.",
+      "givens": {
+        "K_agc": 0.33,
+        "t_end_s": 60.0
+      },
+      "givens_units": {
+        "K_agc": "pu",
+        "t_end_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "agc_ss_df1_Hz",
+            "type": "float",
+            "unit": "Hz",
+            "tolerance": 0.002
+          },
+          {
+            "name": "agc_ss_P12_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance": 0.05
+          }
+        ],
+        "rule": "AGC steady state with K given in episode givens."
+      },
+      "grading_rule": "AGC steady state with K given in episode givens."
+    },
+    {
+      "id": "trap/T5-s253",
+      "domain": "trap",
+      "seed": 253,
+      "question": "Two-area AGC: steady-state Area-1 frequency (Hz) and tie P12 (MW) with K in givens.",
+      "givens": {
+        "K_agc": 0.3,
+        "t_end_s": 60.0
+      },
+      "givens_units": {
+        "K_agc": "pu",
+        "t_end_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "agc_ss_df1_Hz",
+            "type": "float",
+            "unit": "Hz",
+            "tolerance": 0.002
+          },
+          {
+            "name": "agc_ss_P12_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance": 0.05
+          }
+        ],
+        "rule": "AGC steady state with K given in episode givens."
+      },
+      "grading_rule": "AGC steady state with K given in episode givens."
+    },
+    {
+      "id": "trap/T5-s254",
+      "domain": "trap",
+      "seed": 254,
+      "question": "Two-area AGC: steady-state Area-1 frequency (Hz) and tie P12 (MW) with K in givens.",
+      "givens": {
+        "K_agc": 0.29,
+        "t_end_s": 60.0
+      },
+      "givens_units": {
+        "K_agc": "pu",
+        "t_end_s": "s"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "agc_ss_df1_Hz",
+            "type": "float",
+            "unit": "Hz",
+            "tolerance": 0.002
+          },
+          {
+            "name": "agc_ss_P12_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance": 0.05
+          }
+        ],
+        "rule": "AGC steady state with K given in episode givens."
+      },
+      "grading_rule": "AGC steady state with K given in episode givens."
+    },
+    {
+      "id": "trap/T6-s260",
+      "domain": "trap",
+      "seed": 260,
+      "question": "Economic dispatch with three units: at load PD (MW) in givens, report unit2 MW, unit2 incremental cost, and lambda (Rs/MWh) with limits enforced.",
+      "givens": {
+        "PD_MW": 500.0,
+        "unit1_MW": 102.9
+      },
+      "givens_units": {
+        "PD_MW": "MW",
+        "unit1_MW": "MW"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "unit2_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance": 0.01
+          },
+          {
+            "name": "unit2_IC",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance": 0.01
+          },
+          {
+            "name": "lambda",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance": 0.01
+          }
+        ],
+        "rule": "Lambda dispatch with limits; bind unit 2 when PD in givens."
+      },
+      "grading_rule": "Lambda dispatch with limits; bind unit 2 when PD in givens."
+    },
+    {
+      "id": "trap/T6-s261",
+      "domain": "trap",
+      "seed": 261,
+      "question": "Economic dispatch with three units: at load PD (MW) in givens, report unit2 MW, unit2 incremental cost, and lambda (Rs/MWh) with limits enforced.",
+      "givens": {
+        "PD_MW": 450.0,
+        "unit1_MW": 139.5
+      },
+      "givens_units": {
+        "PD_MW": "MW",
+        "unit1_MW": "MW"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "unit2_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance": 0.01
+          },
+          {
+            "name": "unit2_IC",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance": 0.01
+          },
+          {
+            "name": "lambda",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance": 0.01
+          }
+        ],
+        "rule": "Lambda dispatch with limits; bind unit 2 when PD in givens."
+      },
+      "grading_rule": "Lambda dispatch with limits; bind unit 2 when PD in givens."
+    },
+    {
+      "id": "trap/T6-s262",
+      "domain": "trap",
+      "seed": 262,
+      "question": "Economic dispatch with three units: at load PD (MW) in givens, report unit2 MW, unit2 incremental cost, and lambda (Rs/MWh) with limits enforced.",
+      "givens": {
+        "PD_MW": 520.0,
+        "unit1_MW": 130.2
+      },
+      "givens_units": {
+        "PD_MW": "MW",
+        "unit1_MW": "MW"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "unit2_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance": 0.01
+          },
+          {
+            "name": "unit2_IC",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance": 0.01
+          },
+          {
+            "name": "lambda",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance": 0.01
+          }
+        ],
+        "rule": "Lambda dispatch with limits; bind unit 2 when PD in givens."
+      },
+      "grading_rule": "Lambda dispatch with limits; bind unit 2 when PD in givens."
+    },
+    {
+      "id": "trap/T6-s263",
+      "domain": "trap",
+      "seed": 263,
+      "question": "Economic dispatch with three units: at load PD (MW) in givens, report unit2 MW, unit2 incremental cost, and lambda (Rs/MWh) with limits enforced.",
+      "givens": {
+        "PD_MW": 450.0,
+        "unit1_MW": 113.5
+      },
+      "givens_units": {
+        "PD_MW": "MW",
+        "unit1_MW": "MW"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "unit2_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance": 0.01
+          },
+          {
+            "name": "unit2_IC",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance": 0.01
+          },
+          {
+            "name": "lambda",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance": 0.01
+          }
+        ],
+        "rule": "Lambda dispatch with limits; bind unit 2 when PD in givens."
+      },
+      "grading_rule": "Lambda dispatch with limits; bind unit 2 when PD in givens."
+    },
+    {
+      "id": "trap/T6-s264",
+      "domain": "trap",
+      "seed": 264,
+      "question": "Economic dispatch with three units: at load PD (MW) in givens, report unit2 MW, unit2 incremental cost, and lambda (Rs/MWh) with limits enforced.",
+      "givens": {
+        "PD_MW": 520.0,
+        "unit1_MW": 121.8
+      },
+      "givens_units": {
+        "PD_MW": "MW",
+        "unit1_MW": "MW"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "unit2_MW",
+            "type": "float",
+            "unit": "MW",
+            "tolerance": 0.01
+          },
+          {
+            "name": "unit2_IC",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance": 0.01
+          },
+          {
+            "name": "lambda",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance": 0.01
+          }
+        ],
+        "rule": "Lambda dispatch with limits; bind unit 2 when PD in givens."
+      },
+      "grading_rule": "Lambda dispatch with limits; bind unit 2 when PD in givens."
+    },
+    {
+      "id": "trap/T7-s270",
+      "domain": "trap",
+      "seed": 270,
+      "question": "Unit incremental cost at P1 (MW) in givens: use IC = b + 2*c*P (not b + c*P).",
+      "givens": {
+        "PD_MW": 500.0,
+        "unit1_MW": 114.3
+      },
+      "givens_units": {
+        "PD_MW": "MW",
+        "unit1_MW": "MW"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "unit1_IC",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance": 0.0001
+          }
+        ],
+        "rule": "IC = b + 2*c*P for unit 1 at P in givens (factor 2 required)."
+      },
+      "grading_rule": "IC = b + 2*c*P for unit 1 at P in givens (factor 2 required)."
+    },
+    {
+      "id": "trap/T7-s271",
+      "domain": "trap",
+      "seed": 271,
+      "question": "Unit incremental cost at P1 (MW) in givens: use IC = b + 2*c*P (not b + c*P).",
+      "givens": {
+        "PD_MW": 450.0,
+        "unit1_MW": 126.2
+      },
+      "givens_units": {
+        "PD_MW": "MW",
+        "unit1_MW": "MW"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "unit1_IC",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance": 0.0001
+          }
+        ],
+        "rule": "IC = b + 2*c*P for unit 1 at P in givens (factor 2 required)."
+      },
+      "grading_rule": "IC = b + 2*c*P for unit 1 at P in givens (factor 2 required)."
+    },
+    {
+      "id": "trap/T7-s272",
+      "domain": "trap",
+      "seed": 272,
+      "question": "Unit incremental cost at P1 (MW) in givens: use IC = b + 2*c*P (not b + c*P).",
+      "givens": {
+        "PD_MW": 450.0,
+        "unit1_MW": 114.4
+      },
+      "givens_units": {
+        "PD_MW": "MW",
+        "unit1_MW": "MW"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "unit1_IC",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance": 0.0001
+          }
+        ],
+        "rule": "IC = b + 2*c*P for unit 1 at P in givens (factor 2 required)."
+      },
+      "grading_rule": "IC = b + 2*c*P for unit 1 at P in givens (factor 2 required)."
+    },
+    {
+      "id": "trap/T7-s273",
+      "domain": "trap",
+      "seed": 273,
+      "question": "Unit incremental cost at P1 (MW) in givens: use IC = b + 2*c*P (not b + c*P).",
+      "givens": {
+        "PD_MW": 500.0,
+        "unit1_MW": 126.6
+      },
+      "givens_units": {
+        "PD_MW": "MW",
+        "unit1_MW": "MW"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "unit1_IC",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance": 0.0001
+          }
+        ],
+        "rule": "IC = b + 2*c*P for unit 1 at P in givens (factor 2 required)."
+      },
+      "grading_rule": "IC = b + 2*c*P for unit 1 at P in givens (factor 2 required)."
+    },
+    {
+      "id": "trap/T7-s274",
+      "domain": "trap",
+      "seed": 274,
+      "question": "Unit incremental cost at P1 (MW) in givens: use IC = b + 2*c*P (not b + c*P).",
+      "givens": {
+        "PD_MW": 500.0,
+        "unit1_MW": 118.4
+      },
+      "givens_units": {
+        "PD_MW": "MW",
+        "unit1_MW": "MW"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "unit1_IC",
+            "type": "float",
+            "unit": "Rs/MWh",
+            "tolerance": 0.0001
+          }
+        ],
+        "rule": "IC = b + 2*c*P for unit 1 at P in givens (factor 2 required)."
+      },
+      "grading_rule": "IC = b + 2*c*P for unit 1 at P in givens (factor 2 required)."
+    },
+    {
+      "id": "trap/T8-s280",
+      "domain": "trap",
+      "seed": 280,
+      "question": "Loop margins for plant G(s) = num/den in givens: gain margin (dB) and gain crossover (rad/s).",
+      "givens": {
+        "num": [
+          38.1
+        ],
+        "den": [
+          1.0,
+          12.0,
+          20.0,
+          0.0
+        ]
+      },
+      "givens_units": {
+        "num": "coeff",
+        "den": "coeff"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "gain_margin_dB",
+            "type": "float",
+            "unit": "dB",
+            "tolerance": 0.05
+          },
+          {
+            "name": "gain_crossover_rad_s",
+            "type": "float",
+            "unit": "rad/s",
+            "tolerance": 0.02
+          }
+        ],
+        "rule": "Loop margins for plant TF in givens (python-control)."
+      },
+      "grading_rule": "Loop margins for plant TF in givens (python-control)."
+    },
+    {
+      "id": "trap/T8-s281",
+      "domain": "trap",
+      "seed": 281,
+      "question": "Loop margins for plant G(s) = num/den in givens: gain margin (dB) and gain crossover (rad/s).",
+      "givens": {
+        "num": [
+          35.2
+        ],
+        "den": [
+          1.0,
+          12.0,
+          20.0,
+          0.0
+        ]
+      },
+      "givens_units": {
+        "num": "coeff",
+        "den": "coeff"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "gain_margin_dB",
+            "type": "float",
+            "unit": "dB",
+            "tolerance": 0.05
+          },
+          {
+            "name": "gain_crossover_rad_s",
+            "type": "float",
+            "unit": "rad/s",
+            "tolerance": 0.02
+          }
+        ],
+        "rule": "Loop margins for plant TF in givens (python-control)."
+      },
+      "grading_rule": "Loop margins for plant TF in givens (python-control)."
+    },
+    {
+      "id": "trap/T8-s282",
+      "domain": "trap",
+      "seed": 282,
+      "question": "Loop margins for plant G(s) = num/den in givens: gain margin (dB) and gain crossover (rad/s).",
+      "givens": {
+        "num": [
+          41.7
+        ],
+        "den": [
+          1.0,
+          12.0,
+          20.0,
+          0.0
+        ]
+      },
+      "givens_units": {
+        "num": "coeff",
+        "den": "coeff"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "gain_margin_dB",
+            "type": "float",
+            "unit": "dB",
+            "tolerance": 0.05
+          },
+          {
+            "name": "gain_crossover_rad_s",
+            "type": "float",
+            "unit": "rad/s",
+            "tolerance": 0.02
+          }
+        ],
+        "rule": "Loop margins for plant TF in givens (python-control)."
+      },
+      "grading_rule": "Loop margins for plant TF in givens (python-control)."
+    },
+    {
+      "id": "trap/T8-s283",
+      "domain": "trap",
+      "seed": 283,
+      "question": "Loop margins for plant G(s) = num/den in givens: gain margin (dB) and gain crossover (rad/s).",
+      "givens": {
+        "num": [
+          42.2
+        ],
+        "den": [
+          1.0,
+          12.0,
+          20.0,
+          0.0
+        ]
+      },
+      "givens_units": {
+        "num": "coeff",
+        "den": "coeff"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "gain_margin_dB",
+            "type": "float",
+            "unit": "dB",
+            "tolerance": 0.05
+          },
+          {
+            "name": "gain_crossover_rad_s",
+            "type": "float",
+            "unit": "rad/s",
+            "tolerance": 0.02
+          }
+        ],
+        "rule": "Loop margins for plant TF in givens (python-control)."
+      },
+      "grading_rule": "Loop margins for plant TF in givens (python-control)."
+    },
+    {
+      "id": "trap/T8-s284",
+      "domain": "trap",
+      "seed": 284,
+      "question": "Loop margins for plant G(s) = num/den in givens: gain margin (dB) and gain crossover (rad/s).",
+      "givens": {
+        "num": [
+          35.3
+        ],
+        "den": [
+          1.0,
+          12.0,
+          20.0,
+          0.0
+        ]
+      },
+      "givens_units": {
+        "num": "coeff",
+        "den": "coeff"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "gain_margin_dB",
+            "type": "float",
+            "unit": "dB",
+            "tolerance": 0.05
+          },
+          {
+            "name": "gain_crossover_rad_s",
+            "type": "float",
+            "unit": "rad/s",
+            "tolerance": 0.02
+          }
+        ],
+        "rule": "Loop margins for plant TF in givens (python-control)."
+      },
+      "grading_rule": "Loop margins for plant TF in givens (python-control)."
+    },
+    {
+      "id": "trap/T9-s290",
+      "domain": "trap",
+      "seed": 290,
+      "question": "SMIB clearing: using handwritten RK4 only, rotor angle (deg) at time t (s) with clearing time tc (s) in givens; h step in givens.",
+      "givens": {
+        "h_mj_mva": 4.84,
+        "f0_hz": 50.0,
+        "pm_pu": 0.902,
+        "pmax_pre_pu": 1.998,
+        "pmax_fault_pu": 0.451,
+        "pmax_post_pu": 1.449,
+        "tc_s": 0.15,
+        "t_query_s": 0.3,
+        "h_integrator_s": 0.01
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta_deg_at_t",
+            "type": "float",
+            "unit": "deg",
+            "tolerance": 0.05
+          }
+        ],
+        "rule": "Handwritten RK4 clearing trajectory at (t, tc) in givens; no black-box ODE."
+      },
+      "grading_rule": "Handwritten RK4 clearing trajectory at (t, tc) in givens; no black-box ODE."
+    },
+    {
+      "id": "trap/T9-s291",
+      "domain": "trap",
+      "seed": 291,
+      "question": "SMIB clearing: using handwritten RK4 only, rotor angle (deg) at time t (s) with clearing time tc (s) in givens; h step in givens.",
+      "givens": {
+        "h_mj_mva": 5.23,
+        "f0_hz": 50.0,
+        "pm_pu": 0.906,
+        "pmax_pre_pu": 2.095,
+        "pmax_fault_pu": 0.533,
+        "pmax_post_pu": 1.478,
+        "tc_s": 0.15,
+        "t_query_s": 0.3,
+        "h_integrator_s": 0.01
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta_deg_at_t",
+            "type": "float",
+            "unit": "deg",
+            "tolerance": 0.05
+          }
+        ],
+        "rule": "Handwritten RK4 clearing trajectory at (t, tc) in givens; no black-box ODE."
+      },
+      "grading_rule": "Handwritten RK4 clearing trajectory at (t, tc) in givens; no black-box ODE."
+    },
+    {
+      "id": "trap/T9-s292",
+      "domain": "trap",
+      "seed": 292,
+      "question": "SMIB clearing: using handwritten RK4 only, rotor angle (deg) at time t (s) with clearing time tc (s) in givens; h step in givens.",
+      "givens": {
+        "h_mj_mva": 5.27,
+        "f0_hz": 50.0,
+        "pm_pu": 0.911,
+        "pmax_pre_pu": 1.93,
+        "pmax_fault_pu": 0.534,
+        "pmax_post_pu": 1.438,
+        "tc_s": 0.15,
+        "t_query_s": 0.3,
+        "h_integrator_s": 0.01
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta_deg_at_t",
+            "type": "float",
+            "unit": "deg",
+            "tolerance": 0.05
+          }
+        ],
+        "rule": "Handwritten RK4 clearing trajectory at (t, tc) in givens; no black-box ODE."
+      },
+      "grading_rule": "Handwritten RK4 clearing trajectory at (t, tc) in givens; no black-box ODE."
+    },
+    {
+      "id": "trap/T9-s293",
+      "domain": "trap",
+      "seed": 293,
+      "question": "SMIB clearing: using handwritten RK4 only, rotor angle (deg) at time t (s) with clearing time tc (s) in givens; h step in givens.",
+      "givens": {
+        "h_mj_mva": 4.61,
+        "f0_hz": 50.0,
+        "pm_pu": 0.899,
+        "pmax_pre_pu": 2.0,
+        "pmax_fault_pu": 0.491,
+        "pmax_post_pu": 1.488,
+        "tc_s": 0.15,
+        "t_query_s": 0.3,
+        "h_integrator_s": 0.01
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta_deg_at_t",
+            "type": "float",
+            "unit": "deg",
+            "tolerance": 0.05
+          }
+        ],
+        "rule": "Handwritten RK4 clearing trajectory at (t, tc) in givens; no black-box ODE."
+      },
+      "grading_rule": "Handwritten RK4 clearing trajectory at (t, tc) in givens; no black-box ODE."
+    },
+    {
+      "id": "trap/T9-s294",
+      "domain": "trap",
+      "seed": 294,
+      "question": "SMIB clearing: using handwritten RK4 only, rotor angle (deg) at time t (s) with clearing time tc (s) in givens; h step in givens.",
+      "givens": {
+        "h_mj_mva": 4.98,
+        "f0_hz": 50.0,
+        "pm_pu": 0.887,
+        "pmax_pre_pu": 1.94,
+        "pmax_fault_pu": 0.524,
+        "pmax_post_pu": 1.487,
+        "tc_s": 0.15,
+        "t_query_s": 0.3,
+        "h_integrator_s": 0.01
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta_deg_at_t",
+            "type": "float",
+            "unit": "deg",
+            "tolerance": 0.05
+          }
+        ],
+        "rule": "Handwritten RK4 clearing trajectory at (t, tc) in givens; no black-box ODE."
+      },
+      "grading_rule": "Handwritten RK4 clearing trajectory at (t, tc) in givens; no black-box ODE."
+    },
+    {
+      "id": "trap/T10-s300",
+      "domain": "trap",
+      "seed": 300,
+      "question": "SMIB prefault: report delta0 (deg) from power-angle equilibrium for parameters in givens.",
+      "givens": {
+        "h_mj_mva": 4.84,
+        "f0_hz": 50.0,
+        "pm_pu": 0.904,
+        "pmax_pre_pu": 1.9,
+        "pmax_fault_pu": 0.485,
+        "pmax_post_pu": 1.565
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta0_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance": 0.02
+          }
+        ],
+        "rule": "Prefault angle from engine for Smib parameters in givens."
+      },
+      "grading_rule": "Prefault angle from engine for Smib parameters in givens."
+    },
+    {
+      "id": "trap/T10-s301",
+      "domain": "trap",
+      "seed": 301,
+      "question": "SMIB prefault: report delta0 (deg) from power-angle equilibrium for parameters in givens.",
+      "givens": {
+        "h_mj_mva": 5.3,
+        "f0_hz": 50.0,
+        "pm_pu": 0.896,
+        "pmax_pre_pu": 1.999,
+        "pmax_fault_pu": 0.496,
+        "pmax_post_pu": 1.447
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta0_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance": 0.02
+          }
+        ],
+        "rule": "Prefault angle from engine for Smib parameters in givens."
+      },
+      "grading_rule": "Prefault angle from engine for Smib parameters in givens."
+    },
+    {
+      "id": "trap/T10-s302",
+      "domain": "trap",
+      "seed": 302,
+      "question": "SMIB prefault: report delta0 (deg) from power-angle equilibrium for parameters in givens.",
+      "givens": {
+        "h_mj_mva": 5.04,
+        "f0_hz": 50.0,
+        "pm_pu": 0.919,
+        "pmax_pre_pu": 2.011,
+        "pmax_fault_pu": 0.497,
+        "pmax_post_pu": 1.438
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta0_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance": 0.02
+          }
+        ],
+        "rule": "Prefault angle from engine for Smib parameters in givens."
+      },
+      "grading_rule": "Prefault angle from engine for Smib parameters in givens."
+    },
+    {
+      "id": "trap/T10-s303",
+      "domain": "trap",
+      "seed": 303,
+      "question": "SMIB prefault: report delta0 (deg) from power-angle equilibrium for parameters in givens.",
+      "givens": {
+        "h_mj_mva": 5.47,
+        "f0_hz": 50.0,
+        "pm_pu": 0.881,
+        "pmax_pre_pu": 1.939,
+        "pmax_fault_pu": 0.549,
+        "pmax_post_pu": 1.589
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta0_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance": 0.02
+          }
+        ],
+        "rule": "Prefault angle from engine for Smib parameters in givens."
+      },
+      "grading_rule": "Prefault angle from engine for Smib parameters in givens."
+    },
+    {
+      "id": "trap/T10-s304",
+      "domain": "trap",
+      "seed": 304,
+      "question": "SMIB prefault: report delta0 (deg) from power-angle equilibrium for parameters in givens.",
+      "givens": {
+        "h_mj_mva": 4.93,
+        "f0_hz": 50.0,
+        "pm_pu": 0.885,
+        "pmax_pre_pu": 2.07,
+        "pmax_fault_pu": 0.495,
+        "pmax_post_pu": 1.447
+      },
+      "givens_units": {
+        "h_mj_mva": "MJ/MVA",
+        "f0_hz": "Hz",
+        "pm_pu": "pu",
+        "pmax_pre_pu": "pu",
+        "pmax_fault_pu": "pu",
+        "pmax_post_pu": "pu"
+      },
+      "answer_schema": {
+        "fields": [
+          {
+            "name": "delta0_deg",
+            "type": "float",
+            "unit": "deg",
+            "tolerance": 0.02
+          }
+        ],
+        "rule": "Prefault angle from engine for Smib parameters in givens."
+      },
+      "grading_rule": "Prefault angle from engine for Smib parameters in givens."
+    }
+  ]
+}

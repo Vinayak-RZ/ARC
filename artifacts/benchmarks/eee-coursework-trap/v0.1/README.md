@@ -1,10 +1,14 @@
-# EEE-Coursework-Trap v0.1 (build artifact)
+# EEE-Coursework-Trap v0.1
 
-Not published to GitHub Releases. Rebuild with `uv run python scripts/build_benchmark_v01.py`.
+Rebuild: `uv run python scripts/build_benchmark_v01.py`
 
-- `eee-coursework-trap-v0.1.tar.gz`: packaged items, datasheet, answer key, trap index.
-- `manifest.json`: version and SHA-256.
-- `scorecard.json`: rows from `scripts/benchmark_scorecard.py`.
-- `_stage/`: unpacked build inputs used to produce the tarball.
+| Artifact | Contents |
+|----------|----------|
+| `eee-coursework-trap-v0.1-questions.tar.gz` | Public questions only (`questions.json`, datasheet) |
+| `_key/answer_key.json` | Private references (not in questions tarball) |
+| `manifest.json` | Questions SHA-256 and task counts |
 
-Excluded by policy: live-ab, exam-v4/v5/v6, sealed `REFERENCE.json`.
+Grade: `uv run python scripts/grade_benchmark_v01.py answers.json`  
+Naive baseline: `uv run python scripts/grade_benchmark_v01.py --naive`
+
+Circuits are picked up automatically from `eval/gold/circuits/*/expect.json`.

@@ -1,43 +1,23 @@
 # Arc RLVR environment card (v0.1)
 
-## Summary
-
-Importable Gym-style environment for rule-based verifiable rewards over the Arc trap catalog (T1 to T10). External researchers can train routers or policies against the same deterministic engines and tolerances Arc uses in CI. This package does not ship weight training or hosted RL loops.
-
 ## Interface
 
-| Method | Behavior |
-|--------|----------|
-| `reset(seed=...)` | Returns `trap_id`, natural-language `prompt`, and backing `engine` key. |
-| `step(action)` | `action` is `{"trap_id", "submission": {...}}`. Returns reward `0.0` or `1.0`, `terminated=True`. |
+`reset(seed, trap_id=...)` returns:
 
-Rewards come from `electrical_engineer.rlvr_env.rewards.grade_trap`, which reuses PSA and trap regression numerics (SMIB, AGC, ED, diagram signs, integrator policy, defaults).
+- `question`: self-contained prompt (no repo paths)
+- `givens`: numeric parameters and units for this episode
+- `answer_schema`: named fields, units, tolerances
+- `held_out_eval`: true when `seed` is in 9000..9999
 
-## Install
+`step({"submission": {...}})` grades **numeric answers only** via Arc engines. Self-reported flags and copying givens score 0.
 
-```bash
-uv sync --extra engines
-python -c "from electrical_engineer.rlvr_env import ArcRlvrEnv; print(ArcRlvrEnv())"
-```
+## Seeds
 
-## Manifest
+Training: `0..8999`. Held-out evaluation: `9000..9999` (see `seeds.json`).
 
-Version `0.1`, ten traps. See `manifest.json` in this directory.
-
-## Example rollout
+## Example
 
 ```bash
 uv run python scripts/rlvr_dummy_rollout.py
+uv run python -c "from electrical_engineer.rlvr_env import ArcRlvrEnv; e=ArcRlvrEnv(); print(e.reset(seed=17, trap_id='T1'))"
 ```
-
-Runs an oracle policy through all traps end to end and prints JSON including the contract block.
-
-## Provenance
-
-- Trap prompts: `proofs/ablation/trap_prompts.yaml` (T1, T2, T6 plus extended traps in ablation tests).
-- Trap index: `artifacts/frontier/trap_suite_index.json`.
-- No held-out live A/B sheets, exam PDFs, or sealed `REFERENCE.json` content.
-
-## Licence
-
-Same as the Arc repository (Apache-2.0). Lab numerics are license-clean reconstructions from `artifacts/eec301-lab-goldens/`.

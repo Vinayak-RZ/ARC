@@ -1,15 +1,14 @@
 {
   "version": "v0.1",
-  "sha256": "ff44f9c731d279553113b7c1146459562ab625bf2914e7d75b5d82a9c9d99da5",
-  "tarball": "eee-coursework-trap-v0.1.tar.gz",
-  "files": [
-    "benchmark_items.json",
-    "datasheet.json",
-    "answer_key.json",
-    "manifest.json",
-    "trap_suite_index.json",
-    "trap_prompts.yaml",
-    "rlvr_env_manifest.json"
-  ],
-  "total_tasks": 26
+  "questions_sha256": "8ec236605ae805c73f7d4e1ed31eba989899f1c2270c68034d5916ad91073fd7",
+  "questions_tarball": "eee-coursework-trap-v0.1-questions.tar.gz",
+  "answer_key_path": "artifacts/benchmarks/eee-coursework-trap/v0.1/_key/answer_key.json",
+  "answer_key_sha256": "a731eba27390fa61da0220c3dca2b47e57f979a46b31e4409862c640a1259d36",
+  "total_tasks": 82,
+  "task_counts_by_domain": {
+    "power": 18,
+    "control": 10,
+    "circuits": 4,
+    "trap": 50
+  }
 }

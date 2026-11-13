@@ -11,6 +11,16 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def _load_json(stdout: str) -> dict:
+    text = stdout.strip()
+    if not text:
+        return {}
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        return json.loads(text.splitlines()[-1])
+
+
 def main() -> int:
     build = subprocess.run(
         [sys.executable, str(ROOT / "scripts/build_benchmark_v01.py")],
@@ -22,16 +32,21 @@ def main() -> int:
     if build.returncode != 0:
         print(build.stderr or build.stdout, file=sys.stderr)
         return build.returncode
-    build_meta = json.loads(build.stdout.strip().splitlines()[-1])
-    sha = build_meta["sha256"]
-    grade = subprocess.run(
+    build_meta = _load_json(build.stdout)
+    oracle = subprocess.run(
         [sys.executable, str(ROOT / "scripts/grade_benchmark_v01.py")],
         cwd=ROOT,
         capture_output=True,
         text=True,
         check=False,
     )
-    grade_report = json.loads(grade.stdout) if grade.stdout.strip() else {}
+    naive = subprocess.run(
+        [sys.executable, str(ROOT / "scripts/grade_benchmark_v01.py"), "--naive"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
     rlvr = subprocess.run(
         [sys.executable, str(ROOT / "scripts/rlvr_dummy_rollout.py")],
         cwd=ROOT,
@@ -39,55 +54,49 @@ def main() -> int:
         text=True,
         check=False,
     )
-    rlvr_report = json.loads(rlvr.stdout) if rlvr.stdout.strip() else {}
-    circuit = subprocess.run(
-        [sys.executable, str(ROOT / "scripts/run_circuit_benchmark.py")],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    circuit_report = json.loads(circuit.stdout) if circuit.stdout.strip() else {}
-    psa = subprocess.run(
-        ["uv", "run", "electrical-engineer", "eval", "--pack", "power"],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    oracle_report = _load_json(oracle.stdout)
+    naive_report = _load_json(naive.stdout)
+    rlvr_report = _load_json(rlvr.stdout)
     rows = [
         {
-            "metric": "benchmark_tarball_sha256",
-            "value": sha,
+            "metric": "benchmark_questions_sha256",
+            "value": build_meta.get("tarball_sha256"),
+            "source": "scripts/build_benchmark_v01.py",
+        },
+        {
+            "metric": "benchmark_task_count",
+            "value": str(build_meta.get("tasks")),
             "source": "scripts/build_benchmark_v01.py",
         },
         {
             "metric": "benchmark_oracle_grade",
-            "value": f"{grade_report.get('passed', 0)}/{grade_report.get('total', 0)}",
+            "value": f"{oracle_report.get('passed', 0)}/{oracle_report.get('total', 0)}",
             "source": "scripts/grade_benchmark_v01.py",
+        },
+        {
+            "metric": "benchmark_naive_trap_baseline",
+            "value": f"{naive_report.get('passed', 0)}/{naive_report.get('total', 0)}",
+            "source": "scripts/grade_benchmark_v01.py --naive",
+        },
+        {
+            "metric": "bare_agent",
+            "value": "pending live run",
+            "source": "owner",
         },
         {
             "metric": "rlvr_dummy_rollout",
             "value": f"{rlvr_report.get('passed', 0)}/{rlvr_report.get('episodes', 0)}",
             "source": "scripts/rlvr_dummy_rollout.py",
         },
-        {
-            "metric": "circuit_subset",
-            "value": f"{circuit_report.get('passed', 0)}/{circuit_report.get('total', 0)}",
-            "source": "scripts/run_circuit_benchmark.py",
-        },
-        {
-            "metric": "psa_power_pack_cli",
-            "value": "PASS" if psa.returncode == 0 else f"FAIL({psa.returncode})",
-            "source": "electrical-engineer eval --pack power",
-        },
     ]
-    contract = {"tarball_sha256": sha, "scorecard_rows": rows}
+    contract = {
+        "tarball_sha256": build_meta.get("tarball_sha256"),
+        "scorecard_rows": rows,
+    }
     print(json.dumps(contract, indent=2))
     out = ROOT / "artifacts" / "benchmarks" / "eee-coursework-trap" / "v0.1" / "scorecard.json"
-    out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(contract, indent=2))
-    return 0 if grade.returncode == 0 and rlvr.returncode == 0 else 1
+    return 0 if oracle.returncode == 0 and rlvr.returncode == 0 and naive.returncode == 0 else 1
 
 
 if __name__ == "__main__":

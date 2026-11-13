@@ -3,14 +3,15 @@
   "version": "v0.1",
   "name": "eee-coursework-trap",
   "task_counts_by_domain": {
-    "power": 9,
-    "control": 5,
-    "circuits": 2,
-    "trap": 10
+    "power": 18,
+    "control": 10,
+    "circuits": 4,
+    "trap": 50
   },
-  "total_tasks": 26,
-  "grading_tolerance_rules": "Recipe items: value within expect.json tol vs evidentiary recompute. PSA engine items: tolerances in expect.json (deg, seconds, MW). Trap items: binary pass via rlvr_env.rewards.grade_trap.",
-  "licence": "Apache-2.0; prompts are license-clean reconstructions. No copyrighted exam PDFs.",
+  "total_tasks": 82,
+  "grading_tolerance_rules": "Numeric fields in answer_schema only; verifiers use Arc engines. No self-reported flags. Trap tasks include per-episode givens.",
+  "licence": "Apache-2.0; license-clean reconstructions only.",
   "excluded": "live-ab, exam-v4/v5/v6, sealed REFERENCE.json",
-  "gold_sources": "eval/gold/{power,control,circuits} and knowledge/traps via trap_suite_index"
+  "public_artifact": "eee-coursework-trap-v0.1-questions.tar.gz",
+  "private_artifact": "answer_key.json (not in questions tarball)"
 }

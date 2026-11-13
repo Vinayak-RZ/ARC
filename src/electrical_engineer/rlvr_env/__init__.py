@@ -6,8 +6,9 @@ import json
 from pathlib import Path
 from typing import Any
 
-from electrical_engineer.rlvr_env.env import ArcRlvrEnv, run_dummy_rollout
-from electrical_engineer.rlvr_env.rewards import grade_trap, oracle_submission
+from electrical_engineer.rlvr_env.env import ArcRlvrEnv, run_dummy_rollout, run_naive_rollout
+from electrical_engineer.rlvr_env.rewards import grade_trap, naive_submission, oracle_submission
+from electrical_engineer.rlvr_env.schema import HELD_OUT_SEED_MIN, is_held_out_seed
 
 MANIFEST = Path(__file__).resolve().parent / "manifest.json"
 
@@ -21,12 +22,12 @@ def list_trap_ids() -> list[str]:
 
 
 def contract_json() -> dict[str, Any]:
-    """B7 contract output for frontier nodes."""
     m = load_manifest()
     return {
         "rlvr_env_manifest": {
             "version": str(m.get("version", "0.1")),
             "traps": len(m.get("traps", [])),
+            "held_out_seed_min": HELD_OUT_SEED_MIN,
         }
     }
 
@@ -35,8 +36,11 @@ __all__ = [
     "ArcRlvrEnv",
     "contract_json",
     "grade_trap",
+    "is_held_out_seed",
     "list_trap_ids",
     "load_manifest",
+    "naive_submission",
     "oracle_submission",
     "run_dummy_rollout",
+    "run_naive_rollout",
 ]
