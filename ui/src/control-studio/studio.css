@@ -1346,3 +1346,5 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+.studio-results.is-empty .studio-results-layout { grid-template-rows: minmax(0, 1fr); }

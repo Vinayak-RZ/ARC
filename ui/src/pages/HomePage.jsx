@@ -209,8 +209,7 @@ export function HomePage({ runs, onRunsChange, onOpenProblem }) {
         <h2>Agent</h2>
         <p className="hint">Connect your coding agent.</p>
         <p className="hint">
-          <kbd className="home-agent-cmd">electrical-engineer mcp</kbd> — then connect Cursor or Claude Code. CLI:{" "}
-          <code className="home-cli">electrical-engineer run solve-circuit-problem</code>
+          <kbd className="home-agent-cmd">electrical-engineer mcp</kbd> — then connect Cursor or Claude Code.
         </p>
       </section>
     </div>

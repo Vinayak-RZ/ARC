@@ -1453,6 +1453,28 @@ a { color: var(--ee-color-primary); }
 .example-thumb-accent { stroke: var(--ee-color-primary); color: var(--ee-color-primary); fill: var(--ee-color-primary); }
 .example-thumb-muted { stroke: var(--ee-color-muted); color: var(--ee-color-muted); fill: none; }
 .example-thumb-label { fill: var(--ee-color-muted); font-size: 11px; }
+.example-thumb-svg .th-line,
+.example-thumb-svg .th-axis,
+.example-thumb-svg .th-dash,
+.example-thumb-svg .th-tint,
+.example-thumb-svg .th-dot { vector-effect: non-scaling-stroke; }
+.example-thumb-svg .th-line { fill: none; stroke: var(--ee-color-primary); stroke-width: 1.5px; stroke-linecap: round; stroke-linejoin: round; }
+.example-thumb-svg .th-axis { fill: none; stroke: var(--ee-color-muted); stroke-width: 1px; opacity: 0.7; }
+.example-thumb-svg .th-dash { fill: none; stroke: var(--ee-color-muted); stroke-width: 1px; stroke-dasharray: 4 3; }
+.example-thumb-svg .th-tint { fill: var(--ee-color-primary); fill-opacity: 0.14; stroke: none; }
+.example-thumb-svg .th-dot { fill: var(--ee-color-primary); stroke: none; }
+.shortcut-kbd-row { display: inline-flex; gap: 4px; vertical-align: baseline; }
+.shortcut-kbd-row .shortcut-kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  border: 1px solid var(--ee-color-hairline-strong);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background: var(--ee-color-surface-soft);
+  color: var(--ee-color-ink);
+  font-size: 11px;
+  line-height: 1.4;
+}
 .param-field input,
 .param-field input:focus {
   color: var(--ee-color-ink);

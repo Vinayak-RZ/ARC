@@ -32,7 +32,7 @@ def test_skip_link_and_no_wan() -> None:
     home = _read("pages", "HomePage.jsx")
     assert "Try an example" in home
     assert "/api/examples" in home
-    assert "electrical-engineer run" in home
+    assert "electrical-engineer mcp" in home
     assert "named runs · exact token unchecked" not in shell
     assert 'register("rag.inventory"' in root
     library = _read("slots", "library.jsx")

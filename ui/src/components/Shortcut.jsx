@@ -17,13 +17,12 @@ export function Shortcut({ keys }) {
     .filter(Boolean)
     .map(formatToken);
   return (
-    <kbd className="shortcut-kbd">
+    <span className="shortcut-kbd-row">
       {parts.map((part, i) => (
-        <span key={`${part}-${i}`}>
-          {i > 0 ? " " : null}
+        <kbd key={`${part}-${i}`} className="shortcut-kbd">
           {part}
-        </span>
+        </kbd>
       ))}
-    </kbd>
+    </span>
   );
 }

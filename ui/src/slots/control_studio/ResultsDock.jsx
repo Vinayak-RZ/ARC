@@ -102,7 +102,7 @@ export function ResultsDock({ results, stepData, margins, stale, sessionId, onRe
   return (
     <footer className={`studio-results${stale ? " is-stale" : ""}${results ? "" : " is-empty"}`} aria-label="Results">
       <div className="studio-results-layout">
-        <MarginsStrip margins={margins} stale={stale} />
+        {results || margins ? <MarginsStrip margins={margins} stale={stale} /> : null}
         <div className="studio-results-chart-col">
           <div className="studio-results-stage">
             {!results ? (
