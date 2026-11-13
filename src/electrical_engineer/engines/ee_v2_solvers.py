@@ -29,44 +29,51 @@ def rl_step(v: float, r: float, l: float, t: float) -> dict[str, float]:
 
 
 def rlc_natural(r: float, l: float, c: float, vc0: float, i0: float, t: float) -> dict[str, float]:
-    if l <= 0 or c <= 0 or t < 0:
-        raise ValueError("L, C must be positive and t >= 0")
+    """Parallel RLC (R, L, C in parallel). i0 is inductor current at t=0 (A, into L from top node)."""
+    if l <= 0 or c <= 0 or r <= 0 or t < 0:
+        raise ValueError("R, L, C must be positive and t >= 0")
     wn = 1.0 / math.sqrt(l * c)
-    alpha = r / (2.0 * l)
+    alpha = 1.0 / (2.0 * r * c)
     zeta = alpha / wn if wn > 0 else 0.0
+    dv0 = -(i0 + vc0 / r) / c
+
+    def _branch_currents(vc: float, dvc: float) -> float:
+        return -(c * dvc + vc / r)
+
     if zeta < 1.0 - 1e-12:
         wd = wn * math.sqrt(1.0 - zeta * zeta)
         a = vc0
-        b = (i0 / c + alpha * vc0) / wd
-        vc = math.exp(-alpha * t) * (a * math.cos(wd * t) + b * math.sin(wd * t))
-        i = c * math.exp(-alpha * t) * (
-            (-alpha * a + b * wd) * math.cos(wd * t) + (-alpha * b - a * wd) * math.sin(wd * t)
+        b = (dv0 + alpha * vc0) / wd
+        expa = math.exp(-alpha * t)
+        cos_wd = math.cos(wd * t)
+        sin_wd = math.sin(wd * t)
+        vc = expa * (a * cos_wd + b * sin_wd)
+        dvc = expa * (
+            (-alpha * a + b * wd) * cos_wd + (-alpha * b - a * wd) * sin_wd
         )
         damping = "underdamped"
     elif zeta > 1.0 + 1e-12:
         disc = math.sqrt(alpha * alpha - wn * wn)
         s1 = -alpha + disc
         s2 = -alpha - disc
-        # vc0 = A + B, i0 = C*(s1*A + s2*B) with i = C dvc/dt ... use C dvc/dt = i
-        c_val = c
-        a_coef = (s2 * vc0 - i0 / c_val) / (s2 - s1)
+        a_coef = (s2 * vc0 - dv0) / (s2 - s1)
         b_coef = vc0 - a_coef
         vc = a_coef * math.exp(s1 * t) + b_coef * math.exp(s2 * t)
-        i = c_val * (a_coef * s1 * math.exp(s1 * t) + b_coef * s2 * math.exp(s2 * t))
+        dvc = a_coef * s1 * math.exp(s1 * t) + b_coef * s2 * math.exp(s2 * t)
         damping = "overdamped"
     else:
-        vc = (vc0 + (i0 / c + alpha * vc0) * t) * math.exp(-alpha * t)
-        i = c * math.exp(-alpha * t) * (
-            -alpha * vc0
-            - alpha * (i0 / c + alpha * vc0) * t
-            + (i0 / c + alpha * vc0)
+        vc = (vc0 + (dv0 + alpha * vc0) * t) * math.exp(-alpha * t)
+        dvc = math.exp(-alpha * t) * (
+            dv0 + alpha * vc0 - alpha * (vc0 + (dv0 + alpha * vc0) * t) + (dv0 + alpha * vc0)
         )
         damping = "critically_damped"
+    i_l = _branch_currents(vc, dvc)
     return {
         "zeta": zeta,
         "damping": damping,
         "vc_V": vc,
-        "i_A": i,
+        "i_A": i_l,
+        "topology": "parallel",
     }
 
 

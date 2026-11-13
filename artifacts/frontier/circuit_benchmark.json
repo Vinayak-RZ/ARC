@@ -1,10 +1,14 @@
 {
   "subset": "circuits",
-  "total": 1,
-  "passed": 1,
+  "total": 2,
+  "passed": 2,
   "items": [
     {
       "id": "divider-dc-01",
+      "ok": true
+    },
+    {
+      "id": "rc-step-01",
       "ok": true
     }
   ]

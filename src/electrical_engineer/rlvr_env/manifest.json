@@ -1,12 +1,19 @@
 {
   "schema": "arc.rlvr.env.v0.1",
+  "version": "0.1",
+  "reward": "deterministic_trap_verifier",
+  "training": "none",
   "traps": [
-    {"id": "T1", "engine": "smib_swing"},
-    {"id": "T2", "engine": "smib_swing"},
-    {"id": "T4", "engine": "agc_two_area"},
-    {"id": "T5", "engine": "agc_two_area"},
-    {"id": "T6", "engine": "ed_lambda"}
+    {"id": "T1", "engine": "smib_swing", "topic": "smib"},
+    {"id": "T2", "engine": "smib_swing", "topic": "smib"},
+    {"id": "T3", "engine": "smib_swing", "topic": "smib"},
+    {"id": "T4", "engine": "agc_two_area", "topic": "agc"},
+    {"id": "T5", "engine": "agc_two_area", "topic": "agc"},
+    {"id": "T6", "engine": "ed_lambda", "topic": "ed"},
+    {"id": "T7", "engine": "ed_lambda", "topic": "ed"},
+    {"id": "T8", "engine": "control_diagram", "topic": "diagrams"},
+    {"id": "T9", "engine": "integration_policy", "topic": "integration"},
+    {"id": "T10", "engine": "smib_swing", "topic": "smib"}
   ],
-  "reward": "trap_regression_pass",
-  "training": "none"
+  "seeds_file": "seeds.json"
 }
