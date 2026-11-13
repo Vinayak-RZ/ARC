@@ -28,6 +28,7 @@ GOLDEN_MAP: dict[str, str] = {
     "control.bode": "control",
     "control.step": "control",
     "control.root_locus": "control",
+    "control.nyquist": "control",
     "control.block_diagram": "control",
     "schematic.divider": "circuits",
     "waveform.phasor": "circuits",

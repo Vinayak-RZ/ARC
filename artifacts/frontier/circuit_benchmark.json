@@ -1,0 +1,11 @@
+{
+  "subset": "circuits",
+  "total": 1,
+  "passed": 1,
+  "items": [
+    {
+      "id": "divider-dc-01",
+      "ok": true
+    }
+  ]
+}

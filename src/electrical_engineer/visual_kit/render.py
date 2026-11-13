@@ -14,6 +14,7 @@ from electrical_engineer.visual_kit.render_circuit import (
 )
 from electrical_engineer.visual_kit.render_control import (
     render_control_bode,
+    render_control_nyquist,
     render_control_root_locus,
     render_control_step,
 )
@@ -51,9 +52,12 @@ _COMPONENTS = {
     "control.bode": lambda out, props: render_control_bode(out, theme_name=_theme(props)),
     "control.step": lambda out, props: render_control_step(out, theme_name=_theme(props)),
     "control.root_locus": lambda out, props: render_control_root_locus(out, theme_name=_theme(props)),
+    "control.nyquist": lambda out, props: render_control_nyquist(out, theme_name=_theme(props)),
     "schematic.divider": lambda out, props: render_schematic_divider(out, theme_name=_theme(props)),
     "waveform.phasor": lambda out, props: render_phasor_diagram(out, theme_name=_theme(props)),
-    "control.block_diagram": lambda out, props: render_control_block_diagram(out, theme_name=_theme(props)),
+    "control.block_diagram": lambda out, props: render_control_block_diagram(
+        out, theme_name=_theme(props), props=props
+    ),
     "power.oneline_bus": lambda out, props: render_power_oneline(out, theme_name=_theme(props)),
 }
 

@@ -1,13 +1,14 @@
 {
-  "manifest_version": "0.2",
+  "manifest_version": "0.3",
   "design_tokens": "DESIGN-coinbase",
   "components": [
-    {"id": "power.swing_equal_area", "engine": "smib_swing", "pack": "power", "golden": "swing/power.swing_equal_area.png"},
-    {"id": "power.agc_trace", "engine": "agc_two_area", "pack": "power", "golden": "agc/power.agc_trace.png"},
+    {"id": "power.swing_equal_area", "engine": "smib_swing", "pack": "power", "golden": "swing/power.swing_equal_area.png", "golden_dark": "dark/swing/power.swing_equal_area.png"},
+    {"id": "power.agc_trace", "engine": "agc_two_area", "pack": "power", "golden": "agc/power.agc_trace.png", "golden_dark": "dark/agc/power.agc_trace.png"},
     {"id": "power.dispatch_curve", "engine": "ed_lambda", "pack": "power", "golden": "ed/power.dispatch_curve.png"},
     {"id": "power.swing_animation", "engine": "smib_swing", "pack": "power", "golden": "swing/power.swing_animation.gif"},
     {"id": "power.oneline_bus", "engine": "power_runner", "pack": "power", "golden": "oneline/power.oneline_bus.png"},
     {"id": "control.bode", "engine": "control_runner", "pack": "control", "golden": "control/control.bode.png"},
+    {"id": "control.nyquist", "engine": "control_runner", "pack": "control", "golden": "control/control.nyquist.png", "golden_dark": "dark/control/control.nyquist.png"},
     {"id": "control.step", "engine": "control_runner", "pack": "control", "golden": "control/control.step.png"},
     {"id": "control.root_locus", "engine": "control_runner", "pack": "control", "golden": "control/control.root_locus.png"},
     {"id": "control.block_diagram", "engine": "block_diagram", "pack": "control", "golden": "control/control.block_diagram.png"},

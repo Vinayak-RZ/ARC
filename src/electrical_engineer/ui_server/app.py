@@ -331,6 +331,12 @@ def create_app(root: Path | None = None) -> FastAPI:
                 filters[key] = val
         return retrieve(filters, query=query, cwd=cwd, hops=hops_n)
 
+    @app.get("/api/frontier/scorecard")
+    def frontier_scorecard() -> dict:
+        path = _repo_root() / "docs/planning/frontier-2026-11/SCORECARD.md"
+        text = path.read_text(encoding="utf-8") if path.is_file() else ""
+        return {"markdown": text, "path": str(path.relative_to(_repo_root()))}
+
     @app.get("/api/visual-kit")
     def visual_kit() -> dict:
         from electrical_engineer.visual_kit.registry import load_manifest

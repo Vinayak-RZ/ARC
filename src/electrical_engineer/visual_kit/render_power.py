@@ -143,8 +143,12 @@ def render_agc_trace(out_dir: Path, *, theme_name: ThemeName = "light") -> dict[
     ax1.set_title("Two-area load disturbance with AGC")
     ax2.set_xlabel("Time (s)")
     ax2.set_ylabel(r"Tie power $P_{12}$ (MW)")
-    direct_label(ax1, trail[-1][0] if trail else 0, f1[-1] if trail else 50, "Area 1", theme, color=theme.primary)
-    direct_label(ax1, trail[-1][0] if trail else 0, f2[-1] if trail else 50, "Area 2", theme, color=theme.accent)
+    if trail:
+        i_mid = max(0, len(trail) // 3)
+        direct_label(ax1, t[i_mid], f1[i_mid], r"Area 1", theme, color=theme.primary, dy=10)
+        direct_label(ax1, t[i_mid], f2[i_mid], r"Area 2", theme, color=theme.accent, dy=-14)
+        direct_label(ax1, t[-1], f1[-1], rf"$f_1={f1[-1]:.4f}$ Hz", theme, color=theme.primary, dy=12)
+        direct_label(ax1, t[-1], f2[-1], rf"$f_2={f2[-1]:.4f}$ Hz", theme, color=theme.accent, dy=-16)
     png = out_dir / "power.agc_trace.png"
     fig.tight_layout()
     _save(fig, png, theme)

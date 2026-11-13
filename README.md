@@ -178,6 +178,46 @@ pip install -e ".[engines,dev]"
 
 Boot details: [`docs/planning/R1_BOOT_SHIP.md`](docs/planning/R1_BOOT_SHIP.md).
 
+### Visual Kit (engine-bound figures)
+
+Arc ships a design-system Visual Kit: every annotation comes from kernels (`smib_swing`, `agc_two_area`, `ed_lambda`, `pandapower`, `ngspice`, `python-control`), not from the chat.
+
+| Figure | Golden path |
+|--------|-------------|
+| SMIB equal-area (pre/fault/post, $A_1$, $A_2$) | `artifacts/visual-goldens/swing/power.swing_equal_area.png` |
+| Two-area AGC ($f_1$, $f_2$, $P_{12}$) | `artifacts/visual-goldens/agc/power.agc_trace.png` |
+| Economic dispatch IC curves | `artifacts/visual-goldens/ed/power.dispatch_curve.png` |
+| Rotor swing animation | `artifacts/visual-goldens/swing/power.swing_animation.gif` |
+| Pandapower one-line | `artifacts/visual-goldens/oneline/power.oneline_bus.png` |
+| Control block diagram | `artifacts/visual-goldens/control/control.block_diagram.png` |
+
+Regenerate goldens locally:
+
+```bash
+uv run python scripts/regenerate_visual_goldens.py
+uv run pytest -q tests/visual
+```
+
+Open the gallery tab in the local UI (`127.0.0.1:8765`, sidebar **Visuals**) or `GET /api/visual-kit`.
+
+### Frontier scorecard (Nov 2026 branch)
+
+Measured on `cursor/frontier-execution-7a2f` (see `docs/planning/frontier-2026-11/SCORECARD.md`):
+
+| Check | Result |
+|-------|--------|
+| Full `electrical-engineer eval` | 18/18 PASS |
+| PSA pack | 6/6 PASS |
+| pytest | 255+ PASS (includes visual regression) |
+| Scripted trap pass^k | 1.0 (no API keys) |
+| LIVE A/B | blocked until `OPENAI_API_KEY` + `ANTHROPIC_API_KEY` (`docs/planning/frontier-2026-11/LIVE_AB.md`) |
+
+One-command frontier validation:
+
+```bash
+./scripts/validate_frontier.sh
+```
+
 ### Domain screenshots (localhost UI window)
 
 Fixed **1280×900** viewport captures of the Arc shell at `127.0.0.1:8765` (one run in the sidebar, diagram on canvas, plots below). Not full-page scroll shots.

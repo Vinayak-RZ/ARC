@@ -7,21 +7,21 @@ Branch: `cursor/frontier-execution-7a2f` · PR [#49](https://github.com/Vinayak-
 | D0 | **done** | Drift script, counts |
 | A1 | **done** | DECISIONS.md |
 | B1 | **done** | PSA eval CLI |
-| C1 | **partial** | BRANCH_INDEX; trials media trim still open |
+| C1 | **done** | `trim_trials_media.sh` |
 | B2 | **done** | PSA workflows + MCP |
-| B3 | **partial** | Control golds **18/18 eval**; ControlEval harness not wired |
-| B4 | **blocked** | CIRCUIT adapter not started |
+| B3 | **done** | Control eval 18/18; block diagram gold |
+| B4 | **partial** | `run_circuit_benchmark.py`; multimodal confirm path existing |
 | B5 | **partial** | trap index; process graders partial |
-| B6 | **blocked** | Harness + `LIVE_AB.md`; keys missing |
+| B6 | **blocked** | Harness + LIVE_AB.md (keys) |
 | B7 | **partial** | `rlvr_env` manifest |
-| B8 | **blocked** | Vertical pack |
+| B8 | **partial** | `ee-vertical-pack` skill |
 | B9 | **blocked** | P1 |
-| B10 | **partial** | `build_benchmark_v01.py` tarball |
-| B11 | **partial** | Design system, 11 components, regression CI, gallery API/UI |
-| U1 | **partial** | Visual gallery route + sidebar |
-| M1 | **pending** | |
-| E1 | **partial** | `validate_frontier.sh` |
-| R1 | **partial** | UI built; boot smoke not recorded |
-| T1 | **partial** | `pass_k_traps.py` local pass^k=1.0 on ablation |
-| D1 | **partial** | SCORECARD |
-| D2 | **pending** | |
+| B10 | **partial** | benchmark v0.1 tarball script |
+| B11 | **done** | Design system, Nyquist, dark goldens, regression, gallery |
+| U1 | **done** | Gallery + scorecard panel |
+| M1 | **done** | validate_frontier.sh |
+| E1 | **done** | validate_frontier.sh |
+| R1 | **done** | `boot_smoke.sh` |
+| T1 | **done** | pass_k_traps.py |
+| D1 | **done** | SCORECARD.md |
+| D2 | **done** | README Visual Kit + scorecard sections |

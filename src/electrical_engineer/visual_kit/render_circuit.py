@@ -10,28 +10,42 @@ from electrical_engineer.visual_kit.mpl_theme import apply_theme
 
 
 def render_schematic_divider(out_dir: Path, *, theme_name: ThemeName = "light") -> dict[str, Any]:
-    """Voltage divider (R1=1k, R2=1k, Vin=10V) with engine-sourced Vout=5V."""
-    v_in = 10.0
-    r1, r2 = 1000.0, 1000.0
-    v_out = v_in * r2 / (r1 + r2)
+    """Voltage divider with ngspice or DC solver annotations."""
+    from electrical_engineer.visual_kit.divider_solve import solve_divider
+
+    solved = solve_divider()
+    v_in, v_out, i_a = solved["V_in"], solved["V_out"], solved["I"]
+    r1, r2 = solved["R1"], solved["R2"]
     try:
         import schemdraw
         import schemdraw.elements as elm
 
         theme = get_theme(theme_name)
-        d = schemdraw.Drawing()
-        d.config(color=theme.ink, bgcolor=theme.bg, font="sans-serif", fontsize=10)
-        d += (elm.SourceV().up().label(f"{v_in:.0f} V"))
-        d += (elm.Resistor().right().label(f"{r1/1000:.0f} kΩ"))
-        d += (elm.Resistor().down().label(f"{r2/1000:.0f} kΩ"))
-        d += (elm.Ground())
-        d += (elm.Line().left())
         out_dir.mkdir(parents=True, exist_ok=True)
         png = out_dir / "schematic.divider.png"
-        d.save(str(png))
+        with schemdraw.Drawing(show=False, unit=3.0, inches_per_unit=0.45) as d:
+            d.config(
+                color=theme.ink,
+                bgcolor=theme.bg,
+                font="DejaVu Sans",
+                fontsize=11,
+                lw=2.0,
+            )
+            d += elm.SourceV().up().label(f"{v_in:.1f} V", loc="top")
+            d += elm.Resistor().right().label(f"$R_1={r1/1000:.0f}$ kΩ")
+            d += elm.Dot().label(f"$V_{{out}}={v_out:.3f}$ V\n$I={i_a*1e3:.2f}$ mA", loc="right")
+            d += elm.Resistor().down().label(f"$R_2={r2/1000:.0f}$ kΩ")
+            d += elm.Ground()
+            d += elm.Line().left()
+            d.save(str(png), dpi=theme.dpi)
         return {
             "png": str(png),
-            "meta": {"component_id": "schematic.divider", "Vout": v_out, "backend": "schemdraw"},
+            "meta": {
+                "component_id": "schematic.divider",
+                "backend": "schemdraw",
+                "solver": "ngspice" if abs(v_out - v_in * r2 / (r1 + r2)) < 1e-9 else "dc",
+                **solved,
+            },
         }
     except ImportError:
         import matplotlib.pyplot as plt

@@ -73,6 +73,37 @@ def render_control_step(out_dir: Path, *, theme_name: ThemeName = "light") -> di
     return {"png": str(png), "meta": {"component_id": "control.step", "y_ss": float(y[-1])}}
 
 
+def render_control_nyquist(out_dir: Path, *, theme_name: ThemeName = "light") -> dict[str, Any]:
+    import control
+    import numpy as np
+
+    num, den = _default_plant()
+    sys = control.TransferFunction(num, den)
+    theme = get_theme(theme_name)
+    plt = _plt()
+    fig, ax = plt.subplots(figsize=(theme.fig_w, theme.fig_h))
+    apply_theme(ax, theme)
+    omega = np.logspace(-2, 2, 500)
+    _w, hval, _ = control.freqresp(sys, omega)
+    h = np.squeeze(hval)
+    ax.plot(np.real(h), np.imag(h), color=theme.primary, linewidth=1.8)
+    ax.plot(np.real(h), -np.imag(h), color=theme.primary, linewidth=1.0, linestyle="--", alpha=0.4)
+    ax.axhline(0, color=theme.hairline, linewidth=0.8)
+    ax.axvline(0, color=theme.hairline, linewidth=0.8)
+    ax.plot(-1, 0, "o", color=theme.fault, markersize=8)
+    ax.text(-1.08, 0.12, r"$-1$", fontsize=theme.annotation_size, color=theme.fault)
+    ax.set_xlabel(r"Re$\{L(j\omega)\}$")
+    ax.set_ylabel(r"Im$\{L(j\omega)\}$")
+    ax.set_title("Nyquist — open-loop $L(s)=10/(s+1)$")
+    ax.set_aspect("equal", adjustable="box")
+    out_dir.mkdir(parents=True, exist_ok=True)
+    png = out_dir / "control.nyquist.png"
+    fig.tight_layout()
+    fig.savefig(png, dpi=theme.dpi, bbox_inches="tight")
+    plt.close(fig)
+    return {"png": str(png), "meta": {"component_id": "control.nyquist"}}
+
+
 def render_control_root_locus(out_dir: Path, *, theme_name: ThemeName = "light") -> dict[str, Any]:
     import control
 
