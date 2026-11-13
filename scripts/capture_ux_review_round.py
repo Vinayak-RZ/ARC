@@ -208,7 +208,7 @@ def main() -> int:
                 if args.round < 4:
                     return name
                 stem = name.replace(".png", "")
-                if stem.endswith("-light") or stem.endswith("-dark"):
+                if stem.endswith(("-light", "-dark")):
                     return name
                 if stem.startswith("dark-"):
                     return f"{stem[5:]}-dark.png"
@@ -225,7 +225,7 @@ def main() -> int:
                 shot.screenshot(path=str(path), full_page=False)
                 digest = _md5(path)
                 if digest in hashes.values():
-                    dup = [k for k, v in hashes.items() if v == digest][0]
+                    dup = next(k for k, v in hashes.items() if v == digest)
                     raise RuntimeError(f"duplicate screenshot: {name} matches {dup} (md5={digest})")
                 hashes[name] = digest
                 print(f"wrote {path} md5={digest}")

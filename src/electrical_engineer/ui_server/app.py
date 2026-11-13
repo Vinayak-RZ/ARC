@@ -63,9 +63,7 @@ def _opaque_title(title: str, folder_name: str) -> bool:
         return True
     if text.startswith("cs-") and len(text) <= 16:
         return True
-    if "-" in text and " " not in text and text.lower() == text:
-        return True
-    return False
+    return "-" in text and " " not in text and text.lower() == text
 
 
 def _human_run_title(folder: Path, evid: dict) -> str:
@@ -328,7 +326,7 @@ def create_app(root: Path | None = None) -> FastAPI:
         recipe_id, problem = _recipe_from_prompt(prompt, subject)
         try:
             out = execute(str(recipe_id), cwd=cwd, problem=problem)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             return JSONResponse({"error": "run failed", "detail": str(exc)}, status_code=500)
         return {
             "run_id": out.get("run_id"),
@@ -345,7 +343,7 @@ def create_app(root: Path | None = None) -> FastAPI:
             return JSONResponse({"error": "unknown example"}, status_code=404)
         try:
             out = execute(str(match["recipe_id"]), cwd=cwd, problem=dict(match["problem"]))
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             return JSONResponse({"error": "run failed", "detail": str(exc)}, status_code=500)
         return {"run_id": out.get("run_id"), "unchecked": bool((out.get("summary") or {}).get("unchecked"))}
 

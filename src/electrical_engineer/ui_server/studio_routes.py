@@ -116,7 +116,7 @@ def register_studio_routes(app: FastAPI, *, root: Path) -> None:
             body = {}
             try:
                 body = await request.json()
-            except Exception:
+            except Exception:  # noqa: BLE001
                 body = {}
             if not isinstance(body, dict):
                 body = {}

@@ -116,7 +116,7 @@ def main() -> int:
                 page.screenshot(path=str(path), full_page=False)
                 digest = _md5(path)
                 if digest in hashes.values():
-                    dup = [k for k, v in hashes.items() if v == digest][0]
+                    dup = next(k for k, v in hashes.items() if v == digest)
                     raise RuntimeError(f"duplicate screenshot: {name} matches {dup} (md5={digest})")
                 hashes[name] = digest
                 print(f"wrote {path} md5={digest}")
