@@ -27,10 +27,8 @@ def render_swing_equal_area(out_dir: Path, case: SmibCase | None = None) -> dict
     ref = eec301_reference(case)
     plt = _require_mpl()
     fig, ax = plt.subplots(figsize=(6.4, 4.0), dpi=120)
-    delta_cr = math.radians(ref["delta_cr_deg"])
-    deltas = [math.radians(x) for x in range(0, 120)]
+    deltas = [math.radians(x) for x in range(120)]
     pe = [case.pmax_post_pu * math.sin(d) for d in deltas]
-    pm = [case.pm_pu] * len(deltas)
     ax.plot([math.degrees(d) for d in deltas], pe, label="Pe post")
     ax.axhline(case.pm_pu, color="C2", linestyle="--", label="Pm")
     ax.axvline(ref["delta0_deg"], color="C3", linestyle=":", label=f"delta0={ref['delta0_deg']:.2f}")
