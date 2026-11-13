@@ -32,10 +32,17 @@ def main() -> int:
         browser = p.chromium.launch()
         page = browser.new_page(viewport={"width": 1280, "height": 800})
         page.goto(url_golden, wait_until="domcontentloaded", timeout=60000)
-        page.wait_for_timeout(1800)
+        page.wait_for_timeout(2200)
         page.get_by_role("button", name="Simulate").click()
         page.wait_for_selector(".studio-results-stage img", timeout=25000)
-        page.wait_for_timeout(600)
+        page.wait_for_function(
+            """() => {
+            const dd = document.querySelector('.cs-margin-grid dd');
+            return dd && dd.textContent && dd.textContent.trim() !== '—' && dd.textContent.includes('dB');
+        }""",
+            timeout=25000,
+        )
+        page.wait_for_timeout(400)
         page.screenshot(path=str(populated), full_page=False)
 
         sid2 = handle_tool("control_studio_create_diagram", {"title": "Agent build", "golden": None})["session_id"]

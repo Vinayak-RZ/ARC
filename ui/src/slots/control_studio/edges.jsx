@@ -26,7 +26,7 @@ export function SignalEdge({
     const ly = Math.max(sourceY, targetY) + 72;
     return (
       <>
-        <BaseEdge id={id} path={path} markerEnd={markerEnd} style={{ stroke: "var(--ee-color-ink)", strokeWidth: 1.75 }} />
+        <BaseEdge id={id} path={path} markerEnd={markerEnd} style={{ stroke: "var(--cs-text)", strokeWidth: 1.75 }} />
         {label ? (
           <EdgeLabelRenderer>
             <div
@@ -66,10 +66,14 @@ export function SignalEdge({
 export const studioEdgeTypes = { signal: SignalEdge };
 
 export function wireLabel(from, to, blocksById) {
-  const [fb, fp] = from.split(":");
-  const [, tp] = to.split(":");
-  if (tp === "feedback" || fp === "feedback") return "fb";
+  const [fb] = from.split(":");
+  const [tb, tp] = to.split(":");
+  if (tp === "feedback") return "fb";
   const src = blocksById[fb];
+  const tgt = blocksById[tb];
   if (src?.type === "step") return "r";
+  if (src?.type === "sum" && tgt?.type === "pid") return "e";
+  if (src?.type === "pid") return "u";
+  if (src?.type?.startsWith("plant") && tgt?.type === "scope") return "y";
   return "";
 }
