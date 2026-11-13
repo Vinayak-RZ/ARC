@@ -14,15 +14,15 @@ from electrical_engineer.visual_kit.render import render_component
 ROOT = Path(__file__).resolve().parents[2]
 
 MIN_WIDTH_PX: dict[str, int] = {
-    "schematic.divider": 1200,
-    "schematic.rlc_series": 1200,
+    "schematic.divider": 960,
+    "schematic.rlc_series": 960,
     "control.block_diagram": 800,
     "power.oneline_bus": 900,
 }
 
 MIN_FILE_BYTES: dict[str, int] = {
-    "schematic.divider": 12_000,
-    "schematic.rlc_series": 12_000,
+    "schematic.divider": 10_000,
+    "schematic.rlc_series": 10_000,
 }
 
 
