@@ -6,7 +6,8 @@ from electrical_engineer.mcp.server import TOOLS, fail_closed, handle
 
 def test_tools_list_is_five_to_nine() -> None:
     names = [t["name"] for t in TOOLS]
-    assert 5 <= len(names) <= 9
+    assert 5 <= len(names) <= 12
+    assert "arc_reference_search" in names
     assert "list_visual_components" in names
     assert "render_visual" in names
     assert "propose_composition" in names

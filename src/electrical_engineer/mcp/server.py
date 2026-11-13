@@ -112,6 +112,24 @@ TOOLS = [
             "required": ["component_id"],
         },
     },
+    {
+        "name": "arc_reference_search",
+        "description": "Keyword search curated EE reference records (standards, curves, conductors, cases).",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"query": {"type": "string"}, "limit": {"type": "integer"}},
+            "required": ["query"],
+        },
+    },
+    {
+        "name": "arc_reference_get",
+        "description": "Fetch one reference record by id with units, source, license, verification.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"id": {"type": "string"}},
+            "required": ["id"],
+        },
+    },
 ]
 
 
@@ -318,6 +336,22 @@ def handle(method: str, params: dict[str, Any] | None) -> Any:
             except (ValueError, RuntimeError) as exc:
                 return _ok({"error": str(exc), "waits": False}, error=True)
             return _ok({"run_id": rid, "paths": [out["png"]], "meta": out["meta"], "waits": False})
+        if name == "arc_reference_search":
+            from electrical_engineer.reference.catalog import search_records
+
+            q = str(args.get("query") or "")
+            limit = int(args.get("limit") or 20)
+            hits = search_records(q, limit=limit)
+            return _ok({"query": q, "results": hits, "waits": False})
+        if name == "arc_reference_get":
+            from electrical_engineer.reference.catalog import get_record
+
+            rid = str(args.get("id") or "")
+            rec = get_record(rid)
+            if rec is None:
+                return _ok({"error": "not_found", "id": rid, "waits": False}, error=True)
+            rec["waits"] = False
+            return _ok(rec)
         return _ok({"error": f"unknown tool {name}", "waits": False}, error=True)
     if method == "notifications/initialized":
         return None

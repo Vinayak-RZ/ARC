@@ -25,6 +25,7 @@ Product execution graph **complete through H1** on `cursor/ee-product-execution-
 - **graph-engineering:** only if named. Never auto-chain. Not graphify.
 - **README:** `readme` router — this repo’s landing is product-readme (OSS co-solver); internals companion is `extensive-readme`.
 - Inventory: [skills-manifest.json](skills-manifest.json)
+- **Reference library:** curated open/factual EE data in `src/electrical_engineer/reference/data/`; retrieve via `electrical-engineer reference search|get` or MCP `arc_reference_search` / `arc_reference_get`. Agent skill: [`skills/reference/SKILL.md`](skills/reference/SKILL.md). Coverage and gaps: [`docs/reference/COVERAGE.md`](docs/reference/COVERAGE.md), [`docs/reference/GAPS.md`](docs/reference/GAPS.md). When a problem names a standard curve, conductor, IEEE case, or limit table, **look it up and cite** — do not assume constants.
 
 ## Architecture (when designing)
 

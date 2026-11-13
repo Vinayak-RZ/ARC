@@ -1,0 +1,60 @@
+- id: MCB_TYPE_B
+  domain: low_voltage_protection
+  title: IEC 60898 Type B MCB magnetic trip multiple band
+  aliases: [MCB B, type B breaker]
+  values:
+    magnetic_multiple_min: 3.0
+    magnetic_multiple_max: 5.0
+  source:
+    title: IEC 60898-1
+    edition: "2015"
+    clause: Table 3 type B instantaneous trip
+  url: https://webstore.iec.ch/en/publication/4532
+  license: Factual band limits
+  verification: Instantaneous trip 3-5*In per type B
+
+- id: MCB_TYPE_C
+  domain: low_voltage_protection
+  title: IEC 60898 Type C MCB magnetic trip band
+  aliases: [MCB C, type C]
+  values:
+    magnetic_multiple_min: 5.0
+    magnetic_multiple_max: 10.0
+  source:
+    title: IEC 60898-1
+    edition: "2015"
+    clause: type C trip band
+  url: https://webstore.iec.ch/en/publication/4532
+  license: Factual band
+  verification: 5-10*In band check in engine
+
+- id: MCB_TYPE_D
+  domain: low_voltage_protection
+  title: IEC 60898 Type D MCB magnetic trip band
+  aliases: [MCB D, type D]
+  values:
+    magnetic_multiple_min: 10.0
+    magnetic_multiple_max: 20.0
+  source:
+    title: IEC 60898-1
+    edition: "2015"
+    clause: type D trip band
+  url: https://webstore.iec.ch/en/publication/4532
+  license: Factual band
+  verification: 10-20*In
+
+- id: IEC60364_TN_DISCONNECTION_0_4S
+  domain: low_voltage_protection
+  title: IEC 60364-4-41 TN system max disconnection time (final circuits)
+  aliases: [TN disconnection, 0.4 s touch]
+  values:
+    max_disconnection_s: 0.4
+    system: TN
+    circuit_class: final_circuits_230v
+  source:
+    title: IEC 60364-4-41
+    edition: "2017"
+    clause: Table 41.1
+  url: https://webstore.iec.ch/
+  license: Factual time limit
+  verification: Table 41.1 0.4 s for U0=230 V final circuits

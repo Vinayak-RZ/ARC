@@ -1,0 +1,44 @@
+- id: IEEE80_BODY_50KG
+  domain: earthing_safety
+  title: IEEE 80 body-current constant k (50 kg person)
+  aliases: [50 kg body, IEEE 80 50kg]
+  values:
+    k_factor: 0.157
+    body_mass_kg: 50
+  source:
+    title: IEEE Std 80-2013
+    edition: "2013"
+    clause: body weight constant 50 kg
+  url: https://standards.ieee.org/standard/80-2013.html
+  license: Factual constant; equation not reproduced
+  verification: Used in simplified Es = (1000+1.5*Cs*rho)*k/sqrt(t)
+
+- id: IEEE80_BODY_70KG
+  domain: earthing_safety
+  title: IEEE 80 body-current constant k (70 kg person)
+  aliases: [70 kg body]
+  values:
+    k_factor: 0.313
+    body_mass_kg: 70
+  source:
+    title: IEEE Std 80-2013
+    edition: "2013"
+    clause: 70 kg constant
+  url: https://standards.ieee.org/standard/80-2013.html
+  license: Factual constant
+  verification: k doubles vs 50 kg in same simplified form
+
+- id: SVERAK_GRID_RESISTANCE_FORMULA
+  domain: earthing_safety
+  title: Sverak empirical substation grid resistance formula note
+  aliases: [Sverak, grid resistance formula]
+  values:
+    formula_note: R = rho * (1/sqrt(20*A) + 1/L) with A area m2, L perimeter m
+    units: ohm
+  source:
+    title: IEEE 80 ground grid design
+    edition: "2013"
+    clause: empirical approximations section
+  url: https://standards.ieee.org/standard/80-2013.html
+  license: Factual formula reference; use with measured rho
+  verification: Documented in syllabus; numeric case deferred to problem data

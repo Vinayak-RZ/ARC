@@ -1,0 +1,47 @@
+- id: EEC301_EXP6_GOLDEN
+  domain: course_context
+  title: IIT Roorkee EEC-301 Experiment 6 SMIB golden case pointer
+  aliases: [EEC301 exp6, SMIB lab, swing lab]
+  values:
+    artifact: artifacts/eec301-lab-goldens/exp06.json
+    engine: smib_swing.eec301_reference
+    workflow: smib-swing-study
+  source:
+    title: Arc bundled EEC-301 lab pack
+    edition: "in-repo"
+    clause: exp06.json
+  url: https://github.com/Vinayak-RZ/Electrical-Engineer
+  license: Apache-2.0 (repo)
+  verification: Existing PSA eval goldens pass on branch
+
+- id: EEC301_EXP7_AGC
+  domain: course_context
+  title: EEC-301 Experiment 7 two-area AGC reference path
+  aliases: [AGC lab, exp7]
+  values:
+    artifact: artifacts/eec301-lab-goldens/exp07.json
+    engine: agc_two_area
+    workflow: agc-two-area-study
+  source:
+    title: Arc EEC-301 pack
+    edition: "in-repo"
+    clause: exp07.json
+  url: https://github.com/Vinayak-RZ/Electrical-Engineer
+  license: Apache-2.0
+  verification: PSA eval exp7 golden
+
+- id: EEC301_EXP8_LAMBDA
+  domain: course_context
+  title: EEC-301 Experiment 8 economic dispatch lambda reference
+  aliases: [lambda dispatch, exp8, ED lab]
+  values:
+    artifact: artifacts/eec301-lab-goldens/exp08.json
+    engine: ed_lambda
+    workflow: ed-lambda-study
+  source:
+    title: Arc EEC-301 pack
+    edition: "in-repo"
+    clause: exp08.json
+  url: https://github.com/Vinayak-RZ/Electrical-Engineer
+  license: Apache-2.0
+  verification: PSA eval exp8 golden

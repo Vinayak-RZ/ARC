@@ -1,0 +1,117 @@
+- id: IEC_SI
+  domain: overcurrent_protection
+  title: IEC 60255 standard inverse (SI) IDMT constants
+  aliases: [IEC SI, standard inverse, SI curve, 60255 SI]
+  values:
+    standard: IEC
+    k: 0.14
+    alpha: 0.02
+    formula_note: t = k*TMS/(M^alpha - 1), M = I/Ipickup
+  source:
+    title: IEC 60255-151
+    edition: "2009"
+    clause: inverse-time characteristic SI
+  url: https://webstore.iec.ch/en/publication/6762
+  license: Standard constants (factual); no standard text reproduced
+  verification: At M=10, TMS=1 -> t approx 2.97 s hand check
+
+- id: IEC_VI
+  domain: overcurrent_protection
+  title: IEC very inverse (VI) IDMT constants
+  aliases: [IEC VI, very inverse]
+  values:
+    standard: IEC
+    k: 13.5
+    alpha: 1.0
+    formula_note: t = k*TMS/(M^alpha - 1)
+  source:
+    title: IEC 60255-151
+    edition: "2009"
+    clause: VI characteristic
+  url: https://webstore.iec.ch/en/publication/6762
+  license: Factual constants only
+  verification: M=2, TMS=0.5 -> t=13.5 s
+
+- id: IEC_EI
+  domain: overcurrent_protection
+  title: IEC extremely inverse (EI) IDMT constants
+  aliases: [IEC EI, extremely inverse]
+  values:
+    standard: IEC
+    k: 80.0
+    alpha: 2.0
+    formula_note: t = k*TMS/(M^alpha - 1)
+  source:
+    title: IEC 60255-151
+    edition: "2009"
+    clause: EI characteristic
+  url: https://webstore.iec.ch/en/publication/6762
+  license: Factual constants only
+  verification: M=2, TMS=1 -> t about 26.67 s hand check
+
+- id: IEEE_CO8
+  domain: overcurrent_protection
+  title: IEEE C37.112 very inverse (CO-8) curve constants
+  aliases: [IEEE very inverse, CO8, C37.112 VI]
+  values:
+    standard: IEEE
+    A: 19.61
+    B: 0.491
+    p: 2.0
+    formula_note: t = TD*(A/(M^p - 1) + B)
+  source:
+    title: IEEE C37.112-1996
+    edition: "1996"
+    clause: CO-8 coefficients
+  url: https://standards.ieee.org/standard/C37_112-1996.html
+  license: Factual coefficients; no standard text copied
+  verification: M=10, TD=1 -> t about 0.806 s
+
+- id: IEEE_CO2
+  domain: overcurrent_protection
+  title: IEEE moderately inverse (CO-2) curve constants
+  aliases: [moderately inverse, CO2]
+  values:
+    standard: IEEE
+    A: 0.0515
+    B: 0.114
+    p: 0.02
+    formula_note: t = TD*(A/(M^p - 1) + B)
+  source:
+    title: IEEE C37.112-1996
+    edition: "1996"
+    clause: CO-2 coefficients
+  url: https://standards.ieee.org/standard/C37_112-1996.html
+  license: Factual coefficients only
+  verification: M=10, TD=1 hand spot check
+
+- id: CTI_NORM
+  domain: overcurrent_protection
+  title: Typical feeder coordination time interval
+  aliases: [CTI, coordination interval, 0.3 s CTI]
+  values:
+    cti_s: 0.3
+    application: downstream relay must operate at least CTI before upstream
+  source:
+    title: IEEE 242 protection coordination practice
+    edition: "BNSF summary tables"
+    clause: typical 0.3 s margin
+  url: https://standards.ieee.org/standard/242-2001.html
+  license: Industry norm (factual)
+  verification: Used in coordination_margin engine default
+
+- id: CT_CLASS_5P20
+  domain: overcurrent_protection
+  title: IEC 61869-2 CT class 5P20 composite error limit
+  aliases: [5P20, protection CT 5P20]
+  values:
+    class: 5P20
+    composite_error_percent: 5
+    accuracy_limit_multiple: 20
+  source:
+    title: IEC 61869-2
+    edition: "2012"
+    clause: Table 2 protection classes
+  url: https://webstore.iec.ch/en/publication/4319
+  license: Factual class designation
+  verification: Class name encodes 5% at 20*In

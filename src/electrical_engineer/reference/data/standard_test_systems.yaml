@@ -1,0 +1,66 @@
+- id: IEEE_CASE_9
+  domain: standard_test_systems
+  title: IEEE 9-bus test case (MATPOWER case9)
+  aliases: [case9, WSCC 9 bus, nine bus]
+  values:
+    pandapower_loader: case9
+    buses: 9
+    matpower_name: case9
+    sn_mva: 100
+  source:
+    title: MATPOWER case files
+    edition: "7.1"
+    clause: case9.m
+  url: https://github.com/MATPOWER/matpower/blob/master/data/case9.m
+  license: BSD-3-Clause (MATPOWER); factual extraction only
+  verification: Pandapower case9 load flow converges; bus count 9
+
+- id: IEEE_CASE_14
+  domain: standard_test_systems
+  title: IEEE 14-bus test case (MATPOWER case14)
+  aliases: [case14, fourteen bus]
+  values:
+    pandapower_loader: case14
+    buses: 14
+    matpower_name: case14
+    sn_mva: 100
+  source:
+    title: MATPOWER case files
+    edition: "7.1"
+    clause: case14.m
+  url: https://github.com/MATPOWER/matpower/blob/master/data/case14.m
+  license: BSD-3-Clause (MATPOWER); factual extraction only
+  verification: Pandapower case14 converges; 14 buses
+
+- id: IEEE_CASE_30
+  domain: standard_test_systems
+  title: IEEE 30-bus test case (MATPOWER case30)
+  aliases: [case30, thirty bus]
+  values:
+    pandapower_loader: case30
+    buses: 30
+    matpower_name: case30
+    sn_mva: 100
+  source:
+    title: MATPOWER case files
+    edition: "7.1"
+    clause: case30.m
+  url: https://github.com/MATPOWER/matpower/blob/master/data/case30.m
+  license: BSD-3-Clause (MATPOWER); factual extraction only
+  verification: Pandapower case30 converges; 30 buses
+
+- id: WSCC9_GEN_INERTIA_GEN2
+  domain: standard_test_systems
+  title: WSCC 9-bus generator 2 inertia constant H (Anderson-Fouad table)
+  aliases: [Anderson Fouad gen2 H, machine 2 inertia]
+  values:
+    H_s: 6.4
+    Xd_prime_pu: 0.209
+    bus: 2
+  source:
+    title: Power System Control and Stability (Anderson & Fouad)
+    edition: "1990"
+    clause: Example 9-bus data table
+  url: https://openlibrary.org/books/OL1770328M/Power_system_control_and_stability
+  license: Factual tabular data; no prose copied
+  verification: Matches commonly reproduced 9-bus machine 2 H=6.4 s in course notes

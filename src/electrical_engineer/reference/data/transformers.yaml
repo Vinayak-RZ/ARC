@@ -1,0 +1,45 @@
+- id: VECTOR_DYN11
+  domain: transformers
+  title: Dyn11 vector group HV-to-LV phase shift
+  aliases: [Dyn11, delta star 11, Dy11]
+  values:
+    phase_shift_hv_to_lv_deg: -30.0
+    trap_note: LV lags HV by 30 deg; clock 11 means -30 not +30
+  source:
+    title: IEC 60076-1 vector group designation
+    edition: "2011"
+    clause: clock number convention
+  url: https://webstore.iec.ch/en/publication/28
+  license: Factual phase relationship
+  verification: Engine returns -30; common Dy11 trap
+
+- id: VECTOR_YD1
+  domain: transformers
+  title: Yd1 vector group phase shift
+  aliases: [Yd1, star delta 1]
+  values:
+    phase_shift_hv_to_lv_deg: 30.0
+    trap_note: Yd1 is +30 deg HV-to-LV
+  source:
+    title: IEC 60076-1
+    edition: "2011"
+    clause: clock 1
+  url: https://webstore.iec.ch/en/publication/28
+  license: Factual phase shift
+  verification: Clock 1 -> +30 deg
+
+- id: XFMR_Z_PU_TYPICAL_DIST
+  domain: transformers
+  title: Typical distribution transformer % impedance range
+  aliases: [transformer impedance range, z pu typical]
+  values:
+    z_pu_min: 0.04
+    z_pu_max: 0.08
+    voltage_class: distribution
+  source:
+    title: IEEE C57.12.00 / open textbook tables
+    edition: "study range"
+    clause: distribution class typical Z
+  url: https://standards.ieee.org/
+  license: Factual typical range
+  verification: Used for sanity bounds only not a design guarantee

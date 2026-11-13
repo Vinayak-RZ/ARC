@@ -41,10 +41,13 @@ Never call `evaluate_matlab_code`. Host talks only to Arc MCP.
 
 ## Retrieve (scaffold)
 
-When: a citation, page, or handbook claim is needed.
-Filters: book_id, chapter_id, domain_tag, folder_tag.
-Index: TBD (empty this graph). Call `retrieve` anyway. Empty is visible. Do not
-dump `knowledge/`.
+**RAG** when: citation, page, or handbook claim. Filters: book_id, chapter_id,
+domain_tag, folder_tag. Index: TBD (empty this graph). Call `retrieve` anyway.
+
+**Reference library** when: IEC/IEEE curve, IEC 60909 c, ACSR name, IEEE 9/14/30,
+IEEE 519 TDD, MCB type, Dyn11, IEEE 80 limit — `arc_reference_search/get` or
+`electrical-engineer reference search/get`; see `skills/reference/SKILL.md`.
+Never guess IDMT constants or conductor R at unstated temperature.
 
 ## Knowledge
 

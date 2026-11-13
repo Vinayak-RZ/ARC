@@ -41,10 +41,12 @@ No provider → exact token `unchecked`.
 
 ## Retrieve (scaffold)
 
-When a citation is needed, call EE `retrieve` with book/chapter/folder/domain
-filters. Index: TBD (empty this graph). Empty is **visible**. Do not dump
-`knowledge/ug-ee/**` into chat. Link `knowledge/ug-ee/<pack>/INDEX.md` and
-`knowledge/COVERAGE.yaml` unit ids instead.
+Citations: EE `retrieve` with book/chapter/folder/domain filters. Index: TBD.
+
+Standards data (curves, conductors, cases, limits): MCP `arc_reference_search` /
+`arc_reference_get` or CLI `electrical-engineer reference search|get`. Load
+`skills/reference/SKILL.md` when the sheet names IEC SI, Zebra, case14, Dyn11,
+etc. Empty retrieval is **visible**. Do not dump `knowledge/ug-ee/**` into chat.
 
 ## MATLAB / Simulink
 

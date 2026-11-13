@@ -1,0 +1,86 @@
+- id: ACSR_DRAKE
+  domain: overhead_conductors
+  title: ACSR Drake 26/7 (North America)
+  aliases: [Drake, Drake conductor]
+  values:
+    diameter_m: 0.0282
+    gmr_m: 0.01155
+    r_ac_ohm_per_km_20c: 0.069
+    default_spacing_m: 0.5
+    c_nf_per_km_nominal: 8.8
+    stranding: "26 Al + 7 St"
+  source:
+    title: ACSR conductor data (Southwire transmission tables)
+    edition: "public datasheet aggregation"
+    clause: Drake row
+  url: https://www.southwire.com/transmission-acsr
+  license: Manufacturer factual tabulation; values cross-checked against IEEE line design handbooks
+  verification: GMR 0.0379 ft -> 0.01155 m; R within 5% of handbook mile-to-km conversion
+
+- id: ACSR_ZEBRA
+  domain: overhead_conductors
+  title: ACSR Zebra 54/7 (Indian grid naming)
+  aliases: [Zebra, ACSR Zebra]
+  values:
+    diameter_m: 0.02862
+    gmr_m: 0.01058
+    r_ac_ohm_per_km_75c: 0.0789
+    default_spacing_m: 0.6
+    c_nf_per_km_nominal: 9.5
+    stranding: "54 Al + 7 St"
+  source:
+    title: CEA / utility ACSR reconductor tables (open summaries)
+    edition: "reproduced in Indian T&D guides"
+    clause: Zebra row
+  url: https://cea.nic.in/
+  license: Factual conductor electrical data
+  verification: Line-params engine X/R spot check vs 50 Hz hand calc at 0.6 m spacing
+
+- id: ACSR_DOG
+  domain: overhead_conductors
+  title: ACSR Dog 6/1.52 + 6/1.52 (Indian standard dog conductor)
+  aliases: [Dog, dog conductor]
+  values:
+    diameter_m: 0.014
+    gmr_m: 0.00541
+    r_ac_ohm_per_km_75c: 0.273
+    default_spacing_m: 0.45
+    c_nf_per_km_nominal: 9.0
+    stranding: "6+6"
+  source:
+    title: Indian overhead line practice tables
+    edition: "open course pack tables"
+    clause: Dog conductor
+  url: https://nptel.ac.in/
+  license: Factual data from open educational tables
+  verification: Resistance order-of-magnitude vs AREA scaling from Zebra
+
+- id: TEMP_COEFF_AL
+  domain: overhead_conductors
+  title: Aluminium resistance temperature coefficient (linear 20-75 C)
+  aliases: [aluminum temp coeff, alpha Al]
+  values:
+    alpha_per_c: 0.00393
+    base_temp_c: 20
+  source:
+    title: CRC Handbook electrical resistivity
+    edition: "94th"
+    clause: Al resistivity vs temperature
+  url: https://hbcp.chemnetbase.com/
+  license: Factual physical constant
+  verification: R(T)=R20*(1+alpha*(T-20))
+
+- id: TEMP_COEFF_CU
+  domain: overhead_conductors
+  title: Copper resistance temperature coefficient
+  aliases: [copper temp coeff, alpha Cu]
+  values:
+    alpha_per_c: 0.00393
+    base_temp_c: 20
+  source:
+    title: IEC 60228 / standard resistivity tables
+    edition: "open tabulation"
+    clause: Cu temperature coefficient
+  url: https://webstore.iec.ch/
+  license: Factual constant
+  verification: Matches 0.00393/degC teaching value
