@@ -132,8 +132,17 @@ def _load_diagram(session_id: str) -> tuple[str, dict[str, Any]]:
     return session_id, payload["diagram"]
 
 
-def _save(session_id: str, diagram: dict[str, Any], op: str) -> dict[str, Any]:
-    return session_mod.apply_diagram(session_id, diagram, author="agent", op=op)
+def _save(
+    session_id: str,
+    diagram: dict[str, Any],
+    op: str,
+    *,
+    target: str | None = None,
+    detail: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    return session_mod.apply_diagram(
+        session_id, diagram, author="agent", op=op, target=target, detail=detail
+    )
 
 
 def handle_tool(name: str, args: dict[str, Any]) -> dict[str, Any]:
@@ -169,7 +178,7 @@ def handle_tool(name: str, args: dict[str, Any]) -> dict[str, Any]:
                 "y": float(args.get("y") or 120),
             }
             diagram = session_mod.add_block(diagram, block)
-            out = _save(sid, diagram, "add_block")
+            out = _save(sid, diagram, "add_block", target=str(args["block_id"]))
             return {**out, "waits": False}
         if name == "control_studio_connect":
             sid = str(args["session_id"])
@@ -186,7 +195,13 @@ def handle_tool(name: str, args: dict[str, Any]) -> dict[str, Any]:
             sid = str(args["session_id"])
             _, diagram = _load_diagram(sid)
             diagram = session_mod.set_param(diagram, str(args["block_id"]), dict(args.get("params") or {}))
-            out = _save(sid, diagram, "set_param")
+            out = _save(
+                sid,
+                diagram,
+                "set_param",
+                target=str(args["block_id"]),
+                detail=dict(args.get("params") or {}),
+            )
             return {**out, "waits": False}
         if name == "control_studio_remove":
             sid = str(args["session_id"])

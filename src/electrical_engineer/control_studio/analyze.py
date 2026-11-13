@@ -82,17 +82,17 @@ def analyze(diagram: dict[str, Any], *, run_dir: Path | None = None) -> dict[str
     poles = np.roots(den).tolist()
     zeros = np.roots(num).tolist() if len(num) > 1 else []
 
-    margins = extract_margins(closed)
-    bode_png = run_dir / "studio_bode.png"
-    nyquist_png = run_dir / "studio_nyquist.png"
-    rlocus_png = run_dir / "studio_root_locus.png"
-
     try:
         ol, _ = open_loop_with_controller(diagram)
     except StudioError:
         ol = closed
 
-    _plot_bode_annotated(closed, bode_png)
+    margins = extract_margins(ol)
+    bode_png = run_dir / "studio_bode.png"
+    nyquist_png = run_dir / "studio_nyquist.png"
+    rlocus_png = run_dir / "studio_root_locus.png"
+
+    _plot_bode_annotated(ol, bode_png)
 
     theme = get_theme("light")
     plt.figure(figsize=(5, 5))
