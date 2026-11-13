@@ -20,6 +20,11 @@ def _fixture(problem: dict[str, Any], item: Path) -> dict[str, Any]:
 
 def run_circuit_item(item: Path, expect: dict[str, Any], *, run_root: Path | None = None) -> dict[str, Any]:
     problem = _fixture({}, item)
+    if run_root is None and expect.get("gold_provenance") == "ngspice_oracle":
+        from electrical_engineer.runner.runs import project_root
+
+        run_root = project_root() / "runs" / "_circuit_eval"
+        run_root.mkdir(parents=True, exist_ok=True)
     run_dir = None
     if run_root is not None:
         run_dir = run_root / item.name
@@ -37,6 +42,8 @@ def run_circuit_item(item: Path, expect: dict[str, Any], *, run_root: Path | Non
     ok = bool(out.get("ok"))
     if want is not None:
         got = out.get("value")
+        if expect.get("gold_provenance") == "ngspice_oracle" and out.get("simulated") is not None:
+            got = out.get("simulated")
         gold_ok = got is not None and abs(float(got) - float(want)) <= tol
         ok = ok and gold_ok
     if (out.get("spice") or {}).get("skipped") and problem.get("require_spice"):

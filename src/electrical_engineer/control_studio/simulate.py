@@ -23,13 +23,57 @@ def _output_unit(diagram: dict[str, Any]) -> str:
     return ""
 
 
+def _round_window_nice(x: float) -> float:
+    """Round up to 1, 2, or 5 × 10^n for Auto simulation windows."""
+    if not math.isfinite(x) or x <= 0:
+        return 10.0
+    exp = math.floor(math.log10(x))
+    mag = 10.0**exp
+    norm = x / mag
+    step = 1.0 if norm <= 1.0 else 2.0 if norm <= 2.0 else 5.0 if norm <= 5.0 else 10.0
+    out = step * mag
+    if out < x - 1e-12:
+        if step == 1.0:
+            step = 2.0
+        elif step == 2.0:
+            step = 5.0
+        elif step == 5.0:
+            step = 10.0
+        else:
+            step = 10.0
+            mag *= 10.0
+        out = step * mag
+    return float(min(600.0, max(2.0, out)))
+
+
 def _auto_t_final(margins: dict[str, Any] | None, *, t_settle: float | None = None) -> float:
     if t_settle is not None and math.isfinite(t_settle) and t_settle > 0:
-        return float(min(600.0, max(2.0, 8.0 * t_settle)))
+        return _round_window_nice(8.0 * t_settle)
     wcg = (margins or {}).get("gain_crossover_rad_s")
     if wcg and math.isfinite(float(wcg)) and float(wcg) > 0:
-        return float(min(600.0, max(10.0, 6.0 / float(wcg))))
+        return _round_window_nice(max(10.0, 6.0 / float(wcg)))
     return 10.0
+
+
+def _interpolate_settle_time(t, y, settle_idx: int, y_ss: float, band: float) -> float:
+    """Linear crossing time when the response last enters the ±2% band."""
+    if settle_idx >= len(y) - 1:
+        return float(t[settle_idx])
+    ti = float(t[settle_idx])
+    tj = float(t[settle_idx + 1])
+    yi = float(y[settle_idx])
+    yj = float(y[settle_idx + 1])
+    ai = abs(yi - y_ss)
+    aj = abs(yj - y_ss)
+    if ai <= band:
+        return ti
+    if aj > band:
+        return ti
+    if abs(ai - aj) < 1e-15:
+        return ti
+    frac = (ai - band) / (ai - aj)
+    frac = max(0.0, min(1.0, frac))
+    return ti + frac * (tj - ti)
 
 
 def _step_metrics(t, y, setpoint: float, window_s: float) -> dict[str, Any]:
@@ -85,7 +129,7 @@ def _step_metrics(t, y, setpoint: float, window_s: float) -> dict[str, Any]:
         peak = float(np.max(y)) if y_ss >= 0 else float(np.min(y))
         over = (peak - y_ss) / abs(y_ss) * 100.0 if y_ss >= 0 else (y_ss - peak) / abs(y_ss) * 100.0
         peak_idx = int(np.argmax(y)) if y_ss >= 0 else int(np.argmin(y))
-        metrics["t_settle_s"] = float(t[settle_idx])
+        metrics["t_settle_s"] = _interpolate_settle_time(t, y, settle_idx, y_ss, band)
         metrics["overshoot_pct"] = round(max(0.0, over), 2)
         metrics["peak_t_s"] = float(t[peak_idx])
         metrics["peak_value"] = peak

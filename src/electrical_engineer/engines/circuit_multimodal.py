@@ -53,6 +53,7 @@ def propose_netlist_from_component(component_id: str, *, cwd: Path | None = None
     if component_id == "schematic.divider":
         graph = divider_graph(vin=10.0, r1=1000.0, r2=1000.0)
         png_dir = root / "runs" / "_mm_smoke"
+        png_dir.mkdir(parents=True, exist_ok=True)
         try:
             from electrical_engineer.visual_kit.render_circuit import render_schematic_divider
 
@@ -74,6 +75,7 @@ def propose_netlist_from_component(component_id: str, *, cwd: Path | None = None
         graph = series_rlc_graph(vin=10.0, r_ohm=1000.0, l_h=1e-3, c_f=1e-6)
         cir = compile_netlist(graph)
         png_dir = root / "runs" / "_mm_smoke"
+        png_dir.mkdir(parents=True, exist_ok=True)
         try:
             from electrical_engineer.visual_kit.render_circuit import render_schematic_rlc_series
 

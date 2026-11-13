@@ -4,5 +4,5 @@
   "value": 10.0,
   "tol": 0.001,
   "require_spice": true,
-  "gold_provenance": "hand_calc"
+  "gold_provenance": "ngspice_oracle"
 }

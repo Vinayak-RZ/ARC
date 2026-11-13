@@ -10,7 +10,7 @@ export function useFitContent() {
     (duration = 0) => {
       const edgeCount = getEdges().length;
       if (edgeCount < 1) return;
-      fitView({ padding: 0.14, duration, minZoom: MIN_ZOOM, maxZoom: MAX_ZOOM, includeHiddenNodes: false });
+      fitView({ padding: 0.1, duration, minZoom: MIN_ZOOM, maxZoom: MAX_ZOOM, includeHiddenNodes: false });
     },
     [fitView, getEdges],
   );

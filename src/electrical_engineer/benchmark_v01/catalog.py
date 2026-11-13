@@ -246,7 +246,8 @@ def build_task_catalog() -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]
                 "answer_schema": schema,
             }
             questions.append(public)
-            raw_ref = oracle_eval(givens, grading)
+            grading_ctx = {**grading, "benchmark_item": base_name, "benchmark_item_dir": str(item_dir)}
+            raw_ref = oracle_eval(givens, grading_ctx)
             if "value" in raw_ref:
                 assert_circuit_gold_independent(base_name, givens, float(raw_ref["value"]))
             ref = _round_reference(raw_ref)

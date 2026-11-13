@@ -70,19 +70,19 @@ def main() -> int:
         run_dir = run_root / cid
         run_dir.mkdir(parents=True, exist_ok=True)
         value: float | None = None
-        if spec["analysis"] == "tran":
+        used_hand = False
+        if spec["analysis"] == "tran" and spec.get("gold_provenance") == "hand_calc":
             value = _transient_hand_oracle(spec)
+            used_hand = value is not None
         if value is None:
             sim = run_spice_netlist(spec["netlist"], run_dir, problem)
             if not sim.get("ok"):
                 print(f"{cid}: ngspice failed: {sim}", file=sys.stderr)
                 return 1
             value = float(sim["value"])
+            prov = "ngspice_oracle"
         else:
-            sim = {"ok": True, "tool": "hand_transient"}
-        prov = spec["gold_provenance"]
-        if spec["analysis"] == "tran" and value is not None:
-            prov = "hand_calc"
+            prov = "hand_calc" if used_hand else spec["gold_provenance"]
         expect = {
             "schema": "arc.eval.expect.v2",
             "engine": "circuit_unit",

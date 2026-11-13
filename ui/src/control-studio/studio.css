@@ -20,9 +20,11 @@
   padding: 0;
   gap: 0;
   grid-template-columns: 220px minmax(0, 1fr);
-  --studio-results-h: clamp(320px, 44vh, 420px);
-  grid-template-rows: 44px minmax(280px, 1fr) var(--studio-results-h);
-  min-height: 560px;
+  --studio-results-h: clamp(320px, 46vh, 400px);
+  --studio-canvas-h: clamp(280px, min(34vh, 320px), 360px);
+  grid-template-rows: 44px var(--studio-canvas-h) var(--studio-results-h);
+  min-height: 0;
+  max-height: 100%;
   grid-template-areas:
     "bar bar"
     "palette canvas"
@@ -223,9 +225,10 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 160px;
-  min-width: 560px;
+  min-height: 0;
+  min-width: 0;
   max-height: 100%;
+  overflow: hidden;
 }
 
 .studio-step-chart-head-unified {
@@ -249,11 +252,12 @@
 }
 
 .studio-step-plot {
-  flex: 1 1 auto;
-  min-height: 160px;
-  min-width: 560px;
+  flex: 1 1 0;
+  min-height: 0;
+  min-width: 0;
   display: flex;
   align-items: stretch;
+  overflow: hidden;
 }
 
 .studio-step-tick {
@@ -267,9 +271,10 @@
 }
 
 .studio-step-band-edge {
-  stroke: var(--cs-accent);
-  stroke-opacity: 0.45;
+  stroke: var(--cs-text-muted);
+  stroke-opacity: 0.85;
   stroke-width: 1;
+  stroke-dasharray: 2 3;
 }
 
 .studio-step-settle {
@@ -301,6 +306,9 @@
 .studio-step-svg text.studio-step-peak-label {
   font-size: 11px;
   fill: var(--cs-text-secondary);
+  paint-order: stroke fill;
+  stroke: var(--cs-surface);
+  stroke-width: 3px;
 }
 
 .studio-settled-pill {
@@ -1288,10 +1296,12 @@
   align-items: stretch;
   flex: 1 1 0;
   min-height: 0;
+  overflow: hidden;
   background: var(--cs-canvas);
   border-radius: var(--cs-radius-sm);
   border: 1px solid var(--cs-border);
   padding: var(--cs-space-2);
+  box-sizing: border-box;
 }
 
 .studio-results-stage img {

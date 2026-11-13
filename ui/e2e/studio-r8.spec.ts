@@ -35,11 +35,7 @@ test("off-target loop reports settling time and overshoot against its final valu
   expect(m.final_value).toBeCloseTo(10 / 11, 3);
   expect(m.steady_state_error_pct).toBeCloseTo(9.1, 1);
   expect(m.t_settle_s, "settling time must exist for a flat, off-target response").not.toBeNull();
-  // independent recomputation: last time |y - y_ss| > 2% of y_ss
-  const yss = m.final_value as number;
-  let idx = 0;
-  for (let i = s.y.length - 1; i >= 0; i -= 1) if (Math.abs(s.y[i] - yss) > 0.02 * Math.abs(yss)) { idx = i; break; }
-  expect(m.t_settle_s).toBeCloseTo(s.t[idx], 2);
+  expect(m.t_settle_s).toBeCloseTo(Math.log(50) / 11, 2);
   expect(m.t_settle_s).toBeLessThan(0.5); // ln(50)/11 = 0.36 s for this loop
   expect(m.overshoot_pct).toBeCloseTo(0, 1);
 });

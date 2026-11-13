@@ -34,8 +34,8 @@ python -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
 electrical-engineer eval --pack circuits
-PASS divider-dc-01 recipe=solve-circuit-problem
-1/1 passed
+PASS mna-ladder-01 recipe=solve-circuit-problem
+31/31 passed
 ```
 
 If `python -m venv` fails (common on Debian/Ubuntu without `python3-venv`), install the `python3-venv` package or use a user install instead:
@@ -45,7 +45,7 @@ pip install --user -e ".[dev]"
 electrical-engineer eval --pack circuits
 ```
 
-That eval is the product check. Gold `eval/gold/circuits/divider-dc-01` expects divider `Vout = 5.0` from `Vin=10`, `R1=R2=1k`.
+That eval is the product check. Circuit golds are ngspice oracles (see `scripts/capture_circuit_oracle.py`); `mna-ladder-01` checks a resistor ladder node voltage against SPICE, not `derive()` alone.
 
 ## Domain kernel
 
@@ -146,7 +146,7 @@ electrical-engineer eval --pack circuits
 ./scripts/validate.sh
 ```
 
-Put a `problem.json` in the working directory for numeric tasks (see `eval/gold/circuits/divider-dc-01/fixtures/problem.json`).
+Put a `problem.json` in the working directory for numeric tasks (see `eval/gold/circuits/mna-ladder-01/fixtures/problem.json`).
 
 If you are an agent reading this: load [`skills/SKILL.md`](skills/SKILL.md), then [`docs/hosts/README.md`](docs/hosts/README.md). Do not invent a kind of check. Do not present a fluent number as verified.
 
@@ -225,26 +225,27 @@ One-command frontier validation:
 ./scripts/validate_frontier.sh
 ```
 
-### Domain screenshots (localhost UI window)
+### Product UI (localhost shell)
 
-Fixed **1280×900** viewport captures of the Arc shell at `127.0.0.1:8765` (one run in the sidebar, diagram on canvas, plots below). Not full-page scroll shots.
-
-Regenerate:
+**2× device captures** at **1440×900** (`deviceScaleFactor: 2`) from `127.0.0.1:8765`. Regenerate after `npm run build` in `ui/`:
 
 ```bash
-pip install playwright
+pip install playwright pngquant-bin
 playwright install chromium
-npm run build --prefix ui
-python scripts/capture_readme_ui_screenshots.py
+EE_NO_BROWSER=1 electrical-engineer ui &
+python scripts/capture_readme_showcase.py
 ```
 
-| Domain | Screenshot |
-|--------|------------|
-| Circuits (series RLC + transient) | ![RLC UI](docs/media/ui-rlc-full.png) |
-| Control (loop diagram + Bode/step) | ![Control UI](docs/media/ui-control-bode-full.png) |
-| Power (one-line + fault table) | ![Power fault UI](docs/media/ui-power-fault-full.png) |
-| Protection (CT/relay one-line + settings) | ![Protection UI](docs/media/ui-protection-full.png) |
-| Drives (DC steady-state) | ![Drives UI](docs/media/ui-drives-full.png) |
+| View | Screenshot |
+|------|------------|
+| Home (recipes + recent runs) | ![Arc home](docs/assets/readme/home-light.png) |
+| Control Studio (block diagram + step) | ![Control Studio](docs/assets/readme/studio-hero-light.png) |
+| Checked divider problem | ![Circuit problem](docs/assets/readme/problem-checked-light.png) |
+| Visual kit gallery | ![Gallery](docs/assets/readme/gallery-light.png) |
+| Reference library | ![Library](docs/assets/readme/library-light.png) |
+| Studio (dark) | ![Studio dark](docs/assets/readme/studio-dark.png) |
+
+Legacy domain window shots (1280×900) remain under [`docs/media/`](docs/media/).
 
 ## How it works
 

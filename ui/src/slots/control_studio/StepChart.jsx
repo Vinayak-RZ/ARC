@@ -43,7 +43,12 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
     if (!el) return undefined;
     const ro = new ResizeObserver(() => {
       const r = el.getBoundingClientRect();
-      setSize({ w: Math.max(560, Math.floor(r.width)), h: Math.max(160, Math.floor(r.height)) });
+      const rh = Math.floor(r.height);
+      const rw = Math.floor(r.width);
+      setSize({
+        w: rw > 0 ? rw : 560,
+        h: rh > 0 ? rh : 160,
+      });
     });
     ro.observe(el);
     return () => ro.disconnect();
@@ -80,18 +85,23 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
   const bandHi = flat ? yss + 0.02 * Math.abs(yss) : null;
   const unitSfx = unit ? ` ${unit}` : "";
   const finalText = flat ? `${Number(yss).toPrecision(3)}${unitSfx}` : "";
+  const ssePct = flat ? Math.abs(Number(metrics.steady_state_error_pct) || 0) : 0;
+  const deEmphasizeSettle = flat && ssePct > 50;
+  const yssNearAxis = flat && ypx(yss) > m.t + plotH * 0.88;
   // One summary line, drawn inside the plot's top margin so it can never wrap into the controls.
   const summary =
-    flat && metrics.t_settle_s != null
-      ? `Settling time ${fmtTime(metrics.t_settle_s)} s` +
-        (offTarget
-          ? ` · Final value ${finalText} · ${fmt(metrics.steady_state_error_pct, 1)}% ${metrics.direction || "below"} setpoint`
-          : metrics.overshoot_pct != null
-            ? ` · Overshoot ${fmt(metrics.overshoot_pct, 1)}%`
-            : "")
+    flat && (deEmphasizeSettle || metrics.t_settle_s != null)
+      ? deEmphasizeSettle
+        ? `Final value ${finalText} · ${fmt(metrics.steady_state_error_pct, 1)}% ${metrics.direction || "below"} setpoint`
+        : `Settling time ${fmtTime(metrics.t_settle_s)} s` +
+          (offTarget
+            ? ` · Final value ${finalText} · ${fmt(metrics.steady_state_error_pct, 1)}% ${metrics.direction || "below"} setpoint`
+            : metrics.overshoot_pct != null
+              ? ` · Overshoot ${fmt(metrics.overshoot_pct, 1)}%`
+              : "")
       : "";
   const peak =
-    flat && metrics.overshoot_pct > 0.05 && metrics.peak_t_s != null
+    flat && metrics.overshoot_pct > 0.5 && metrics.peak_t_s != null
       ? { px: x(metrics.peak_t_s), py: ypx(metrics.peak_value) }
       : null;
   const ts = metrics.t_settle_s;
@@ -170,7 +180,11 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
             />
             <line x1={m.l} x2={w - m.r} y1={ypx(bandHi)} y2={ypx(bandHi)} className="studio-step-band-edge" />
             <line x1={m.l} x2={w - m.r} y1={ypx(bandLo)} y2={ypx(bandLo)} className="studio-step-band-edge" />
-            <text x={m.l + plotW * 0.62} y={ypx(bandLo) + 14} className="studio-step-band-label">
+            <text
+              x={yssNearAxis ? m.l + 6 : m.l + plotW * 0.62}
+              y={yssNearAxis ? ypx(bandHi) - 6 : ypx(bandLo) + 14}
+              className="studio-step-band-label"
+            >
               ±2% of final value
             </text>
           </>
@@ -182,10 +196,20 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
         {offTarget ? (
           <>
             <line x1={m.l} x2={w - m.r} y1={ypx(yss)} y2={ypx(yss)} className="studio-step-final" />
-            <text x={w - m.r - 4} y={ypx(yss) + 15} className="studio-step-ref-label" textAnchor="end">
+            <text
+              x={yssNearAxis ? m.l + 6 : w - m.r - 4}
+              y={yssNearAxis ? ypx(yss) - 20 : ypx(yss) + 15}
+              className="studio-step-ref-label"
+              textAnchor={yssNearAxis ? "start" : "end"}
+            >
               Final value {finalText}
             </text>
-            <text x={w - m.r - 4} y={ypx(yss) + 30} className="studio-step-sse" textAnchor="end">
+            <text
+              x={yssNearAxis ? m.l + 6 : w - m.r - 4}
+              y={yssNearAxis ? ypx(yss) - 6 : ypx(yss) + 30}
+              className="studio-step-sse"
+              textAnchor={yssNearAxis ? "start" : "end"}
+            >
               e_ss = {fmt(metrics.steady_state_error_pct, 1)}%
             </text>
           </>
@@ -207,7 +231,7 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
         {peak ? (
           <>
             <circle cx={peak.px} cy={peak.py} r={3.5} className="studio-step-peak" />
-            <text x={peak.px + 8} y={peak.py + 4} className="studio-step-peak-label">
+            <text x={peak.px + 8} y={peak.py - 10} className="studio-step-peak-label">
               {fmt(metrics.overshoot_pct, 1)}%
             </text>
           </>

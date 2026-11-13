@@ -89,7 +89,7 @@ export function Sidebar({ runs, onNavigate, onNewProblem }) {
               key={run.id}
               type="button"
               className="sidebar-recent-item"
-              title={run.id}
+              title={displayTitle(run)}
               aria-current={current === run.id ? "true" : undefined}
               onClick={() => onNavigate({ view: "problems", runId: run.id })}
             >

@@ -78,7 +78,6 @@ export function VisualGallery() {
               </div>
               <figcaption>
                 <span className="gallery-card-title">{CAPTIONS[c.id] || c.title || c.id.split(".").pop()}</span>
-                <span className="hint">{c.id}</span>
               </figcaption>
             </figure>
           );
