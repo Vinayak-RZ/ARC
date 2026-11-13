@@ -43,7 +43,8 @@ def render_schematic_divider(out_dir: Path, *, theme_name: ThemeName = "light") 
             "meta": {
                 "component_id": "schematic.divider",
                 "backend": "schemdraw",
-                "solver": "ngspice" if abs(v_out - v_in * r2 / (r1 + r2)) < 1e-9 else "dc",
+                "solver": "ngspice" if solved.get("spice_used") else "dc",
+            "V_out_spice": solved.get("V_out_spice"),
                 **solved,
             },
         }

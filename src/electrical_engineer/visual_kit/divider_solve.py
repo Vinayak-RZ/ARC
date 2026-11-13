@@ -23,4 +23,13 @@ def solve_divider(r1_ohm: float = 1000.0, r2_ohm: float = 1000.0, v_in: float = 
                     v_out = float(out["value"])
     except (ImportError, OSError, ValueError, TypeError):
         pass
-    return {"V_in": v_in, "V_out": v_out, "I": i_a, "R1": r1_ohm, "R2": r2_ohm}
+    v_analytic = v_in * r2_ohm / (r1_ohm + r2_ohm)
+    return {
+        "V_in": v_in,
+        "V_out": v_analytic,
+        "V_out_spice": v_out,
+        "I": i_a,
+        "R1": r1_ohm,
+        "R2": r2_ohm,
+        "spice_used": abs(v_out - v_analytic) > 1e-6,
+    }
