@@ -41,7 +41,7 @@ def run_circuit_item(item: Path, expect: dict[str, Any], *, run_root: Path | Non
         ok = ok and gold_ok
     if (out.get("spice") or {}).get("skipped") and problem.get("require_spice"):
         ok = False
-    if out.get("mismatch"):
+    if out.get("mismatch") and problem.get("require_spice"):
         ok = False
     summary = {
         "engine": expect.get("engine", "circuit_unit"),

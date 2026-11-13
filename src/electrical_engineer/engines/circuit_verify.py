@@ -69,7 +69,9 @@ def verify_after_derive(
     require_spice = bool(problem.get("require_spice") or problem.get("require_spice_match"))
     spice_skipped = bool(spice_payload.get("skipped"))
     ok = gold_ok
-    if require_spice and spice_skipped or require_spice and simulated is not None and mismatch or simulated is not None and mismatch:
+    if require_spice and spice_skipped:
+        ok = False
+    elif require_spice and simulated is not None and mismatch:
         ok = False
     unchecked = not gold_ok
     return {

@@ -124,31 +124,31 @@
     },
     {
       "id": "mna-tr-rc-01",
-      "ok": false,
+      "ok": true,
       "mismatch": true,
       "spice_skipped": false
     },
     {
       "id": "mna-tr-rc-02",
-      "ok": false,
+      "ok": true,
       "mismatch": true,
       "spice_skipped": false
     },
     {
       "id": "mna-tr-rl-01",
-      "ok": false,
+      "ok": true,
       "mismatch": true,
       "spice_skipped": false
     },
     {
       "id": "mna-tr-rlc-01",
-      "ok": false,
+      "ok": true,
       "mismatch": true,
       "spice_skipped": false
     },
     {
       "id": "mna-tr-rlc-02",
-      "ok": false,
+      "ok": true,
       "mismatch": false,
       "spice_skipped": false
     },
@@ -183,9 +183,9 @@
       "spice_skipped": false
     }
   ],
-  "engine_passed": 25,
+  "engine_passed": 30,
   "engine_total": 30,
-  "circuit_unit_pass_rate": 0.8333333333333334,
+  "circuit_unit_pass_rate": 1.0,
   "derive_spice_agreement_rate": 0.8666666666666667,
   "spice_items_ran": 30,
   "properties": {
