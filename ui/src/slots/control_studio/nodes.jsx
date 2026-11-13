@@ -29,8 +29,8 @@ export function SumNode({ data, selected }) {
     <div className={`studio-node studio-sum${selected ? " is-selected" : ""}${data?.highlight ? " is-highlight" : ""}`}>
       {badge(data)}
       {pinNote(data)}
-      <Handle type="target" position={Position.Left} id="in1" style={{ top: "32%" }} />
-      <Handle type="target" position={Position.Left} id="feedback" style={{ top: "68%" }} />
+      <Handle type="target" position={Position.Left} id="in1" style={{ top: "42%" }} />
+      <Handle type="target" position={Position.Bottom} id="feedback" />
       <Handle type="source" position={Position.Right} id="out" />
       <span className="studio-sum-glyphs">
         <span className="sign-plus">+</span>
@@ -115,8 +115,10 @@ export function ScopeNode({ data, selected }) {
     <div className={`studio-node studio-scope${selected ? " is-selected" : ""}${data?.highlight ? " is-highlight" : ""}`}>
       {pinNote(data)}
       <Handle type="target" position={Position.Left} id="in" />
-      <span className="scope-glyph">◔</span>
-      <span>y(t)</span>
+      <span className="scope-glyph" aria-hidden>
+        ◔
+      </span>
+      <span className="scope-title">Scope</span>
       {errs(data)}
     </div>
   );
@@ -129,6 +131,7 @@ export function PlantNode({ data, selected }) {
       {pinNote(data)}
       <Handle type="target" position={Position.Left} id="in" />
       <Handle type="source" position={Position.Right} id="out" />
+      <Handle type="source" position={Position.Bottom} id="tap" className="studio-tap-handle" />
       <span className="plant-label">{data?.label || data?.blockType}</span>
       {errs(data)}
     </div>

@@ -33,6 +33,7 @@ export function diagramToFlow(diagram, { issuesByBlock = {}, notes = [], highlig
   const edges = (diagram?.wires || []).map((w) => {
     const [fb, fp] = w.from.split(":");
     const [tb, tp] = w.to.split(":");
+    const below = tp === "feedback" || w.route === "below";
     return {
       id: w.id,
       type: "signal",
@@ -41,7 +42,7 @@ export function diagramToFlow(diagram, { issuesByBlock = {}, notes = [], highlig
       sourceHandle: fp,
       targetHandle: tp,
       markerEnd: EDGE_MARKER,
-      data: { label: wireLabel(w.from, w.to, blocksById) },
+      data: { label: wireLabel(w.from, w.to, blocksById), route: below ? "below" : "forward" },
     };
   });
   return { nodes, edges };
