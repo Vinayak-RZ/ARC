@@ -41,7 +41,7 @@ Notes: the composer ring is drawn on the composer card (the textarea keeps a tra
 |---|---|---|---|
 | 1 | Margin captions | done | above, G5 |
 | 2 | Focus captures plus this table | done | above, G9 |
-| 3 | Work step expander | done | `.step-expand` styled from tokens, `aria-label="Show working"`, chevron rotates when open; `problem-work-dark.png` and `problem-work-light.png`. Not done: step 2 expanded by default |
+| 3 | Work step expander | done | `.step-expand` styled from tokens, `aria-label="Show working"`, chevron rotates when open; `problem-work-dark.png` and `problem-work-tab-light.png`. Not done: step 2 expanded by default |
 | 4 | Thumbnail well, both themes | done | `home-dark.png`, `home-empty-light.png` |
 | 5 | Specs | done, merge not done | `studio-r7.spec.ts` added (4 tests), r5 dark test strengthened, wire-selection fails on unmeasurable elements, `retries: 0`, critiques 3 to 7 under `docs/planning/frontier-2026-11/design-critiques/`. 27 of 27 e2e pass at retries 0. PR #58 is not merged (user decides) |
 | 6 | Settle wording | not done (out of scope for this half-round) | |
