@@ -8,8 +8,8 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from electrical_engineer.visual_kit.render import render_component
 from electrical_engineer.visual_kit.registry import list_component_ids
+from electrical_engineer.visual_kit.render import render_component
 
 ROOT = Path(__file__).resolve().parents[2]
 
