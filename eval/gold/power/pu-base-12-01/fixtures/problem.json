@@ -1,0 +1,11 @@
+{
+  "s_system_mva": 100,
+  "v_system_kv": 13.8,
+  "elements": [
+    {"id": "gen", "z_pu": "0.2j", "s_base_mva": 50, "sequence": "1"},
+    {"id": "xf", "z_pu": "0.1j", "s_base_mva": 100, "sequence": "1"}
+  ],
+  "check_kind": "sym_fault_z1",
+  "expected": 0.2,
+  "tol": 0.001
+}

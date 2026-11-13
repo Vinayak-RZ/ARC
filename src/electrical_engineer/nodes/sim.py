@@ -151,6 +151,11 @@ def run_spice(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
                         break
             else:
                 last = _missing("ngspice/PySpice", spec, inputs)
+                last["hint"] = (
+                    "ngspice/PySpice not installed; for RLC use run-rlc-analytic "
+                    "or problem keys r_ohm, l_h, c_f, v_step"
+                )
+                last["analytic_recipe"] = "run-rlc-analytic"
             continue
         if run_dir is None:
             last = _missing("ngspice/PySpice", spec, inputs)
@@ -376,6 +381,35 @@ def run_ed_lambda(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any
     }
 
 
+@register("run-symmetrical-fault-base")
+def run_symmetrical_fault_base(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
+    from electrical_engineer.engines.pu_base import aggregate_fault_impedance
+
+    run_dir_s = spec.get("run_dir")
+    if not run_dir_s:
+        return _missing("symmetrical-fault-base", spec, inputs)
+    problem = _problem(spec)
+    try:
+        agg = aggregate_fault_impedance(
+            problem.get("elements", []),
+            s_system_mva=float(problem.get("s_system_mva", 100)),
+            v_system_kv=float(problem.get("v_system_kv", 13.8)),
+        )
+    except (ValueError, TypeError, KeyError) as exc:
+        return {"ok": False, "error": str(exc), "unchecked": True, "tool": "pu_base"}
+    run_dir = Path(run_dir_s)
+    json_safe = {k: v for k, v in agg.items() if k not in ("z1_pu", "z2_pu", "z0_pu")}
+    _write_run_json(run_dir, "sym_fault_impedance.json", json_safe)
+    return {
+        "ok": True,
+        "unchecked": False,
+        "tool": "pu_base",
+        "value": float(agg["z1_pu_mag"]),
+        "result": agg,
+        "capability": "power-network-study",
+    }
+
+
 @register("run-load-flow")
 def run_load_flow(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
     from electrical_engineer.engines.power_runner import pandapower_available, run_power_study
@@ -429,7 +463,45 @@ def check_numeric(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any
     }
 
 
+def _recompute_scalar(problem: dict[str, Any]) -> float | None:
+    kind = str(problem.get("check_kind") or problem.get("engine") or problem.get("kind") or "")
+    if not kind:
+        return None
+    try:
+        from electrical_engineer.engines import ee_v2_solvers as v2
+    except ImportError:
+        return None
+    if kind == "rc_step" and problem.get("unit") == "V":
+        return float(v2.rc_step(float(problem["v"]), float(problem["r"]), float(problem["c"]), float(problem["t"]))["vc_V"])
+    if kind == "rl_step" and problem.get("unit") == "A":
+        return float(v2.rl_step(float(problem["v"]), float(problem["r"]), float(problem["l"]), float(problem["t"]))["i_A"])
+    if kind == "ccm_buck_duty":
+        return float(v2.ccm_buck(float(problem["vin"]), float(problem["vout"]), float(problem["l"]), float(problem["c"]), float(problem["fs"]))["duty"])
+    if kind == "ed_penalty_dispatch":
+        r = v2.ed_with_losses(problem.get("units", []), problem.get("B"), float(problem["pd_mw"]))
+        idx = int(problem.get("unit_index", 0))
+        return float(r["P_mw"][idx])
+    if kind == "sym_fault_z1":
+        from electrical_engineer.engines.pu_base import aggregate_fault_impedance
+
+        agg = aggregate_fault_impedance(
+            problem["elements"],
+            s_system_mva=float(problem.get("s_system_mva", 100)),
+            v_system_kv=float(problem.get("v_system_kv", 13.8)),
+        )
+        return float(abs(agg["z1_pu"]))
+    if kind == "steady_state_error" and "gain" in problem:
+        st = int(problem.get("system_type", 1))
+        err = v2.steady_state_error_type(st, float(problem["gain"]))
+        key = str(problem.get("error_key") or "ess_ramp")
+        return float(err[key])
+    return None
+
+
 def _hand_value(problem: dict[str, Any]) -> float | None:
+    rec = _recompute_scalar(problem)
+    if rec is not None:
+        return rec
     kind = str(problem.get("kind") or "")
     if kind == "ohms_law" and "v" in problem and "r" in problem:
         r = float(problem["r"])

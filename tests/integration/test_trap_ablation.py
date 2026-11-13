@@ -83,9 +83,29 @@ def test_ablation_t11_margin_crossover_names() -> None:
     assert abs(m["gain_margin_dB"] - bare_gm_db) > 5.0
 
 
+def test_ablation_t12_pu_base_not_transformer_only() -> None:
+    from electrical_engineer.engines.pu_base import aggregate_fault_impedance, impedance_pu_on_new_base
+
+    x_gen_50 = 0.2j
+    x_xf_100 = 0.1j
+    arc = aggregate_fault_impedance(
+        [
+            {"id": "gen", "z_pu": x_gen_50, "s_base_mva": 50, "sequence": "1"},
+            {"id": "xf", "z_pu": x_xf_100, "s_base_mva": 100, "sequence": "1"},
+        ],
+        s_system_mva=100,
+        v_system_kv=13.8,
+    )
+    bare = abs(x_xf_100)
+    assert abs(arc["z1_pu"] - (0.1j + 0.1j)) < 1e-9
+    assert abs(bare - 0.1) < 1e-9
+    assert abs(abs(arc["z1_pu"]) - bare) > 0.05
+    assert abs(impedance_pu_on_new_base(x_gen_50, s_old_mva=50, s_new_mva=100, v_old_kv=13.8, v_new_kv=13.8) - 0.1j) < 1e-12
+
+
 def test_trap_prompts_catalog_loads() -> None:
     from pathlib import Path
 
     text = Path("proofs/ablation/trap_prompts.yaml").read_text(encoding="utf-8")
     data = yaml.safe_load(text)
-    assert "T1" in data["traps"] and "T6" in data["traps"] and "T11" in data["traps"]
+    assert "T1" in data["traps"] and "T6" in data["traps"] and "T11" in data["traps"] and "T12" in data["traps"]
