@@ -57,19 +57,155 @@ def _read_json(path: Path) -> dict:
     return data if isinstance(data, dict) else {}
 
 
+def _opaque_title(title: str, folder_name: str) -> bool:
+    text = (title or "").strip()
+    if not text or text == folder_name:
+        return True
+    if text.startswith("cs-") and len(text) <= 16:
+        return True
+    return bool(len(text) <= 20 and "-" in text and " " not in text and text.lower() == text)
+
+
+def _human_run_title(folder: Path, evid: dict) -> str:
+    from electrical_engineer.circuit.title import run_title
+
+    title = str(evid.get("title") or "").strip()
+    if title and not _opaque_title(title, folder.name):
+        return title
+    problem = _read_json(folder / "problem.json")
+    recipe_id = str(evid.get("recipe_id") or problem.get("recipe_id") or "")
+    if problem:
+        derived = run_title(recipe_id or "solve-circuit-problem", problem)
+        if derived:
+            return derived
+    diagram = _read_json(folder / "control_diagram.json")
+    if isinstance(diagram.get("title"), str) and diagram["title"].strip():
+        return str(diagram["title"]).strip()
+    if folder.name.startswith("cs-"):
+        return "PID on DC motor"
+    if recipe_id:
+        return recipe_id.replace("-", " ")
+    return "Untitled run"
+
+
+def _subject_tag(recipe_id: str, folder_name: str) -> str:
+    rid = recipe_id or ""
+    if rid.startswith("solve-circuit") or "circuit" in rid or "spice" in rid:
+        return "Circuits"
+    if "control" in rid or folder_name.startswith("cs-"):
+        return "Control"
+    if "power" in rid:
+        return "Power"
+    if "signal" in rid:
+        return "Signals"
+    if rid:
+        return rid.replace("-", " ").title()
+    return "General"
+
+
 def _run_list_item(folder: Path) -> dict:
     evid = _read_json(folder / "evidentiary.json") or _read_json(folder / "summary.json")
     try:
         modified_at = folder.stat().st_mtime
     except OSError:
         modified_at = 0.0
+    recipe_id = str(evid.get("recipe_id") or "")
+    display_title = _human_run_title(folder, evid)
     return {
         "id": folder.name,
-        "title": str(evid.get("title") or folder.name),
+        "title": display_title,
+        "display_title": display_title,
+        "subject": _subject_tag(recipe_id, folder.name),
         "unchecked": bool(evid.get("unchecked")),
-        "recipe_id": str(evid.get("recipe_id") or ""),
+        "recipe_id": recipe_id,
         "modified_at": modified_at,
     }
+
+
+def _golden_thumb(rel: str) -> str:
+    return f"/api/visual-kit/golden/{rel}"
+
+
+_UI_EXAMPLES = (
+    {
+        "id": "divider",
+        "title": "Voltage divider",
+        "caption": "Find Vout for 10 V into 1 kΩ / 1 kΩ",
+        "subject": "Circuits",
+        "thumbnail": _golden_thumb("circuits/schematic.divider.png"),
+        "recipe_id": "solve-circuit-problem",
+        "problem": {"kind": "voltage_divider", "vin": 10, "r1": 1000, "r2": 1000},
+    },
+    {
+        "id": "control-step",
+        "title": "First-order step",
+        "caption": "Step response for 1/(s+1)",
+        "subject": "Control",
+        "thumbnail": _golden_thumb("control/control.step.png"),
+        "recipe_id": "solve-control-problem",
+        "problem": {"tf": "1/(s+1)", "prompt": "unit step response"},
+    },
+    {
+        "id": "smib-swing",
+        "title": "SMIB swing",
+        "caption": "Equal-area swing after a cleared fault",
+        "subject": "Power",
+        "thumbnail": _golden_thumb("swing/power.swing_equal_area.png"),
+        "recipe_id": "smib-swing-study",
+        "problem": {},
+    },
+    {
+        "id": "dc-drive",
+        "title": "DC drive speed",
+        "caption": "Steady speed for armature drive with load torque",
+        "subject": "Machines",
+        "thumbnail": _golden_thumb("circuits/waveform.phasor.png"),
+        "recipe_id": "solve-drives-problem",
+        "problem": {"kind": "dc", "v_dc": 120, "ra_ohm": 1, "k_torque": 0.5, "t_load_nm": 5},
+    },
+    {
+        "id": "digital-stable",
+        "title": "Digital loop",
+        "caption": "Discrete-time pole inside the unit circle",
+        "subject": "Power electronics",
+        "thumbnail": _golden_thumb("control/control.root_locus.png"),
+        "recipe_id": "solve-digital-control-problem",
+        "problem": {"num": [0.1], "den": [1.0, -0.5], "ts": 0.01},
+    },
+    {
+        "id": "signals-fft",
+        "title": "Signals workout",
+        "caption": "Solve a signals problem with checked numerics",
+        "subject": "Signals",
+        "thumbnail": _golden_thumb("circuits/waveform.phasor.png"),
+        "recipe_id": "solve-signals-problem",
+        "problem": {"prompt": "find fundamental frequency of a 60 Hz sinusoid"},
+    },
+)
+
+
+def _recipe_from_prompt(prompt: str, subject: str) -> tuple[str, dict]:
+    text = (prompt or "").strip().lower()
+    subj = (subject or "circuits").strip().lower()
+    if subj == "control" or "bode" in text or "transfer" in text:
+        return "solve-control-problem", {"tf": "1/(s+1)", "prompt": prompt}
+    if subj == "power" or "swing" in text or "fault" in text:
+        return "smib-swing-study", {}
+    if subj in {"machines", "drives"} or "motor" in text or "drive" in text:
+        return "solve-drives-problem", {
+            "kind": "dc",
+            "v_dc": 120,
+            "ra_ohm": 1,
+            "k_torque": 0.5,
+            "t_load_nm": 5,
+        }
+    if subj in {"power_electronics", "electronics"} or "z-transform" in text:
+        return "solve-digital-control-problem", {"num": [0.1], "den": [1.0, -0.5], "ts": 0.01}
+    if subj == "signals":
+        return "solve-signals-problem", {"prompt": prompt}
+    if "divider" in text or "vout" in text:
+        return "solve-circuit-problem", {"kind": "voltage_divider", "vin": 10, "r1": 1000, "r2": 1000}
+    return "solve-circuit-problem", {"kind": "ohms_law", "v": 12, "r": 4, "prompt": prompt}
 
 
 def _safe_book_id(raw: str | None) -> str:
@@ -115,6 +251,46 @@ def create_app(root: Path | None = None) -> FastAPI:
         if runs.is_dir():
             items = [_run_list_item(p) for p in sorted(runs.iterdir()) if p.is_dir()]
         return {"runs": items}
+
+    @app.get("/api/examples")
+    def list_examples() -> dict:
+        return {"examples": [{k: ex[k] for k in ex if k != "problem"} for ex in _UI_EXAMPLES]}
+
+    @app.post("/api/problems")
+    async def create_problem(request: Request) -> dict:
+        from electrical_engineer.runner.execute import execute
+
+        try:
+            body = await request.json()
+        except json.JSONDecodeError:
+            return JSONResponse({"error": "invalid json"}, status_code=400)
+        prompt = str(body.get("prompt") or "").strip()
+        if not prompt:
+            return JSONResponse({"error": "prompt required"}, status_code=400)
+        subject = str(body.get("subject") or "circuits")
+        recipe_id, problem = _recipe_from_prompt(prompt, subject)
+        try:
+            out = execute(str(recipe_id), cwd=cwd, problem=problem)
+        except Exception as exc:
+            return JSONResponse({"error": "run failed", "detail": str(exc)}, status_code=500)
+        return {
+            "run_id": out.get("run_id"),
+            "recipe_id": recipe_id,
+            "unchecked": bool((out.get("summary") or {}).get("unchecked")),
+        }
+
+    @app.post("/api/examples/{example_id}/run")
+    def run_example(example_id: str) -> dict:
+        from electrical_engineer.runner.execute import execute
+
+        match = next((ex for ex in _UI_EXAMPLES if ex["id"] == example_id), None)
+        if match is None:
+            return JSONResponse({"error": "unknown example"}, status_code=404)
+        try:
+            out = execute(str(match["recipe_id"]), cwd=cwd, problem=dict(match["problem"]))
+        except Exception as exc:
+            return JSONResponse({"error": "run failed", "detail": str(exc)}, status_code=500)
+        return {"run_id": out.get("run_id"), "unchecked": bool((out.get("summary") or {}).get("unchecked"))}
 
     @app.get("/api/runs/{run_id}")
     def run_detail(run_id: str) -> dict:
@@ -164,7 +340,7 @@ def create_app(root: Path | None = None) -> FastAPI:
         control_diagram = _read_json(d / "control_diagram.json")
         return {
             "id": run_id,
-            "title": str(evid_obj.get("title") or run_id),
+            "title": _human_run_title(d, evid_obj),
             "summary": evid_text,
             "evidentiary": evid_text,
             "argument": argument,
