@@ -1,0 +1,1127 @@
+[
+  {
+    "id": "power/agc-eec301-01",
+    "domain": "power",
+    "source": "eval/gold/power/agc-eec301-01",
+    "expect_mode": "engine",
+    "oracle_ok": true,
+    "grading": {
+      "tol": 0.001,
+      "engine": "agc_two_area",
+      "recipe_id": null
+    },
+    "summary": {
+      "engine": "agc_two_area",
+      "recipe_id": null,
+      "schema": "arc.eval.expect.v2",
+      "primary_df1_Hz": -0.1603587610447002,
+      "primary_P12_MW": -44.93676808630311,
+      "agc_ss_df1_Hz": 3.696827589786669e-08,
+      "agc_ss_Pm1_MW": 100.00000956994134,
+      "diverged_at_K": true
+    }
+  },
+  {
+    "id": "power/ed-eec301-01",
+    "domain": "power",
+    "source": "eval/gold/power/ed-eec301-01",
+    "expect_mode": "engine",
+    "oracle_ok": true,
+    "grading": {
+      "tol": 0.001,
+      "engine": "ed_lambda",
+      "recipe_id": null
+    },
+    "summary": {
+      "engine": "ed_lambda",
+      "recipe_id": null,
+      "schema": "arc.eval.expect.v2",
+      "cases": [
+        {
+          "case": "PD_450",
+          "lam": 7.173684210526315,
+          "P": [
+            234.21052631578942,
+            139.47368421052627,
+            76.31578947368419
+          ],
+          "status": [
+            "free",
+            "free",
+            "free"
+          ]
+        },
+        {
+          "case": "PD_500",
+          "lam": 7.392307692307693,
+          "P": [
+            261.5384615384616,
+            150.0,
+            88.4615384615385
+          ],
+          "status": [
+            "free",
+            "at_max",
+            "free"
+          ]
+        },
+        {
+          "case": "PD_300",
+          "lam": 6.605263157894736,
+          "P": [
+            163.15789473684205,
+            92.10526315789468,
+            44.73684210526314
+          ],
+          "status": [
+            "free",
+            "free",
+            "free"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "power/ed-penalty-t13-01",
+    "domain": "power",
+    "source": "eval/gold/power/ed-penalty-t13-01",
+    "expect_mode": "recipe",
+    "oracle_ok": true,
+    "grading": {
+      "tol": 0.01,
+      "engine": null,
+      "recipe_id": "ed-penalty-study"
+    },
+    "summary": {
+      "recipe_id": "ed-penalty-study",
+      "run_id": "e870-20261113T153219Z",
+      "title": "Ed Penalty Study",
+      "unchecked": false,
+      "token": null,
+      "value": 7.889036594226772,
+      "paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/e870-20261113T153219Z/summary.json"
+      ],
+      "citations": [],
+      "web_verification": {
+        "status": "pass",
+        "provider": "offline",
+        "needs_review": false,
+        "offline_unverified": false,
+        "verified_values": {},
+        "disagreement_banner": null
+      },
+      "answer_markdown": null,
+      "similar_problems": {
+        "provider": "offline",
+        "topic": "",
+        "matches": []
+      },
+      "recomputed": null,
+      "nodes": {
+        "solve": {
+          "unchecked": false,
+          "ok": true
+        },
+        "web": {
+          "unchecked": false,
+          "ok": true
+        },
+        "check": {
+          "unchecked": false,
+          "ok": true
+        },
+        "label": {
+          "unchecked": false,
+          "ok": null
+        },
+        "summary": {
+          "unchecked": false,
+          "ok": null
+        }
+      },
+      "verifier": "algebraic-check via check-numeric",
+      "values": {
+        "value": 7.889036594226772
+      },
+      "artifact_paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/e870-20261113T153219Z/summary.json"
+      ]
+    }
+  },
+  {
+    "id": "power/lg-01",
+    "domain": "power",
+    "source": "eval/gold/power/lg-01",
+    "expect_mode": "recipe",
+    "oracle_ok": true,
+    "grading": {
+      "tol": 0.001,
+      "engine": null,
+      "recipe_id": "simulate-power-fault"
+    },
+    "summary": {
+      "recipe_id": "simulate-power-fault",
+      "run_id": "2qhg-20261113T153219Z",
+      "title": "Simulate Power Fault",
+      "unchecked": false,
+      "token": null,
+      "value": 6.0,
+      "paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/2qhg-20261113T153219Z/power_tables.json",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/2qhg-20261113T153219Z/artifact.svg",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/2qhg-20261113T153219Z/summary.json"
+      ],
+      "citations": [],
+      "web_verification": null,
+      "answer_markdown": null,
+      "similar_problems": null,
+      "recomputed": null,
+      "nodes": {
+        "flow": {
+          "unchecked": false,
+          "ok": true
+        },
+        "label": {
+          "unchecked": false,
+          "ok": null
+        },
+        "summary": {
+          "unchecked": false,
+          "ok": null
+        }
+      },
+      "verifier": "label-unverified via label-unchecked",
+      "values": {
+        "value": 6.0
+      },
+      "artifact_paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/2qhg-20261113T153219Z/power_tables.json",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/2qhg-20261113T153219Z/artifact.svg",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/2qhg-20261113T153219Z/summary.json"
+      ]
+    }
+  },
+  {
+    "id": "power/ll-01",
+    "domain": "power",
+    "source": "eval/gold/power/ll-01",
+    "expect_mode": "recipe",
+    "oracle_ok": true,
+    "grading": {
+      "tol": 0.001,
+      "engine": null,
+      "recipe_id": "simulate-power-fault"
+    },
+    "summary": {
+      "recipe_id": "simulate-power-fault",
+      "run_id": "a5b4-20261113T153221Z",
+      "title": "Simulate Power Fault",
+      "unchecked": false,
+      "token": null,
+      "value": 8.660254037844386,
+      "paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/a5b4-20261113T153221Z/power_tables.json",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/a5b4-20261113T153221Z/artifact.svg",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/a5b4-20261113T153221Z/summary.json"
+      ],
+      "citations": [],
+      "web_verification": null,
+      "answer_markdown": null,
+      "similar_problems": null,
+      "recomputed": null,
+      "nodes": {
+        "flow": {
+          "unchecked": false,
+          "ok": true
+        },
+        "label": {
+          "unchecked": false,
+          "ok": null
+        },
+        "summary": {
+          "unchecked": false,
+          "ok": null
+        }
+      },
+      "verifier": "label-unverified via label-unchecked",
+      "values": {
+        "value": 8.660254037844386
+      },
+      "artifact_paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/a5b4-20261113T153221Z/power_tables.json",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/a5b4-20261113T153221Z/artifact.svg",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/a5b4-20261113T153221Z/summary.json"
+      ]
+    }
+  },
+  {
+    "id": "power/llg-bc-01",
+    "domain": "power",
+    "source": "eval/gold/power/llg-bc-01",
+    "expect_mode": "recipe",
+    "oracle_ok": true,
+    "grading": {
+      "tol": 0.001,
+      "engine": null,
+      "recipe_id": "simulate-power-fault"
+    },
+    "summary": {
+      "recipe_id": "simulate-power-fault",
+      "run_id": "zx6r-20261113T153221Z",
+      "title": "Simulate Power Fault",
+      "unchecked": false,
+      "token": null,
+      "value": 4.999999999999999,
+      "paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/zx6r-20261113T153221Z/power_tables.json",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/zx6r-20261113T153221Z/artifact.svg",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/zx6r-20261113T153221Z/summary.json"
+      ],
+      "citations": [],
+      "web_verification": null,
+      "answer_markdown": null,
+      "similar_problems": null,
+      "recomputed": null,
+      "nodes": {
+        "flow": {
+          "unchecked": false,
+          "ok": true
+        },
+        "label": {
+          "unchecked": false,
+          "ok": null
+        },
+        "summary": {
+          "unchecked": false,
+          "ok": null
+        }
+      },
+      "verifier": "label-unverified via label-unchecked",
+      "values": {
+        "value": 4.999999999999999
+      },
+      "artifact_paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/zx6r-20261113T153221Z/power_tables.json",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/zx6r-20261113T153221Z/artifact.svg",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/zx6r-20261113T153221Z/summary.json"
+      ]
+    }
+  },
+  {
+    "id": "power/protection-oc-01",
+    "domain": "power",
+    "source": "eval/gold/power/protection-oc-01",
+    "expect_mode": "recipe",
+    "oracle_ok": true,
+    "grading": {
+      "tol": 0.001,
+      "engine": null,
+      "recipe_id": "study-protection-setting"
+    },
+    "summary": {
+      "recipe_id": "study-protection-setting",
+      "run_id": "3fjr-20261113T153221Z",
+      "title": "Study Protection Setting",
+      "unchecked": false,
+      "token": null,
+      "value": 1.0,
+      "paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/3fjr-20261113T153221Z/protection_tables.json",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/3fjr-20261113T153221Z/artifact.svg",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/3fjr-20261113T153221Z/summary.json"
+      ],
+      "citations": [],
+      "web_verification": null,
+      "answer_markdown": null,
+      "similar_problems": null,
+      "recomputed": null,
+      "nodes": {
+        "prot": {
+          "unchecked": false,
+          "ok": true
+        },
+        "label": {
+          "unchecked": false,
+          "ok": null
+        },
+        "summary": {
+          "unchecked": false,
+          "ok": null
+        }
+      },
+      "verifier": "label-unverified via label-unchecked",
+      "values": {
+        "value": 1.0
+      },
+      "artifact_paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/3fjr-20261113T153221Z/protection_tables.json",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/3fjr-20261113T153221Z/artifact.svg",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/3fjr-20261113T153221Z/summary.json"
+      ]
+    }
+  },
+  {
+    "id": "power/pu-base-12-01",
+    "domain": "power",
+    "source": "eval/gold/power/pu-base-12-01",
+    "expect_mode": "recipe",
+    "oracle_ok": true,
+    "grading": {
+      "tol": 0.001,
+      "engine": null,
+      "recipe_id": "symmetrical-fault-study"
+    },
+    "summary": {
+      "recipe_id": "symmetrical-fault-study",
+      "run_id": "3wyc-20261113T153221Z",
+      "title": "Symmetrical Fault Study",
+      "unchecked": false,
+      "token": null,
+      "value": 0.2,
+      "paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/3wyc-20261113T153221Z/summary.json"
+      ],
+      "citations": [],
+      "web_verification": {
+        "status": "pass",
+        "provider": "offline",
+        "needs_review": false,
+        "offline_unverified": false,
+        "verified_values": {},
+        "disagreement_banner": null
+      },
+      "answer_markdown": null,
+      "similar_problems": {
+        "provider": "offline",
+        "topic": "",
+        "matches": []
+      },
+      "recomputed": null,
+      "nodes": {
+        "base": {
+          "unchecked": false,
+          "ok": true
+        },
+        "flow": {
+          "unchecked": false,
+          "ok": true
+        },
+        "web": {
+          "unchecked": false,
+          "ok": true
+        },
+        "label": {
+          "unchecked": false,
+          "ok": true
+        },
+        "summary": {
+          "unchecked": false,
+          "ok": null
+        }
+      },
+      "verifier": "algebraic-check via check-numeric",
+      "values": {
+        "value": 0.2
+      },
+      "artifact_paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/3wyc-20261113T153221Z/summary.json"
+      ]
+    }
+  },
+  {
+    "id": "power/smib-eec301-01",
+    "domain": "power",
+    "source": "eval/gold/power/smib-eec301-01",
+    "expect_mode": "engine",
+    "oracle_ok": true,
+    "grading": {
+      "tol": 1e-06,
+      "engine": "smib_swing",
+      "recipe_id": null
+    },
+    "summary": {
+      "engine": "smib_swing",
+      "recipe_id": null,
+      "schema": "arc.eval.expect.v2",
+      "delta0_deg": 26.74368395040301,
+      "delta_cr_deg": 79.53240997193419,
+      "tcr_s": 0.30950007438659666,
+      "t_to_delta_cr_s": 0.3100000000000002,
+      "golden_file": "artifacts/eec301-lab-goldens/exp06.json"
+    }
+  },
+  {
+    "id": "control/block-feedback-01",
+    "domain": "control",
+    "source": "eval/gold/control/block-feedback-01",
+    "expect_mode": "recipe",
+    "oracle_ok": true,
+    "grading": {
+      "tol": 0.001,
+      "engine": null,
+      "recipe_id": "control-diagram-to-model"
+    },
+    "summary": {
+      "recipe_id": "control-diagram-to-model",
+      "run_id": "egmm-20261113T153221Z",
+      "title": "Control Diagram To Model",
+      "unchecked": false,
+      "token": null,
+      "value": 0.9081818181818173,
+      "paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/egmm-20261113T153221Z/bode.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/egmm-20261113T153221Z/step.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/egmm-20261113T153221Z/artifact.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/egmm-20261113T153221Z/artifact.svg",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/egmm-20261113T153221Z/summary.json"
+      ],
+      "citations": [],
+      "web_verification": null,
+      "answer_markdown": null,
+      "similar_problems": null,
+      "recomputed": null,
+      "nodes": {
+        "compose": {
+          "unchecked": false,
+          "ok": true
+        },
+        "ctrl": {
+          "unchecked": false,
+          "ok": true
+        },
+        "label": {
+          "unchecked": false,
+          "ok": null
+        },
+        "summary": {
+          "unchecked": false,
+          "ok": null
+        }
+      },
+      "verifier": "label-unverified via compose-control-blocks",
+      "values": {
+        "value": 0.9081818181818173
+      },
+      "artifact_paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/egmm-20261113T153221Z/bode.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/egmm-20261113T153221Z/step.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/egmm-20261113T153221Z/artifact.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/egmm-20261113T153221Z/artifact.svg",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/egmm-20261113T153221Z/summary.json"
+      ]
+    }
+  },
+  {
+    "id": "control/breakaway-3pole-01",
+    "domain": "control",
+    "source": "eval/gold/control/breakaway-3pole-01",
+    "expect_mode": "recipe",
+    "oracle_ok": true,
+    "grading": {
+      "tol": 0.001,
+      "engine": null,
+      "recipe_id": "study-control-exam"
+    },
+    "summary": {
+      "recipe_id": "study-control-exam",
+      "run_id": "xx6a-20261113T153222Z",
+      "title": "Study Control Exam",
+      "unchecked": false,
+      "token": null,
+      "value": -1.2679491924311228,
+      "paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/xx6a-20261113T153222Z/summary.json"
+      ],
+      "citations": [],
+      "web_verification": {
+        "status": "pass",
+        "provider": "offline",
+        "needs_review": false,
+        "offline_unverified": false,
+        "verified_values": {},
+        "disagreement_banner": null
+      },
+      "answer_markdown": null,
+      "similar_problems": {
+        "provider": "offline",
+        "topic": "",
+        "matches": []
+      },
+      "recomputed": null,
+      "nodes": {
+        "solve": {
+          "unchecked": false,
+          "ok": true
+        },
+        "web": {
+          "unchecked": false,
+          "ok": true
+        },
+        "check": {
+          "unchecked": false,
+          "ok": true
+        },
+        "label": {
+          "unchecked": false,
+          "ok": null
+        },
+        "summary": {
+          "unchecked": false,
+          "ok": null
+        }
+      },
+      "verifier": "algebraic-check via check-numeric",
+      "values": {
+        "value": -1.2679491924311228
+      },
+      "artifact_paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/xx6a-20261113T153222Z/summary.json"
+      ]
+    }
+  },
+  {
+    "id": "control/digital-pole-01",
+    "domain": "control",
+    "source": "eval/gold/control/digital-pole-01",
+    "expect_mode": "recipe",
+    "oracle_ok": true,
+    "grading": {
+      "tol": 0.001,
+      "engine": null,
+      "recipe_id": "solve-digital-control-problem"
+    },
+    "summary": {
+      "recipe_id": "solve-digital-control-problem",
+      "run_id": "msga-20261113T153222Z",
+      "title": "Digital loop",
+      "unchecked": false,
+      "token": null,
+      "value": 0.5,
+      "paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/msga-20261113T153222Z/step.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/msga-20261113T153222Z/bode.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/msga-20261113T153222Z/artifact.svg",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/msga-20261113T153222Z/step.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/msga-20261113T153222Z/bode.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/msga-20261113T153222Z/artifact.svg",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/msga-20261113T153222Z/summary.json"
+      ],
+      "citations": [],
+      "web_verification": {
+        "status": "pass",
+        "provider": "offline",
+        "needs_review": false,
+        "offline_unverified": false,
+        "verified_values": {},
+        "disagreement_banner": null
+      },
+      "answer_markdown": null,
+      "similar_problems": {
+        "provider": "offline",
+        "topic": "",
+        "matches": []
+      },
+      "recomputed": null,
+      "nodes": {
+        "dig": {
+          "unchecked": false,
+          "ok": true
+        },
+        "web": {
+          "unchecked": false,
+          "ok": true
+        },
+        "label": {
+          "unchecked": false,
+          "ok": null
+        },
+        "summary": {
+          "unchecked": false,
+          "ok": null
+        }
+      },
+      "verifier": "label-unverified via label-unchecked",
+      "values": {
+        "value": 0.5
+      },
+      "artifact_paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/msga-20261113T153222Z/step.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/msga-20261113T153222Z/bode.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/msga-20261113T153222Z/artifact.svg",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/msga-20261113T153222Z/step.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/msga-20261113T153222Z/bode.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/msga-20261113T153222Z/artifact.svg",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/msga-20261113T153222Z/summary.json"
+      ]
+    }
+  },
+  {
+    "id": "control/margin-40-01",
+    "domain": "control",
+    "source": "eval/gold/control/margin-40-01",
+    "expect_mode": "recipe",
+    "oracle_ok": true,
+    "grading": {
+      "tol": 0.001,
+      "engine": null,
+      "recipe_id": "solve-control-problem"
+    },
+    "summary": {
+      "recipe_id": "solve-control-problem",
+      "run_id": "ktav-20261113T153222Z",
+      "title": "Control step",
+      "unchecked": false,
+      "token": null,
+      "value": 43.209845307369534,
+      "paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/ktav-20261113T153222Z/bode.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/ktav-20261113T153222Z/step.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/ktav-20261113T153222Z/artifact.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/ktav-20261113T153222Z/artifact.svg",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/ktav-20261113T153222Z/bode.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/ktav-20261113T153222Z/step.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/ktav-20261113T153222Z/artifact.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/ktav-20261113T153222Z/artifact.svg",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/ktav-20261113T153222Z/summary.json"
+      ],
+      "citations": [],
+      "web_verification": {
+        "status": "pass",
+        "provider": "offline",
+        "needs_review": false,
+        "offline_unverified": false,
+        "verified_values": {},
+        "disagreement_banner": null
+      },
+      "answer_markdown": null,
+      "similar_problems": {
+        "provider": "offline",
+        "topic": "",
+        "matches": []
+      },
+      "recomputed": null,
+      "nodes": {
+        "exam": {
+          "unchecked": true,
+          "ok": true
+        },
+        "ctrl": {
+          "unchecked": false,
+          "ok": true
+        },
+        "web": {
+          "unchecked": false,
+          "ok": true
+        },
+        "check": {
+          "unchecked": false,
+          "ok": true
+        },
+        "label": {
+          "unchecked": false,
+          "ok": null
+        },
+        "summary": {
+          "unchecked": false,
+          "ok": null
+        }
+      },
+      "verifier": "algebraic-check via check-numeric",
+      "values": {
+        "value": 43.209845307369534
+      },
+      "artifact_paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/ktav-20261113T153222Z/bode.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/ktav-20261113T153222Z/step.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/ktav-20261113T153222Z/artifact.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/ktav-20261113T153222Z/artifact.svg",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/ktav-20261113T153222Z/bode.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/ktav-20261113T153222Z/step.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/ktav-20261113T153222Z/artifact.png",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/ktav-20261113T153222Z/artifact.svg",
+        "/agent/repos/ARC/runs/_benchmark_build/runs/ktav-20261113T153222Z/summary.json"
+      ]
+    }
+  },
+  {
+    "id": "control/steady-state-type1-01",
+    "domain": "control",
+    "source": "eval/gold/control/steady-state-type1-01",
+    "expect_mode": "recipe",
+    "oracle_ok": true,
+    "grading": {
+      "tol": 0.001,
+      "engine": null,
+      "recipe_id": "study-control-exam"
+    },
+    "summary": {
+      "recipe_id": "study-control-exam",
+      "run_id": "hzhz-20261113T153223Z",
+      "title": "Study Control Exam",
+      "unchecked": false,
+      "token": null,
+      "value": 0.25,
+      "paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/hzhz-20261113T153223Z/summary.json"
+      ],
+      "citations": [],
+      "web_verification": {
+        "status": "pass",
+        "provider": "offline",
+        "needs_review": false,
+        "offline_unverified": false,
+        "verified_values": {},
+        "disagreement_banner": null
+      },
+      "answer_markdown": null,
+      "similar_problems": {
+        "provider": "offline",
+        "topic": "",
+        "matches": []
+      },
+      "recomputed": null,
+      "nodes": {
+        "solve": {
+          "unchecked": false,
+          "ok": true
+        },
+        "web": {
+          "unchecked": false,
+          "ok": true
+        },
+        "check": {
+          "unchecked": false,
+          "ok": true
+        },
+        "label": {
+          "unchecked": false,
+          "ok": null
+        },
+        "summary": {
+          "unchecked": false,
+          "ok": null
+        }
+      },
+      "verifier": "algebraic-check via check-numeric",
+      "values": {
+        "value": 0.25
+      },
+      "artifact_paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/hzhz-20261113T153223Z/summary.json"
+      ]
+    }
+  },
+  {
+    "id": "circuits/divider-dc-01",
+    "domain": "circuits",
+    "source": "eval/gold/circuits/divider-dc-01",
+    "expect_mode": "recipe",
+    "oracle_ok": true,
+    "grading": {
+      "tol": 1e-06,
+      "engine": null,
+      "recipe_id": "solve-circuit-problem"
+    },
+    "summary": {
+      "recipe_id": "solve-circuit-problem",
+      "run_id": "gked-20261113T153223Z",
+      "title": "Voltage divider \u00b7 Vout",
+      "unchecked": false,
+      "token": null,
+      "value": 5.0,
+      "paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/gked-20261113T153223Z/summary.json"
+      ],
+      "citations": [
+        {
+          "book_id": "kuphaldt-dc",
+          "chapter_id": "2",
+          "page": "2"
+        },
+        {
+          "book_id": "kuphaldt-dc",
+          "chapter_id": "6",
+          "page": "6"
+        }
+      ],
+      "web_verification": {
+        "status": "pass",
+        "provider": "offline",
+        "needs_review": false,
+        "offline_unverified": false,
+        "verified_values": {},
+        "disagreement_banner": null
+      },
+      "answer_markdown": null,
+      "similar_problems": {
+        "provider": "offline",
+        "topic": "",
+        "matches": []
+      },
+      "recomputed": null,
+      "nodes": {
+        "retrieve": {
+          "unchecked": null,
+          "ok": null
+        },
+        "solve": {
+          "unchecked": true,
+          "ok": null
+        },
+        "web": {
+          "unchecked": false,
+          "ok": true
+        },
+        "check": {
+          "unchecked": false,
+          "ok": true
+        },
+        "label": {
+          "unchecked": false,
+          "ok": null
+        },
+        "summary": {
+          "unchecked": false,
+          "ok": null
+        }
+      },
+      "verifier": "algebraic-check via check-numeric",
+      "values": {
+        "value": 5.0
+      },
+      "artifact_paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/gked-20261113T153223Z/summary.json"
+      ]
+    }
+  },
+  {
+    "id": "circuits/rc-step-01",
+    "domain": "circuits",
+    "source": "eval/gold/circuits/rc-step-01",
+    "expect_mode": "recipe",
+    "oracle_ok": true,
+    "grading": {
+      "tol": 0.001,
+      "engine": null,
+      "recipe_id": "study-circuits-v2"
+    },
+    "summary": {
+      "recipe_id": "study-circuits-v2",
+      "run_id": "k5m9-20261113T153223Z",
+      "title": "Study Circuits V2",
+      "unchecked": false,
+      "token": null,
+      "value": 6.321205588285577,
+      "paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/k5m9-20261113T153223Z/summary.json"
+      ],
+      "citations": [],
+      "web_verification": {
+        "status": "pass",
+        "provider": "offline",
+        "needs_review": false,
+        "offline_unverified": false,
+        "verified_values": {},
+        "disagreement_banner": null
+      },
+      "answer_markdown": null,
+      "similar_problems": {
+        "provider": "offline",
+        "topic": "",
+        "matches": []
+      },
+      "recomputed": null,
+      "nodes": {
+        "solve": {
+          "unchecked": false,
+          "ok": true
+        },
+        "web": {
+          "unchecked": false,
+          "ok": true
+        },
+        "check": {
+          "unchecked": false,
+          "ok": true
+        },
+        "label": {
+          "unchecked": false,
+          "ok": null
+        },
+        "summary": {
+          "unchecked": false,
+          "ok": null
+        }
+      },
+      "verifier": "algebraic-check via check-numeric",
+      "values": {
+        "value": 6.321205588285577
+      },
+      "artifact_paths": [
+        "/agent/repos/ARC/runs/_benchmark_build/runs/k5m9-20261113T153223Z/summary.json"
+      ]
+    }
+  },
+  {
+    "id": "trap/T1",
+    "domain": "trap",
+    "source": "knowledge/traps/smib/T1-wrong-pmax-equal-area.md",
+    "expect_mode": "trap_verifier",
+    "oracle_ok": true,
+    "grading": {
+      "trap_id": "T1"
+    },
+    "summary": {
+      "oracle_submission": {
+        "delta_cr_deg": 79.53240997193419
+      }
+    }
+  },
+  {
+    "id": "trap/T2",
+    "domain": "trap",
+    "source": "knowledge/traps/smib/T2-cct-clearing-model.md",
+    "expect_mode": "trap_verifier",
+    "oracle_ok": true,
+    "grading": {
+      "trap_id": "T2"
+    },
+    "summary": {
+      "oracle_submission": {
+        "t_to_delta_cr_s": 0.30972000000016897
+      }
+    }
+  },
+  {
+    "id": "trap/T3",
+    "domain": "trap",
+    "source": "knowledge/traps/smib/T3-h-vs-m-frequency-base.md",
+    "expect_mode": "trap_verifier",
+    "oracle_ok": true,
+    "grading": {
+      "trap_id": "T3"
+    },
+    "summary": {
+      "oracle_submission": {
+        "accel_coeff": 31.41592653589793,
+        "domega0_at_prefault": 0.0
+      }
+    }
+  },
+  {
+    "id": "trap/T4",
+    "domain": "trap",
+    "source": "knowledge/traps/agc/T4-ace-bias-tie-sign.md",
+    "expect_mode": "trap_verifier",
+    "oracle_ok": true,
+    "grading": {
+      "trap_id": "T4"
+    },
+    "summary": {
+      "oracle_submission": {
+        "primary_df1_Hz": -0.16000155470592292,
+        "primary_P12_MW": -45.066103265964756
+      }
+    }
+  },
+  {
+    "id": "trap/T5",
+    "domain": "trap",
+    "source": "knowledge/traps/agc/T5-primary-vs-agc-dynamics.md",
+    "expect_mode": "trap_verifier",
+    "oracle_ok": true,
+    "grading": {
+      "trap_id": "T5"
+    },
+    "summary": {
+      "oracle_submission": {
+        "agc_ss_df1_Hz": 1.6430234887005652e-07,
+        "agc_ss_P12_MW": -4.328490984494997e-05
+      }
+    }
+  },
+  {
+    "id": "trap/T6",
+    "domain": "trap",
+    "source": "knowledge/traps/ed/T6-limits-kt-lambda.md",
+    "expect_mode": "trap_verifier",
+    "oracle_ok": true,
+    "grading": {
+      "trap_id": "T6"
+    },
+    "summary": {
+      "oracle_submission": {
+        "unit2_MW": 150.0,
+        "unit2_IC": 7.3,
+        "lambda": 7.392307692307693
+      }
+    }
+  },
+  {
+    "id": "trap/T7",
+    "domain": "trap",
+    "source": "knowledge/traps/ed/T7-ic-factor-two-units.md",
+    "expect_mode": "trap_verifier",
+    "oracle_ok": true,
+    "grading": {
+      "trap_id": "T7"
+    },
+    "summary": {
+      "oracle_submission": {
+        "unit1_MW": 120.0,
+        "unit1_IC": 6.26,
+        "ic_without_factor_2": 5.779999999999999
+      }
+    }
+  },
+  {
+    "id": "trap/T8",
+    "domain": "trap",
+    "source": "knowledge/traps/diagrams/T8-wrong-signal-flow.md",
+    "expect_mode": "trap_verifier",
+    "oracle_ok": true,
+    "grading": {
+      "trap_id": "T8"
+    },
+    "summary": {
+      "oracle_submission": {
+        "sum_signs": "+-"
+      }
+    }
+  },
+  {
+    "id": "trap/T9",
+    "domain": "trap",
+    "source": "knowledge/traps/integration/T9-forbidden-solvers.md",
+    "expect_mode": "trap_verifier",
+    "oracle_ok": true,
+    "grading": {
+      "trap_id": "T9"
+    },
+    "summary": {
+      "oracle_submission": {
+        "integrator": "rk4",
+        "forbidden_solver_used": false
+      }
+    }
+  },
+  {
+    "id": "trap/T10",
+    "domain": "trap",
+    "source": "knowledge/traps/smib/T10-silent-defaults.md",
+    "expect_mode": "trap_verifier",
+    "oracle_ok": true,
+    "grading": {
+      "trap_id": "T10"
+    },
+    "summary": {
+      "oracle_submission": {
+        "pm_pu": 0.9,
+        "f0_hz": 50.0,
+        "pmax_pre_pu": 2.0
+      }
+    }
+  }
+]

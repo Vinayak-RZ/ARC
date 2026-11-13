@@ -1,0 +1,16 @@
+{
+  "schema": "arc.benchmark.datasheet.v0.1",
+  "version": "v0.1",
+  "name": "eee-coursework-trap",
+  "task_counts_by_domain": {
+    "power": 9,
+    "control": 5,
+    "circuits": 2,
+    "trap": 10
+  },
+  "total_tasks": 26,
+  "grading_tolerance_rules": "Recipe items: value within expect.json tol vs evidentiary recompute. PSA engine items: tolerances in expect.json (deg, seconds, MW). Trap items: binary pass via rlvr_env.rewards.grade_trap.",
+  "licence": "Apache-2.0; prompts are license-clean reconstructions. No copyrighted exam PDFs.",
+  "excluded": "live-ab, exam-v4/v5/v6, sealed REFERENCE.json",
+  "gold_sources": "eval/gold/{power,control,circuits} and knowledge/traps via trap_suite_index"
+}

@@ -1,0 +1,58 @@
+{
+  "schema": "arc.frontier.trap_suite_index.v1",
+  "generated": "2026-11-13",
+  "traps": [
+    {
+      "id": "T1",
+      "topic": "smib",
+      "path": "knowledge/traps/smib/T1-wrong-pmax-equal-area.md"
+    },
+    {
+      "id": "T2",
+      "topic": "smib",
+      "path": "knowledge/traps/smib/T2-cct-clearing-model.md"
+    },
+    {
+      "id": "T3",
+      "topic": "smib",
+      "path": "knowledge/traps/smib/T3-h-vs-m-frequency-base.md"
+    },
+    {
+      "id": "T4",
+      "topic": "agc",
+      "path": "knowledge/traps/agc/T4-ace-bias-tie-sign.md"
+    },
+    {
+      "id": "T5",
+      "topic": "agc",
+      "path": "knowledge/traps/agc/T5-primary-vs-agc-dynamics.md"
+    },
+    {
+      "id": "T6",
+      "topic": "ed",
+      "path": "knowledge/traps/ed/T6-limits-kt-lambda.md"
+    },
+    {
+      "id": "T7",
+      "topic": "ed",
+      "path": "knowledge/traps/ed/T7-ic-factor-two-units.md"
+    },
+    {
+      "id": "T8",
+      "topic": "diagrams",
+      "path": "knowledge/traps/diagrams/T8-wrong-signal-flow.md"
+    },
+    {
+      "id": "T9",
+      "topic": "integration",
+      "path": "knowledge/traps/integration/T9-forbidden-solvers.md"
+    },
+    {
+      "id": "T10",
+      "topic": "smib",
+      "path": "knowledge/traps/smib/T10-silent-defaults.md"
+    }
+  ],
+  "ablation_tests": "tests/integration/test_trap_ablation.py",
+  "prompts": "proofs/ablation/trap_prompts.yaml"
+}

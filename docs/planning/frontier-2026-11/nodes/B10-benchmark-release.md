@@ -17,8 +17,18 @@ Public standard for "bare agent fails EE coursework" (report #02 white space #10
 
 **Output:** `{ "tarball_sha256": "...", "scorecard_rows": [] }`
 
+Produce via:
+
+```bash
+uv run python scripts/build_benchmark_v01.py
+uv run python scripts/benchmark_scorecard.py
+uv run python scripts/grade_benchmark_v01.py
+```
+
+Artifacts under `artifacts/benchmarks/eee-coursework-trap/v0.1/` (no GitHub release; PR attachment only).
+
 ## Commits
 
 | # | Commit | Gate |
 |---|--------|------|
-| 34-35 | release + SCORECARD | checksum + review |
+| 34-35 | release + SCORECARD | checksum + `grade_benchmark_v01.py` |

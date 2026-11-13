@@ -1,0 +1,30 @@
+{
+  "tarball_sha256": "d56ea9d6b9f1b84b45b334f698a8a7b7935b22c0fc2c900ed135d5f487012fc9",
+  "scorecard_rows": [
+    {
+      "metric": "benchmark_tarball_sha256",
+      "value": "d56ea9d6b9f1b84b45b334f698a8a7b7935b22c0fc2c900ed135d5f487012fc9",
+      "source": "scripts/build_benchmark_v01.py"
+    },
+    {
+      "metric": "benchmark_oracle_grade",
+      "value": "26/26",
+      "source": "scripts/grade_benchmark_v01.py"
+    },
+    {
+      "metric": "rlvr_dummy_rollout",
+      "value": "10/10",
+      "source": "scripts/rlvr_dummy_rollout.py"
+    },
+    {
+      "metric": "circuit_subset",
+      "value": "2/2",
+      "source": "scripts/run_circuit_benchmark.py"
+    },
+    {
+      "metric": "psa_power_pack_cli",
+      "value": "PASS",
+      "source": "electrical-engineer eval --pack power"
+    }
+  ]
+}
