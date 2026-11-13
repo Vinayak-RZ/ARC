@@ -367,7 +367,10 @@ def handle(method: str, params: dict[str, Any] | None) -> Any:
             data["waits"] = False
             return _ok(data)
         if name == "arc_web_evidence_submit":
-            from electrical_engineer.web_verify.validate import validate_host_submit, validate_similar_matches
+            from electrical_engineer.web_verify.validate import (
+                validate_host_submit,
+                validate_similar_matches,
+            )
 
             rid = str(args.get("run_id") or "")
             run_dir = project_root() / "runs" / rid

@@ -10,7 +10,7 @@ nodes:
     needs: [flow]
   label:
     activity: check-numeric
-    needs: [flow, web]
+    needs: [base, web]
   summary:
     activity: write-run-summary
     needs: [label]

@@ -9,8 +9,12 @@ from typing import Any
 from electrical_engineer.web_verify.citations import index_citations, render_answer_section
 from electrical_engineer.web_verify.config import load_web_verify_config
 from electrical_engineer.web_verify.providers import get_provider
-from electrical_engineer.web_verify.reconcile import overall_status, reconcile_claim, reconcile_similar_match
 from electrical_engineer.web_verify.recompute import recompute
+from electrical_engineer.web_verify.reconcile import (
+    overall_status,
+    reconcile_claim,
+    reconcile_similar_match,
+)
 
 
 def enrich_claims_from_reference_library(claims: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -95,10 +99,14 @@ def run_web_verify(
     for c in web_raw.get("claims") or []:
         cid = str(c.get("claim_id") or "")
         if cid in incoming:
-            if incoming[cid].get("library_value") is not None:
-                c["library_value"] = incoming[cid]["library_value"]
-            if incoming[cid].get("tolerance") is not None:
-                c["tolerance"] = incoming[cid]["tolerance"]
+            inc = incoming[cid]
+            if inc.get("library_value") is not None:
+                c["library_value"] = inc["library_value"]
+            if inc.get("tolerance") is not None:
+                c["tolerance"] = inc["tolerance"]
+            for key in ("reference_record_id", "reference_title", "record_value_key"):
+                if inc.get(key) is not None:
+                    c[key] = inc[key]
         row = reconcile_claim(c)
         if row.get("web_value") is not None:
             row["substituted_value"] = row.get("web_value")

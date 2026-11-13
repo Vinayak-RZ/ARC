@@ -29,7 +29,7 @@ def _pdf_text(data: bytes) -> str:
         for page in reader.pages[:8]:
             parts.append(page.extract_text() or "")
         return "\n".join(parts)
-    except Exception:
+    except (OSError, ValueError, TypeError, AttributeError):
         return ""
 
 
