@@ -1,6 +1,6 @@
 # PROGRESS: frontier-2026-11
 
-Branch: `cursor/frontier-execution-7a2f` · PR [#49](https://github.com/Vinayak-RZ/ARC/pull/49)
+Branch: `cursor/b7-b10-benchmark-rlvr-ebaf` · PR [#56](https://github.com/Vinayak-RZ/ARC/pull/56) (B7/B10); frontier graph PR [#49](https://github.com/Vinayak-RZ/ARC/pull/49)
 
 | Node | Status | Notes |
 |------|--------|-------|

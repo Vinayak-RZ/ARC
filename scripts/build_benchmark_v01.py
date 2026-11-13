@@ -3,7 +3,9 @@
 
 from __future__ import annotations
 
+import gzip
 import hashlib
+import io
 import json
 import shutil
 import tarfile
@@ -12,6 +14,37 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 OUT_DIR = ROOT / "artifacts" / "benchmarks" / "eee-coursework-trap" / "v0.1"
 STAGING = OUT_DIR / "_stage"
+
+
+def _stable_summary(summary: dict | None, expect: dict) -> dict:
+    """Drop run ids and paths so tarball SHA is reproducible."""
+    if not summary:
+        return {}
+    stable: dict = {}
+    if "value" in summary:
+        stable["value"] = summary["value"]
+    if "recipe_id" in summary:
+        stable["recipe_id"] = summary["recipe_id"]
+    if "recomputed" in summary:
+        stable["recomputed"] = summary["recomputed"]
+    engine = expect.get("engine")
+    if engine:
+        stable["engine"] = engine
+        for key in (
+            "delta0_deg",
+            "delta_cr_deg",
+            "tcr_s",
+            "t_to_delta_cr_s",
+            "primary_df1_Hz",
+            "primary_P12_MW",
+            "agc_ss_df1_Hz",
+            "agc_ss_Pm1_MW",
+            "lam",
+            "cases",
+        ):
+            if key in summary:
+                stable[key] = summary[key]
+    return stable
 
 
 def _collect_eval_items() -> list[dict]:
@@ -37,7 +70,7 @@ def _collect_eval_items() -> list[dict]:
                         "engine": expect.get("engine"),
                         "recipe_id": expect.get("recipe_id"),
                     },
-                    "summary": row.get("summary"),
+                    "summary": _stable_summary(row.get("summary"), expect),
                 }
             )
     trap_index = json.loads((ROOT / "artifacts/frontier/trap_suite_index.json").read_text())
@@ -128,9 +161,14 @@ def main() -> int:
         staged_files.append(dest)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     tarball = OUT_DIR / "eee-coursework-trap-v0.1.tar.gz"
-    with tarfile.open(tarball, "w:gz") as tar:
+    buf = io.BytesIO()
+    with tarfile.open(fileobj=buf, mode="w") as tar:
         for path in staged_files:
-            tar.add(path, arcname=f"eee-coursework-trap-v0.1/{path.name}")
+            info = tar.gettarinfo(path, arcname=f"eee-coursework-trap-v0.1/{path.name}")
+            info.mtime = 0
+            with path.open("rb") as handle:
+                tar.addfile(info, handle)
+    tarball.write_bytes(gzip.compress(buf.getvalue(), mtime=0))
     digest = hashlib.sha256(tarball.read_bytes()).hexdigest()
     release_manifest = {
         "version": "v0.1",
