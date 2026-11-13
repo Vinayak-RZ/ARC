@@ -1,0 +1,8 @@
+* int ac
+V1 1 0 AC 1
+R1 1 2 10k
+C1 2 0 10n
+Eop 3 0 2 0 -1
+Rout 3 0 1
+.ac lin 1 1k 1k
+.end

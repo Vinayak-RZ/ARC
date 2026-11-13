@@ -1,3 +1,0 @@
-# Source
-
-Millman equivalent conductance

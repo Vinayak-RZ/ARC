@@ -1,7 +1,0 @@
-{
-  "schema": "arc.eval.expect.v2",
-  "engine": "circuit_unit",
-  "value": 2000.0,
-  "tol": 0.0001,
-  "kind": "thevenin"
-}

@@ -1,4 +1,5 @@
 {
-  "circuit_unit_pass_rate": 1.0,
+  "circuit_unit_pass_rate": 0.8333333333333334,
+  "derive_spice_agreement_rate": 0.8666666666666667,
   "multimodal_path_smoke": true
 }

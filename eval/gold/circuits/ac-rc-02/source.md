@@ -1,3 +1,0 @@
-# Source
-
-XR impedance magnitude

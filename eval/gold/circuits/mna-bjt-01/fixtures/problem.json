@@ -1,0 +1,8 @@
+{
+  "netlist_path": "fixtures/netlist.cir",
+  "analysis": "dc",
+  "probe": "v(2)",
+  "unit": "V",
+  "tol": 0.001,
+  "require_spice": true
+}

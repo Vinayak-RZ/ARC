@@ -24,16 +24,24 @@ def run_circuit_item(item: Path, expect: dict[str, Any], *, run_root: Path | Non
     if run_root is not None:
         run_dir = run_root / item.name
         run_dir.mkdir(parents=True, exist_ok=True)
-    out = verify_after_derive(problem, run_dir=run_dir, rel_tol=float(expect.get("rel_tol", 1e-3)))
+    want_spice = bool(expect.get("require_spice", True))
+    problem["require_spice"] = want_spice and run_dir is not None
+    out = verify_after_derive(
+        problem,
+        item_root=item,
+        run_dir=run_dir,
+        rel_tol=float(expect.get("rel_tol", 1e-3)),
+    )
     want = expect.get("value")
     tol = float(expect.get("tol", problem.get("tol", 1e-4)))
     ok = bool(out.get("ok"))
     if want is not None:
         got = out.get("value")
-        ok = got is not None and abs(float(got) - float(want)) <= tol
-    if expect.get("require_spice_match") and out.get("mismatch"):
+        gold_ok = got is not None and abs(float(got) - float(want)) <= tol
+        ok = ok and gold_ok
+    if (out.get("spice") or {}).get("skipped") and problem.get("require_spice"):
         ok = False
-    if expect.get("require_spice") and (out.get("spice") or {}).get("skipped"):
+    if out.get("mismatch"):
         ok = False
     summary = {
         "engine": expect.get("engine", "circuit_unit"),
@@ -42,6 +50,8 @@ def run_circuit_item(item: Path, expect: dict[str, Any], *, run_root: Path | Non
         "value": out.get("value"),
         "simulated": out.get("simulated"),
         "mismatch": out.get("mismatch"),
+        "gold_provenance": expect.get("gold_provenance"),
+        "spice_agree": (not out.get("mismatch")) if out.get("simulated") is not None else None,
         "spice_skipped": (out.get("spice") or {}).get("skipped"),
         "spice_reason": (out.get("spice") or {}).get("reason"),
     }

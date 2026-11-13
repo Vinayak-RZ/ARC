@@ -1,9 +1,0 @@
-{
-  "kind": "bjt_ce_gain",
-  "gm_s": 0.02,
-  "rc_ohm": 4700,
-  "vin": 0.002,
-  "value": -94.0,
-  "expected": -94.0,
-  "tol": 0.001
-}

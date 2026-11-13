@@ -1,9 +1,0 @@
-{
-  "kind": "opamp_noninverting",
-  "vin": 0.5,
-  "rf": 9000,
-  "rg": 1000,
-  "value": 5.0,
-  "expected": 5.0,
-  "tol": 1e-06
-}

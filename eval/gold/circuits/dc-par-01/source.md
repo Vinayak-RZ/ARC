@@ -1,3 +1,0 @@
-# Source
-
-Parallel conductance sum

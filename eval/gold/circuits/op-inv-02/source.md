@@ -1,3 +1,0 @@
-# Source
-
-Inverting gain block

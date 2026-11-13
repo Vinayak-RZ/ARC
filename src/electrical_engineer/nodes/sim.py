@@ -105,6 +105,8 @@ def run_circuit_derive(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str
     for v in inputs.values():
         if isinstance(v, dict) and v.get("cir"):
             problem.setdefault("cir", v["cir"])
+    if problem.get("kind") and not problem.get("cir") and not problem.get("netlist_path"):
+        problem["allow_template_fallback"] = True
     try:
         out = derive(problem)
     except ValueError as exc:

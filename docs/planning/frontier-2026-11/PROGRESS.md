@@ -10,7 +10,7 @@ Branch: `cursor/frontier-execution-7a2f` · PR [#49](https://github.com/Vinayak-
 | C1 | **done** | `trim_trials_media.sh` |
 | B2 | **done** | PSA workflows + MCP |
 | B3 | **done** | Control eval 18/18; block diagram gold |
-| B4 | **done** | verify-after-derive, 30 engine golds, MCP, multimodal smoke |
+| B4 | **done** | MNA derive, ngspice verify, 30 independent netlist golds, honest benchmark metrics |
 | B5 | **partial** | trap index; process graders partial |
 | B6 | **blocked** | Harness + LIVE_AB.md (keys) |
 | B7 | **partial** | `rlvr_env` manifest |

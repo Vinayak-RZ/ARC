@@ -42,8 +42,9 @@ def main() -> int:
 
     st = simulator_status()
     if not st.get("available"):
-        print("circuit_eval: spice skipped:", st.get("reason"))
-    print(f"circuit_eval: {engine} engine golds ok")
+        print(f"circuit_eval: ngspice required in CI: {st.get('reason')}", file=sys.stderr)
+        return 1
+    print(f"circuit_eval: {engine} engine golds ok (ngspice present)")
     return 0
 
 

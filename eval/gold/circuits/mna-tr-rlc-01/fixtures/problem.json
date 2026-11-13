@@ -1,0 +1,9 @@
+{
+  "netlist_path": "fixtures/netlist.cir",
+  "analysis": "tran",
+  "probe": "v(3)",
+  "unit": "V",
+  "tol": 0.1,
+  "require_spice": false,
+  "t_s": 2e-05
+}

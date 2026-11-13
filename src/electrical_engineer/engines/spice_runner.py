@@ -19,19 +19,22 @@ def _pyspice_installed() -> bool:
 
 
 def spice_available() -> bool:
-    return shutil.which("ngspice") is not None and _pyspice_installed()
+    return shutil.which("ngspice") is not None
 
 
 def simulator_status() -> dict[str, Any]:
     ng = shutil.which("ngspice")
     py = _pyspice_installed()
-    if ng and py:
-        return {"available": True, "backend": "ngspice", "reason": None}
-    if ng and not py:
-        return {"available": False, "backend": None, "reason": "PySpice not installed"}
-    if py and not ng:
+    if ng:
+        return {
+            "available": True,
+            "backend": "ngspice",
+            "reason": None,
+            "pyspice": py,
+        }
+    if py:
         return {"available": False, "backend": None, "reason": "ngspice binary not on PATH"}
-    return {"available": False, "backend": None, "reason": "ngspice and PySpice unavailable"}
+    return {"available": False, "backend": None, "reason": "ngspice not on PATH"}
 
 
 def _analysis_kind(cir: str, problem: dict[str, Any]) -> str:
@@ -46,16 +49,38 @@ def _analysis_kind(cir: str, problem: dict[str, Any]) -> str:
     return "dc"
 
 
-def _ensure_control_block(cir: str, probe: str = "v(2)", *, analysis: str = "dc") -> str:
+def _ensure_control_block(
+    cir: str,
+    probe: str = "v(2)",
+    *,
+    analysis: str = "dc",
+    f_hz: float | None = None,
+    t_s: float | None = None,
+) -> str:
     if ".control" in cir.lower():
         return cir
     text = cir.rstrip()
     if text.lower().endswith(".end"):
         text = text[:-4].rstrip()
+    low = text.lower()
+    if analysis == "ac" and ".ac" not in low:
+        f = float(f_hz or 1000.0)
+        text += f"\n.ac lin 1 {f} {f}\n"
+    if analysis == "tran" and ".tran" not in low:
+        text += "\n.tran 1m 0.1\n"
     if analysis == "ac":
-        cmd = f"run\nprint mag({probe})\n"
+        probe_inner = probe
+        if not probe.lower().startswith("mag("):
+            probe_inner = f"mag({probe})"
+        cmd = f"run\nprint {probe_inner}\n"
+    elif analysis == "tran":
+        if t_s is not None:
+            text += f"\n.measure tran _arc_out find {probe} at={float(t_s)}\n"
+            cmd = "run\nprint _arc_out\n"
+        else:
+            cmd = f"run\nprint {probe}\n"
     else:
-        cmd = f"run\nprint {probe}\n"
+        cmd = f"op\nprint {probe}\n"
     return f"{text}\n.control\n{cmd}.endc\n.end\n"
 
 
@@ -71,6 +96,20 @@ def _probe_node(problem: dict[str, Any], cir: str) -> str:
 def _parse_print_voltage(stdout: str, probe: str) -> float | None:
     needle = probe.replace(" ", "").lower()
     mag_needle = f"mag({needle})" if not needle.startswith("mag(") else needle
+    for line in stdout.splitlines():
+        low = line.lower().replace(" ", "")
+        if "_arc_out" in low and "=" in line:
+            rhs = line.split("=", 1)[-1].strip()
+            try:
+                return float(rhs.split()[0])
+            except ValueError:
+                continue
+        if "=" in line and (needle in low or mag_needle.replace(" ", "") in low):
+            rhs = line.split("=", 1)[-1].strip()
+            try:
+                return float(rhs.split()[0])
+            except ValueError:
+                continue
     last: float | None = None
     in_table = False
     for line in stdout.splitlines():
@@ -78,7 +117,7 @@ def _parse_print_voltage(stdout: str, probe: str) -> float | None:
         if "time" in compact and (needle in compact or mag_needle in compact):
             in_table = True
             continue
-        if mag_needle in compact and "mag" in compact:
+        if mag_needle.replace("mag(", "").replace(")", "") in compact and "mag" in compact:
             in_table = True
             continue
         if in_table:
@@ -122,7 +161,18 @@ def run_spice_netlist(
 ) -> dict[str, Any]:
     probe = str(problem.get("probe") or _probe_node(problem, cir))
     analysis = _analysis_kind(cir, problem)
-    body = _ensure_control_block(cir, probe=probe, analysis=analysis)
+    f_hz = problem.get("f_hz")
+    cir_body = cir.strip()
+    if not cir_body.startswith("*"):
+        cir_body = "* arc netlist\n" + cir_body
+    t_s = problem.get("t_s")
+    body = _ensure_control_block(
+        cir_body,
+        probe=probe,
+        analysis=analysis,
+        f_hz=float(f_hz) if f_hz else None,
+        t_s=float(t_s) if t_s is not None else None,
+    )
     net_path = run_dir / "netlist.cir"
     net_path.write_text(body, encoding="utf-8")
     if not spice_available():

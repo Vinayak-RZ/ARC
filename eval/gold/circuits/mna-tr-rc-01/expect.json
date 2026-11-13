@@ -1,0 +1,8 @@
+{
+  "schema": "arc.eval.expect.v2",
+  "engine": "circuit_unit",
+  "value": 3.9346934028736658,
+  "tol": 0.005,
+  "require_spice": false,
+  "gold_provenance": "hand_calc"
+}

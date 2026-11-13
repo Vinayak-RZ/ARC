@@ -12,13 +12,14 @@ from electrical_engineer.engines.spice_runner import run_spice_netlist, simulato
 def verify_after_derive(
     problem: dict[str, Any],
     *,
+    item_root: Path | None = None,
     run_dir: Path | None = None,
     rel_tol: float = 1e-3,
     abs_tol: float = 1e-9,
 ) -> dict[str, Any]:
     """Derive analytically, simulate when a backend exists, flag mismatches."""
     try:
-        derived = derive(problem)
+        derived = derive(problem, item_root=item_root)
     except DeriveError as exc:
         return {
             "ok": False,
@@ -39,7 +40,10 @@ def verify_after_derive(
     if not sim_status.get("available"):
         spice_payload["skipped"] = True
         spice_payload["reason"] = sim_status.get("reason") or "simulator missing"
-    elif run_dir is not None:
+    elif run_dir is None:
+        spice_payload["skipped"] = True
+        spice_payload["reason"] = "no run_dir for simulation"
+    else:
         prob = {
             **problem,
             "cir": derived.get("cir"),
@@ -62,9 +66,10 @@ def verify_after_derive(
     if gold is not None:
         tol_gold = float(problem.get("tol", 1e-4))
         gold_ok = abs(dval - float(gold)) <= max(abs_tol, tol_gold * max(abs(float(gold)), 1.0))
-    require_spice = bool(problem.get("require_spice_match"))
+    require_spice = bool(problem.get("require_spice") or problem.get("require_spice_match"))
+    spice_skipped = bool(spice_payload.get("skipped"))
     ok = gold_ok
-    if require_spice and mismatch:
+    if require_spice and spice_skipped or require_spice and simulated is not None and mismatch or simulated is not None and mismatch:
         ok = False
     unchecked = not gold_ok
     return {

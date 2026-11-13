@@ -3,189 +3,191 @@
   "version": "0.2",
   "engine_items": [
     {
-      "id": "ac-rc-01",
+      "id": "mna-ac-mix-01",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "ac-rc-02",
+      "id": "mna-ac-rc-01",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "ac-rl-01",
+      "id": "mna-ac-rc-02",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "ac-rl-02",
+      "id": "mna-ac-rl-01",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "bjt-av-01",
+      "id": "mna-bjt-01",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "bjt-av-02",
+      "id": "mna-bode-01",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "dc-cdiv-01",
+      "id": "mna-bridge-01",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "dc-div-02",
+      "id": "mna-bridge-02",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "dc-div-03",
+      "id": "mna-dio-01",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "dc-div-04",
+      "id": "mna-ladder-01",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "dc-par-01",
+      "id": "mna-ladder-02",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "dc-par-02",
+      "id": "mna-maxpwr-01",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "dc-ser-01",
+      "id": "mna-mesh-01",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "dc-ser-02",
+      "id": "mna-mesh-02",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "dio-rd-01",
+      "id": "mna-op-ac-01",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "dio-rd-02",
+      "id": "mna-op-inv-01",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "op-inv-01",
+      "id": "mna-op-ninv-01",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "op-inv-02",
+      "id": "mna-super-01",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "op-ninv-01",
+      "id": "mna-super-02",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "op-ninv-02",
+      "id": "mna-thev-01",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "thev-r-01",
-      "ok": true,
-      "mismatch": false,
-      "spice_skipped": true
+      "id": "mna-tr-rc-01",
+      "ok": false,
+      "mismatch": true,
+      "spice_skipped": false
     },
     {
-      "id": "thev-v-01",
-      "ok": true,
-      "mismatch": false,
-      "spice_skipped": true
+      "id": "mna-tr-rc-02",
+      "ok": false,
+      "mismatch": true,
+      "spice_skipped": false
     },
     {
-      "id": "tr-rc-02",
-      "ok": true,
-      "mismatch": false,
-      "spice_skipped": true
+      "id": "mna-tr-rl-01",
+      "ok": false,
+      "mismatch": true,
+      "spice_skipped": false
     },
     {
-      "id": "tr-rc-03",
-      "ok": true,
-      "mismatch": false,
-      "spice_skipped": true
+      "id": "mna-tr-rlc-01",
+      "ok": false,
+      "mismatch": true,
+      "spice_skipped": false
     },
     {
-      "id": "tr-rl-01",
-      "ok": true,
+      "id": "mna-tr-rlc-02",
+      "ok": false,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "tr-rl-02",
+      "id": "mna-vccs-01",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "tr-rlc-01",
+      "id": "mna-vccs-02",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "tr-rlc-02",
+      "id": "mna-vcvs-01",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "z11-01",
+      "id": "mna-vcvs-02",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     },
     {
-      "id": "z11-02",
+      "id": "mna-zpi-01",
       "ok": true,
       "mismatch": false,
-      "spice_skipped": true
+      "spice_skipped": false
     }
   ],
-  "engine_passed": 30,
+  "engine_passed": 25,
   "engine_total": 30,
-  "circuit_unit_pass_rate": 1.0,
+  "circuit_unit_pass_rate": 0.8333333333333334,
+  "derive_spice_agreement_rate": 0.8666666666666667,
+  "spice_items_ran": 30,
   "properties": {
     "total": 3,
     "passed": 3,
@@ -213,9 +215,10 @@
       "confirm": true,
       "derive_ok": true,
       "simulator": {
-        "available": false,
-        "backend": null,
-        "reason": "ngspice binary not on PATH"
+        "available": true,
+        "backend": "ngspice",
+        "reason": null,
+        "pyspice": false
       }
     },
     {
@@ -224,9 +227,10 @@
       "confirm": true,
       "netlist_ok": true,
       "simulator": {
-        "available": false,
-        "backend": null,
-        "reason": "ngspice binary not on PATH"
+        "available": true,
+        "backend": "ngspice",
+        "reason": null,
+        "pyspice": false
       }
     }
   ]

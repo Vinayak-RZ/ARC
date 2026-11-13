@@ -31,14 +31,22 @@ def _run_engine_golds() -> dict[str, object]:
     from electrical_engineer.eval_runner.circuit_score import run_circuit_item
 
     rows = []
+    spice_agree = 0
+    spice_ran = 0
     for item in _engine_items():
         expect = json.loads((item / "expect.json").read_text())
         row = run_circuit_item(item, expect, run_root=ROOT / "runs" / "_circuit_bench")
+        sim = row.get("summary", {}).get("simulated")
+        mismatch = row.get("summary", {}).get("mismatch")
+        if sim is not None:
+            spice_ran += 1
+            if not mismatch:
+                spice_agree += 1
         rows.append(
             {
                 "id": item.name,
                 "ok": bool(row.get("ok")),
-                "mismatch": row.get("summary", {}).get("mismatch"),
+                "mismatch": mismatch,
                 "spice_skipped": row.get("summary", {}).get("spice_skipped"),
             }
         )
@@ -49,6 +57,8 @@ def _run_engine_golds() -> dict[str, object]:
         "engine_passed": passed,
         "engine_total": total,
         "circuit_unit_pass_rate": (passed / total) if total else 0.0,
+        "derive_spice_agreement_rate": (spice_agree / spice_ran) if spice_ran else 0.0,
+        "spice_items_ran": spice_ran,
     }
 
 
@@ -77,10 +87,15 @@ def _multimodal_smoke() -> dict[str, object]:
             trace.append(step)
             continue
         confirm_and_write(run_dir / comp.replace(".", "_"), cir=str(prop["cir"]), graph=prop.get("graph"))
-        problem = {"kind": "voltage_divider", "vin": 10, "r1": 1000, "r2": 1000, "value": 5.0, "tol": 1e-3}
         step["confirm"] = True
         if comp == "schematic.divider":
-            problem = {"kind": "voltage_divider", "vin": 10, "r1": 1000, "r2": 1000, "value": 5.0, "tol": 1e-3}
+            problem = {
+                "cir": "* mm\nV1 1 0 DC 10\nR1 1 2 1k\nR2 2 0 1k\n.end\n",
+                "analysis": "dc",
+                "probe": "v(2)",
+                "value": 5.0,
+                "tol": 1e-3,
+            }
             v = verify_after_derive(problem, run_dir=run_dir / comp.replace(".", "_"))
             step["derive_ok"] = bool(v.get("gold_ok"))
             ok = ok and step["derive_ok"]
@@ -101,6 +116,7 @@ def main() -> int:
     report.update(_multimodal_smoke())
     contract = {
         "circuit_unit_pass_rate": report["circuit_unit_pass_rate"],
+        "derive_spice_agreement_rate": report.get("derive_spice_agreement_rate", 0.0),
         "multimodal_path_smoke": report["multimodal_path_smoke"],
     }
     OUT.write_text(json.dumps(report, indent=2) + "\n")

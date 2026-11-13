@@ -1,7 +1,0 @@
-{
-  "schema": "arc.eval.expect.v2",
-  "engine": "circuit_unit",
-  "value": 2.585,
-  "tol": 0.01,
-  "kind": "diode_small_signal"
-}

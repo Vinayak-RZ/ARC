@@ -1,0 +1,7 @@
+* ac dc mix
+Vdc 1 0 DC 5
+Vac 2 0 AC 1
+C1 2 3 10u
+R1 3 0 1k
+.ac lin 1 1k 1k
+.end

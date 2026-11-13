@@ -5,26 +5,30 @@ from __future__ import annotations
 from electrical_engineer.engines.circuit_derive import derive
 
 
+def _divider_cir(vin: float, r1: float, r2: float) -> str:
+    return f"* div\nV1 1 0 DC {vin}\nR1 1 2 {r1}\nR2 2 0 {r2}\n.end\n"
+
+
 def _close(a: float, b: float, tol: float = 1e-6) -> bool:
     return abs(a - b) <= tol
 
 
 def superposition_voltage_divider() -> None:
-    base = derive({"kind": "dc_divider", "vin": 10, "r1": 1000, "r2": 1000})
-    a = derive({"kind": "dc_divider", "vin": 4, "r1": 1000, "r2": 1000})
-    b = derive({"kind": "dc_divider", "vin": 6, "r1": 1000, "r2": 1000})
+    base = derive({"cir": _divider_cir(10, 1000, 1000), "analysis": "dc", "probe": "v(2)"})
+    a = derive({"cir": _divider_cir(4, 1000, 1000), "analysis": "dc", "probe": "v(2)"})
+    b = derive({"cir": _divider_cir(6, 1000, 1000), "analysis": "dc", "probe": "v(2)"})
     assert _close(float(a["value"]) + float(b["value"]), float(base["value"]))
 
 
 def reciprocity_symmetric_divider() -> None:
-    forward = derive({"kind": "dc_divider", "vin": 12, "r1": 2000, "r2": 1000})
-    swap = derive({"kind": "dc_divider", "vin": 12, "r1": 1000, "r2": 2000})
+    forward = derive({"cir": _divider_cir(12, 2000, 1000), "analysis": "dc", "probe": "v(2)"})
+    swap = derive({"cir": _divider_cir(12, 1000, 2000), "analysis": "dc", "probe": "v(2)"})
     assert _close(float(forward["value"]) + float(swap["value"]), 12.0)
 
 
 def power_balance_dc_divider() -> None:
     vin, r1, r2 = 12.0, 1500.0, 500.0
-    out = derive({"kind": "dc_divider", "vin": vin, "r1": r1, "r2": r2})
+    out = derive({"cir": _divider_cir(vin, r1, r2), "analysis": "dc", "probe": "v(2)"})
     vout = float(out["value"])
     i = vin / (r1 + r2)
     p_in = vin * i

@@ -1,7 +1,0 @@
-{
-  "schema": "arc.eval.expect.v2",
-  "engine": "circuit_unit",
-  "value": -110.0,
-  "tol": 0.001,
-  "kind": "bjt_ce_gain"
-}
