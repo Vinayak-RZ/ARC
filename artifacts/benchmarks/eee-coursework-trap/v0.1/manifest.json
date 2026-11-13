@@ -1,14 +1,15 @@
 {
   "version": "v0.1",
-  "questions_sha256": "8ec236605ae805c73f7d4e1ed31eba989899f1c2270c68034d5916ad91073fd7",
+  "questions_sha256": "5e7d7a7beffc78d9c8e6aafb0978438d1d31644d80d7644e23927649542c21e6",
   "questions_tarball": "eee-coursework-trap-v0.1-questions.tar.gz",
   "answer_key_path": "artifacts/benchmarks/eee-coursework-trap/v0.1/_key/answer_key.json",
-  "answer_key_sha256": "a731eba27390fa61da0220c3dca2b47e57f979a46b31e4409862c640a1259d36",
-  "total_tasks": 82,
+  "answer_key_sha256": "6e175b60bea3950b97697696cb2bb6b96ebbdf6d7e3c45c2d0ca329ea6329a72",
+  "total_tasks": 70,
+  "unique_question_givens": 70,
   "task_counts_by_domain": {
-    "power": 18,
-    "control": 10,
-    "circuits": 4,
-    "trap": 50
+    "power": 13,
+    "control": 7,
+    "circuits": 3,
+    "trap": 47
   }
 }

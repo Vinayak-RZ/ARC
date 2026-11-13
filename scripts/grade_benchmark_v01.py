@@ -31,8 +31,11 @@ def grade_trap_answer(submission: dict, entry: dict) -> bool:
 
 
 def grade_eval_answer(submission: dict, entry: dict) -> bool:
-    ref = entry.get("reference") or {}
+    from electrical_engineer.benchmark_v01.oracle_givens import oracle_eval
+
     grading = entry.get("grading") or {}
+    givens = grading.get("public_givens") or grading.get("givens") or {}
+    ref = oracle_eval(givens, grading) if givens else (entry.get("reference") or {})
     if grading.get("engine"):
         tol = float(grading.get("tol") or 0.002)
         numeric = {k: v for k, v in ref.items() if isinstance(v, (int, float))}

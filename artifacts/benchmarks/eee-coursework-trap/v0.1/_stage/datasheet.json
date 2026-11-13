@@ -3,12 +3,13 @@
   "version": "v0.1",
   "name": "eee-coursework-trap",
   "task_counts_by_domain": {
-    "power": 18,
-    "control": 10,
-    "circuits": 4,
-    "trap": 50
+    "power": 13,
+    "control": 7,
+    "circuits": 3,
+    "trap": 47
   },
-  "total_tasks": 82,
+  "total_tasks": 70,
+  "unique_question_givens": 70,
   "grading_tolerance_rules": "Numeric fields in answer_schema only; verifiers use Arc engines. No self-reported flags. Trap tasks include per-episode givens.",
   "licence": "Apache-2.0; license-clean reconstructions only.",
   "excluded": "live-ab, exam-v4/v5/v6, sealed REFERENCE.json",

@@ -23,6 +23,10 @@ def _write_tarball(paths: list[Path], dest: Path, prefix: str) -> str:
         for path in paths:
             info = tar.gettarinfo(path, arcname=f"{prefix}/{path.name}")
             info.mtime = 0
+            info.uid = 0
+            info.gid = 0
+            info.uname = ""
+            info.gname = ""
             with path.open("rb") as handle:
                 tar.addfile(info, handle)
     dest.write_bytes(gzip.compress(buf.getvalue(), mtime=0))
@@ -39,10 +43,8 @@ def main() -> int:
     STAGING.mkdir(parents=True)
     KEY_DIR.mkdir(parents=True)
 
-    questions, answer_map = build_task_catalog()
-    by_domain: dict[str, int] = {}
-    for q in questions:
-        by_domain[q["domain"]] = by_domain.get(q["domain"], 0) + 1
+    questions, answer_map, catalog_meta = build_task_catalog()
+    by_domain = catalog_meta["by_domain"]
 
     datasheet = {
         "schema": "arc.benchmark.datasheet.v0.1",
@@ -50,6 +52,7 @@ def main() -> int:
         "name": "eee-coursework-trap",
         "task_counts_by_domain": by_domain,
         "total_tasks": len(questions),
+        "unique_question_givens": catalog_meta["unique_question_givens"],
         "grading_tolerance_rules": (
             "Numeric fields in answer_schema only; verifiers use Arc engines. "
             "No self-reported flags. Trap tasks include per-episode givens."
@@ -100,6 +103,7 @@ def main() -> int:
         "answer_key_path": str(key_path.relative_to(ROOT)),
         "answer_key_sha256": key_body["key_sha256"],
         "total_tasks": len(questions),
+        "unique_question_givens": catalog_meta["unique_question_givens"],
         "task_counts_by_domain": by_domain,
     }
     (OUT_DIR / "manifest.json").write_text(json.dumps(release_manifest, indent=2))
@@ -109,6 +113,7 @@ def main() -> int:
                 "questions_tarball": str(q_tar),
                 "tarball_sha256": q_sha,
                 "tasks": len(questions),
+                "unique_tasks": catalog_meta["unique_question_givens"],
                 "by_domain": by_domain,
             }
         )

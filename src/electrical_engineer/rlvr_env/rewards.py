@@ -7,9 +7,10 @@ from typing import Any
 
 import control
 
-from electrical_engineer.engines.agc_two_area import TwoAreaAgcCase, simulate_two_area
+from electrical_engineer.benchmark_v01.engine_cases import agc_case_from_givens, ed_case_from_givens
+from electrical_engineer.engines.agc_two_area import simulate_two_area
 from electrical_engineer.engines.control_margins import loop_margins
-from electrical_engineer.engines.ed_lambda import EdCase, incremental_cost, solve_lambda_ed
+from electrical_engineer.engines.ed_lambda import incremental_cost, solve_lambda_ed
 from electrical_engineer.engines.smib_swing import (
     critical_clearing_angle,
     initial_angle_pre_fault,
@@ -113,8 +114,15 @@ def _grade_t3(sub: dict[str, Any], givens: dict[str, Any]) -> tuple[bool, float]
 
 
 def _grade_t4(sub: dict[str, Any], givens: dict[str, Any]) -> tuple[bool, float]:
-    case = TwoAreaAgcCase.eec301_default()
-    out = simulate_two_area(case, run="primary", t_end_s=float(givens.get("t_end_s", 30.0)))
+    case = agc_case_from_givens(givens)
+    out = simulate_two_area(
+        case,
+        run="primary",
+        t_end_s=float(givens.get("t_end_s", 30.0)),
+        dpl1_pu=float(givens.get("dpl1_pu", 0.1)),
+        dpl2_pu=float(givens.get("dpl2_pu", 0.0)),
+        step_time_s=float(givens.get("step_time_s", 1.0)),
+    )
     st = out["steady"]
     df = sub.get("primary_df1_Hz")
     p12 = sub.get("primary_P12_MW")
@@ -128,8 +136,15 @@ def _grade_t4(sub: dict[str, Any], givens: dict[str, Any]) -> tuple[bool, float]
 
 def _grade_t5(sub: dict[str, Any], givens: dict[str, Any]) -> tuple[bool, float]:
     k = float(givens.get("K_agc", 0.3))
-    case = TwoAreaAgcCase.eec301_default().with_k(k)
-    st = simulate_two_area(case, run="agc", t_end_s=float(givens.get("t_end_s", 60.0)))["steady"]
+    case = agc_case_from_givens(givens).with_k(k)
+    st = simulate_two_area(
+        case,
+        run="agc",
+        t_end_s=float(givens.get("agc_t_end_s", 60.0)),
+        dpl1_pu=float(givens.get("dpl1_pu", 0.1)),
+        dpl2_pu=float(givens.get("dpl2_pu", 0.0)),
+        step_time_s=float(givens.get("step_time_s", 1.0)),
+    )["steady"]
     df = sub.get("agc_ss_df1_Hz")
     p12 = sub.get("agc_ss_P12_MW")
     if df is None or p12 is None:
@@ -140,8 +155,11 @@ def _grade_t5(sub: dict[str, Any], givens: dict[str, Any]) -> tuple[bool, float]
 
 
 def _grade_t6(sub: dict[str, Any], givens: dict[str, Any]) -> tuple[bool, float]:
+    from electrical_engineer.engines.ed_lambda import EdCase
+
     pd = float(givens["PD_MW"])
-    r = solve_lambda_ed(EdCase.eec301_default(), pd)
+    case = ed_case_from_givens(givens) if givens.get("units") else EdCase.eec301_default()
+    r = solve_lambda_ed(case, pd)
     p2 = sub.get("unit2_MW")
     ic2 = sub.get("unit2_IC")
     lam = sub.get("lambda")
@@ -154,7 +172,7 @@ def _grade_t6(sub: dict[str, Any], givens: dict[str, Any]) -> tuple[bool, float]
 
 
 def _grade_t7(sub: dict[str, Any], givens: dict[str, Any]) -> tuple[bool, float]:
-    case = EdCase.eec301_default()
+    case = ed_case_from_givens(givens)
     p = float(givens["unit1_MW"])
     want = incremental_cost(p, case.units[0])
     ic = sub.get("unit1_IC")
@@ -234,25 +252,31 @@ def oracle_submission(trap_id: str, givens: dict[str, Any] | None = None) -> dic
         _, domega0 = swing_derivative(d0, 0.0, case.pmax_pre_pu, case)
         return {"accel_coeff": case.accel_coeff(), "domega0_at_prefault": domega0}
     if trap_id == "T4":
-        case_agc = TwoAreaAgcCase.eec301_default()
-        st = simulate_two_area(case_agc, run="primary", t_end_s=float(givens.get("t_end_s", 30.0)))[
-            "steady"
-        ]
+        st = simulate_two_area(
+            agc_case_from_givens(givens),
+            run="primary",
+            t_end_s=float(givens.get("t_end_s", 30.0)),
+            dpl1_pu=float(givens.get("dpl1_pu", 0.1)),
+            dpl2_pu=float(givens.get("dpl2_pu", 0.0)),
+            step_time_s=float(givens.get("step_time_s", 1.0)),
+        )["steady"]
         return {"primary_df1_Hz": st["df1_hz"], "primary_P12_MW": st["P12_MW"]}
     if trap_id == "T5":
         k = float(givens.get("K_agc", 0.3))
         st = simulate_two_area(
-            TwoAreaAgcCase.eec301_default().with_k(k),
+            agc_case_from_givens(givens).with_k(k),
             run="agc",
-            t_end_s=float(givens.get("t_end_s", 60.0)),
+            t_end_s=float(givens.get("agc_t_end_s", 60.0)),
+            dpl1_pu=float(givens.get("dpl1_pu", 0.1)),
+            dpl2_pu=float(givens.get("dpl2_pu", 0.0)),
         )["steady"]
         return {"agc_ss_df1_Hz": st["df1_hz"], "agc_ss_P12_MW": st["P12_MW"]}
     if trap_id == "T6":
-        r = solve_lambda_ed(EdCase.eec301_default(), float(givens["PD_MW"]))
+        r = solve_lambda_ed(ed_case_from_givens(givens), float(givens["PD_MW"]))
         return {"unit2_MW": r["P"][1], "unit2_IC": r["IC"][1], "lambda": r["lam"]}
     if trap_id == "T7":
         p = float(givens["unit1_MW"])
-        return {"unit1_IC": incremental_cost(p, EdCase.eec301_default().units[0])}
+        return {"unit1_IC": incremental_cost(p, ed_case_from_givens(givens).units[0])}
     if trap_id == "T8":
         m = loop_margins(control.tf(givens["num"], givens["den"]))
         return {"gain_margin_dB": m["gain_margin_dB"], "gain_crossover_rad_s": m["gain_crossover_rad_s"]}
@@ -290,7 +314,7 @@ def naive_submission(trap_id: str, givens: dict[str, Any]) -> dict[str, Any]:
         return {"unit2_MW": 200.0, "unit2_IC": 5.0, "lambda": 7.39}
     if trap_id == "T7":
         p = float(givens["unit1_MW"])
-        u = EdCase.eec301_default().units[0]
+        u = ed_case_from_givens(givens).units[0]
         return {"unit1_IC": u.b + u.c * p}
     if trap_id == "T8":
         return {"gain_margin_dB": 6.0, "gain_crossover_rad_s": 4.472}
