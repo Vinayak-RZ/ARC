@@ -55,3 +55,19 @@ def test_pid_dc_motor_open_loop_matches_hand_built_margins() -> None:
     assert got["gain_crossover_rad_s"] is not None
     assert abs(got["gain_crossover_rad_s"] - float(wgc)) < 1e-5
     assert got["display"]["wcg"] != "No crossover"
+    assert got["phase_margin_deg"] is not None
+    assert got["phase_margin_deg"] > 30.0
+    assert got["gain_margin_infinite"] or got["display"]["gm_db"] == "Infinite"
+
+
+@pytest.mark.skipif(not control_available(), reason="python-control missing")
+def test_pid_dc_motor_margins_unchanged_with_unconnected_gain() -> None:
+  diagram = layout_chain(pid_dc_motor())
+  base = extract_margins(open_loop_with_controller(diagram)[0])
+  shadow = dict(diagram)
+  shadow["blocks"] = list(diagram["blocks"]) + [
+    {"id": "g_extra", "type": "gain", "x": 40, "y": 200, "params": {"k": 1.0}},
+  ]
+  with_gain = extract_margins(open_loop_with_controller(shadow)[0])
+  for key in ("gain_crossover_rad_s", "phase_margin_deg", "gain_margin_infinite", "display"):
+    assert base.get(key) == with_gain.get(key)

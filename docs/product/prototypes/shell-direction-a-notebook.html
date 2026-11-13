@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Arc prototype A — Notebook shell</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" />
+  <style>
+    :root {
+      --canvas: #FAFAF9;
+      --surface: #FFFFFF;
+      --surface-subtle: #F5F5F4;
+      --line: #E4E4E2;
+      --ink: #202020;
+      --ink-secondary: #5F5F5C;
+      --muted: #8A8A86;
+      --cobalt: #2F6FEB;
+      --cobalt-50: #EEF3FE;
+      --cobalt-ink: #1D47A3;
+      --success: #2F9E6A;
+      --warning: #E0A526;
+      --critical: #D0312D;
+      --radius: 6px;
+      --space-2: 8px;
+      --space-4: 16px;
+      --space-5: 24px;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Inter, system-ui, sans-serif; background: var(--canvas); color: var(--ink); }
+    .shell { display: flex; flex-direction: column; min-height: 100vh; max-width: 1280px; margin: 0 auto; }
+    .topbar {
+      display: flex; align-items: center; gap: var(--space-4);
+      height: 56px; padding: 0 var(--space-5);
+      border-bottom: 1px solid var(--line); background: var(--surface);
+    }
+    .brand { font-weight: 600; letter-spacing: -0.02em; }
+    .layout { display: flex; flex: 1; min-height: 0; }
+    .nav {
+      width: 220px; padding: var(--space-4); border-right: 1px solid var(--line);
+      background: var(--surface-subtle); display: flex; flex-direction: column; gap: var(--space-2);
+    }
+    .nav a, .nav button {
+      text-align: left; border: 0; background: transparent; font: inherit; cursor: pointer;
+      padding: 10px 12px; border-radius: var(--radius); color: var(--ink-secondary);
+    }
+    .nav a[aria-current], .nav button[aria-current] {
+      background: var(--cobalt-50); color: var(--cobalt-ink); font-weight: 600;
+    }
+    .main { flex: 1; padding: var(--space-5); }
+    .home h1 { margin: 0 0 var(--space-2); font-size: 28px; font-weight: 500; letter-spacing: -0.02em; }
+    .home p { color: var(--ink-secondary); max-width: 42rem; line-height: 1.6; }
+    .primary {
+      margin-top: var(--space-5); height: 44px; padding: 0 16px; border: 0; border-radius: 4px;
+      background: var(--cobalt); color: #fff; font: inherit; font-weight: 500; cursor: pointer;
+    }
+    .section { margin-top: var(--space-5); padding: var(--space-5); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+    .run-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
+    .badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+    .badge.ok { background: #E8F5EE; color: var(--success); }
+    .badge.warn { background: #FDF4E3; color: #8A6520; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar"><span class="brand">Arc</span></header>
+    <div class="layout">
+      <nav class="nav" aria-label="Workspace">
+        <button type="button" aria-current="true">Home</button>
+        <button type="button">Runs</button>
+        <button type="button">Books</button>
+        <button type="button">Visuals</button>
+        <button type="button">Control</button>
+      </nav>
+      <main class="main home">
+        <h1>Co-solve EE problems with your agent</h1>
+        <p>Arc runs verified engines on circuits, control, and power coursework. You and your coding agent work on the same live run: answer, plots, and reasoning trail.</p>
+        <button class="primary" type="button">Try a problem</button>
+        <section class="section" aria-label="Recent runs">
+          <h2 style="margin:0 0 12px;font-size:20px;font-weight:600;">Recent</h2>
+          <div class="run-row"><div><strong>RLC step response</strong><div style="font-size:13px;color:var(--muted);">simulate-circuit · 2h ago</div></div><span class="badge ok">Checked</span></div>
+          <div class="run-row"><div><strong>PID DC motor</strong><div style="font-size:13px;color:var(--muted);">control · yesterday</div></div><span class="badge warn">Unchecked</span></div>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

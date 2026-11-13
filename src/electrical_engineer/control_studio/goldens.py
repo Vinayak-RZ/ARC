@@ -39,9 +39,9 @@ def pid_dc_motor() -> dict[str, Any]:
         "blocks": [
             {"id": "r", "type": "step", "x": 24, "y": 80, "params": {}, "label": "Step"},
             {"id": "sum1", "type": "sum", "x": 168, "y": 72, "params": {"signs": "+-"}},
-            {"id": "pid1", "type": "pid", "x": 312, "y": 64, "params": {"kp": 2.0, "ki": 0.5, "kd": 0.1}},
-            {"id": "motor", "type": "plant_dc_motor", "x": 456, "y": 64, "params": {}, "label": "DC motor"},
-            {"id": "y", "type": "scope", "x": 600, "y": 72, "params": {}},
+            {"id": "pid1", "type": "pid", "x": 312, "y": 64, "params": {"kp": 50.0, "ki": 100.0, "kd": 5.0}},
+            {"id": "motor", "type": "plant_dc_motor", "x": 528, "y": 64, "params": {}, "label": "DC motor"},
+            {"id": "y", "type": "scope", "x": 672, "y": 72, "params": {}},
         ],
         "wires": [
             {"id": "w1", "from": "r:out", "to": "sum1:in1"},
@@ -50,7 +50,11 @@ def pid_dc_motor() -> dict[str, Any]:
             {"id": "w4", "from": "motor:out", "to": "y:in"},
             {"id": "w5", "from": "motor:tap", "to": "sum1:feedback"},
         ],
-        "meta": {},
+        "meta": {
+            "reference": "University of Michigan CTMS — DC Motor Speed: System Modeling",
+            "reference_url": "https://ctms.engin.umich.edu/CTMS/index.php?example=MotorSpeed&section=SystemModeling",
+            "pid_note": "Default gains scaled from CTMS example (Kp 100, Ki 200, Kd 10) for a visible step within 10 s.",
+        },
     }
 
 
@@ -103,9 +107,29 @@ def two_area_agc() -> dict[str, Any]:
     }
 
 
+def open_loop_low_gain() -> dict[str, Any]:
+    """Open loop with magnitude below 0 dB across the analysis sweep (margin regression capture)."""
+    return {
+        "schema": "arc.control_studio.v1",
+        "id": "golden-open-low-gain",
+        "title": "Low gain open loop",
+        "blocks": [
+            {"id": "r", "type": "step", "x": 40, "y": 120, "params": {"amplitude": 1.0}},
+            {"id": "g", "type": "plant_first_order", "x": 280, "y": 120, "params": {"k": 0.001, "tau": 1.0}},
+            {"id": "y", "type": "scope", "x": 440, "y": 120, "params": {}},
+        ],
+        "wires": [
+            {"id": "w1", "from": "r:out", "to": "g:in"},
+            {"id": "w2", "from": "g:out", "to": "y:in"},
+        ],
+        "meta": {"num": [0.001], "den": [1.0, 1.0]},
+    }
+
+
 GOLDENS = {
     "unity_first_order": unity_first_order,
     "pid_dc_motor": pid_dc_motor,
     "lead_compensator": lead_compensator,
     "two_area_agc": two_area_agc,
+    "open_loop_low_gain": open_loop_low_gain,
 }

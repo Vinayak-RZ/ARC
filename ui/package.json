@@ -4,15 +4,20 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "test:e2e": "playwright test -c e2e/playwright.config.ts",
+    "test:e2e:wire": "playwright test -c e2e/playwright.config.ts studio-wire-selection.spec.ts"
   },
   "dependencies": {
     "@xyflow/react": "^12.11.6",
+    "cmdk": "^1.1.1",
+    "lucide-react": "^1.72.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "zustand": "^5.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.49.0",
     "@vitejs/plugin-react": "^4.3.0",
     "vite": "^6.0.0"
   }

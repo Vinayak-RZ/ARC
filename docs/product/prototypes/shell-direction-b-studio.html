@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Arc prototype B — Studio top nav</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" />
+  <style>
+    :root { --canvas:#FAFAF9; --surface:#fff; --line:#E4E4E2; --ink:#202020; --muted:#8A8A86; --cobalt:#2F6FEB; }
+    body { margin:0; font-family:Inter,sans-serif; background:var(--canvas); }
+    .top { display:flex; align-items:center; gap:24px; padding:0 24px; height:56px; border-bottom:1px solid var(--line); background:var(--surface); }
+    .tabs { display:flex; gap:8px; }
+    .tabs button { border:0; background:transparent; padding:8px 12px; font:inherit; color:var(--muted); cursor:pointer; }
+    .tabs button.on { color:var(--cobalt); font-weight:600; border-bottom:2px solid var(--cobalt); }
+    .grid { display:grid; grid-template-columns:320px 1fr; gap:24px; padding:24px; max-width:1280px; margin:0 auto; }
+    .card { background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:20px; }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <strong>Arc</strong>
+    <nav class="tabs"><button class="on">Home</button><button>Runs</button><button>Visuals</button><button>Control</button></nav>
+  </header>
+  <div class="grid">
+    <div class="card"><h2>Runs</h2><p style="color:var(--muted);font-size:14px;">Search and open saved work</p></div>
+    <div class="card"><h1 style="margin:0;font-size:24px;">Answer first layout</h1><p>Large plot region below verification card.</p></div>
+  </div>
+</body>
+</html>

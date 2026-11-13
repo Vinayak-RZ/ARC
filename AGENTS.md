@@ -27,6 +27,10 @@ Product execution graph **complete through H1** on `cursor/ee-product-execution-
 - Inventory: [skills-manifest.json](skills-manifest.json)
 - **Reference library:** curated open/factual EE data in `src/electrical_engineer/reference/data/`; retrieve via `electrical-engineer reference search|get` or MCP `arc_reference_search` / `arc_reference_get`. Agent skill: [`skills/reference/SKILL.md`](skills/reference/SKILL.md). Coverage and gaps: [`docs/reference/COVERAGE.md`](docs/reference/COVERAGE.md), [`docs/reference/GAPS.md`](docs/reference/GAPS.md). When a problem names a standard curve, conductor, IEEE case, or limit table, **look it up and cite** — do not assume constants.
 
+## UI and visual design
+
+Product UI work must follow [`docs/design/DESIGN.md`](docs/design/DESIGN.md) (Learning Lab / Cobalt tokens) and the `.cursor/skills/product-thinking` skill before changing layout or copy. Encode tokens once in `ui/src/tokens.css` and `ui/src/tokens.js`; keep `src/electrical_engineer/visual_kit/design_tokens.py` aligned for matplotlib output.
+
 ## Architecture (when designing)
 
 | Domain | Skill | Rule |

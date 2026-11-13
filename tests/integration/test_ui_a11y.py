@@ -4,39 +4,46 @@ from fastapi.testclient import TestClient
 
 from electrical_engineer.ui_server.app import BIND_HOST, create_app, should_open_browser
 
+UI_SRC = Path("ui/src")
+
+
+def _read(*parts: str) -> str:
+    return (UI_SRC.joinpath(*parts)).read_text(encoding="utf-8")
+
 
 def test_skip_link_and_no_wan() -> None:
-    root = Path("ui/src/slots/root.jsx").read_text(encoding="utf-8")
-    assert "Skip to workspace" in root
+    shell = _read("shell", "AppShell.jsx")
+    root = _read("slots", "root.jsx")
+    assert "Skip to workspace" in shell
     assert "aria-live" in root
     assert "unchecked === true" in root
     assert 'String(summary).includes("unchecked")' not in root
     assert "run.result" in root
     assert "run.canvas" in root
-    canvas = Path("ui/src/slots/canvas/Canvas.jsx").read_text(encoding="utf-8")
-    inspector = Path("ui/src/slots/canvas/Inspector.jsx").read_text(encoding="utf-8")
+    canvas = _read("slots", "canvas", "Canvas.jsx")
+    inspector = _read("slots", "canvas", "Inspector.jsx")
     assert "Confirm topology" in canvas
     assert "Save graph" in canvas
     assert ">Refdes<" in inspector.replace(" ", "") or "Refdes" in inspector
-    assert "palette-btn" in Path("ui/src/slots/canvas/Palette.jsx").read_text(encoding="utf-8")
+    assert "palette-btn" in _read("slots", "canvas", "Palette.jsx")
     assert "Waiting for topology confirm" in root
     assert "waiting-human" in root
-    assert 'alt="Arc"' in root
-    assert "MATLAB · via Arc" in root
-    assert 'aria-label="MATLAB optional via Arc"' in root
-    assert "Simulink · via Arc" in root
-    assert 'aria-label="Simulink optional via Arc"' in root
-    assert "No saved runs yet" in root
-    assert "electrical-engineer run" in root
-    assert "named runs · exact token unchecked" not in root
-    assert "nav-toggle" in root
+    assert 'alt="Arc"' in _read("shell", "Sidebar.jsx")
+    home = _read("pages", "HomePage.jsx")
+    assert "Try an example" in home
+    assert "/api/examples" in home
+    assert "electrical-engineer run" in home
+    assert "named runs · exact token unchecked" not in shell
     assert 'register("rag.inventory"' in root
-    library = Path("ui/src/slots/library.jsx").read_text(encoding="utf-8")
+    library = _read("slots", "library.jsx")
     assert "Add a PDF you have rights to; it stays on this machine." in library
     assert 'aria-label="Book"' in library
     assert "I have rights to this file." in library
     assert "Search tagged books" in library
     assert "No passages for that query." in library
+    problems = _read("pages", "ProblemsPage.jsx")
+    assert "No problems yet" in problems
+    assert "product-sidebar" in _read("tokens.css")
     assert BIND_HOST == "127.0.0.1"
 
 
