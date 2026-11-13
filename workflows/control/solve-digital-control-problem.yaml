@@ -2,9 +2,12 @@ id: solve-digital-control-problem
 nodes:
   dig:
     activity: run-digital-control
+  web:
+    activity: web-verify
+    needs: [dig]
   label:
     activity: label-unchecked
-    needs: [dig]
+    needs: [dig, web]
   summary:
     activity: write-run-summary
     needs: [label]

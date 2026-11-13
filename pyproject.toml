@@ -28,6 +28,7 @@ control = ["control>=0.9.4", "matplotlib>=3.8", "numpy>=1.26", "scipy>=1.11"]
 power = ["pandapower>=2.14", "numpy>=1.26"]
 engines = [
     "electrical-engineer[sim,control,power]",
+    "schemdraw>=0.15",
 ]
 
 [tool.hatch.build.targets.wheel]

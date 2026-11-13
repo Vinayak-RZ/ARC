@@ -101,6 +101,7 @@ def execute(
     completed = run_fsm(recipe, {name: wrap(fn) for name, fn in REGISTRY.items()})
     summary_node = completed.get("summary") or next(reversed(completed.values()))
     caps, provs, verifier = _ids(recipe, completed)
+    web_block = _web_verification(summary_node, completed)
     payload = {
         "recipe_id": recipe.id,
         "run_id": run_id,
@@ -110,6 +111,10 @@ def execute(
         "value": summary_node.get("value"),
         "paths": summary_node.get("paths") or [],
         "citations": summary_node.get("citations") or [],
+        "web_verification": web_block.get("web_verification"),
+        "answer_markdown": summary_node.get("answer_markdown"),
+        "similar_problems": web_block.get("similar_problems"),
+        "recomputed": web_block.get("recomputed"),
         "nodes": {
             k: {"unchecked": v.get("unchecked"), "ok": v.get("ok")} for k, v in completed.items()
         },
@@ -119,6 +124,8 @@ def execute(
     }
     if payload["unchecked"] and payload.get("token") is None:
         payload["token"] = UNCHECKED
+    if web_block.get("evidence_paths"):
+        payload["artifact_paths"] = [*payload["artifact_paths"], *web_block["evidence_paths"]]
     if not payload["unchecked"]:
         for v in completed.values():
             if isinstance(v, dict) and v.get("value") is not None:
@@ -177,6 +184,30 @@ def _ids(recipe, completed: dict[str, Any]) -> tuple[list[str], list[str], str]:
     return caps, provs, verifier
 
 
+def _web_verification(summary_node: dict[str, Any], completed: dict[str, Any]) -> dict[str, Any]:
+    web = summary_node.get("web_verification") if isinstance(summary_node, dict) else None
+    similar = None
+    paths: list[str] = []
+    for v in completed.values():
+        if not isinstance(v, dict) or v.get("tool") != "web-verify":
+            continue
+        web = {
+            "status": v.get("web_verify_status"),
+            "provider": v.get("provider"),
+            "needs_review": v.get("needs_review"),
+            "offline_unverified": v.get("offline_unverified"),
+            "verified_values": v.get("verified_values"),
+            "disagreement_banner": v.get("disagreement_banner"),
+        }
+        similar = v.get("similar_problems")
+        paths.extend(v.get("paths") or [])
+    recomputed = None
+    for v in completed.values():
+        if isinstance(v, dict) and v.get("tool") == "web-verify":
+            recomputed = v.get("recomputed")
+    return {"web_verification": web, "similar_problems": similar, "evidence_paths": paths, "recomputed": recomputed}
+
+
 def _retrieve_seed(completed: dict[str, Any]) -> dict[str, Any]:
     for v in completed.values():
         if isinstance(v, dict) and ("passages" in v or "empty" in v):
@@ -207,5 +238,8 @@ def _unchecked_reason(recipe_id: str, completed: dict[str, Any], payload: dict[s
             v.get("error") in {"unconfirmed", "gate"} or v.get("confirmed") is False
         ):
             return "gate-closed"
+    for v in completed.values():
+        if isinstance(v, dict) and v.get("tool") == "web-verify" and v.get("needs_review"):
+            return "context-mismatch"
     # Nothing blocked the run: the kernel produced prose it cannot verify and said so.
     return "labeled"

@@ -1,0 +1,53 @@
+{
+  "recorded_at": "2026-11-13T11:42:00Z",
+  "topic": "MATPOWER case9 generator cost rows vs generator buses",
+  "queries": [
+    "MATPOWER case9.m gencost polynomial",
+    "case9 generator bus 1 2 3 gencost",
+    "matpower gencost row order gen matrix"
+  ],
+  "claims": [
+    {
+      "claim_id": "case9_gencost",
+      "name": "case9 gencost row 1 quadratic coefficient c2",
+      "unit": "USD per MW^2 hour",
+      "conditions": "gen row 1 is bus 1; model 2 polynomial cost",
+      "tolerance": 0.001,
+      "authoritative_value": 0.11,
+      "sources": [
+        {
+          "url": "https://raw.githubusercontent.com/MATPOWER/matpower/master/data/case9.m",
+          "domain": "raw.githubusercontent.com",
+          "title": "MATPOWER data/case9.m",
+          "retrieved_at": "2026-11-13T11:37:35Z",
+          "http_status": 200,
+          "snippet": "mpc.gencost = [ 2 1500 0 3 0.11 5 150;",
+          "extracted_value": 0.11,
+          "unit": "",
+          "source_class": "reference_case"
+        },
+        {
+          "url": "https://matpower.org/docs/ref/matpower6.0/case9.html",
+          "domain": "matpower.org",
+          "title": "MATPOWER case9 reference",
+          "retrieved_at": "2026-11-13T12:10:00Z",
+          "http_status": 200,
+          "snippet": "mpc.gencost = [ 2 1500 0 3 0.11 5 150;",
+          "extracted_value": 0.11,
+          "unit": "",
+          "source_class": "reference_doc"
+        },
+        {
+          "url": "https://matpower.org/documentation/ref-manual/legacy/functions/caseformat.html",
+          "domain": "matpower.org",
+          "title": "MATPOWER caseformat",
+          "retrieved_at": "2026-11-13T11:37:30Z",
+          "http_status": 200,
+          "snippet": "MODEL = 2 : cn, ..., c1, c0 polynomial cost for each generator row in mpc.gencost",
+          "source_class": "context_only"
+        }
+      ]
+    }
+  ],
+  "similar_problems": []
+}

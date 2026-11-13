@@ -1,0 +1,10 @@
+{
+  "solver": "breakaway_real_axis",
+  "check_kind": "breakaway_real_axis",
+  "poles": [0, -3, -6],
+  "zeros": [],
+  "pick_sigma": -1.268,
+  "value_key": "breakaway",
+  "expected": -1.268,
+  "tol": 0.02
+}

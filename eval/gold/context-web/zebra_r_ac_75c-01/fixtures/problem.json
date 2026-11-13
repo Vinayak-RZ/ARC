@@ -1,0 +1,17 @@
+{
+  "web_verify_fixture": "zebra_r_ac_75c",
+  "context_claims": [
+    {
+      "claim_id": "zebra_r_ac_75c",
+      "name": "Zebra R_ac at 75 C",
+      "library_value": 0.0789,
+      "unit": "ohm/km",
+      "tolerance": 0.02
+    }
+  ],
+  "recompute": {
+    "kind": "zebra_drop_p14",
+    "i_a": 1000.0,
+    "length_km": 12.498
+  }
+}

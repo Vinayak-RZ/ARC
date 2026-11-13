@@ -1,0 +1,165 @@
+{
+  "quantity_pass": 25,
+  "quantity_total": 25,
+  "total_fraction": 1.0,
+  "problems": {
+    "P1": {
+      "delta0_deg": {
+        "pass": true,
+        "submitted": 24.901062370366965,
+        "reference": 24.901062370366965
+      },
+      "delta_cr_deg": {
+        "pass": true,
+        "submitted": 78.31719753697801,
+        "reference": 78.31719753697801
+      },
+      "t_cr_s": {
+        "pass": true,
+        "submitted": 0.2965846061706543,
+        "reference": 0.296478271484375
+      },
+      "fraction": 1.0,
+      "full_credit": true
+    },
+    "P2": {
+      "stable": {
+        "pass": true,
+        "submitted": true,
+        "reference": true
+      },
+      "max_rotor_angle_deg": {
+        "pass": true,
+        "submitted": 102.06232146790454,
+        "reference": 102.06231801305648
+      },
+      "fraction": 1.0,
+      "full_credit": true
+    },
+    "P3": {
+      "P1_MW": {
+        "pass": true,
+        "submitted": 350.00000000000006,
+        "reference": 350.00000000000006
+      },
+      "P2_MW": {
+        "pass": true,
+        "submitted": 250.0,
+        "reference": 250
+      },
+      "P3_MW": {
+        "pass": true,
+        "submitted": 300.0,
+        "reference": 300
+      },
+      "lambda_Rs_per_MWh": {
+        "pass": true,
+        "submitted": 9.8,
+        "reference": 9.8
+      },
+      "fraction": 1.0,
+      "full_credit": true
+    },
+    "P4": {
+      "steady_state_frequency_deviation_Hz": {
+        "pass": true,
+        "submitted": -0.05952380952380953,
+        "reference": -0.05952380952380953
+      },
+      "Delta_P12_MW": {
+        "pass": true,
+        "submitted": -25.0,
+        "reference": -25.0
+      },
+      "fraction": 1.0,
+      "full_credit": true
+    },
+    "P5": {
+      "gain_crossover_rad_per_s": {
+        "pass": true,
+        "submitted": 1.558686400848468,
+        "reference": 1.55868640406249
+      },
+      "phase_margin_deg": {
+        "pass": true,
+        "submitted": 43.209845307369534,
+        "reference": 43.20984525381832
+      },
+      "phase_crossover_rad_per_s": {
+        "pass": true,
+        "submitted": 4.47213595499958,
+        "reference": 4.4721359682367465
+      },
+      "gain_margin_dB": {
+        "pass": true,
+        "submitted": 15.563025007672875,
+        "reference": 15.563024919110225
+      },
+      "fraction": 1.0,
+      "full_credit": true
+    },
+    "P6": {
+      "damping_type": {
+        "pass": true,
+        "submitted": "underdamped",
+        "reference": "underdamped"
+      },
+      "Vc_peak_V": {
+        "pass": true,
+        "submitted": 15.051146539410333,
+        "reference": 15.045920575021169
+      },
+      "t_Vc_peak_s": {
+        "pass": true,
+        "submitted": 0.3426,
+        "reference": 0.3428
+      },
+      "settling_time_2pct_s": {
+        "pass": true,
+        "submitted": 0.8408,
+        "reference": 0.8409
+      },
+      "fraction": 1.0,
+      "full_credit": true
+    },
+    "P7": {
+      "I_fault_pu": {
+        "pass": true,
+        "submitted": 4.285714285714286,
+        "reference": 4.285714285714286
+      },
+      "I_fault_kA": {
+        "pass": true,
+        "submitted": 7.498055444021114,
+        "reference": 7.498055444021114
+      },
+      "fraction": 1.0,
+      "full_credit": true
+    },
+    "P8": {
+      "rotor_speed_rpm": {
+        "pass": true,
+        "submitted": 1440.0,
+        "reference": 1440.0
+      },
+      "stator_current_A": {
+        "pass": true,
+        "submitted": 23.456116655053975,
+        "reference": 23.456116655053975
+      },
+      "developed_torque_Nm": {
+        "pass": true,
+        "submitted": 88.10049292522135,
+        "reference": 88.10049292522137
+      },
+      "slip_at_max_torque": {
+        "pass": true,
+        "submitted": 0.16666666666666669,
+        "reference": 0.16702205904356413
+      },
+      "fraction": 1.0,
+      "full_credit": true
+    }
+  },
+  "submission": "answers"
+}

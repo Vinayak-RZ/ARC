@@ -1,0 +1,16 @@
+id: study-power-electronics-v2
+nodes:
+  solve:
+    activity: run-ee-v2-solver
+  web:
+    activity: web-verify
+    needs: [solve]
+  check:
+    activity: check-numeric
+    needs: [solve, web]
+  label:
+    activity: label-unchecked
+    needs: [check, web]
+  summary:
+    activity: write-run-summary
+    needs: [label]

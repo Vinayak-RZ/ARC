@@ -1,0 +1,10 @@
+id: ed-lambda-study
+nodes:
+  ed:
+    activity: run-ed-lambda
+  label:
+    activity: label-unchecked
+    needs: [ed]
+  summary:
+    activity: write-run-summary
+    needs: [label]

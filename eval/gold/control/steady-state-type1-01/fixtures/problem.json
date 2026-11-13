@@ -1,0 +1,10 @@
+{
+  "solver": "steady_state_error",
+  "check_kind": "steady_state_error",
+  "system_type": 1,
+  "gain": 4.0,
+  "error_key": "ess_ramp",
+  "value_key": "ess_ramp",
+  "expected": 0.25,
+  "tol": 1e-6
+}

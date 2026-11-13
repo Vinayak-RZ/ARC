@@ -1,0 +1,8 @@
+# Arc local configuration (optional). Env vars override these keys.
+
+[web_verify]
+# provider: offline | host | builtin (default: host when EE_WEB_VERIFY unset)
+provider = "offline"
+# builtin: set search_api_key to BRAVE_SEARCH_API_KEY or TAVILY_API_KEY (env overrides).
+# Optional search_url = "https://api.tavily.com" to select Tavily instead of Brave.
+# search_api_key = ""

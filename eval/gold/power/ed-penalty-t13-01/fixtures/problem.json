@@ -1,0 +1,14 @@
+{
+  "solver": "ed_with_losses",
+  "check_kind": "ed_with_losses",
+  "pd_mw": 500,
+  "units": "eec301",
+  "B": [
+    [0.0001, 0.00002, 0.00001],
+    [0.00002, 0.00015, 0.00002],
+    [0.00001, 0.00002, 0.00012]
+  ],
+  "value_key": "lam",
+  "expected": 7.889,
+  "tol": 0.15
+}

@@ -1,0 +1,10 @@
+{
+  "recipe_id": "context-web-spotcheck",
+  "stale_context_flagged": true,
+  "recomputed": {
+    "P1_MW": 127.56,
+    "P2_MW": 187.44,
+    "lambda_Rs_per_MWh": 33.06
+  },
+  "tol": 0.05
+}

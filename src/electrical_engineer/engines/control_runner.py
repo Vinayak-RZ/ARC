@@ -74,7 +74,14 @@ def run_control_plots(run_dir: Path, problem: dict[str, Any]) -> dict[str, Any]:
     )
 
     y_ss = float(y[-1]) if len(y) else None
-    return {
+    margins: dict[str, float] = {}
+    try:
+        from electrical_engineer.engines.control_margins import loop_margins
+
+        margins = loop_margins(sys)
+    except (ImportError, ValueError, TypeError, ArithmeticError):
+        margins = {}
+    out: dict[str, Any] = {
         "ok": True,
         "tool": "python-control",
         "unchecked": False,
@@ -83,3 +90,9 @@ def run_control_plots(run_dir: Path, problem: dict[str, Any]) -> dict[str, Any]:
         "bode_png": str(bode_png),
         "step_png": str(step_png),
     }
+    if margins:
+        out["margins"] = margins
+        out.update(margins)
+        if problem.get("margins"):
+            out["value"] = margins["phase_margin_deg"]
+    return out

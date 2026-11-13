@@ -5,8 +5,28 @@ from __future__ import annotations
 import cmath
 import json
 import math
+import re
 from pathlib import Path
 from typing import Any
+
+
+def _parse_complex(val: Any) -> complex:
+    if isinstance(val, complex):
+        return val
+    if isinstance(val, (int, float)):
+        return complex(float(val))
+    s = str(val).strip().replace(" ", "")
+    if not s:
+        raise ValueError("empty complex")
+    s = s.replace("J", "j")
+    m = re.match(r"^([+-]?)j(.*)$", s)
+    if m:
+        sign, rest = m.group(1) or "+", m.group(2)
+        coeff = rest if rest not in ("", "+", "-") else "1"
+        s = f"{sign}{coeff}j"
+    elif s in ("j", "+j", "-j"):
+        s = s.replace("j", "1j")
+    return complex(s)
 
 
 def pandapower_available() -> bool:
@@ -46,6 +66,7 @@ def _default_network():
         max_i_ka=1.0,
     )
     pp.create_load(net, b1, p_mw=5.0, q_mvar=1.0)
+    pp.create_load(net, b2, p_mw=0.5, q_mvar=0.15, name="fault_shunt")
     return net
 
 
@@ -56,19 +77,20 @@ def _sequence_fault(
     z2: complex,
     z0: complex,
     zf: complex = 0j,
+    *,
+    faulted_phases: tuple[str, ...] | None = None,
 ) -> complex:
-    """Symmetrical-component bolted fault currents (per-unit on common base)."""
-    ft = fault_type.upper().replace(" ", "")
-    if ft in {"3PH", "LLL", "THREE_PHASE"}:
-        return v_prefault / z1
-    if ft in {"LG", "SLG", "1LG"}:
-        return 3.0 * v_prefault / (z1 + z2 + z0 + 3.0 * zf)
-    if ft in {"LL", "2LL"}:
-        return cmath.sqrt(3) * v_prefault / (z1 + z2)
-    if ft in {"LLG", "2LLG", "DLG"}:
-        den = z1 + z2 * (z0 + 3.0 * zf) / (z2 + z0 + 3.0 * zf)
-        return cmath.sqrt(3) * v_prefault / den
-    raise ValueError(f"unsupported fault type {fault_type}")
+    from electrical_engineer.engines.sequence_fault import legacy_scalar_current
+
+    return legacy_scalar_current(
+        fault_type,
+        v_prefault,
+        z1,
+        z2,
+        z0,
+        zf,
+        faulted_phases=faulted_phases,
+    )
 
 
 def run_power_study(run_dir: Path, problem: dict[str, Any]) -> dict[str, Any]:
@@ -106,20 +128,41 @@ def run_power_study(run_dir: Path, problem: dict[str, Any]) -> dict[str, Any]:
                 "tool": "pandapower",
             }
 
-    v_pre = complex(float(problem.get("v_prefault_pu", 1.0)))
-    z1 = complex(problem.get("z1_pu", 0.1))
-    z2 = complex(problem.get("z2_pu", 0.1))
-    z0 = complex(problem.get("z0_pu", 0.3))
-    zf = complex(problem.get("zf_pu", 0.0))
+    v_pre = _parse_complex(problem.get("v_prefault_pu", 1.0))
+    z1 = _parse_complex(problem.get("z1_pu", 0.1))
+    z2 = _parse_complex(problem.get("z2_pu", 0.1))
+    z0 = _parse_complex(problem.get("z0_pu", 0.3))
+    zf = _parse_complex(problem.get("zf_pu", 0.0))
+    phases = problem.get("faulted_phases") or problem.get("phases")
+    phase_tuple = tuple(phases) if isinstance(phases, (list, tuple)) else None
     try:
-        i_fault = _sequence_fault(fault_type, v_pre, z1, z2, z0, zf)
+        from electrical_engineer.engines.sequence_fault import analyze_sequence_fault
+
+        seq = analyze_sequence_fault(
+            fault_type=fault_type,
+            faulted_phases=phase_tuple,
+            v_prefault_pu=v_pre,
+            z1_pu=z1,
+            z2_pu=z2,
+            z0_pu=z0,
+            zf_pu=zf,
+        )
+        i_fault = _sequence_fault(fault_type, v_pre, z1, z2, z0, zf, faulted_phases=phase_tuple)
     except ValueError as exc:
         return {"ok": False, "error": str(exc), "unchecked": True, "tool": "sequence"}
 
     fault_row = {
         "fault_type": fault_type,
+        "faulted_phases": seq.get("faulted_phases"),
         "i_fault_pu": float(abs(i_fault)),
         "i_fault_angle_deg": float(math.degrees(cmath.phase(i_fault))),
+        "sequence": {
+            "I0_pu": seq["I0_pu"],
+            "I1_pu": seq["I1_pu"],
+            "I2_pu": seq["I2_pu"],
+            "I_phase_pu": seq["I_phase_pu"],
+            "verified": seq.get("verified"),
+        },
     }
     table.append({"fault": fault_row})
 

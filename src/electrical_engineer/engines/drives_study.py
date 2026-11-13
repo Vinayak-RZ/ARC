@@ -51,13 +51,26 @@ def run_drives_study(run_dir: Path, problem: dict[str, Any]) -> dict[str, Any]:
             result = _dc_drive(problem)
         elif kind in {"im", "induction", "im_slip"}:
             result = _im_slip_torque(problem)
+        elif kind in {"im_ec", "im_exact", "induction_ec"}:
+            from electrical_engineer.engines.induction_motor import solve_induction_motor
+
+            raw = solve_induction_motor(problem)
+            result = {
+                "rpm": raw["rotor_speed_rpm"],
+                "n_sync_rpm": raw["n_sync_rpm"],
+                "ia_a": raw["stator_current_A"],
+                "t_elect_nm": raw["developed_torque_Nm"],
+                "slip": raw["slip"],
+                "slip_at_max_torque": raw["slip_at_max_torque"],
+                **raw,
+            }
         else:
             return {"ok": False, "error": f"unsupported drive kind {kind}", "unchecked": True}
-    except ValueError as exc:
+    except (ValueError, KeyError) as exc:
         return {"ok": False, "error": str(exc), "unchecked": True}
     path = run_dir / "drives_result.json"
     path.write_text(json.dumps(result, indent=2), encoding="utf-8")
-    rpm = float(result["rpm"])
+    rpm = float(result.get("rpm") or result.get("rotor_speed_rpm", 0.0))
     svg = run_dir / "artifact.svg"
     svg.write_text(
         (
@@ -68,11 +81,14 @@ def run_drives_study(run_dir: Path, problem: dict[str, Any]) -> dict[str, Any]:
         ),
         encoding="utf-8",
     )
+    val = rpm if kind not in {"im_ec", "im_exact", "induction_ec"} else float(
+        result.get("developed_torque_Nm") or result.get("t_elect_nm") or rpm
+    )
     return {
         "ok": True,
         "tool": "drives-study",
         "unchecked": False,
-        "value": rpm,
+        "value": float(val),
         "result": result,
         "paths": [str(path), str(svg)],
     }

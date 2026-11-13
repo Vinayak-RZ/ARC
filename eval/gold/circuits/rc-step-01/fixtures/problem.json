@@ -1,0 +1,12 @@
+{
+  "solver": "rc_step",
+  "check_kind": "rc_step",
+  "v": 10,
+  "r": 1000,
+  "c": 0.001,
+  "t": 1.0,
+  "value_key": "vc_V",
+  "unit": "V",
+  "expected": 6.321205588615618,
+  "tol": 1e-4
+}

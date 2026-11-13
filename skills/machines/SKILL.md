@@ -4,13 +4,20 @@ Load for transformers and DC/IM/synchronous machines at UG: equivalent
 circuits, phasors, OC/SC / no-load tests, torque-speed, efficiency.
 Not FEA / Ansys Maxwell (`CD-MACHINES-FEA`). Not plant actuation.
 
+## Web-verify
+
+Solve/study recipes call **`web-verify`** before label. Put datasheet and nameplate
+fields in `context_claims`; never ship stale library ohms/flux without web reconcile.
+
 ## Any question in this pack
 
 1. Name the machine, test or regime (no-load, blocked rotor, rated, starting).
 2. Draw the equivalent circuit; per-unit if the problem is in pu.
-3. Request `machine-model` (phasor / eq-circuit algebra). Optional numeric
+3. **Exam v2** (`study-machines-v2`): `transformer_regulation`, `dc_motor_shunt`,
+   `induction_air_gap_split` — see `docs/AGENT_ROUTING.md`.
+4. Request `machine-model` (phasor / eq-circuit algebra). Optional numeric
    provider if registered; otherwise `algebraic-check`.
-4. No live PLC / starter write. No full-wave magnetics as a promise.
+5. No live PLC / starter write. No full-wave magnetics as a promise.
 
 ## Genres
 
@@ -24,8 +31,10 @@ DC drive chain in the UI: **`skills/ui-diagrams/SKILL.md`** (`diagramKind: drive
 
 **UG drives (OSS):** `solve-drives-problem` — DC (`kind: dc`, `v_dc`, `ra_ohm`,
 `k_torque`, `t_load_nm`) or IM slip line (`kind: im`, `t_rated_nm`, `slip_rated`,
-`t_load_nm`). Checked steady-state speed (rpm). Full Simulink drive plant remains
-optional MATLAB/Simulink, not required for coursework numbers.
+`t_load_nm`) or **exact per-phase EC** (`kind: im_ec` with `r1_ohm`, `x1_ohm`,
+`r2p_ohm`, `x2p_ohm`, `xm_ohm`, `slip`, `v_line_v`, `poles`, `f_hz`). Engine
+exports `developed_torque_Nm`, `stator_current_A`, `slip_at_max_torque`, and
+`rotor_speed_rpm` (3-phase air-gap power). Full Simulink plant remains optional.
 
 ## Spawn
 

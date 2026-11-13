@@ -48,9 +48,87 @@ def test_ablation_t6_ed_limit_case() -> None:
     assert r["IC"][1] < r["lam"]
 
 
+def test_ablation_im_torque_needs_three_phase_factor() -> None:
+    from electrical_engineer.engines.induction_motor import solve_induction_motor
+
+    r = solve_induction_motor(
+        {
+            "r1_ohm": 0.5,
+            "x1_ohm": 1.2,
+            "r2p_ohm": 0.4,
+            "x2p_ohm": 1.2,
+            "xm_ohm": 30,
+            "slip": 0.04,
+        }
+    )
+    single_phase_torque = r["developed_torque_Nm"] / 3.0
+    assert abs(single_phase_torque - 29.37) < 0.5
+
+
+def test_ablation_t11_margin_crossover_names() -> None:
+    import control
+
+    from electrical_engineer.engines.control_margins import loop_margins
+
+    sys = control.tf([40.0], [1.0, 12.0, 20.0, 0.0])
+    gm, _pm, wg, wp = control.margin(sys)
+    m = loop_margins(sys)
+    bare_wgc = float(wg)
+    bare_gm_db = float(gm)
+    assert abs(m["gain_crossover_rad_s"] - float(wp)) < 1e-6
+    assert abs(m["phase_crossover_rad_s"] - float(wg)) < 1e-6
+    assert abs(m["gain_margin_dB"] - 20.0 * __import__("math").log10(float(gm))) < 1e-6
+    assert abs(bare_wgc - m["phase_crossover_rad_s"]) < 1e-6
+    assert abs(bare_gm_db - float(gm)) < 1e-6
+    assert abs(m["gain_margin_dB"] - bare_gm_db) > 5.0
+
+
+def test_ablation_t12_pu_base_not_transformer_only() -> None:
+    from electrical_engineer.engines.pu_base import (
+        aggregate_fault_impedance,
+        impedance_pu_on_new_base,
+    )
+
+    x_gen_50 = 0.2j
+    x_xf_100 = 0.1j
+    arc = aggregate_fault_impedance(
+        [
+            {"id": "gen", "z_pu": x_gen_50, "s_base_mva": 50, "sequence": "1"},
+            {"id": "xf", "z_pu": x_xf_100, "s_base_mva": 100, "sequence": "1"},
+        ],
+        s_system_mva=100,
+        v_system_kv=13.8,
+    )
+    bare = abs(x_xf_100)
+    assert abs(arc["z1_pu"] - (0.1j + 0.1j)) < 1e-9
+    assert abs(bare - 0.1) < 1e-9
+    assert abs(abs(arc["z1_pu"]) - bare) > 0.05
+    assert abs(impedance_pu_on_new_base(x_gen_50, s_old_mva=50, s_new_mva=100, v_old_kv=13.8, v_new_kv=13.8) - 0.1j) < 1e-12
+
+
+def test_ablation_t13_ed_penalty_beats_naive_lambda() -> None:
+    from electrical_engineer.engines.ed_lambda import EdCase
+    from electrical_engineer.engines.ee_v2_runner import ed_naive_dispatch
+    from electrical_engineer.engines.ee_v2_solvers import ed_with_losses
+
+    case = EdCase.eec301_default()
+    b = [
+        [1e-4, 2e-5, 1e-5],
+        [2e-5, 1.5e-4, 2e-5],
+        [1e-5, 2e-5, 1.2e-4],
+    ]
+    arc = ed_with_losses(case, b, 500.0)
+    naive = ed_naive_dispatch(case, 500.0)
+    assert abs(naive["lam"] - 7.3923) < 0.01
+    assert abs(arc["lam"] - naive["lam"]) > 0.3
+    assert abs(sum(naive["P"]) - 500.0) < 0.1
+    assert abs(arc["sum_P_minus_loss"] - 500.0) < 0.5
+
+
 def test_trap_prompts_catalog_loads() -> None:
     from pathlib import Path
 
     text = Path("proofs/ablation/trap_prompts.yaml").read_text(encoding="utf-8")
     data = yaml.safe_load(text)
-    assert "T1" in data["traps"] and "T6" in data["traps"]
+    traps = data["traps"]
+    assert "T1" in traps and "T6" in traps and "T11" in traps and "T12" in traps and "T13" in traps

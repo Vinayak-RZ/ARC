@@ -1,0 +1,75 @@
+{
+  "P1": {
+    "answers": {
+      "delta0_deg": 24.901062370366965,
+      "delta_cr_deg": 78.31719753697801,
+      "t_cr_s": 0.2965846061706543
+    },
+    "method": "smib-swing-study engine",
+    "confidence": 0.98
+  },
+  "P2": {
+    "answers": {
+      "stable": true,
+      "max_rotor_angle_deg": 102.06232146790454
+    },
+    "method": "simulate_clearing",
+    "confidence": 0.98
+  },
+  "P3": {
+    "answers": {
+      "P1_MW": 350.00000000000006,
+      "P2_MW": 250.0,
+      "P3_MW": 300.0,
+      "lambda_Rs_per_MWh": 9.8
+    },
+    "method": "ed-lambda-study CLI",
+    "confidence": 0.98
+  },
+  "P4": {
+    "answers": {
+      "steady_state_frequency_deviation_Hz": -0.05952380952380953,
+      "Delta_P12_MW": -25.0
+    },
+    "method": "primary_response_study",
+    "confidence": 0.98
+  },
+  "P5": {
+    "answers": {
+      "gain_crossover_rad_s": 1.558686400848468,
+      "phase_margin_deg": 43.209845307369534,
+      "phase_crossover_rad_s": 4.47213595499958,
+      "gain_margin_dB": 15.563025007672875
+    },
+    "method": "solve-control-problem + control_margins",
+    "confidence": 0.98
+  },
+  "P6": {
+    "answers": {
+      "damping_type": "underdamped",
+      "Vc_peak_V": 15.051146539410333,
+      "t_Vc_peak_s": 0.3426,
+      "settling_time_2pct_s": 0.8408
+    },
+    "method": "simulate-circuit rlc_analytic fallback",
+    "confidence": 0.97
+  },
+  "P7": {
+    "answers": {
+      "I_fault_pu": 4.285714285714286,
+      "I_fault_kA": 7.498055444021114
+    },
+    "method": "simulate-power-fault sequence",
+    "confidence": 0.98
+  },
+  "P8": {
+    "answers": {
+      "rotor_speed_rpm": 1440.0,
+      "stator_current_A": 23.456116655053975,
+      "developed_torque_Nm": 88.10049292522135,
+      "slip_at_max_torque": 0.16666666666666669
+    },
+    "method": "solve-drives-problem im_ec",
+    "confidence": 0.98
+  }
+}

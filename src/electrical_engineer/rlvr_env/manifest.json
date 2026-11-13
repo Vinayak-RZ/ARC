@@ -1,0 +1,10 @@
+{
+  "schema": "arc.rlvr.env.v0.1",
+  "traps": [
+    {"id": "T1", "engine": "smib_swing"},
+    {"id": "T2", "engine": "smib_swing"},
+    {"id": "T6", "engine": "ed_lambda"}
+  ],
+  "reward": "trap_regression_pass",
+  "training": "none"
+}

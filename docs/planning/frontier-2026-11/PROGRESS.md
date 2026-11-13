@@ -1,16 +1,27 @@
 # PROGRESS: frontier-2026-11
 
-| Wave | Status | Notes |
-|------|--------|-------|
-| 0 Gate 0 | **done** | Vinayak 2026-11-13; Visual Kit + C1/D2 addendum |
-| 1 D0, A1 | pending | |
-| 2 B1 | pending | |
-| 2b C1 | pending | Repo cleanup; PSA + pytest every commit |
-| 3 B2-B8, B11, U1 | pending | |
-| 4 B6, B7, B9 | pending | |
-| 5 M1 | pending | |
-| 6 B10 | pending | |
-| 7-9 E1, R1, T1, D1 | pending | D1 scorecard only |
-| 10 D2 | pending | **Last:** README + authority docs |
+Branch: `cursor/frontier-execution-7a2f` · PR [#49](https://github.com/Vinayak-RZ/ARC/pull/49)
 
-Planning PR only. No product code until owner merges plan.
+| Node | Status | Notes |
+|------|--------|-------|
+| D0 | **done** | Drift script, counts |
+| A1 | **done** | DECISIONS.md |
+| B1 | **done** | PSA eval CLI |
+| C1 | **done** | `trim_trials_media.sh` |
+| B2 | **done** | PSA workflows + MCP |
+| B3 | **done** | Control eval 18/18; block diagram gold |
+| B4 | **partial** | `run_circuit_benchmark.py`; multimodal confirm path existing |
+| B5 | **partial** | trap index; process graders partial |
+| B6 | **blocked** | Harness + LIVE_AB.md (keys) |
+| B7 | **partial** | `rlvr_env` manifest |
+| B8 | **partial** | `ee-vertical-pack` skill |
+| B9 | **blocked** | P1 |
+| B10 | **partial** | benchmark v0.1 tarball script |
+| B11 | **done** | Design system, Nyquist, dark goldens, regression, gallery |
+| U1 | **done** | Gallery + scorecard panel |
+| M1 | **done** | validate_frontier.sh |
+| E1 | **done** | validate_frontier.sh |
+| R1 | **done** | `boot_smoke.sh` |
+| T1 | **done** | pass_k_traps.py |
+| D1 | **done** | SCORECARD.md |
+| D2 | **done** | README Visual Kit + scorecard sections |

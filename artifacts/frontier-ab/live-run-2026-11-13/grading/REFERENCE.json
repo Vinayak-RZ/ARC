@@ -1,0 +1,220 @@
+{
+  "meta": {
+    "sheet": "Arc live A/B held-out sheets v1 (13 Nov 2026)",
+    "tie_flow_convention": "P12 positive from area 1 to area 2",
+    "arc_engine_disagreements": [
+      {
+        "id": "P5-control-margin-gm-units",
+        "detail": "python-control margin() returns gm as linear gain ratio, not dB; phase crossover frequency is labeled wcg."
+      },
+      {
+        "id": "P8-no-exact-im-engine",
+        "detail": "drives_study cannot validate exact equivalent-circuit torque/slip."
+      }
+    ]
+  },
+  "P1": {
+    "quantities": {
+      "delta0_deg": {
+        "scratch": 24.901062370366965,
+        "arc": 24.901062370366965,
+        "agreement": "agree"
+      },
+      "delta_cr_deg": {
+        "scratch": 78.31719753697801,
+        "arc": 78.31719753697801,
+        "agreement": "agree"
+      },
+      "t_cr_s": {
+        "scratch": 0.296478271484375,
+        "arc": 0.296478271484375,
+        "agreement": "agree",
+        "integration": {
+          "step_s": 0.001,
+          "method": "rk4_bisection"
+        }
+      }
+    },
+    "reference": {
+      "delta0_deg": 24.901062370366965,
+      "delta_cr_deg": 78.31719753697801,
+      "t_cr_s": 0.296478271484375
+    }
+  },
+  "P2": {
+    "quantities": {
+      "stable": {
+        "scratch": true,
+        "arc": true,
+        "agreement": "agree"
+      },
+      "max_rotor_angle_deg": {
+        "scratch": 102.06231801305648,
+        "arc": 102.06231801305648,
+        "agreement": "agree"
+      }
+    },
+    "reference": {
+      "stable": true,
+      "max_rotor_angle_deg": 102.06231801305648
+    }
+  },
+  "P3": {
+    "quantities": {
+      "P1_MW": {
+        "scratch": 350.00000000000006,
+        "arc": 350.00000000000006,
+        "agreement": "agree"
+      },
+      "P2_MW": {
+        "scratch": 250,
+        "arc": 250,
+        "agreement": "agree"
+      },
+      "P3_MW": {
+        "scratch": 300,
+        "arc": 300,
+        "agreement": "agree"
+      },
+      "lambda_Rs_per_MWh": {
+        "scratch": 9.8,
+        "arc": 9.8,
+        "agreement": "agree"
+      }
+    },
+    "reference": {
+      "P1_MW": 350.00000000000006,
+      "P2_MW": 250,
+      "P3_MW": 300,
+      "lambda_Rs_per_MWh": 9.8
+    }
+  },
+  "P4": {
+    "quantities": {
+      "steady_state_frequency_deviation_Hz": {
+        "scratch": -0.05952380952380953,
+        "arc": null,
+        "agreement": "no_applicable_engine"
+      },
+      "Delta_P12_MW": {
+        "scratch": -25.0,
+        "arc": null,
+        "agreement": "no_applicable_engine"
+      }
+    },
+    "reference": {
+      "steady_state_frequency_deviation_Hz": -0.05952380952380953,
+      "Delta_P12_MW": -25.0
+    }
+  },
+  "P5": {
+    "quantities": {
+      "gain_crossover_rad_per_s": {
+        "scratch": 1.55868640406249,
+        "arc": 1.558686400848468,
+        "agreement": "disagree"
+      },
+      "phase_margin_deg": {
+        "scratch": 43.20984525381832,
+        "arc": 43.209845307369534,
+        "agreement": "disagree"
+      },
+      "phase_crossover_rad_per_s": {
+        "scratch": 4.4721359682367465,
+        "arc": 4.47213595499958,
+        "agreement": "disagree"
+      },
+      "gain_margin_dB": {
+        "scratch": 15.563024919110225,
+        "arc": 15.563025007672875,
+        "agreement": "agree"
+      }
+    },
+    "reference": {
+      "gain_crossover_rad_per_s": 1.55868640406249,
+      "phase_margin_deg": 43.20984525381832,
+      "phase_crossover_rad_per_s": 4.4721359682367465,
+      "gain_margin_dB": 15.563024919110225
+    },
+    "note": "gain crossover |L|=1; phase crossover phase=-180 deg"
+  },
+  "P6": {
+    "quantities": {
+      "damping_type": {
+        "scratch": "underdamped",
+        "arc": null,
+        "agreement": "no_applicable_engine"
+      },
+      "Vc_peak_V": {
+        "scratch": 15.045920575021169,
+        "arc": null,
+        "agreement": "no_applicable_engine"
+      },
+      "t_Vc_peak_s": {
+        "scratch": 0.3428,
+        "arc": null,
+        "agreement": "no_applicable_engine"
+      },
+      "settling_time_2pct_s": {
+        "scratch": 0.8409,
+        "arc": null,
+        "agreement": "no_applicable_engine"
+      }
+    },
+    "reference": {
+      "damping_type": "underdamped",
+      "Vc_peak_V": 15.045920575021169,
+      "t_Vc_peak_s": 0.3428,
+      "settling_time_2pct_s": 0.8409,
+      "zeta": 0.4
+    }
+  },
+  "P7": {
+    "quantities": {
+      "I_fault_pu": {
+        "scratch": 4.285714285714286,
+        "arc": 4.285714285714286,
+        "agreement": "agree"
+      },
+      "I_fault_kA": {
+        "scratch": 7.498055444021114,
+        "arc": 7.498055444021114,
+        "agreement": "agree"
+      }
+    },
+    "reference": {
+      "I_fault_pu": 4.285714285714286,
+      "I_fault_kA": 7.498055444021114
+    }
+  },
+  "P8": {
+    "quantities": {
+      "rotor_speed_rpm": {
+        "scratch": 1440.0,
+        "arc": null,
+        "agreement": "no_applicable_engine"
+      },
+      "stator_current_A": {
+        "scratch": 23.456116655053975,
+        "arc": null,
+        "agreement": "no_applicable_engine"
+      },
+      "developed_torque_Nm": {
+        "scratch": 88.10049292522137,
+        "arc": null,
+        "agreement": "no_applicable_engine"
+      },
+      "slip_at_max_torque": {
+        "scratch": 0.16702205904356413,
+        "arc": null,
+        "agreement": "no_applicable_engine"
+      }
+    },
+    "reference": {
+      "rotor_speed_rpm": 1440.0,
+      "stator_current_A": 23.456116655053975,
+      "developed_torque_Nm": 88.10049292522137,
+      "slip_at_max_torque": 0.16702205904356413
+    }
+  }
+}

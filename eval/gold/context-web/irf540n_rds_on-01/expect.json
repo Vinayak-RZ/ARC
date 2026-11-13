@@ -1,0 +1,8 @@
+{
+  "recipe_id": "context-web-spotcheck",
+  "stale_context_flagged": true,
+  "recomputed": {
+    "P_loss_W": 6.336
+  },
+  "tol": 0.01
+}

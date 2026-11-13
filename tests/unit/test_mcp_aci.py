@@ -4,9 +4,13 @@ from pathlib import Path
 from electrical_engineer.mcp.server import TOOLS, fail_closed, handle
 
 
-def test_tools_list_is_five_to_seven() -> None:
+def test_tools_list_is_five_to_nine() -> None:
     names = [t["name"] for t in TOOLS]
-    assert 5 <= len(names) <= 7
+    assert 5 <= len(names) <= 11
+    assert "arc_web_evidence_request" in names
+    assert "arc_web_evidence_submit" in names
+    assert "list_visual_components" in names
+    assert "render_visual" in names
     assert "propose_composition" in names
     assert "simulate_attachment" in names
     assert "retrieve" in names

@@ -1,0 +1,8 @@
+{
+  "recipe_id": "context-web-spotcheck",
+  "stale_context_flagged": true,
+  "recomputed": {
+    "V_touch_V": 322.71
+  },
+  "tol": 0.5
+}

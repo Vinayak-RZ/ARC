@@ -21,7 +21,7 @@
   <a href="LICENSE"><b>License</b></a>
 </p>
 
-Turn your AI coding assistant into an undergraduate electrical engineer. 10 undergraduate packs, 12 host-spawned specialists, 27 named lab recipes.
+Turn your AI coding assistant into an undergraduate electrical engineer. 10 undergraduate packs, 12 host-spawned specialists, 34 named lab recipes.
 
 **Arc is built for agents.** Clone the repo, install, run `electrical-engineer hosts install`, then paste a job brief into Cursor, Claude Code, Codex, or ChatGPT desktop. The assistant picks named recipes, runs simulators when they exist, and labels anything it did not verify as `unchecked` in the saved run.
 
@@ -36,6 +36,13 @@ pip install -e ".[dev]"
 electrical-engineer eval --pack circuits
 PASS divider-dc-01 recipe=solve-circuit-problem
 1/1 passed
+```
+
+If `python -m venv` fails (common on Debian/Ubuntu without `python3-venv`), install the `python3-venv` package or use a user install instead:
+
+```text
+pip install --user -e ".[dev]"
+electrical-engineer eval --pack circuits
 ```
 
 That eval is the product check. Gold `eval/gold/circuits/divider-dc-01` expects divider `Vout = 5.0` from `Vin=10`, `R1=R2=1k`.
@@ -178,6 +185,46 @@ pip install -e ".[engines,dev]"
 
 Boot details: [`docs/planning/R1_BOOT_SHIP.md`](docs/planning/R1_BOOT_SHIP.md).
 
+### Visual Kit (engine-bound figures)
+
+Arc ships a design-system Visual Kit: every annotation comes from kernels (`smib_swing`, `agc_two_area`, `ed_lambda`, `pandapower`, `ngspice`, `python-control`), not from the chat.
+
+| Figure | Golden path |
+|--------|-------------|
+| SMIB equal-area (pre/fault/post, $A_1$, $A_2$) | `artifacts/visual-goldens/swing/power.swing_equal_area.png` |
+| Two-area AGC ($f_1$, $f_2$, $P_{12}$) | `artifacts/visual-goldens/agc/power.agc_trace.png` |
+| Economic dispatch IC curves | `artifacts/visual-goldens/ed/power.dispatch_curve.png` |
+| Rotor swing animation | `artifacts/visual-goldens/swing/power.swing_animation.gif` |
+| Pandapower one-line | `artifacts/visual-goldens/oneline/power.oneline_bus.png` |
+| Control block diagram | `artifacts/visual-goldens/control/control.block_diagram.png` |
+
+Regenerate goldens locally:
+
+```bash
+uv run python scripts/regenerate_visual_goldens.py
+uv run pytest -q tests/visual
+```
+
+Open the gallery tab in the local UI (`127.0.0.1:8765`, sidebar **Visuals**) or `GET /api/visual-kit`.
+
+### Frontier scorecard (Nov 2026 branch)
+
+Measured on `cursor/frontier-execution-7a2f` (see `docs/planning/frontier-2026-11/SCORECARD.md`):
+
+| Check | Result |
+|-------|--------|
+| Full `electrical-engineer eval` | 18/18 PASS |
+| PSA pack | 6/6 PASS |
+| pytest | 255+ PASS (includes visual regression) |
+| Scripted trap pass^k | 1.0 (no API keys) |
+| LIVE A/B | blocked until `OPENAI_API_KEY` + `ANTHROPIC_API_KEY` (`docs/planning/frontier-2026-11/LIVE_AB.md`) |
+
+One-command frontier validation:
+
+```bash
+./scripts/validate_frontier.sh
+```
+
 ### Domain screenshots (localhost UI window)
 
 Fixed **1280×900** viewport captures of the Arc shell at `127.0.0.1:8765` (one run in the sidebar, diagram on canvas, plots below). Not full-page scroll shots.
@@ -214,7 +261,7 @@ sequenceDiagram
   UI-->>H: numbers plus explanation, confirm photos
 ```
 
-- **Named lab recipes.** 27 saved workflows. The assistant picks one (or proposes an allowed graph). Arc runs it. A free agent loop can skip the simulator. Limit: Arc never invents a new recipe in chat. [`docs/WORKFLOWS.md`](docs/WORKFLOWS.md)
+- **Named lab recipes.** 34 saved workflows. The assistant picks one (or proposes an allowed graph). Arc runs it. A free agent loop can skip the simulator. Limit: Arc never invents a new recipe in chat. [`docs/WORKFLOWS.md`](docs/WORKFLOWS.md)
 - **Host-spawned specialists.** 12 cards in [`hosts/agents/`](hosts/agents/INDEX.md). Cursor, Codex, or Claude starts at most two on a large assignment. Limit: Arc never starts those children. Cloud `/in-cloud` spawn is off.
 - **Deterministic checks.** The recipe runner and the simulators do not sample. Same netlist, same `Vout`. Limit: the explanation can still vary. The ohms cannot, unless they are labeled unverified. [`docs/ON_THE_HARNESS.md`](docs/ON_THE_HARNESS.md)
 - **Unverified numbers are labeled.** If SPICE, python-control, or pandapower is missing, Arc does not guess. Limit: a verified number needs a simulator or a numeric check, not a fluent paragraph.

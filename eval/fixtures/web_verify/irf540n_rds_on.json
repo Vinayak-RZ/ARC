@@ -1,0 +1,55 @@
+{
+  "recorded_at": "2026-11-13T12:05:00Z",
+  "topic": "IRF540N maximum R_DS(on) at 25 C",
+  "queries": [
+    "IRF540N datasheet RDS on 44 mohm VGS 10V",
+    "Infineon IRF540N static drain-source on-resistance",
+    "IRF540N 100V 33A HEXFET on resistance max"
+  ],
+  "claims": [
+    {
+      "claim_id": "irf540n_rds_on",
+      "name": "IRF540N R_DS(on) max",
+      "unit": "ohm",
+      "conditions": "V_GS = 10 V, I_D = 16 A, T_J = 25 C (datasheet max)",
+      "tolerance": 0.02,
+      "authoritative_value": 0.044,
+      "sources": [
+        {
+          "url": "https://www.infineon.com/assets/row/public/documents/24/49/infineon-irf540n-datasheet-en.pdf",
+          "domain": "infineon.com",
+          "title": "Infineon IRF540N datasheet (EN)",
+          "retrieved_at": "2026-11-13T12:05:00Z",
+          "http_status": 200,
+          "snippet": "Static Drain-to-Source On-Resistance max 44 mOhm, VGS = 10V, ID = 16A",
+          "extracted_value": 0.044,
+          "unit": "ohm",
+          "source_class": "datasheet"
+        },
+        {
+          "url": "https://www.infineon.cn/part/IRF540N",
+          "domain": "infineon.cn",
+          "title": "Infineon IRF540N product page",
+          "retrieved_at": "2026-11-13T11:39:03Z",
+          "http_status": 200,
+          "snippet": "Maximum R DS (on) (@10V): 44 mOhm",
+          "extracted_value": 0.044,
+          "unit": "ohm",
+          "source_class": "manufacturer"
+        },
+        {
+          "url": "https://www.mouser.com/datasheet/2/196/irf540npbf-1227114.pdf",
+          "domain": "mouser.com",
+          "title": "IRF540NPbF authorized distributor datasheet mirror",
+          "retrieved_at": "2026-11-13T12:05:00Z",
+          "http_status": 200,
+          "snippet": "Static Drain-to-Source On-Resistance max 44 mOhm at VGS = 10V, ID = 16A",
+          "extracted_value": 0.044,
+          "unit": "ohm",
+          "source_class": "authorized_distributor_mirror"
+        }
+      ]
+    }
+  ],
+  "similar_problems": []
+}
