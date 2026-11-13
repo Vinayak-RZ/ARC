@@ -3,19 +3,19 @@
 | Field | Value |
 |-------|-------|
 | **Node id** | `U1` |
-| **Job** | Localhost panels for eval scorecard and A/B transcript replay |
+| **Job** | Proof dashboard: eval scorecard, A/B replay, **Visual Kit gallery** with live registry previews |
 | **Wave** | 3 |
-| **Depends on (data)** | `capability_delta_spec`, Gate 0 T4 (UI depth) |
+| **Depends on (data)** | `capability_delta_spec`, `visual_manifest` from B11 |
 | **Write paths** | `ui/src/**`, `src/electrical_engineer/ui_server/**` |
 | **Model** | inherit |
 
 ## Objective
 
-Demonstrate frontier metrics without requiring engineers to read JSON only (default minimal per Gate 0 T4).
+Demonstrate frontier **numbers and figures** together (owner 2026-11-13: visuals sell; gallery is P0).
 
 ## Contract
 
-**Output:** `{ "ui_routes": ["/scorecard", "/ab"], "smoke_passed": true }`
+**Output:** `{ "ui_routes": ["/scorecard", "/ab", "/visuals"], "smoke_passed": true }`
 
 ## Commits
 

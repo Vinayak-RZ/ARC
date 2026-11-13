@@ -50,7 +50,8 @@ When complete: eval CLI and CI prove PSA + expanded kernel depth; public benchma
 - RLVR-style golden environment package.
 - `artifacts/benchmarks/` public release + README scorecard.
 - LIVE A/B harness + held-out trap set.
-- Docs: frontier proof section in product README.
+- **Arc Visual Kit:** registry + MCP + engine-bound components + visual goldens (report #05, node B11).
+- Docs: frontier proof section in product README with media from Visual Kit.
 
 ### Non-goals
 
@@ -63,8 +64,8 @@ When complete: eval CLI and CI prove PSA + expanded kernel depth; public benchma
 
 | Priority | Items |
 |----------|-------|
-| **P0** | B1 proof foundation, B2 PSA wire, B6 LIVE A/B infra, B10 benchmark release, E1 eval gates |
-| **P1** | B3 control, B4 circuits/mm, B5 verifier, B8 vertical pack, U1 proof UI |
+| **P0** | B1 proof foundation, B2 PSA wire, **B11 Arc Visual Kit**, B6 LIVE A/B infra, B10 benchmark release, U1 proof gallery, E1 eval gates |
+| **P1** | B3 control, B4 circuits/mm, B5 verifier, B8 vertical pack |
 | **P2** | B7 RLVR env polish, B9 tutoring, ANDES optional provider |
 
 ---
@@ -73,8 +74,9 @@ When complete: eval CLI and CI prove PSA + expanded kernel depth; public benchma
 
 | Item | Status | Blocks | Resolution |
 |------|--------|--------|------------|
-| Gate 0 answers | **pending** | All execution waves | Owner fills `GATE_0_QUESTIONS.md` |
-| Research PRs #44 to #47 merged | pending | Doc authority | Merge or cherry-pick reports to `main` |
+| Gate 0 answers | **done** 2026-11-13 | Execution start | Locked in `GATE_0_QUESTIONS.md` |
+| Research PRs #44 to #47 + #05 | **done** | Doc authority | On `main` after rebase |
+| Plan merge before code | **pending** | All execution waves | Owner merges PR #48 |
 | API budget for LIVE A/B | pending | B6 nightly | Owner sets cap; secrets in env |
 | ngspice in CI | done | circuits | existing |
 | MATLAB optional | N/A | B8 | Gate 0 Q4 |
@@ -89,7 +91,7 @@ When complete: eval CLI and CI prove PSA + expanded kernel depth; public benchma
 | Execution graph | `docs/planning/frontier-2026-11/EXECUTION_GRAPH.md` | Wave program |
 | Gate 0 | `docs/planning/frontier-2026-11/GATE_0_QUESTIONS.md` | Blocking Q&A |
 | Node plans | `docs/planning/frontier-2026-11/nodes/*.md` | Per-node authority |
-| Research | `docs/research/frontier-2026-11/0*.md` | Evidence |
+| Research | `docs/research/frontier-2026-11/0*.md` | Evidence (includes `05-visual-components-for-agents.md`) |
 | DECISIONS | `docs/planning/frontier-2026-11/DECISIONS.md` | ADRs post Gate 0 |
 | PROGRESS | `docs/planning/frontier-2026-11/PROGRESS.md` | Live wave status |
 | Scorecard | `artifacts/benchmarks/SCORECARD.md` | Public metrics |
@@ -98,7 +100,7 @@ When complete: eval CLI and CI prove PSA + expanded kernel depth; public benchma
 
 ## §4 Architecture and system map
 
-No architecture changes are **decided** until Gate 0. Recommended shape (default):
+Gate 0 locked the default shape below; B11 adds a **Visual Kit** plane inside L2/L3:
 
 ```mermaid
 flowchart TB
@@ -114,6 +116,10 @@ flowchart TB
     ENG[PSA_ngspice_control]
     TRP[trap_PRM_hooks]
     EVAL[eval_plus_arena]
+    VIS[visual_kit_registry]
+  end
+  subgraph surfaces [L3_surfaces]
+    UI[localhost_UI_gallery]
   end
   subgraph proof [proof_plane]
     BENCH[public_benchmarks]
@@ -124,6 +130,8 @@ flowchart TB
   MCP --> VAL
   VAL --> ENG
   ENG --> EVAL
+  ENG --> VIS
+  VIS --> UI
   TRP --> H
   EVAL --> BENCH
   AB --> BENCH
@@ -144,14 +152,15 @@ flowchart TB
 | WS-VERIFY | Trap PRM | `knowledge/traps/`, host hooks docs, `tests/integration/test_trap_*` | B2 | No hook contract agreed |
 | WS-PACK | Vertical EE pack | `skills/`, `hosts/`, `.cursor/mcp.json` | A1 | N/A |
 | WS-BENCH | Public benchmarks | `artifacts/benchmarks/` | B6, B7 | Owner declines public release (Q7) |
-| WS-TUTOR | Socratic mode | `skills/_cross/`, gold explain | P1 | Defer whole node |
+| WS-TUTOR | Socratic mode | `skills/_cross/`, gold explain | B11, P1 | Defer whole node |
+| WS-VISUAL | **Arc Visual Kit** | `packages/visual-kit/**`, `artifacts/visual-goldens/**`, `skills/visual-kit/` | B2/B3 contracts | Visual regression flake 3x → demote component |
 
 ### Phases (workstream summary)
 
 | Phase | Weeks (technical, not calendar) | Workstreams | Exit |
 |-------|--------------------------------|-------------|------|
-| P0 | Gate 0 + wave 1 to 2 | D0, A1, B1 | eval CLI no crash |
-| P1 | Wave 3 | B2, B3, B4, B5, B8, U1 | M1 ready |
+| P0 | Gate 0 (done) + wave 1 to 2 | D0, A1, B1 | eval CLI no crash |
+| P1 | Wave 3 | B2, B3, B4, B5, **B11**, B8, U1 | M1 ready; **≥8** visual components with goldens |
 | P2 | Wave 4 to 6 | B6, B7, B9, M1, B10 | benchmarks tarball |
 | P3 | Wave 7 to 9 | E1, R1, T1, D1 | scorecard published |
 
@@ -197,6 +206,7 @@ flowchart TB
 | Public scorecard on named benches | EPRI, EEE-Bench, CIRCUIT, ControlEval (#02 table) |
 | Property tests on engine invariants | PBT emerging (#03) |
 | MATLAB MCP as optional provider | Commoditized surface (#02); beat with goldens (#01) |
+| **Arc Visual Kit (registry + MCP + visual CI)** | What sells; agent-assembled figures (#05); beats Copilot screenshots (#01 MathWorks) |
 
 ---
 
@@ -238,7 +248,13 @@ flowchart LR
 ```yaml
 todos:
   - id: gate-0
-    content: Owner answers GATE_0_QUESTIONS.md
+    content: Gate 0 answered 2026-11-13
+    status: completed
+  - id: plan-merge
+    content: Owner merges plan PR before execution
+    status: pending
+  - id: wave-3-b11
+    content: B11 Arc Visual Kit
     status: pending
   - id: merge-research
     content: Merge research reports PRs 44 to 47
@@ -307,6 +323,9 @@ todos:
 | 24 | B8 | `feat(mcp): matlab optional provider wire` | optional extra | skip if no MATLAB |
 | 25 | U1 | `feat(ui): eval scorecard panel` | ui route | smoke |
 | 26 | U1 | `feat(ui): ab transcript viewer` | ui | smoke |
+| 27a | B11 | `feat(visual): kit manifest schemas registry` | visual-kit | schema CI |
+| 27b | B11 | `feat(visual): PSA and control render components` | coalesce with 11-14 if needed | visual goldens |
+| 27c | B11 | `feat(mcp): list/render visual` | MCP smoke |
 
 ### Phase 2 proof (8 commits)
 
@@ -424,6 +443,9 @@ N/A: open source clone-and-run; publish scorecard on merge, no fleet cutover.
 | **Multimodal symbolic step** | **≥40%** symbolic then numeric on Arc path | CircuitSense **<19%** symbolic (#02) |
 | **CI health** | pytest count ≥232, PSA 16/16 | Current (#04) |
 | **Public benchmark** | `eee-coursework-trap v0.1` released | White space #10 (#02) |
+| **Visual Kit P0 components** | **≥10** registry ids; **100%** props from engine replay | Ad-hoc matplotlib today (#04) |
+| **Visual regression** | **0** unintended pixel diffs on P0 gallery | Chromatic/Playwright pattern (#05) |
+| **Textbook/IITR parity panels** | **≥12** side-by-side references filed | Manual rubric + golden PNG |
 
 ---
 
@@ -435,6 +457,7 @@ N/A: open source clone-and-run; publish scorecard on merge, no fleet cutover.
 | Eval schema churn | High | B1 first, versioned schema | Stop wave 3 until green |
 | MATLAB license | Med | Optional extra only | Skip commit 24 |
 | Scope creep packs | High | Depth-first default Gate 0 T1 | Freeze non-PSA gold promises |
+| Visual regression flake | Med | Pin DPI/fonts; bump goldens in PR | Demote component per B11 cut rule |
 | Benchmark licensing | Med | Reconstruct items only | Shrink EPRI mirror count |
 
 ---
@@ -444,7 +467,7 @@ N/A: open source clone-and-run; publish scorecard on merge, no fleet cutover.
 If §19 is filled, **follow EXECUTION_GRAPH waves**, not linear §18 only.
 
 1. Load ponytail on every code edit.
-2. **Wait for Gate 0.**
+2. **Wait for plan merge** (Gate 0 already answered).
 3. Execute waves 1 to 9; update PROGRESS after each barrier.
 4. One §9 commit per row; lead integrates M1.
 5. Draft frontier execution PR with SCORECARD evidence.
@@ -455,7 +478,7 @@ If §19 is filled, **follow EXECUTION_GRAPH waves**, not linear §18 only.
 
 See [EXECUTION_GRAPH.md](EXECUTION_GRAPH.md) (full graph, node links, waves, lifecycle).
 
-**Approval:** Approving this plan **after Gate 0** starts wave 1. Graph does not run until owner answers [GATE_0_QUESTIONS.md](GATE_0_QUESTIONS.md).
+**Approval:** Gate 0 answered 2026-11-13. **Merge this plan, then** start wave 1 per [EXECUTION_GRAPH.md](EXECUTION_GRAPH.md).
 
 ---
 
@@ -463,7 +486,7 @@ See [EXECUTION_GRAPH.md](EXECUTION_GRAPH.md) (full graph, node links, waves, lif
 
 Arc should become demonstrably frontier by **proving** undergraduate EE lab law with the same rigor vertical AI winners use in law and life sciences: **connectors, skills, benchmarks, and honest limits**. Research says generalists now own coding, MCP, and chat memory; they still fail power simulation orchestration (~28% vs ~97%), ControlBench design (~33%), CIRCUIT unit tests (~27%), EPRI open-ended drops (~27pp), and symbolic schematic reasoning (<19%). Arc's PSA kernel is the rare 5/5 depth asset but is **orphaned from the product eval CLI** and **weak on live-agent proof**.
 
-This plan **cuts** harness duplication, shallow YAML breadth, scripted-only marketing, and RAG corpora; **keeps** the four-layer kernel, traps, thin MCP, and CI; **doubles down** on eval wiring, LIVE A/B, held-out trap benchmarks, control and circuit benchmark closure, multimodal verify pipelines, and a public vertical pack. Execution is a **17-node graph** with parallel kernel slices after a serial eval-foundation spine. **Sixteen Gate 0 questions** (with recommended defaults) block guessing on benchmarks scope, MATLAB, tutoring, UI, and commit budget.
+This plan **cuts** harness duplication, shallow YAML breadth, scripted-only marketing, RAG corpora, and gen-AI video for graded figures; **keeps** the four-layer kernel, traps, thin MCP, and CI; **doubles down** on eval wiring, LIVE A/B, held-out benchmarks, **Arc Visual Kit**, multimodal verify, and vertical pack. Execution is an **18-node graph** (added **B11**). Gate 0 is **answered** (Vinayak, 2026-11-13); code waves start after plan merge.
 
 ---
 

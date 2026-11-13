@@ -1,6 +1,10 @@
 # Gate 0 questions (Arc frontier upgrade, Nov 2026)
 
-Research for this plan is **complete** (four reports under `docs/research/frontier-2026-11/` on branches PR #44 to #47). Answer these before executing `EXECUTION_GRAPH.md`. Defaults apply if the owner skips optional items.
+Research for this plan is **complete** (five reports under `docs/research/frontier-2026-11/`, merged to `main`). **Gate 0 is ANSWERED** (Vinayak, 2026-11-13): all recommended defaults for must-answer 1 to 10, trade-offs T1 to T5, and optional 11 to 15.
+
+**Owner addendum (same date):** Arc Visual Kit is a **first-class capability**, not UI polish. See research `05-visual-components-for-agents.md` and graph node **B11**.
+
+Execution may begin after plan merge; this PR updates the plan only.
 
 ---
 
@@ -124,11 +128,32 @@ Research for this plan is **complete** (four reports under `docs/research/fronti
 
 ---
 
+## Locked answers (2026-11-13)
+
+| # | Answer |
+|---|--------|
+| 1 | Held-out 8 sheets; pass^8 ≥0.75 Arc vs ≤0.15 bare; T1 to T10 regression green |
+| 2 | P0 benches per defaults; P1 EEE-Bench/EEBench optional |
+| 3 | Composer 2.5, Sonnet 4.5, GPT-5; artifacts under `artifacts/frontier-ab/` |
+| 4 | MATLAB optional `engines` extra; OSS ≥95% P0 goldens |
+| 5 | `ingest-figure` for control blocks + lumped schematics (16/24 cap) |
+| 6 | Tutoring P1 |
+| 7 | Public `eee-coursework-trap v0.1` |
+| 8 | 36 conventional commits (B11 visual rows may coalesce into wave 3) |
+| 9 | Non-goals list unchanged |
+| 10 | Extend eec301-lift; frontier graph owns net-new |
+| T1 | Depth-first (QUALITY) |
+| T2 | LIVE AB nightly, $50/day cap (QUALITY) |
+| T3 | Slim RAG/BYO (SIMPLICITY) |
+| T4 | **Override:** U1 + **B11 Arc Visual Kit** are P0 presentation proof (owner addendum); not minimal-only UI |
+| T5 | RLVR env only (CONSISTENCY) |
+| 11 to 15 | All defaults |
+| **Visual Kit** | Engine-bound props; registry + MCP; visual goldens in CI; textbook/IITR parity review |
+
 ## Approval record
 
 | Field | Value |
 |-------|-------|
-| Gate 0 research | Complete 2026-11-13 (reports PR #44 to #47) |
-| Plan author | Cloud agent run `cursor/frontier-plan-nov-2026-16fb` |
-| Owner sign-off | _pending_ |
-| Answers URL / commit | _fill when owner replies_ |
+| Gate 0 research | Complete 2026-11-13; report #05 added same day |
+| Owner sign-off | **Vinayak, 2026-11-13** (all defaults + Visual Kit addendum) |
+| Execution | **Blocked until plan PR merged** (owner kickoff) |

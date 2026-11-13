@@ -5,7 +5,7 @@
 | **Node id** | `D1` |
 | **Job** | README frontier section + DOMAIN_KERNEL metrics update |
 | **Wave** | 9 |
-| **Depends on (data)** | `proof_artifacts_bundle` |
+| **Depends on (data)** | `proof_artifacts_bundle`, `readme_media_manifest` from B11 |
 | **Write paths** | `README.md`, `docs/DOMAIN_KERNEL_CAPABILITIES.md` |
 | **Model** | inherit |
 

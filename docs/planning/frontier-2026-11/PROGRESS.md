@@ -2,7 +2,7 @@
 
 | Wave | Status | Notes |
 |------|--------|-------|
-| 0 Gate 0 | **blocked** | Awaiting owner answers |
+| 0 Gate 0 | **done** | Vinayak 2026-11-13; Visual Kit addendum |
 | 1 D0, A1 | pending | |
 | 2 B1 | pending | |
 | 3 B2-B8, U1 | pending | |

@@ -5,7 +5,7 @@
 | **Node id** | `B9` |
 | **Job** | Host Socratic policy + Arc numeric oracle gold for explain genre |
 | **Wave** | 4 (P1) |
-| **Depends on (data)** | Gate 0 Q6 |
+| **Depends on (data)** | Gate 0 Q6; B11 `explain.trap_callout` and schematic components |
 | **Write paths** | `skills/_cross/**`, `eval/gold/explain/**`, `docs/**` |
 | **Model** | inherit |
 

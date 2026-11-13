@@ -5,7 +5,7 @@
 | **Node id** | `B10` |
 | **Job** | Publish `eee-coursework-trap v0.1` + SCORECARD with actuals vs targets |
 | **Wave** | 6 |
-| **Depends on (data)** | `live_ab_results`, `rlvr_env_manifest`, benchmark runners |
+| **Depends on (data)** | `live_ab_results`, `rlvr_env_manifest`, `benchmark_figure_bundle` from B11, benchmark runners |
 | **Write paths** | `artifacts/benchmarks/**`, `docs/**` |
 | **Model** | inherit |
 

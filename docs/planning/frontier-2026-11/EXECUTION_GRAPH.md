@@ -1,6 +1,6 @@
 # Execution graph: Arc frontier upgrade (Nov 2026)
 
-> **This is the execution program after Gate 0 approval.** Scope contract lives in [PLAN.md](PLAN.md). Research is done; **do not run waves until** [GATE_0_QUESTIONS.md](GATE_0_QUESTIONS.md) is answered.
+> **This is the execution program.** Scope contract lives in [PLAN.md](PLAN.md). **Gate 0 answered 2026-11-13** (see [GATE_0_QUESTIONS.md](GATE_0_QUESTIONS.md)). **Do not start code waves until the owner merges this plan and kicks off execution.**
 
 ---
 
@@ -9,11 +9,11 @@
 | Field | Value |
 |-------|-------|
 | **Scope plan** | [PLAN.md](PLAN.md) |
-| **Objective** | Ship a provably frontier UG EE co-solver: deterministic engines + public benchmarks + LIVE host A/B, with cuts on commoditized host surface. |
+| **Objective** | Ship a provably frontier UG EE co-solver: deterministic engines + **Arc Visual Kit** + public benchmarks + LIVE host A/B. |
 | **Topology mix** | Diamond + pipeline (proof spine serial; kernel slices parallel) |
 | **Depth** | 2 (graph → node plans) |
 | **Graph-engineering** | Named; approval starts execution immediately |
-| **Gate 0** | **STOP** until owner answers [GATE_0_QUESTIONS.md](GATE_0_QUESTIONS.md) |
+| **Gate 0** | **Answered** 2026-11-13 (Vinayak); execution **waits on plan merge** |
 
 ---
 
@@ -34,6 +34,7 @@
 | B8 | Vertical EE pack + MCP | [nodes/B8-vertical-pack.md](nodes/B8-vertical-pack.md) |
 | B9 | Tutoring mode | [nodes/B9-tutoring.md](nodes/B9-tutoring.md) |
 | B10 | Public benchmark release | [nodes/B10-benchmark-release.md](nodes/B10-benchmark-release.md) |
+| B11 | Arc Visual Kit | [nodes/B11-visual-kit.md](nodes/B11-visual-kit.md) |
 | M1 | Integrate + barrier | [nodes/M1-integrate.md](nodes/M1-integrate.md) |
 | E1 | Evaluate gates | [nodes/E1-evaluate.md](nodes/E1-evaluate.md) |
 | R1 | Run (boot smoke) | [nodes/R1-run.md](nodes/R1-run.md) |
@@ -50,7 +51,7 @@
 | Docs-in | D0 | [D0](nodes/D0-docs-in.md) |
 | Architecture | A1 | [A1](nodes/A1-architecture.md) |
 | Design / UI UX | U1 | [U1](nodes/U1-proof-ui.md) |
-| Build | B1..B10 | Linked above |
+| Build | B1..B11 | Linked above |
 | Integrate | M1 | [M1](nodes/M1-integrate.md) |
 | Evaluate | E1 | [E1](nodes/E1-evaluate.md) |
 | Run | R1 | [R1](nodes/R1-run.md) |
@@ -76,6 +77,7 @@ flowchart TB
   B8[B8_vertical_pack]
   B9[B9_tutoring]
   B10[B10_benchmark_release]
+  B11[B11_visual_kit]
   U1[U1_proof_ui]
   M1[M1_integrate]
   E1[E1_evaluate]
@@ -92,6 +94,13 @@ flowchart TB
   A1 --> B4
   A1 --> B5
   A1 --> B8
+  A1 --> B11
+  B2 --> B11
+  B3 --> B11
+  B11 --> U1
+  B11 --> B9
+  B11 --> B10
+  B11 --> D1
   B1 --> B2
   B1 --> B6
   B2 --> M1
@@ -111,7 +120,7 @@ flowchart TB
   T1 --> D1
 ```
 
-**Edges cut (no arrow):** B3, B4, B5 are parallel (no cross-file edges until M1). B7 can start after B1 schema (wave 1) without waiting for B2. B9 is P1 and only needs A1 policy answers.
+**Edges cut (no arrow):** B3, B4, B5, B11 are parallel until M1 (B11 reads engine contracts from B2/B3 but does not block their start). B7 can start after B1 schema. B9 is P1; needs B11 component ids for figure-backed tutoring.
 
 ---
 
@@ -119,10 +128,10 @@ flowchart TB
 
 | Wave | Nodes | Fan-out? | Barrier? | Status | Lead plumbing |
 |------|-------|----------|----------|--------|---------------|
-| 0 | GATE_0 | no | yes | **blocked** | Owner Q&A |
-| 1 | D0, A1 | yes | no | pending | Merge answers into DECISIONS |
+| 0 | GATE_0 | no | yes | **done** | Locked in GATE_0_QUESTIONS.md |
+| 1 | D0, A1 | yes | no | pending | DECISIONS + Visual Kit ADR |
 | 2 | B1 | no | no | pending | n/a |
-| 3 | B2, B3, B4, B5, B8, U1 | yes | no | pending | Disjoint paths per node plan |
+| 3 | B2, B3, B4, B5, B8, B11, U1 | yes | no | pending | B11 owns `packages/visual-kit/**` |
 | 4 | B6, B7, B9 | yes | no | pending | B9 optional P1 |
 | 5 | M1 | no | yes | pending | Merge + conflict resolve |
 | 6 | B10 | no | no | pending | Consumes B6 + B7 artifacts |
@@ -139,7 +148,12 @@ flowchart TB
 | GATE_0 | A1 | `gate0_answers.json` | agent |
 | GATE_0 | B6 | `ab_host_models` | agent |
 | D0 | B1 | `doc_truth_manifest` | plumbing |
-| A1 | B2..B8 | `capability_delta_spec` | agent |
+| A1 | B2..B11 | `capability_delta_spec` | agent |
+| B2 | B11 | `psa_series_payload` | agent |
+| B3 | B11 | `control_plot_payload` | agent |
+| B11 | U1 | `visual_manifest` | agent |
+| B11 | B10 | `benchmark_figure_bundle` | agent |
+| B11 | D1 | `readme_media_manifest` | agent |
 | B1 | B2 | `eval_schema_v2` | agent |
 | B1 | B6 | `trap_suite_index` | agent |
 | B2 | M1 | `psa_dag_wiring` | agent |
@@ -174,7 +188,8 @@ flowchart TB
 | B8 | 3 | MCP smoke |
 | B9 | 2 | tutoring gold (P1) |
 | B10 | 2 | benchmark tarball |
-| U1 | 2 | UI smoke |
+| B11 | 5 | visual regression + MCP |
+| U1 | 2 | UI smoke + visual gallery |
 | M1 | 2 | full pytest |
 | E1 | 1 | validate frontier |
 | R1 | 1 | boot smoke |
@@ -187,4 +202,4 @@ Lead owns git. One matrix row per commit. See [PLAN.md](PLAN.md) §9 for full ta
 
 ## Approval implication
 
-Approving **this graph** after Gate 0 answers starts **wave 1** immediately. Node agents load **only** their linked plan file. No second wait between waves unless a node marks a human checkpoint (prod / API budget).
+After **plan merge**, start **wave 1** immediately. Node agents load **only** their linked plan file. Human checkpoints: LIVE AB API budget; visual golden bumps.
