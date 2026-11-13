@@ -127,6 +127,7 @@ function ControlStudioInner({ sessionId, onSession }) {
   const [margins, setMargins] = useState(null);
   const [revision, setRevision] = useState(0);
   const [lastSimRevision, setLastSimRevision] = useState(null);
+  const [connecting, setConnecting] = useState(false);
   const [validation, setValidation] = useState({ ok: true, issues: [], warnings: [] });
   const [highlight, setHighlight] = useState({ ids: new Set(), author: null });
   const diagramBase = useRef({});
@@ -392,7 +393,7 @@ function ControlStudioInner({ sessionId, onSession }) {
       <MarginsSummary margins={margins} stale={resultsStale} />
       <div className="cs-workspace studio-layout">
         <StudioPalette groups={groups} onDragStart={(item, opts) => opts?.placeCenter && placeBlock(item)} />
-        <div className="studio-canvas">
+        <div className={`studio-canvas${connecting ? " is-connecting" : ""}`}>
           <ReactFlowProvider>
             <CanvasDrop onDropBlock={placeBlock}>
               <ReactFlow
@@ -403,7 +404,11 @@ function ControlStudioInner({ sessionId, onSession }) {
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
+                onConnectStart={() => setConnecting(true)}
+                onConnectEnd={() => setConnecting(false)}
                 onNodeDragStop={onNodeDragStop}
+                connectionRadius={22}
+                defaultEdgeOptions={{ type: "signal", zIndex: 0 }}
                 snapToGrid
                 snapGrid={[GRID, GRID]}
                 connectionLineType={ConnectionLineType.SmoothStep}

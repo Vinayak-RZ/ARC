@@ -1,7 +1,7 @@
 import { BaseEdge, EdgeLabelRenderer, getSmoothStepPath } from "@xyflow/react";
 
 function feedbackPath(sourceX, sourceY, targetX, targetY) {
-  const drop = 96;
+  const drop = 100;
   const midY = Math.max(sourceY, targetY) + drop;
   return `M ${sourceX} ${sourceY} V ${midY} H ${targetX} V ${targetY}`;
 }
@@ -51,7 +51,7 @@ export function SignalEdge({
   });
   return (
     <>
-      <BaseEdge id={id} path={path} markerEnd={markerEnd} style={{ stroke: "var(--ee-color-ink)", strokeWidth: 1.75 }} />
+      <BaseEdge id={id} path={path} markerEnd={markerEnd} style={{ stroke: "var(--cs-text)", strokeWidth: 1.75 }} />
       {label ? (
         <EdgeLabelRenderer>
           <div className="studio-edge-label" style={{ transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)` }}>
