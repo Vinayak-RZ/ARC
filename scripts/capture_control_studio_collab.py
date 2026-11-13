@@ -37,10 +37,10 @@ def main() -> int:
         page.wait_for_selector(".studio-results-stage img", timeout=25000)
         page.wait_for_function(
             """() => {
-            const dd = document.querySelector('.cs-margin-grid dd');
-            return dd && dd.textContent && dd.textContent.trim() !== '—' && dd.textContent.includes('dB');
+            const cells = Array.from(document.querySelectorAll('.cs-margin-grid dd'));
+            return cells.some((el) => (el.textContent || '').includes('dB'));
         }""",
-            timeout=25000,
+            timeout=35000,
         )
         page.wait_for_timeout(400)
         page.screenshot(path=str(populated), full_page=False)
