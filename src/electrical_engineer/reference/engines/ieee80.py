@@ -1,4 +1,4 @@
-"""IEEE Std 80-2013 tolerable touch and step voltages (Eq. 32 / Eq. 35)."""
+"""IEEE Std 80-2013 tolerable touch and step voltages (clause 8.4, Eq. 29–33)."""
 
 from __future__ import annotations
 
@@ -7,6 +7,31 @@ import math
 from electrical_engineer.reference.catalog import get_record
 
 _BODY_ID = {50: "IEEE80_BODY_50KG", 70: "IEEE80_BODY_70KG"}
+
+# Touch Eq. 29–30; step Eq. 32–33 (IEEE Std 80-2013 clause 8.4).
+_CLAUSE: dict[tuple[str, int], tuple[str, str]] = {
+    ("touch", 50): (
+        "IEEE Std 80-2013 Eq. 29 (tolerable touch voltage, 50 kg)",
+        "(1000+1.5*Cs*rho_s)*k/sqrt(t)",
+    ),
+    ("touch", 70): (
+        "IEEE Std 80-2013 Eq. 30 (tolerable touch voltage, 70 kg)",
+        "(1000+1.5*Cs*rho_s)*k/sqrt(t)",
+    ),
+    ("step", 50): (
+        "IEEE Std 80-2013 Eq. 32 (tolerable step voltage, 50 kg)",
+        "(1000+6*Cs*rho_s)*k/sqrt(t)",
+    ),
+    ("step", 70): (
+        "IEEE Std 80-2013 Eq. 33 (tolerable step voltage, 70 kg)",
+        "(1000+6*Cs*rho_s)*k/sqrt(t)",
+    ),
+}
+
+_CLAUSE_CITATIONS = (
+    "IEEE Std 80-2013 clause 8.4 (Eq. 29–33); "
+    "secondary: ieccalc.com/standards/ieee-80, windfarmbop.com IEEE 80 worked example"
+)
 
 
 def _resolve_body_id(*, body_mass_kg: int) -> str:
@@ -23,7 +48,7 @@ def tolerable_voltage(
     cs: float,
     t_s: float,
 ) -> dict:
-    """One tolerable voltage; kind touch (Eq. 32) or step (Eq. 35)."""
+    """One tolerable voltage; k depends on body mass only (0.116 kg50, 0.157 kg70)."""
     kind_l = str(kind).strip().lower()
     if kind_l not in ("touch", "step"):
         raise ValueError("kind must be 'touch' or 'step'")
@@ -32,22 +57,13 @@ def tolerable_voltage(
     if rec is None:
         raise ValueError(f"unknown body constant id {body_id}")
     vals = rec["values"]
-    k_touch = float(vals["k_touch"])
-    k_step = float(vals["k_step"])
+    k = float(vals["k"])
     if t_s <= 0:
         raise ValueError("t_s must be positive")
-    denom = math.sqrt(t_s)
-    if kind_l == "touch":
-        factor = 1000.0 + 1.5 * cs * rho_s_ohm_m
-        k = k_touch
-        clause = "IEEE Std 80-2013 Eq. 32 (tolerable touch voltage)"
-        equation = "(1000+1.5*Cs*rho_s)*k_touch/sqrt(t)"
-    else:
-        factor = 1000.0 + 6.0 * cs * rho_s_ohm_m
-        k = k_step
-        clause = "IEEE Std 80-2013 Eq. 35 (tolerable step voltage)"
-        equation = "(1000+6*Cs*rho_s)*k_step/sqrt(t)"
-    e_v = factor * k / denom
+    clause, equation = _CLAUSE[(kind_l, body_mass_kg)]
+    rs_coeff = 1.5 if kind_l == "touch" else 6.0
+    factor = 1000.0 + rs_coeff * cs * rho_s_ohm_m
+    e_v = factor * k / math.sqrt(t_s)
     inputs_used = {
         "kind": kind_l,
         "body_mass_kg": body_mass_kg,
@@ -67,6 +83,7 @@ def tolerable_voltage(
         "k_used": k,
         "equation": equation,
         "standard_clause": clause,
+        "standard_clause_citations": _CLAUSE_CITATIONS,
         "inputs_used": inputs_used,
         "source_id": body_id,
     }

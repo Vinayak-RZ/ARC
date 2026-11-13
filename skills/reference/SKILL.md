@@ -14,7 +14,7 @@ Use when a problem names a **standard symbol, curve, conductor, test case, or li
 | MCB type B/C/D trip | get `MCB_TYPE_*`; engine `mcb` |
 | IEEE 519 TDD | band id or `ieee519` with Isc/Il ratio |
 | Dyn11 / Yd1 | get `VECTOR_*`; engine `vector_group` — **do not flip sign** |
-| IEEE 80 touch/step | engine `ieee80` — touch uses `k_touch` (Eq. 32), step uses `k_step` |
+| IEEE 80 touch/step | engine `ieee80` — requires `kind` and `body_mass_kg`; k=0.116/0.157 by weight only |
 | IEC 60909 peak ip | engine `iec60909_peak` after Ik'' |
 | NEMA code letter I_lr | get `NEMA_CODE_*`; engine `nema_locked_rotor` |
 | EEC-301 Exp 6–8 | get `EEC301_EXP*` pointer; use existing PSA workflows |

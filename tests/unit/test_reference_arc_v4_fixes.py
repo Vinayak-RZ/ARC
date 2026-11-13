@@ -7,13 +7,17 @@ import math
 import pytest
 
 from electrical_engineer.reference.catalog import clear_catalog_cache
+from electrical_engineer.reference.catalog_crosscheck import (
+    assert_catalog_formula_consistency,
+    crosscheck_tabulated_formulas,
+)
 from electrical_engineer.reference.conductors import check_conductor_resistance_consistency
 from electrical_engineer.reference.engines.iec60909_peak import (
     kappa_from_rx_ratio,
     peak_short_circuit_ka,
 )
 from electrical_engineer.reference.engines.ieee80 import tolerable_voltage
-from electrical_engineer.reference.engines.ieee519 import tdd_limit_percent
+from electrical_engineer.reference.engines.ieee519 import BOUNDARY_POLICY, tdd_limit_percent
 from electrical_engineer.web_verify.citations import append_standard_formula_lines
 
 
@@ -28,7 +32,7 @@ def _fresh_catalog() -> None:
         ("touch", 50, 0.116),
         ("step", 50, 0.116),
         ("touch", 70, 0.157),
-        ("step", 70, 0.313),
+        ("step", 70, 0.157),
     ],
 )
 def test_ieee80_four_kind_body_combinations(kind: str, body_kg: int, k: float) -> None:
@@ -39,13 +43,34 @@ def test_ieee80_four_kind_body_combinations(kind: str, body_kg: int, k: float) -
     rs_coeff = 1.5 if kind == "touch" else 6.0
     expected = (1000.0 + rs_coeff * cs * rho) * k / math.sqrt(t)
     assert out["e_v"] == pytest.approx(expected, rel=1e-6)
-    assert out["inputs_used"]["kind"] == kind
-    assert out["inputs_used"]["body_mass_kg"] == body_kg
+    assert out["k_used"] == k
 
 
 def test_ieee80_blind_exam_step_50kg() -> None:
     out = tolerable_voltage(kind="step", body_mass_kg=50, rho_s_ohm_m=250.0, cs=1.0, t_s=0.35)
     assert out["e_v"] == pytest.approx(490.2, rel=1e-3)
+
+
+def test_ieee80_step_70kg_annex_style() -> None:
+    out = tolerable_voltage(kind="step", body_mass_kg=70, rho_s_ohm_m=250.0, cs=1.0, t_s=0.35)
+    assert out["e_v"] == pytest.approx(663.4, rel=1e-3)
+    assert "Eq. 33" in out["standard_clause"]
+
+
+@pytest.mark.parametrize(
+    ("kind", "body_kg", "eq_snippet"),
+    [
+        ("touch", 50, "Eq. 29"),
+        ("touch", 70, "Eq. 30"),
+        ("step", 50, "Eq. 32"),
+        ("step", 70, "Eq. 33"),
+    ],
+)
+def test_ieee80_clause_numbers(kind: str, body_kg: int, eq_snippet: str) -> None:
+    out = tolerable_voltage(
+        kind=kind, body_mass_kg=body_kg, rho_s_ohm_m=100.0, cs=1.0, t_s=1.0
+    )
+    assert eq_snippet in out["standard_clause"]
 
 
 def test_ieee80_requires_kind_and_mass() -> None:
@@ -70,20 +95,27 @@ def test_ieee519_table2_boundaries(ratio: float, limit: float, band: str) -> Non
     out = tdd_limit_percent(isc_il_ratio=ratio)
     assert out["tdd_limit_percent"] == limit
     assert out["ratio_id"] == band
-    assert "IEEE 519-2022 Table 2" in out["table_row_label"]
+    assert out["boundary_policy"] == BOUNDARY_POLICY
 
 
-def test_iec60909_kappa_tabulated_only_at_xr10() -> None:
+def test_ieee519_boundary_1000_in_gt_band() -> None:
+    """Ratio exactly 1000 is not in [100, 1000); it maps to the >1000 row (20%)."""
+    out = tdd_limit_percent(isc_il_ratio=1000.0)
+    assert out["ratio_id"] == "IEEE519_TDD_BAND_GT1000"
+    assert out["tdd_limit_percent"] == 20.0
+
+
+def test_iec60909_kappa_formula_at_xr10() -> None:
     z = 0.05 + 0.5j
     peak = peak_short_circuit_ka(voltage_kv=11.0, z_ohm=z)
-    assert peak["kappa_method"] == "catalog_tabulated_XR10"
-    assert peak["kappa"] == pytest.approx(1.632, rel=1e-4)
-    z2 = 0.1 + 0.2j
-    peak2 = peak_short_circuit_ka(voltage_kv=11.0, z_ohm=z2)
-    assert peak2["kappa_method"] == "IEC60909_figure_formula"
-    rx = 0.1 / 0.2
-    assert peak2["kappa"] == pytest.approx(kappa_from_rx_ratio(rx), rel=1e-9)
-    assert peak2["kappa"] != peak["kappa"]
+    assert peak["kappa_method"] == "IEC60909-0_figure_formula"
+    assert peak["kappa"] == pytest.approx(1.746, rel=1e-3)
+    assert peak["kappa"] == pytest.approx(kappa_from_rx_ratio(0.1), rel=1e-9)
+
+
+def test_catalog_formula_crosscheck() -> None:
+    assert crosscheck_tabulated_formulas() == []
+    assert_catalog_formula_consistency()
 
 
 def test_conductor_catalog_resistance_consistency() -> None:

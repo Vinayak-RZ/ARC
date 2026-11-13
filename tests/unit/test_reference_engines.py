@@ -59,7 +59,7 @@ def test_ieee80_touch_step_split() -> None:
         kind="step", body_mass_kg=70, rho_s_ohm_m=200.0, cs=1.0, t_s=0.4
     )
     assert touch["e_v"] == pytest.approx(322.71, rel=1e-3)
-    expected_step = (1000.0 + 6.0 * 200.0) * 0.313 / math.sqrt(0.4)
+    expected_step = (1000.0 + 6.0 * 200.0) * 0.157 / math.sqrt(0.4)
     assert step["e_v"] == pytest.approx(expected_step, rel=1e-3)
     assert step["e_v"] > touch["e_v"]
 

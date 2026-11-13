@@ -13,6 +13,15 @@ _TDD_BAND_IDS = (
     "IEEE519_TDD_BAND_GT1000",
 )
 
+# Table 2 rows are Isc/IL <20, 20–50, 50–100, 100–1000, >1000 (519-2022 Table 2).
+# Lookup uses half-open [lo, hi): interior breakpoints 20, 50, 100, 1000 map to the
+# next row (e.g. ratio 20 -> 8% band, ratio 1000 -> >1000 / 20% band).
+BOUNDARY_POLICY = "half_open_lo_inclusive_hi_exclusive"
+BOUNDARY_POLICY_CITATION = (
+    "IEEE Std 519-2022 Table 2 (120 V–69 kV TDD limits); "
+    "interval endpoints assigned to weaker-supply row per half-open [lo, hi) lookup"
+)
+
 
 def _band_row_label(rec: dict) -> str:
     src = rec.get("source") or {}
@@ -38,6 +47,8 @@ def tdd_limit_percent(*, ratio_id: str | None = None, isc_il_ratio: float | None
             "isc_il_max": rec["values"].get("isc_il_max"),
             "table_row_label": _band_row_label(raw),
             "standard_clause": "IEEE Std 519-2022 Table 2",
+            "boundary_policy": BOUNDARY_POLICY,
+            "boundary_policy_citation": BOUNDARY_POLICY_CITATION,
             "inputs_used": {"isc_il_ratio": None, "ratio_id": ratio_id},
             "source_id": ratio_id,
         }
@@ -68,6 +79,8 @@ def tdd_compliance(*, isc_il_ratio: float, measured_tdd_percent: float) -> dict:
         "ratio_band_id": limit["ratio_id"],
         "table_row_label": limit["table_row_label"],
         "standard_clause": limit["standard_clause"],
+        "boundary_policy": limit["boundary_policy"],
+        "boundary_policy_citation": limit["boundary_policy_citation"],
         "inputs_used": {
             "isc_il_ratio": isc_il_ratio,
             "measured_tdd_percent": measured_tdd_percent,
