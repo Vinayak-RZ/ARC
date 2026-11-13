@@ -166,7 +166,19 @@ def _unity_from_wired(diagram: dict[str, Any]):
     for bid in chain:
         g = control.series(g, _block_tf(by_id[bid]))
     if feedback_id and feedback_id in by_id:
-        h = _block_tf(by_id[feedback_id])
+        fb_block = by_id[feedback_id]
+        # Output tap from plant or scope path is unity feedback (sensor), not the plant TF again.
+        if fb_block["type"] in (
+            "plant_dc_motor",
+            "plant_first_order",
+            "transfer_function",
+            "scope",
+        ):
+            h = control.tf([1.0], [1.0])
+        elif fb_block["type"] == "gain":
+            h = _block_tf(fb_block)
+        else:
+            h = control.tf([1.0], [1.0])
     else:
         h = control.tf([1.0], [1.0])
     sys = control.feedback(g, h, sign=sign)
