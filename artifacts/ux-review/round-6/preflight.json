@@ -1,9 +1,9 @@
 {
-  "git_sha": "2ba9b3ecb6ff2aa05509a7b830c151f4171e571b",
-  "git_sha_short": "2ba9b3e",
+  "git_sha": "5095779c781ee7cbbd9007906a3a319eaf2386cd",
+  "git_sha_short": "5095779",
   "package_path": "/agent/repos/ARC/src/electrical_engineer/__init__.py",
   "dist_index_mtime": 1794576121.6944635,
   "kp": 50.0,
   "step_series": true,
-  "gain_margin_caption": "Phase never reaches \u2212180\u00b0 from 0.001 to 100,000 rad/s."
+  "gain_margin_caption": "Phase never reaches −180° from 0.001 to 100,000 rad/s."
 }
