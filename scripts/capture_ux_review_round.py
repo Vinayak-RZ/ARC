@@ -391,7 +391,7 @@ def main() -> int:
                 page.wait_for_selector(".studio-settled-pill", timeout=120000)
                 snap("studio-step-settled.png")
                 page.locator(".react-flow__node", has_text="PID").click(force=True)
-                for label, val in [("Kp", "0.5"), ("Ki", "0.1")]:
+                for label, val in [("Kp", "0.08"), ("Ki", "0.02"), ("Kd", "0")]:
                     field = page.get_by_label(label)
                     if field.count():
                         field.fill(val)
