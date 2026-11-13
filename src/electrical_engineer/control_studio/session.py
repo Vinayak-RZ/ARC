@@ -8,6 +8,7 @@ import uuid
 from pathlib import Path
 from typing import Any
 
+from electrical_engineer.control_studio.layout import layout_chain
 from electrical_engineer.control_studio.schema import StudioError, empty_diagram, parse_diagram
 from electrical_engineer.runner.runs import project_root
 
@@ -69,8 +70,7 @@ def create_session(
     if golden and golden in GOLDENS:
         diagram = parse_diagram(GOLDENS[golden]())
         diagram["title"] = title
-        if golden not in ("pid_dc_motor", "unity_first_order"):
-            diagram = auto_layout(diagram)
+        diagram = layout_chain(diagram)
     payload = {
         "session_id": sid,
         "revision": 0,
@@ -227,17 +227,7 @@ def redo(session_id: str, *, author: str = "human", root: Path | None = None) ->
 
 
 def auto_layout(diagram: dict[str, Any]) -> dict[str, Any]:
-    d = parse_diagram(diagram)
-    x0, y0 = 80, 120
-    dx = 180
-    row = 0
-    for i, b in enumerate(d["blocks"]):
-        b["x"] = x0 + (i % 4) * dx
-        b["y"] = y0 + row * 120
-        if (i + 1) % 4 == 0:
-            row += 1
-    d["blocks"] = d["blocks"]
-    return d
+    return layout_chain(parse_diagram(diagram))
 
 
 def add_block(diagram: dict[str, Any], block: dict[str, Any]) -> dict[str, Any]:

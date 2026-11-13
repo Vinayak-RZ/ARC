@@ -584,9 +584,15 @@ name = "electrical-engineer"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "control" },
     { name = "fastapi" },
     { name = "httpx" },
+    { name = "matplotlib" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "numpy", version = "2.5.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "pyyaml" },
+    { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "scipy", version = "1.18.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "uvicorn" },
 ]
 
@@ -639,13 +645,16 @@ sim = [
 
 [package.metadata]
 requires-dist = [
+    { name = "control", specifier = ">=0.9.4" },
     { name = "control", marker = "extra == 'control'", specifier = ">=0.9.4" },
     { name = "electrical-engineer", extras = ["rag"], marker = "extra == 'rag-multimodal'" },
     { name = "electrical-engineer", extras = ["rag"], marker = "extra == 'rag-ocr'" },
     { name = "electrical-engineer", extras = ["sim", "control", "power"], marker = "extra == 'engines'" },
     { name = "fastapi", specifier = ">=0.115" },
     { name = "httpx", specifier = ">=0.27" },
+    { name = "matplotlib", specifier = ">=3.8" },
     { name = "matplotlib", marker = "extra == 'control'", specifier = ">=3.8" },
+    { name = "numpy", specifier = ">=1.26" },
     { name = "numpy", marker = "extra == 'control'", specifier = ">=1.26" },
     { name = "numpy", marker = "extra == 'power'", specifier = ">=1.26" },
     { name = "numpy", marker = "extra == 'sim'", specifier = ">=1.26" },
@@ -659,6 +668,7 @@ requires-dist = [
     { name = "pyyaml", specifier = ">=6" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.6" },
     { name = "schemdraw", marker = "extra == 'engines'", specifier = ">=0.15" },
+    { name = "scipy", specifier = ">=1.11" },
     { name = "scipy", marker = "extra == 'control'", specifier = ">=1.11" },
     { name = "uvicorn", specifier = ">=0.32" },
 ]
