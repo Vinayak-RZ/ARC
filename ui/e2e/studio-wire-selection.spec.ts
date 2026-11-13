@@ -23,11 +23,15 @@ async function contentOutsideCanvas(page: Page, label: string) {
   };
   const sel =
     ".react-flow__edge-path, .react-flow__arrowhead, .react-flow__edge circle, .studio-block";
+  const rects = await page.locator(sel).evaluateAll((els) =>
+    els.map((el) => {
+      const r = el.getBoundingClientRect();
+      return { x: r.x, y: r.y, width: r.width, height: r.height };
+    }),
+  );
   const bad: string[] = [];
-  const n = await page.locator(sel).count();
-  for (let i = 0; i < n; i += 1) {
-    const r = await page.locator(sel).nth(i).boundingBox();
-    if (!r) continue;
+  for (const r of rects) {
+    if (r.width <= 0 && r.height <= 0) continue;
     if (
       r.x < box.x - 0.5 ||
       r.y < box.y - 0.5 ||
