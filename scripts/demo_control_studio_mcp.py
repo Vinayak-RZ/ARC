@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from electrical_engineer.control_studio.mcp_tools import handle_tool  # noqa: E402
+from electrical_engineer.control_studio.mcp_tools import handle_tool
 
 OUT = Path("/opt/cursor/artifacts")
 
