@@ -21,6 +21,10 @@ def register_studio_routes(app: FastAPI, *, root: Path) -> None:
     def studio_palette() -> dict:
         return {"palette": PALETTE, "groups": PALETTE_GROUPS}
 
+    @app.get("/api/control-studio/sessions")
+    def studio_list() -> dict:
+        return {"sessions": session_mod.list_sessions(root)}
+
     @app.post("/api/control-studio/sessions")
     async def studio_create(request: Request) -> dict:
         body = await request.json()
@@ -45,9 +49,18 @@ def register_studio_routes(app: FastAPI, *, root: Path) -> None:
         if not isinstance(body, dict):
             return JSONResponse({"error": "body must be object"}, status_code=400)
         author = str(body.get("author") or "human")
+        op = str(body.get("op") or "edit")
+        target = body.get("target")
+        detail = body.get("detail") if isinstance(body.get("detail"), dict) else None
         try:
             return session_mod.apply_diagram(
-                session_id, body.get("diagram") or body, author=author, op="edit", root=root
+                session_id,
+                body.get("diagram") or body,
+                author=author,
+                op=op,
+                target=str(target) if target is not None else None,
+                detail=detail,
+                root=root,
             )
         except StudioError as exc:
             return JSONResponse({"error": str(exc)}, status_code=400)
@@ -83,7 +96,22 @@ def register_studio_routes(app: FastAPI, *, root: Path) -> None:
         try:
             payload = session_mod.load_session(session_id, root)
             run_dir = root / "runs" / session_id
-            return simulate_mod.simulate(payload["diagram"], run_dir=run_dir)
+            sim = simulate_mod.simulate(payload["diagram"], run_dir=run_dir)
+            if not sim.get("ok"):
+                return sim
+            an = analyze_mod.analyze(payload["diagram"], run_dir=run_dir)
+            out = {**sim, "analyze": an}
+            if an.get("ok"):
+                for key in (
+                    "gain_margin_db",
+                    "phase_margin_deg",
+                    "phase_crossover_rad_s",
+                    "gain_crossover_rad_s",
+                    "display",
+                ):
+                    if key in an:
+                        out[key] = an[key]
+            return out
         except StudioError as exc:
             return JSONResponse({"error": str(exc)}, status_code=404)
 

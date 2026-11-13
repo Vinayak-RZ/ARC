@@ -69,7 +69,8 @@ def create_session(
     if golden and golden in GOLDENS:
         diagram = parse_diagram(GOLDENS[golden]())
         diagram["title"] = title
-        diagram = auto_layout(diagram)
+        if golden not in ("pid_dc_motor", "unity_first_order"):
+            diagram = auto_layout(diagram)
     payload = {
         "session_id": sid,
         "revision": 0,
@@ -82,8 +83,42 @@ def create_session(
     }
     if diagram.get("blocks"):
         payload["undo_stack"] = [json.loads(json.dumps(diagram))]
+    _append_op(
+        payload,
+        {"op": "create", "target": golden or "blank", "detail": {"title": title}},
+        "agent" if golden else "human",
+    )
     save_session(sid, payload, root)
     return payload
+
+
+def list_sessions(root: Path | None = None, *, limit: int = 12) -> list[dict[str, Any]]:
+    d = _studio_dir(root)
+    items: list[dict[str, Any]] = []
+    if not d.is_dir():
+        return items
+    for path in sorted(d.glob("cs-*.json"), key=lambda p: p.stat().st_mtime, reverse=True):
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if not isinstance(data, dict):
+            continue
+        diagram = data.get("diagram") or {}
+        title = str(diagram.get("title") or data.get("session_id"))
+        if title.startswith("unmatched") or "scratch" in title.lower():
+            continue
+        items.append(
+            {
+                "session_id": data.get("session_id") or path.stem,
+                "title": title,
+                "revision": data.get("revision") or 0,
+                "updated_at_ms": data.get("updated_at_ms") or 0,
+            }
+        )
+        if len(items) >= limit:
+            break
+    return items
 
 
 def _append_op(payload: dict[str, Any], op: dict[str, Any], author: str) -> dict[str, Any]:
@@ -104,11 +139,23 @@ def _append_op(payload: dict[str, Any], op: dict[str, Any], author: str) -> dict
     return entry
 
 
-def apply_diagram(session_id: str, diagram: dict[str, Any], *, author: str, op: str, root: Path | None = None) -> dict[str, Any]:
+def apply_diagram(
+    session_id: str,
+    diagram: dict[str, Any],
+    *,
+    author: str,
+    op: str,
+    target: str | None = None,
+    detail: dict[str, Any] | None = None,
+    root: Path | None = None,
+) -> dict[str, Any]:
     payload = load_session(session_id, root)
     parsed = parse_diagram(diagram)
     payload["diagram"] = parsed
-    entry = _append_op(payload, {"op": op, "diff": {"title": parsed.get("title")}}, author)
+    body: dict[str, Any] = {"op": op, "target": target}
+    if detail:
+        body["detail"] = detail
+    entry = _append_op(payload, body, author)
     presence = payload.setdefault(
         "presence",
         {"agent_editing": False, "last_author": author, "highlight_until_ms": 0},
