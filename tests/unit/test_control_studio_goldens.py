@@ -8,7 +8,7 @@ from electrical_engineer.control_studio.compose import compose_closed_loop
 from electrical_engineer.control_studio.goldens import GOLDENS
 from electrical_engineer.control_studio.simulate import simulate
 from electrical_engineer.control_studio.validate import validate
-from electrical_engineer.engines.block_diagram import compose_plant, plant_problem_dict
+from electrical_engineer.engines.block_diagram import compose_plant
 from electrical_engineer.engines.control_runner import control_available
 
 
