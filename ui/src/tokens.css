@@ -1519,6 +1519,50 @@ a { color: var(--ee-color-primary); }
 }
 .capability-label { font-weight: 600; font-size: var(--ee-type-body); }
 .capability-count { font-size: var(--ee-type-caption); color: var(--ee-color-primary-ink); font-weight: 500; }
+.gallery-card-open {
+  display: block;
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+.gallery-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ee-space-l);
+}
+.gallery-lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+}
+.gallery-lightbox-panel {
+  position: relative;
+  z-index: 1;
+  max-width: min(880px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+  background: var(--ee-color-surface-card);
+  border-radius: 8px;
+  border: 1px solid var(--ee-color-hairline);
+  padding: var(--ee-space-l);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ee-space-m);
+}
+.gallery-lightbox-panel img { max-width: 100%; height: auto; border-radius: 4px; }
+.gallery-lightbox-panel h2 { margin: 0; font-size: var(--ee-type-title); }
+.gallery-lightbox-actions { display: flex; gap: var(--ee-space-s); flex-wrap: wrap; }
 .subject-chip-muted {
   display: inline-block;
   font-size: 10px;
