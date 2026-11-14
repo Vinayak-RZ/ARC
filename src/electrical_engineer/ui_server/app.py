@@ -32,12 +32,17 @@ _SVG = "<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'></svg>"
 
 
 def _repo_root() -> Path:
-    return Path(__file__).resolve().parents[3]
+    from electrical_engineer.paths import checkout_root, install_root
+
+    return checkout_root() or install_root()
 
 
 def _icon_path() -> Path | None:
+    from electrical_engineer.paths import ui_dist_dir
+
     here = _repo_root()
     for cand in (
+        ui_dist_dir() / "arc-icon.png",
         here / "ui" / "dist" / "arc-icon.png",
         here / "ui" / "public" / "arc-icon.png",
         here / "assets" / "brand" / "arc-icon.png",
@@ -630,7 +635,9 @@ def create_app(root: Path | None = None) -> FastAPI:
         media = "image/gif" if target.suffix == ".gif" else "image/png"
         return FileResponse(target, media_type=media)
 
-    ui_dist = Path(__file__).resolve().parents[3] / "ui" / "dist"
+    from electrical_engineer.paths import ui_dist_dir
+
+    ui_dist = ui_dist_dir()
     index = ui_dist / "index.html"
     if index.is_file():
         app.mount("/assets", StaticFiles(directory=ui_dist / "assets"), name="assets")
