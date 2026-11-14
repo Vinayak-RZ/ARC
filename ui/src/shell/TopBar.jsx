@@ -1,6 +1,7 @@
 import { SlidersHorizontal, MoreHorizontal } from "lucide-react";
 import { useLayout } from "../store.js";
 import { displayTitle } from "../runDisplay.js";
+import { ArcMascot } from "../mascot/index.js";
 
 const VIEW_LABEL = {
   home: "Home",
@@ -36,6 +37,13 @@ export function TopBar({ runMeta, onPrimaryAction, primaryLabel, runAgainPrimary
         ))}
       </nav>
       <div className="topbar-actions">
+        <ArcMascot
+          className="topbar-mascot"
+          size={28}
+          mode={agentEditing ? "thinking" : "asleep"}
+          label={agentEditing ? "Agent busy" : "Arc idle"}
+          idleTimes={{ bored: 20, sleepy: 40, doze: 60 }}
+        />
         {agentEditing ? <span className="presence-chip">Agent editing</span> : null}
         {showParams ? (
           <>

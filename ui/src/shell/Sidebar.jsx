@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useLayout } from "../store.js";
 import { displayTitle } from "../runDisplay.js";
+import { ArcMascot } from "../mascot/index.js";
 
 const PRIMARY = [
   { id: "home", label: "Home", icon: Home },
@@ -43,7 +44,7 @@ export function Sidebar({ runs, onNavigate, onNewProblem }) {
       aria-label="Main navigation"
     >
       <div className="sidebar-head">
-        <img className="brand-mark" src="/arc-icon.png" width="28" height="28" alt="Arc" />
+        <ArcMascot className="brand-mark brand-mascot" size={collapsed ? 28 : 32} label="Arc" mode="ambient" live />
         {!collapsed ? (
           <>
             <div className="sidebar-brand-text">
