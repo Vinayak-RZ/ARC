@@ -2,21 +2,23 @@
 
 Gold tasks for `electrical-engineer eval` and `eval --pack <pack>`. See [`docs/ARCHITECTURE.md`](../../docs/ARCHITECTURE.md) and [`docs/WORKFLOWS.md`](../../docs/WORKFLOWS.md).
 
-The catalog ships **34** named workflow recipes (`src/electrical_engineer/catalog.py`). Eval packs score a subset with checked-in `expect.json` files.
+The catalog ships **42** named workflow recipes (`list_workflow_ids()` in `src/electrical_engineer/catalog.py`). Eval packs score a subset with checked-in `expect.json` files: **60** tasks total (`electrical-engineer eval` with no `--pack`), including **31** in `circuits`.
 
 ## Layout
 
 ```text
 eval/gold/
-  circuits/
-  control/
-  explain/
-  injection/
-  machines/
-  power/          # recipe golds + EEC-301 PSA engine golds (schema v2)
-  rag-retrieval/
-  signals/
-  unmatched/
+  circuits/       # 31
+  context-web/    # 5
+  control/        # 5
+  explain/        # 1
+  injection/      # 1
+  machines/       # 2
+  power/          # 9 — recipe golds + EEC-301 PSA engine golds (schema v2)
+  rag-retrieval/  # 4
+  signals/        # 1
+  unmatched/      # 1
+  ui-diagrams/    # visual/JSON goldens for pytest; 0 CLI eval items
 ```
 
 Each item is a directory:

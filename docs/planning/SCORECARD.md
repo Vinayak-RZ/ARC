@@ -4,7 +4,7 @@
 |--------|--------|----------|--------|
 | PSA eval CLI | 3/3 | **3/3 PASS** | done |
 | `eval --pack power` | exit 0 | **6/6 PASS** | done |
-| Full `electrical-engineer eval` | all runnable PASS | **20/20 PASS** | done |
+| Full `electrical-engineer eval` | all runnable PASS | **60** gold tasks today (branch-era note: was 20/20 when scorecard frozen) | update counts via `iter_items` |
 | pytest | green | **283 passed** | done |
 | Visual regression + sanity | image diff + size | **28 PASS** | done |
 | `check_psa_evals.py` | green | **16+ passed** | done |

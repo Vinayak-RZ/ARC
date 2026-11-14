@@ -57,7 +57,7 @@ flowchart TB
   subgraph arc["Arc already ships, on this machine"]
     Method[Course method]
     Tools[Tools the assistant can call]
-    Recipes[27 named lab recipes]
+    Recipes[42 named lab recipes]
     Runner[Deterministic recipe runner]
     Sims[Simulators]
     Gates[Gates: auto, ask, or refuse]
@@ -126,7 +126,7 @@ Limit: Arc is an undergraduate lab, not a plant controller. It does not make eve
 
 A general assistant in a loop invents the next step as it goes. That is a poor fit when the next step is "run SPICE, then label anything that did not compute." The model can skip the simulator, reorder the work, or call a tool that does not exist.
 
-A **named lab recipe** is a saved path the runner will not improvise. This checkout has **27** of them across **10** packs (circuits, control, signals, machines, power, and the rest). `simulate-circuit` is four steps: load the netlist, simulate, label unverified leftovers, write the summary. Ask twice, get the same path.
+A **named lab recipe** is a saved path the runner will not improvise. This checkout has **42** of them across **10** packs (circuits, control, signals, machines, power, and the rest). `simulate-circuit` is four steps: load the netlist, simulate, label unverified leftovers, write the summary. Ask twice, get the same path.
 
 The combination is the product: the assistant **selects** a recipe (or proposes an allowed graph). Arc **runs** it. The assistant does not learn Kirchhoff by trial and error inside the loop.
 
@@ -151,7 +151,7 @@ flowchart LR
 
 **When no saved recipe fits: compose.** The assistant names a graph of *already allowed* kinds of check (simulate this circuit, then check this algebra). Arc validates first: known ids only, at most 16 steps and 24 edges, no cycles, photos still need the local window. Record the plan without physics, or apply and run. On the command line the same job is `compose-from-parts` (asks you first). Invalid graphs fail before a simulator starts.
 
-A generic command line runs one flag. A generic MCP dumps tools into the chat. Neither ships 27 named lab recipes plus a validator that will only run allowed checks.
+A generic command line runs one flag. A generic MCP dumps tools into the chat. Neither ships 42 named lab recipes plus a validator that will only run allowed checks.
 
 Limit: the catalog is not the whole subject. A signals question with no YAML row is still in-bound: compose allowed checks, or unmatched plus an unverified label. Long `solve-*` recipes that include an essay step are the command-line / test path, not the assistant's chat brain. Full list: [`WORKFLOWS.md`](WORKFLOWS.md).
 

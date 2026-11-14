@@ -21,7 +21,7 @@
   <a href="LICENSE"><b>License</b></a>
 </p>
 
-Turn your AI coding assistant into an undergraduate electrical engineer. 10 undergraduate packs, 12 host-spawned specialists, 34 named lab recipes.
+Turn your AI coding assistant into an undergraduate electrical engineer. 10 undergraduate packs, 12 host-spawned specialists, 42 named lab recipes.
 
 **Arc is built for agents.** Clone the repo, install, run `electrical-engineer hosts install`, then paste a job brief into Cursor, Claude Code, Codex, or ChatGPT desktop. The assistant picks named recipes, runs simulators when they exist, and labels anything it did not verify as `unchecked` in the saved run.
 
@@ -45,7 +45,7 @@ pip install --user -e ".[dev]"
 electrical-engineer eval --pack circuits
 ```
 
-That eval is the product check. Circuit golds are ngspice oracles (see `scripts/capture_circuit_oracle.py`); `mna-ladder-01` checks a resistor ladder node voltage against SPICE, not `derive()` alone.
+That circuits pack check is **31/31**. Full `electrical-engineer eval` (no `--pack`) is **60** gold tasks across 10 packs. Circuit golds are ngspice oracles (see `scripts/capture_circuit_oracle.py`); `mna-ladder-01` checks a resistor ladder node voltage against SPICE, not `derive()` alone.
 
 ## Domain kernel
 
@@ -213,8 +213,9 @@ Measured on `cursor/frontier-execution-7a2f` (see `docs/planning/SCORECARD.md`):
 
 | Check | Result |
 |-------|--------|
-| Full `electrical-engineer eval` | 18/18 PASS |
-| PSA pack | 6/6 PASS |
+| Full `electrical-engineer eval` | 60 gold tasks (see `docs/planning/SCORECARD.md` for branch-era scores) |
+| `eval --pack circuits` | 31/31 |
+| `eval --pack power` | 9 items (PSA + recipe golds) |
 | pytest | 255+ PASS (includes visual regression) |
 | Scripted trap pass^k | 1.0 (no API keys) |
 | LIVE A/B | blocked until `OPENAI_API_KEY` + `ANTHROPIC_API_KEY` (`docs/planning/LIVE_AB.md`) |
@@ -262,7 +263,7 @@ sequenceDiagram
   UI-->>H: numbers plus explanation, confirm photos
 ```
 
-- **Named lab recipes.** 34 saved workflows. The assistant picks one (or proposes an allowed graph). Arc runs it. A free agent loop can skip the simulator. Limit: Arc never invents a new recipe in chat. [`docs/WORKFLOWS.md`](docs/WORKFLOWS.md)
+- **Named lab recipes.** 42 saved workflows. The assistant picks one (or proposes an allowed graph). Arc runs it. A free agent loop can skip the simulator. Limit: Arc never invents a new recipe in chat. [`docs/WORKFLOWS.md`](docs/WORKFLOWS.md)
 - **Host-spawned specialists.** 12 cards in [`hosts/agents/`](hosts/agents/INDEX.md). Cursor, Codex, or Claude starts at most two on a large assignment. Limit: Arc never starts those children. Cloud `/in-cloud` spawn is off.
 - **Deterministic checks.** The recipe runner and the simulators do not sample. Same netlist, same `Vout`. Limit: the explanation can still vary. The ohms cannot, unless they are labeled unverified. [`docs/ON_THE_HARNESS.md`](docs/ON_THE_HARNESS.md)
 - **Unverified numbers are labeled.** If SPICE, python-control, or pandapower is missing, Arc does not guess. Limit: a verified number needs a simulator or a numeric check, not a fluent paragraph.

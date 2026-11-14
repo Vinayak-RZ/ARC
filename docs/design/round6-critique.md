@@ -212,7 +212,7 @@ All Arc PRs are merged, so the builder's code is on `main`. I read `origin/main`
 | `studio-r5.spec.ts` (round 5) | **Yes**, `ui/e2e/studio-r5.spec.ts`, wired in `playwright.config.ts` `testMatch` and CI (`npm run test:e2e` in `.github/workflows/ci.yml`) | **Dark arrowhead test is vacuous**: selector `marker polygon, marker path` misses React Flow's `polyline`, so it passes with invisible arrowheads. The margins and inspector tests are sound. The inspector test selects `.studio-inspector:not(.studio-inspector-float)` which is right for the docked panel |
 | Preflight in `scripts/capture_ux_review_round.py` | **Yes** | See section 1 for the sha weakness |
 | `DESIGN_PLAYBOOK.md` | **No** | Lives only in `/workspace/arc-frontier/design-loop/`. The fresh branch will not contain it. **Copy it into the repo** (`docs/design/DESIGN_PLAYBOOK.md`) and paste the rubric into the round 7 prompt |
-| Critiques for rounds 3 to 6 | **No** | `main` has `CRITIQUE.md` for rounds 1 and 2 only. Add `artifacts/ux-review/round-{3..6}/CRITIQUE.md` so the builder can see its own history |
+| Critiques for rounds 3 to 6 | **No** | Historical note: UX dump rounds lived under `artifacts/ux-review/` (removed; regenerate via `scripts/capture_ux_review_round.py` if needed) |
 | `round3/studio-fix/` repro files (`repro.spec.js`, before and after HTML) | **No, not needed** | Debug scaffolding, superseded by the layout spec |
 | `round6/studio-fix/studio-r6.spec.ts` (new, this round) | **No** | Saved next to this file. Merge into `studio-wire-selection.spec.ts` and `studio-r5.spec.ts` on the new branch |
 

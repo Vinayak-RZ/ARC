@@ -40,13 +40,17 @@ Every pack owns genres solve, derive, design, simulate, review, explain, report.
 
 ## 1. Catalog
 
+Discovery: `electrical-engineer workflows` / `list_workflow_ids()` → **42** YAML recipes under `workflows/`.  
+`compose-from-parts` is a CLI/MCP compose path (**not** a YAML recipe id).
+
 ### Cross-cutting
 
 | id | Title | Mark | Notes |
 |----|-------|------|-------|
 | unmatched-cosolver | Answer an EE question (unchecked if not verified) | v1 | No auto-sim. Optional retrieve → solve-explain → label-unchecked → write-run-summary |
-| compose-from-parts | Build a one-off workflow from allowed steps | v1 | `--advanced`; typed ports; 16/24 cap; may emit `run-recipe`; gate = ask |
+| compose-from-parts | Build a one-off workflow from allowed steps | v1 | CLI/MCP `--advanced` only; not in `list_workflow_ids()`; typed ports; 16/24 cap; may emit `run-recipe`; gate = ask |
 | photo-to-netlist | Photo of a circuit to a draft netlist | stub | UI confirm; **no sim** after confirm |
+| context-web-spotcheck | Spot-check a claim against curated web evidence | v1 | Provenance / evidence path |
 
 ### Circuits (specified in full)
 
@@ -66,6 +70,30 @@ Every pack owns genres solve, derive, design, simulate, review, explain, report.
 | solve-control-problem | Solve a classical control problem | v1 | python-control; MATLAB if present |
 | explain-control | Explain stability, Bode, or root locus | v1 | Library plots, not invented PNGs |
 | control-diagram-to-model | Block diagram or Bode figure to a model | v1 | OSS block compose + python-control Bode/step; `control_diagram.json` + UI canvas |
+| solve-digital-control-problem | Discrete / ZOH control homework | v1 | Digital TF path |
+| study-control-exam | Control exam-style study recipe | v1 | Study pack binding |
+
+### Power / PSA / protection / drives
+
+| id | Title | Mark | Notes |
+|----|-------|------|-------|
+| simulate-power-fault | Fault / sequence-network study | v1 | pandapower + sequence nets |
+| study-protection-setting | CT / pickup / distance study | v1 | Protection math |
+| solve-drives-problem | UG drives intro (DC / IM slip) | v1 | Steady-state OSS |
+| smib-swing-study | SMIB equal-area / CCT | v1 | `smib_swing` kernel |
+| agc-two-area-study | Two-area AGC | v1 | `agc_two_area` kernel |
+| ed-lambda-study | Economic dispatch with limits | v1 | `ed_lambda` kernel |
+| ed-penalty-study | ED penalty / soft-limit study | v1 | Companion ED path |
+| primary-response-study | Primary droop / frequency response | v1 | Power study |
+| symmetrical-fault-study | Symmetrical fault study | v1 | Sequence networks |
+
+### Study / exam bindings (extra YAML)
+
+| id | Title | Pack | Mark |
+|----|-------|------|------|
+| study-circuits-v2 | Circuits study binding | circuits | v1 |
+| study-machines-v2 | Machines study binding | machines | v1 |
+| study-power-electronics-v2 | Power electronics study binding | power_electronics | v1 |
 
 ### Other packs (solve + explain for every curriculum pack)
 
