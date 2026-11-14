@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { MascotState } from "../components/MascotState.jsx";
 
 const DOMAINS = [
   "circuits",
@@ -19,7 +20,115 @@ function bookIds(items) {
   return [...new Set((items || []).map((row) => row.book_id).filter(Boolean))];
 }
 
-export function Library() {
+function ReferenceTab() {
+  const [domains, setDomains] = useState([]);
+  const [q, setQ] = useState("");
+  const [results, setResults] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    fetch("/api/reference")
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((d) => setDomains(d.domains || []))
+      .catch(() => setError("Could not load the reference catalog."))
+      .finally(() => setLoading(false));
+  }, []);
+
+  async function search(ev) {
+    ev?.preventDefault();
+    setError("");
+    const query = q.trim();
+    if (!query) {
+      setResults([]);
+      return;
+    }
+    try {
+      const r = await fetch(`/api/reference?q=${encodeURIComponent(query)}`);
+      const body = await r.json();
+      if (!r.ok) throw new Error(body.error || "search");
+      setResults(body.results || []);
+    } catch (exc) {
+      setError(exc.message || "Search failed.");
+    }
+  }
+
+  async function openRecord(id) {
+    setError("");
+    try {
+      const r = await fetch(`/api/reference/${encodeURIComponent(id)}`);
+      const body = await r.json();
+      if (!r.ok) throw new Error(body.error || "missing");
+      setSelected(body.record);
+    } catch (exc) {
+      setError(exc.message || "Could not open record.");
+    }
+  }
+
+  if (loading) {
+    return <MascotState kind="loading" size={56} title="Loading reference…" message="Bundled NEC/IEEE tables and course data." />;
+  }
+  if (error && !domains.length) {
+    return <MascotState kind="error" title="Reference unavailable" message={error} />;
+  }
+
+  return (
+    <div className="library-reference">
+      <p className="hint">Curated open tables shipped with Arc. Search by title, alias, or id.</p>
+      <form className="library-ref-search" onSubmit={search}>
+        <input className="run-search" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="e.g. AWG 12 ampacity" aria-label="Search reference" />
+        <button type="submit" className="button-primary button-compact">
+          Search
+        </button>
+      </form>
+      {error ? <p className="error-text">{error}</p> : null}
+      <div className="library-domain-chips" role="list">
+        {domains.map((d) => (
+          <button
+            key={d.id}
+            type="button"
+            className="gallery-filter-chip"
+            role="listitem"
+            onClick={() => {
+              setQ(d.id);
+              setTimeout(() => search({ preventDefault() {} }), 0);
+            }}
+          >
+            {d.id} · {d.count}
+          </button>
+        ))}
+      </div>
+      <ul className="library-ref-results">
+        {results.map((row) => (
+          <li key={row.id}>
+            <button type="button" className="library-ref-hit" onClick={() => openRecord(row.id)}>
+              <strong>{row.title}</strong>
+              <span className="hint">
+                {row.domain} · {row.id}
+              </span>
+            </button>
+          </li>
+        ))}
+      </ul>
+      {selected ? (
+        <article className="library-ref-detail card-surface">
+          <h3>{selected.title}</h3>
+          <p className="hint">
+            {selected.domain} · {selected.id}
+          </p>
+          <pre className="number-display">{JSON.stringify(selected.values, null, 2)}</pre>
+          <p className="hint">
+            {selected.source?.title} {selected.source?.edition} §{selected.source?.clause}
+          </p>
+        </article>
+      ) : null}
+    </div>
+  );
+}
+
+function BooksTab() {
   const [items, setItems] = useState([]);
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
@@ -89,7 +198,7 @@ export function Library() {
       setError("Pick an existing book or name a new one.");
       return;
     }
-    const q = new URLSearchParams({
+    const params = new URLSearchParams({
       rights: "true",
       filename: file.name,
       book_id: bid,
@@ -99,7 +208,7 @@ export function Library() {
       folder_tag: folder,
     });
     try {
-      const r = await fetch(`/api/rag/upload?${q}`, { method: "POST", body: file });
+      const r = await fetch(`/api/rag/upload?${params}`, { method: "POST", body: file });
       const body = await r.json();
       if (!r.ok) throw new Error(body.error || "upload");
       setStatus(`Ingested ${file.name} as ${bid}.`);
@@ -111,24 +220,10 @@ export function Library() {
   }
 
   return (
-    <section className="library" aria-labelledby="library-title">
-      <h1 id="library-title">Library</h1>
-      <p className="hint">Sources used for retrieve. Add textbooks and lab sheets you have rights to.</p>
+    <div className="library-books">
+      <p className="hint">Add textbooks and lab sheets you have rights to. They stay on this machine.</p>
       <div className="library-sources-toolbar">
-        <input
-          className="run-search"
-          type="search"
-          placeholder="Search sources"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        <button
-          type="button"
-          className="button-secondary library-add-btn"
-          onClick={() => document.querySelector(".library-form")?.scrollIntoView({ behavior: "smooth", block: "start" })}
-        >
-          Add a source
-        </button>
+        <input className="run-search" type="search" placeholder="Search sources" value={query} onChange={(e) => setQuery(e.target.value)} />
       </div>
       <table className="library-sources-table">
         <thead>
@@ -147,7 +242,7 @@ export function Library() {
               <tr key={row.book_id}>
                 <td>{row.book_id}</td>
                 <td>{row.licence_tag === "commercial-byo" ? "Textbook" : row.licence_tag || "—"}</td>
-                <td>{row.domain_tag === "circuits" ? "Circuits" : row.domain_tag || "—"}</td>
+                <td>{row.domain_tag || "—"}</td>
                 <td>{[...row.chapters].join(", ") || `${row.count} chunk${row.count === 1 ? "" : "s"}`}</td>
               </tr>
             ))}
@@ -155,25 +250,9 @@ export function Library() {
       </table>
       {loading ? <p className="hint">Loading books.</p> : null}
       {!loading && items.length === 0 ? (
-        <p className="empty">No books yet. Add a PDF you have rights to; it stays on this machine.</p>
+        <MascotState kind="empty" size={48} title="No books yet" message="Add a PDF you have rights to; it stays on this machine." />
       ) : null}
-      {items.length ? (
-        <ul className="book-list">
-          {books.map((id) => {
-            const rows = items.filter((row) => row.book_id === id);
-            const sample = rows[0] || {};
-            return (
-              <li key={id}>
-                <strong>{id}</strong>
-                <span className="hint">
-                  {sample.licence_tag || "untagged"} · {rows.length} chunk{rows.length === 1 ? "" : "s"}
-                </span>
-              </li>
-            );
-          })}
-        </ul>
-      ) : null}
-      <form className="library-form" onSubmit={ingest}>
+      <form className="library-form card-surface" onSubmit={ingest}>
         <h2>Add a book</h2>
         <label className="field">
           Book
@@ -195,11 +274,7 @@ export function Library() {
         ) : null}
         <label className="field">
           File
-          <input
-            type="file"
-            accept=".pdf,.md,.txt,application/pdf,text/markdown,text/plain"
-            onChange={(e) => setFile(e.target.files?.[0] || null)}
-          />
+          <input type="file" accept=".pdf,.md,.txt,application/pdf,text/markdown,text/plain" onChange={(e) => setFile(e.target.files?.[0] || null)} />
         </label>
         <label className="field">
           Chapter
@@ -230,8 +305,7 @@ export function Library() {
           <input value={folder} onChange={(e) => setFolder(e.target.value)} />
         </label>
         <label className="rights">
-          <input type="checkbox" checked={rights} onChange={(e) => setRights(e.target.checked)} />
-          I have rights to this file. Do not upload a commercial textbook into git.
+          <input type="checkbox" checked={rights} onChange={(e) => setRights(e.target.checked)} />I have rights to this file. Do not upload a commercial textbook into git.
         </label>
         <button className="button-primary" type="submit" disabled={!rights}>
           Ingest
@@ -240,7 +314,7 @@ export function Library() {
         {status ? <p className="hint">{status}</p> : null}
       </form>
       <form
-        className="library-form"
+        className="library-form card-surface"
         onSubmit={async (ev) => {
           ev.preventDefault();
           setError("");
@@ -297,6 +371,24 @@ export function Library() {
             ))
           : null}
       </form>
+    </div>
+  );
+}
+
+export function Library() {
+  const [tab, setTab] = useState("reference");
+  return (
+    <section className="library" aria-labelledby="library-title">
+      <h1 id="library-title">Library</h1>
+      <div className="settings-tabs tabs-underline" role="tablist">
+        <button type="button" role="tab" className="tab-underline" aria-selected={tab === "reference"} onClick={() => setTab("reference")}>
+          Reference
+        </button>
+        <button type="button" role="tab" className="tab-underline" aria-selected={tab === "books"} onClick={() => setTab("books")}>
+          Your books
+        </button>
+      </div>
+      {tab === "reference" ? <ReferenceTab /> : <BooksTab />}
     </section>
   );
 }

@@ -410,6 +410,27 @@ def create_app(root: Path | None = None) -> FastAPI:
     def list_examples() -> dict:
         return {"examples": [{k: ex[k] for k in ex if k != "problem"} for ex in _UI_EXAMPLES]}
 
+    @app.get("/api/reference")
+    def reference_search(q: str = "", limit: int = 20) -> dict:
+        from electrical_engineer.reference.catalog import list_domains, search_records
+
+        domains = list_domains()
+        hits = search_records(q, limit=max(1, min(limit, 50))) if q.strip() else []
+        return {
+            "domains": [{"id": k, "count": v} for k, v in sorted(domains.items())],
+            "results": hits,
+            "query": q,
+        }
+
+    @app.get("/api/reference/{record_id}")
+    def reference_get(record_id: str) -> dict:
+        from electrical_engineer.reference.catalog import get_record
+
+        rec = get_record(record_id)
+        if rec is None:
+            return JSONResponse({"error": "missing"}, status_code=404)
+        return {"record": rec}
+
     @app.get("/api/capabilities")
     def capabilities() -> dict:
         from electrical_engineer.catalog import list_workflow_ids, workflows_root

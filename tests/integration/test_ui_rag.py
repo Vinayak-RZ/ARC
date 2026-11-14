@@ -15,6 +15,19 @@ def test_inventory_lists_oer_seed() -> None:
     assert any(row.get("book_id") for row in items)
 
 
+def test_reference_search_and_get() -> None:
+    client = TestClient(create_app())
+    domains = client.get("/api/reference").json()
+    assert domains["domains"]
+    hits = client.get("/api/reference", params={"q": "ampacity"}).json()
+    assert "results" in hits
+    if hits["results"]:
+        rid = hits["results"][0]["id"]
+        one = client.get(f"/api/reference/{rid}")
+        assert one.status_code == 200
+        assert one.json()["record"]["id"] == rid
+
+
 def test_upload_requires_rights(tmp_path) -> None:
     (tmp_path / "workflows").mkdir()
     client = TestClient(create_app(tmp_path))
