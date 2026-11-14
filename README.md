@@ -133,7 +133,7 @@ uvx electrical-engineer workflows
 
 Optional simulators: `pip install "electrical-engineer[engines]"`. The wheel ships recipes, host packs, and a prebuilt UI (`ui/dist`); no repo clone required for `workflows`, `hosts doctor`, or `ui`.
 
-Until the package is published, build locally: `npm run build` in `ui/`, then `uv run --with build python scripts/build_release_wheel.py`, then `pip install dist/electrical_engineer-*.whl`. Smoke: `uv run python scripts/smoke_wheel_install.py`.
+Until the package is published, build locally: `npm run build` in `ui/`, then `uv run --with build python scripts/build_release_wheel.py`, then `pip install dist/electrical_engineer-*.whl`. Smoke: `uv run python scripts/smoke_wheel_install.py`. Maintainers: `uv run --with twine python -m twine check dist/*` before upload; TestPyPI with `twine upload --repository testpypi dist/*` when you have a token.
 
 ### Contributor clone (editable)
 
