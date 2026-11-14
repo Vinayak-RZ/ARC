@@ -17,4 +17,4 @@
 
 **W0–W2 scope:** traps **T1–T3** encoded as knowledge; engines/evals back T1–T2 numerics.
 
-Narrative source: `docs/planning/eec301-lift/BARE_AGENT_FAILURE_NOTES.md`. Numerics: `artifacts/eec301-lab-goldens/exp06.json`.
+Narrative source: `docs/labs/eec301/BARE_AGENT_FAILURE_NOTES.md`. Numerics: `artifacts/eec301-lab-goldens/exp06.json`.

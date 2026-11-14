@@ -603,7 +603,7 @@ def create_app(root: Path | None = None) -> FastAPI:
 
     @app.get("/api/frontier/scorecard")
     def frontier_scorecard() -> dict:
-        path = _repo_root() / "docs/planning/frontier-2026-11/SCORECARD.md"
+        path = _repo_root() / "docs/planning/SCORECARD.md"
         text = path.read_text(encoding="utf-8") if path.is_file() else ""
         return {"markdown": text, "path": str(path.relative_to(_repo_root()))}
 

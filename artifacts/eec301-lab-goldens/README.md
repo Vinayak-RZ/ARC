@@ -10,4 +10,4 @@ vendored here.
 | `exp07.json` | Two-area AGC OSS twin (W3+) |
 | `exp08.json` | λ-iteration ED (W4+) |
 
-Authority for trap narratives: `docs/planning/eec301-lift/BARE_AGENT_FAILURE_NOTES.md`.
+Authority for trap narratives: `docs/labs/eec301/BARE_AGENT_FAILURE_NOTES.md`.

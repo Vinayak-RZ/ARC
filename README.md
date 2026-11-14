@@ -209,7 +209,7 @@ Open the gallery tab in the local UI (`127.0.0.1:8765`, sidebar **Visuals**) or 
 
 ### Frontier scorecard (Nov 2026 branch)
 
-Measured on `cursor/frontier-execution-7a2f` (see `docs/planning/frontier-2026-11/SCORECARD.md`):
+Measured on `cursor/frontier-execution-7a2f` (see `docs/planning/SCORECARD.md`):
 
 | Check | Result |
 |-------|--------|
@@ -217,7 +217,7 @@ Measured on `cursor/frontier-execution-7a2f` (see `docs/planning/frontier-2026-1
 | PSA pack | 6/6 PASS |
 | pytest | 255+ PASS (includes visual regression) |
 | Scripted trap pass^k | 1.0 (no API keys) |
-| LIVE A/B | blocked until `OPENAI_API_KEY` + `ANTHROPIC_API_KEY` (`docs/planning/frontier-2026-11/LIVE_AB.md`) |
+| LIVE A/B | blocked until `OPENAI_API_KEY` + `ANTHROPIC_API_KEY` (`docs/planning/LIVE_AB.md`) |
 
 One-command frontier validation:
 

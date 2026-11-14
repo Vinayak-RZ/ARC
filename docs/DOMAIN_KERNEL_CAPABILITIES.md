@@ -47,6 +47,6 @@ uv run --extra dev pytest tests/integration/test_trap_ablation.py -q
 
 Optional deeper reads (planning appendix, not required for the story above):
 
-- [`docs/planning/eec301-lift/AB_REVIEW_RUNNABLE.md`](planning/eec301-lift/AB_REVIEW_RUNNABLE.md)
-- [`docs/planning/eec301-lift/AB_REVIEW_NARRATIVE.md`](planning/eec301-lift/AB_REVIEW_NARRATIVE.md)
-- [`docs/planning/eec301-lift/LAB_FEEDS_KERNEL.md`](planning/eec301-lift/LAB_FEEDS_KERNEL.md)
+- [`docs/labs/eec301/AB_REVIEW_RUNNABLE.md`](labs/eec301/AB_REVIEW_RUNNABLE.md)
+- [`docs/labs/eec301/AB_REVIEW_NARRATIVE.md`](labs/eec301/AB_REVIEW_NARRATIVE.md)
+- [`docs/labs/eec301/LAB_FEEDS_KERNEL.md`](labs/eec301/LAB_FEEDS_KERNEL.md)

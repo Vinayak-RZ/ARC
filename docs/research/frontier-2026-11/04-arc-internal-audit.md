@@ -22,7 +22,7 @@ Arc today is a **clone-and-run undergraduate EE co-solver**: Python 3.11+ CLI (`
 
 Everything else is **breadth over depth**: 10 curriculum packs (`docs/curriculum-map.md`), **31** workflow YAMLs (`src/electrical_engineer/catalog.py`), **12** host specialist cards (`hosts/agents/INDEX.md`), **448** UG note files under `knowledge/ug-ee/`, and **232** pytest tests. Default **recipe-path** providers are real but thin: ngspice (`engines/spice_runner.py`), python-control (`control_runner.py`), pandapower 3-bus template (`power_runner.py`), plus study toys for protection/drives/digital. **Gold eval** (`electrical-engineer eval`) passes **11 recipe-scored items** across circuits, control, signals, machines, RAG, explain, unmatched, injection; **power PSA gold folders exist but are not wired** to the eval runner (`eval/gold/power/*-eec301-01/expect.json` lack `recipe_id` → `KeyError` in `eval_runner/score.py`). PSA proof is therefore **unit tests + ablation**, not the public eval CLI.
 
-**A/B evidence** is **reproducible and narrow**: three traps (T1, T2, T6) are automated; T3–T5, T7–T10 are narrative/knowledge (`docs/planning/eec301-lift/AB_REVIEW_NARRATIVE.md`). The “bare agent” baseline in tests is a **hand-authored wrong model** (`_bare_t1_wrong_delta_cr()` in `test_trap_ablation.py`), not a live LLM run — strong for regression, weak as agentic eval. PSA engines are **not on the workflow graph** (`workflows/power/solve-power-problem.yaml` uses `run-load-flow` + `check-numeric`, not `smib_swing`).
+**A/B evidence** is **reproducible and narrow**: three traps (T1, T2, T6) are automated; T3–T5, T7–T10 are narrative/knowledge (`docs/labs/eec301/AB_REVIEW_NARRATIVE.md`). The “bare agent” baseline in tests is a **hand-authored wrong model** (`_bare_t1_wrong_delta_cr()` in `test_trap_ablation.py`), not a live LLM run — strong for regression, weak as agentic eval. PSA engines are **not on the workflow graph** (`workflows/power/solve-power-problem.yaml` uses `run-load-flow` + `check-numeric`, not `smib_swing`).
 
 **Quality risks:** doc drift (README “27 recipes” vs 31 catalog ids; `eval/gold/README.md` stale; `hosts/agents/INDEX.md` still says 27); `check-numeric` remains a small hand-solved seam (`nodes/sim.py`); RAG is tested (14 unit tests) but not CI-gated as a heavy engine; MATLAB/Simulink paths are optional stubs. **Frontier upgrade** should **double down** on PSA + eval integration + live-agent trap eval, and **cut or freeze** surface that advertises depth without gold (duplicate host narrative, orphan planning branches, eval items that never run).
 
@@ -86,9 +86,9 @@ Depth key: **toy** (formula demo), **homework** (structured problem), **lab** (l
 | Eval CLI product proof | `electrical-engineer eval --pack circuits` etc. | 11/11 recipe golds PASS in isolation | **Crashes** on power pack when hitting `agc-eec301-01` (`KeyError: 'recipe_id'`) |
 | Kernel harden trials | `scripts/kernel_harden/`, `artifacts/kernel-harden/` | Scenario bank + optional drivers | Separate from PSA ablation; not in default CI |
 
-**Trap catalog source of truth:** `docs/planning/eec301-lift/TRAP_CATALOG.md`. **Runnable narrative:** `docs/planning/eec301-lift/AB_REVIEW_RUNNABLE.md`. **Prompt stubs:** `proofs/ablation/trap_prompts.yaml`.
+**Trap catalog source of truth:** `docs/labs/eec301/TRAP_CATALOG.md`. **Runnable narrative:** `docs/labs/eec301/AB_REVIEW_RUNNABLE.md`. **Prompt stubs:** `proofs/ablation/trap_prompts.yaml`.
 
-**Contamination risk:** Gold numbers are **in-repo JSON** (`artifacts/eec301-lab-goldens/`) derived from lab sheets (`docs/planning/eec301-lift/EEC301_EXP6_GOLDEN.md`) — models can memorize paths; mitigations for frontier: held-out cases, live agent eval, no gold in prompt context.
+**Contamination risk:** Gold numbers are **in-repo JSON** (`artifacts/eec301-lab-goldens/`) derived from lab sheets (`docs/labs/eec301/EEC301_EXP6_GOLDEN.md`) — models can memorize paths; mitigations for frontier: held-out cases, live agent eval, no gold in prompt context.
 
 ---
 
@@ -103,7 +103,7 @@ Depth key: **toy** (formula demo), **homework** (structured problem), **lab** (l
 | `check-numeric` thin seam | Medium | `nodes/sim.py` — not full CAS for arbitrary EE |
 | `photo-stub-01` gold incomplete | Low | `eval/gold/circuits/photo-stub-01/` missing `expect.json` |
 | `ui-diagrams` eval pack empty | Low | `eval --pack ui-diagrams` → 0/0 |
-| Planning doc stale branch refs | Low | `docs/planning/eec301-lift/PROGRESS.md` |
+| Planning doc stale branch refs | Low | (removed; lab authority now under `docs/labs/eec301/`) |
 | Many planning branches on remote, not product | Low | `git branch -r` (research/agentic overlays) |
 | Solve-explain mint risk | Medium (documented) | `docs/PRD.md` FR9 — gold must not score LLM numerics |
 
@@ -173,6 +173,6 @@ Depth key: **toy** (formula demo), **homework** (structured problem), **lab** (l
 
 - Domain unlock story: [`docs/DOMAIN_KERNEL_CAPABILITIES.md`](../../DOMAIN_KERNEL_CAPABILITIES.md)
 - EEC-301 merge: PR #43 → `d7c33ea`
-- Trap catalog: [`docs/planning/eec301-lift/TRAP_CATALOG.md`](../../planning/eec301-lift/TRAP_CATALOG.md)
+- Trap catalog: [`docs/labs/eec301/TRAP_CATALOG.md`](../../labs/eec301/TRAP_CATALOG.md)
 - Test log artifact: `/opt/cursor/artifacts/pytest-full.log` (232 passed)
 - Eval logs: `/opt/cursor/artifacts/eval-packs.log`, `/opt/cursor/artifacts/eval-all.log`

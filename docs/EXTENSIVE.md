@@ -177,7 +177,7 @@ Python 3.11+, `uv`, hatchling. Optional tools (PySpice, python-control, pandapow
 - [`docs/PID.md`](PID.md), [`docs/PRD.md`](PRD.md), [`docs/ARCHITECTURE.md`](ARCHITECTURE.md)
 - [`docs/WORKFLOWS.md`](WORKFLOWS.md), [`docs/CANNOT_DO.md`](CANNOT_DO.md)
 - [`docs/design/DESIGN-coinbase.md`](design/DESIGN-coinbase.md)
-- [`docs/planning/R1_BOOT.md`](planning/R1_BOOT.md), [`docs/planning/R1_BOOT_SIMULINK.md`](planning/R1_BOOT_SIMULINK.md), [`docs/planning/T1_TRIALS.md`](planning/T1_TRIALS.md), [`docs/planning/T1_HOST.md`](planning/T1_HOST.md), [`docs/planning/T1_SIMULINK_AGENTS.md`](planning/T1_SIMULINK_AGENTS.md)
+- [`docs/planning/R1_BOOT.md`](planning/R1_BOOT.md), [`docs/planning/R1_BOOT_SHIP.md`](planning/R1_BOOT_SHIP.md), [`docs/planning/SCORECARD.md`](planning/SCORECARD.md)
 - Spike: [`research/notes/rag-spike-results-2026-09.md`](../research/notes/rag-spike-results-2026-09.md)
 
 ## 8. Future advancements

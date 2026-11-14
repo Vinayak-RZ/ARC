@@ -20,7 +20,7 @@ RK4). Not multi-machine eigenanalysis, not voltage stability, not PSS design.
    for coursework: first-swing \(\delta > \pi\) rad within the study window.
 6. Call kernel helpers (`electrical_engineer.engines.smib_swing`) for checked
    δ₀, δ_cr, t_cr against `artifacts/eec301-lab-goldens/exp06.json` (see
-   `docs/planning/eec301-lift/EEC301_EXP6_GOLDEN.md`). Headline: δ₀≈26.7437°,
+   `docs/labs/eec301/EEC301_EXP6_GOLDEN.md`). Headline: δ₀≈26.7437°,
    δ_cr≈79.5324°, t_cr≈0.309688 s — **never** round PDF table without JSON.
 
 ## Forbidden shortcuts (trap T9)
@@ -46,4 +46,4 @@ SMIB transient stability.
 
 - `knowledge/ug-ee/power/06-power-system-stability/notes.md`
 - Traps: `knowledge/traps/smib/` (T1–T3)
-- Golden tolerances: `docs/planning/eec301-lift/EEC301_EXP6_GOLDEN.md`
+- Golden tolerances: `docs/labs/eec301/EEC301_EXP6_GOLDEN.md`
