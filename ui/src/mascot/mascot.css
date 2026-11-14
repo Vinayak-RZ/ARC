@@ -1,0 +1,12 @@
+.arc-mascot {
+  --arc-mascot-body: var(--ee-color-primary, #2f6feb);
+  --arc-mascot-notify: #2496e8;
+  --arc-mascot-warn: #d98e04;
+  display: block;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+[data-theme="dark"] .arc-mascot {
+  --arc-mascot-body: #5b8ef5;
+}
