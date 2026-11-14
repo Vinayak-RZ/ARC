@@ -20,3 +20,5 @@ def test_css_vars_match_design() -> None:
     assert "var(--ee-color-surface-strong)" in css
     assert "outline: none" not in css
     assert ".asset-row:focus-visible" in css
+    assert "outline: 2px solid var(--ee-color-primary)" in css
+    assert css.count("#2f6feb") <= 3  # token definitions only
