@@ -38,6 +38,24 @@ engines = [
 [tool.hatch.build.targets.wheel]
 packages = ["src/electrical_engineer"]
 
+# Ship recipes, host packs, and prebuilt UI with the wheel (see electrical_engineer.paths).
+# Prerequisite: `npm run build` in ui/ so ui/dist/index.html exists.
+[tool.hatch.build.targets.wheel.force-include]
+"workflows" = "electrical_engineer/_bundle/workflows"
+"hosts" = "electrical_engineer/_bundle/hosts"
+"ui/dist" = "electrical_engineer/_bundle/ui/dist"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/electrical_engineer",
+    "workflows",
+    "hosts",
+    "ui/dist",
+    "pyproject.toml",
+    "README.md",
+    "LICENSE",
+]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
