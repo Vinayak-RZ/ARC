@@ -1227,6 +1227,15 @@ a { color: var(--ee-color-primary); }
 }
 .breadcrumb-current { color: var(--ee-color-ink); font-weight: 500; }
 .breadcrumb-sep { margin: 0 4px; opacity: 0.5; }
+.breadcrumb-link {
+  border: none;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  color: var(--ee-color-muted);
+  cursor: pointer;
+}
+.breadcrumb-link:hover { color: var(--ee-color-primary); text-decoration: underline; }
 .topbar-actions { display: flex; align-items: center; gap: var(--ee-space-s); }
 .presence-chip {
   font-size: var(--ee-type-label);

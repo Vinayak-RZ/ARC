@@ -53,6 +53,17 @@ export const useLayout = create((set) => ({
       parametersOpen: false,
       parametersStale: false,
     }),
+  clearRun: () =>
+    set({
+      currentRunId: null,
+      graphDirty: false,
+      selectedNodeId: null,
+      capMessage: "",
+      flowNodes: [],
+      flowEdges: [],
+      parametersOpen: false,
+      parametersStale: false,
+    }),
   setParametersStale: (parametersStale) => set({ parametersStale }),
   setView: (view) => set({ view: normalizeView(view) }),
   setAgentEditing: (agentEditing) => set({ agentEditing }),
