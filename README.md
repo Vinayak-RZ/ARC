@@ -119,7 +119,25 @@ Host adapters: [`docs/hosts/README.md`](docs/hosts/README.md). **12 EE specialis
 
 ## Quick start
 
-You need **Python 3.11+** and (for the UI) **Node** to build `ui/dist`. An AI coding assistant is the primary interface; the CLI is complete without one.
+You need **Python 3.11+**. An AI coding assistant is the primary interface; the CLI is complete without one.
+
+### Consumer install (wheel / PyPI)
+
+When a release is on PyPI (or you have a local wheel from `scripts/build_release_wheel.py`):
+
+```bash
+pip install electrical-engineer
+# or one-shot without a permanent env:
+uvx electrical-engineer workflows
+```
+
+Optional simulators: `pip install "electrical-engineer[engines]"`. The wheel ships recipes, host packs, and a prebuilt UI (`ui/dist`); no repo clone required for `workflows`, `hosts doctor`, or `ui`.
+
+Until the package is published, build locally: `npm run build` in `ui/`, then `uv run --with build python scripts/build_release_wheel.py`, then `pip install dist/electrical_engineer-*.whl`. Smoke: `uv run python scripts/smoke_wheel_install.py`.
+
+### Contributor clone (editable)
+
+Node is only needed if you change the UI and rebuild `ui/dist`.
 
 ```bash
 python -m venv .venv
