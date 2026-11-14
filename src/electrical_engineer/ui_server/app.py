@@ -410,6 +410,31 @@ def create_app(root: Path | None = None) -> FastAPI:
     def list_examples() -> dict:
         return {"examples": [{k: ex[k] for k in ex if k != "problem"} for ex in _UI_EXAMPLES]}
 
+    @app.get("/api/capabilities")
+    def capabilities() -> dict:
+        from electrical_engineer.catalog import list_workflow_ids, workflows_root
+
+        root = workflows_root(cwd)
+        packs = [
+            {"id": "circuits", "label": "Circuits", "blurb": "Dividers, RLC, and SPICE checks"},
+            {"id": "control", "label": "Control", "blurb": "Bode, step response, block diagrams"},
+            {"id": "power", "label": "Power", "blurb": "Faults, swing, AGC, economic dispatch"},
+            {"id": "signals", "label": "Signals", "blurb": "FFT and frequency-domain homework"},
+            {"id": "machines", "label": "Machines", "blurb": "DC drives and steady-state speed"},
+        ]
+        ids = list_workflow_ids(cwd)
+        out = []
+        for pack in packs:
+            folder = root / pack["id"]
+            count = 0
+            if folder.is_dir():
+                count = len(list(folder.glob("**/*.yaml")))
+            if count == 0:
+                # fall back: count ids that mention the pack name
+                count = sum(1 for i in ids if pack["id"] in i.replace("_", "-") or pack["id"] in i)
+            out.append({**pack, "recipe_count": count})
+        return {"packs": out, "recipe_total": len(ids)}
+
     @app.post("/api/problems")
     async def create_problem(request: Request) -> dict:
         from electrical_engineer.runner.execute import execute

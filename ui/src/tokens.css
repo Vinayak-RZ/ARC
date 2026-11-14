@@ -1495,6 +1495,30 @@ a { color: var(--ee-color-primary); }
   border-top: 1px solid var(--ee-color-hairline);
 }
 .home-section h2 { margin: 0 0 var(--ee-space-m); font-size: var(--ee-type-title); font-weight: 600; }
+.capability-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--ee-space-m);
+}
+.capability-card {
+  text-align: left;
+  border: 1px solid var(--ee-color-hairline);
+  border-radius: 6px;
+  background: var(--ee-color-surface-card);
+  padding: var(--ee-space-m);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+.capability-card:hover {
+  border-color: var(--ee-color-primary);
+  background: var(--ee-color-primary-tint);
+}
+.capability-label { font-weight: 600; font-size: var(--ee-type-body); }
+.capability-count { font-size: var(--ee-type-caption); color: var(--ee-color-primary-ink); font-weight: 500; }
 .subject-chip-muted {
   display: inline-block;
   font-size: 10px;

@@ -28,3 +28,12 @@ def test_run_list_and_detail(tmp_path, monkeypatch) -> None:
     body = detail.json()
     assert "unchecked" in body["summary"]
     assert body["title"] == "Voltage divider · Vout"
+
+
+def test_capabilities_endpoint(tmp_path, monkeypatch) -> None:
+    monkeypatch.setenv("EE_NO_SEED", "1")
+    client = TestClient(create_app(tmp_path))
+    body = client.get("/api/capabilities").json()
+    assert "packs" in body
+    assert any(p["id"] == "circuits" for p in body["packs"])
+    assert "recipe_total" in body

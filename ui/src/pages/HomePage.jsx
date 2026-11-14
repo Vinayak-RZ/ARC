@@ -32,6 +32,7 @@ function detectSubject(text) {
 
 export function HomePage({ runs, onRunsChange, onOpenProblem, seeding = false }) {
   const [examples, setExamples] = useState([]);
+  const [packs, setPacks] = useState([]);
   const [prompt, setPrompt] = useState("");
   const [subject, setSubject] = useState("circuits");
   const [subjectLocked, setSubjectLocked] = useState(false);
@@ -49,6 +50,10 @@ export function HomePage({ runs, onRunsChange, onOpenProblem, seeding = false })
       .then((r) => r.json())
       .then((d) => setExamples(d.examples || []))
       .catch(() => setExamples([]));
+    fetch("/api/capabilities")
+      .then((r) => r.json())
+      .then((d) => setPacks(d.packs || []))
+      .catch(() => setPacks([]));
   }, []);
 
   useEffect(() => {
@@ -182,6 +187,28 @@ export function HomePage({ runs, onRunsChange, onOpenProblem, seeding = false })
           </button>
         </div>
       </form>
+      {packs.length > 0 ? (
+        <section className="home-section capabilities-section">
+          <h2>What Arc can do</h2>
+          <div className="capability-grid">
+            {packs.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                className="capability-card"
+                onClick={() => {
+                  setSubject(p.id);
+                  setSubjectLocked(true);
+                }}
+              >
+                <span className="capability-label">{p.label}</span>
+                <span className="capability-count">{p.recipe_count} recipes</span>
+                <span className="hint">{p.blurb}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      ) : null}
       <section className="home-section">
         <h2>Try an example</h2>
         <div className="example-grid example-grid-six">
