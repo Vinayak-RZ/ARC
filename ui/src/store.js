@@ -4,9 +4,12 @@ const SIDEBAR_KEY = "arc-sidebar-collapsed";
 
 function readSidebarCollapsed() {
   try {
-    return localStorage.getItem(SIDEBAR_KEY) === "1";
+    const v = localStorage.getItem(SIDEBAR_KEY);
+    // Default collapsed on first visit (no stored preference).
+    if (v === null) return true;
+    return v === "1";
   } catch {
-    return false;
+    return true;
   }
 }
 

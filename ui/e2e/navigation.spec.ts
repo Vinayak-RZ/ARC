@@ -31,4 +31,11 @@ test.describe("product navigation", () => {
     await page.goBack();
     await expect(page).toHaveURL(/view=gallery/);
   });
+
+  test("sidebar collapsed by default on fresh profile", async ({ page }) => {
+    await page.goto(`${BASE}/?view=home`);
+    await page.evaluate(() => localStorage.removeItem("arc-sidebar-collapsed"));
+    await page.reload();
+    await expect(page.locator(".product-shell")).toHaveClass(/is-sidebar-collapsed/);
+  });
 });
