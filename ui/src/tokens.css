@@ -1589,6 +1589,50 @@ a { color: var(--ee-color-primary); }
   padding: var(--ee-space-l);
   margin-top: var(--ee-space-l);
 }
+.settings-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ee-space-l);
+  margin-bottom: var(--ee-space-l);
+}
+.settings-layout {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: var(--ee-space-l);
+}
+.settings-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.settings-rail-item {
+  text-align: left;
+  border: none;
+  background: transparent;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font: inherit;
+  color: var(--ee-color-body);
+  cursor: pointer;
+}
+.settings-rail-item[aria-current="page"] {
+  background: var(--ee-color-primary-tint);
+  color: var(--ee-color-primary-ink);
+  font-weight: 600;
+}
+.settings-data-actions { display: flex; gap: var(--ee-space-s); flex-wrap: wrap; }
+.settings-scorecard {
+  max-height: 320px;
+  overflow: auto;
+  font-size: var(--ee-type-caption);
+  background: var(--ee-color-surface-soft);
+  padding: var(--ee-space-m);
+  border-radius: 6px;
+}
+@media (max-width: 720px) {
+  .settings-layout { grid-template-columns: 1fr; }
+}
 .subject-chip-muted {
   display: inline-block;
   font-size: 10px;

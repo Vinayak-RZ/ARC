@@ -378,6 +378,31 @@ def create_app(root: Path | None = None) -> FastAPI:
     def health() -> dict:
         return {"bind": BIND_HOST, "ok": True}
 
+    @app.get("/api/engines")
+    def engines_status() -> dict:
+        from importlib import import_module
+
+        from electrical_engineer import __version__
+
+        def probe(label: str, module: str | None = None, *, detail: str = "") -> dict:
+            if module is None:
+                return {"name": label, "available": False, "detail": detail or "via Arc, not installed"}
+            try:
+                import_module(module)
+                return {"name": label, "available": True, "detail": ""}
+            except Exception:  # noqa: BLE001
+                return {"name": label, "available": False, "detail": detail or "Not installed"}
+
+        rows = [
+            {"name": "Numeric (algebraic checks)", "available": True, "detail": ""},
+            probe("SPICE (ngspice / PySpice)", "PySpice"),
+            probe("python-control", "control"),
+            probe("pandapower", "pandapower"),
+            probe("MATLAB engine", detail="via Arc, not installed"),
+            probe("Simulink engine", detail="via Arc, not installed"),
+        ]
+        return {"engines": rows, "version": __version__}
+
     @app.get("/api/runs")
     def list_runs() -> dict:
         items = []
