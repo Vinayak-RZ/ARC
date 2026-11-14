@@ -1403,8 +1403,17 @@ a { color: var(--ee-color-primary); }
   padding: var(--ee-space-m);
   display: flex;
   flex-direction: column;
-  gap: var(--ee-space-m);
-  min-height: 200px;
+  gap: var(--ee-space-s);
+}
+.composer-card-compact {
+  min-height: 0;
+  max-width: 720px;
+}
+.home-header-with-mascot {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ee-space-l);
 }
 .composer-top { display: flex; align-items: center; }
 .subject-chip-wrap { position: relative; }
@@ -1456,22 +1465,22 @@ a { color: var(--ee-color-primary); }
   resize: none;
   font: inherit;
   font-size: var(--ee-type-body);
-  line-height: 1.6;
+  line-height: 1.5;
   color: var(--ee-color-ink);
   background: var(--ee-color-surface-card);
-  min-height: 88px;
-  padding: 10px 12px;
+  min-height: 56px;
+  padding: 8px 10px;
 }
 .composer-input-inset {
   border: none;
   border-radius: 0;
   padding: 0;
   background: transparent;
-  min-height: 88px;
+  min-height: 56px;
 }
 .composer-card:focus-within {
   border-color: var(--ee-border-input);
-  outline: 2px solid #2f6feb;
+  outline: 2px solid var(--ee-color-primary);
   outline-offset: 2px;
 }
 .composer-input-inset:focus-visible {
