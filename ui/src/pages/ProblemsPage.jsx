@@ -24,7 +24,7 @@ function titleCaseSubject(s) {
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-export function ProblemsPage({ runs, loading, error, onOpenProblem, onTryExample, onReload }) {
+export function ProblemsPage({ runs, loading, error, onOpenProblem, onTryExample, onReload, seeding = false }) {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
   const [subjectFilter, setSubjectFilter] = useState("all");
@@ -99,6 +99,17 @@ export function ProblemsPage({ runs, loading, error, onOpenProblem, onTryExample
           <summary>Details</summary>
           <p className="hint">{String(error)}</p>
         </details>
+      </div>
+    );
+  }
+  if (seeding && runs.length === 0) {
+    return (
+      <div className="problems-page problems-empty problems-centered">
+        <MascotState
+          kind="loading"
+          title="Preparing sample problems…"
+          message="Arc is running a few curated checks so the lab is not empty."
+        />
       </div>
     );
   }
@@ -195,7 +206,10 @@ export function ProblemsPage({ runs, loading, error, onOpenProblem, onTryExample
             <tbody>
               {items.map((run) => (
                 <tr key={run.id} className="problems-row" onClick={() => onOpenProblem(run.id)} title={run.id}>
-                  <td>{displayTitle(run)}</td>
+                  <td>
+                    {displayTitle(run)}
+                    {run.sample ? <span className="sample-badge">Sample</span> : null}
+                  </td>
                   <td>
                     <span className="subject-tag">{titleCaseSubject(run.subject || subjectTag(run))}</span>
                   </td>

@@ -30,23 +30,45 @@ export function useRunsList() {
   const [runs, setRuns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [seeding, setSeeding] = useState(false);
+
   function reload() {
     setLoading(true);
     setError(false);
-    fetch("/api/runs")
+    return fetch("/api/runs")
       .then((r) => {
         if (!r.ok) throw new Error("failed");
         return r.json();
       })
-      .then((d) => setRuns(d.runs || []))
+      .then((d) => {
+        setRuns(d.runs || []);
+        setSeeding(Boolean(d.seeding));
+      })
       .catch(() => {
         setRuns([]);
         setError(true);
+        setSeeding(false);
       })
       .finally(() => setLoading(false));
   }
+
   useEffect(() => {
     reload();
   }, []);
-  return { runs, loading, error, reload };
+
+  useEffect(() => {
+    if (!seeding) return undefined;
+    const t = setInterval(() => {
+      fetch("/api/runs")
+        .then((r) => (r.ok ? r.json() : Promise.reject()))
+        .then((d) => {
+          setRuns(d.runs || []);
+          setSeeding(Boolean(d.seeding));
+        })
+        .catch(() => {});
+    }, 1500);
+    return () => clearInterval(t);
+  }, [seeding]);
+
+  return { runs, loading, error, reload, seeding };
 }

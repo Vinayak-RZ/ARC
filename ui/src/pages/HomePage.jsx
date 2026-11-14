@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { Shortcut } from "../components/Shortcut.jsx";
 import { ExampleThumb } from "../components/ExampleThumb.jsx";
+import { MascotState } from "../components/MascotState.jsx";
 import { relativeTime } from "../units/format.js";
 import { displayTitle, subjectTag } from "../runDisplay.js";
 
@@ -28,7 +29,7 @@ function detectSubject(text) {
   return "circuits";
 }
 
-export function HomePage({ runs, onRunsChange, onOpenProblem }) {
+export function HomePage({ runs, onRunsChange, onOpenProblem, seeding = false }) {
   const [examples, setExamples] = useState([]);
   const [prompt, setPrompt] = useState("");
   const [subject, setSubject] = useState("circuits");
@@ -188,6 +189,11 @@ export function HomePage({ runs, onRunsChange, onOpenProblem }) {
           ))}
         </div>
       </section>
+      {seeding && recent.length === 0 ? (
+        <section className="home-section">
+          <MascotState kind="loading" size={56} title="Preparing sample problems…" message="Checking a few recipes so Recent is not empty." />
+        </section>
+      ) : null}
       {recent.length > 0 ? (
         <section className="home-section continue-section">
           <h2>Continue</h2>
@@ -195,7 +201,10 @@ export function HomePage({ runs, onRunsChange, onOpenProblem }) {
             {recent.map((run) => (
               <button key={run.id} type="button" className="continue-card" onClick={() => onOpenProblem(run.id)}>
                 <span className="subject-chip-muted">{run.subject || subjectTag(run)}</span>
-                <span className="example-card-title">{displayTitle(run)}</span>
+                <span className="example-card-title">
+                  {displayTitle(run)}
+                  {run.sample ? <span className="sample-badge">Sample</span> : null}
+                </span>
                 <span className="hint continue-meta">{relativeTime(run.modified_at)}</span>
                 <span className={run.unchecked ? "status-badge unchecked" : "status-badge checked"}>
                   {run.unchecked ? "Unchecked" : "Checked"}

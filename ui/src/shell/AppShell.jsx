@@ -27,7 +27,7 @@ export function AppShell() {
   const clearRun = useLayout((s) => s.clearRun);
   const setThemeMode = useLayout((s) => s.setThemeMode);
   const collapsed = useLayout((s) => s.sidebarCollapsed);
-  const { runs, loading: runsLoading, error: runsError, reload } = useRunsList();
+  const { runs, loading: runsLoading, error: runsError, reload, seeding } = useRunsList();
   const { data } = useRun(id);
 
   const applyRoute = useCallback(
@@ -87,8 +87,9 @@ export function AppShell() {
     onPrimary = () => openProblem(id);
   }
   let workspace = null;
-  if (view === "home") workspace = <HomePage runs={runs} onRunsChange={reload} onOpenProblem={openProblem} />;
-  else if (view === "problems" && !id) {
+  if (view === "home") {
+    workspace = <HomePage runs={runs} onRunsChange={reload} onOpenProblem={openProblem} seeding={seeding} />;
+  } else if (view === "problems" && !id) {
     workspace = (
       <ProblemsPage
         runs={runs}
@@ -97,6 +98,7 @@ export function AppShell() {
         onReload={reload}
         onOpenProblem={openProblem}
         onTryExample={() => navigate({ view: "home" })}
+        seeding={seeding}
       />
     );
   } else if (view === "problems" && id) {
@@ -104,13 +106,13 @@ export function AppShell() {
   } else if (view === "studio") workspace = renderSlot("control.studio");
   else if (view === "gallery") workspace = renderSlot("visual.gallery");
   else if (view === "library") workspace = renderSlot("rag.inventory");
-  else if (view === "settings") workspace = <SettingsPage />;
+  else if (view === "settings") workspace = <SettingsPage onRunsChange={reload} />;
   return (
     <div className={collapsed ? "product-shell is-sidebar-collapsed" : "product-shell"}>
       <a className="skip" href="#workspace">
         Skip to workspace
       </a>
-      <Sidebar runs={runs} onNavigate={navigate} onNewProblem={() => navigate({ view: "home" })} />
+      <Sidebar runs={runs} onNavigate={navigate} onNewProblem={() => navigate({ view: "home" })} seeding={seeding} />
       <div className="product-main">
         <TopBar
           runMeta={runMeta}
