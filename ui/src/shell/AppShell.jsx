@@ -12,6 +12,8 @@ import { ProblemDetailPage } from "../pages/ProblemDetailPage.jsx";
 import { SettingsPage } from "../pages/SettingsPage.jsx";
 import { LearnPage } from "../pages/LearnPage.jsx";
 import { SubjectPage } from "../pages/SubjectPage.jsx";
+import { AchievementsPanel } from "../components/AchievementsPanel.jsx";
+import { UnlockToast } from "../components/UnlockToast.jsx";
 import { renderSlot } from "../slots/registry.js";
 
 function readUrlState() {
@@ -142,8 +144,6 @@ export function AppShell() {
     workspace = (
       <SubjectPage
         subjectId={learnSubjectId}
-        achievementsOpen={achievementsOpen}
-        onCloseAchievements={() => setAchievementsOpen(false)}
         onBack={() => navigate({ view: "learn" })}
         onNavigate={navigate}
       />
@@ -185,6 +185,8 @@ export function AppShell() {
         </main>
       </div>
       <CommandPalette runs={runs} onNavigate={navigate} />
+      <AchievementsPanel open={achievementsOpen} onClose={() => setAchievementsOpen(false)} />
+      <UnlockToast />
     </div>
   );
 }
