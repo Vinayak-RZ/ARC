@@ -1,0 +1,28 @@
+id: line-parameters-study
+title: Overhead line inductance study
+pack: em
+sample_problem:
+  config: three_phase_equilateral
+  r_m: 0.01
+  d_m: 2
+  f_hz: 50
+  expected: 0.0011097
+  tol: 1e-5
+nodes:
+  solve:
+    activity: run-ee-v2-solver
+    default_solver: line_parameters
+    capability: fields-analytic
+  check:
+    activity: check-numeric
+    default_solver: line_parameters
+    needs: [solve]
+  trap:
+    activity: trap-verify
+    needs: [solve]
+  label:
+    activity: label-unchecked
+    needs: [trap, check]
+  summary:
+    activity: write-run-summary
+    needs: [label]
