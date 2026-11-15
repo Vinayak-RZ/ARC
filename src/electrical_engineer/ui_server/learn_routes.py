@@ -146,3 +146,18 @@ def register_learn_routes(app: FastAPI, *, root: Path) -> None:
         from electrical_engineer.learn import achievements as achievements_mod
 
         return achievements_mod.evaluate(root, root / "runs")
+
+    @app.post("/api/learn/recipes/{recipe_id}/try")
+    def learn_try_recipe(recipe_id: str) -> Response:
+        from electrical_engineer.catalog import load_recipe_meta
+        from electrical_engineer.runner.execute import execute
+
+        try:
+            meta = load_recipe_meta(recipe_id, root)
+        except FileNotFoundError:
+            return _err("not_found", "unknown recipe", 404)
+        sample = meta.get("sample_problem")
+        if not isinstance(sample, dict):
+            return _err("not_found", "recipe has no sample_problem", 404)
+        result = execute(recipe_id, problem=dict(sample), run_root=root)
+        return {"run_id": result["run_id"]}
