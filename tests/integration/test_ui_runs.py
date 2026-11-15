@@ -35,5 +35,7 @@ def test_capabilities_endpoint(tmp_path, monkeypatch) -> None:
     client = TestClient(create_app(tmp_path))
     body = client.get("/api/capabilities").json()
     assert "packs" in body
+    assert len(body["packs"]) == 10
     assert any(p["id"] == "circuits" for p in body["packs"])
+    assert any(p["id"] == "power_electronics" for p in body["packs"])
     assert "recipe_total" in body
