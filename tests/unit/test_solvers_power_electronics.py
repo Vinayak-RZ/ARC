@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+
 import pytest
 
 from electrical_engineer.engines.ee_v2_runner import solve_ee_v2

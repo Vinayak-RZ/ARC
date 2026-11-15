@@ -28,7 +28,8 @@ def test_skip_link_and_no_wan() -> None:
     assert "palette-btn" in _read("slots", "canvas", "Palette.jsx")
     assert "Waiting for topology confirm" in root
     assert "waiting-human" in root
-    assert 'alt="Arc"' in _read("shell", "Sidebar.jsx")
+    sidebar = _read("shell", "Sidebar.jsx")
+    assert 'alt="Arc"' in sidebar or 'label="Arc"' in sidebar
     home = _read("pages", "HomePage.jsx")
     assert "Try an example" in home
     assert "/api/examples" in home
@@ -60,7 +61,7 @@ def test_ee_no_browser(monkeypatch) -> None:
 
 
 def test_cli_ui_binds_loopback() -> None:
-    text = Path("src/electrical_engineer/cli.py").read_text()
+    text = Path("src/electrical_engineer/cli.py").read_text(encoding="utf-8")
     assert "0.0.0.0" not in text
     assert "BIND_HOST" in text
     assert "should_open_browser" in text

@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import math
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from electrical_engineer.engines.solvers import power as _power_solvers
 from electrical_engineer.engines.solvers.power_electronics import (
-    boost_ccm,
     buck_boost_ccm,
     rectifier_1ph,
     rectifier_3ph,

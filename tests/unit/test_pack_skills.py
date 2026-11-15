@@ -44,7 +44,7 @@ SPAWN = {
 
 def test_each_pack_has_scaffold_and_knowledge_link() -> None:
     for pack in PACKS:
-        text = Path(f"skills/{pack}/SKILL.md").read_text()
+        text = Path(f"skills/{pack}/SKILL.md").read_text(encoding="utf-8")
         assert "## Retrieve (scaffold)" in text, pack
         assert "Index: TBD" in text, pack
         assert KNOWLEDGE[pack] in text, pack
@@ -54,8 +54,8 @@ def test_each_pack_has_scaffold_and_knowledge_link() -> None:
 
 
 def test_root_and_cross_scaffold() -> None:
-    root = Path("skills/SKILL.md").read_text()
-    cross = Path("skills/_cross/SKILL.md").read_text()
+    root = Path("skills/SKILL.md").read_text(encoding="utf-8")
+    cross = Path("skills/_cross/SKILL.md").read_text(encoding="utf-8")
     for text in (root, cross):
         assert "## Retrieve (scaffold)" in text
         assert "evaluate_matlab_code" in text
@@ -72,6 +72,6 @@ def test_no_elective_pack_skills() -> None:
 
 def test_b8_domain_skills_exist() -> None:
     for pack in ("protection-standards", "web-verify"):
-        text = Path(f"skills/{pack}/SKILL.md").read_text()
+        text = Path(f"skills/{pack}/SKILL.md").read_text(encoding="utf-8")
         assert "provenance" in text.lower()
         assert "unchecked" in text.lower()

@@ -23,7 +23,7 @@ def load_curriculum(root: Path | None = None) -> dict[str, Any]:
     del root  # packaged YAML; root reserved for future checkout overlays
     data = yaml.safe_load(_CURRICULUM_PATH.read_text(encoding="utf-8")) or {}
     if not isinstance(data, dict):
-        raise ValueError("curriculum.yaml must be a mapping")
+        raise TypeError("curriculum.yaml must be a mapping")
     return data
 
 

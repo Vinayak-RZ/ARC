@@ -18,9 +18,7 @@ def _zero_sources(netlist: str) -> str:
             out.append(line)
             continue
         tok = s.split()
-        if tok and tok[0][0].upper() == "V" and len(tok) >= 4:
-            out.append(f"{tok[0]} {tok[1]} {tok[2]} DC 0")
-        elif tok and tok[0][0].upper() == "I" and len(tok) >= 4:
+        if tok and len(tok) >= 4 and tok[0][0].upper() in {"V", "I"}:
             out.append(f"{tok[0]} {tok[1]} {tok[2]} DC 0")
         else:
             out.append(line)

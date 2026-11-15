@@ -245,18 +245,14 @@ def _golden_thumb(rel: str) -> str:
     return f"/api/visual-kit/golden/{rel}"
 
 
-_RLC_CIR = "\n".join(
-    [
-        "* series rlc step",
-        "V1 1 0 DC 10",
-        "R1 1 2 10",
-        "L1 2 3 10m",
-        "C1 3 0 100u",
-        ".tran 50u 20m",
-        ".end",
-        "",
-    ]
-)
+_RLC_CIR = """* series rlc step
+V1 1 0 DC 10
+R1 1 2 10
+L1 2 3 10m
+C1 3 0 100u
+.tran 50u 20m
+.end
+"""
 
 _UI_EXAMPLES = (
     {
@@ -1030,8 +1026,8 @@ def create_app(root: Path | None = None) -> FastAPI:
             "goldens_base": "/api/visual-kit/golden/",
         }
 
-    from electrical_engineer.ui_server.studio_routes import register_studio_routes
     from electrical_engineer.ui_server.learn_routes import register_learn_routes
+    from electrical_engineer.ui_server.studio_routes import register_studio_routes
 
     register_studio_routes(app, root=cwd)
     register_learn_routes(app, root=cwd)

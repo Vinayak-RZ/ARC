@@ -27,7 +27,7 @@ def test_power_study_writes_tables(tmp_path: Path, fault_type: str) -> None:
     out = run_power_study(tmp_path, {"fault_type": fault_type})
     assert out["ok"] is True
     assert (tmp_path / "power_tables.json").is_file()
-    data = json.loads((tmp_path / "power_tables.json").read_text())
+    data = json.loads((tmp_path / "power_tables.json").read_text(encoding="utf-8"))
     assert "fault" in data
 
 

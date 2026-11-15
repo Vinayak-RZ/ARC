@@ -29,7 +29,7 @@ Q_RE = re.compile(r"^## Q(\d+)\s*$", re.MULTILINE)
 
 
 def load_coverage() -> dict:
-    return yaml.safe_load(COVERAGE.read_text())
+    return yaml.safe_load(COVERAGE.read_text(encoding="utf-8"))
 
 
 def select_packs(data: dict, pack: str | None) -> dict[str, dict]:
@@ -72,8 +72,8 @@ def check_unit(unit_dir: Path, allow_empty: bool) -> list[str]:
             errs.append(f"missing {p.relative_to(ROOT)}")
     if errs:
         return errs
-    notes = (unit_dir / "notes.md").read_text()
-    questions = (unit_dir / "questions.md").read_text()
+    notes = (unit_dir / "notes.md").read_text(encoding="utf-8")
+    questions = (unit_dir / "questions.md").read_text(encoding="utf-8")
     if not allow_empty:
         wc = word_count(notes)
         if wc < MIN_WORDS:
@@ -119,7 +119,7 @@ def inventory(data: dict, packs: dict) -> dict[str, int]:
         for u in spec["units"]:
             qpath = base / u["id"] / "questions.md"
             if qpath.is_file():
-                questions += len(Q_RE.findall(qpath.read_text()))
+                questions += len(Q_RE.findall(qpath.read_text(encoding="utf-8")))
     return {"packs": len(packs), "units": units, "questions": questions}
 
 

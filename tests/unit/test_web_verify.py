@@ -40,7 +40,7 @@ def test_reference_record_flows_to_answer_cited_md(tmp_path):
     )
     cited = tmp_path / "evidence" / "answer_cited.md"
     assert cited.is_file()
-    md = cited.read_text()
+    md = cited.read_text(encoding="utf-8")
     assert "0.01144" in md
     assert "[1]" in md
     assert "Similar solved problems" in md
@@ -109,10 +109,10 @@ def test_context_web_gold_pack(tmp_path):
 
 def test_solve_recipe_includes_web_verify(tmp_path):
     problem = json.loads(
-        (Path(__file__).resolve().parents[2] / "eval/gold/circuits/mna-ladder-01/fixtures/problem.json").read_text()
+        (Path(__file__).resolve().parents[2] / "eval/gold/circuits/mna-ladder-01/fixtures/problem.json").read_text(encoding="utf-8")
     )
     result = execute("solve-circuit-problem", run_root=tmp_path, problem=problem)
-    summary = json.loads((Path(result["run_dir"]) / "evidentiary.json").read_text())
+    summary = json.loads((Path(result["run_dir"]) / "evidentiary.json").read_text(encoding="utf-8"))
     assert summary.get("web_verification") is not None or any(
         n.get("ok") is not None for n in (summary.get("nodes") or {}).values()
     )

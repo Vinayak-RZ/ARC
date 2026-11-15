@@ -3,7 +3,6 @@ from __future__ import annotations
 import pytest
 
 from electrical_engineer.catalog import load_recipe_meta
-from electrical_engineer.engines.ee_v2_runner import solve_ee_v2
 from electrical_engineer.engines.solvers.power import _idmt_psm, _idmt_time
 from electrical_engineer.runner.execute import execute
 

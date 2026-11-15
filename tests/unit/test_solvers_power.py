@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-import math
-
 import pytest
 
 from electrical_engineer.engines.ee_v2_runner import solve_ee_v2
-from electrical_engineer.engines.solvers.power import _idmt_time, _idmt_psm
+from electrical_engineer.engines.solvers.power import _idmt_psm, _idmt_time
 
 
 def _solve(sid: str, **kw):

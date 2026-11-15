@@ -39,16 +39,16 @@ def test_transformer_eta() -> None:
 
 
 def test_induction_torque_slip() -> None:
-    kw = dict(
-        v_ll=400,
-        f_hz=50,
-        poles=4,
-        r1=0.2,
-        x1=0.5,
-        r2=0.15,
-        x2=0.4,
-        xm=15,
-        slip=0.05,
-    )
+    kw = {
+        "v_ll": 400,
+        "f_hz": 50,
+        "poles": 4,
+        "r1": 0.2,
+        "x1": 0.5,
+        "r2": 0.15,
+        "x2": 0.4,
+        "xm": 15,
+        "slip": 0.05,
+    }
     out = _solve("induction_torque_slip", **kw)
     assert out["value"] == pytest.approx(261.447, rel=1e-3)

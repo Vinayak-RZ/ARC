@@ -127,7 +127,7 @@ def register_learn_routes(app: FastAPI, *, root: Path) -> None:
     async def learn_progress_post(request: Request) -> Response:
         try:
             body = await request.json()
-        except Exception:
+        except (ValueError, TypeError):
             return _err("invalid_progress", "invalid json", 422)
         if not isinstance(body, dict):
             return _err("invalid_progress", "body must be object", 422)

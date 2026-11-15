@@ -54,7 +54,7 @@ def benchmark_tasks(benchmark_v01_build: dict) -> list[dict]:
 
 @pytest.fixture(scope="session")
 def benchmark_answers(benchmark_v01_build: dict) -> dict:
-    key = json.loads(benchmark_v01_build["key_path"].read_text())
+    key = json.loads(benchmark_v01_build["key_path"].read_text(encoding="utf-8"))
     return key["answers"]
 
 

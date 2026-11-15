@@ -10,10 +10,10 @@ FIXTURE = Path("tests/fixtures/rag/worked-example-with-figure.md")
 def test_worked_example_and_figure_linked(tmp_path) -> None:
     (tmp_path / "workflows").mkdir()
     src = tmp_path / "ex.md"
-    src.write_text(FIXTURE.read_text())
+    src.write_text(FIXTURE.read_text(encoding="utf-8"))
     # copy referenced image path as empty file so parse keeps relative link
     (tmp_path / "fig-ohm.png").write_bytes(b"\x89PNG\r\n\x1a\n")
-    text = src.read_text().replace("fig-ohm.png", str(tmp_path / "fig-ohm.png"))
+    text = src.read_text(encoding="utf-8").replace("fig-ohm.png", str(tmp_path / "fig-ohm.png"))
     src.write_text(text)
     add_doc(
         str(src),

@@ -26,15 +26,15 @@ VERBS = (
 def test_host_docs_exist() -> None:
     base = Path("docs/hosts")
     for name in ("README.md", "cursor.md", "claude-code.md", "openai.md", "chatgpt-desktop.md"):
-        text = (base / name).read_text()
+        text = (base / name).read_text(encoding="utf-8")
         assert "electrical-engineer mcp" in text or "stdio" in text.lower()
 
 
 def test_chatgpt_desktop_names_live_verbs() -> None:
-    text = Path("docs/hosts/chatgpt-desktop.md").read_text()
+    text = Path("docs/hosts/chatgpt-desktop.md").read_text(encoding="utf-8")
     for verb in VERBS:
         assert verb in text, verb
-    root = Path("skills/SKILL.md").read_text()
+    root = Path("skills/SKILL.md").read_text(encoding="utf-8")
     assert "propose_composition" in root
 
 
@@ -47,17 +47,17 @@ def test_ee_packs_not_in_cursor_skills() -> None:
 def test_host_docs_forbid_peer_matlab_mcp() -> None:
     base = Path("docs/hosts")
     for name in ("README.md", "cursor.md", "claude-code.md", "openai.md", "chatgpt-desktop.md"):
-        text = (base / name).read_text()
+        text = (base / name).read_text(encoding="utf-8")
         assert "Coming next" not in text, name
         assert "do **not**" in text.lower(), name
-    cursor = Path("docs/hosts/cursor.md").read_text()
+    cursor = Path("docs/hosts/cursor.md").read_text(encoding="utf-8")
     assert "Do **not** add MATLAB MCP" in cursor
     assert "Simulink" in cursor
     assert "hosts install" in cursor
-    harness = Path("docs/ON_THE_HARNESS.md").read_text()
+    harness = Path("docs/ON_THE_HARNESS.md").read_text(encoding="utf-8")
     assert "How Arc mediates MATLAB" in harness
     assert "This is not shipped" not in harness
-    assert "hosts" in Path("docs/ON_THE_HARNESS.md").read_text()
+    assert "hosts" in Path("docs/ON_THE_HARNESS.md").read_text(encoding="utf-8")
     assert "Simulink" in harness
 
 

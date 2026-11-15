@@ -46,7 +46,7 @@ def test_propose_composition_apply_false_records_plan(tmp_path, monkeypatch) -> 
     assert body["run_id"]
     assert any(p.endswith("plan.md") for p in body["paths"])
     assert "nodes" not in body
-    text = Path(body["paths"][0]).read_text()
+    text = Path(body["paths"][0]).read_text(encoding="utf-8")
     assert "algebraic-check" in text
     assert "5.0" not in text
 

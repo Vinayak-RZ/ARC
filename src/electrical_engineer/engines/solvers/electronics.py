@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 import itertools
-import math
-from typing import Any
 
 from electrical_engineer.engines.solvers.spec import Param, SolverSpec
 
@@ -202,8 +200,8 @@ def kmap_minimize(n_vars: float, minterms: list, dont_cares: list | None = None)
     n_vars = int(n_vars)
     if not 2 <= n_vars <= 6:
         raise ValueError("n_vars must be between 2 and 6")
-    dc = set(int(x) for x in (dont_cares or []))
-    mt = set(int(x) for x in minterms)
+    dc = {int(x) for x in (dont_cares or [])}
+    mt = {int(x) for x in minterms}
     work = mt | dc
     primes = sorted(_qm_prime_implicants(n_vars, work))
     essential: list[str] = []
@@ -223,7 +221,7 @@ def kmap_minimize(n_vars: float, minterms: list, dont_cares: list | None = None)
                 covers_for.append((p, hits))
         best_score = 10**9
         best_pick: set[str] = set(candidate)
-        for r in range(0, len(covers_for) + 1):
+        for r in range(len(covers_for) + 1):
             for combo in itertools.combinations(covers_for, r):
                 pick = set(candidate) | {p for p, _ in combo}
                 if not all(any(_covers(p, m, n_vars) for p in pick) for m in mt):

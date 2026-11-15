@@ -30,7 +30,7 @@ def test_engine_gold_smoke(tmp_path) -> None:
     from electrical_engineer.runner.runs import project_root
 
     item = project_root() / "eval" / "gold" / "circuits" / "mna-ladder-01"
-    expect = __import__("json").loads((item / "expect.json").read_text())
+    expect = __import__("json").loads((item / "expect.json").read_text(encoding="utf-8"))
     row = run_circuit_item(item, expect, run_root=tmp_path)
     assert row["ok"] is True
 

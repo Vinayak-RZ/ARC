@@ -10,7 +10,7 @@ def test_unconfirmed_spice_rejected(tmp_path) -> None:
     assert recipe.nodes["spice"].extras.get("require_confirmed") is True
     out = execute("simulate-after-confirm", run_root=tmp_path)
     assert out["summary"]["token"] == UNCHECKED
-    spice = (tmp_path / "runs" / out["run_id"] / "nodes" / "spice" / "out.json").read_text()
+    spice = (tmp_path / "runs" / out["run_id"] / "nodes" / "spice" / "out.json").read_text(encoding="utf-8")
     assert "unconfirmed" in spice
 
 

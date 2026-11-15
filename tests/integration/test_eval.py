@@ -17,9 +17,9 @@ def test_rag_and_explain_gold_exist() -> None:
     r = Path("eval/gold/rag-retrieval/ohms-perturbed")
     e = Path("eval/gold/explain/kvl-viva")
     assert (r / "expect.json").is_file()
-    assert "kuphaldt-dc" in (r / "expect.json").read_text()
+    assert "kuphaldt-dc" in (r / "expect.json").read_text(encoding="utf-8")
     assert (e / "expect.json").is_file()
-    assert "chapter_id" in (e / "expect.json").read_text()
+    assert "chapter_id" in (e / "expect.json").read_text(encoding="utf-8")
 
 
 def test_eval_pack_rag_and_explain(capsys) -> None:
