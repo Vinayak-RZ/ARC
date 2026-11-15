@@ -13,7 +13,7 @@ def test_real_curriculum_validates() -> None:
     data = load_curriculum()
     assert data["schema"] == "arc.curriculum.v1"
     assert data["current_semester"] == 5
-    errs = validate(data, allow_pending=True)
+    errs = validate(data)
     assert errs == [], errs
 
 
@@ -27,7 +27,7 @@ def test_bad_recipe_caught() -> None:
             if subj["id"] == "eec-303":
                 subj["topics"][2]["recipes"] = ["not-a-real-recipe"]
                 break
-    errs = validate(data, allow_pending=True)
+    errs = validate(data)
     assert any("not-a-real-recipe" in e for e in errs)
 
 
@@ -39,7 +39,7 @@ def test_coverage_expansion_yields_topics() -> None:
     assert topics[0]["id"] == "01-charge-current-voltage-power"
 
 
-def test_pending_removed_fails_until_recipes_land() -> None:
+def test_pending_removed_all_recipes_known() -> None:
     data = load_curriculum()
-    errs = validate(data, allow_pending=False)
-    assert any("rectifier-3ph-study" in e or "unknown recipe" in e for e in errs)
+    errs = validate(data)
+    assert errs == [], errs

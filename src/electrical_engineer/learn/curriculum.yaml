@@ -1,45 +1,6 @@
 schema: arc.curriculum.v1
 institute_basis: IIT Roorkee NEP (inferred; see docs/curriculum-map.md)
 current_semester: 5
-pending_recipes:
-  - rectifier-1ph-study
-  - rectifier-3ph-study
-  - boost-converter-study
-  - buck-boost-converter-study
-  - six-step-inverter-study
-  - spwm-inverter-study
-  - idmt-relay-study
-  - idmt-coordination-study
-  - differential-protection-study
-  - distance-mho-study
-  - circuit-breaker-rrrv-study
-  - critical-clearing-study
-  - lfc-single-area-study
-  - pid-zn-ultimate-study
-  - pid-zn-reaction-curve-study
-  - lead-compensator-design-study
-  - lag-compensator-design-study
-  - second-order-specs-study
-  - routh-hurwitz-study
-  - fourier-series-study
-  - convolution-study
-  - dft-spectrum-study
-  - sampling-aliasing-study
-  - laplace-inverse-study
-  - bjt-bias-study
-  - opamp-amplifier-study
-  - kmap-minimization-study
-  - bridge-balance-study
-  - meter-range-extension-study
-  - transformer-tests-study
-  - induction-torque-slip-study
-  - synchronous-regulation-study
-  - line-parameters-study
-  - capacitance-geometry-study
-  - thevenin-equivalent-study
-  - max-power-transfer-study
-  - two-port-study
-  - resonance-study
 semesters:
   - n: 1
     subjects:

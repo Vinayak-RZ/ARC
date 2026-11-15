@@ -7,6 +7,7 @@ import math
 from pathlib import Path
 from typing import Any
 
+from electrical_engineer.visual_kit.diagram_study import STUDY_BUILDERS
 from electrical_engineer.visual_kit.diagram_validate import SCHEMA, validate_diagram
 
 _LOG = logging.getLogger(__name__)
@@ -322,6 +323,9 @@ def _kind_from(recipe_id: str, problem: dict[str, Any]) -> str | None:
 
 def diagram_for_run(run_dir: Path, recipe_id: str, problem: dict[str, Any]) -> dict[str, Any] | None:
     del run_dir
+    study = STUDY_BUILDERS.get(recipe_id)
+    if study is not None:
+        return study(problem)
     key = _kind_from(recipe_id, problem)
     if not key:
         return None

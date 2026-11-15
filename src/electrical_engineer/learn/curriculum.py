@@ -96,15 +96,13 @@ def validate(
     data: dict[str, Any] | None = None,
     *,
     cwd: Path | None = None,
-    allow_pending: bool = True,
 ) -> list[str]:
     """Return a list of validation errors (empty = ok)."""
     errors: list[str] = []
     raw = data if data is not None else load_curriculum(cwd)
     if raw.get("schema") != "arc.curriculum.v1":
         errors.append("schema must be arc.curriculum.v1")
-    pending = set(raw.get("pending_recipes") or []) if allow_pending else set()
-    known = set(list_workflow_ids(cwd)) | pending
+    known = set(list_workflow_ids(cwd))
     subject_ids: set[str] = set()
     for sem in raw.get("semesters") or []:
         n = sem.get("n")
