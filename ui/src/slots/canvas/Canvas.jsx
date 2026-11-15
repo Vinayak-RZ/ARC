@@ -14,9 +14,7 @@ import { useLayout } from "../../store.js";
 import { Palette } from "./Palette.jsx";
 import { fromFlow, MAX_EDGES, MAX_NODES, nextEdgeId, nextPartId, nextRefdes, PARTS, toFlow } from "./graph.js";
 import { nodeTypes } from "./nodes.jsx";
-import { StaticStudyDiagram } from "./StaticStudyDiagram.jsx";
-import { isSeriesRlcSheetGraph, SeriesRlcSchematic } from "./SeriesRlcSchematic.jsx";
-import { isVoltageDividerGraph, VoltageDividerSchematic } from "./VoltageDividerSchematic.jsx";
+import { DiagramView } from "../../studio-engine/DiagramView.jsx";
 
 const EDGE_STYLE = { stroke: "var(--ee-color-ink)", strokeWidth: 1.5 };
 const GRID = 16;
@@ -38,29 +36,10 @@ export function Canvas({ id }) {
 
 function CanvasInner({ id }) {
   const data = useRunGraph(id);
-  const controlDiagram = data?.control_diagram;
-  const hasControl =
-    controlDiagram &&
-    Array.isArray(controlDiagram.nodes) &&
-    controlDiagram.nodes.length > 0;
-  if (hasControl) {
+  if (data?.diagram?.panels?.length) {
     return (
       <div className="canvas-lab control-only">
-        <StaticStudyDiagram diagram={controlDiagram} />
-      </div>
-    );
-  }
-  if (isSeriesRlcSheetGraph(data?.graph)) {
-    return (
-      <div className="canvas-lab control-only">
-        <SeriesRlcSchematic graph={data.graph} />
-      </div>
-    );
-  }
-  if (isVoltageDividerGraph(data?.graph)) {
-    return (
-      <div className="canvas-lab control-only">
-        <VoltageDividerSchematic graph={data.graph} />
+        <DiagramView diagram={data.diagram} />
       </div>
     );
   }
