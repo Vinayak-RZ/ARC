@@ -407,6 +407,20 @@ function ControlStudioInner({ sessionId, onSession, autoBoot = false }) {
     persist(flowToDiagram(nodes, edges, diagramBase.current), { op: "move" });
   }, [nodes, edges, persist]);
 
+  const nodesRef = useRef(nodes);
+  const edgesRef = useRef(edges);
+  nodesRef.current = nodes;
+  edgesRef.current = edges;
+
+  const onEdgesDelete = useCallback(
+    (deleted) => {
+      const ids = new Set(deleted.map((e) => e.id));
+      const next = edgesRef.current.filter((e) => !ids.has(e.id));
+      persist(flowToDiagram(nodesRef.current, next, diagramBase.current), { op: "disconnect" });
+    },
+    [persist],
+  );
+
   function placeBlock(item, position) {
     const id = `${item.type}${nodes.length + 1}`;
     const nx = {
@@ -553,6 +567,7 @@ function ControlStudioInner({ sessionId, onSession, autoBoot = false }) {
         />
         <StudioPalette groups={groups} onDragStart={(item) => placeBlock(item)} />
         <div className={`studio-canvas${connecting ? " is-connecting" : ""}`}>
+          <p className="studio-wire-hint">Drag a port onto another port. Click a wire, then Delete, to remove it.</p>
           <CanvasDrop onDropBlock={placeBlock}>
             <FlowZoomHelpers zoomApi={zoomApi} setZoomPct={setZoomPct} />
             <ReactFlow
@@ -563,8 +578,13 @@ function ControlStudioInner({ sessionId, onSession, autoBoot = false }) {
               onNodesChange={onNodesChange}
               onEdgesChange={onEdgesChange}
               onConnect={onConnect}
+              onEdgesDelete={onEdgesDelete}
               onConnectStart={() => setConnecting(true)}
               onConnectEnd={() => setConnecting(false)}
+              deleteKeyCode={["Backspace", "Delete"]}
+              edgesFocusable
+              elementsSelectable
+              connectionRadius={32}
               onNodeDragStop={onNodeDragStop}
               onNodeClick={(_, node) => {
                 setSelectedId(node.id);
@@ -575,7 +595,6 @@ function ControlStudioInner({ sessionId, onSession, autoBoot = false }) {
                 setNodes((nds) => nds.map((n) => ({ ...n, selected: false })));
               }}
               onMove={(_, vp) => setZoomPct(vp.zoom)}
-              connectionRadius={22}
               snapToGrid
               snapGrid={[GRID, GRID]}
               connectionLineType={ConnectionLineType.Straight}

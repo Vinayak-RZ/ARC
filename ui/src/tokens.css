@@ -275,6 +275,68 @@ body { margin: 0; background: var(--ee-color-canvas); height: 100dvh; overflow: 
   outline-offset: 2px;
 }
 .flow-wrap .react-flow { height: 400px; width: 100%; }
+.studio-workspace-pane .lab-surface-circuit {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+.studio-circuit-sandbox {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+.studio-circuit-sandbox .flow-wrap {
+  min-height: 0;
+  height: 100%;
+  position: relative;
+  border: 1px solid var(--ee-color-hairline);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--ee-color-canvas);
+}
+.studio-circuit-sandbox .flow-wrap .react-flow {
+  height: min(78vh, calc(100dvh - 150px));
+  min-height: 560px;
+}
+.canvas-wire-hint {
+  position: absolute;
+  z-index: 5;
+  left: 12px;
+  bottom: 12px;
+  margin: 0;
+  max-width: 28rem;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ee-color-canvas) 88%, transparent);
+  border: 1px solid var(--ee-color-hairline);
+  color: var(--ee-color-body);
+  font-size: 12px;
+  pointer-events: none;
+}
+.circuit-port {
+  width: 9px !important;
+  height: 9px !important;
+  border-radius: 50% !important;
+  background: var(--ee-color-canvas) !important;
+  border: 2px solid var(--ee-color-primary) !important;
+}
+.circuit-port:hover,
+.react-flow__handle.circuit-port.connectingto,
+.react-flow__handle.circuit-port.connectingfrom {
+  width: 13px !important;
+  height: 13px !important;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ee-color-primary) 28%, transparent);
+}
+.studio-circuit-sandbox .react-flow__edge.selected .react-flow__edge-path,
+.studio-circuit-sandbox .react-flow__edge:focus .react-flow__edge-path,
+.studio-circuit-sandbox .react-flow__edge:focus-visible .react-flow__edge-path {
+  stroke: var(--ee-color-primary) !important;
+  stroke-width: 2.5px !important;
+}
 .part-value {
   font-size: 11px;
   color: var(--ee-color-muted);
@@ -352,14 +414,15 @@ body { margin: 0; background: var(--ee-color-canvas); height: 100dvh; overflow: 
 .part-node {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
+  gap: 4px;
+  padding: 2px 6px;
   background: var(--ee-color-canvas);
   border: 1px solid var(--ee-color-hairline);
-  border-radius: 8px;
+  border-radius: 6px;
   color: var(--ee-color-ink);
-  font-size: var(--ee-type-caption);
+  font-size: 11px;
 }
+.part-node .part-ref { font-size: 10px; font-weight: 600; }
 .part-node.is-selected {
   outline: 2px solid var(--ee-color-primary);
 }

@@ -3,23 +3,23 @@ import { Handle, Position } from "@xyflow/react";
 function Glyph({ kind }) {
   if (kind === "capacitor") {
     return (
-      <svg width="36" height="20" aria-hidden="true">
-        <path d="M2 10 H14 M22 10 H34 M14 2 V18 M22 2 V18" fill="none" stroke="currentColor" strokeWidth="2" />
+      <svg width="26" height="14" aria-hidden="true">
+        <path d="M1 7 H10 M16 7 H25 M10 1 V13 M16 1 V13" fill="none" stroke="currentColor" strokeWidth="1.6" />
       </svg>
     );
   }
   if (kind === "inductor") {
     return (
-      <svg width="36" height="20" aria-hidden="true">
-        <path d="M2 10 H8 a5 5 0 0 1 10 0 a5 5 0 0 1 10 0 H34" fill="none" stroke="currentColor" strokeWidth="2" />
+      <svg width="26" height="14" aria-hidden="true">
+        <path d="M1 7 H5 a3.5 3.5 0 0 1 7 0 a3.5 3.5 0 0 1 7 0 H25" fill="none" stroke="currentColor" strokeWidth="1.6" />
       </svg>
     );
   }
   if (kind === "source_v") {
     return (
-      <svg width="28" height="28" aria-hidden="true">
-        <circle cx="14" cy="14" r="12" fill="none" stroke="currentColor" strokeWidth="2" />
-        <text x="14" y="18" textAnchor="middle" fontSize="12" fill="currentColor">
+      <svg width="20" height="20" aria-hidden="true">
+        <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" strokeWidth="1.6" />
+        <text x="10" y="13.5" textAnchor="middle" fontSize="9" fill="currentColor">
           V
         </text>
       </svg>
@@ -27,22 +27,22 @@ function Glyph({ kind }) {
   }
   if (kind === "source_i") {
     return (
-      <svg width="28" height="28" aria-hidden="true">
-        <circle cx="14" cy="14" r="12" fill="none" stroke="currentColor" strokeWidth="2" />
-        <path d="M14 6 V20 M10 16 L14 20 L18 16" fill="none" stroke="currentColor" strokeWidth="2" />
+      <svg width="20" height="20" aria-hidden="true">
+        <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" strokeWidth="1.6" />
+        <path d="M10 4 V15 M7 12 L10 15 L13 12" fill="none" stroke="currentColor" strokeWidth="1.6" />
       </svg>
     );
   }
   if (kind === "ground") {
     return (
-      <svg width="28" height="20" aria-hidden="true">
-        <path d="M14 2 V8 M6 8 H22 M8 12 H20 M11 16 H17" fill="none" stroke="currentColor" strokeWidth="2" />
+      <svg width="20" height="14" aria-hidden="true">
+        <path d="M10 1 V6 M3 6 H17 M5 9 H15 M7 12 H13" fill="none" stroke="currentColor" strokeWidth="1.6" />
       </svg>
     );
   }
   return (
-    <svg width="40" height="16" aria-hidden="true">
-      <path d="M2 8 H8 L12 2 L20 14 L24 2 L28 14 L32 8 H38" fill="none" stroke="currentColor" strokeWidth="2" />
+    <svg width="28" height="12" aria-hidden="true">
+      <path d="M1 6 H5 L8 1 L14 11 L17 1 L20 11 L23 6 H27" fill="none" stroke="currentColor" strokeWidth="1.6" />
     </svg>
   );
 }
@@ -80,11 +80,11 @@ export function PartNode({ data, selected }) {
   const valueLabel = formatPartValue(kind, data?.value, data?.unit);
   return (
     <div className={["part-node", selected ? "is-selected" : "", vertical ? "is-vertical" : ""].filter(Boolean).join(" ")}>
-      {twoPort ? <Handle type="source" position={n1Pos} id="n1" /> : <Handle type="source" position={Position.Top} id="n1" />}
+      {twoPort ? <Handle type="source" position={n1Pos} id="n1" className="circuit-port" /> : <Handle type="source" position={Position.Top} id="n1" className="circuit-port" />}
       <Glyph kind={kind} />
       <span className="part-ref">{data?.refdes}</span>
       {valueLabel ? <span className="part-value">{valueLabel}</span> : null}
-      {twoPort ? <Handle type="source" position={n2Pos} id="n2" /> : null}
+      {twoPort ? <Handle type="source" position={n2Pos} id="n2" className="circuit-port" /> : null}
     </div>
   );
 }

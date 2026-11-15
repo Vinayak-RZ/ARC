@@ -150,8 +150,8 @@ function CircuitSandboxInner() {
       <div className="canvas-lab studio-circuit-sandbox">
         <Palette onAdd={addPart} />
         <div className="flow-wrap">
-          <p className="hint canvas-hint">
-            Orthogonal wires, palette on the left. Sketch only — ngspice runs on a problem’s Diagram tab after confirm.
+          <p className="canvas-wire-hint">
+            Drag a port onto another port to connect. Click a wire, then Delete, to remove it.
           </p>
           {msg ? <p className="hint">{msg}</p> : null}
           <ReactFlow
@@ -161,16 +161,20 @@ function CircuitSandboxInner() {
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
             nodeTypes={nodeTypes}
-            defaultEdgeOptions={{ type: "step", style: EDGE_STYLE }}
+            defaultEdgeOptions={{ type: "step", style: EDGE_STYLE, interactionWidth: 22 }}
             connectionLineType={ConnectionLineType.Step}
             connectionLineStyle={EDGE_STYLE}
             connectionMode={ConnectionMode.Loose}
+            connectionRadius={28}
             snapToGrid
             snapGrid={[GRID, GRID]}
             deleteKeyCode={["Backspace", "Delete"]}
+            edgesFocusable
+            elementsSelectable
             fitView
+            minZoom={0.4}
+            maxZoom={1.6}
             proOptions={{ hideAttribution: true }}
-            style={{ width: "100%", height: 420 }}
           >
             <Background gap={16} color="var(--ee-color-hairline)" />
           </ReactFlow>
