@@ -2282,3 +2282,13 @@ a { color: var(--ee-color-primary); }
 @media (prefers-reduced-motion: reduce) {
   .learn-unlock-toast { transition: none; }
 }
+
+.se-diagram-view { display: flex; flex-direction: column; gap: var(--ee-space-l); }
+.se-diagram-title { margin: 0; font-size: var(--ee-type-title); }
+.se-panel { display: flex; flex-direction: column; gap: 8px; }
+.se-panel h4 { margin: 0; font-size: var(--ee-type-caption); color: var(--ee-color-muted); font-weight: 600; }
+.se-schematic, .se-block, .se-oneline { width: 100%; max-height: 420px; background: var(--ee-color-surface-card); border: 1px solid var(--ee-color-hairline); border-radius: var(--ee-radius-xl); }
+.se-waveform { display: flex; flex-direction: column; gap: 8px; }
+.se-wave-table { font-size: var(--ee-type-caption); border-collapse: collapse; }
+.se-wave-table th, .se-wave-table td { border: 1px solid var(--ee-color-hairline); padding: 4px 8px; }
+.se-error { padding: var(--ee-space-m); border: 1px solid var(--ee-semantic-down); border-radius: var(--ee-radius-xl); }
