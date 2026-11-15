@@ -1,15 +1,16 @@
-"""HTTP routes for Learn curriculum and course notes."""
+"""HTTP routes for Learn curriculum, course notes, and progress."""
 
 from __future__ import annotations
 
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, Response
 
 from electrical_engineer.catalog import load_recipe_meta
 from electrical_engineer.learn import courses as courses_mod
+from electrical_engineer.learn import progress as progress_mod
 from electrical_engineer.learn.curriculum import expand_topics, load_curriculum
 
 
@@ -95,7 +96,7 @@ def curriculum_payload(cwd: Path, *, progress: dict[str, Any] | None = None) -> 
 def register_learn_routes(app: FastAPI, *, root: Path) -> None:
     @app.get("/api/learn/curriculum")
     def learn_curriculum() -> dict:
-        return curriculum_payload(root)
+        return curriculum_payload(root, progress=progress_mod.load(root))
 
     @app.get("/api/learn/courses/{code}/{file}")
     def learn_course_file(code: str, file: str) -> Response:
@@ -112,3 +113,30 @@ def register_learn_routes(app: FastAPI, *, root: Path) -> None:
                 "Referrer-Policy": "no-referrer",
             },
         )
+
+    @app.get("/api/learn/progress")
+    def learn_progress_get() -> dict:
+        data = progress_mod.load(root)
+        return {
+            "schema": data.get("schema"),
+            "topics_done": data.get("topics_done") or {},
+            "labs_opened": data.get("labs_opened") or {},
+        }
+
+    @app.post("/api/learn/progress")
+    async def learn_progress_post(request: Request) -> Response:
+        try:
+            body = await request.json()
+        except Exception:
+            return _err("invalid_progress", "invalid json", 422)
+        if not isinstance(body, dict):
+            return _err("invalid_progress", "body must be object", 422)
+        try:
+            updated = progress_mod.apply(root, body)
+        except progress_mod.ProgressError as exc:
+            return _err("invalid_progress", str(exc), 422)
+        return {
+            "schema": updated.get("schema"),
+            "topics_done": updated.get("topics_done") or {},
+            "labs_opened": updated.get("labs_opened") or {},
+        }
