@@ -3,6 +3,7 @@ import { useLayout } from "../store.js";
 import { renderSlot } from "../slots/registry.js";
 import { DiagramView } from "../studio-engine/DiagramView.jsx";
 import { LAB_REGISTRY } from "../studio-engine/labs/registry.js";
+import "../studio-engine/labs/RectifierLab.jsx";
 
 const TABS = [
   { id: "control", label: "Control" },
