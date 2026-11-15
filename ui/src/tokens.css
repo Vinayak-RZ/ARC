@@ -2435,6 +2435,7 @@ a { color: var(--ee-color-primary); }
 .lab-shell { padding: var(--ee-space-s) 0 var(--ee-space-l); color: var(--ee-color-ink); }
 .lab-shell h2 { margin: 0 0 var(--ee-space-m); font-size: var(--ee-type-title); font-weight: 600; }
 .lab-main { min-width: 0; display: flex; flex-direction: column; gap: var(--ee-space-m); }
+.lab-main .se-waveform { min-height: 280px; height: 320px; }
 .lab-controls fieldset {
   border: 1px solid var(--ee-color-hairline);
   border-radius: var(--ee-radius-xl);

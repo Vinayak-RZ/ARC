@@ -4,6 +4,7 @@ import { Waveform } from "../renderers/Waveform.jsx";
 import { bodeSeries, leadDesign } from "./lead.js";
 import { registerLab } from "./registry.js";
 import { postProgress } from "../../hooks/useLearn.js";
+import { openMatchingProblem } from "./openExample.js";
 
 export function LeadLab() {
   const [K, setK] = useState(10);
@@ -102,6 +103,8 @@ export function LeadLab() {
           </div>
         </>
       }
+      exampleId="lead"
+      onOpenExample={openMatchingProblem}
       check={
         <p className="hint">
           EET-123 lead design: φm = PMtarget − PMunc + ε → α → ωm at −10 log10(α) → τ = 1/(ωm√α).

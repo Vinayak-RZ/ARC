@@ -4,6 +4,7 @@ import { Waveform } from "../renderers/Waveform.jsx";
 import { coordination, curvePoints, idmtTime } from "./idmt.js";
 import { registerLab } from "./registry.js";
 import { postProgress } from "../../hooks/useLearn.js";
+import { openMatchingProblem } from "./openExample.js";
 
 const CURVES = ["standard", "very", "extreme", "long"];
 
@@ -155,6 +156,8 @@ export function IdmtLab() {
           </>
         )
       }
+      exampleId="idmt"
+      onOpenExample={openMatchingProblem}
       check={
         <p className="hint">
           IEC IDMT: t = k·TMS / (PSM^a − 1). R2 TMS is sized for CTI ≥ {ctiTarget} s at the fault current.

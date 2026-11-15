@@ -36,45 +36,40 @@ export function voClosedForm(p) {
   return ((3 * Vll_pk) / PI) * cosA - (3 * w * ls_h * io_a) / PI;
 }
 
+function gatedSine(wt, Vm, alpha, halfWave) {
+  const cycle = ((wt % (2 * PI)) + 2 * PI) % (2 * PI);
+  const half = ((wt % PI) + PI) % PI;
+  if (halfWave) {
+    return cycle >= alpha && cycle < PI ? Math.max(0, Vm * Math.sin(wt)) : 0;
+  }
+  return half >= alpha ? Math.abs(Vm * Math.sin(wt)) : 0;
+}
+
+/** Six-pulse line-line envelope, firing delayed by alpha. */
+function sixPulse(wt, VllPk, alpha) {
+  const sector = Math.PI / 3;
+  const local = ((wt - alpha) % sector + sector) % sector;
+  return VllPk * Math.cos(local - sector / 2);
+}
+
 export function sampleWaveform(p, N = 720) {
-  const { topology, v_rms, alpha_deg, f_hz = 50 } = p;
+  const { topology, v_rms, alpha_deg } = p;
   const alpha = (alpha_deg * PI) / 180;
-  const Vll_pk = Math.SQRT2 * v_rms;
+  const three = topology.endsWith("3");
+  const Vm = three ? Math.SQRT2 * v_rms : Math.SQRT2 * v_rms;
   const points = [];
   for (let i = 0; i < N; i += 1) {
     const wt = (2 * PI * i) / N;
-    const deg = (wt * 180) / PI;
     let vo = 0;
-    if (topology.startsWith("full") && topology.includes("3")) {
-      // 6-pulse envelope
-      const phases = [0, 2 * PI / 3, 4 * PI / 3];
-      let best = -Infinity;
-      for (const ph of phases) {
-        const v = Vll_pk * Math.cos(wt - ph - PI / 6);
-        if (v > best) best = v;
-      }
-      const gateOk = ((wt % (PI / 3)) + alpha) < PI / 3 + alpha; // simplified
-      vo = best * Math.cos(alpha); // approximate gated average shape
-      // better: delayed envelope
-      const sector = Math.floor(((wt - alpha + 2 * PI) % (2 * PI)) / (PI / 3));
-      const mid = sector * (PI / 3) + alpha + PI / 6;
-      vo = Vll_pk * Math.cos(wt - mid);
-      if (vo < 0 && topology === "full3") vo = 0; // rough
-    } else if (topology === "full1") {
-      const Vm = Math.SQRT2 * v_rms;
-      const fired = (wt % PI) >= alpha;
-      vo = fired ? Math.abs(Vm * Math.sin(wt)) * Math.sign(Math.sin(wt) || 1) : 0;
-      // continuous full bridge controlled:
-      vo = fired ? Vm * Math.sin(wt) * (Math.sin(wt) >= 0 ? 1 : -1) : 0;
-      // use |sin| after alpha each half
-      const half = wt % PI;
-      vo = half >= alpha ? Math.abs(Vm * Math.sin(wt)) : 0;
+    if (topology === "full3" || topology === "semi3" || topology === "hw3") {
+      vo = sixPulse(wt, Vm, alpha);
+      if (topology === "hw3" && vo < 0) vo = 0;
+    } else if (topology === "full1" || topology === "semi1") {
+      vo = gatedSine(wt, Vm, alpha, false);
     } else {
-      const Vm = Math.SQRT2 * v_rms;
-      const half = wt % (2 * PI);
-      vo = half >= alpha && half < PI + alpha ? Math.max(0, Vm * Math.sin(wt)) : 0;
+      vo = gatedSine(wt, Vm, alpha, true);
     }
-    points.push([deg, vo]);
+    points.push([(wt * 180) / PI, vo]);
   }
   return points;
 }

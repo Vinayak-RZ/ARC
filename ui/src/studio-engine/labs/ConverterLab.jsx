@@ -4,6 +4,7 @@ import { Waveform } from "../renderers/Waveform.jsx";
 import { converterMetrics } from "./converter.js";
 import { registerLab } from "./registry.js";
 import { postProgress } from "../../hooks/useLearn.js";
+import { openMatchingProblem } from "./openExample.js";
 
 function rippleWave(d, deltaIl, periods = 3, n = 120) {
   const pts = [];
@@ -127,6 +128,8 @@ export function ConverterLab() {
           </div>
         </>
       }
+      exampleId="converter"
+      onOpenExample={openMatchingProblem}
       check={
         <p className="hint">
           Closed-form CCM formulas from the EEC-303 sheet. Lcrit = {result.Lcrit.toExponential(3)} H.

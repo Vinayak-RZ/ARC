@@ -4,6 +4,7 @@ import { Waveform } from "../renderers/Waveform.jsx";
 import { computeRectifier } from "./rectifier.js";
 import { registerLab } from "./registry.js";
 import { postProgress } from "../../hooks/useLearn.js";
+import { openMatchingProblem } from "./openExample.js";
 
 const TOPOS = [
   { id: "hw1", label: "1φ half" },
@@ -129,9 +130,11 @@ export function RectifierLab() {
           ) : null}
         </>
       }
+      exampleId="rectifier"
+      onOpenExample={openMatchingProblem}
       check={
         <p className="hint">
-          Closed-form Vo from the EEC-303 formula sheet. Waveform plot is a teaching sketch of the gated envelope.
+          Closed-form Vo from the EEC-303 formula sheet. The trace is the gated sine envelope for that firing angle.
         </p>
       }
     >
