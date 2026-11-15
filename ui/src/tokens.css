@@ -423,6 +423,17 @@ body { margin: 0; background: var(--ee-color-canvas); height: 100dvh; overflow: 
   font-size: 11px;
 }
 .part-node .part-ref { font-size: 10px; font-weight: 600; }
+.junction-node {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--ee-color-primary);
+  position: relative;
+}
+.junction-node.is-selected { outline: 2px solid var(--ee-color-primary); outline-offset: 3px; }
+.junction-node .circuit-port { opacity: 0; }
+.junction-node:hover .circuit-port,
+.junction-node.is-selected .circuit-port { opacity: 1; }
 .part-node.is-selected {
   outline: 2px solid var(--ee-color-primary);
 }

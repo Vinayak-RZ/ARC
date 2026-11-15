@@ -70,8 +70,25 @@ function formatPartValue(kind, value, unit) {
   return unit ? `${v} ${unit}` : String(v);
 }
 
+export function JunctionNode({ selected }) {
+  const ports = [
+    ["n", Position.Top],
+    ["e", Position.Right],
+    ["s", Position.Bottom],
+    ["w", Position.Left],
+  ];
+  return (
+    <div className={selected ? "junction-node is-selected" : "junction-node"}>
+      {ports.map(([id, pos]) => (
+        <Handle key={id} type="source" position={pos} id={id} className="circuit-port" />
+      ))}
+    </div>
+  );
+}
+
 export function PartNode({ data, selected }) {
   const kind = data?.kind;
+  if (kind === "junction") return <JunctionNode selected={selected} />;
   const rot = Number(data?.rot) === 90 ? 90 : 0;
   const twoPort = kind !== "ground";
   const vertical = rot === 90;

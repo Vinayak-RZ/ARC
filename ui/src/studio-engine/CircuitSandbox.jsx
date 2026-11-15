@@ -8,6 +8,7 @@ import {
   addEdge,
   useEdgesState,
   useNodesState,
+  useReactFlow,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { Palette } from "../slots/canvas/Palette.jsx";
@@ -18,7 +19,9 @@ import {
   nextEdgeId,
   nextPartId,
   nextRefdes,
+  partCount,
   PARTS,
+  splitEdgeAt,
   toFlow,
 } from "../slots/canvas/graph.js";
 import { nodeTypes } from "../slots/canvas/nodes.jsx";
@@ -26,6 +29,64 @@ import { nodeTypes } from "../slots/canvas/nodes.jsx";
 const EDGE_STYLE = { stroke: "var(--ee-color-ink)", strokeWidth: 1.5 };
 const GRID = 16;
 const STORAGE_KEY = "arc-circuit-sandbox-v1";
+
+const SERIES_RLC = {
+  schema: "arc.circuit.v1",
+  nodes: [
+    { id: "vin", type: "source_v", refdes: "V1", value: 10, unit: "V", x: 40, y: 120, rot: 0 },
+    { id: "r1", type: "resistor", refdes: "R1", value: 1000, unit: "ohm", x: 180, y: 40, rot: 0 },
+    { id: "l1", type: "inductor", refdes: "L1", value: 0.01, unit: "H", x: 320, y: 40, rot: 0 },
+    { id: "c1", type: "capacitor", refdes: "C1", value: 1e-6, unit: "F", x: 460, y: 120, rot: 90 },
+    { id: "gnd", type: "ground", refdes: "Gnd", value: 0, unit: "", x: 40, y: 220, rot: 0 },
+  ],
+  edges: [
+    { id: "e1", from: "vin.n1", to: "r1.n1" },
+    { id: "e2", from: "r1.n2", to: "l1.n1" },
+    { id: "e3", from: "l1.n2", to: "c1.n1" },
+    { id: "e4", from: "c1.n2", to: "gnd.n1" },
+    { id: "e5", from: "vin.n2", to: "gnd.n1" },
+  ],
+};
+
+const RC_LOWPASS = {
+  schema: "arc.circuit.v1",
+  nodes: [
+    { id: "vin", type: "source_v", refdes: "V1", value: 5, unit: "V", x: 40, y: 100, rot: 0 },
+    { id: "r1", type: "resistor", refdes: "R1", value: 1000, unit: "ohm", x: 200, y: 40, rot: 0 },
+    { id: "c1", type: "capacitor", refdes: "C1", value: 1e-6, unit: "F", x: 360, y: 120, rot: 90 },
+    { id: "gnd", type: "ground", refdes: "Gnd", value: 0, unit: "", x: 40, y: 220, rot: 0 },
+  ],
+  edges: [
+    { id: "e1", from: "vin.n1", to: "r1.n1" },
+    { id: "e2", from: "r1.n2", to: "c1.n1" },
+    { id: "e3", from: "c1.n2", to: "gnd.n1" },
+    { id: "e4", from: "vin.n2", to: "gnd.n1" },
+  ],
+};
+
+const PARALLEL_RC = {
+  schema: "arc.circuit.v1",
+  nodes: [
+    { id: "vin", type: "source_v", refdes: "V1", value: 10, unit: "V", x: 40, y: 120, rot: 0 },
+    { id: "r1", type: "resistor", refdes: "R1", value: 1000, unit: "ohm", x: 220, y: 40, rot: 90 },
+    { id: "c1", type: "capacitor", refdes: "C1", value: 1e-6, unit: "F", x: 340, y: 40, rot: 90 },
+    { id: "gnd", type: "ground", refdes: "Gnd", value: 0, unit: "", x: 40, y: 240, rot: 0 },
+  ],
+  edges: [
+    { id: "e1", from: "vin.n1", to: "r1.n1" },
+    { id: "e2", from: "vin.n1", to: "c1.n1" },
+    { id: "e3", from: "r1.n2", to: "gnd.n1" },
+    { id: "e4", from: "c1.n2", to: "gnd.n1" },
+    { id: "e5", from: "vin.n2", to: "gnd.n1" },
+  ],
+};
+
+const EXAMPLES = [
+  ["divider", "Load divider", null],
+  ["rlc", "Series RLC", SERIES_RLC],
+  ["rc", "RC low-pass", RC_LOWPASS],
+  ["prc", "Parallel RC", PARALLEL_RC],
+];
 
 const DIVIDER_SEED = {
   schema: "arc.circuit.v1",
@@ -60,6 +121,7 @@ function CircuitSandboxInner() {
   const past = useRef([]);
   const future = useRef([]);
   const hydrated = useRef(false);
+  const { screenToFlowPosition } = useReactFlow();
 
   useEffect(() => {
     if (hydrated.current) return;
@@ -107,8 +169,25 @@ function CircuitSandboxInner() {
     [edges.length, setEdges, snapshot],
   );
 
+  const onEdgeDoubleClick = useCallback(
+    (event, edge) => {
+      const point = screenToFlowPosition({ x: event.clientX, y: event.clientY });
+      const next = splitEdgeAt(nodes, edges, edge.id, point);
+      if (!next) return;
+      if (next.edges.length > MAX_EDGES) {
+        setMsg("16 parts or 24 wires is the cap for this lab.");
+        return;
+      }
+      snapshot();
+      setNodes(next.nodes);
+      setEdges(next.edges.map((e) => ({ ...e, style: EDGE_STYLE })));
+      setMsg("");
+    },
+    [edges, nodes, screenToFlowPosition, setEdges, setNodes, snapshot],
+  );
+
   function addPart(type) {
-    if (nodes.length >= MAX_NODES) {
+    if (partCount(nodes) >= MAX_NODES) {
       setMsg("16 parts or 24 wires is the cap for this lab.");
       return;
     }
@@ -130,9 +209,11 @@ function CircuitSandboxInner() {
     setMsg("");
   }
 
-  function loadDivider() {
+  function loadExample(id) {
+    const seed = id === "divider" ? DIVIDER_SEED : EXAMPLES.find((row) => row[0] === id)?.[2];
+    if (!seed) return;
     snapshot();
-    const { nodes: n, edges: e } = toFlow(DIVIDER_SEED);
+    const { nodes: n, edges: e } = toFlow(seed);
     setNodes(n);
     setEdges(e);
     setMsg("");
@@ -151,7 +232,7 @@ function CircuitSandboxInner() {
         <Palette onAdd={addPart} />
         <div className="flow-wrap">
           <p className="canvas-wire-hint">
-            Drag a port onto another port to connect. Click a wire, then Delete, to remove it.
+            Drag a port onto another port. Double-click a wire to add a junction. Click a wire, then Delete, to remove it.
           </p>
           {msg ? <p className="hint">{msg}</p> : null}
           <ReactFlow
@@ -160,6 +241,7 @@ function CircuitSandboxInner() {
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
+            onEdgeDoubleClick={onEdgeDoubleClick}
             nodeTypes={nodeTypes}
             defaultEdgeOptions={{ type: "step", style: EDGE_STYLE, interactionWidth: 22 }}
             connectionLineType={ConnectionLineType.Step}
@@ -180,9 +262,11 @@ function CircuitSandboxInner() {
           </ReactFlow>
         </div>
         <div className="confirm-row">
-          <button type="button" className="button-secondary" onClick={loadDivider}>
-            Load divider example
-          </button>
+          {EXAMPLES.map(([id, label]) => (
+            <button key={id} type="button" className="button-secondary" onClick={() => loadExample(id)}>
+              {label}
+            </button>
+          ))}
           <button type="button" className="button-secondary" onClick={clearCanvas}>
             Clear canvas
           </button>
