@@ -1,0 +1,26 @@
+id: second-order-specs-study
+title: Second-order time-domain specs
+pack: control
+sample_problem:
+  zeta: 0.5
+  wn: 1
+  expected: 16.30
+  tol: 1e-2
+nodes:
+  solve:
+    activity: run-ee-v2-solver
+    default_solver: second_order_specs
+    capability: lti-analysis
+  check:
+    activity: check-numeric
+    default_solver: second_order_specs
+    needs: [solve]
+  trap:
+    activity: trap-verify
+    needs: [solve]
+  label:
+    activity: label-unchecked
+    needs: [trap, check]
+  summary:
+    activity: write-run-summary
+    needs: [label]

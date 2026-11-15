@@ -1,0 +1,29 @@
+id: lead-compensator-design-study
+title: Lead compensator design
+pack: control
+sample_problem:
+  num: [1]
+  den: [1, 1, 0]
+  kv_target: 10
+  pm_target_deg: 45
+  epsilon_deg: 8
+  expected: 3.696
+  tol: 0.05
+nodes:
+  solve:
+    activity: run-ee-v2-solver
+    default_solver: lead_compensator
+    capability: lti-analysis
+  check:
+    activity: check-numeric
+    default_solver: lead_compensator
+    needs: [solve]
+  trap:
+    activity: trap-verify
+    needs: [solve]
+  label:
+    activity: label-unchecked
+    needs: [trap, check]
+  summary:
+    activity: write-run-summary
+    needs: [label]
