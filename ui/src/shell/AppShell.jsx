@@ -12,6 +12,7 @@ import { ProblemDetailPage } from "../pages/ProblemDetailPage.jsx";
 import { SettingsPage } from "../pages/SettingsPage.jsx";
 import { LearnPage } from "../pages/LearnPage.jsx";
 import { SubjectPage } from "../pages/SubjectPage.jsx";
+import { StudioPage } from "../pages/StudioPage.jsx";
 import { AchievementsPanel } from "../components/AchievementsPanel.jsx";
 import { UnlockToast } from "../components/UnlockToast.jsx";
 import { renderSlot } from "../slots/registry.js";
@@ -162,7 +163,7 @@ export function AppShell() {
     );
   } else if (view === "problems" && id) {
     workspace = <ProblemDetailPage id={id} data={data} runMeta={runMeta} />;
-  } else if (view === "studio") workspace = renderSlot("control.studio");
+  } else if (view === "studio") workspace = <StudioPage onNavigate={navigate} />;
   else if (view === "gallery") workspace = renderSlot("visual.gallery");
   else if (view === "library") workspace = renderSlot("rag.inventory");
   else if (view === "settings") workspace = <SettingsPage onRunsChange={reload} />;
