@@ -30,6 +30,9 @@ export function normalizeView(view) {
 export const useLayout = create((set) => ({
   currentRunId: null,
   view: "home",
+  learnSubjectId: null,
+  studioTab: "control",
+  studioLab: null,
   sidebarCollapsed: readSidebarCollapsed(),
   sidebarLastToggledAt: 0,
   agentEditing: false,
@@ -69,6 +72,12 @@ export const useLayout = create((set) => ({
     }),
   setParametersStale: (parametersStale) => set({ parametersStale }),
   setView: (view) => set({ view: normalizeView(view) }),
+  setLearnSubject: (learnSubjectId) => set({ learnSubjectId }),
+  setStudio: ({ tab, lab } = {}) =>
+    set((s) => ({
+      studioTab: tab != null ? tab : s.studioTab,
+      studioLab: lab !== undefined ? lab : s.studioLab,
+    })),
   setAgentEditing: (agentEditing) => set({ agentEditing }),
   toggleSidebar: () =>
     set((s) => {
