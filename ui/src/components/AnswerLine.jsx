@@ -21,7 +21,7 @@ export function AnswerLine({ parts, checked }) {
   );
 }
 
-export function VerificationStrip({ checked, unchecked, modifiedAt, stale }) {
+export function VerificationStrip({ checked, unchecked, modifiedAt, stale, note }) {
   if (stale && checked && !unchecked) {
     return (
       <div className="verification-strip verification-stale" role="status">
@@ -47,7 +47,7 @@ export function VerificationStrip({ checked, unchecked, modifiedAt, stale }) {
       <CheckCircle2 size={16} strokeWidth={1.5} className="verification-icon" aria-hidden="true" />
       <span className="checked-tag status-tag">Checked</span>
       <span className="verification-body">
-        Solved in SPICE and matched the hand calculation within 0.1%. Checked {relativeTimeShort(modifiedAt)}.
+        {note || "Numeric check passed."} Checked {relativeTimeShort(modifiedAt)}.
       </span>
       <button type="button" className="verification-link">
         View engine output

@@ -11,7 +11,16 @@ from electrical_engineer.circuit.graph import SCHEMA as CIRCUIT_SCHEMA
 
 CONTROL_SCHEMA = "arc.control_diagram.v1"
 ALLOWED_DIAGRAM_KINDS = frozenset(
-    {"unity_feedback", "power_fault", "protection_5051", "drives_dc"},
+    {
+        "unity_feedback",
+        "power_fault",
+        "protection_5051",
+        "drives_dc",
+        "smib_swing",
+        "digital_loop",
+        "dispatch_ed",
+        "buck_ccm",
+    },
 )
 SERIES_RLC_IDS = frozenset({"vin", "r1", "l1", "c1", "gnd"})
 SERIES_RLC_TYPES = {
@@ -108,6 +117,8 @@ def check_control_diagram(data: dict[str, Any], *, path: str = "control_diagram.
         errors.append(f"{path}: protection_5051 requires meta (CT ratio, pickup)")
     if kind == "drives_dc" and not isinstance(data.get("meta"), dict):
         errors.append(f"{path}: drives_dc requires meta (v_dc, ra_ohm, t_load)")
+    if kind in {"smib_swing", "digital_loop", "dispatch_ed", "buck_ccm"} and not isinstance(data.get("meta"), dict):
+        errors.append(f"{path}: {kind} requires meta")
     for n in nodes:
         if not isinstance(n, dict):
             continue

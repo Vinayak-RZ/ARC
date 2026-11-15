@@ -9,6 +9,10 @@ function titleFor(diagram) {
   if (kind === "power_fault") return "LG fault study — single-line diagram (pu)";
   if (kind === "protection_5051") return "Feeder protection — CT, 50/51 relay, breaker";
   if (kind === "drives_dc") return "DC drive — armature circuit and load torque";
+  if (kind === "smib_swing") return "SMIB — generator, transformer, line, infinite bus";
+  if (kind === "digital_loop") return "Discrete loop — zero-order hold and G(z)";
+  if (kind === "dispatch_ed") return "Economic dispatch — three units, one load";
+  if (kind === "buck_ccm") return "Buck converter — switch, diode, L, C";
   if ((diagram?.nodes || []).some((n) => n.type === "equip")) {
     return "One-line study diagram (read-only)";
   }
@@ -212,6 +216,137 @@ function DrivesDiagram({ diagram }) {
   );
 }
 
+function SmibDiagram({ diagram }) {
+  const meta = diagram.meta || {};
+  const w = 680;
+  const h = 240;
+  const y = 100;
+  return (
+    <svg className="static-diagram" viewBox={`0 0 ${w} ${h}`} width="100%" height="240" role="img" aria-label="SMIB one-line">
+      <g style={{ color: "var(--ee-color-ink)" }}>
+        <line x1="80" y1={y} x2="600" y2={y} stroke="currentColor" strokeWidth="3" />
+        <circle cx="70" cy={y} r="28" fill="var(--ee-color-canvas)" stroke="currentColor" strokeWidth="2" />
+        <text x="70" y={y + 5} textAnchor="middle" fontSize="14" fontWeight="600">G</text>
+        <text x="70" y={y + 48} textAnchor="middle" fontSize="11">H={meta.h ?? 5} s</text>
+        <g transform="translate(210,78)">
+          <circle cx="16" cy="22" r="16" fill="none" stroke="currentColor" strokeWidth="2" />
+          <circle cx="34" cy="22" r="16" fill="none" stroke="currentColor" strokeWidth="2" />
+          <text x="25" y="58" textAnchor="middle" fontSize="11">Transformer</text>
+        </g>
+        <g transform="translate(360,88)">
+          <line x1="0" y1="4" x2="90" y2="4" stroke="currentColor" strokeWidth="2" />
+          <line x1="0" y1="16" x2="90" y2="16" stroke="currentColor" strokeWidth="2" />
+          <text x="45" y="40" textAnchor="middle" fontSize="11">Double circuit</text>
+        </g>
+        <g transform="translate(560,78)">
+          <line x1="0" y1="0" x2="0" y2="44" stroke="currentColor" strokeWidth="3" />
+          <line x1="8" y1="6" x2="8" y2="38" stroke="currentColor" strokeWidth="2" />
+          <line x1="16" y1="12" x2="16" y2="32" stroke="currentColor" strokeWidth="2" />
+          <text x="8" y="64" textAnchor="middle" fontSize="11">Infinite bus</text>
+        </g>
+        <text x="24" y="200" fontSize="12">
+          Pm={meta.pm ?? "—"} pu · Pmax pre/fault/post {meta.pmax_pre ?? "—"} / {meta.pmax_fault ?? "—"} / {meta.pmax_post ?? "—"} pu
+        </text>
+      </g>
+    </svg>
+  );
+}
+
+function DigitalLoopDiagram({ diagram }) {
+  const meta = diagram.meta || {};
+  const w = 680;
+  const h = 260;
+  const y = 90;
+  return (
+    <svg className="static-diagram" viewBox={`0 0 ${w} ${h}`} width="100%" height="260" role="img" aria-label="Discrete control loop">
+      <g style={{ color: "var(--ee-color-ink)" }}>
+        <text x="36" y={y - 28} fontSize="13" fontWeight="500">R(z)</text>
+        <line x1="70" y1={y} x2="120" y2={y} stroke="currentColor" strokeWidth="2" />
+        <circle cx="148" cy={y} r="22" fill="var(--ee-color-canvas)" stroke="currentColor" strokeWidth="2" />
+        <text x="140" y={y - 2} fontSize="14" fontWeight="600">+</text>
+        <text x="156" y={y + 14} fontSize="14" fontWeight="600">−</text>
+        <line x1="170" y1={y} x2="230" y2={y} stroke="currentColor" strokeWidth="2" />
+        <rect x="230" y={y - 28} width="90" height="56" fill="var(--ee-color-canvas)" stroke="currentColor" strokeWidth="2" />
+        <text x="275" y={y - 4} textAnchor="middle" fontSize="13" fontWeight="600">ZOH</text>
+        <text x="275" y={y + 14} textAnchor="middle" fontSize="11">Ts={meta.ts ?? "—"} s</text>
+        <line x1="320" y1={y} x2="390" y2={y} stroke="currentColor" strokeWidth="2" />
+        <rect x="390" y={y - 28} width="140" height="56" fill="var(--ee-color-canvas)" stroke="currentColor" strokeWidth="2" />
+        <text x="460" y={y - 4} textAnchor="middle" fontSize="13" fontWeight="600">G(z)</text>
+        <text x="460" y={y + 16} textAnchor="middle" fontSize="10">{meta.gz || "H(z)"}</text>
+        <line x1="530" y1={y} x2="620" y2={y} stroke="currentColor" strokeWidth="2" />
+        <text x="620" y={y - 16} textAnchor="end" fontSize="13" fontWeight="500">C(z)</text>
+        <path d="M 600 90 V 190 H 148 V 112" fill="none" stroke="currentColor" strokeWidth="1.5" />
+        <text x="360" y="206" textAnchor="middle" fontSize="12">feedback 1</text>
+      </g>
+    </svg>
+  );
+}
+
+function DispatchDiagram({ diagram }) {
+  const pd = diagram.meta?.pd_mw ?? 500;
+  const w = 640;
+  const h = 260;
+  return (
+    <svg className="static-diagram" viewBox={`0 0 ${w} ${h}`} width="100%" height="260" role="img" aria-label="Economic dispatch one-line">
+      <g style={{ color: "var(--ee-color-ink)" }}>
+        {[0, 1, 2].map((i) => (
+          <g key={i} transform={`translate(48, ${36 + i * 72})`}>
+            <circle cx="24" cy="24" r="22" fill="var(--ee-color-canvas)" stroke="currentColor" strokeWidth="2" />
+            <text x="24" y="29" textAnchor="middle" fontSize="13" fontWeight="600">G{i + 1}</text>
+            <line x1="46" y1="24" x2="280" y2="24" stroke="currentColor" strokeWidth="2" />
+          </g>
+        ))}
+        <line x1="280" y1="40" x2="280" y2="200" stroke="currentColor" strokeWidth="4" />
+        <text x="292" y="36" fontSize="12" fontWeight="600">Bus</text>
+        <rect x="400" y="96" width="160" height="56" fill="var(--ee-color-canvas)" stroke="currentColor" strokeWidth="2" />
+        <text x="480" y="118" textAnchor="middle" fontSize="13" fontWeight="600">Load</text>
+        <text x="480" y="138" textAnchor="middle" fontSize="12">Pd = {pd} MW</text>
+        <line x1="280" y1="124" x2="400" y2="124" stroke="currentColor" strokeWidth="2" />
+      </g>
+    </svg>
+  );
+}
+
+function BuckDiagram({ diagram }) {
+  const meta = diagram.meta || {};
+  const w = 680;
+  const h = 240;
+  const y = 80;
+  return (
+    <svg className="static-diagram" viewBox={`0 0 ${w} ${h}`} width="100%" height="240" role="img" aria-label="Buck converter">
+      <g style={{ color: "var(--ee-color-ink)" }}>
+        <line x1="40" y1={y} x2="560" y2={y} stroke="currentColor" strokeWidth="2" />
+        <line x1="40" y1={y} x2="40" y2="180" stroke="currentColor" strokeWidth="2" />
+        <line x1="40" y1="180" x2="560" y2="180" stroke="currentColor" strokeWidth="2" />
+        <line x1="560" y1={y} x2="560" y2="180" stroke="currentColor" strokeWidth="2" />
+        <text x="48" y={y - 16} fontSize="13" fontWeight="600">Vin {meta.vin ?? "—"} V</text>
+        <g transform="translate(150,62)">
+          <line x1="0" y1="18" x2="28" y2="0" stroke="currentColor" strokeWidth="2" />
+          <line x1="28" y1="0" x2="28" y2="36" stroke="currentColor" strokeWidth="2" />
+          <text x="14" y="56" textAnchor="middle" fontSize="11">S · {meta.fs_khz ?? "—"} kHz</text>
+        </g>
+        <g transform="translate(250,150)">
+          <polygon points="16,0 32,28 0,28" fill="none" stroke="currentColor" strokeWidth="2" />
+          <line x1="4" y1="32" x2="28" y2="4" stroke="currentColor" strokeWidth="2" />
+          <text x="16" y="52" textAnchor="middle" fontSize="11">D</text>
+        </g>
+        <g transform="translate(340,68)">
+          <path d="M0 12 h8 q10 -16 20 0 q10 16 20 0 h8" fill="none" stroke="currentColor" strokeWidth="2" />
+          <text x="28" y="40" textAnchor="middle" fontSize="11">L {meta.l_uh ?? "—"} µH</text>
+        </g>
+        <g transform="translate(470,96)">
+          <line x1="20" y1="0" x2="20" y2="16" stroke="currentColor" strokeWidth="2" />
+          <line x1="8" y1="16" x2="32" y2="16" stroke="currentColor" strokeWidth="2" />
+          <line x1="8" y1="28" x2="32" y2="28" stroke="currentColor" strokeWidth="2" />
+          <line x1="20" y1="28" x2="20" y2="44" stroke="currentColor" strokeWidth="2" />
+          <text x="20" y="64" textAnchor="middle" fontSize="11">C</text>
+        </g>
+        <text x="500" y={y - 16} fontSize="13" fontWeight="600">Vout {meta.vout ?? "—"} V</text>
+      </g>
+    </svg>
+  );
+}
+
 export function StaticStudyDiagram({ diagram }) {
   const kind = diagram?.diagramKind || "";
   const title = titleFor(diagram);
@@ -221,6 +356,10 @@ export function StaticStudyDiagram({ diagram }) {
   else if (kind === "power_fault") body = <PowerFaultDiagram diagram={diagram} />;
   else if (kind === "protection_5051") body = <ProtectionDiagram diagram={diagram} />;
   else if (kind === "drives_dc") body = <DrivesDiagram diagram={diagram} />;
+  else if (kind === "smib_swing") body = <SmibDiagram diagram={diagram} />;
+  else if (kind === "digital_loop") body = <DigitalLoopDiagram diagram={diagram} />;
+  else if (kind === "dispatch_ed") body = <DispatchDiagram diagram={diagram} />;
+  else if (kind === "buck_ccm") body = <BuckDiagram diagram={diagram} />;
   else body = <UnityFeedbackDiagram diagram={diagram} />;
 
   return (

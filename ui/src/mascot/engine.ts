@@ -1,6 +1,6 @@
 /**
  * Arc mascot engine. Pure function of time, no React and no clock, in the same spirit as bloub's engine
- * (see ./bloub, MIT). The body is a rounded-square robot head (Arc brand), eyes cut as mask holes.
+ * (see ./bloub, MIT). The body is a pointy-top rounded hexagon (Arc brand), eyes cut as mask holes.
  * Units: body circumradius = 1. Screen y points down.
  */
 import { TAU, clamp, easings, lerp } from "./bloub/math";
@@ -19,6 +19,8 @@ export const MASCOT_STATES: MascotState[] = [
 ];
 
 const STEP = Math.PI / 2;
+/** Vertex spacing of the hex body. Rotation snaps land on a vertex. */
+const HEX_STEP = Math.PI / 3;
 const pathOf = (pts: Point[], s: number) => pts.map((p, i) => `${i ? "L" : "M"}${(p.x * s).toFixed(2)} ${(p.y * s).toFixed(2)}`).join("") + "Z";
 
 /** Optional rim V-notch (kept for rare morph states; Arc default pose uses no spokes). */
@@ -33,13 +35,16 @@ export function notchPath(k: number, open: number, rot: number, s: number, bodyR
   return pathOf([at(r0, c - ai), at(r0, c + ai), at(1.5, c + tw + ao), at(1.5, c + tw - ao)], s);
 }
 
-/** Rounded square robot head (Arc), axis-aligned. */
-const BODY = regularPolygonProfile(4, 1.02, 0.22, 0);
+/** Pointy-top rounded hexagon (Arc). First vertex sits at the top. */
+const BODY = regularPolygonProfile(6, 1.02, 0.16, -90);
+/** Rare fidget: the hex morphs into a diamond, then back. */
+const DIAMOND = regularPolygonProfile(4, 1.0, 0.18, 45);
 
-/** Body shapes the octagon can morph into. All share bloub's 64 radial samples, so a morph is a blend of radii. */
+/** Body shapes the hex can morph into. All share bloub's 64 radial samples, so a morph is a blend of radii. */
 const BAR_UPRIGHT_CY = -0.1875;
 const SHAPES = {
   octagon: BODY,
+  diamond: DIAMOND,
   egg: [...PROFILES.egg].map((r) => r * 1.02),
   hexagon: [...PROFILES.hexagon].map((r) => r * 1.02),
   triangle: [...PROFILES.triangle],
@@ -92,8 +97,8 @@ function dotPulse(t: number, index: number): number {
 
 /** States that carry the resting face. */
 export const BASE_FACE: ReadonlySet<MascotState> = new Set(["idle", "swirl", "listening"]);
-/** Square-body states: rotation snaps to 90° symmetry. */
-const SQUARE_BODY: ReadonlySet<MascotState> = new Set(["arrival", "idle", "listening", "thinking", "answering", "success", "warning", "error", "doze", "wink", "wide", "notify", "swirl", "burst", "comet", "sleep", "dots"]);
+/** Hex-body states: rotation snaps to 60° symmetry. */
+const HEX_BODY: ReadonlySet<MascotState> = new Set(["arrival", "idle", "listening", "thinking", "answering", "success", "warning", "error", "doze", "wink", "wide", "notify", "swirl", "burst", "comet", "sleep", "dots"]);
 
 /** Timing per state, in seconds: how long one pass reads well, the shortest cut that still completes, and the morph in. */
 export const STATE_INFO: Record<MascotState, { duration: number; min?: number; morph: number; blinkIn: boolean; loops: boolean }> = {
@@ -168,7 +173,7 @@ export function statePose(state: MascotState, lt: number, t: number, still = fal
   switch (state) {
     case "arrival": {
       p.scale = backOut(lt / 0.5);
-      p.rot = -STEP * (1 - easings.easeOutCubic(clamp(lt / 0.9)));
+      p.rot = -HEX_STEP * (1 - easings.easeOutCubic(clamp(lt / 0.9)));
       const f = easings.easeOutCubic(clamp((lt - 0.55) / 0.4));
       p.hub = f; p.eyeAlpha = f; p.eyeH *= 0.3 + 0.7 * f;
       break;
@@ -187,7 +192,7 @@ export function statePose(state: MascotState, lt: number, t: number, still = fal
     case "answering": {
       const ph = lt * 1.6 * Math.PI * 2;
       p.open = 0.45; p.sy *= 1 + Math.sin(ph) * 0.022; p.sx *= 1 - Math.sin(ph) * 0.013; p.dy = -Math.max(0, Math.sin(ph)) * 0.015;
-      const n = Math.floor(lt / 1.2); p.rot = (n + easings.easeOutCubic(clamp((lt - n * 1.2) / 0.3))) * STEP;
+      const n = Math.floor(lt / 1.2); p.rot = (n + easings.easeOutCubic(clamp((lt - n * 1.2) / 0.3))) * HEX_STEP;
       p.gaze = { ...p.gaze, pitch: 6 + L.dPitch * 0.5 };
       p.lids = [0.86 * L.lid, 0.86 * L.lid];
       break;
@@ -270,7 +275,7 @@ export function statePose(state: MascotState, lt: number, t: number, still = fal
       p.gaze = { yaw: p.gaze.yaw - 5, pitch: p.gaze.pitch - 2, roll: p.gaze.roll - 3 }; p.split = 11.5; p.ew = [0.9, 0.9]; p.eh = [0.95, 0.95];
       break;
     case "hexagon":
-      p.shape = SHAPES.hexagon; p.spoke = 0.6;
+      p.shape = SHAPES.diamond; p.spoke = 0.6;
       p.gaze = { yaw: p.gaze.yaw - 3, pitch: p.gaze.pitch - 3, roll: p.gaze.roll }; p.split = 13.4; p.ew = [0.95, 0.95];
       break;
     case "play": {
@@ -294,7 +299,7 @@ export function statePose(state: MascotState, lt: number, t: number, still = fal
     case "swirl":
       // bloub's settings transition: half the orbit rings, short, with the eyes taking a quick look round
       p.gaze = { ...p.gaze, yaw: p.gaze.yaw + Math.sin(clamp(lt / 1.1) * TAU) * 22 };
-      p.rot = easings.easeInOutCubic(clamp(lt / 1.1)) * STEP;
+      p.rot = easings.easeInOutCubic(clamp(lt / 1.1)) * HEX_STEP;
       p.arcs = arcs(RINGS_W.slice(0, 3), "sr", lt, (i) => clamp((lt - i * 0.06) / 0.14) * clamp((1.22 - lt) / 0.34));
       break;
     case "burst": {
@@ -344,7 +349,7 @@ export const FADE = 0.35;
 /** Pose on screen: the new state's pose, blended from the frozen pose `from` that was on screen at the change. */
 export function sample(state: MascotState, lt: number, t: number, from?: Pose, still = false, life?: Life, face?: Face): Pose {
   const to = statePose(state, still ? 30 : lt, still ? 0 : t, still, life, face);
-  if (from && SQUARE_BODY.has(state)) to.rot += Math.round(from.rot / STEP) * STEP;
+  if (from && HEX_BODY.has(state)) to.rot += Math.round(from.rot / HEX_STEP) * HEX_STEP;
   if (!from || still) return to;
   const morph = Math.max(FADE, STATE_INFO[state].morph);
   // a fresh copy of `from` without decoration that has already faded keeps blends from piling up
@@ -382,8 +387,8 @@ export function render(p: Pose, o: RenderOpts = {}): Frame {
       transform: `translate(${e.x.toFixed(2)} ${e.y.toFixed(2)}) scale(1 ${bs.toFixed(3)}) matrix(${e.a.toFixed(3)} ${e.b.toFixed(3)} ${e.c.toFixed(3)} ${e.d.toFixed(3)} 0 0) rotate(${p.tilt[i].toFixed(1)})`,
     };
   });
-  const particles = p.particles < 0 ? [] : Array.from({ length: 4 }, (_, k) => {
-    const a = -Math.PI / 2 + STEP / 2 + k * STEP + p.rot;
+  const particles = p.particles < 0 ? [] : Array.from({ length: 6 }, (_, k) => {
+    const a = -Math.PI / 2 + k * HEX_STEP + p.rot;
     const f = easings.easeOutCubic(clamp(p.particles / 0.8));
     const r = (0.95 + 0.55 * f) * R;
     return { x: Math.cos(a) * r, y: Math.sin(a) * r, r: 9 * (1 - 0.6 * f), o: 1 - clamp((p.particles - 0.5) / 0.5) };

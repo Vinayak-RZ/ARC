@@ -1407,7 +1407,7 @@ a { color: var(--ee-color-primary); }
 }
 .composer-card-compact {
   min-height: 0;
-  max-width: 720px;
+  width: 100%;
 }
 .home-header-with-mascot {
   display: flex;

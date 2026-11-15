@@ -217,10 +217,65 @@ function ThumbSpectrum() {
   );
 }
 
+function ThumbRlc() {
+  const pts = Array.from({ length: 48 }, (_, i) => {
+    const t = i / 47;
+    const env = Math.exp(-2.2 * t);
+    const y = 78 - (1 - env * Math.cos(t * Math.PI * 3.2)) * 48;
+    return pt(22 + t * 120, y);
+  }).join(" ");
+  return (
+    <Frame>
+      {axes(22, 80, 146, 16)}
+      <line className="th-dash" x1={22} y1={30} x2={146} y2={30} />
+      <polyline className="th-line" points={pts} />
+    </Frame>
+  );
+}
+
+function ThumbFault() {
+  return (
+    <Frame>
+      <line className="th-line" x1={28} y1={42} x2={132} y2={42} />
+      <circle className="th-axis" cx={36} cy={42} r={12} />
+      <text x={36} y={46} textAnchor="middle" className="example-thumb-label">G</text>
+      <line className="th-line" x1={88} y1={42} x2={88} y2={68} />
+      <polygon className="th-tint" points="78,68 98,68 88,84" />
+      <text x={104} y={78} className="example-thumb-label">LG</text>
+    </Frame>
+  );
+}
+
+function ThumbDispatch() {
+  return (
+    <Frame>
+      {axes(24, 80, 146, 16)}
+      <line className="th-dash" x1={24} y1={36} x2={146} y2={36} />
+      <polyline className="th-line" points="30,74 70,40" />
+      <polyline className="th-line" points="40,78 100,34" />
+      <polyline className="th-line" points="54,80 124,30" />
+    </Frame>
+  );
+}
+
+function ThumbBuck() {
+  return (
+    <Frame>
+      {axes(24, 78, 146, 18)}
+      <polyline className="th-line" points="28,70 70,28 132,70" />
+      <line className="th-dash" x1={24} y1={49} x2={146} y2={49} />
+    </Frame>
+  );
+}
+
 const THUMBS = {
   divider: ThumbDivider,
+  "rlc-step": ThumbRlc,
   "control-step": ThumbStep,
   "smib-swing": ThumbSwing,
+  "lg-fault": ThumbFault,
+  "ed-dispatch": ThumbDispatch,
+  "buck-ccm": ThumbBuck,
   "dc-drive": ThumbMotorSpeed,
   "digital-stable": ThumbDigital,
   "signals-fft": ThumbSpectrum,

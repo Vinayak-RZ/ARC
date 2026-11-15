@@ -67,10 +67,14 @@ def control_diagram_from_problem(problem: dict[str, Any] | None) -> dict[str, An
 
 def control_diagram_for_recipe(recipe_id: str, problem: dict[str, Any] | None) -> dict[str, Any] | None:
     from electrical_engineer.control.study_diagrams import (
+        buck_diagram,
         control_diagram_from_tf_problem,
+        digital_loop_diagram,
+        dispatch_diagram,
         drives_oneline_diagram,
         power_oneline_diagram,
         protection_oneline_diagram,
+        smib_swing_diagram,
     )
 
     if recipe_id == "control-diagram-to-model":
@@ -83,6 +87,14 @@ def control_diagram_for_recipe(recipe_id: str, problem: dict[str, Any] | None) -
         return protection_oneline_diagram(problem)
     if recipe_id == "solve-drives-problem":
         return drives_oneline_diagram(problem)
+    if recipe_id == "smib-swing-study":
+        return smib_swing_diagram(problem)
+    if recipe_id == "solve-digital-control-problem":
+        return digital_loop_diagram(problem)
+    if recipe_id == "ed-lambda-study":
+        return dispatch_diagram(problem)
+    if recipe_id == "study-power-electronics-v2" and str((problem or {}).get("solver") or "") == "ccm_buck":
+        return buck_diagram(problem)
     return None
 
 

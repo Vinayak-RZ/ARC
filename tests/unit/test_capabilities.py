@@ -1,10 +1,4 @@
-from electrical_engineer.capabilities import (
-    CAPABILITIES,
-    CD_NO_PROVIDER,
-    CapabilityError,
-    bind,
-    provider_installed,
-)
+from electrical_engineer.capabilities import CAPABILITIES, CapabilityError, bind
 
 
 def test_unknown_id_rejected() -> None:
@@ -28,14 +22,10 @@ def test_explicit_provider_passthrough() -> None:
     assert bound.capability is None
 
 
-def test_lumped_sim_without_spice_is_cannot_do() -> None:
+def test_lumped_sim_binds_run_spice() -> None:
     bound = bind("lumped-circuit-sim")
-    if provider_installed("run-spice"):
-        assert bound.provider == "run-spice"
-        assert bound.no_provider is False
-    else:
-        assert bound.provider == "label-unchecked"
-        assert bound.cannot_do == CD_NO_PROVIDER
+    assert bound.provider == "run-spice"
+    assert bound.no_provider is False
 
 
 def test_allowlist_size() -> None:

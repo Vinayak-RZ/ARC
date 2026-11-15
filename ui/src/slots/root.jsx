@@ -72,6 +72,7 @@ function Result({ id }) {
           unchecked={unchecked}
           modifiedAt={data?.modified_at}
           stale={stale}
+          note={(data?.work_steps || []).find((step) => step.title === "Check")?.result}
         />
       ) : (
         <p className="status-hint">{note}</p>
@@ -102,13 +103,45 @@ function Argument({ id }) {
   );
 }
 
+function ActivityFeed({ rows }) {
+  if (!rows?.length) return null;
+  return (
+    <table className="data-table activity-feed">
+      <thead>
+        <tr>
+          <th>Step</th>
+          <th>What ran</th>
+          <th>Status</th>
+          <th>Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row, i) => {
+          const status = row.unchecked ? "Unchecked" : row.ok === false ? "Failed" : "Done";
+          const ms = row.duration_ms == null ? "—" : `${Number(row.duration_ms).toFixed(0)} ms`;
+          return (
+            <tr key={`${row.node}-${i}`}>
+              <td>{i + 1}</td>
+              <td>{row.role || row.node}</td>
+              <td>{status}</td>
+              <td className="tabular-nums">{ms}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
+}
+
 function More({ id }) {
   const { data, error } = useRun(id);
   if (error || !data) return null;
   const excerpt = data.observation_excerpt || {};
   const spans = Array.isArray(data.trace_excerpt) ? data.trace_excerpt : [];
+  const feed = Array.isArray(data.activity_feed) ? data.activity_feed : [];
   return (
     <div className="disclosures diagnostics-panel">
+      <ActivityFeed rows={feed} />
       <details>
         <summary>Run id</summary>
         <p className="hint">
@@ -173,14 +206,18 @@ function More({ id }) {
         <summary>Evidentiary JSON</summary>
         <pre className="number-display">{data.evidentiary || ""}</pre>
       </details>
-      <details>
-        <summary>Plan</summary>
-        {data.plan ? <pre className="number-display">{data.plan}</pre> : <p className="empty">No plan yet.</p>}
-      </details>
-      <details>
-        <summary>Raw graph</summary>
-        <pre className="number-display">{JSON.stringify(data.graph || {}, null, 2)}</pre>
-      </details>
+      {data.plan ? (
+        <details>
+          <summary>Plan</summary>
+          <pre className="number-display">{data.plan}</pre>
+        </details>
+      ) : null}
+      {data.graph && Object.keys(data.graph).length ? (
+        <details>
+          <summary>Raw graph</summary>
+          <pre className="number-display">{JSON.stringify(data.graph, null, 2)}</pre>
+        </details>
+      ) : null}
       <details>
         <summary>Artifacts</summary>
         <p className="hint">Library SVG/PNG from this run only.</p>

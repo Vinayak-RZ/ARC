@@ -43,14 +43,12 @@ export function TopBar({ runMeta, onPrimaryAction, primaryLabel, runAgainPrimary
         ))}
       </nav>
       <div className="topbar-actions">
-        <ArcMascot
-          className="topbar-mascot"
-          size={28}
-          mode={agentEditing ? "thinking" : "asleep"}
-          label={agentEditing ? "Agent busy" : "Arc idle"}
-          idleTimes={{ bored: 20, sleepy: 40, doze: 60 }}
-        />
-        {agentEditing ? <span className="presence-chip">Agent editing</span> : null}
+        {agentEditing ? (
+          <>
+            <ArcMascot className="topbar-mascot" size={28} mode="thinking" label="Agent busy" />
+            <span className="presence-chip">Agent editing</span>
+          </>
+        ) : null}
         {showParams ? (
           <>
             <button type="button" className="button-secondary button-compact" onClick={() => go({ view: "studio" })}>

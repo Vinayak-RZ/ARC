@@ -23,9 +23,14 @@ const POSTER = {
 
 const EXAMPLE_FOR = {
   "schematic.divider": "divider",
+  "schematic.rlc_series": "rlc-step",
   "control.step": "control-step",
+  "control.bode": "control-step",
+  "control.root_locus": "control-step",
   "power.swing_equal_area": "smib-swing",
   "power.swing_animation": "smib-swing",
+  "power.oneline_bus": "lg-fault",
+  "power.dispatch_curve": "ed-dispatch",
 };
 
 const PACK_LABELS = {

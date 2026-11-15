@@ -1,5 +1,5 @@
 /**
- * Arc mascot: rounded-square robot head with eyes, driven by the pure engine + behaviour layer.
+ * Arc mascot: pointy-top hexagon with eyes, driven by the pure engine + behaviour layer.
  *
  * <ArcMascot mode="thinking" />
  * <ArcMascot state="wink" />
@@ -186,7 +186,7 @@ export function ArcMascot({
       ? `color-mix(in srgb, var(--arc-mascot-body, var(--ee-color-primary, #2f6feb)) ${Math.round((1 - f.desat) * 100)}%, #8C8A86)`
       : "var(--arc-mascot-body, var(--ee-color-primary, #2f6feb))";
   const body = "var(--arc-mascot-body, var(--ee-color-primary, #2f6feb))";
-  const tipY = small ? -98 : -118;
+  const tipY = small ? -104 : -132;
 
   return (
     <svg
