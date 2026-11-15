@@ -73,6 +73,7 @@ export function AppShell() {
           setLearnSubject(null);
           url.searchParams.delete("subject");
         }
+        url.searchParams.delete("session");
         if (v === "studio") {
           const nextTab = tab || "home";
           const nextLab = lab || null;

@@ -215,6 +215,8 @@ def seed_sample_runs(cwd: Path, runs_dir: Path) -> int:
     runs_dir.mkdir(parents=True, exist_ok=True)
     seeded = 0
     for ex in _UI_EXAMPLES:
+        if str(ex.get("recipe_id", "")).startswith("solve-"):
+            continue
         try:
             out = execute(str(ex["recipe_id"]), cwd=cwd, problem=dict(ex["problem"]))
             rid = out.get("run_id")
@@ -368,6 +370,25 @@ _UI_EXAMPLES = (
             "k_torque": 0.5,
             "t_load_nm": 5,
             "prompt": "DC drive speed",
+        },
+    },
+    {
+        "id": "boost-ccm",
+        "title": "Boost converter",
+        "caption": "CCM boost, 12 V in, duty 0.5",
+        "subject": "Power electronics",
+        "thumbnail": _golden_thumb("circuits/schematic.rlc_series.png"),
+        "recipe_id": "boost-converter-study",
+        "problem": {
+            "vin": 12,
+            "d": 0.5,
+            "l": 0.0001,
+            "c": 0.00001,
+            "fs": 100000,
+            "r": 10,
+            "expected": 24,
+            "tol": 1e-3,
+            "prompt": "Boost converter CCM",
         },
     },
     {
@@ -645,6 +666,7 @@ def create_app(root: Path | None = None) -> FastAPI:
                 if p.is_dir() and not _run_list_hidden(p)
             ]
         items = _dedupe_run_items(items)
+        items = [item for item in items if not item.get("unchecked")]
         return {"runs": items, "seeding": bool(seed_state["active"])}
 
     @app.delete("/api/runs/samples")
@@ -669,6 +691,8 @@ def create_app(root: Path | None = None) -> FastAPI:
 
         rows: list[dict] = []
         for ex in _UI_EXAMPLES:
+            if str(ex.get("recipe_id", "")).startswith("solve-"):
+                continue
             row = {k: ex[k] for k in ex if k != "problem"}
             pack = pack_for_recipe(str(ex["recipe_id"]), cwd)
             if pack:

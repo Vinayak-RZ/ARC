@@ -10,15 +10,12 @@ from electrical_engineer.ui_server.app import create_app
 from electrical_engineer.ui_server.work_steps import work_steps
 
 _EXAMPLE_IDS = (
-    "divider",
     "rlc-step",
-    "control-step",
-    "digital-stable",
     "smib-swing",
     "lg-fault",
     "ed-dispatch",
     "buck-ccm",
-    "dc-drive",
+    "boost-ccm",
     "rectifier-3ph",
     "idmt-relay",
     "lead-design",
@@ -29,7 +26,7 @@ _EXAMPLE_IDS = (
 )
 
 
-def test_examples_are_sixteen_varied(tmp_path, monkeypatch) -> None:
+def test_examples_catalog(tmp_path, monkeypatch) -> None:
     monkeypatch.setenv("EE_NO_SEED", "1")
     body = TestClient(create_app(tmp_path)).get("/api/examples").json()
     ids = [ex["id"] for ex in body["examples"]]
