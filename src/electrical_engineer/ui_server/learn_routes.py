@@ -1,4 +1,4 @@
-"""HTTP routes for Learn curriculum, course notes, and progress."""
+"""HTTP routes for Learn curriculum, notes, progress, and achievements."""
 
 from __future__ import annotations
 
@@ -140,3 +140,9 @@ def register_learn_routes(app: FastAPI, *, root: Path) -> None:
             "topics_done": updated.get("topics_done") or {},
             "labs_opened": updated.get("labs_opened") or {},
         }
+
+    @app.get("/api/learn/achievements")
+    def learn_achievements() -> dict:
+        from electrical_engineer.learn import achievements as achievements_mod
+
+        return achievements_mod.evaluate(root, root / "runs")
