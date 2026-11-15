@@ -890,8 +890,10 @@ def create_app(root: Path | None = None) -> FastAPI:
         }
 
     from electrical_engineer.ui_server.studio_routes import register_studio_routes
+    from electrical_engineer.ui_server.learn_routes import register_learn_routes
 
     register_studio_routes(app, root=cwd)
+    register_learn_routes(app, root=cwd)
 
     @app.get("/api/visual-kit/golden/{rel_path:path}", response_model=None)
     def visual_golden(rel_path: str):
