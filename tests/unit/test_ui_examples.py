@@ -19,14 +19,22 @@ _EXAMPLE_IDS = (
     "ed-dispatch",
     "buck-ccm",
     "dc-drive",
+    "rectifier-3ph",
+    "idmt-relay",
+    "lead-design",
+    "fourier-square",
+    "opamp-inverting",
+    "wheatstone",
+    "line-params",
 )
 
 
-def test_examples_are_nine_varied(tmp_path, monkeypatch) -> None:
+def test_examples_are_sixteen_varied(tmp_path, monkeypatch) -> None:
     monkeypatch.setenv("EE_NO_SEED", "1")
     body = TestClient(create_app(tmp_path)).get("/api/examples").json()
     ids = [ex["id"] for ex in body["examples"]]
     assert ids == list(_EXAMPLE_IDS)
+    assert all(ex.get("pack") for ex in body["examples"])
     assert "signals-fft" not in ids
 
 

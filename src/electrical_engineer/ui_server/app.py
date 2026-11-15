@@ -374,6 +374,116 @@ _UI_EXAMPLES = (
             "prompt": "DC drive speed",
         },
     },
+    {
+        "id": "rectifier-3ph",
+        "title": "Three-phase rectifier",
+        "caption": "DC output for 415 V line, α = 45°",
+        "subject": "Power electronics",
+        "thumbnail": _golden_thumb("circuits/waveform.phasor.png"),
+        "recipe_id": "rectifier-3ph-study",
+        "problem": {
+            "v_ll_rms": 415,
+            "alpha_deg": 45,
+            "topology": "full",
+            "io_a": 0,
+            "ls_h": 0,
+            "f_hz": 50,
+            "prompt": "Three-phase rectifier",
+        },
+    },
+    {
+        "id": "idmt-relay",
+        "title": "IDMT relay time",
+        "caption": "Operating time for a standard inverse curve",
+        "subject": "Power",
+        "thumbnail": _golden_thumb("oneline/power.oneline_bus.png"),
+        "recipe_id": "idmt-relay-study",
+        "problem": {
+            "i_fault_a": 1000,
+            "ct_primary_a": 100,
+            "ct_secondary_a": 1,
+            "plug_setting": 1.0,
+            "tms": 1,
+            "curve": "standard",
+            "prompt": "IDMT relay time",
+        },
+    },
+    {
+        "id": "lead-design",
+        "title": "Lead compensator",
+        "caption": "Lead network for a 45° phase margin target",
+        "subject": "Control",
+        "thumbnail": _golden_thumb("control/control.step.png"),
+        "recipe_id": "lead-compensator-design-study",
+        "problem": {
+            "num": [1],
+            "den": [1, 1, 0],
+            "kv_target": 10,
+            "pm_target_deg": 45,
+            "epsilon_deg": 8,
+            "prompt": "Lead compensator design",
+        },
+    },
+    {
+        "id": "fourier-square",
+        "title": "Fourier series",
+        "caption": "Fundamental amplitude of a square wave",
+        "subject": "Signals",
+        "thumbnail": _golden_thumb("circuits/waveform.phasor.png"),
+        "recipe_id": "fourier-series-study",
+        "problem": {
+            "waveform": "square",
+            "amplitude": 1,
+            "f0_hz": 50,
+            "n_harmonics": 9,
+            "prompt": "Fourier square wave",
+        },
+    },
+    {
+        "id": "opamp-inverting",
+        "title": "Inverting op-amp",
+        "caption": "Gain for 1 kΩ / 10 kΩ feedback",
+        "subject": "Electronics",
+        "thumbnail": _golden_thumb("circuits/schematic.divider.png"),
+        "recipe_id": "opamp-amplifier-study",
+        "problem": {
+            "config": "inverting",
+            "vin": [1],
+            "rf": 10000,
+            "r1": 1000,
+            "prompt": "Inverting op-amp gain",
+        },
+    },
+    {
+        "id": "wheatstone",
+        "title": "Wheatstone bridge",
+        "caption": "Unknown leg for balance with known arms",
+        "subject": "Measurements",
+        "thumbnail": _golden_thumb("circuits/schematic.divider.png"),
+        "recipe_id": "bridge-balance-study",
+        "problem": {
+            "bridge": "wheatstone",
+            "r1": 100,
+            "r2": 200,
+            "r3": 50,
+            "prompt": "Wheatstone bridge balance",
+        },
+    },
+    {
+        "id": "line-params",
+        "title": "Line parameters",
+        "caption": "Inductance per metre for an equilateral spacing",
+        "subject": "EM fields",
+        "thumbnail": _golden_thumb("circuits/waveform.phasor.png"),
+        "recipe_id": "line-parameters-study",
+        "problem": {
+            "config": "three_phase_equilateral",
+            "r_m": 0.01,
+            "d_m": 2,
+            "f_hz": 50,
+            "prompt": "Transmission line inductance",
+        },
+    },
 )
 
 _NODE_ROLE = {
@@ -539,7 +649,16 @@ def create_app(root: Path | None = None) -> FastAPI:
 
     @app.get("/api/examples")
     def list_examples() -> dict:
-        return {"examples": [{k: ex[k] for k in ex if k != "problem"} for ex in _UI_EXAMPLES]}
+        from electrical_engineer.catalog import pack_for_recipe
+
+        rows: list[dict] = []
+        for ex in _UI_EXAMPLES:
+            row = {k: ex[k] for k in ex if k != "problem"}
+            pack = pack_for_recipe(str(ex["recipe_id"]), cwd)
+            if pack:
+                row["pack"] = pack
+            rows.append(row)
+        return {"examples": rows}
 
     @app.get("/api/reference")
     def reference_search(q: str = "", limit: int = 20) -> dict:

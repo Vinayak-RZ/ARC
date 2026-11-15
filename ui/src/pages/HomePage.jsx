@@ -1,19 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { Shortcut } from "../components/Shortcut.jsx";
 import { ExampleThumb } from "../components/ExampleThumb.jsx";
 import { MascotState } from "../components/MascotState.jsx";
 import { ArcMascot } from "../mascot/index.js";
+import { useCurriculum } from "../hooks/useLearn.js";
 import { relativeTime } from "../units/format.js";
 import { displayTitle, subjectTag } from "../runDisplay.js";
-
-const SUBJECTS = [
-  { id: "circuits", label: "Circuits" },
-  { id: "control", label: "Control" },
-  { id: "power", label: "Power" },
-  { id: "signals", label: "Signals" },
-  { id: "machines", label: "Machines" },
-];
 
 const PLACEHOLDERS = [
   "Find Vout for a 10 V divider with 1 kΩ and 1 kΩ…",
@@ -23,27 +16,58 @@ const PLACEHOLDERS = [
 
 function detectSubject(text) {
   const t = text.toLowerCase();
-  if (t.includes("bode") || t.includes("transfer") || t.includes("step")) return "control";
-  if (t.includes("swing") || t.includes("fault") || t.includes("bus")) return "power";
+  if (t.includes("bode") || t.includes("transfer") || t.includes("compensator")) return "control";
+  if (t.includes("rectifier") || t.includes("converter") || t.includes("inverter")) return "power_electronics";
+  if (t.includes("relay") || t.includes("swing") || t.includes("fault") || t.includes("dispatch")) return "power";
+  if (t.includes("fourier") || t.includes("fft") || t.includes("frequency")) return "signals";
+  if (t.includes("op-amp") || t.includes("opamp") || t.includes("amplifier")) return "electronics";
+  if (t.includes("bridge") || t.includes("wheatstone")) return "measurements";
+  if (t.includes("transmission") || t.includes("line param")) return "em";
+  if (t.includes("laplace") || t.includes("complex")) return "maths";
   if (t.includes("motor") || t.includes("drive")) return "machines";
-  if (t.includes("fft") || t.includes("frequency")) return "signals";
   return "circuits";
 }
 
-export function HomePage({ runs, onRunsChange, onOpenProblem, seeding = false }) {
+export function HomePage({
+  runs,
+  onRunsChange,
+  onOpenProblem,
+  onOpenLearn,
+  onOpenSubject,
+  seeding = false,
+}) {
   const [examples, setExamples] = useState([]);
   const [packs, setPacks] = useState([]);
   const [prompt, setPrompt] = useState("");
   const [subject, setSubject] = useState("circuits");
   const [subjectLocked, setSubjectLocked] = useState(false);
+  const [examplePack, setExamplePack] = useState(null);
+  const [showAllExamples, setShowAllExamples] = useState(false);
   const [popover, setPopover] = useState(false);
   const [busy, setBusy] = useState(false);
   const [lastUnchecked, setLastUnchecked] = useState(null);
   const [phIndex, setPhIndex] = useState(0);
   const areaRef = useRef(null);
+  const { data: curriculum, error: curriculumError } = useCurriculum();
   const recent = [...runs]
     .sort((a, b) => Number(b.modified_at || 0) - Number(a.modified_at || 0))
     .slice(0, 3);
+
+  const currentSemester = useMemo(() => {
+    if (!curriculum) return null;
+    const n = curriculum.current_semester;
+    return (curriculum.semesters || []).find((s) => s.n === n) || null;
+  }, [curriculum]);
+
+  const filteredExamples = useMemo(() => {
+    if (!examplePack) return examples;
+    return examples.filter((ex) => ex.pack === examplePack);
+  }, [examples, examplePack]);
+
+  const visibleExamples = useMemo(() => {
+    if (examplePack || showAllExamples) return filteredExamples;
+    return filteredExamples.slice(0, 6);
+  }, [filteredExamples, examplePack, showAllExamples]);
 
   useEffect(() => {
     fetch("/api/examples")
@@ -124,8 +148,15 @@ export function HomePage({ runs, onRunsChange, onOpenProblem, seeding = false })
     }
   }
 
-  const subjectLabel = SUBJECTS.find((s) => s.id === subject)?.label || "Circuits";
+  const subjectLabel = packs.find((s) => s.id === subject)?.label || "Circuits";
   const mascotMode = busy ? "thinking" : prompt.trim() ? "listening" : lastUnchecked === true ? "warning" : lastUnchecked === false ? "success" : "ambient";
+
+  function selectPack(packId) {
+    setSubject(packId);
+    setSubjectLocked(true);
+    setExamplePack(packId);
+    setShowAllExamples(false);
+  }
 
   return (
     <div className="page-column home-product">
@@ -150,7 +181,7 @@ export function HomePage({ runs, onRunsChange, onOpenProblem, seeding = false })
             </button>
             {popover ? (
               <ul className="subject-popover" role="listbox">
-                {SUBJECTS.map((s) => (
+                {packs.map((s) => (
                   <li key={s.id}>
                     <button
                       type="button"
@@ -192,15 +223,7 @@ export function HomePage({ runs, onRunsChange, onOpenProblem, seeding = false })
           <h2>What Arc can do</h2>
           <div className="capability-grid">
             {packs.map((p) => (
-              <button
-                key={p.id}
-                type="button"
-                className="capability-card"
-                onClick={() => {
-                  setSubject(p.id);
-                  setSubjectLocked(true);
-                }}
-              >
+              <button key={p.id} type="button" className="capability-card" onClick={() => selectPack(p.id)}>
                 <span className="capability-label">{p.label}</span>
                 <span className="capability-count">{p.recipe_count} recipes</span>
                 <span className="hint">{p.blurb}</span>
@@ -211,8 +234,32 @@ export function HomePage({ runs, onRunsChange, onOpenProblem, seeding = false })
       ) : null}
       <section className="home-section">
         <h2>Try an example</h2>
+        {packs.length > 0 ? (
+          <div className="library-domain-chips home-pack-chips" role="group" aria-label="Filter examples by pack">
+            <button
+              type="button"
+              className={examplePack ? "chip" : "chip is-pressed"}
+              onClick={() => {
+                setExamplePack(null);
+                setShowAllExamples(false);
+              }}
+            >
+              All
+            </button>
+            {packs.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                className={examplePack === p.id ? "chip is-pressed" : "chip"}
+                onClick={() => selectPack(p.id)}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
+        ) : null}
         <div className="example-grid example-grid-six">
-          {examples.map((ex) => (
+          {visibleExamples.map((ex) => (
             <button
               key={ex.id}
               type="button"
@@ -229,7 +276,42 @@ export function HomePage({ runs, onRunsChange, onOpenProblem, seeding = false })
             </button>
           ))}
         </div>
+        {!examplePack && !showAllExamples && examples.length > 6 ? (
+          <button type="button" className="button-secondary home-show-all-examples" onClick={() => setShowAllExamples(true)}>
+            Show all ({examples.length})
+          </button>
+        ) : null}
       </section>
+      {curriculum && !curriculumError && currentSemester?.subjects?.length ? (
+        <section className="home-section home-continue-learn">
+          <div className="home-continue-learn-head">
+            <h2>Continue learning</h2>
+            {onOpenLearn ? (
+              <button type="button" className="button-secondary" onClick={onOpenLearn}>
+                Open Learn
+              </button>
+            ) : null}
+          </div>
+          <ul className="home-continue-rows">
+            {currentSemester.subjects.map((subj) => (
+              <li key={subj.id}>
+                <button
+                  type="button"
+                  className="home-continue-row"
+                  onClick={() => onOpenSubject?.(subj.id)}
+                  disabled={!onOpenSubject}
+                >
+                  <span className="learn-code-label">{subj.code || subj.id}</span>
+                  <span className="example-card-title">{subj.title}</span>
+                  <span className="hint">
+                    {subj.progress?.done || 0} / {subj.progress?.total || 0} topics
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
       {seeding && recent.length === 0 ? (
         <section className="home-section">
           <MascotState kind="loading" size={56} title="Preparing sample problems…" message="Checking a few recipes so Recent is not empty." />

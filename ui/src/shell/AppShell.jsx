@@ -133,7 +133,16 @@ export function AppShell() {
   }
   let workspace = null;
   if (view === "home") {
-    workspace = <HomePage runs={runs} onRunsChange={reload} onOpenProblem={openProblem} seeding={seeding} />;
+    workspace = (
+      <HomePage
+        runs={runs}
+        onRunsChange={reload}
+        onOpenProblem={openProblem}
+        onOpenLearn={() => navigate({ view: "learn" })}
+        onOpenSubject={(sid) => navigate({ view: "learn", subject: sid })}
+        seeding={seeding}
+      />
+    );
   } else if (view === "learn" && !learnSubjectId) {
     workspace = (
       <LearnPage
