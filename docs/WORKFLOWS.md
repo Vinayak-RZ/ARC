@@ -40,7 +40,7 @@ Every pack owns genres solve, derive, design, simulate, review, explain, report.
 
 ## 1. Catalog
 
-Discovery: `electrical-engineer workflows` / `list_workflow_ids()` → **42** YAML recipes under `workflows/`.  
+Discovery: `electrical-engineer workflows` / `list_workflow_ids()` → **80** YAML recipes under `workflows/`.  
 `compose-from-parts` is a CLI/MCP compose path (**not** a YAML recipe id).
 
 ### Cross-cutting
@@ -94,6 +94,49 @@ Discovery: `electrical-engineer workflows` / `list_workflow_ids()` → **42** YA
 | study-circuits-v2 | Circuits study binding | circuits | v1 |
 | study-machines-v2 | Machines study binding | machines | v1 |
 | study-power-electronics-v2 | Power electronics study binding | power_electronics | v1 |
+
+### Deterministic study recipes (SolverSpec + closed-form)
+
+| id | Purpose | Pack |
+|----|---------|------|
+| thevenin-equivalent-study | DC Thevenin equivalent | circuits |
+| max-power-transfer-study | AC maximum power transfer | circuits |
+| two-port-study | Two-port parameter conversion | circuits |
+| resonance-study | RLC resonance frequency | circuits |
+| fourier-series-study | Fourier series harmonics | signals |
+| convolution-study | Discrete-time convolution | signals |
+| dft-spectrum-study | DFT spectrum peak | signals |
+| sampling-aliasing-study | Sampling alias frequency | signals |
+| laplace-inverse-study | Laplace partial-fraction inverse | signals |
+| bjt-bias-study | BJT divider bias | electronics |
+| opamp-amplifier-study | Op-amp amplifier configs | electronics |
+| kmap-minimization-study | Karnaugh map minimization | electronics |
+| bridge-balance-study | Wheatstone / AC bridge balance | measurements |
+| meter-range-extension-study | Ammeter shunt / voltmeter multiplier | measurements |
+| transformer-tests-study | Transformer OC and SC tests | machines |
+| induction-torque-slip-study | Induction motor torque vs slip | machines |
+| synchronous-regulation-study | Sync generator voltage regulation | machines |
+| line-parameters-study | Overhead line inductance | em |
+| capacitance-geometry-study | Capacitance from geometry | em |
+| rectifier-1ph-study | Single-phase controlled rectifier | power_electronics |
+| rectifier-3ph-study | Three-phase controlled rectifier | power_electronics |
+| boost-converter-study | Boost converter CCM | power_electronics |
+| buck-boost-converter-study | Buck-boost converter CCM | power_electronics |
+| six-step-inverter-study | Six-step inverter line voltage | power_electronics |
+| spwm-inverter-study | SPWM inverter fundamental RMS | power_electronics |
+| idmt-relay-study | IDMT relay operating time | power |
+| idmt-coordination-study | IDMT coordination TMS | power |
+| differential-protection-study | Differential protection bias | power |
+| distance-mho-study | Mho relay reach setting | power |
+| circuit-breaker-rrrv-study | Circuit breaker RRRV | power |
+| critical-clearing-study | Equal-area critical clearing | power |
+| lfc-single-area-study | Single-area load frequency control | power |
+| pid-zn-ultimate-study | Ziegler–Nichols ultimate-gain PID | control |
+| pid-zn-reaction-curve-study | Ziegler–Nichols reaction-curve PID | control |
+| lead-compensator-design-study | Lead compensator design | control |
+| lag-compensator-design-study | Lag compensator design | control |
+| second-order-specs-study | Second-order time-domain specs | control |
+| routh-hurwitz-study | Routh–Hurwitz stability | control |
 
 ### Other packs (solve + explain for every curriculum pack)
 

@@ -66,6 +66,10 @@ GATE EE technical sections remain a convenient **check** that an Indian UG stude
 
 Source: GATE EE syllabus mirror used in research (`research/source-ledger.md` S11).
 
+## Learn page and semesters
+
+**D6:** The Learn surface follows IIT Roorkee NEP-style semesters 1–8. Curriculum YAML (`src/electrical_engineer/learn/curriculum.yaml`) marks subjects as `provided` (notes + practice recipes) or `inferred` (outline only). Course HTML under `knowledge/courses/` is served only via the manifest (`INDEX.yaml`); path traversal is rejected. Achievements and topic progress live under `.electrical-engineer/learn/` on the student machine. PG-only courses stay out of the public Learn rail ([`CANNOT_DO.md`](CANNOT_DO.md) `CD-PG-TIER`).
+
 ## What this does not decide
 
 - Gold-task counts per pack (eval design).

@@ -2,7 +2,7 @@
 
 Gold tasks for `electrical-engineer eval` and `eval --pack <pack>`. See [`docs/ARCHITECTURE.md`](../../docs/ARCHITECTURE.md) and [`docs/WORKFLOWS.md`](../../docs/WORKFLOWS.md).
 
-The catalog ships **42** named workflow recipes (`list_workflow_ids()` in `src/electrical_engineer/catalog.py`). Eval packs score a subset with checked-in `expect.json` files: **60** tasks total (`electrical-engineer eval` with no `--pack`), including **31** in `circuits`.
+The catalog ships **80** named workflow recipes (`list_workflow_ids()` in `src/electrical_engineer/catalog.py`). Eval packs score a subset with checked-in `expect.json` files: **60** tasks total (`electrical-engineer eval` with no `--pack`), including **31** in `circuits`.
 
 ## Layout
 

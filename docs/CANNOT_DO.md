@@ -7,6 +7,10 @@ Honest holes. Prefer a row here over fake gold. Expanded by B_NODES and later pa
 | CD-PLC | Live PLC / plant actuation | Out of product (PID) | None |
 | CD-CIVIL | Civil / mechanical / manufacturing | Never this product | None |
 | CD-PG | Graduate-only optimal control as a public promise | UG bound | Later unpublished `--profile` |
+| CD-PG-TIER | Full postgraduate EE tier (research EM, optimal control cores, analog IC flows) | Deferred; Learn/curriculum stays UG-first | Keep PG rows out of public Learn semesters |
+| CD-LAPLACE-IMPROPER | Laplace inverse for non-proper F(s) | Solver assumes proper rational F(s) | Reduce improper part by hand; else unchecked |
+| CD-SPWM-OVERMOD | SPWM overmodulation (ma > 1) closed-form RMS | Linear modulation formulas only | Cap ma ≤ 1 or label unchecked |
+| CD-KMAP-GT6 | Karnaugh maps above 6 variables | Combinatorial explosion / UI bound | Quine–McCluskey offline or unchecked |
 | CD-H4 | Electric Pi / Cordis / DSH as runtime | H4/H5 falsifier | H3 CLI + hosts |
 | CD-BOOKS | Commercial textbooks in git | Copyright | BYO on the student machine |
 | CD-EXAM-PDF | Third-party exam PDFs in git | Copyright | BYO; licence-clean reconstructions |
