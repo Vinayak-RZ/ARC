@@ -32,7 +32,7 @@ export function LearnPage({ onOpenSubject, onOpenAchievements }) {
   if (error || !data) {
     return (
       <div className="learn-page">
-        <MascotState mode="error" title="Could not load curriculum" actionLabel="Retry" onAction={reload} />
+        <MascotState kind="error" title="Could not load curriculum" actionLabel="Retry" onAction={reload} />
       </div>
     );
   }
