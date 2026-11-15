@@ -7,7 +7,8 @@ from typing import Any
 
 from electrical_engineer.engines.smib_swing import SmibCase
 from electrical_engineer.visual_kit.animation import render_swing_fault_animation
-from electrical_engineer.visual_kit.design_tokens import ThemeName
+from electrical_engineer.visual_kit.design_tokens import ThemeName, get_theme
+from electrical_engineer.visual_kit.mpl_theme import arc_rcparams
 from electrical_engineer.visual_kit.render_circuit import (
     render_phasor_diagram,
     render_schematic_divider,
@@ -65,8 +66,12 @@ _COMPONENTS = {
 
 
 def render_component(component_id: str, out_dir: Path, props: dict[str, Any] | None = None) -> dict[str, Any]:
+    import matplotlib as mpl
+
     props = props or {}
     fn = _COMPONENTS.get(component_id)
     if fn is None:
         raise ValueError(f"unknown visual component: {component_id}")
-    return fn(out_dir, props)
+    theme = get_theme(_theme(props))
+    with mpl.rc_context(arc_rcparams(theme)):
+        return fn(out_dir, props)

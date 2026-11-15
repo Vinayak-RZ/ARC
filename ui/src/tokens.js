@@ -11,7 +11,7 @@ export const arcTokens = {
   hairlineStrong: "#D4D4D1",
   ink: "#202020",
   body: "#5F5F5C",
-  muted: "#8A8A86",
+  muted: "#70706c",
   onPrimary: "#FFFFFF",
   primary: "#2F6FEB",
   primaryHover: "#2459C9",
