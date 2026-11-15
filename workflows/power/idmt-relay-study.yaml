@@ -1,0 +1,30 @@
+id: idmt-relay-study
+title: IDMT relay operating time
+pack: power
+sample_problem:
+  i_fault_a: 1000
+  ct_primary_a: 100
+  ct_secondary_a: 1
+  plug_setting: 1.0
+  tms: 1
+  curve: standard
+  expected: 2.971
+  tol: 1e-3
+nodes:
+  solve:
+    activity: run-ee-v2-solver
+    default_solver: idmt_relay_time
+    capability: power-network-study
+  check:
+    activity: check-numeric
+    default_solver: idmt_relay_time
+    needs: [solve]
+  trap:
+    activity: trap-verify
+    needs: [solve]
+  label:
+    activity: label-unchecked
+    needs: [trap, check]
+  summary:
+    activity: write-run-summary
+    needs: [label]
