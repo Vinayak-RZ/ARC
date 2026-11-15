@@ -10,10 +10,6 @@ import "../studio-engine/labs/ConverterLab.jsx";
 import "../studio-engine/labs/IdmtLab.jsx";
 import "../studio-engine/labs/LeadLab.jsx";
 
-function studioSessionInUrl() {
-  return Boolean(new URLSearchParams(window.location.search).get("session"));
-}
-
 export function StudioPage({ onNavigate }) {
   const tab = useLayout((s) => s.studioTab) || "home";
   const lab = useLayout((s) => s.studioLab);
@@ -140,7 +136,7 @@ export function StudioPage({ onNavigate }) {
 
       {tab === "control" ? (
         <div className="studio-workspace-pane">
-          {renderSlot("control.studio", { autoBoot: studioSessionInUrl() })}
+          {renderSlot("control.studio", { autoBoot: true })}
         </div>
       ) : null}
 
