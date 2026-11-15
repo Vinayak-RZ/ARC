@@ -36,6 +36,7 @@ export function SignalEdge({
           id={id}
           path={path}
           markerEnd={markerEnd}
+          interactionWidth={22}
           style={{ stroke: "var(--cs-wire)", strokeWidth: 2, zIndex: 0 }}
         />
       </>
@@ -47,7 +48,7 @@ export function SignalEdge({
   const labelY = railY;
   return (
     <>
-      <BaseEdge id={id} path={path} markerEnd={markerEnd} style={{ stroke: "var(--cs-wire)", strokeWidth: 2, zIndex: 0 }} />
+      <BaseEdge id={id} path={path} markerEnd={markerEnd} interactionWidth={22} style={{ stroke: "var(--cs-wire)", strokeWidth: 2, zIndex: 0 }} />
       {label ? (
         <EdgeLabelRenderer>
           <span

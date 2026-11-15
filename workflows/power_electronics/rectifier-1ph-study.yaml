@@ -1,0 +1,31 @@
+id: rectifier-1ph-study
+title: Single-phase controlled rectifier
+pack: power_electronics
+sample_problem:
+  v_rms: 230
+  alpha_deg: 30
+  topology: full
+  load: continuous
+  io_a: 0
+  ls_h: 0
+  f_hz: 50
+  expected: 179.33
+  tol: 1e-3
+nodes:
+  solve:
+    activity: run-ee-v2-solver
+    default_solver: rectifier_1ph
+    capability: converter-model
+  check:
+    activity: check-numeric
+    default_solver: rectifier_1ph
+    needs: [solve]
+  trap:
+    activity: trap-verify
+    needs: [solve]
+  label:
+    activity: label-unchecked
+    needs: [trap, check]
+  summary:
+    activity: write-run-summary
+    needs: [label]

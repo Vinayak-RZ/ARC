@@ -7,6 +7,7 @@ from typing import Any
 from electrical_engineer.engines import ee_v2_solvers as v2
 from electrical_engineer.engines.ed_lambda import EdCase
 from electrical_engineer.engines.power_runner import _parse_complex
+from electrical_engineer.engines.solvers import SPECS, build_kwargs
 
 DEFAULT_VALUE_KEY: dict[str, str] = {
     "rc_step": "vc_V",
@@ -26,6 +27,10 @@ DEFAULT_VALUE_KEY: dict[str, str] = {
     "steady_state_error": "ess_selected",
 }
 
+_overlap = set(DEFAULT_VALUE_KEY) & set(SPECS)
+if _overlap:
+    raise RuntimeError(f"solver id collision with legacy table: {_overlap}")
+DEFAULT_VALUE_KEY.update({k: s.value_key for k, s in SPECS.items()})
 SOLVER_IDS = frozenset(DEFAULT_VALUE_KEY)
 
 
@@ -130,6 +135,8 @@ def _scalar_from_result(sid: str, result: dict[str, Any]) -> float:
 
 
 def _default_unit(sid: str, value_key: str) -> str:
+    if sid in SPECS:
+        return SPECS[sid].unit
     if value_key.endswith("_V"):
         return "V"
     if value_key.endswith("_A"):
@@ -168,6 +175,8 @@ def ed_naive_dispatch(units: Any, pd_mw: float, *, loss_guess_mw: float = 0.0) -
 
 
 def _call_solver(sid: str, problem: dict[str, Any]) -> dict[str, Any]:
+    if sid in SPECS:
+        return SPECS[sid].fn(**build_kwargs(SPECS[sid], problem))
     if sid == "rc_step":
         return v2.rc_step(_num(problem, "v"), _num(problem, "r"), _num(problem, "c"), _num(problem, "t"))
     if sid == "rl_step":

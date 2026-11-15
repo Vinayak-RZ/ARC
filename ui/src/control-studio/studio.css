@@ -20,9 +20,8 @@
   padding: 0;
   gap: 0;
   grid-template-columns: 220px minmax(0, 1fr);
-  --studio-results-h: clamp(320px, 46vh, 400px);
-  --studio-canvas-h: clamp(280px, min(34vh, 320px), 360px);
-  grid-template-rows: 44px var(--studio-canvas-h) var(--studio-results-h);
+  --studio-results-h: auto;
+  grid-template-rows: 44px minmax(420px, 1fr) auto;
   min-height: 0;
   max-height: 100%;
   grid-template-areas:
@@ -404,6 +403,13 @@
   font-size: 13px;
   color: var(--cs-text-secondary);
   min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.studio-crumb .breadcrumb-current {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .studio-bar-actions {
@@ -907,12 +913,12 @@
 .studio-block {
   position: relative;
   overflow: hidden;
-  width: 96px;
-  min-width: 96px;
-  max-width: 96px;
-  height: 56px;
-  min-height: 56px;
-  max-height: 56px;
+  width: 72px;
+  min-width: 72px;
+  max-width: 72px;
+  height: 40px;
+  min-height: 40px;
+  max-height: 40px;
   background: var(--cs-surface);
   border: 1px solid var(--cs-border-strong);
   border-radius: var(--cs-radius-md);
@@ -954,9 +960,12 @@
 }
 
 .studio-pid.studio-block {
-  width: 168px;
-  min-width: 168px;
-  max-width: 168px;
+  width: 148px;
+  min-width: 148px;
+  max-width: 148px;
+  height: 44px;
+  min-height: 44px;
+  max-height: 44px;
 }
 
 .studio-pid-line {
@@ -1112,12 +1121,36 @@
 }
 
 .studio-port-handle {
-  width: 10px !important;
-  height: 10px !important;
+  width: 12px !important;
+  height: 12px !important;
   border-radius: 50% !important;
   background: var(--cs-surface) !important;
   border: 2px solid var(--cs-accent) !important;
-  transition: box-shadow 120ms ease, opacity 120ms ease;
+  transition: box-shadow 120ms ease, width 120ms ease, height 120ms ease, opacity 120ms ease;
+}
+.studio-port-handle:hover {
+  width: 16px !important;
+  height: 16px !important;
+  box-shadow: 0 0 0 4px var(--cs-accent-50);
+}
+.studio-canvas .react-flow__edge.selected .react-flow__edge-path,
+.studio-canvas .react-flow__edge:focus .react-flow__edge-path {
+  stroke: var(--cs-accent) !important;
+  stroke-width: 3px !important;
+}
+.studio-wire-hint {
+  position: absolute;
+  z-index: 5;
+  left: 12px;
+  bottom: 12px;
+  margin: 0;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--cs-border);
+  background: color-mix(in srgb, var(--cs-surface) 90%, transparent);
+  color: var(--cs-text-secondary, var(--cs-text));
+  font-size: 12px;
+  pointer-events: none;
 }
 
 .studio-port-handle.is-tap {
@@ -1316,11 +1349,15 @@
   max-width: none; /* global .empty { max-width: 36rem } no longer matches, kept as a guard */
 }
 
+.studio-results {
+  max-height: 180px;
+}
+.studio-results.is-empty {
+  max-height: none;
+  padding: 8px 16px;
+}
 .studio-results.is-empty .studio-results-stage {
-  min-height: 160px;
-  background: var(--cs-surface);
-  border: 1px solid var(--cs-border);
-  border-radius: var(--cs-radius-md);
+  display: none;
 }
 
 .studio-results-placeholder {

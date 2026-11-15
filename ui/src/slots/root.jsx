@@ -1,10 +1,24 @@
+import { lazy, Suspense } from "react";
 import { register } from "./registry.js";
 import { AppShell } from "../shell/AppShell.jsx";
-import { Canvas } from "./canvas/Canvas.jsx";
 import { Inspector } from "./canvas/Inspector.jsx";
-import { Library } from "./library.jsx";
-import { VisualGallery } from "./gallery.jsx";
-import { ControlStudio } from "./control_studio/ControlStudio.jsx";
+
+const Canvas = lazy(() => import("./canvas/Canvas.jsx").then((m) => ({ default: m.Canvas })));
+const Library = lazy(() => import("./library.jsx").then((m) => ({ default: m.Library })));
+const VisualGallery = lazy(() => import("./gallery.jsx").then((m) => ({ default: m.VisualGallery })));
+const ControlStudio = lazy(() =>
+  import("./control_studio/ControlStudio.jsx").then((m) => ({ default: m.ControlStudio })),
+);
+
+function slot(Component) {
+  return function LazySlot(props) {
+    return (
+      <Suspense fallback={null}>
+        <Component {...props} />
+      </Suspense>
+    );
+  };
+}
 import { buildAnswerRows, verificationNote } from "../formatAnswer.js";
 import { AnswerLine, VerificationStrip } from "../components/AnswerLine.jsx";
 import { MascotState } from "../components/MascotState.jsx";
@@ -72,6 +86,7 @@ function Result({ id }) {
           unchecked={unchecked}
           modifiedAt={data?.modified_at}
           stale={stale}
+          note={(data?.work_steps || []).find((step) => step.title === "Check")?.result}
         />
       ) : (
         <p className="status-hint">{note}</p>
@@ -82,7 +97,11 @@ function Result({ id }) {
 }
 
 function CanvasStub({ id }) {
-  return <Canvas id={id} />;
+  return (
+    <Suspense fallback={null}>
+      <Canvas id={id} />
+    </Suspense>
+  );
 }
 
 function InspectorSlot() {
@@ -102,13 +121,45 @@ function Argument({ id }) {
   );
 }
 
+function ActivityFeed({ rows }) {
+  if (!rows?.length) return null;
+  return (
+    <table className="data-table activity-feed">
+      <thead>
+        <tr>
+          <th>Step</th>
+          <th>What ran</th>
+          <th>Status</th>
+          <th>Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row, i) => {
+          const status = row.unchecked ? "Unchecked" : row.ok === false ? "Failed" : "Done";
+          const ms = row.duration_ms == null ? "—" : `${Number(row.duration_ms).toFixed(0)} ms`;
+          return (
+            <tr key={`${row.node}-${i}`}>
+              <td>{i + 1}</td>
+              <td>{row.role || row.node}</td>
+              <td>{status}</td>
+              <td className="tabular-nums">{ms}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
+}
+
 function More({ id }) {
   const { data, error } = useRun(id);
   if (error || !data) return null;
   const excerpt = data.observation_excerpt || {};
   const spans = Array.isArray(data.trace_excerpt) ? data.trace_excerpt : [];
+  const feed = Array.isArray(data.activity_feed) ? data.activity_feed : [];
   return (
     <div className="disclosures diagnostics-panel">
+      <ActivityFeed rows={feed} />
       <details>
         <summary>Run id</summary>
         <p className="hint">
@@ -173,14 +224,18 @@ function More({ id }) {
         <summary>Evidentiary JSON</summary>
         <pre className="number-display">{data.evidentiary || ""}</pre>
       </details>
-      <details>
-        <summary>Plan</summary>
-        {data.plan ? <pre className="number-display">{data.plan}</pre> : <p className="empty">No plan yet.</p>}
-      </details>
-      <details>
-        <summary>Raw graph</summary>
-        <pre className="number-display">{JSON.stringify(data.graph || {}, null, 2)}</pre>
-      </details>
+      {data.plan ? (
+        <details>
+          <summary>Plan</summary>
+          <pre className="number-display">{data.plan}</pre>
+        </details>
+      ) : null}
+      {data.graph && Object.keys(data.graph).length ? (
+        <details>
+          <summary>Raw graph</summary>
+          <pre className="number-display">{JSON.stringify(data.graph, null, 2)}</pre>
+        </details>
+      ) : null}
       <details>
         <summary>Artifacts</summary>
         <p className="hint">Library SVG/PNG from this run only.</p>
@@ -203,6 +258,6 @@ register("run.more", More);
 register("photo.confirm", function PhotoConfirm() {
   return null;
 });
-register("rag.inventory", Library);
-register("visual.gallery", VisualGallery);
-register("control.studio", ControlStudio);
+register("rag.inventory", slot(Library));
+register("visual.gallery", slot(VisualGallery));
+register("control.studio", slot(ControlStudio));

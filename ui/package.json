@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "test:unit": "node --test \"src/studio-engine/**/*.test.js\"",
     "test:e2e": "playwright test -c e2e/playwright.config.ts",
     "test:e2e:wire": "playwright test -c e2e/playwright.config.ts studio-wire-selection.spec.ts"
   },

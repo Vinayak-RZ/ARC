@@ -11,7 +11,7 @@ def test_trap_knowledge_files_exist_for_t1_t10() -> None:
 
 
 def test_skills_reference_goldens_not_invented_numbers() -> None:
-    swing = Path("skills/swing-equation/SKILL.md").read_text()
+    swing = Path("skills/swing-equation/SKILL.md").read_text(encoding="utf-8")
     assert "exp06.json" in swing
-    agc = Path("skills/agc-two-area/SKILL.md").read_text()
+    agc = Path("skills/agc-two-area/SKILL.md").read_text(encoding="utf-8")
     assert "exp07.json" in agc

@@ -217,13 +217,169 @@ function ThumbSpectrum() {
   );
 }
 
+function ThumbRlc() {
+  const pts = Array.from({ length: 48 }, (_, i) => {
+    const t = i / 47;
+    const env = Math.exp(-2.2 * t);
+    const y = 78 - (1 - env * Math.cos(t * Math.PI * 3.2)) * 48;
+    return pt(22 + t * 120, y);
+  }).join(" ");
+  return (
+    <Frame>
+      {axes(22, 80, 146, 16)}
+      <line className="th-dash" x1={22} y1={30} x2={146} y2={30} />
+      <polyline className="th-line" points={pts} />
+    </Frame>
+  );
+}
+
+function ThumbFault() {
+  return (
+    <Frame>
+      <line className="th-line" x1={28} y1={42} x2={132} y2={42} />
+      <circle className="th-axis" cx={36} cy={42} r={12} />
+      <text x={36} y={46} textAnchor="middle" className="example-thumb-label">G</text>
+      <line className="th-line" x1={88} y1={42} x2={88} y2={68} />
+      <polygon className="th-tint" points="78,68 98,68 88,84" />
+      <text x={104} y={78} className="example-thumb-label">LG</text>
+    </Frame>
+  );
+}
+
+function ThumbDispatch() {
+  return (
+    <Frame>
+      {axes(24, 80, 146, 16)}
+      <line className="th-dash" x1={24} y1={36} x2={146} y2={36} />
+      <polyline className="th-line" points="30,74 70,40" />
+      <polyline className="th-line" points="40,78 100,34" />
+      <polyline className="th-line" points="54,80 124,30" />
+    </Frame>
+  );
+}
+
+function ThumbBuck() {
+  return (
+    <Frame>
+      {axes(24, 78, 146, 18)}
+      <polyline className="th-line" points="28,70 70,28 132,70" />
+      <line className="th-dash" x1={24} y1={49} x2={146} y2={49} />
+    </Frame>
+  );
+}
+
+function ThumbRectifier3ph() {
+  const pts = Array.from({ length: 40 }, (_, i) => {
+    const x = 22 + (i / 39) * 120;
+    const t = (i / 39) * Math.PI * 2;
+    const y = 78 - (0.55 + 0.35 * Math.max(0, Math.cos(t))) * 50;
+    return pt(x, y);
+  }).join(" ");
+  return (
+    <Frame>
+      {axes(22, 80, 146, 16)}
+      <polyline className="th-line" points={pts} />
+    </Frame>
+  );
+}
+
+function ThumbIdmt() {
+  const pts = Array.from({ length: 30 }, (_, i) => {
+    const x = 30 + (i / 29) * 108;
+    const psm = 1.2 + (i / 29) * 18;
+    const y = 78 - (32 / (psm - 0.85)) * 0.55;
+    return pt(x, Math.max(22, Math.min(76, y)));
+  }).join(" ");
+  return (
+    <Frame>
+      {axes(28, 80, 146, 18)}
+      <polyline className="th-line" points={pts} />
+    </Frame>
+  );
+}
+
+function ThumbLead() {
+  return (
+    <Frame>
+      {axes(24, 80, 146, 14)}
+      <polyline className="th-line" points="28,72 58,62 96,38 134,24" />
+      <line className="th-dash" x1={24} y1={58} x2={146} y2={58} />
+    </Frame>
+  );
+}
+
+function ThumbFourier() {
+  const pts = Array.from({ length: 80 }, (_, i) => {
+    const t = (i / 79) * Math.PI * 2;
+    let s = 0;
+    for (let n = 1; n <= 9; n += 2) s += (4 / (n * Math.PI)) * Math.sin(n * t);
+    return pt(22 + (i / 79) * 120, 50 - s * 22);
+  }).join(" ");
+  return (
+    <Frame>
+      {axes(22, 80, 146, 16)}
+      <line className="th-dash" x1={22} y1={50} x2={146} y2={50} />
+      <polyline className="th-line" points={pts} />
+    </Frame>
+  );
+}
+
+function ThumbOpamp() {
+  return (
+    <Frame>
+      <polyline className="th-line" points="24,50 52,50 60,42" />
+      <polyline className="th-line" points="24,70 52,70 60,58" />
+      <polygon className="th-tint" points="60,34 100,50 60,66" />
+      <line className="th-line" x1={100} y1={50} x2={132} y2={50} />
+      <circle className="th-dot" cx={132} cy={50} r={3} />
+      <polyline className="th-line" points="88,50 88,28 112,28 112,50" />
+    </Frame>
+  );
+}
+
+function ThumbWheatstone() {
+  return (
+    <Frame>
+      <line className="th-line" x1={50} y1={32} x2={110} y2={68} />
+      <line className="th-line" x1={50} y1={68} x2={110} y2={32} />
+      <line className="th-line" x1={50} y1={32} x2={50} y2={68} />
+      <line className="th-line" x1={110} y1={32} x2={110} y2={68} />
+      <line className="th-line" x1={50} y1={50} x2={110} y2={50} />
+      <circle className="th-dot" cx={80} cy={50} r={4} />
+    </Frame>
+  );
+}
+
+function ThumbLineParams() {
+  return (
+    <Frame>
+      <line className="th-line" x1={24} y1={50} x2={136} y2={50} />
+      <line className="th-line" x1={40} y1={34} x2={40} y2={66} />
+      <line className="th-line" x1={80} y1={30} x2={80} y2={70} />
+      <line className="th-line" x1={120} y1={34} x2={120} y2={66} />
+      <text x={72} y={88} className="example-thumb-label">ABC</text>
+    </Frame>
+  );
+}
+
 const THUMBS = {
   divider: ThumbDivider,
+  "rlc-step": ThumbRlc,
   "control-step": ThumbStep,
   "smib-swing": ThumbSwing,
+  "lg-fault": ThumbFault,
+  "ed-dispatch": ThumbDispatch,
+  "buck-ccm": ThumbBuck,
   "dc-drive": ThumbMotorSpeed,
   "digital-stable": ThumbDigital,
   "signals-fft": ThumbSpectrum,
+  "rectifier-3ph": ThumbRectifier3ph,
+  "idmt-relay": ThumbIdmt,
+  "lead-design": ThumbLead,
+  "fourier-square": ThumbFourier,
+  "opamp-inverting": ThumbOpamp,
+  wheatstone: ThumbWheatstone,
+  "line-params": ThumbLineParams,
 };
 
 export function ExampleThumb({ id }) {

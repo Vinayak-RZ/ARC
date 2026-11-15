@@ -1,0 +1,942 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Rectifier Waveform Lab</title>
+<script>
+(function () {
+  try {
+    var t = localStorage.getItem("sn-theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+})();
+</script>
+<style>
+:root{
+  --sans: ui-sans-serif,-apple-system,"Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,sans-serif;
+  --serif: "Iowan Old Style","Palatino Linotype",Palatino,Charter,Georgia,serif;
+  --mono: ui-monospace,"SF Mono","Cascadia Mono",Consolas,monospace;
+  --paper:#fbfaf7; --paper-2:#f3f1ec; --paper-3:#eceae3;
+  --chrome:#f4f2ec; --chrome-2:#e9e6de;
+  --ink:#1c1e22; --ink-soft:#434852; --ink-faint:#6d7480;
+  --rule:#ddd9d0; --rule-2:#c8c3b7;
+  --accent:#17496e; --accent-2:#2b7bb0; --warn:#a6400c; --exam:#6a2b7d;
+  --good:#1b6446; --why:#8a6a12;
+  --fill:rgba(23,73,110,.12); --band:rgba(166,64,12,.13);
+  --shadow:0 1px 2px rgba(20,22,26,.05),0 4px 14px rgba(20,22,26,.045);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#15171a; --paper-2:#1c1f23; --paper-3:#23272c;
+    --chrome:#101215; --chrome-2:#191c20;
+    --ink:#e7e5e0; --ink-soft:#b9bcc2; --ink-faint:#8b9099;
+    --rule:#2e3339; --rule-2:#3d434a;
+    --accent:#7fb6dd; --accent-2:#5f9ec9; --warn:#e08b5c; --exam:#c79ad6;
+    --good:#6cc29b; --why:#d9b55e;
+    --fill:rgba(127,182,221,.14); --band:rgba(224,139,92,.16);
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.26);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#15171a; --paper-2:#1c1f23; --paper-3:#23272c;
+  --chrome:#101215; --chrome-2:#191c20;
+  --ink:#e7e5e0; --ink-soft:#b9bcc2; --ink-faint:#8b9099;
+  --rule:#2e3339; --rule-2:#3d434a;
+  --accent:#7fb6dd; --accent-2:#5f9ec9; --warn:#e08b5c; --exam:#c79ad6;
+  --good:#6cc29b; --why:#d9b55e;
+  --fill:rgba(127,182,221,.14); --band:rgba(224,139,92,.16);
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.26);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--chrome);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5}
+a{color:var(--accent)}
+sub,sup{line-height:0}
+header.top{display:flex;align-items:center;gap:.8rem;padding:.7rem 1rem;border-bottom:1px solid var(--rule);background:var(--paper)}
+header.top h1{font-size:1.15rem;margin:0;font-weight:720;letter-spacing:-.01em}
+header.top .sub{color:var(--ink-faint);font-size:.85rem}
+header.top .grow{flex:1;min-width:0}
+.btn{font:inherit;font-size:.82rem;border:1px solid var(--rule-2);background:var(--paper-2);color:var(--ink);border-radius:6px;padding:.3rem .65rem;cursor:pointer}
+.btn:hover{background:var(--paper-3)}
+.btn.on{background:var(--accent);color:var(--paper);border-color:var(--accent)}
+.shell{display:grid;grid-template-columns:19.5rem minmax(0,1fr);gap:1rem;padding:1rem;max-width:110rem;margin:0 auto}
+@media (max-width:900px){.shell{grid-template-columns:minmax(0,1fr);padding:.75rem 1rem}}
+.panel{background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:.9rem;box-shadow:var(--shadow)}
+aside.panel{align-self:start;position:sticky;top:1rem;max-height:calc(100vh - 2rem);overflow:auto}
+@media (max-width:900px){aside.panel{position:static;max-height:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(14.5rem,1fr));gap:.2rem 1.4rem}}
+.grp>.ctl-h:first-child{margin-top:0}
+@media (min-width:901px){.grp+.grp{margin-top:.9rem}}
+@media (max-width:900px){.grp+.grp .ctl-h:first-child{margin-top:.6rem}}
+.ctl-h{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);margin:.9rem 0 .35rem}
+.ctl-h:first-child{margin-top:0}
+.seg{display:flex;flex-wrap:wrap;gap:.3rem}
+.seg label{flex:1 1 auto;position:relative}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:block;text-align:center;font-size:.8rem;padding:.38rem .45rem;border:1px solid var(--rule-2);border-radius:6px;background:var(--paper-2);cursor:pointer;white-space:nowrap}
+.seg input:checked+span{background:var(--accent);color:var(--paper);border-color:var(--accent);font-weight:650}
+.seg input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.seg input:disabled+span{opacity:.4;cursor:not-allowed}
+.fam{font-size:.75rem;color:var(--ink-soft);margin:.25rem 0 .2rem;font-weight:600}
+.tog{display:flex;align-items:flex-start;gap:.5rem;font-size:.85rem;margin:.35rem 0;cursor:pointer}
+.tog input{margin-top:.2rem;accent-color:var(--accent)}
+.tog.dis{opacity:.45;cursor:not-allowed}
+.tog small{display:block;color:var(--ink-faint);font-size:.74rem}
+.rng{margin:.45rem 0}
+.rng .lab{display:flex;justify-content:space-between;font-size:.82rem}
+.rng .lab b{font-family:var(--mono);font-weight:600}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.hint{font-size:.75rem;color:var(--ink-faint);margin:.3rem 0 0}
+.stage{min-width:0;display:flex;flex-direction:column;gap:.8rem}
+.alpha{position:sticky;top:0;z-index:5;background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:.65rem .9rem;box-shadow:var(--shadow)}
+.alpha .row{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap}
+.alpha .big{font-size:1.25rem;font-weight:720;font-family:var(--mono);min-width:6.5rem}
+.alpha input[type=range]{flex:1 1 14rem;height:1.6rem}
+.chips{display:flex;gap:.25rem;flex-wrap:wrap}
+.chips .btn{padding:.2rem .5rem;font-family:var(--mono)}
+.hover{font-family:var(--mono);font-size:.78rem;color:var(--ink-soft);margin-top:.45rem;min-height:1.2em;overflow-wrap:anywhere}
+.plot{background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:.5rem .5rem .2rem;box-shadow:var(--shadow)}
+.plot h3{font-size:.85rem;margin:.1rem .4rem .1rem;font-weight:680;display:flex;gap:.6rem;align-items:baseline;flex-wrap:wrap}
+.plot h3 small{font-weight:400;color:var(--ink-faint);font-size:.76rem}
+.plot svg{display:block;width:100%;touch-action:pan-y}
+svg text{font-family:var(--sans)}
+.g1{stroke:var(--rule);stroke-width:1}
+.g2{stroke:var(--rule-2);stroke-width:1}
+.z0{stroke:var(--ink-faint);stroke-width:1.1}
+.tk{fill:var(--ink-faint);font-size:10.5px}
+.env{fill:none;stroke:var(--ink-faint);stroke-width:1;stroke-dasharray:4 3;opacity:.85}
+.vo{fill:none;stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+.vofill{fill:var(--fill);stroke:none}
+.avg{stroke:var(--good);stroke-width:1.6;stroke-dasharray:8 4}
+.eline{stroke:var(--why);stroke-width:1.4;stroke-dasharray:2 3}
+.fire{stroke:var(--exam);stroke-width:1;stroke-dasharray:3 3;opacity:.8}
+.cur{stroke:var(--ink);stroke-width:1;opacity:.55;pointer-events:none}
+.lbl{font-size:11px;fill:var(--ink-soft)}
+.seglbl{font-size:11.5px;fill:var(--accent);font-weight:650;paint-order:stroke;stroke:var(--paper);stroke-width:3px}
+.segdev{paint-order:stroke;stroke:var(--paper);stroke-width:3px}
+.segdev{font-size:9.5px;fill:var(--ink-faint)}
+.band{fill:var(--band)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:.6rem}
+.card{background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:.65rem .8rem;box-shadow:var(--shadow)}
+.card .k{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint);font-weight:700}
+.card .v{font-family:var(--mono);font-size:1.15rem;font-weight:650;margin:.15rem 0}
+.card .d{font-size:.8rem;color:var(--ink-soft)}
+.card.formula .f{font-family:var(--serif);font-size:1rem;margin:.2rem 0}
+.ok{color:var(--good);font-weight:650}
+.bad{color:var(--warn);font-weight:650}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:.8rem}
+@media (max-width:1100px){.two{grid-template-columns:minmax(0,1fr)}}
+table{border-collapse:collapse;width:100%;font-size:.82rem}
+th,td{text-align:left;padding:.3rem .45rem;border-bottom:1px solid var(--rule)}
+th{font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-faint)}
+td.m{font-family:var(--mono)}
+.notes h4{margin:.2rem 0 .4rem;font-size:.9rem}
+.notes ul{margin:.2rem 0 .6rem;padding-left:1.1rem;font-family:var(--serif);font-size:.95rem}
+.notes li{margin:.25rem 0}
+.warnbox{border-left:3px solid var(--warn);padding:.35rem .6rem;background:var(--paper-2);font-size:.82rem;margin:.5rem 0;border-radius:0 6px 6px 0}
+.views{display:flex;flex-wrap:wrap;gap:.2rem .8rem}
+.views .tog{margin:.15rem 0}
+select{font:inherit;font-size:.82rem;background:var(--paper-2);color:var(--ink);border:1px solid var(--rule-2);border-radius:6px;padding:.25rem .4rem;width:100%}
+@media print{aside.panel,.alpha .chips,#sweep,header .btn{display:none}.shell{display:block}.plot{break-inside:avoid;box-shadow:none}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="grow">
+    <h1>Rectifier Waveform Lab</h1>
+    <div class="sub">EEC-303 · every controlled-rectifier case from the Ch 15 formula sheet, simulated in the time domain · <a href="EEC-303_Power-Electronics_Study-Notes.html#ch16">open the notes</a></div>
+  </div>
+  <button class="btn" id="theme" type="button" title="Toggle light / dark">◐ theme</button>
+</header>
+
+<div class="shell">
+<aside class="panel" aria-label="Circuit controls">
+<div class="grp">
+  <div class="ctl-h">Converter</div>
+  <div class="fam">Single-phase</div>
+  <div class="seg" role="radiogroup">
+    <label><input type="radio" name="conv" value="hw1"><span>Half-wave</span></label>
+    <label><input type="radio" name="conv" value="semi1"><span>Semiconverter</span></label>
+    <label><input type="radio" name="conv" value="full1"><span>Full converter</span></label>
+  </div>
+  <div class="fam">Three-phase</div>
+  <div class="seg" role="radiogroup">
+    <label><input type="radio" name="conv" value="hw3" checked><span>Half-wave (3-pulse)</span></label>
+    <label><input type="radio" name="conv" value="semi3"><span>Semiconverter</span></label>
+    <label><input type="radio" name="conv" value="full3"><span>Full (6-pulse)</span></label>
+  </div>
+
+  <div class="ctl-h">Load</div>
+  <div class="seg" role="radiogroup">
+    <label><input type="radio" name="load" value="R" checked><span>R</span></label>
+    <label><input type="radio" name="load" value="RL"><span>R–L</span></label>
+    <label><input type="radio" name="load" value="RLE"><span>R–L–E</span></label>
+    <label><input type="radio" name="load" value="CC"><span>Constant I<sub>o</sub> (L→∞)</span></label>
+  </div>
+
+</div><div class="grp">
+  <div class="ctl-h">Extras</div>
+  <label class="tog" id="fwdWrap"><input type="checkbox" id="fwd"><span>Freewheeling diode across the load<small id="fwdNote"></small></span></label>
+  <label class="tog" id="lsWrap"><input type="checkbox" id="ls"><span>Source inductance L<sub>s</sub> (overlap μ)<small id="lsNote"></small></span></label>
+
+  <div class="ctl-h">Parameters</div>
+  <div class="rng"><div class="lab"><span id="vLab">Supply V (rms)</span><b id="vOut"></b></div><input type="range" id="V" min="50" max="500" step="5"></div>
+  <div class="rng" id="Rrow"><div class="lab"><span>R</span><b id="ROut"></b></div><input type="range" id="R" min="0.5" max="100" step="0.5" value="10"></div>
+  <div class="rng" id="Lrow"><div class="lab"><span>L</span><b id="LOut"></b></div><input type="range" id="L" min="0" max="1000" step="5" value="100"></div>
+  <div class="rng" id="Erow"><div class="lab"><span>E (back-EMF / battery)</span><b id="EOut"></b></div><input type="range" id="E" min="-400" max="400" step="5" value="100"></div>
+  <div class="rng" id="Iorow"><div class="lab"><span>I<sub>o</sub> (constant)</span><b id="IoOut"></b></div><input type="range" id="Io" min="1" max="100" step="1" value="20"></div>
+  <div class="rng" id="Lsrow"><div class="lab"><span>L<sub>s</sub> per line</span><b id="LsOut"></b></div><input type="range" id="Ls" min="0.1" max="10" step="0.1" value="2"></div>
+  <p class="hint">f = 50 Hz. Thyristors receive a wide gate pulse (held for one conduction slot), so a device fires as soon as it becomes forward-biased after α — the usual textbook assumption, and what makes 6-pulse double-pulsing automatic.</p>
+
+</div><div class="grp">
+  <div class="ctl-h">Show</div>
+  <div class="views">
+    <label class="tog"><input type="checkbox" class="view" value="pV" checked>Output voltage</label>
+    <label class="tog"><input type="checkbox" class="view" value="pI" checked>Load current</label>
+    <label class="tog"><input type="checkbox" class="view" value="pG" checked>Conduction chart</label>
+    <label class="tog"><input type="checkbox" class="view" value="pS" checked>Supply current</label>
+    <label class="tog"><input type="checkbox" class="view" value="pT" checked>Device voltage</label>
+    <label class="tog" id="railView"><input type="checkbox" class="view" value="pR">Rail potentials</label>
+    <label class="tog"><input type="checkbox" id="labels" checked>Segment labels</label>
+  </div>
+  <div class="ctl-h">Device to inspect</div>
+  <select id="dev"></select>
+</div>
+</aside>
+
+<main class="stage">
+  <div class="alpha">
+    <div class="row">
+      <div class="big">α = <span id="aOut">45</span>°</div>
+      <input type="range" id="alpha" min="0" max="180" step="1" value="45" aria-label="Firing angle alpha in degrees">
+      <button class="btn" id="sweep" type="button">▶ sweep</button>
+    </div>
+    <div class="row" style="margin-top:.35rem">
+      <div class="chips" id="chips"></div>
+      <span class="hint" id="aRef" style="margin:0"></span>
+    </div>
+    <div class="hover" id="hover">Hover or tap a plot to read instantaneous values.</div>
+  </div>
+  <div id="plots" style="display:flex;flex-direction:column;gap:.8rem"></div>
+  <div class="cards" id="cards"></div>
+  <div class="two">
+    <div class="panel"><h4 style="margin:0 0 .4rem;font-size:.9rem">Conduction table (one supply cycle)</h4><div id="ctab"></div></div>
+    <div class="panel notes" id="notes"></div>
+  </div>
+</main>
+</div>
+
+<script>
+(function(){
+"use strict";
+var DEG = Math.PI/180, N = 2880, H = 360/N, HR = H*DEG, F = 50, W0 = 2*Math.PI*F;
+var $ = function(id){ return document.getElementById(id); };
+
+/* ---------------- converter definitions ----------------
+   Each converter = a positive device group (cathodes to + rail) and a negative group
+   (anodes to − rail) or the neutral. b = natural-commutation reference; fires at b+α. */
+var CONV = {
+  hw1:  {label:"1-φ half-wave controlled", fam:1, ph:["s"], pos:[{n:"T1",ph:0,b:0}], neg:null, gw:180, pulses:1, lsOK:false, fwdOK:true, piv:"V<sub>m</sub>"},
+  semi1:{label:"1-φ semiconverter", fam:1, ph:["a","b"], pos:[{n:"T1",ph:0,b:0},{n:"T2",ph:1,b:180}], neg:[{n:"D1",ph:0,dio:true},{n:"D2",ph:1,dio:true}], gw:180, pulses:2, lsOK:false, fwdOK:false, piv:"V<sub>m</sub>"},
+  full1:{label:"1-φ full converter", fam:1, ph:["a","b"], pos:[{n:"T1",ph:0,b:0},{n:"T3",ph:1,b:180}], neg:[{n:"T4",ph:0,b:180},{n:"T2",ph:1,b:0}], gw:180, pulses:2, lsOK:true, loopN:1, fwdOK:true, piv:"V<sub>m</sub>"},
+  hw3:  {label:"3-φ half-wave (3-pulse)", fam:3, ph:["a","b","c"], pos:[{n:"T1",ph:0,b:30},{n:"T2",ph:1,b:150},{n:"T3",ph:2,b:270}], neg:null, gw:120, pulses:3, lsOK:true, loopN:1, fwdOK:true, piv:"√3 V<sub>m</sub> = V<sub>LL,pk</sub>"},
+  semi3:{label:"3-φ semiconverter", fam:3, ph:["a","b","c"], pos:[{n:"T1",ph:0,b:30},{n:"T3",ph:1,b:150},{n:"T5",ph:2,b:270}], neg:[{n:"D4",ph:0,dio:true},{n:"D6",ph:1,dio:true},{n:"D2",ph:2,dio:true}], gw:120, pulses:3, lsOK:false, fwdOK:false, piv:"V<sub>LL,pk</sub>"},
+  full3:{label:"3-φ full converter (6-pulse)", fam:3, ph:["a","b","c"], pos:[{n:"T1",ph:0,b:30},{n:"T3",ph:1,b:150},{n:"T5",ph:2,b:270}], neg:[{n:"T4",ph:0,b:210},{n:"T6",ph:1,b:330},{n:"T2",ph:2,b:90}], gw:120, pulses:6, lsOK:true, loopN:2, fwdOK:true, piv:"V<sub>LL,pk</sub>"}
+};
+var famV = {1:230, 3:415};
+
+/* ---------------- read UI ---------------- */
+function radio(name){ return document.querySelector('input[name="'+name+'"]:checked').value; }
+function params(){
+  var conv = radio("conv"), C = CONV[conv];
+  return {
+    conv:conv, C:C, load:radio("load"), alpha:+$("alpha").value,
+    V:+$("V").value, R:+$("R").value, L:+$("L").value, E:+$("E").value,
+    Io:+$("Io").value, Ls:+$("Ls").value,
+    fwd: $("fwd").checked && C.fwdOK && !($("ls").checked && C.lsOK),
+    ls: $("ls").checked && C.lsOK
+  };
+}
+
+/* ---------------- simulation ---------------- */
+function simulate(P){
+  var C = P.C, nph = C.ph.length;
+  var Vm = C.fam === 1 ? P.V*Math.SQRT2 : P.V*Math.SQRT2/Math.sqrt(3);
+  var pos = C.pos, neg = C.neg, np = pos.length, nn = neg ? neg.length : 0, nd = np+nn;
+  var a = P.alpha, s, m, j;
+
+  // phase voltage table
+  var VT = new Array(N);
+  for (s=0; s<N; s++){
+    var th = s*H*DEG, v = new Float64Array(nph);
+    if (P.conv === "hw1") v[0] = Vm*Math.sin(th);
+    else if (C.fam === 1){ v[0] = Vm*Math.sin(th)/2; v[1] = -v[0]; }
+    else for (m=0;m<3;m++) v[m] = Vm*Math.sin(th - m*120*DEG);
+    VT[s] = v;
+  }
+  function gateTab(d){
+    var g = new Uint8Array(N);
+    for (var s=0;s<N;s++){
+      if (d.dio){ g[s]=1; continue; }
+      var x = ((s*H - (d.b + a)) % 360 + 360) % 360;
+      g[s] = x < C.gw - 1e-9 ? 1 : 0;
+    }
+    return g;
+  }
+  var gP = pos.map(gateTab), gN = neg ? neg.map(gateTab) : null;
+
+  var CC = P.load === "CC";
+  var R = P.R, Lh = (P.load === "R" || CC) ? 0 : P.L*1e-3, E = P.load === "RLE" ? P.E : 0;
+  if (CC) E = 0;
+  var Ls = P.ls ? P.Ls*1e-3 : 0, Xs = W0*Ls, Lloop = P.ls ? C.loopN*Ls : 0;
+  var fwdOn = P.fwd, Io = P.Io;
+
+  var S = {on:false, fwd:false, p:-1, n:-1, ovP:null, ovN:null, i:0};
+  function kill(){ S.on=false; S.fwd=false; S.p=-1; S.n=-1; S.ovP=null; S.ovN=null; }
+  function bestPos(s, v){ var k=-1, bv=-Infinity; for (var j=0;j<np;j++) if (gP[j][s] && v[pos[j].ph] > bv){ bv=v[pos[j].ph]; k=j; } return k; }
+  function bestNeg(s, v){ var k=-1, bv=Infinity; for (var j=0;j<nn;j++) if (gN[j][s] && v[neg[j].ph] < bv){ bv=v[neg[j].ph]; k=j; } return k; }
+
+  var rec = null;
+  function newRec(){
+    var r = {vo:new Float64Array(N), i:new Float64Array(N), rp:new Float64Array(N), rn:new Float64Array(N),
+      dI:[], dV:[], dOv:[], line:[], seg:new Array(N), ov:new Uint8Array(N), fwdI:new Float64Array(N), state:new Array(N)};
+    for (var d=0; d<nd; d++){ r.dI.push(new Float64Array(N)); r.dV.push(new Float64Array(N)); r.dOv.push(new Uint8Array(N)); }
+    for (var m=0;m<nph;m++) r.line.push(new Float64Array(N));
+    return r;
+  }
+
+  function step(s){
+    var v = VT[s], k, mm, vp, vn, vpath = 0, rp = 0, rn = 0;
+    if (!S.on && !S.fwd && !CC){
+      k = bestPos(s, v); mm = neg ? bestNeg(s, v) : -1;
+      if (k >= 0 && (!neg || mm >= 0)){
+        vp = v[pos[k].ph]; vn = neg ? v[neg[mm].ph] : 0;
+        if (vp - vn > E + 1e-9){ S.on = true; S.p = k; S.n = mm; }
+      }
+    }
+    if (S.fwd){
+      k = bestPos(s, v); mm = neg ? bestNeg(s, v) : -1;
+      if (k >= 0 && (!neg || mm >= 0)){
+        vp = v[pos[k].ph]; vn = neg ? v[neg[mm].ph] : 0;
+        if (vp - vn > 1e-9){ S.fwd = false; S.on = true; S.p = k; S.n = mm; S.ovP = S.ovN = null; }
+      }
+    }
+    if (S.on){
+      if (!S.ovP){
+        var cur = v[pos[S.p].ph], kk = -1, bv = cur + 1e-9;
+        for (j=0;j<np;j++) if (j !== S.p && gP[j][s] && v[pos[j].ph] > bv){ bv = v[pos[j].ph]; kk = j; }
+        if (kk >= 0){ if (P.ls) S.ovP = {j:S.p, k:kk, ik:0}; else S.p = kk; }
+      }
+      if (neg && !S.ovN){
+        var curn = v[neg[S.n].ph], kn = -1, bn = curn - 1e-9;
+        for (j=0;j<nn;j++) if (j !== S.n && gN[j][s] && v[neg[j].ph] < bn){ bn = v[neg[j].ph]; kn = j; }
+        if (kn >= 0){ if (P.ls) S.ovN = {j:S.n, k:kn, ik:0}; else S.n = kn; }
+      }
+      rp = S.ovP ? (v[pos[S.ovP.j].ph] + v[pos[S.ovP.k].ph])/2 : v[pos[S.p].ph];
+      rn = !neg ? 0 : S.ovN ? (v[neg[S.ovN.j].ph] + v[neg[S.ovN.k].ph])/2 : v[neg[S.n].ph];
+      vpath = rp - rn;
+      if (fwdOn && vpath < 0 && !S.ovP && !S.ovN){ S.on = false; S.fwd = true; S.p = S.n = -1; vpath = 0; }
+    }
+    var i = S.i, vo;
+    var single = S.on && !S.ovP && !S.ovN;
+    if (CC){ i = Io; vo = S.on ? vpath : 0; }
+    else if (S.on || S.fwd){
+      var Leff = Lh + (single ? Lloop : 0);
+      if (Leff <= 0){
+        i = (vpath - E)/R; vo = vpath;
+        if (i <= 0){ i = 0; kill(); vo = E; }
+      } else {
+        var iss = (vpath - E)/R, ex = Math.exp(-R*HR/(W0*Leff)), inew = iss + (i - iss)*ex;
+        vo = (single && Lloop > 0) ? vpath - Lloop*(inew - i)/(HR/W0) : vpath;
+        i = inew;
+        if (i <= 0){ i = 0; kill(); }
+      }
+    } else { i = 0; vo = E; }
+    S.i = i;
+    if (S.ovP){
+      S.ovP.ik += (v[pos[S.ovP.k].ph] - v[pos[S.ovP.j].ph])/(2*Xs)*HR;
+      if (S.ovP.ik >= i){ S.p = S.ovP.k; S.ovP = null; }
+    }
+    if (S.ovN){
+      S.ovN.ik += (v[neg[S.ovN.j].ph] - v[neg[S.ovN.k].ph])/(2*Xs)*HR;
+      if (S.ovN.ik >= i){ S.n = S.ovN.k; S.ovN = null; }
+    }
+    if (!rec) return;
+    // ---------- record ----------
+    rec.vo[s] = vo; rec.i[s] = i;
+    var rpE, rnE;
+    if (S.on){ rpE = S.ovP ? (v[pos[S.ovP.j].ph] + v[pos[S.ovP.k].ph])/2 : v[pos[S.p].ph];
+               rnE = !neg ? 0 : S.ovN ? (v[neg[S.ovN.j].ph] + v[neg[S.ovN.k].ph])/2 : v[neg[S.n].ph]; }
+    else if (S.fwd){ rpE = 0; rnE = 0; }
+    else if (!neg){ rpE = E; rnE = 0; }
+    else { rpE = E/2; rnE = -E/2; }
+    rec.rp[s] = rpE; rec.rn[s] = rnE;
+    var term = new Float64Array(nph); for (m=0;m<nph;m++) term[m] = v[m];
+    if (S.on && S.ovP){ term[pos[S.ovP.j].ph] = rpE; term[pos[S.ovP.k].ph] = rpE; }
+    if (S.on && S.ovN){ term[neg[S.ovN.j].ph] = rnE; term[neg[S.ovN.k].ph] = rnE; }
+    if (S.on){
+      if (S.ovP){ rec.dI[S.ovP.j][s] = Math.max(0, i - S.ovP.ik); rec.dI[S.ovP.k][s] = Math.min(S.ovP.ik, i);
+                  rec.dOv[S.ovP.j][s] = 1; rec.dOv[S.ovP.k][s] = 1; }
+      else rec.dI[S.p][s] = i;
+      if (neg){
+        if (S.ovN){ rec.dI[np+S.ovN.j][s] = Math.max(0, i - S.ovN.ik); rec.dI[np+S.ovN.k][s] = Math.min(S.ovN.ik, i);
+                    rec.dOv[np+S.ovN.j][s] = 1; rec.dOv[np+S.ovN.k][s] = 1; }
+        else rec.dI[np+S.n][s] = i;
+      }
+    }
+    if (S.fwd) rec.fwdI[s] = i;
+    for (var d=0; d<np; d++){ rec.dV[d][s] = term[pos[d].ph] - rpE; rec.line[pos[d].ph][s] += rec.dI[d][s]; }
+    for (d=0; d<nn; d++){ rec.dV[np+d][s] = rnE - term[neg[d].ph]; rec.line[neg[d].ph][s] -= rec.dI[np+d][s]; }
+    rec.ov[s] = (S.ovP || S.ovN) ? 1 : 0;
+    rec.seg[s] = S.on ? (S.ovP || S.ovN ? "ov" : S.p + "|" + S.n) : (S.fwd ? "fwd" : "off");
+    rec.state[s] = S.on ? (function(){
+      var l = [];
+      if (S.ovP){ l.push(pos[S.ovP.j].n, pos[S.ovP.k].n); } else l.push(pos[S.p].n);
+      if (neg){ if (S.ovN) l.push(neg[S.ovN.j].n, neg[S.ovN.k].n); else l.push(neg[S.n].n); }
+      return l.join(" ");
+    })() : (S.fwd ? "FWD" : "none");
+  }
+
+  // ---------- reach periodic steady state ----------
+  if (CC){
+    S.on = true; S.i = Io;
+    S.p = 0; var v0 = VT[0], bv=-Infinity; for (j=0;j<np;j++) if (v0[pos[j].ph] > bv){ bv=v0[pos[j].ph]; S.p=j; }
+    if (neg){ S.n = 0; bv = Infinity; for (j=0;j<nn;j++) if (v0[neg[j].ph] < bv){ bv=v0[neg[j].ph]; S.n=j; } }
+    for (var c=0;c<3;c++) for (s=0;s<N;s++) step(s);
+  } else {
+    var hist = [], maxC = 1500;
+    for (var cyc=0; cyc<maxC; cyc++){
+      var i0 = S.i;
+      for (s=0;s<N;s++) step(s);
+      var i1 = S.i;
+      if (Math.abs(i1 - i0) < 1e-7*(1 + Math.abs(i1)) && cyc > 2) break;
+      hist.push(i1);
+      if (hist.length >= 3 && cyc % 4 === 3 && S.on){       // Aitken extrapolation of the cycle-start current
+        var x0 = hist[hist.length-3], x1 = hist[hist.length-2], x2 = hist[hist.length-1];
+        var den = (x2 - x1) - (x1 - x0);
+        if (Math.abs(den) > 1e-12){
+          var xs = x2 - (x2 - x1)*(x2 - x1)/den;
+          if (isFinite(xs) && xs > 0 && Math.abs(xs - x2) < 50*(1 + Math.abs(x2))) S.i = xs;
+        }
+        hist = [];
+      }
+    }
+    for (s=0;s<N;s++) step(s);
+  }
+  rec = newRec();
+  for (s=0;s<N;s++) step(s);
+  rec.Vm = Vm; rec.VT = VT; rec.E = E; rec.CC = CC; rec.fwdOn = fwdOn; rec.Lh = Lh; rec.Xs = Xs;
+  return rec;
+}
+
+/* ---------------- metrics ---------------- */
+function runs(flag){       // circular runs of truthy flag[s]; returns [[start,len],...]
+  var out = [], s, all = true;
+  for (s=0;s<N;s++) if (!flag(s)){ all = false; break; }
+  if (all) return [[0, N, true]];
+  for (s=0;s<N;s++){
+    var prev = (s - 1 + N) % N;
+    if (flag(s) && !flag(prev)){
+      var l = 0; while (l < N && flag((s + l) % N)) l++;
+      out.push([s, l]);
+    }
+  }
+  return out;
+}
+function metrics(P, r){
+  var M = {Vm:r.Vm}, s, sum=0, si=0, si2=0, pw=0;
+  for (s=0;s<N;s++){ sum += r.vo[s]; si += r.i[s]; si2 += r.i[s]*r.i[s]; pw += r.vo[s]*r.i[s]; }
+  M.Vo = sum/N; M.Iavg = si/N; M.Irms = Math.sqrt(si2/N); M.P = pw/N;
+  var imax = 0; for (s=0;s<N;s++) imax = Math.max(imax, r.i[s]);
+  M.imax = imax;
+  var thr = 1e-9*(1 + imax);
+  M.cont = true; for (s=0;s<N;s++) if (r.i[s] <= thr){ M.cont = false; break; }
+  M.fwdUsed = false; for (s=0;s<N;s++) if (r.fwdI[s] > thr){ M.fwdUsed = true; break; }
+  var zc = 0; for (s=0;s<N;s++) if (r.seg[s] !== "off" && Math.abs(r.vo[s]) < 1e-6*r.Vm && r.i[s] > thr) zc++;
+  M.zeroSeg = zc*H > 2;
+  M.negVo = false; for (s=0;s<N;s++) if (r.vo[s] < -1e-3*r.Vm){ M.negVo = true; break; }
+  // current runs
+  M.iruns = runs(function(s){ return r.i[s] > thr; });
+  // overlap
+  var ov = runs(function(s){ return r.ov[s]; });
+  M.mu = ov.length && !ov[0][2] ? ov.reduce(function(a,b){ return a + b[1]; }, 0)/ov.length*H : 0;
+  M.muAll = ov.length && ov[0][2];
+  // supply current (phase a)
+  var ia = r.line[0], a1=0, b1=0, q=0;
+  for (s=0;s<N;s++){ var th = s*H*DEG; a1 += ia[s]*Math.cos(th); b1 += ia[s]*Math.sin(th); q += ia[s]*ia[s]; }
+  a1 *= 2/N; b1 *= 2/N;
+  M.Is = Math.sqrt(q/N); M.I1 = Math.hypot(a1, b1)/Math.SQRT2; M.phi1 = Math.atan2(a1, b1);
+  M.a1 = a1; M.b1 = b1;
+  var Vph = r.Vm/Math.SQRT2, Ssup = P.C.fam === 3 ? 3*Vph*M.Is : Vph*M.Is;
+  if (P.conv !== "hw1" && P.C.fam === 1) Ssup = (r.Vm/Math.SQRT2)*M.Is;
+  M.PF = Ssup > 1e-9 ? M.P/Ssup : 0;
+  M.THD = M.I1 > 1e-9 ? Math.sqrt(Math.max(0, M.Is*M.Is - M.I1*M.I1))/M.I1 : 0;
+  M.DPF = Math.cos(M.phi1);
+  return M;
+}
+
+/* ---------------- closed-form check ---------------- */
+function formula(P, r, M){
+  var a = P.alpha*DEG, Vm = r.Vm, VLL = Math.sqrt(3)*Vm, pi = Math.PI, I = M.Iavg, Xs = r.Xs;
+  var R = P.load === "R", clamp = R || (M.fwdUsed && (M.cont || r.E === 0)), f = null;
+  if (P.ls && R) return {none:"The textbook overlap drop assumes a ripple-free I<sub>o</sub>; with a pure R load the current follows v<sub>o</sub>, so no closed form applies. Use R–L with large L or constant I<sub>o</sub>."};
+  var lsD = 0, lsTxt = "";
+  if (P.ls){
+    if (P.conv === "full1"){ lsD = 2*Xs*I/pi; lsTxt = " − 2ωL<sub>s</sub>I<sub>o</sub>/π"; }
+    if (P.conv === "hw3"){ lsD = 3*Xs*I/(2*pi); lsTxt = " − 3ωL<sub>s</sub>I<sub>o</sub>/2π"; }
+    if (P.conv === "full3"){ lsD = 3*Xs*I/pi; lsTxt = " − 3ωL<sub>s</sub>I<sub>o</sub>/π"; }
+  }
+  var g0 = null, b0 = null;
+  if (!M.cont && M.iruns.length){ g0 = M.iruns[0][0]*H; b0 = g0 + M.iruns[0][1]*H; }
+  var E = r.E;
+  switch (P.conv){
+    case "hw1":
+      if (clamp) f = {e:"V<sub>o</sub> = (V<sub>m</sub>/2π)(1 + cos α)", v:Vm/(2*pi)*(1+Math.cos(a)), c: R ? "R load, any α" : "freewheeling diode clamps v<sub>o</sub> at 0"};
+      else if (M.cont) f = {e:"V<sub>o</sub> = 0 (T1 never turns off)", v:0, c:"stiff current without a FWD — the thyristor is dragged through the whole negative half"};
+      else if (!M.fwdUsed) f = {e:"V<sub>o</sub> = (1/2π)[V<sub>m</sub>(cos γ − cos β) + E(2π − β + γ)]", v:(Vm*(Math.cos(g0*DEG)-Math.cos(b0*DEG)) + E*(2*pi - (b0-g0)*DEG))/(2*pi), c:"discontinuous; γ = "+g0.toFixed(1)+"°, β = "+b0.toFixed(1)+"°"};
+      break;
+    case "semi1":
+      if (M.cont || E === 0) f = {e:"V<sub>o</sub> = (V<sub>m</sub>/π)(1 + cos α)", v:Vm/pi*(1+Math.cos(a)), c:"cannot go negative; holds whenever v<sub>o</sub> is never at E"};
+      break;
+    case "full1":
+      if (clamp) f = {e:"V<sub>o</sub> = (V<sub>m</sub>/π)(1 + cos α)", v:Vm/pi*(1+Math.cos(a)), c: R ? "R load — v<sub>o</sub> is |v<sub>s</sub>| from α" : "FWD clamps the negative part"};
+      else if (M.cont) f = {e:"V<sub>o</sub> = (2V<sub>m</sub>/π) cos α" + lsTxt, v:2*Vm/pi*Math.cos(a) - lsD, c:"continuous conduction"};
+      else if (!M.fwdUsed) f = {e:"V<sub>o</sub> = (1/π)[V<sub>m</sub>(cos γ − cos β) + E(π − β + γ)]", v:(Vm*(Math.cos(g0*DEG)-Math.cos(b0*DEG)) + E*(pi - (b0-g0)*DEG))/pi, c:"discontinuous; γ = "+g0.toFixed(1)+"°, β = "+b0.toFixed(1)+"°"};
+      break;
+    case "hw3":
+      if (clamp && P.alpha > 30) f = {e:"V<sub>o</sub> = (3V<sub>m</sub>/2π)[1 + cos(30° + α)]", v:3*Vm/(2*pi)*(1+Math.cos(a+pi/6)), c:"30° ≤ α ≤ 150°, output clamped at 0"};
+      else if (clamp || M.cont) f = {e:"V<sub>o</sub> = (3√3V<sub>m</sub>/2π) cos α" + lsTxt, v:3*Math.sqrt(3)*Vm/(2*pi)*Math.cos(a) - lsD, c: clamp ? "α ≤ 30° — humps still join" : "continuous conduction"};
+      break;
+    case "semi3":
+      if (M.cont || E === 0) f = {e:"V<sub>o</sub> = (3V<sub>LL,m</sub>/2π)(1 + cos α)", v:3*VLL/(2*pi)*(1+Math.cos(a)), c:"cannot invert"};
+      break;
+    case "full3":
+      if (clamp && P.alpha > 60) f = {e:"V<sub>o</sub> = (3V<sub>LL,m</sub>/π)[1 + cos(60° + α)]" + (P.alpha >= 120 ? " → 0 for α ≥ 120°" : ""), v:P.alpha >= 120 ? 0 : 3*VLL/pi*(1+Math.cos(a+pi/3)), c:"60° ≤ α ≤ 120°, output clamped at 0"};
+      else if (clamp || M.cont) f = {e:"V<sub>o</sub> = (3V<sub>LL,m</sub>/π) cos α" + lsTxt, v:3*VLL/pi*Math.cos(a) - lsD, c: clamp ? "α ≤ 60° — still continuous" : "continuous conduction"};
+      break;
+  }
+  if (f && P.ls){ f.c += " · drop uses simulated I<sub>o</sub> = " + I.toFixed(2) + " A"; if (!r.CC){ f.approx = true; f.c += " · approximate: real current ripples during μ"; } }
+  return f;
+}
+
+/* ---------------- plotting helpers ---------------- */
+var plotsHost = $("plots"), cursors = [], GEOM = null;
+function niceTicks(lo, hi, n){
+  var span = hi - lo; if (span <= 0) return [lo];
+  var st = span/n, mag = Math.pow(10, Math.floor(Math.log10(st))), q = st/mag;
+  var step = (q < 1.5 ? 1 : q < 3 ? 2 : q < 7 ? 5 : 10)*mag, t = [];
+  for (var v = Math.ceil(lo/step)*step; v <= hi + 1e-9; v += step) t.push(Math.abs(v) < step*1e-6 ? 0 : v);
+  return t;
+}
+function fmt(v){ var a = Math.abs(v); return a >= 100 ? v.toFixed(0) : a >= 10 ? v.toFixed(1) : v.toFixed(2); }
+function frame(Wd, h, ylo, yhi, unit){
+  var m = {l:50, r:12, t:20, b:22};
+  var X = function(t){ return m.l + t/720*(Wd - m.l - m.r); };
+  var Y = function(v){ return m.t + (yhi - v)/(yhi - ylo)*(h - m.t - m.b); };
+  var s = "", t;
+  var step = Wd < 560 ? 90 : 60;
+  for (t=0; t<=720; t+=30) s += '<line class="'+(t%180===0?'g2':'g1')+'" x1="'+X(t)+'" x2="'+X(t)+'" y1="'+m.t+'" y2="'+(h-m.b)+'"/>';
+  for (t=0; t<=720; t+=step) s += '<text class="tk" text-anchor="middle" x="'+X(t)+'" y="'+(h-6)+'">'+t+'°</text>';
+  niceTicks(ylo, yhi, 4).forEach(function(v){
+    s += '<line class="g1" x1="'+m.l+'" x2="'+(Wd-m.r)+'" y1="'+Y(v)+'" y2="'+Y(v)+'"/>';
+    s += '<text class="tk" text-anchor="end" x="'+(m.l-5)+'" y="'+(Y(v)+3.5)+'">'+fmt(v)+'</text>';
+  });
+  if (ylo < 0 && yhi > 0) s += '<line class="z0" x1="'+m.l+'" x2="'+(Wd-m.r)+'" y1="'+Y(0)+'" y2="'+Y(0)+'"/>';
+  s += '<text class="tk" x="4" y="'+(m.t-6)+'">'+unit+'</text>';
+  return {s:s, X:X, Y:Y, m:m, W:Wd, h:h};
+}
+function pathArr(arr, X, Y, dec){
+  dec = dec || 2; var d = "";
+  for (var s=0; s<=2*N; s+=dec*2) d += (s ? "L" : "M") + X(s*H).toFixed(1) + " " + Y(arr[s % N]).toFixed(1);
+  return d;
+}
+function pathFn(fn, X, Y){
+  var d = ""; for (var t=0; t<=720; t+=1) d += (t ? "L" : "M") + X(t).toFixed(1) + " " + Y(fn(t)).toFixed(1); return d;
+}
+function sub(main, s){ return main + '<tspan dy="3" font-size="0.78em">' + s + '</tspan><tspan dy="-3"></tspan>'; }
+function panel(id, title, note, h){
+  var wrap = document.createElement("div"); wrap.className = "plot"; wrap.id = id;
+  wrap.innerHTML = '<h3><span>' + title + '</span> <small>' + (note || "") + '</small></h3>';
+  plotsHost.appendChild(wrap);
+  var Wd = Math.max(300, wrap.clientWidth - 16);
+  return {wrap:wrap, W:Wd, h:h};
+}
+function finish(pn, fr, body){
+  var svg = '<svg width="'+fr.W+'" height="'+fr.h+'" viewBox="0 0 '+fr.W+' '+fr.h+'">' + fr.s + body +
+    '<line class="cur" x1="0" x2="0" y1="'+fr.m.t+'" y2="'+(fr.h-fr.m.b)+'" style="display:none"/></svg>';
+  pn.wrap.insertAdjacentHTML("beforeend", svg);
+  var el = pn.wrap.querySelector("svg");
+  cursors.push(el.querySelector(".cur"));
+  el.addEventListener("pointermove", hover);
+  el.addEventListener("pointerdown", hover);
+  el.addEventListener("pointerleave", function(){ cursors.forEach(function(c){ c.style.display = "none"; }); });
+  GEOM = fr;
+}
+
+/* ---------------- envelopes ---------------- */
+function envelopes(P, Vm){
+  var C = P.C, list = [];
+  var ph = function(m){ return function(t){ return Vm*Math.sin((t - m*120)*DEG); }; };
+  if (P.conv === "hw1") list.push({f:ph(0), n:sub("v","s")});
+  else if (C.fam === 1){ list.push({f:ph(0), n:sub("v","s")}); list.push({f:function(t){ return -Vm*Math.sin(t*DEG); }, n:"−"+sub("v","s")}); }
+  else if (P.conv === "hw3"){ ["a","b","c"].forEach(function(x, m){ list.push({f:ph(m), n:sub("v",x)}); }); }
+  else {
+    [[0,1],[0,2],[1,2],[1,0],[2,0],[2,1]].forEach(function(pq){
+      var A = ph(pq[0]), B = ph(pq[1]);
+      list.push({f:function(t){ return A(t) - B(t); }, n:sub("v", C.ph[pq[0]] + C.ph[pq[1]])});
+    });
+  }
+  return list;
+}
+function segName(P, key){
+  var C = P.C;
+  if (key === "fwd") return {t:"0", d:"FWD"};
+  if (key === "off") return null;
+  if (key === "ov") return null;
+  var pr = key.split("|"), p = +pr[0], n = +pr[1];
+  var pd = C.pos[p], nd = C.neg ? C.neg[n] : null;
+  var dev = pd.n + (nd ? " " + nd.n : "");
+  if (P.conv === "hw1") return {t:sub("v","s"), d:dev};
+  if (!nd) return {t:sub("v", C.ph[pd.ph]), d:dev};
+  if (pd.ph === nd.ph) return {t:"0", d:dev + " (freewheel)"};
+  if (C.fam === 1) return {t: pd.ph === 0 ? sub("v","s") : "−" + sub("v","s"), d:dev};
+  return {t:sub("v", C.ph[pd.ph] + C.ph[nd.ph]), d:dev};
+}
+
+/* ---------------- render ---------------- */
+var LAST = null;
+function render(){
+  var P = params(), r = simulate(P), M = metrics(P, r), C = P.C, Vm = r.Vm;
+  LAST = {P:P, r:r, M:M};
+  plotsHost.innerHTML = ""; cursors = [];
+  var views = {}; document.querySelectorAll(".view").forEach(function(c){ views[c.value] = c.checked; });
+  var showLab = $("labels").checked;
+  var devs = C.pos.concat(C.neg || []);
+  var selDev = +$("dev").value || 0;
+  var envs = envelopes(P, Vm), s, body, fr, pn;
+  var vpk = (C.fam === 3 && C.neg) ? Math.sqrt(3)*Vm : Vm;
+
+  /* ---- output voltage ---- */
+  if (views.pV){
+    var lo = -vpk*1.24, hi = vpk*1.22;
+    if (r.E){ lo = Math.min(lo, r.E*1.1); hi = Math.max(hi, r.E*1.1); }
+    pn = panel("pV", "Output voltage v<sub>o</sub>", "dashed: source voltages · shaded: v<sub>o</sub> · green: average · purple: firing instants", 300);
+    fr = frame(pn.W, pn.h, lo, hi, "V");
+    var X = fr.X, Y = fr.Y; body = "";
+    // overlap bands
+    runs(function(s){ return r.ov[s]; }).forEach(function(rn){
+      if (rn[2]) return;
+      for (var k=-1;k<2;k++){ var x0 = X(Math.max(0, rn[0]*H + 360*k)), x1 = X(Math.min(rn[0]*H + rn[1]*H + 360*k, 720)); if (x1 > x0) body += '<rect class="band" x="'+x0+'" y="'+fr.m.t+'" width="'+Math.max(1,x1-x0)+'" height="'+(fr.h-fr.m.t-fr.m.b)+'"/>'; }
+    });
+    envs.forEach(function(e){ body += '<path class="env" d="'+pathFn(e.f, X, Y)+'"/>'; });
+    // envelope labels at peaks inside 0..720
+    envs.forEach(function(e){
+      for (var t0=0; t0<720; t0+=360){
+        var sg = showLab ? -1 : 1, bt = t0, bv = -Infinity; for (var t=t0; t<t0+360; t++){ var vv = sg*e.f(t); if (vv > bv){ bv = vv; bt = t; } }
+        if (bt > 8 && bt < 712) body += '<text class="tk" text-anchor="middle" x="'+X(bt)+'" y="'+(showLab ? Y(-bv)+12 : Y(bv)-4)+'">'+e.n+'</text>';
+      }
+    });
+    var dvo = pathArr(r.vo, X, Y, 1);
+    body += '<path class="vofill" d="'+dvo+'L'+X(720)+' '+Y(0)+'L'+X(0)+' '+Y(0)+'Z"/>';
+    if (r.E) body += '<line class="eline" x1="'+X(0)+'" x2="'+X(720)+'" y1="'+Y(r.E)+'" y2="'+Y(r.E)+'"/><text class="lbl" x="'+(X(0)+4)+'" y="'+(Y(r.E)-4)+'" style="fill:var(--why)">E = '+r.E+' V</text>';
+    body += '<path class="vo" d="'+dvo+'"/>';
+    body += '<line class="avg" x1="'+X(0)+'" x2="'+X(720)+'" y1="'+Y(M.Vo)+'" y2="'+Y(M.Vo)+'"/>';
+    body += '<text class="lbl" text-anchor="end" x="'+(X(720)-4)+'" y="'+(Y(M.Vo)+14)+'" style="fill:var(--good);font-weight:650;paint-order:stroke;stroke:var(--paper);stroke-width:3px">V<tspan dy="3" font-size=".78em">o</tspan><tspan dy="-3"> = '+M.Vo.toFixed(1)+' V</tspan></text>';
+    // firing marks
+    var fires = {};
+    devs.forEach(function(d){ if (d.dio) return; for (var k=-1;k<3;k++){ var t = d.b + P.alpha + 360*k; if (t >= 0 && t <= 720){ var key = t.toFixed(1); (fires[key] = fires[key] || []).push(d.n); } } });
+    Object.keys(fires).forEach(function(k){ var t = +k;
+      body += '<line class="fire" x1="'+X(t)+'" x2="'+X(t)+'" y1="'+fr.m.t+'" y2="'+(fr.h-fr.m.b)+'"/>';
+      body += '<text class="tk" text-anchor="middle" x="'+X(t)+'" y="'+(fr.m.t+9)+'" style="fill:var(--exam);font-weight:650">'+fires[k].join(",")+'</text>';
+    });
+    // alpha arrow for first positive device
+    if (P.alpha > 0){
+      var d0 = C.pos[0], ref = d0.b, fire = d0.b + P.alpha;
+      var refV = P.conv === "hw1" || C.fam === 1 ? 0 : (P.conv === "hw3" ? Vm/2 : 1.5*Vm);
+      var ya = Y(refV) + (refV === 0 ? -14 : 14);
+      body += '<circle cx="'+X(ref)+'" cy="'+Y(refV)+'" r="3.5" fill="none" stroke="var(--exam)" stroke-width="1.6"/>';
+      body += '<line x1="'+X(ref)+'" x2="'+X(fire)+'" y1="'+ya+'" y2="'+ya+'" stroke="var(--exam)" stroke-width="1.3" marker-end="url(#ah)" marker-start="url(#ah2)"/>';
+      body += '<text text-anchor="middle" x="'+((X(ref)+X(fire))/2)+'" y="'+(ya-4)+'" style="fill:var(--exam);font-size:12px;font-weight:700">α</text>';
+      body = '<defs><marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8z" fill="var(--exam)"/></marker><marker id="ah2" viewBox="0 0 8 8" refX="1" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M8 0L0 4L8 8z" fill="var(--exam)"/></marker></defs>' + body;
+    }
+    // segment labels
+    if (showLab){
+      var segs = [], cur = null;
+      for (s=0; s<2*N; s++){ var key = r.seg[s % N]; if (!cur || cur.k !== key){ cur = {k:key, s0:s, s1:s}; segs.push(cur); } else cur.s1 = s; }
+      segs.forEach(function(g){
+        var nm = segName(P, g.k); if (!nm) return;
+        var t0 = g.s0*H, t1 = (g.s1+1)*H, wpx = X(t1) - X(t0);
+        if (wpx < 34 || t1 - t0 < 10) return;
+        var mx = -Infinity; for (var q=g.s0; q<=g.s1; q++) mx = Math.max(mx, r.vo[q % N]);
+        var yy = Math.max(fr.m.t + 24, Y(mx) - 18), xm = (X(t0) + X(t1))/2;
+        body += '<text class="seglbl" text-anchor="middle" x="'+xm+'" y="'+yy+'">'+nm.t+'</text>';
+        if (wpx > 44) body += '<text class="segdev" text-anchor="middle" x="'+xm+'" y="'+(yy+11)+'">'+nm.d+'</text>';
+      });
+    }
+    finish(pn, fr, body);
+  }
+
+  /* ---- load current ---- */
+  if (views.pI){
+    pn = panel("pI", "Load current i<sub>o</sub>", M.cont ? "continuous" : "discontinuous — current falls to zero", 160);
+    var imx = Math.max(M.imax, 1e-3);
+    fr = frame(pn.W, pn.h, 0, imx*1.25, "A");
+    var di = pathArr(r.i, fr.X, fr.Y, 1);
+    body = '<path class="vofill" style="fill:var(--fill)" d="'+di+'L'+fr.X(720)+' '+fr.Y(0)+'L'+fr.X(0)+' '+fr.Y(0)+'Z"/>';
+    body += '<path class="vo" style="stroke:var(--accent-2)" d="'+di+'"/>';
+    body += '<line class="avg" x1="'+fr.X(0)+'" x2="'+fr.X(720)+'" y1="'+fr.Y(M.Iavg)+'" y2="'+fr.Y(M.Iavg)+'"/>';
+    body += '<text class="lbl" x="'+(fr.X(0)+4)+'" y="'+(fr.Y(M.Iavg)-5)+'" style="fill:var(--good);font-weight:650">I<tspan dy="3" font-size=".78em">o</tspan><tspan dy="-3"> = '+M.Iavg.toFixed(2)+' A</tspan></text>';
+    finish(pn, fr, body);
+  }
+
+  /* ---- conduction chart ---- */
+  if (views.pG){
+    var rows = devs.map(function(d, k){ return {n:d.n + " (" + (P.conv === "hw1" ? "s" : C.ph[d.ph]) + (k < C.pos.length ? (C.neg ? "+" : "") : "−") + ")", k:k, dio:!!d.dio, grp:k < C.pos.length ? "p" : "n", d:d}; });
+    if (r.fwdOn) rows.push({n:"FWD", k:-1, dio:true, grp:"f"});
+    var rh = 22, hh = rows.length*rh + 42;
+    pn = panel("pG", "Conduction chart", "bars: device carrying current · hatched: overlap · ▲ gate pulse", hh);
+    var fg = frame(pn.W, pn.h, 0, 1, "");
+    fg.s = fg.s.replace(/<line class="g1" x1="\d+(\.\d+)?" x2="[\d.]+" y1="[\d.]+" y2="[\d.]+"\/><text class="tk" text-anchor="end"[^<]*<\/text>/g, "");
+    body = '<defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="var(--paper)"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--warn)" stroke-width="3"/></pattern></defs>';
+    rows.forEach(function(row, ri){
+      var y = fg.m.t + 4 + ri*rh;
+      body += '<text class="tk" text-anchor="end" x="'+(fg.m.l-5)+'" y="'+(y+13)+'" style="fill:var(--ink-soft);font-weight:600">'+row.n.replace(/ \(.*/, "")+'</text>';
+      var arr = row.k >= 0 ? r.dI[row.k] : r.fwdI, ovA = row.k >= 0 ? r.dOv[row.k] : null;
+      var thr = 1e-9*(1+M.imax);
+      var col = row.grp === "p" ? "var(--accent)" : row.grp === "n" ? "var(--accent-2)" : "var(--why)";
+      if (row.dio) col = row.grp === "f" ? "var(--why)" : "var(--good)";
+      var rr = runs(function(s){ return arr[s] > thr; });
+      for (var k=-1;k<2;k++) rr.forEach(function(q){
+        var t0 = Math.max(0, q[0]*H + 360*k), t1 = Math.min(720, q[0]*H + q[1]*H + 360*k);
+        if (q[2]){ if (k !== 0) return; t0 = 0; t1 = 720; }
+        if (t1 <= t0) return;
+        body += '<rect x="'+fg.X(t0)+'" y="'+(y+2)+'" width="'+Math.max(1, fg.X(t1)-fg.X(t0))+'" height="'+(rh-6)+'" rx="2" fill="'+col+'" opacity=".85"/>';
+      });
+      if (ovA){
+        var ro = runs(function(s){ return ovA[s] && arr[s] > thr; });
+        if (!(ro.length && ro[0][2])) for (var k2=-1;k2<2;k2++) ro.forEach(function(q){
+          var t0 = Math.max(0, q[0]*H + 360*k2), t1 = Math.min(q[0]*H + q[1]*H + 360*k2, 720); if (t1 <= t0) return;
+          body += '<rect x="'+fg.X(t0)+'" y="'+(y+2)+'" width="'+Math.max(1.5, fg.X(t1)-fg.X(t0))+'" height="'+(rh-6)+'" fill="url(#hatch)"/>';
+        });
+      }
+      if (row.d && !row.d.dio) for (var kk=-1;kk<3;kk++){ var tf = row.d.b + P.alpha + 360*kk; if (tf >= 0 && tf <= 720){ var xf = fg.X(tf); body += '<path d="M'+(xf-4)+' '+(y+rh-1)+'L'+(xf+4)+' '+(y+rh-1)+'L'+xf+' '+(y+rh-8)+'Z" fill="var(--exam)"/>'; } }
+    });
+    finish(pn, fg, body);
+  }
+
+  /* ---- supply current ---- */
+  if (views.pS){
+    var ia = r.line[0], imxs = 1e-3; for (s=0;s<N;s++) imxs = Math.max(imxs, Math.abs(ia[s]));
+    var nmS = C.fam === 1 ? "i<sub>s</sub>" : "i<sub>a</sub>";
+    pn = panel("pS", "Supply current " + nmS, "dashed purple: fundamental · dotted: v" + (C.fam===1?"<sub>s</sub>":"<sub>a</sub>") + " (scaled) for phase reference · φ<sub>1</sub> = " + (-M.phi1/DEG).toFixed(1) + "° lag", 170);
+    fr = frame(pn.W, pn.h, -imxs*1.3, imxs*1.3, "A");
+    body = '<path class="env" style="stroke-dasharray:1 3" d="'+pathFn(function(t){ return imxs*1.1*Math.sin(t*DEG); }, fr.X, fr.Y)+'"/>';
+    body += '<path class="env" style="stroke:var(--exam);stroke-dasharray:6 3;opacity:1" d="'+pathFn(function(t){ return M.b1*Math.sin(t*DEG) + M.a1*Math.cos(t*DEG); }, fr.X, fr.Y)+'"/>';
+    body += '<path class="vo" style="stroke:var(--exam)" d="'+pathArr(ia, fr.X, fr.Y, 1)+'"/>';
+    finish(pn, fr, body);
+  }
+
+  /* ---- device voltage ---- */
+  if (views.pT){
+    var dv = r.dV[selDev], dvmx = 1e-3, piv = 0, fwdB = 0;
+    for (s=0;s<N;s++){ dvmx = Math.max(dvmx, Math.abs(dv[s])); piv = Math.max(piv, -dv[s]); fwdB = Math.max(fwdB, dv[s]); }
+    M.piv = piv; M.fwdB = fwdB;
+    pn = panel("pT", "Voltage across " + devs[selDev].n, "peak reverse " + piv.toFixed(0) + " V · peak forward blocking " + fwdB.toFixed(0) + " V", 170);
+    fr = frame(pn.W, pn.h, -dvmx*1.15, dvmx*1.15, "V");
+    var dpv = pathArr(dv, fr.X, fr.Y, 1);
+    body = '<path class="vofill" style="fill:var(--band)" d="'+dpv+'L'+fr.X(720)+' '+fr.Y(0)+'L'+fr.X(0)+' '+fr.Y(0)+'Z"/>';
+    body += '<path class="vo" style="stroke:var(--warn)" d="'+dpv+'"/>';
+    finish(pn, fr, body);
+  }
+
+  /* ---- rails ---- */
+  if (views.pR && C.fam === 3){
+    pn = panel("pR", "Rail potentials vs phase voltages", "v<sub>o</sub> is the vertical gap between the + rail and the − rail (or neutral)", 240);
+    fr = frame(pn.W, pn.h, -Vm*1.15, Vm*1.15, "V");
+    body = "";
+    ["a","b","c"].forEach(function(x, m){ body += '<path class="env" d="'+pathFn(function(t){ return Vm*Math.sin((t - m*120)*DEG); }, fr.X, fr.Y)+'"/>'; });
+    var dpr = pathArr(r.rp, fr.X, fr.Y, 1), dnr = pathArr(r.rn, fr.X, fr.Y, 1);
+    body += '<path class="vo" d="'+dpr+'"/>' + '<path class="vo" style="stroke:var(--accent-2);stroke-dasharray:' + (C.neg ? "0" : "5 3") + '" d="'+dnr+'"/>';
+    body += '<text class="lbl" x="'+(fr.X(720)-4)+'" y="'+(fr.m.t+10)+'" text-anchor="end" style="fill:var(--accent)">+ rail</text>';
+    body += '<text class="lbl" x="'+(fr.X(720)-4)+'" y="'+(fr.h-fr.m.b-4)+'" text-anchor="end" style="fill:var(--accent-2)">'+(C.neg ? "− rail" : "neutral")+'</text>';
+    finish(pn, fr, body);
+  }
+  if (!views.pT){ var dvx = r.dV[selDev]; M.piv = 0; M.fwdB = 0; for (s=0;s<N;s++){ M.piv = Math.max(M.piv, -dvx[s]); M.fwdB = Math.max(M.fwdB, dvx[s]); } }
+
+  cards(P, r, M, devs, selDev);
+  ctable(P, r, M, devs);
+  notes(P, r, M);
+}
+
+/* ---------------- readouts ---------------- */
+function cards(P, r, M, devs, sel){
+  var f = formula(P, r, M), h = "";
+  h += '<div class="card"><div class="k">Average output V<sub>o</sub> (simulated)</div><div class="v">'+M.Vo.toFixed(1)+' V</div><div class="d">'+(M.Vo/r.Vm).toFixed(4)+' × V<sub>m</sub> · V<sub>m</sub> = '+r.Vm.toFixed(1)+' V ('+(P.C.fam===3?"phase peak":"supply peak")+')</div></div>';
+  if (f && f.none){
+    h += '<div class="card formula"><div class="k">Closed-form check</div><div class="f">No standard formula</div><div class="d">'+f.none+'</div></div>';
+  } else if (f){
+    var err = Math.abs(f.v - M.Vo), ok = err <= Math.max(0.004*r.Vm, (f.approx ? 0.04 : 0.01)*Math.abs(f.v));
+    h += '<div class="card formula"><div class="k">Closed-form check</div><div class="f">'+f.e+'</div><div class="v">'+f.v.toFixed(1)+' V <span class="'+(ok?"ok":"bad")+'">'+(ok?"✓ matches":"≠ sim ("+(f.v-M.Vo).toFixed(1)+")")+'</span></div><div class="d">'+f.c+'</div></div>';
+  } else {
+    h += '<div class="card formula"><div class="k">Closed-form check</div><div class="f">No standard formula</div><div class="d">Discontinuous with a back-EMF in this topology — integrate v<sub>o</sub> piecewise over the intervals in the conduction table (off intervals sit at E).</div></div>';
+  }
+  var mode = r.CC ? "constant current (ideal)" : M.cont ? "continuous" : "discontinuous";
+  var br = "";
+  if (!M.cont && M.iruns.length){ var q = M.iruns[0]; br = "conducts "+(q[0]*H).toFixed(1)+"° → "+((q[0]+q[1])*H).toFixed(1)+"° (" + (q[1]*H).toFixed(1) + "° per pulse)"; }
+  h += '<div class="card"><div class="k">Load current</div><div class="v">'+M.Iavg.toFixed(2)+' A <span style="font-size:.8rem;font-weight:400">avg</span></div><div class="d">'+mode+' · rms '+M.Irms.toFixed(2)+' A'+(br?'<br>'+br:"")+'</div></div>';
+  if (P.ls) h += '<div class="card"><div class="k">Overlap angle <span style="text-transform:none">μ</span></div><div class="v">'+(M.muAll ? "&gt; slot" : M.mu.toFixed(1)+"°")+'</div><div class="d">'+(M.muAll ? '<span class="bad">overlap never ends — reduce L<sub>s</sub> or I<sub>o</sub></span>' : 'measured; cos(α+μ) = cos α − 2ωL<sub>s</sub>I<sub>o</sub>/V'+(P.conv==="full1"?'<sub>m</sub>':'<sub>LL,m</sub>'))+'<br>ωL<sub>s</sub> = '+r.Xs.toFixed(3)+' Ω</div></div>';
+  h += '<div class="card"><div class="k">Supply side</div><div class="v">PF '+M.PF.toFixed(3)+'</div><div class="d">I<sub>s,rms</sub> '+M.Is.toFixed(2)+' A · I<sub>1</sub> '+M.I1.toFixed(2)+' A · THD '+(M.THD*100).toFixed(1)+'%<br>DPF cos φ<sub>1</sub> = '+M.DPF.toFixed(3)+' · P = '+(M.P/1000).toFixed(2)+' kW</div></div>';
+  var d = r.dI[sel], sa=0, sq=0; for (var s=0;s<N;s++){ sa += d[s]; sq += d[s]*d[s]; }
+  h += '<div class="card"><div class="k">Device '+devs[sel].n+'</div><div class="v">'+(sa/N).toFixed(2)+' A <span style="font-size:.8rem;font-weight:400">avg</span></div><div class="d">rms '+Math.sqrt(sq/N).toFixed(2)+' A · PIV seen '+M.piv.toFixed(0)+' V<br>theory PIV = '+P.C.piv+' = '+(P.C.fam===3 && P.conv!=="hw1" ? Math.sqrt(3)*r.Vm : r.Vm).toFixed(0)+' V</div></div>';
+  $("cards").innerHTML = h;
+}
+function ctable(P, r, M, devs){
+  var C = P.C, h = '<table><thead><tr><th>Device</th><th>Conducts</th><th>Width</th></tr></thead><tbody>';
+  var thr = 1e-9*(1+M.imax);
+  function row(name, arr){
+    var rr = runs(function(s){ return arr[s] > thr; });
+    if (!rr.length){ h += '<tr><td>'+name+'</td><td class="m" colspan="2">never</td></tr>'; return; }
+    if (rr[0][2]){ h += '<tr><td>'+name+'</td><td class="m">whole cycle</td><td class="m">360°</td></tr>'; return; }
+    rr.forEach(function(q, k){
+      var t0 = q[0]*H, t1 = t0 + q[1]*H;
+      h += '<tr><td>'+(k ? "" : name)+'</td><td class="m">'+t0.toFixed(1)+'° → '+(t1 > 360 ? (t1-360).toFixed(1)+'° (next cycle)' : t1.toFixed(1)+'°')+'</td><td class="m">'+(q[1]*H).toFixed(1)+'°</td></tr>';
+    });
+  }
+  devs.forEach(function(d, k){ row(d.n + (d.dio ? " (diode)" : ""), r.dI[k]); });
+  if (r.fwdOn) row("FWD", r.fwdI);
+  h += '</tbody></table><p class="hint">Angles measured from the positive-going zero crossing of '+(C.fam===1?'v<sub>s</sub>':'v<sub>a</sub>')+'. Hatched/overlap intervals are counted for both devices.</p>';
+  $("ctab").innerHTML = h;
+}
+function notes(P, r, M){
+  var C = P.C, a = P.alpha, L = [], W = [];
+  var refTxt = C.fam === 1 ? "the supply zero crossing (0°, 180°)" :
+    P.conv === "hw3" ? "the natural commutation point, 30° after the phase zero crossing" : "the natural commutation point (30°, 90°, 150° … — where two line voltages cross)";
+  L.push("Measure α from " + refTxt + ". Draw a dotted line there, then another α later where the gate pulse arrives.");
+  // sequence of segments over one cycle
+  var seq = [], cur = null, s0 = 0;
+  for (var s=0;s<N;s++){ var k = r.seg[s]; if (k !== cur){ if (cur !== null) seq.push([cur, (s - s0)*H]); cur = k; s0 = s; } }
+  seq.push([cur, (N - s0)*H]);
+  if (seq.length > 1 && seq[0][0] === seq[seq.length-1][0]){ seq[seq.length-1][1] += seq[0][1]; seq.shift(); }
+  var txt = seq.filter(function(q){ return q[1] >= 1; }).slice(0, 14).map(function(q){
+    var nm = segName(P, q[0]);
+    var t = q[0] === "off" ? (r.E ? "E (all off)" : "0 (all off)") : q[0] === "ov" ? "overlap" : nm ? nm.t.replace(/<tspan[^>]*>([^<]*)<\/tspan><tspan[^>]*><\/tspan>/g, "<sub>$1</sub>") + " [" + nm.d + "]" : "?";
+    return t + " " + q[1].toFixed(0) + "°";
+  });
+  L.push("Over one cycle v<sub>o</sub> follows: " + txt.join(" → ") + ".");
+  var ripple = C.pulses;
+  if (P.conv === "semi3" && a > 0) ripple = 3;
+  L.push("Ripple repeats " + ripple + "× per supply cycle (" + ripple*F + " Hz) — draw exactly that many identical pulses in 360°.");
+  if (M.negVo && !r.fwdOn) L.push("v<sub>o</sub> goes <b>negative</b> after each supply zero crossing: the inductance forces current on, so the conducting thyristor stays on into the negative half. Shade that negative area — it is what reduces V<sub>o</sub>.");
+  if (M.zeroSeg) L.push(r.fwdOn ? "The FWD clamps v<sub>o</sub> at zero wherever the bridge output would go negative — draw flat zero segments, not negative ones." : "v<sub>o</sub> sits at zero while the current freewheels through a thyristor and diode in the same leg.");
+  if (!M.cont && !r.CC){
+    var q = M.iruns[0];
+    L.push("Current is discontinuous: it builds from zero at " + (q[0]*H).toFixed(0) + "° and dies at β = " + ((q[0]+q[1])*H % 360).toFixed(0) + "°. Between β and the next firing every device is off, so v<sub>o</sub> = " + (r.E ? "E (the line at " + r.E + " V)" : "0") + ".");
+    if (r.E && P.load === "RLE"){
+      var th1 = Math.asin(Math.min(1, Math.abs(r.E)/((C.fam===3&&C.neg?Math.sqrt(3):1)*r.Vm*(C.fam===1&&P.conv!=="hw1"?1:1))))/DEG;
+      if (r.E > 0 && C.fam === 1) L.push("With E > 0 a thyristor can only turn on when its source voltage exceeds E. If α is earlier than that crossing (θ<sub>1</sub> ≈ " + th1.toFixed(1) + "° for a single-phase supply), conduction starts at θ<sub>1</sub>, not α.");
+    }
+  }
+  if (r.CC) L.push("Constant I<sub>o</sub>: current waveforms are flat-topped rectangles. Each supply-current block has height I<sub>o</sub>; the fundamental lags v<sub>s</sub> by " + (P.ls ? "≈ α + μ/2" : "α") + ".");
+  if (P.ls) L.push("Source inductance: at every commutation both outgoing and incoming devices conduct for μ = " + M.mu.toFixed(1) + "°, and v<sub>o</sub> follows the <b>average</b> of the two source voltages (the notch). The lost volt-seconds give the drop ΔV. Supply-current edges become sloped ramps of width μ.");
+  if (C.neg && C.fam === 3 && P.conv === "full3") L.push("Six-pulse: each thyristor conducts 120°, a new one fires every 60°, sequence 61 → 12 → 23 → 34 → 45 → 56. In discontinuous mode both devices of a pair must be gated (double pulsing / wide pulse).");
+  if (P.conv === "hw3" && P.load === "R") L.push(a <= 30 ? "R load, α ≤ 30°: humps still join — continuous, each thyristor 120°." : "R load, α > 30°: the phase crosses zero before the next device fires, so v<sub>o</sub> drops to 0 — the humps separate. V<sub>o</sub> reaches zero at α = 150°.");
+  if (P.conv === "hw1" && r.CC && !r.fwdOn) W.push("A half-wave converter cannot carry a ripple-free current without a freewheeling diode — V<sub>o</sub> averages to zero. Tick the FWD.");
+  if (M.Vo < -1e-3) L.push("V<sub>o</sub> < 0: inversion mode — the load (E) is pushing power back into the AC supply. This needs α > 90° and a source on the DC side.");
+  if ((C.label.indexOf("semi") >= 0 || P.conv.indexOf("semi") === 0) && a > 0) L.push("A semiconverter can never invert: its diodes give a freewheel path that holds v<sub>o</sub> ≥ 0.");
+  if (P.ls && M.mu + a > 180) W.push("α + μ exceeds 180° — commutation failure in inverting mode.");
+  var h = '<h4>What to draw for this case</h4><ul>' + L.map(function(x){ return "<li>" + x + "</li>"; }).join("") + '</ul>';
+  W.forEach(function(w){ h += '<div class="warnbox">' + w + '</div>'; });
+  h += '<h4>Exam checklist</h4><ul><li>Draw the source voltages dashed first, mark natural commutation points, then α.</li><li>Label each output segment with the voltage it follows (v<sub>ab</sub>, v<sub>ac</sub> …) and the devices on.</li><li>Draw i<sub>o</sub>, then the device and supply currents as blocks of i<sub>o</sub> beneath, on the same time axis.</li><li>Mark the average V<sub>o</sub> and state the formula with its validity condition.</li></ul>';
+  $("notes").innerHTML = h;
+}
+
+/* ---------------- hover ---------------- */
+function hover(ev){
+  if (!LAST || !GEOM) return;
+  var svg = ev.currentTarget, rect = svg.getBoundingClientRect();
+  var x = ev.clientX - rect.left, m = GEOM.m;
+  var t = (x - m.l)/(GEOM.W - m.l - m.r)*720;
+  if (t < 0 || t > 720) return;
+  var s = Math.round(t/H) % N, r = LAST.r, P = LAST.P;
+  var xp = m.l + t/720*(GEOM.W - m.l - m.r);
+  cursors.forEach(function(c){ c.setAttribute("x1", xp); c.setAttribute("x2", xp); c.style.display = ""; });
+  var devs = P.C.pos.concat(P.C.neg || []), sel = +$("dev").value || 0;
+  $("hover").innerHTML = "ωt = " + t.toFixed(1) + "° (" + (t % 360).toFixed(1) + "°) · v<sub>o</sub> = " + r.vo[s].toFixed(1) + " V · i<sub>o</sub> = " + r.i[s].toFixed(2) +
+    " A · on: " + r.state[s] + " · " + (P.C.fam===1?"i<sub>s</sub>":"i<sub>a</sub>") + " = " + r.line[0][s].toFixed(2) + " A · v<sub>" + devs[sel].n + "</sub> = " + r.dV[sel][s].toFixed(1) + " V";
+}
+
+/* ---------------- UI wiring ---------------- */
+var lastFam = null, lastConv = null;
+function syncUI(){
+  var conv = radio("conv"), C = CONV[conv], load = radio("load");
+  if (C.fam !== lastFam){
+    if (lastFam !== null) famV[lastFam] = +$("V").value;
+    $("V").value = famV[C.fam]; lastFam = C.fam;
+  }
+  $("vLab").textContent = C.fam === 3 ? "Supply V (line-to-line rms)" : "Supply V (rms)";
+  if (conv !== lastConv){
+    var devs = C.pos.concat(C.neg || []);
+    $("dev").innerHTML = devs.map(function(d, k){ return '<option value="'+k+'">'+d.n+(d.dio?" (diode)":"")+'</option>'; }).join("");
+    lastConv = conv;
+  }
+  $("Rrow").style.display = load === "CC" ? "none" : "";
+  $("Lrow").style.display = (load === "RL" || load === "RLE") ? "" : "none";
+  $("Erow").style.display = load === "RLE" ? "" : "none";
+  $("Iorow").style.display = load === "CC" ? "" : "none";
+  var lsOn = $("ls").checked && C.lsOK;
+  $("Lsrow").style.display = lsOn ? "" : "none";
+  $("lsWrap").classList.toggle("dis", !C.lsOK);
+  $("ls").disabled = !C.lsOK;
+  $("lsNote").innerHTML = C.lsOK ? "overlap modelled per textbook: load current ≈ constant during μ" : "overlap modelled for the full converters and the 3-pulse converter (the formula-sheet cases)";
+  var fwdOK = C.fwdOK && !lsOn;
+  $("fwdWrap").classList.toggle("dis", !fwdOK);
+  $("fwd").disabled = !fwdOK;
+  $("fwdNote").innerHTML = !C.fwdOK ? "a semiconverter freewheels through its own diodes" : lsOn ? "turn off L<sub>s</sub> to use the FWD" : "";
+  $("railView").style.display = C.fam === 3 ? "" : "none";
+  $("vOut").textContent = $("V").value + " V";
+  $("ROut").textContent = $("R").value + " Ω";
+  $("LOut").textContent = $("L").value + " mH";
+  $("EOut").textContent = $("E").value + " V";
+  $("IoOut").textContent = $("Io").value + " A";
+  $("LsOut").textContent = $("Ls").value + " mH";
+  $("aOut").textContent = $("alpha").value;
+  $("aRef").innerHTML = "α measured from " + (C.fam === 1 ? "the supply zero crossing" : "the natural commutation point (30° after the phase zero crossing)");
+}
+var raf = 0;
+function update(){ syncUI(); if (!raf) raf = requestAnimationFrame(function(){ raf = 0; render(); }); }
+document.querySelectorAll("input,select").forEach(function(el){ el.addEventListener("input", update); el.addEventListener("change", update); });
+[0,30,60,90,120,150,180].forEach(function(v){
+  var b = document.createElement("button"); b.className = "btn"; b.type = "button"; b.textContent = v + "°";
+  b.addEventListener("click", function(){ $("alpha").value = v; update(); });
+  $("chips").appendChild(b);
+});
+var sweepT = null, dir = 1;
+$("sweep").addEventListener("click", function(){
+  if (sweepT){ clearInterval(sweepT); sweepT = null; this.textContent = "▶ sweep"; this.classList.remove("on"); return; }
+  this.textContent = "❚❚ stop"; this.classList.add("on");
+  sweepT = setInterval(function(){
+    var a = +$("alpha").value + dir;
+    if (a >= 180 || a <= 0) dir = -dir;
+    $("alpha").value = Math.max(0, Math.min(180, a)); update();
+  }, 60);
+});
+$("theme").addEventListener("click", function(){
+  var root = document.documentElement, cur = root.getAttribute("data-theme");
+  var dark = cur ? cur === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  var nx = dark ? "light" : "dark"; root.setAttribute("data-theme", nx);
+  try { localStorage.setItem("sn-theme", nx); } catch (e) {}
+});
+var rz = 0; window.addEventListener("resize", function(){ clearTimeout(rz); rz = setTimeout(render, 150); });
+window.addEventListener("message", function(e){
+  var t = e.data && e.data.snTheme;
+  if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  else if (t === "auto") document.documentElement.removeAttribute("data-theme");
+});
+syncUI(); render();
+})();
+</script>
+</body>
+</html>

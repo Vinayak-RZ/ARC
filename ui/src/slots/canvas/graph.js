@@ -78,6 +78,48 @@ export function nextEdgeId(edges) {
   return `e${i}`;
 }
 
+export function nextJunctionId(nodes) {
+  const used = new Set((nodes || []).map((n) => n.id));
+  let i = 1;
+  while (used.has(`j${i}`)) i += 1;
+  return `j${i}`;
+}
+
+export function partCount(nodes) {
+  return (nodes || []).filter((n) => (n.data?.kind || n.type) !== "junction").length;
+}
+
+/** Split one flow edge into two by inserting a junction at `point`. */
+export function splitEdgeAt(nodes, edges, edgeId, point) {
+  const edge = (edges || []).find((e) => e.id === edgeId);
+  if (!edge) return null;
+  const id = nextJunctionId(nodes);
+  const junction = {
+    id,
+    type: "part",
+    position: { x: Number(point?.x) || 0, y: Number(point?.y) || 0 },
+    data: { kind: "junction", refdes: "", value: 0, unit: "", rot: 0 },
+  };
+  const rest = edges.filter((e) => e.id !== edgeId);
+  const left = {
+    id: nextEdgeId(rest),
+    source: edge.source,
+    target: id,
+    sourceHandle: edge.sourceHandle || "n1",
+    targetHandle: "w",
+    type: "step",
+  };
+  const right = {
+    id: nextEdgeId([...rest, left]),
+    source: id,
+    target: edge.target,
+    sourceHandle: "e",
+    targetHandle: edge.targetHandle || "n1",
+    type: "step",
+  };
+  return { nodes: [...(nodes || []), junction], edges: [...rest, left, right] };
+}
+
 export function nextRefdes(nodes, type) {
   const spec = PARTS.find((p) => p.type === type);
   const prefix = spec?.prefix || "N";

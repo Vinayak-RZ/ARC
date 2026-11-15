@@ -8,7 +8,7 @@ FIXTURE = Path("tests/fixtures/rag/ohm-law-cc-by.md")
 
 def test_ingest_fixture_retrieve_hit(tmp_path) -> None:
     (tmp_path / "workflows").mkdir()
-    assert "CC-BY" in FIXTURE.read_text()
+    assert "CC-BY" in FIXTURE.read_text(encoding="utf-8")
     rec = add_doc(
         str(FIXTURE.resolve()),
         tags={"book_id": "oer-ohm", "licence_tag": "CC-BY"},

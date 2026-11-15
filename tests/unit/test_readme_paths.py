@@ -2,7 +2,7 @@ from pathlib import Path
 
 
 def test_extensive_paths_exist() -> None:
-    text = Path("docs/EXTENSIVE.md").read_text()
+    text = Path("docs/EXTENSIVE.md").read_text(encoding="utf-8")
     for p in (
         "src/electrical_engineer/cli.py",
         "src/electrical_engineer/runner/execute.py",
@@ -16,7 +16,7 @@ def test_extensive_paths_exist() -> None:
         assert p in text
         if not p.endswith("/"):
             assert Path(p).exists()
-    readme = Path("README.md").read_text()
+    readme = Path("README.md").read_text(encoding="utf-8")
     assert readme.count("docs/EXTENSIVE.md") >= 1
     assert "unchecked" in readme
     assert "assets/brand/arc-lockup.png" in readme

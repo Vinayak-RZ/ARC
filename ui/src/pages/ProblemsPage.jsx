@@ -4,11 +4,7 @@ import { displayTitle, subjectTag } from "../runDisplay.js";
 import { relativeTime } from "../units/format.js";
 import { MascotState } from "../components/MascotState.jsx";
 
-const STATUS_CHIPS = [
-  { id: "all", label: "All" },
-  { id: "checked", label: "Checked" },
-  { id: "unchecked", label: "Unchecked" },
-];
+const STATUS_CHIPS = [{ id: "checked", label: "Checked" }];
 
 function timeGroup(ts) {
   const delta = Date.now() / 1000 - Number(ts || 0);
@@ -26,7 +22,7 @@ function titleCaseSubject(s) {
 
 export function ProblemsPage({ runs, loading, error, onOpenProblem, onTryExample, onReload, seeding = false }) {
   const [query, setQuery] = useState("");
-  const [status, setStatus] = useState("all");
+  const [status, setStatus] = useState("checked");
   const [subjectFilter, setSubjectFilter] = useState("all");
   const [madeByFilter, setMadeByFilter] = useState("all");
   const counts = useMemo(

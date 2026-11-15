@@ -2,7 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { Command } from "cmdk";
 import {
   BookOpen,
+  FlaskConical,
   FolderOpen,
+  GraduationCap,
   Home,
   Image,
   LayoutGrid,
@@ -21,6 +23,7 @@ const SIDEBAR_TRANSITION_MS = 180;
 
 const NAV = [
   { id: "home", label: "Home", keys: "G H", Icon: Home },
+  { id: "learn", label: "Learn", keys: "G E", Icon: GraduationCap },
   { id: "problems", label: "Problems", keys: "G P", Icon: FolderOpen },
   { id: "studio", label: "Studio", keys: "G S", Icon: SlidersHorizontal },
   { id: "gallery", label: "Gallery", keys: "G A", Icon: Image },
@@ -31,6 +34,10 @@ const NAV = [
 const ACTIONS = [
   { id: "new", label: "New problem", keys: "G N", Icon: Plus },
   { id: "studio", label: "Open in Studio", keys: "G S", Icon: LayoutGrid },
+  { id: "lab-rectifier", label: "Open rectifier lab", keys: "", Icon: FlaskConical },
+  { id: "lab-converter", label: "Open converter lab", keys: "", Icon: FlaskConical },
+  { id: "lab-idmt", label: "Open IDMT lab", keys: "", Icon: FlaskConical },
+  { id: "lab-lead", label: "Open lead compensator lab", keys: "", Icon: FlaskConical },
   { id: "sidebar", label: "Toggle sidebar", keys: "⌃B", Icon: PanelLeft },
   { id: "theme", label: "Toggle theme", keys: "T", Icon: Moon },
 ];
@@ -139,7 +146,10 @@ export function CommandPalette({ runs, onNavigate }) {
                     } else if (item.id === "sidebar") {
                       useLayout.getState().toggleSidebar();
                     } else if (item.id === "studio") {
-                      onNavigate({ view: "studio" });
+                      onNavigate({ view: "studio", tab: "home" });
+                    } else if (item.id.startsWith("lab-")) {
+                      const lab = item.id.slice(4);
+                      onNavigate({ view: "studio", tab: "labs", lab });
                     } else if (item.id === "new") {
                       onNavigate({ view: "home" });
                     }
@@ -148,13 +158,15 @@ export function CommandPalette({ runs, onNavigate }) {
                 >
                   <item.Icon size={16} strokeWidth={1.5} className="cmdk-row-icon" aria-hidden />
                   <span>{item.label}</span>
-                  <span className="cmdk-kbd-row">
-                    {item.keys.split(/\s+/).map((k) => (
-                      <kbd key={k} className="cmdk-kbd">
-                        {k}
-                      </kbd>
-                    ))}
-                  </span>
+                  {item.keys ? (
+                    <span className="cmdk-kbd-row">
+                      {item.keys.split(/\s+/).map((k) => (
+                        <kbd key={k} className="cmdk-kbd">
+                          {k}
+                        </kbd>
+                      ))}
+                    </span>
+                  ) : null}
                 </Command.Item>
               ))}
             </Command.Group>

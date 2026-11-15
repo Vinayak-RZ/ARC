@@ -1,0 +1,25 @@
+id: six-step-inverter-study
+title: Six-step inverter line voltage
+pack: power_electronics
+sample_problem:
+  vdc: 600
+  expected: 467.8
+  tol: 1e-2
+nodes:
+  solve:
+    activity: run-ee-v2-solver
+    default_solver: inverter_six_step
+    capability: converter-model
+  check:
+    activity: check-numeric
+    default_solver: inverter_six_step
+    needs: [solve]
+  trap:
+    activity: trap-verify
+    needs: [solve]
+  label:
+    activity: label-unchecked
+    needs: [trap, check]
+  summary:
+    activity: write-run-summary
+    needs: [label]

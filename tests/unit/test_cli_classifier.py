@@ -10,7 +10,7 @@ def test_omitted_id_unmatched(tmp_path, monkeypatch, capsys) -> None:
     (tmp_path / "workflows").mkdir()
     repo = Path(__file__).resolve().parents[2]
     dest = tmp_path / "workflows" / "unmatched-cosolver.yaml"
-    dest.write_text((repo / "workflows" / "_cross" / "unmatched-cosolver.yaml").read_text())
+    dest.write_text((repo / "workflows" / "_cross" / "unmatched-cosolver.yaml").read_text(encoding="utf-8"))
     assert main(["run"]) == 0
     out = capsys.readouterr().out
     assert "unmatched-cosolver" in out

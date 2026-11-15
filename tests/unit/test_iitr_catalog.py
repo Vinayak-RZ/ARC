@@ -4,7 +4,7 @@ CATALOG = Path("research/notes/iitr-ee-book-catalog.md")
 
 
 def test_every_core_heading_has_licence_tag() -> None:
-    text = CATALOG.read_text()
+    text = CATALOG.read_text(encoding="utf-8")
     heads = []
     current = None
     tags: dict[str, bool] = {}
@@ -21,7 +21,7 @@ def test_every_core_heading_has_licence_tag() -> None:
 
 
 def test_catalog_forbids_pirate_and_git_binaries() -> None:
-    text = CATALOG.read_text()
+    text = CATALOG.read_text(encoding="utf-8")
     assert "Pirate hosts are not sources" in text
     assert "no commercial book bytes in git" in text
     assert "byo_status: needed" in text

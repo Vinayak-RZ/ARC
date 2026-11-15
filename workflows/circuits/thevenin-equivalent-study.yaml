@@ -1,0 +1,30 @@
+id: thevenin-equivalent-study
+title: DC Thevenin equivalent study
+pack: circuits
+sample_problem:
+  netlist: |
+    V1 1 0 DC 10
+    R1 1 2 1000
+    R2 2 0 1000
+  port_a: "2"
+  port_b: "0"
+  expected: 5
+  tol: 1e-6
+nodes:
+  solve:
+    activity: run-ee-v2-solver
+    default_solver: thevenin_dc
+    capability: lumped-circuit-sim
+  check:
+    activity: check-numeric
+    default_solver: thevenin_dc
+    needs: [solve]
+  trap:
+    activity: trap-verify
+    needs: [solve]
+  label:
+    activity: label-unchecked
+    needs: [trap, check]
+  summary:
+    activity: write-run-summary
+    needs: [label]

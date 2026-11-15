@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import electrical_engineer.paths as paths
+from electrical_engineer import paths
 
 
 def test_checkout_root_finds_repo_workflows() -> None:

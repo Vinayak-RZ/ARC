@@ -37,7 +37,7 @@ def test_empty_trace_process_unchecked() -> None:
 
 
 def test_correct_smib_varied_givens_passes_t1() -> None:
-    cases = json.loads(EVAL.read_text())["cases"]
+    cases = json.loads(EVAL.read_text(encoding="utf-8"))["cases"]
     row = next(c for c in cases if c["id"] == "correct-smib-0")
     g = grade_trace(SolutionTrace.from_mapping(row["trace"]))
     t1 = next(c for c in g.checks if c.trap_id == "T1")
@@ -45,7 +45,7 @@ def test_correct_smib_varied_givens_passes_t1() -> None:
 
 
 def test_wrong_t1_fails_not_lab_constant() -> None:
-    cases = json.loads(EVAL.read_text())["cases"]
+    cases = json.loads(EVAL.read_text(encoding="utf-8"))["cases"]
     row = next(c for c in cases if c["id"].startswith("wrong-t1-smib"))
     g = grade_trace(SolutionTrace.from_mapping(row["trace"]))
     assert any(c.trap_id == "T1" and c.status == "fail" for c in g.checks)

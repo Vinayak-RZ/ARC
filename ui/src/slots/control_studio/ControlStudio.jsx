@@ -145,7 +145,15 @@ function CanvasDrop({ children, onDropBlock }) {
   );
 }
 
-function ControlStudioInner({ sessionId, onSession }) {
+const GOLDEN_TEMPLATES = [
+  {
+    id: "pid_dc_motor",
+    title: "PID · DC motor",
+    blurb: "Summing junction, PID, DC motor plant, and scope — the default simulate loop.",
+  },
+];
+
+function ControlStudioInner({ sessionId, onSession, autoBoot = false }) {
   const [session, setSession] = useState(null);
   const [groups, setGroups] = useState([]);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
@@ -244,6 +252,11 @@ function ControlStudioInner({ sessionId, onSession }) {
       loadSession(sessionId);
       return undefined;
     }
+    if (!autoBoot && bootKey === 0) {
+      setBooting(false);
+      setBootError("");
+      return undefined;
+    }
     let cancelled = false;
     setBooting(true);
     setBootError("");
@@ -267,15 +280,17 @@ function ControlStudioInner({ sessionId, onSession }) {
         onSession?.(p.session_id);
         paint(p);
         refreshValidation(p.session_id);
-        return fetch(`/api/control-studio/sessions/${p.session_id}/simulate`, { method: "POST" })
+        setBooting(false);
+        fetch(`/api/control-studio/sessions/${p.session_id}/simulate`, { method: "POST" })
           .then((r) => r.json())
           .then((sim) => {
             if (cancelled) return;
             applySimAndAnalyze(p.session_id, sim, setResults, setMargins, setStepData, setMsg, () =>
               setLastSimRevision(p.revision || 0),
             );
-            setBooting(false);
-          });
+          })
+          .catch(() => {});
+        return null;
       })
       .catch(() => {
         if (!cancelled) {
@@ -289,7 +304,12 @@ function ControlStudioInner({ sessionId, onSession }) {
       cancelled = true;
       clearTimeout(timeout);
     };
-  }, [sessionId, loadSession, onSession, paint, refreshValidation, bootKey]);
+  }, [sessionId, loadSession, onSession, paint, refreshValidation, bootKey, autoBoot]);
+
+  function startTemplate() {
+    setBootError("");
+    setBootKey((k) => k + 1);
+  }
 
   const resyncFlowFromDiagram = useCallback(
     (diagram) => {
@@ -389,6 +409,20 @@ function ControlStudioInner({ sessionId, onSession }) {
     persist(flowToDiagram(nodes, edges, diagramBase.current), { op: "move" });
   }, [nodes, edges, persist]);
 
+  const nodesRef = useRef(nodes);
+  const edgesRef = useRef(edges);
+  nodesRef.current = nodes;
+  edgesRef.current = edges;
+
+  const onEdgesDelete = useCallback(
+    (deleted) => {
+      const ids = new Set(deleted.map((e) => e.id));
+      const next = edgesRef.current.filter((e) => !ids.has(e.id));
+      persist(flowToDiagram(nodesRef.current, next, diagramBase.current), { op: "disconnect" });
+    },
+    [persist],
+  );
+
   function placeBlock(item, position) {
     const id = `${item.type}${nodes.length + 1}`;
     const nx = {
@@ -474,6 +508,23 @@ function ControlStudioInner({ sessionId, onSession }) {
       .catch(() => {});
   }
 
+  if (!sessionId && !session && !booting && bootKey === 0) {
+    return (
+      <section className="cs-app control-studio studio-idle card-surface">
+        <h2>Control block diagrams</h2>
+        <p className="hint">Start a session, wire blocks, then simulate step response and margins.</p>
+        <div className="learn-lab-grid studio-pick-grid">
+          {GOLDEN_TEMPLATES.map((t) => (
+            <button key={t.id} type="button" className="learn-lab-card" onClick={startTemplate}>
+              <strong>{t.title}</strong>
+              <span className="hint">{t.blurb}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
   if (booting) {
     return (
       <section className="cs-app control-studio studio studio-booting">
@@ -518,6 +569,7 @@ function ControlStudioInner({ sessionId, onSession }) {
         />
         <StudioPalette groups={groups} onDragStart={(item) => placeBlock(item)} />
         <div className={`studio-canvas${connecting ? " is-connecting" : ""}`}>
+          <p className="studio-wire-hint">Drag a port onto another port. Click a wire, then Delete, to remove it.</p>
           <CanvasDrop onDropBlock={placeBlock}>
             <FlowZoomHelpers zoomApi={zoomApi} setZoomPct={setZoomPct} />
             <ReactFlow
@@ -528,8 +580,13 @@ function ControlStudioInner({ sessionId, onSession }) {
               onNodesChange={onNodesChange}
               onEdgesChange={onEdgesChange}
               onConnect={onConnect}
+              onEdgesDelete={onEdgesDelete}
               onConnectStart={() => setConnecting(true)}
               onConnectEnd={() => setConnecting(false)}
+              deleteKeyCode={["Backspace", "Delete"]}
+              edgesFocusable
+              elementsSelectable
+              connectionRadius={32}
               onNodeDragStop={onNodeDragStop}
               onNodeClick={(_, node) => {
                 setSelectedId(node.id);
@@ -540,7 +597,6 @@ function ControlStudioInner({ sessionId, onSession }) {
                 setNodes((nds) => nds.map((n) => ({ ...n, selected: false })));
               }}
               onMove={(_, vp) => setZoomPct(vp.zoom)}
-              connectionRadius={22}
               snapToGrid
               snapGrid={[GRID, GRID]}
               connectionLineType={ConnectionLineType.Straight}
@@ -599,7 +655,7 @@ function ControlStudioInner({ sessionId, onSession }) {
   );
 }
 
-export function ControlStudio() {
+export function ControlStudio({ autoBoot = false }) {
   const [sessionId, setSessionId] = useState(() => {
     const q = new URLSearchParams(window.location.search);
     return q.get("session") || "";
@@ -614,5 +670,5 @@ export function ControlStudio() {
       window.removeEventListener("arc-url", sync);
     };
   }, []);
-  return <ControlStudioInner sessionId={sessionId} onSession={setSessionId} />;
+  return <ControlStudioInner sessionId={sessionId} onSession={setSessionId} autoBoot={autoBoot} />;
 }

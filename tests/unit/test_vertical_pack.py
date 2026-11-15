@@ -28,7 +28,7 @@ def test_manifest_skills_include_b8_domains() -> None:
             continue
         if skill["id"] in {"psa-swing", "psa-agc", "psa-ed", "cross", "root"}:
             continue
-        text = (vertical_pack.repo_root() / skill["path"]).read_text()
+        text = (vertical_pack.repo_root() / skill["path"]).read_text(encoding="utf-8")
         assert "unchecked" in text.lower() or "provenance" in text.lower(), skill["id"]
 
 
@@ -41,7 +41,7 @@ def test_install_pack_all_hosts(tmp_path: Path) -> None:
     assert (tmp_path / ".cursor" / "skills" / "arc-ee-protection-standards" / "SKILL.md").is_file()
     state = vertical_pack.state_path(tmp_path)
     assert state.is_file()
-    data = json.loads(state.read_text())
+    data = json.loads(state.read_text(encoding="utf-8"))
     assert data["pack_id"] == "arc-ee-vertical"
 
 
@@ -49,9 +49,9 @@ def test_install_idempotent(tmp_path: Path) -> None:
     first = vertical_pack.install_pack(tmp_path, host="cursor")
     second = vertical_pack.install_pack(tmp_path, host="cursor")
     assert len(first) == len(second)
-    assert (tmp_path / ".cursor" / "mcp.json").read_text() == (
+    assert (tmp_path / ".cursor" / "mcp.json").read_text(encoding="utf-8") == (
         tmp_path / ".cursor" / "mcp.json"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
 
 def test_uninstall_reverses_install(tmp_path: Path) -> None:

@@ -16,7 +16,9 @@ LL_CANVAS = "#FAFAF9"
 LL_SURFACE = "#FFFFFF"
 LL_INK = "#202020"
 LL_SECONDARY = "#5F5F5C"
+LL_MUTED = "#70706c"
 LL_BORDER = "#E4E4E2"
+LL_HAIRLINE_STRONG = "#D4D4D1"
 LL_COBALT = "#2F6FEB"
 LL_COBALT_700 = "#1D47A3"
 LL_COPPER = "#E07A3F"
@@ -26,14 +28,16 @@ LL_CRITICAL = "#D0312D"
 LL_GRID = "#EEECEA"
 
 FONT_SANS_STACK: tuple[str, ...] = ("Geist", "Inter", "DejaVu Sans", "Liberation Sans", "sans-serif")
-SCHEMDRAW_FONT = "Inter"
+SCHEMDRAW_FONT = "DejaVu Sans"
 
 # --- Learning Lab dark (matched contrast / hue) ---
 DK_CANVAS = "#121211"
 DK_SURFACE = "#1A1A18"
 DK_INK = "#F4F4F3"
 DK_SECONDARY = "#A3A39E"
+DK_MUTED = "#A3A39E"
 DK_BORDER = "#353532"
+DK_HAIRLINE_STRONG = "#454542"
 DK_COBALT = "#6B93F5"
 DK_COBALT_700 = "#2F6FEB"
 DK_COPPER = "#E8935F"
@@ -56,6 +60,7 @@ class ArcTheme:
     surface: str
     ink: str
     muted: str
+    body: str
     primary: str
     primary_dark: str
     copper: str
@@ -71,6 +76,7 @@ class ArcTheme:
     area_decel: tuple[float, float, float, float]
     grid: str
     hairline: str
+    hairline_strong: str
     font_family: str
     font_sans: tuple[str, ...]
     title_size: float
@@ -92,7 +98,8 @@ LIGHT = ArcTheme(
     canvas=LL_CANVAS,
     surface=LL_SURFACE,
     ink=LL_INK,
-    muted=LL_SECONDARY,
+    muted=LL_MUTED,
+    body=LL_SECONDARY,
     primary=LL_COBALT,
     primary_dark=LL_COBALT_700,
     copper=LL_COPPER,
@@ -108,13 +115,14 @@ LIGHT = ArcTheme(
     area_decel=_rgba_hex(LL_SUCCESS, 0.18),
     grid=LL_GRID,
     hairline=LL_BORDER,
+    hairline_strong=LL_HAIRLINE_STRONG,
     font_family=SCHEMDRAW_FONT,
     font_sans=FONT_SANS_STACK,
     title_size=13.0,
     label_size=11.0,
     tick_size=9.5,
     annotation_size=9.0,
-    dpi=144,
+    dpi=200,
     fig_w=7.5,
     fig_h=4.6,
 )
@@ -124,7 +132,8 @@ DARK = ArcTheme(
     canvas=DK_CANVAS,
     surface=DK_SURFACE,
     ink=DK_INK,
-    muted=DK_SECONDARY,
+    muted=DK_MUTED,
+    body=DK_SECONDARY,
     primary=DK_COBALT,
     primary_dark=DK_COBALT_700,
     copper=DK_COPPER,
@@ -140,13 +149,14 @@ DARK = ArcTheme(
     area_decel=_rgba_hex(DK_SUCCESS, 0.24),
     grid=DK_GRID,
     hairline=DK_BORDER,
+    hairline_strong=DK_HAIRLINE_STRONG,
     font_family=SCHEMDRAW_FONT,
     font_sans=FONT_SANS_STACK,
     title_size=13.0,
     label_size=11.0,
     tick_size=9.5,
     annotation_size=9.0,
-    dpi=144,
+    dpi=200,
     fig_w=7.5,
     fig_h=4.6,
 )

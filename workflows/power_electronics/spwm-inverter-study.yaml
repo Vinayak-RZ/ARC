@@ -1,0 +1,28 @@
+id: spwm-inverter-study
+title: SPWM inverter fundamental RMS
+pack: power_electronics
+sample_problem:
+  vdc: 600
+  ma: 0.8
+  mf: 21
+  phases: "3"
+  expected: 293.95
+  tol: 1e-2
+nodes:
+  solve:
+    activity: run-ee-v2-solver
+    default_solver: spwm_inverter
+    capability: converter-model
+  check:
+    activity: check-numeric
+    default_solver: spwm_inverter
+    needs: [solve]
+  trap:
+    activity: trap-verify
+    needs: [solve]
+  label:
+    activity: label-unchecked
+    needs: [trap, check]
+  summary:
+    activity: write-run-summary
+    needs: [label]

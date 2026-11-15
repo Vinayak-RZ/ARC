@@ -82,8 +82,9 @@ DEFAULT_BIND = {
     "ask-student": "ask-human",
 }
 
+# run-spice stays installed: the node uses ngspice when it is on PATH and the
+# in-repo series-RLC analytic solver otherwise. Gating on PySpice skipped that path.
 _OPTIONAL_IMPORT = {
-    "run-spice": "PySpice",
     "run-python-control": "control",
     "run-load-flow": "pandapower",
 }

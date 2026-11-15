@@ -1,0 +1,18 @@
+schema: arc.courses.v1
+courses:
+  - code: EEC-301
+    title: Power Systems-II
+    pack: power
+    files:
+      - {file: power-systems-ii-notes.html, label: Study notes, kind: notes}
+  - code: EEC-303
+    title: Power Electronics
+    pack: power_electronics
+    files:
+      - {file: power-electronics-notes.html, label: Study notes, kind: notes}
+      - {file: rectifier-waveform-lab.html, label: Rectifier waveform lab (original), kind: lab}
+  - code: EET-123
+    title: Industrial Controller Design I
+    pack: control
+    files:
+      - {file: industrial-controller-design-i-notes.html, label: Study notes, kind: notes}

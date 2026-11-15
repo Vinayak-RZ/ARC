@@ -37,6 +37,15 @@ def _problem(spec: dict[str, Any]) -> dict[str, Any]:
     return {}
 
 
+def _problem_with_default_solver(spec: dict[str, Any]) -> dict[str, Any]:
+    problem = dict(_problem(spec))
+    if "solver" not in problem and "check_kind" not in problem:
+        default = spec.get("default_solver")
+        if default:
+            problem["solver"] = default
+    return problem
+
+
 @register("load-netlist")
 def load_netlist(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
     problem = _problem(spec)
@@ -440,7 +449,7 @@ def run_ee_v2_solver(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, 
     from electrical_engineer.engines.ee_v2_runner import SOLVER_IDS, solve_ee_v2, solver_id
 
     run_dir_s = spec.get("run_dir")
-    problem = _problem(spec)
+    problem = _problem_with_default_solver(spec)
     sid = solver_id(problem)
     if not sid or sid not in SOLVER_IDS:
         return {
@@ -526,7 +535,7 @@ def run_load_flow(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any
 
 @register("check-numeric")
 def check_numeric(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
-    problem = _problem(spec)
+    problem = _problem_with_default_solver(spec)
     computed = _hand_value(problem)
     tol = float(problem.get("tol", 1e-6))
     expected = problem.get("expected")

@@ -2,6 +2,7 @@ import {
   AlertTriangle,
   BookOpen,
   CircleCheck,
+  GraduationCap,
   Home,
   Images,
   LifeBuoy,
@@ -19,6 +20,7 @@ import { ArcMascot } from "../mascot/index.js";
 
 const PRIMARY = [
   { id: "home", label: "Home", icon: Home },
+  { id: "learn", label: "Learn", icon: GraduationCap },
   { id: "problems", label: "Problems", icon: ListChecks },
   { id: "studio", label: "Studio", icon: Workflow },
   { id: "gallery", label: "Gallery", icon: Images },

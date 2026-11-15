@@ -51,11 +51,22 @@ export function dividerSteps(problem, evid, unchecked) {
   return rows;
 }
 
+function stepsFromApi(rows) {
+  return rows.map((s) => ({
+    title: s.title,
+    result: s.result,
+    author: s.author || "Engine",
+    body: s.equation ? <p className="work-equation-typeset">{s.equation}</p> : null,
+  }));
+}
+
 export function StepTimeline({ data }) {
   const evid = readEvid(data?.summary);
   const unchecked = evid.unchecked === true || evid.token === "unchecked";
-  const steps =
-    data?.problem?.kind === "voltage_divider" || (data?.problem?.vin && data?.problem?.r1)
+  const api = Array.isArray(data?.work_steps) ? data.work_steps : [];
+  const steps = api.length
+    ? stepsFromApi(api)
+    : data?.problem?.kind === "voltage_divider" || (data?.problem?.vin && data?.problem?.r1)
       ? dividerSteps(data.problem, evid, unchecked)
       : [
           { title: "Solve", result: unchecked ? "Pending verification" : "Numeric check passed", author: "Engine" },

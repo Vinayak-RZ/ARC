@@ -30,17 +30,17 @@ PACK_HOLE = {
 
 
 def test_pack_coverage_paths() -> None:
-    cannot = Path("docs/CANNOT_DO.md").read_text()
+    cannot = Path("docs/CANNOT_DO.md").read_text(encoding="utf-8")
     assert "CD-NO-PROVIDER" in cannot
     assert "CD-YAML-GAP" in cannot
     for pack, cap in PACK_DEFAULT.items():
-        text = Path(f"skills/{pack}/SKILL.md").read_text()
+        text = Path(f"skills/{pack}/SKILL.md").read_text(encoding="utf-8")
         assert cap in text, pack
         assert "unchecked" in text, pack
         hole = PACK_HOLE[pack]
         assert hole in cannot, hole
         if hole != "CD-NO-PROVIDER":
             assert hole in text, pack
-    cross = Path("skills/_cross/SKILL.md").read_text()
+    cross = Path("skills/_cross/SKILL.md").read_text(encoding="utf-8")
     assert "label-unverified" in cross
     assert "unchecked" in cross

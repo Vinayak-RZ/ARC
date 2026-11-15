@@ -1,0 +1,28 @@
+id: capacitance-geometry-study
+title: Capacitance from geometry study
+pack: em
+sample_problem:
+  geometry: parallel_plate
+  eps_r: 1
+  area_m2: 1
+  d_m: 0.001
+  expected: 8.854e-9
+  tol: 1e-12
+nodes:
+  solve:
+    activity: run-ee-v2-solver
+    default_solver: capacitance_geometry
+    capability: fields-analytic
+  check:
+    activity: check-numeric
+    default_solver: capacitance_geometry
+    needs: [solve]
+  trap:
+    activity: trap-verify
+    needs: [solve]
+  label:
+    activity: label-unchecked
+    needs: [trap, check]
+  summary:
+    activity: write-run-summary
+    needs: [label]

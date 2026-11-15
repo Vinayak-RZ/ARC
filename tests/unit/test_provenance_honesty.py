@@ -61,4 +61,4 @@ def test_cli_provenance_audit_rejects_bad_notes(tmp_path: Path) -> None:
     from electrical_engineer.web_verify.validate import audit_markdown_provenance
 
     with pytest.raises(ValueError):
-        audit_markdown_provenance(bad.read_text(), run_dir=tmp_path)
+        audit_markdown_provenance(bad.read_text(encoding="utf-8"), run_dir=tmp_path)

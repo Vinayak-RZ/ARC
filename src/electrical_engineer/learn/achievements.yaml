@@ -1,0 +1,12 @@
+schema: arc.achievements.v1
+achievements:
+  - {id: first-solve, title: First solve, icon: Zap, rule: {type: run_count, min: 1}}
+  - {id: verified-5, title: Five checked answers, icon: BadgeCheck, rule: {type: run_count, min: 5, verified: true}}
+  - {id: verified-25, title: Twenty-five checked answers, icon: BadgeCheck, rule: {type: run_count, min: 25, verified: true}}
+  - {id: pack-first, title: "First {pack_label} problem", icon: Layers, rule: {type: first_in_pack}}
+  - {id: all-packs, title: Every subject touched, icon: Compass, rule: {type: all_packs}}
+  - {id: topics-10, title: Ten topics done, icon: BookCheck, rule: {type: topics_done, min: 10}}
+  - {id: topics-50, title: Fifty topics done, icon: BookCheck, rule: {type: topics_done, min: 50}}
+  - {id: subject-complete, title: "{subject_title} complete", icon: GraduationCap, rule: {type: subject_complete}}
+  - {id: semester-complete, title: "Semester {n} complete", icon: Trophy, rule: {type: semester_complete}}
+  - {id: lab-explorer, title: Lab explorer, icon: FlaskConical, rule: {type: labs_opened, min: 4}}

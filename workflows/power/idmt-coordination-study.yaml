@@ -1,0 +1,32 @@
+id: idmt-coordination-study
+title: IDMT relay coordination TMS
+pack: power
+sample_problem:
+  i_fault_a: 1000
+  r1_ct_primary_a: 100
+  r1_plug_setting: 1.0
+  r1_tms: 0.5
+  r1_curve: standard
+  r2_ct_primary_a: 100
+  r2_plug_setting: 1.5
+  r2_curve: standard
+  cti_s: 0.3
+  tol: 1e-3
+nodes:
+  solve:
+    activity: run-ee-v2-solver
+    default_solver: idmt_coordination
+    capability: power-network-study
+  check:
+    activity: check-numeric
+    default_solver: idmt_coordination
+    needs: [solve]
+  trap:
+    activity: trap-verify
+    needs: [solve]
+  label:
+    activity: label-unchecked
+    needs: [trap, check]
+  summary:
+    activity: write-run-summary
+    needs: [label]

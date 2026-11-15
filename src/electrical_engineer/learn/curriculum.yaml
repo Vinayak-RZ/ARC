@@ -1,0 +1,386 @@
+schema: arc.curriculum.v1
+institute_basis: IIT Roorkee NEP (inferred; see docs/curriculum-map.md)
+current_semester: 5
+semesters:
+  - n: 1
+    subjects:
+      - id: phi-101
+        code: PHI-101
+        title: Physics-I
+        pack: em
+        source: inferred
+        units_from: em
+        units: [01-vector-analysis-coords, 02-electrostatics, 03-conductors-dielectrics-capacitance, 04-magnetostatics, 05-faraday-inductance]
+      - id: eec-102
+        code: EEC-102
+        title: Basic Electrical Science
+        pack: circuits
+        source: inferred
+        units_from: circuits
+        units: [01-charge-current-voltage-power, 02-kcl-kvl-ohms-law, 03-series-parallel-dividers, 04-nodal-mesh, 05-network-theorems, 06-first-order-transients, 07-second-order-transients, 08-phasors-ac-steady-state]
+      - id: maths-1
+        code: null
+        title: Mathematics I
+        pack: maths
+        source: inferred
+        units_from: maths
+        units: [01-complex-numbers-phasors-math, 02-ode-linear-systems, 03-laplace-transforms, 04-fourier-series-transform-math, 05-linear-algebra-ee]
+      - id: ece-101
+        code: ECE-101
+        title: Fundamentals of Electronics
+        pack: electronics
+        source: inferred
+        units_from: electronics
+        units: [01-semiconductor-diodes, 02-bjt-biasing-small-signal, 03-fet-mosfet, 04-opamp-linear, 05-opamp-nonlinear-applications]
+  - n: 2
+    subjects:
+      - id: eec-104
+        code: EEC-104
+        title: Signals and Systems
+        pack: signals
+        source: inferred
+        units_from: signals
+      - id: ece-103
+        code: ECE-103
+        title: Digital Electronics
+        pack: electronics
+        source: inferred
+        units_from: electronics
+        units: [09-number-systems-boolean, 10-combinational-logic, 11-sequential-logic-fsm, 12-adc-dac-logic-families, 13-memory-hdl-intro, 14-cmos-inverter-timing]
+      - id: maths-2
+        code: null
+        title: Mathematics II
+        pack: maths
+        source: inferred
+        units_from: maths
+        units: [06-vector-calculus, 07-probability-random-variables, 08-numerical-methods-ee, 09-z-transform-math, 10-partial-fractions-residues]
+  - n: 3
+    subjects:
+      - id: eec-201
+        code: EEC-201
+        title: Network Theory
+        pack: circuits
+        source: inferred
+        units_from: circuits
+        units: [09-ac-power-rms, 10-resonance, 11-magnetically-coupled-circuits, 12-three-phase, 13-two-port-networks, 14-laplace-network-analysis, 15-frequency-response-filters, 16-graph-theory-tellegen]
+        topic_recipes:
+          10-resonance: [resonance-study]
+          13-two-port-networks: [two-port-study]
+      - id: eec-202
+        code: EEC-202
+        title: Electrical and Electronic Measurements
+        pack: measurements
+        source: inferred
+        units_from: measurements
+      - id: em-fields
+        code: null
+        title: Electromagnetic Fields
+        pack: em
+        source: inferred
+        units_from: em
+        units: [06-maxwell-equations, 07-plane-waves, 08-transmission-lines, 09-smith-chart-stub-matching, 10-waveguides-radiation-intro]
+        topic_recipes:
+          08-transmission-lines: [line-parameters-study]
+      - id: analog-electronics
+        code: null
+        title: Analog Electronics
+        pack: electronics
+        source: inferred
+        units_from: electronics
+        units: [01-semiconductor-diodes, 02-bjt-biasing-small-signal, 03-fet-mosfet, 04-opamp-linear, 05-opamp-nonlinear-applications, 06-feedback-amplifiers, 07-oscillators, 08-voltage-regulators-power-amps]
+        topic_recipes:
+          02-bjt-biasing-small-signal: [bjt-bias-study]
+          04-opamp-linear: [opamp-amplifier-study]
+  - n: 4
+    subjects:
+      - id: eec-204
+        code: EEC-204
+        title: Control Systems
+        pack: control
+        source: inferred
+        units_from: control
+      - id: eec-206
+        code: EEC-206
+        title: Electrical Machines
+        pack: machines
+        source: inferred
+        units_from: machines
+      - id: eec-208
+        code: EEC-208
+        title: Power Systems-I
+        pack: power
+        source: inferred
+        units_from: power
+        units: [01-per-unit-system, 02-transmission-line-models, 03-load-flow, 04-symmetrical-faults, 05-unsymmetrical-faults-sequence, 07-economic-operation]
+        topic_recipes:
+          03-load-flow: [solve-power-problem]
+  - n: 5
+    subjects:
+      - id: eec-301
+        code: EEC-301
+        title: Power Systems-II
+        pack: power
+        source: provided
+        course: EEC-301
+        topics:
+          - id: three-clocks
+            title: Three Clocks
+            anchor: ""
+            recipes: []
+            labs: []
+          - id: rotor-angle-stability
+            title: Rotor-angle stability and the equal-area criterion
+            anchor: ""
+            recipes: [critical-clearing-study, smib-swing-study]
+            labs: []
+          - id: economic-operation
+            title: Economic operation and unit commitment
+            anchor: ""
+            recipes: [ed-lambda-study, ed-penalty-study]
+            labs: []
+          - id: load-frequency-control
+            title: Load-frequency control
+            anchor: ""
+            recipes: [lfc-single-area-study, agc-two-area-study]
+            labs: []
+          - id: relay-must-decide
+            title: What a relay must decide
+            anchor: ""
+            recipes: [study-protection-setting]
+            labs: []
+          - id: overcurrent-idmt
+            title: Overcurrent, PSM, TMS, and IDMT
+            anchor: ""
+            recipes: [idmt-relay-study]
+            labs: [idmt]
+          - id: directional-coordination
+            title: Directional relays and coordination
+            anchor: ""
+            recipes: [idmt-coordination-study]
+            labs: [idmt]
+          - id: transformer-generator-protection
+            title: Transformer and generator protection
+            anchor: ""
+            recipes: [differential-protection-study]
+            labs: []
+          - id: differential-bias
+            title: Differential protection and percentage bias
+            anchor: ""
+            recipes: [differential-protection-study]
+            labs: []
+          - id: distance-mho
+            title: Distance protection and the mho relay
+            anchor: ""
+            recipes: [distance-mho-study]
+            labs: []
+          - id: breakers-rrrv
+            title: Circuit breakers, RRRV, and fuses
+            anchor: ""
+            recipes: [circuit-breaker-rrrv-study]
+            labs: []
+          - id: synthesis-formula
+            title: Synthesis, quizzes, formula sheet
+            anchor: ""
+            recipes: []
+            labs: []
+      - id: eec-303
+        code: EEC-303
+        title: Power Electronics
+        pack: power_electronics
+        source: provided
+        course: EEC-303
+        topics:
+          - id: where-course-got-to
+            title: Where the course has got to
+            anchor: ""
+            recipes: []
+            labs: []
+          - id: devices-commutation
+            title: Devices, latching, and commutation
+            anchor: ""
+            recipes: []
+            labs: []
+          - id: rectifiers-control-laws
+            title: Rectifiers and the control laws
+            anchor: ""
+            recipes: [rectifier-1ph-study]
+            labs: [rectifier]
+          - id: three-phase-rectifiers
+            title: Three-phase controlled rectifiers
+            anchor: ""
+            recipes: [rectifier-3ph-study]
+            labs: [rectifier]
+          - id: source-inductance-overlap
+            title: Source inductance and commutation overlap
+            anchor: ""
+            recipes: [rectifier-3ph-study, rectifier-1ph-study]
+            labs: [rectifier]
+          - id: dc-dc-converters-i
+            title: DC–DC converters I
+            anchor: ""
+            recipes: [boost-converter-study, buck-boost-converter-study, study-power-electronics-v2]
+            labs: [converter]
+          - id: dc-dc-converters-ii
+            title: DC–DC converters II
+            anchor: ""
+            recipes: [boost-converter-study, buck-boost-converter-study, study-power-electronics-v2]
+            labs: [converter]
+          - id: inverters-i
+            title: Inverters I — single-phase
+            anchor: ""
+            recipes: [spwm-inverter-study]
+            labs: []
+          - id: inverters-ii
+            title: Inverters II — three-phase and six-step
+            anchor: ""
+            recipes: [six-step-inverter-study]
+            labs: []
+          - id: pwm-harmonics
+            title: PWM and harmonic control
+            anchor: ""
+            recipes: [spwm-inverter-study]
+            labs: []
+          - id: drive-chain
+            title: The complete drive chain
+            anchor: ""
+            recipes: [solve-drives-problem]
+            labs: []
+          - id: tutorials-exam
+            title: Tutorials, exam practice, and synthesis
+            anchor: ""
+            recipes: []
+            labs: []
+          - id: rectifier-lab
+            title: The rectifier waveform lab
+            anchor: ""
+            recipes: []
+            labs: [rectifier]
+      - id: eet-123
+        code: EET-123
+        title: Industrial Controller Design I
+        pack: control
+        source: provided
+        course: EET-123
+        topics:
+          - id: control-toolkit
+            title: The control toolkit
+            anchor: ""
+            recipes: []
+            labs: []
+          - id: industrial-modelling
+            title: Industrial control and modelling
+            anchor: ""
+            recipes: [solve-control-problem]
+            labs: []
+          - id: stability-model-reduction
+            title: Stability and model reduction
+            anchor: ""
+            recipes: [routh-hurwitz-study]
+            labs: []
+          - id: pid-tuning
+            title: PID control and its tuning
+            anchor: ""
+            recipes: [pid-zn-ultimate-study, pid-zn-reaction-curve-study]
+            labs: []
+          - id: midterm-solved
+            title: This year's midterm, solved
+            anchor: ""
+            recipes: []
+            labs: []
+          - id: poles-zeros
+            title: Shaping the response with poles and zeros
+            anchor: ""
+            recipes: [second-order-specs-study]
+            labs: []
+          - id: frequency-bode-margins
+            title: Frequency response, Bode plots, and the two margins
+            anchor: ""
+            recipes: [solve-control-problem]
+            labs: [lead]
+          - id: compensators-circuits
+            title: Compensators as circuits
+            anchor: ""
+            recipes: []
+            labs: [lead]
+          - id: lead-design
+            title: Lead compensator design
+            anchor: ""
+            recipes: [lead-compensator-design-study]
+            labs: [lead]
+          - id: lag-lead-lag
+            title: Lag and lead–lag compensator design
+            anchor: ""
+            recipes: [lag-compensator-design-study]
+            labs: []
+          - id: control-lab-revision
+            title: Control lab and revision
+            anchor: ""
+            recipes: []
+            labs: []
+      - id: eec-351
+        code: EEC-351
+        title: Fundamentals of AI/ML
+        pack: null
+        source: inferred
+        note: Outside Arc's EE solver packs
+        topics: []
+  - n: 6
+    subjects:
+      - id: eel-302
+        code: EEL-302
+        title: Electric Drives
+        pack: machines
+        source: inferred
+        units_from: electives/electric-drives
+      - id: eel-355
+        code: EEL-355
+        title: Digital Signal Processing
+        pack: signals
+        source: inferred
+        units_from: electives/dsp
+      - id: microprocessors
+        code: null
+        title: Microprocessors
+        pack: electronics
+        source: inferred
+        units_from: electives/microprocessors
+  - n: 7
+    subjects:
+      - id: protection-switchgear
+        code: null
+        title: Protection and Switchgear
+        pack: power
+        source: inferred
+        units_from: electives/protection-switchgear
+      - id: high-voltage
+        code: null
+        title: High Voltage
+        pack: power
+        source: inferred
+        units_from: electives/high-voltage
+      - id: renewables-intro
+        code: null
+        title: Renewables intro
+        pack: power
+        source: inferred
+        units_from: electives/renewables-intro
+  - n: 8
+    subjects:
+      - id: utilization
+        code: null
+        title: Utilization
+        pack: power
+        source: inferred
+        units_from: electives/utilization
+      - id: communication-eee
+        code: null
+        title: Communication (EEE)
+        pack: signals
+        source: inferred
+        units_from: electives/communication-eee
+      - id: plc-industrial
+        code: null
+        title: PLC / industrial
+        pack: control
+        source: inferred
+        units_from: electives/plc-industrial

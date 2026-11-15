@@ -1,0 +1,46 @@
+id: dft-spectrum-study
+title: DFT spectrum peak study
+pack: signals
+sample_problem:
+  samples:
+    - 0.0
+    - 0.309017
+    - 0.587785
+    - 0.809017
+    - 0.951057
+    - 1.0
+    - 0.951057
+    - 0.809017
+    - 0.587785
+    - 0.309017
+    - 0.0
+    - -0.309017
+    - -0.587785
+    - -0.809017
+    - -0.951057
+    - -1.0
+    - -0.951057
+    - -0.809017
+    - -0.587785
+    - -0.309017
+  fs_hz: 1000
+  expected: 50.0
+  tol: 1e-6
+nodes:
+  solve:
+    activity: run-ee-v2-solver
+    default_solver: dft_spectrum
+    capability: signal-analysis
+  check:
+    activity: check-numeric
+    default_solver: dft_spectrum
+    needs: [solve]
+  trap:
+    activity: trap-verify
+    needs: [solve]
+  label:
+    activity: label-unchecked
+    needs: [trap, check]
+  summary:
+    activity: write-run-summary
+    needs: [label]

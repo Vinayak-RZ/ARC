@@ -1,0 +1,27 @@
+id: pid-zn-ultimate-study
+title: Ziegler-Nichols ultimate gain PID
+pack: control
+sample_problem:
+  ku: 10
+  pu_s: 2
+  mode: PID
+  expected: 6
+  tol: 1e-6
+nodes:
+  solve:
+    activity: run-ee-v2-solver
+    default_solver: zn_ultimate
+    capability: lti-analysis
+  check:
+    activity: check-numeric
+    default_solver: zn_ultimate
+    needs: [solve]
+  trap:
+    activity: trap-verify
+    needs: [solve]
+  label:
+    activity: label-unchecked
+    needs: [trap, check]
+  summary:
+    activity: write-run-summary
+    needs: [label]

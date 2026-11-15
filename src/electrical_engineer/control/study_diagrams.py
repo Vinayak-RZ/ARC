@@ -99,6 +99,119 @@ def drives_oneline_diagram(problem: dict[str, Any] | None) -> dict[str, Any]:
     }
 
 
+def smib_swing_diagram(problem: dict[str, Any] | None) -> dict[str, Any]:
+    """One-line of the machine the swing engine actually integrates."""
+    from electrical_engineer.engines.smib_swing import SmibCase
+
+    problem = problem or {}
+    case = SmibCase(
+        **{k: problem[k] for k in problem if k in SmibCase.__dataclass_fields__}
+    )
+    nodes = [
+        _equip("gen", "Generator", f"H={case.h_mj_mva:g} s", 48, 120),
+        _equip("xfmr", "Transformer", "step-up", 200, 120),
+        _equip("line", "Line", "double circuit", 360, 120),
+        _equip("inf", "Infinite bus", f"{case.f0_hz:g} Hz", 520, 120),
+    ]
+    edges = [
+        {"id": "e1", "from": "gen", "fromPort": "out", "to": "xfmr", "toPort": "in"},
+        {"id": "e2", "from": "xfmr", "fromPort": "out", "to": "line", "toPort": "in"},
+        {"id": "e3", "from": "line", "fromPort": "out", "to": "inf", "toPort": "in"},
+    ]
+    return {
+        "schema": SCHEMA,
+        "diagramKind": "smib_swing",
+        "title": "SMIB — generator, transformer, line, infinite bus",
+        "meta": {
+            "pm": case.pm_pu,
+            "pmax_pre": case.pmax_pre_pu,
+            "pmax_fault": case.pmax_fault_pu,
+            "pmax_post": case.pmax_post_pu,
+            "h": case.h_mj_mva,
+            "f0": case.f0_hz,
+        },
+        "nodes": nodes,
+        "edges": edges,
+    }
+
+
+def digital_loop_diagram(problem: dict[str, Any] | None) -> dict[str, Any]:
+    problem = problem or {}
+    num = problem.get("num") or [0.1]
+    den = problem.get("den") or [1.0, -0.5]
+    ts = float(problem.get("ts") or problem.get("sample_time") or 0.01)
+    gz = f"{num} / {den}"
+    nodes = [
+        {"id": "sum", "type": "sum", "label": "Σ", "x": 72, "y": 120, "negative": True},
+        _equip("zoh", "ZOH", f"Ts={ts:g} s", 200, 120),
+        {"id": "G", "type": "block", "label": "G(z)", "tf": gz, "x": 380, "y": 120},
+    ]
+    edges = [
+        {"id": "e1", "from": "sum", "fromPort": "out", "to": "zoh", "toPort": "in"},
+        {"id": "e2", "from": "zoh", "fromPort": "out", "to": "G", "toPort": "in"},
+        {"id": "e3", "from": "G", "fromPort": "out", "to": "sum", "toPort": "feedback"},
+    ]
+    return {
+        "schema": SCHEMA,
+        "diagramKind": "digital_loop",
+        "title": "Discrete loop — zero-order hold and G(z)",
+        "meta": {"gz": gz, "ts": ts},
+        "nodes": nodes,
+        "edges": edges,
+    }
+
+
+def dispatch_diagram(problem: dict[str, Any] | None) -> dict[str, Any]:
+    problem = problem or {}
+    pd = float(problem.get("PD") or problem.get("pd_mw") or 500)
+    nodes = [
+        _equip("g1", "Gen 1", "IC curve", 48, 64),
+        _equip("g2", "Gen 2", "IC curve", 48, 148),
+        _equip("g3", "Gen 3", "IC curve", 48, 232),
+        _equip("bus", "Load bus", f"Pd = {pd:g} MW", 320, 148),
+    ]
+    edges = [
+        {"id": "e1", "from": "g1", "fromPort": "out", "to": "bus", "toPort": "in"},
+        {"id": "e2", "from": "g2", "fromPort": "out", "to": "bus", "toPort": "in"},
+        {"id": "e3", "from": "g3", "fromPort": "out", "to": "bus", "toPort": "in"},
+    ]
+    return {
+        "schema": SCHEMA,
+        "diagramKind": "dispatch_ed",
+        "title": "Economic dispatch — three units, one load",
+        "meta": {"pd_mw": pd},
+        "nodes": nodes,
+        "edges": edges,
+    }
+
+
+def buck_diagram(problem: dict[str, Any] | None) -> dict[str, Any]:
+    problem = problem or {}
+    vin = float(problem.get("vin") or 12)
+    vout = float(problem.get("vout") or 5)
+    l_h = float(problem.get("l") or 47e-6)
+    fs = float(problem.get("fs") or 1e5)
+    nodes = [
+        _equip("src", "Vin", f"{vin:g} V", 40, 120),
+        _equip("sw", "Switch", f"{fs / 1e3:g} kHz", 180, 120),
+        _equip("l", "Inductor", f"{l_h * 1e6:g} µH", 340, 120),
+        _equip("out", "Vout", f"{vout:g} V", 500, 120),
+    ]
+    edges = [
+        {"id": "e1", "from": "src", "fromPort": "out", "to": "sw", "toPort": "in"},
+        {"id": "e2", "from": "sw", "fromPort": "out", "to": "l", "toPort": "in"},
+        {"id": "e3", "from": "l", "fromPort": "out", "to": "out", "toPort": "in"},
+    ]
+    return {
+        "schema": SCHEMA,
+        "diagramKind": "buck_ccm",
+        "title": "Buck converter — switch, diode, L, C",
+        "meta": {"vin": vin, "vout": vout, "l_uh": l_h * 1e6, "fs_khz": fs / 1e3},
+        "nodes": nodes,
+        "edges": edges,
+    }
+
+
 def control_diagram_from_tf_problem(problem: dict[str, Any] | None) -> dict[str, Any] | None:
     from electrical_engineer.control.diagram import control_diagram_from_problem
 

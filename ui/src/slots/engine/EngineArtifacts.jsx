@@ -2,12 +2,33 @@ import { useEffect, useState } from "react";
 
 function recipeKind(recipeId) {
   const id = String(recipeId || "");
+  if (id.includes("digital")) return "digital";
+  if (id.includes("swing") || id.includes("smib")) return "swing";
+  if (id.includes("ed-lambda") || id.includes("dispatch")) return "dispatch";
+  if (id.includes("power-electronic") || id.includes("electronics")) return "buck";
   if (id.includes("protection")) return "protection";
-  if (id.includes("drives")) return "drives";
-  if (id.includes("control") || id.includes("digital")) return "control";
-  if (id.includes("power")) return "power";
-  if (id.includes("simulate-circuit") || id.includes("circuit")) return "circuits";
+  if (id.includes("drives") || id.includes("machines")) return "drives";
+  if (id.includes("simulate-circuit")) return "rlc";
+  if (id.includes("control")) return "control";
+  if (id.includes("power") || id.includes("fault")) return "power";
+  if (id.includes("circuit")) return "circuits";
   return "";
+}
+
+function Fig({ src, alt, caption, wide = false }) {
+  const [ok, setOk] = useState(true);
+  if (!ok) return <p className="hint">No {caption.toLowerCase()} file on this run.</p>;
+  return (
+    <figure>
+      <img
+        className={wide ? "plot plot-lg plot-wide" : "plot plot-lg"}
+        src={src}
+        alt={alt}
+        onError={() => setOk(false)}
+      />
+      <figcaption>{caption}</figcaption>
+    </figure>
+  );
 }
 
 export function EngineArtifacts({ id, recipeId }) {
@@ -44,15 +65,67 @@ export function EngineArtifacts({ id, recipeId }) {
       <section className="engine-panel engine-panel-plots" aria-label="Control plots">
         <h2>Bode and step response</h2>
         <div className="engine-grid engine-grid-plots">
-          <figure>
-            <img className="plot plot-lg" src={`/api/runs/${id}/file/bode.png`} alt="Bode plot" />
-            <figcaption>Magnitude and phase</figcaption>
-          </figure>
-          <figure>
-            <img className="plot plot-lg" src={`/api/runs/${id}/file/step.png`} alt="Step response" />
-            <figcaption>Closed-loop step</figcaption>
-          </figure>
+          <Fig src={`/api/runs/${id}/file/bode.png`} alt="Bode plot" caption="Magnitude and phase" />
+          <Fig src={`/api/runs/${id}/file/step.png`} alt="Step response" caption="Closed-loop step" />
         </div>
+      </section>
+    );
+  }
+
+  if (kind === "digital") {
+    return (
+      <section className="engine-panel engine-panel-plots" aria-label="Discrete plots">
+        <h2>Discrete step and z-plane poles</h2>
+        <div className="engine-grid engine-grid-plots">
+          <Fig src={`/api/runs/${id}/file/step.png`} alt="Discrete step" caption="Sampled step response" />
+          <Fig src={`/api/runs/${id}/file/bode.png`} alt="z-plane poles" caption="Poles on the z plane" />
+        </div>
+      </section>
+    );
+  }
+
+  if (kind === "swing") {
+    return (
+      <section className="engine-panel engine-panel-plots" aria-label="Equal area">
+        <h2>Equal-area criterion</h2>
+        <Fig
+          wide
+          src={`/api/runs/${id}/file/power.swing_equal_area.png`}
+          alt="SMIB equal-area plot"
+          caption="Pre-fault, fault, and post-fault power"
+        />
+      </section>
+    );
+  }
+
+  if (kind === "dispatch") {
+    return (
+      <section className="engine-panel engine-panel-plots" aria-label="Dispatch curve">
+        <h2>Incremental cost</h2>
+        <Fig
+          wide
+          src={`/api/runs/${id}/file/power.dispatch_curve.png`}
+          alt="Economic dispatch curve"
+          caption="λ where the unit costs meet the load"
+        />
+      </section>
+    );
+  }
+
+  if (kind === "buck") {
+    return (
+      <section className="engine-panel engine-panel-plots" aria-label="Buck ripple">
+        <h2>Inductor current</h2>
+        <Fig wide src={`/api/runs/${id}/file/buck.png`} alt="Buck inductor current" caption="One switching period, CCM" />
+      </section>
+    );
+  }
+
+  if (kind === "rlc") {
+    return (
+      <section className="engine-panel engine-panel-plots" aria-label="RLC waveform">
+        <h2>Capacitor voltage</h2>
+        <Fig wide src={`/api/runs/${id}/file/step.png`} alt="Series RLC capacitor voltage" caption="Step response of Vc" />
       </section>
     );
   }
@@ -78,7 +151,7 @@ export function EngineArtifacts({ id, recipeId }) {
       <section className="engine-panel" aria-label="Drive study">
         <h2>Drive steady-state</h2>
         <p className="hint">Speed: <strong>{Number(drives.rpm).toFixed(2)} rpm</strong></p>
-        <img className="plot" src={`/api/runs/${id}/artifact.svg`} alt="Drive summary" width="320" height="120" />
+        <Fig src={`/api/runs/${id}/file/artifact.svg`} alt="Drive summary" caption="Steady speed" />
       </section>
     );
   }
@@ -123,8 +196,8 @@ export function EngineArtifacts({ id, recipeId }) {
   if (kind === "circuits") {
     return (
       <section className="engine-panel engine-panel-plots" aria-label="SPICE result">
-        <h2>Transient waveform</h2>
-        <img className="plot plot-lg plot-wide" src={`/api/runs/${id}/artifact.svg`} alt="SPICE probe" />
+        <h2>Solved circuit</h2>
+        <Fig wide src={`/api/runs/${id}/file/artifact.svg`} alt="Divider operating point" caption="Solved operating point" />
       </section>
     );
   }

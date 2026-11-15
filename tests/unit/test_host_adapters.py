@@ -12,7 +12,7 @@ def test_catalog_has_twelve_cards() -> None:
     assert "ee-simulink" in names
     for pack in PACKS:
         assert cursor_name(pack) in names
-    index = Path("hosts/agents/INDEX.md").read_text()
+    index = Path("hosts/agents/INDEX.md").read_text(encoding="utf-8")
     assert "**Count: 12**" in index
     assert "ee-simulink" in index
 
@@ -26,7 +26,7 @@ def test_install_all_hosts_into_temp(tmp_path: Path) -> None:
         claude = tmp_path / ".claude" / "agents" / f"{name}.md"
         assert cursor.is_file(), name
         assert claude.is_file(), name
-        body = cursor.read_text()
+        body = cursor.read_text(encoding="utf-8")
         assert "evaluate_matlab_code" in body
         assert "model_read" in body
         assert "/in-cloud" in body
@@ -34,13 +34,13 @@ def test_install_all_hosts_into_temp(tmp_path: Path) -> None:
         assert "nested" in body.lower() or "Do not spawn further" in body
     circuits_toml = tmp_path / ".codex" / "agents" / "ee_circuits.toml"
     assert circuits_toml.is_file()
-    toml = circuits_toml.read_text()
+    toml = circuits_toml.read_text(encoding="utf-8")
     assert "developer_instructions" in toml
     assert "ee_circuits" in toml
     assert (tmp_path / ".cursor" / "agents" / "ee-cross.md").is_file()
     assert (tmp_path / ".cursor" / "agents" / "ee-power-electronics.md").is_file()
     assert (tmp_path / ".cursor" / "agents" / "ee-simulink.md").is_file()
-    sim = (tmp_path / ".cursor" / "agents" / "ee-simulink.md").read_text()
+    sim = (tmp_path / ".cursor" / "agents" / "ee-simulink.md").read_text(encoding="utf-8")
     assert "CD-SIMULINK-PLANT" in sim
     assert "model_*" in sim or "model_read" in sim
 

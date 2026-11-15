@@ -57,7 +57,7 @@ flowchart TB
   subgraph arc["Arc already ships, on this machine"]
     Method[Course method]
     Tools[Tools the assistant can call]
-    Recipes[42 named lab recipes]
+    Recipes[80 named lab recipes]
     Runner[Deterministic recipe runner]
     Sims[Simulators]
     Gates[Gates: auto, ask, or refuse]
@@ -151,7 +151,7 @@ flowchart LR
 
 **When no saved recipe fits: compose.** The assistant names a graph of *already allowed* kinds of check (simulate this circuit, then check this algebra). Arc validates first: known ids only, at most 16 steps and 24 edges, no cycles, photos still need the local window. Record the plan without physics, or apply and run. On the command line the same job is `compose-from-parts` (asks you first). Invalid graphs fail before a simulator starts.
 
-A generic command line runs one flag. A generic MCP dumps tools into the chat. Neither ships 42 named lab recipes plus a validator that will only run allowed checks.
+A generic command line runs one flag. A generic MCP dumps tools into the chat. Neither ships 80 named lab recipes plus a validator that will only run allowed checks.
 
 Limit: the catalog is not the whole subject. A signals question with no YAML row is still in-bound: compose allowed checks, or unmatched plus an unverified label. Long `solve-*` recipes that include an essay step are the command-line / test path, not the assistant's chat brain. Full list: [`WORKFLOWS.md`](WORKFLOWS.md).
 
