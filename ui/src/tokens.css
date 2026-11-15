@@ -2312,3 +2312,5 @@ a { color: var(--ee-color-primary); }
   padding: 8px 12px; border: 1px solid var(--ee-color-hairline); border-radius: 4px; min-width: 100px;
 }
 .lab-check { margin-top: 12px; padding: 12px; border: 1px solid var(--ee-color-hairline); border-radius: var(--ee-radius-xl); }
+.lab-badge-ok { color: var(--ee-semantic-up); }
+.lab-badge-warn { color: var(--ee-semantic-down); }

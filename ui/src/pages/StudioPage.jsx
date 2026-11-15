@@ -4,6 +4,9 @@ import { renderSlot } from "../slots/registry.js";
 import { DiagramView } from "../studio-engine/DiagramView.jsx";
 import { LAB_REGISTRY } from "../studio-engine/labs/registry.js";
 import "../studio-engine/labs/RectifierLab.jsx";
+import "../studio-engine/labs/ConverterLab.jsx";
+import "../studio-engine/labs/IdmtLab.jsx";
+import "../studio-engine/labs/LeadLab.jsx";
 
 const TABS = [
   { id: "control", label: "Control" },
