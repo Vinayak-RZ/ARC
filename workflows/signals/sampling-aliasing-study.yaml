@@ -1,0 +1,26 @@
+id: sampling-aliasing-study
+title: Sampling alias frequency study
+pack: signals
+sample_problem:
+  f_signal_hz: 70
+  fs_hz: 100
+  expected: 30
+  tol: 1e-6
+nodes:
+  solve:
+    activity: run-ee-v2-solver
+    default_solver: sampling_alias
+    capability: signal-analysis
+  check:
+    activity: check-numeric
+    default_solver: sampling_alias
+    needs: [solve]
+  trap:
+    activity: trap-verify
+    needs: [solve]
+  label:
+    activity: label-unchecked
+    needs: [trap, check]
+  summary:
+    activity: write-run-summary
+    needs: [label]

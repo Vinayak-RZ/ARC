@@ -1,0 +1,27 @@
+id: laplace-inverse-study
+title: Laplace partial-fraction inverse study
+pack: signals
+sample_problem:
+  num: [1]
+  den: [1, 3, 2]
+  t_eval: 1.0
+  expected: 0.232554
+  tol: 1e-4
+nodes:
+  solve:
+    activity: run-ee-v2-solver
+    default_solver: laplace_inverse_pf
+    capability: signal-analysis
+  check:
+    activity: check-numeric
+    default_solver: laplace_inverse_pf
+    needs: [solve]
+  trap:
+    activity: trap-verify
+    needs: [solve]
+  label:
+    activity: label-unchecked
+    needs: [trap, check]
+  summary:
+    activity: write-run-summary
+    needs: [label]

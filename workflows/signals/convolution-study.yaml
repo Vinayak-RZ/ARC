@@ -1,0 +1,26 @@
+id: convolution-study
+title: Discrete-time convolution study
+pack: signals
+sample_problem:
+  x: [1, 2, 3]
+  h: [1, 1]
+  expected: 12
+  tol: 1e-6
+nodes:
+  solve:
+    activity: run-ee-v2-solver
+    default_solver: dt_convolution
+    capability: signal-analysis
+  check:
+    activity: check-numeric
+    default_solver: dt_convolution
+    needs: [solve]
+  trap:
+    activity: trap-verify
+    needs: [solve]
+  label:
+    activity: label-unchecked
+    needs: [trap, check]
+  summary:
+    activity: write-run-summary
+    needs: [label]
