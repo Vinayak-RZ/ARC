@@ -146,7 +146,7 @@ export function CommandPalette({ runs, onNavigate }) {
                     } else if (item.id === "sidebar") {
                       useLayout.getState().toggleSidebar();
                     } else if (item.id === "studio") {
-                      onNavigate({ view: "studio", tab: "control" });
+                      onNavigate({ view: "studio", tab: "home" });
                     } else if (item.id.startsWith("lab-")) {
                       const lab = item.id.slice(4);
                       onNavigate({ view: "studio", tab: "labs", lab });

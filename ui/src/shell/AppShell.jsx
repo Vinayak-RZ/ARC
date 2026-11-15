@@ -74,10 +74,17 @@ export function AppShell() {
           url.searchParams.delete("subject");
         }
         if (v === "studio") {
-          const nextTab = tab || "control";
+          const session = url.searchParams.get("session");
+          const nextTab = tab || (session ? "control" : "home");
           const nextLab = lab || null;
           setStudio({ tab: nextTab, lab: nextLab });
-          url.searchParams.set("tab", nextTab);
+          if (nextTab === "home") {
+            url.searchParams.delete("tab");
+            url.searchParams.delete("session");
+          } else {
+            url.searchParams.set("tab", nextTab);
+            if (nextTab === "control" && !session) url.searchParams.delete("session");
+          }
           if (nextLab) url.searchParams.set("lab", nextLab);
           else url.searchParams.delete("lab");
         } else {
@@ -102,7 +109,10 @@ export function AppShell() {
     else if (v) {
       setView(v);
       if (v === "learn" && subject) setLearnSubject(subject);
-      if (v === "studio") setStudio({ tab: tab || "control", lab: lab || null });
+      if (v === "studio") {
+        const session = new URLSearchParams(window.location.search).get("session");
+        setStudio({ tab: tab || (session ? "control" : "home"), lab: lab || null });
+      }
     }
   }, [setLearnSubject, setRun, setStudio, setThemeMode, setView]);
 
@@ -115,7 +125,10 @@ export function AppShell() {
         clearRun();
         setView(v || "home");
         setLearnSubject(v === "learn" ? subject || null : null);
-        if (v === "studio") setStudio({ tab: tab || "control", lab: lab || null });
+        if (v === "studio") {
+        const session = new URLSearchParams(window.location.search).get("session");
+        setStudio({ tab: tab || (session ? "control" : "home"), lab: lab || null });
+      }
       }
     }
     window.addEventListener("popstate", onPop);

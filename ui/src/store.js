@@ -31,7 +31,7 @@ export const useLayout = create((set) => ({
   currentRunId: null,
   view: "home",
   learnSubjectId: null,
-  studioTab: "control",
+  studioTab: "home",
   studioLab: null,
   sidebarCollapsed: readSidebarCollapsed(),
   sidebarLastToggledAt: 0,

@@ -145,7 +145,15 @@ function CanvasDrop({ children, onDropBlock }) {
   );
 }
 
-function ControlStudioInner({ sessionId, onSession }) {
+const GOLDEN_TEMPLATES = [
+  {
+    id: "pid_dc_motor",
+    title: "PID · DC motor",
+    blurb: "Summing junction, PID, DC motor plant, and scope — the default simulate loop.",
+  },
+];
+
+function ControlStudioInner({ sessionId, onSession, autoBoot = false }) {
   const [session, setSession] = useState(null);
   const [groups, setGroups] = useState([]);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
@@ -244,6 +252,11 @@ function ControlStudioInner({ sessionId, onSession }) {
       loadSession(sessionId);
       return undefined;
     }
+    if (!autoBoot && bootKey === 0) {
+      setBooting(false);
+      setBootError("");
+      return undefined;
+    }
     let cancelled = false;
     setBooting(true);
     setBootError("");
@@ -289,7 +302,12 @@ function ControlStudioInner({ sessionId, onSession }) {
       cancelled = true;
       clearTimeout(timeout);
     };
-  }, [sessionId, loadSession, onSession, paint, refreshValidation, bootKey]);
+  }, [sessionId, loadSession, onSession, paint, refreshValidation, bootKey, autoBoot]);
+
+  function startTemplate() {
+    setBootError("");
+    setBootKey((k) => k + 1);
+  }
 
   const resyncFlowFromDiagram = useCallback(
     (diagram) => {
@@ -474,6 +492,23 @@ function ControlStudioInner({ sessionId, onSession }) {
       .catch(() => {});
   }
 
+  if (!sessionId && !session && !booting && bootKey === 0) {
+    return (
+      <section className="cs-app control-studio studio-idle card-surface">
+        <h2>Control block diagrams</h2>
+        <p className="hint">Start a session, wire blocks, then simulate step response and margins.</p>
+        <div className="learn-lab-grid studio-pick-grid">
+          {GOLDEN_TEMPLATES.map((t) => (
+            <button key={t.id} type="button" className="learn-lab-card" onClick={startTemplate}>
+              <strong>{t.title}</strong>
+              <span className="hint">{t.blurb}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
   if (booting) {
     return (
       <section className="cs-app control-studio studio studio-booting">
@@ -599,7 +634,7 @@ function ControlStudioInner({ sessionId, onSession }) {
   );
 }
 
-export function ControlStudio() {
+export function ControlStudio({ autoBoot = false }) {
   const [sessionId, setSessionId] = useState(() => {
     const q = new URLSearchParams(window.location.search);
     return q.get("session") || "";
@@ -614,5 +649,5 @@ export function ControlStudio() {
       window.removeEventListener("arc-url", sync);
     };
   }, []);
-  return <ControlStudioInner sessionId={sessionId} onSession={setSessionId} />;
+  return <ControlStudioInner sessionId={sessionId} onSession={setSessionId} autoBoot={autoBoot} />;
 }

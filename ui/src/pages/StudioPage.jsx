@@ -2,20 +2,20 @@ import { useEffect, useState } from "react";
 import { useLayout } from "../store.js";
 import { renderSlot } from "../slots/registry.js";
 import { DiagramView } from "../studio-engine/DiagramView.jsx";
+import { CircuitSandbox } from "../studio-engine/CircuitSandbox.jsx";
+import { STUDIO_WORKSPACES } from "../studio-engine/catalog.js";
 import { LAB_REGISTRY } from "../studio-engine/labs/registry.js";
 import "../studio-engine/labs/RectifierLab.jsx";
 import "../studio-engine/labs/ConverterLab.jsx";
 import "../studio-engine/labs/IdmtLab.jsx";
 import "../studio-engine/labs/LeadLab.jsx";
 
-const TABS = [
-  { id: "control", label: "Control" },
-  { id: "diagrams", label: "Diagrams" },
-  { id: "labs", label: "Labs" },
-];
+function studioSessionInUrl() {
+  return Boolean(new URLSearchParams(window.location.search).get("session"));
+}
 
 export function StudioPage({ onNavigate }) {
-  const tab = useLayout((s) => s.studioTab) || "control";
+  const tab = useLayout((s) => s.studioTab) || "home";
   const lab = useLayout((s) => s.studioLab);
   const setStudio = useLayout((s) => s.setStudio);
   const [runs, setRuns] = useState([]);
@@ -54,6 +54,20 @@ export function StudioPage({ onNavigate }) {
     };
   }, [tab, selected]);
 
+  function goHome() {
+    onNavigate?.({ view: "studio", tab: "home", lab: null });
+  }
+
+  function openWorkspace(workspaceTab) {
+    setStudio({ tab: workspaceTab, lab: null });
+    onNavigate?.({ view: "studio", tab: workspaceTab, lab: null });
+  }
+
+  function openSimLab(labId) {
+    setStudio({ tab: "labs", lab: labId });
+    onNavigate?.({ view: "studio", tab: "labs", lab: labId });
+  }
+
   function selectRun(id) {
     setSelected(id);
     const hit = runs.find((r) => r.id === id);
@@ -81,30 +95,63 @@ export function StudioPage({ onNavigate }) {
     URL.revokeObjectURL(url);
   }
 
-  const Lab = lab ? LAB_REGISTRY.find((l) => l.id === lab)?.Component : null;
+  const SimLab = lab ? LAB_REGISTRY.find((l) => l.id === lab)?.Component : null;
+  const inWorkspace = tab !== "home";
 
   return (
-    <div className="studio-page">
-      <div className="se-tabs" role="tablist" aria-label="Studio">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            role="tab"
-            aria-selected={tab === t.id}
-            className={tab === t.id ? "tab is-active" : "tab"}
-            onClick={() => {
-              setStudio({ tab: t.id, lab: t.id === "labs" ? lab : null });
-              onNavigate?.({ view: "studio", tab: t.id, lab: t.id === "labs" ? lab : null });
-            }}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-      {tab === "control" ? renderSlot("control.studio") : null}
+    <div className={`studio-page page-column${inWorkspace ? " studio-page-workspace" : " studio-home"}`}>
+      {inWorkspace ? (
+        <button type="button" className="text-link studio-back" onClick={goHome}>
+          ← All laboratories
+        </button>
+      ) : (
+        <header className="page-header">
+          <h1>Studio</h1>
+          <p className="home-lede">Run simulations, sketch block and circuit diagrams, and open teaching labs.</p>
+        </header>
+      )}
+
+      {tab === "home" ? (
+        <>
+          <section className="home-section">
+            <h2>Workspaces</h2>
+            <div className="learn-lab-grid studio-pick-grid">
+              {STUDIO_WORKSPACES.map((w) => (
+                <button key={w.id} type="button" className="learn-lab-card" onClick={() => openWorkspace(w.tab)}>
+                  <strong>{w.title}</strong>
+                  <span className="hint">{w.blurb}</span>
+                </button>
+              ))}
+            </div>
+          </section>
+          <section className="home-section">
+            <h2>Simulation laboratories</h2>
+            <div className="learn-lab-grid studio-pick-grid">
+              {LAB_REGISTRY.map((l) => (
+                <button key={l.id} type="button" className="learn-lab-card" onClick={() => openSimLab(l.id)}>
+                  <strong>{l.title}</strong>
+                  <span className="hint">{l.pack}</span>
+                </button>
+              ))}
+            </div>
+          </section>
+        </>
+      ) : null}
+
+      {tab === "control" ? (
+        <div className="studio-workspace-pane">
+          {renderSlot("control.studio", { autoBoot: studioSessionInUrl() })}
+        </div>
+      ) : null}
+
+      {tab === "circuits" ? (
+        <div className="studio-workspace-pane">
+          <CircuitSandbox />
+        </div>
+      ) : null}
+
       {tab === "diagrams" ? (
-        <div className="studio-diagrams">
+        <div className="studio-workspace-pane studio-diagrams">
           {!runs.length ? (
             <p className="hint">Solve a problem to see its diagram here.</p>
           ) : (
@@ -129,33 +176,10 @@ export function StudioPage({ onNavigate }) {
           )}
         </div>
       ) : null}
+
       {tab === "labs" ? (
-        <div className="studio-labs">
-          {Lab ? (
-            <>
-              <button type="button" className="text-link" onClick={() => setStudio({ tab: "labs", lab: null })}>
-                ← All labs
-              </button>
-              <Lab />
-            </>
-          ) : (
-            <div className="learn-lab-grid">
-              {LAB_REGISTRY.map((l) => (
-                <button
-                  key={l.id}
-                  type="button"
-                  className="learn-lab-card"
-                  onClick={() => {
-                    setStudio({ tab: "labs", lab: l.id });
-                    onNavigate?.({ view: "studio", tab: "labs", lab: l.id });
-                  }}
-                >
-                  <strong>{l.title}</strong>
-                  <span className="hint">{l.pack}</span>
-                </button>
-              ))}
-            </div>
-          )}
+        <div className="studio-workspace-pane studio-labs">
+          {SimLab ? <SimLab /> : <p className="hint">Unknown lab.</p>}
         </div>
       ) : null}
     </div>

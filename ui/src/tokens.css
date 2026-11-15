@@ -2339,7 +2339,45 @@ a { color: var(--ee-color-primary); }
 .se-wave-table th, .se-wave-table td { border: 1px solid var(--ee-color-hairline); padding: 4px 8px; }
 .se-error { padding: var(--ee-space-m); border: 1px solid var(--ee-semantic-down); border-radius: var(--ee-radius-xl); }
 
-.studio-page { display: flex; flex-direction: column; gap: var(--ee-space-m); min-height: 0; height: 100%; }
+.product-workspace:has(.studio-page) {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: var(--ee-space-m) var(--ee-space-l);
+}
+.studio-page { display: flex; flex-direction: column; gap: var(--ee-space-m); min-height: 0; flex: 1; width: 100%; max-width: none; }
+.studio-page.studio-home { max-width: 1080px; margin: 0 auto; overflow-y: auto; }
+.studio-page.studio-page-workspace { max-width: none; min-height: 0; overflow: hidden; }
+.studio-back { align-self: flex-start; margin: 0; }
+.studio-workspace-pane { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: auto; }
+.studio-pick-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+.product-workspace .studio-workspace-pane .cs-app.control-studio.studio {
+  flex: 1;
+  min-height: min(720px, 100%);
+  height: 100%;
+  max-height: none;
+}
+.studio-idle { padding: var(--ee-space-l); display: flex; flex-direction: column; gap: var(--ee-space-m); }
+.lab-shell { padding: var(--ee-space-s) 0 var(--ee-space-l); color: var(--ee-color-ink); }
+.lab-shell h2 { margin: 0 0 var(--ee-space-m); font-size: var(--ee-type-title); font-weight: 600; }
+.lab-main { min-width: 0; display: flex; flex-direction: column; gap: var(--ee-space-m); }
+.lab-controls fieldset {
+  border: 1px solid var(--ee-color-hairline);
+  border-radius: var(--ee-radius-xl);
+  padding: var(--ee-space-s) var(--ee-space-m);
+  margin: 0 0 var(--ee-space-s);
+}
+.lab-controls legend {
+  font-size: var(--ee-type-label);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ee-color-muted);
+  padding: 0 4px;
+}
+.lab-controls label { color: var(--ee-color-ink); }
+.se-waveform { min-height: 260px; width: 100%; }
+.studio-circuit-sandbox { min-height: 460px; }
 .se-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--ee-color-hairline); }
 .se-tabs .tab {
   background: none; border: 0; border-bottom: 2px solid transparent; padding: 8px 14px;
