@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { CommandPalette } from "./CommandPalette.jsx";
 import { Sidebar } from "./Sidebar.jsx";
 import { TopBar } from "./TopBar.jsx";
@@ -6,13 +6,13 @@ import { useRunsList } from "../hooks/useRun.js";
 import { useRun } from "../hooks/useRun.js";
 import { useLayout } from "../store.js";
 import { applyTheme, getStoredTheme } from "./theme.js";
-import { HomePage } from "../pages/HomePage.jsx";
-import { ProblemsPage } from "../pages/ProblemsPage.jsx";
-import { ProblemDetailPage } from "../pages/ProblemDetailPage.jsx";
-import { SettingsPage } from "../pages/SettingsPage.jsx";
-import { LearnPage } from "../pages/LearnPage.jsx";
-import { SubjectPage } from "../pages/SubjectPage.jsx";
-import { StudioPage } from "../pages/StudioPage.jsx";
+const HomePage = lazy(() => import("../pages/HomePage.jsx").then((m) => ({ default: m.HomePage })));
+const ProblemsPage = lazy(() => import("../pages/ProblemsPage.jsx").then((m) => ({ default: m.ProblemsPage })));
+const ProblemDetailPage = lazy(() => import("../pages/ProblemDetailPage.jsx").then((m) => ({ default: m.ProblemDetailPage })));
+const SettingsPage = lazy(() => import("../pages/SettingsPage.jsx").then((m) => ({ default: m.SettingsPage })));
+const LearnPage = lazy(() => import("../pages/LearnPage.jsx").then((m) => ({ default: m.LearnPage })));
+const SubjectPage = lazy(() => import("../pages/SubjectPage.jsx").then((m) => ({ default: m.SubjectPage })));
+const StudioPage = lazy(() => import("../pages/StudioPage.jsx").then((m) => ({ default: m.StudioPage })));
 import { AchievementsPanel } from "../components/AchievementsPanel.jsx";
 import { UnlockToast } from "../components/UnlockToast.jsx";
 import { renderSlot } from "../slots/registry.js";
@@ -202,7 +202,7 @@ export function AppShell() {
           onNavigate={navigate}
         />
         <main id="workspace" className="workspace product-workspace">
-          {workspace}
+          <Suspense fallback={null}>{workspace}</Suspense>
         </main>
       </div>
       <CommandPalette runs={runs} onNavigate={navigate} />

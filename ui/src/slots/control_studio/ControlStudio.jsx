@@ -280,15 +280,17 @@ function ControlStudioInner({ sessionId, onSession, autoBoot = false }) {
         onSession?.(p.session_id);
         paint(p);
         refreshValidation(p.session_id);
-        return fetch(`/api/control-studio/sessions/${p.session_id}/simulate`, { method: "POST" })
+        setBooting(false);
+        fetch(`/api/control-studio/sessions/${p.session_id}/simulate`, { method: "POST" })
           .then((r) => r.json())
           .then((sim) => {
             if (cancelled) return;
             applySimAndAnalyze(p.session_id, sim, setResults, setMargins, setStepData, setMsg, () =>
               setLastSimRevision(p.revision || 0),
             );
-            setBooting(false);
-          });
+          })
+          .catch(() => {});
+        return null;
       })
       .catch(() => {
         if (!cancelled) {

@@ -214,9 +214,8 @@ def seed_sample_runs(cwd: Path, runs_dir: Path) -> int:
 
     runs_dir.mkdir(parents=True, exist_ok=True)
     seeded = 0
-    for ex in _UI_EXAMPLES:
-        if str(ex.get("recipe_id", "")).startswith("solve-"):
-            continue
+    engine_examples = [ex for ex in _UI_EXAMPLES if not str(ex.get("recipe_id", "")).startswith("solve-")]
+    for ex in engine_examples[:4]:
         try:
             out = execute(str(ex["recipe_id"]), cwd=cwd, problem=dict(ex["problem"]))
             rid = out.get("run_id")

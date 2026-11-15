@@ -1,10 +1,24 @@
+import { lazy, Suspense } from "react";
 import { register } from "./registry.js";
 import { AppShell } from "../shell/AppShell.jsx";
-import { Canvas } from "./canvas/Canvas.jsx";
 import { Inspector } from "./canvas/Inspector.jsx";
-import { Library } from "./library.jsx";
-import { VisualGallery } from "./gallery.jsx";
-import { ControlStudio } from "./control_studio/ControlStudio.jsx";
+
+const Canvas = lazy(() => import("./canvas/Canvas.jsx").then((m) => ({ default: m.Canvas })));
+const Library = lazy(() => import("./library.jsx").then((m) => ({ default: m.Library })));
+const VisualGallery = lazy(() => import("./gallery.jsx").then((m) => ({ default: m.VisualGallery })));
+const ControlStudio = lazy(() =>
+  import("./control_studio/ControlStudio.jsx").then((m) => ({ default: m.ControlStudio })),
+);
+
+function slot(Component) {
+  return function LazySlot(props) {
+    return (
+      <Suspense fallback={null}>
+        <Component {...props} />
+      </Suspense>
+    );
+  };
+}
 import { buildAnswerRows, verificationNote } from "../formatAnswer.js";
 import { AnswerLine, VerificationStrip } from "../components/AnswerLine.jsx";
 import { MascotState } from "../components/MascotState.jsx";
@@ -83,7 +97,11 @@ function Result({ id }) {
 }
 
 function CanvasStub({ id }) {
-  return <Canvas id={id} />;
+  return (
+    <Suspense fallback={null}>
+      <Canvas id={id} />
+    </Suspense>
+  );
 }
 
 function InspectorSlot() {
@@ -240,6 +258,6 @@ register("run.more", More);
 register("photo.confirm", function PhotoConfirm() {
   return null;
 });
-register("rag.inventory", Library);
-register("visual.gallery", VisualGallery);
-register("control.studio", ControlStudio);
+register("rag.inventory", slot(Library));
+register("visual.gallery", slot(VisualGallery));
+register("control.studio", slot(ControlStudio));
