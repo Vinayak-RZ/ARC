@@ -1,6 +1,6 @@
 # T4 — ACE / bias B ≠ β; tie sign (Exp 7)
 
-See `docs/planning/eec301-lift/BARE_AGENT_FAILURE_NOTES.md` §T4.
+See `docs/labs/eec301/BARE_AGENT_FAILURE_NOTES.md` §T4.
 
 **Bare-agent failures:** `ACE1 = B1Δf1 − ΔP12` (wrong sign); `B = 1/R` only; tie
 integrator missing factor 2; Area 2 tie injection same sign as Area 1.

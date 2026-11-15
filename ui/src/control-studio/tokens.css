@@ -11,8 +11,8 @@
   --cs-text-secondary: #5f5f5c;
   --cs-text-muted: #70706c;
   --cs-text-inverse: #ffffff;
-  --cs-accent: #2f6feb;
-  --cs-accent-hover: #2459c9;
+  --cs-accent: var(--ee-color-primary, #2f6feb);
+  --cs-accent-hover: var(--ee-color-primary-active, #2459c9);
   --cs-accent-50: #eef3fe;
   --cs-accent-700: #1d47a3;
   --cs-copper: #e07a3f;

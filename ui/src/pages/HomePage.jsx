@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { Shortcut } from "../components/Shortcut.jsx";
 import { ExampleThumb } from "../components/ExampleThumb.jsx";
+import { MascotState } from "../components/MascotState.jsx";
+import { ArcMascot } from "../mascot/index.js";
 import { relativeTime } from "../units/format.js";
 import { displayTitle, subjectTag } from "../runDisplay.js";
 
@@ -28,13 +30,16 @@ function detectSubject(text) {
   return "circuits";
 }
 
-export function HomePage({ runs, onRunsChange, onOpenProblem }) {
+export function HomePage({ runs, onRunsChange, onOpenProblem, seeding = false }) {
   const [examples, setExamples] = useState([]);
+  const [packs, setPacks] = useState([]);
   const [prompt, setPrompt] = useState("");
   const [subject, setSubject] = useState("circuits");
   const [subjectLocked, setSubjectLocked] = useState(false);
   const [popover, setPopover] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [lastUnchecked, setLastUnchecked] = useState(null);
+  const [phIndex, setPhIndex] = useState(0);
   const areaRef = useRef(null);
   const recent = [...runs]
     .sort((a, b) => Number(b.modified_at || 0) - Number(a.modified_at || 0))
@@ -45,13 +50,22 @@ export function HomePage({ runs, onRunsChange, onOpenProblem }) {
       .then((r) => r.json())
       .then((d) => setExamples(d.examples || []))
       .catch(() => setExamples([]));
+    fetch("/api/capabilities")
+      .then((r) => r.json())
+      .then((d) => setPacks(d.packs || []))
+      .catch(() => setPacks([]));
+  }, []);
+
+  useEffect(() => {
+    const t = setInterval(() => setPhIndex((i) => (i + 1) % PLACEHOLDERS.length), 5000);
+    return () => clearInterval(t);
   }, []);
 
   const resizeArea = useCallback(() => {
     const el = areaRef.current;
     if (!el) return;
     el.style.height = "auto";
-    el.style.height = `${Math.min(240, Math.max(88, el.scrollHeight))}px`;
+    el.style.height = `${Math.min(200, Math.max(56, el.scrollHeight))}px`;
   }, []);
 
   useEffect(() => {
@@ -91,6 +105,7 @@ export function HomePage({ runs, onRunsChange, onOpenProblem }) {
     ev?.preventDefault();
     if (!prompt.trim()) return;
     setBusy(true);
+    setLastUnchecked(null);
     try {
       const r = await fetch("/api/problems", {
         method: "POST",
@@ -99,6 +114,7 @@ export function HomePage({ runs, onRunsChange, onOpenProblem }) {
       });
       const body = await r.json();
       if (body.run_id) {
+        setLastUnchecked(Boolean(body.unchecked));
         onRunsChange();
         onOpenProblem(body.run_id);
         setPrompt("");
@@ -109,14 +125,18 @@ export function HomePage({ runs, onRunsChange, onOpenProblem }) {
   }
 
   const subjectLabel = SUBJECTS.find((s) => s.id === subject)?.label || "Circuits";
+  const mascotMode = busy ? "thinking" : prompt.trim() ? "listening" : lastUnchecked === true ? "warning" : lastUnchecked === false ? "success" : "ambient";
 
   return (
     <div className="page-column home-product">
-      <header className="page-header">
-        <h1>Ask a problem</h1>
-        <p className="home-lede">Arc checks answers with real engines. Your agent can edit the same problem.</p>
+      <header className="page-header home-header-with-mascot">
+        <div>
+          <h1>Ask a problem</h1>
+          <p className="home-lede">Arc checks answers with real engines. Your agent can edit the same problem.</p>
+        </div>
+        <ArcMascot mode={mascotMode} size={64} label="Arc" arrive />
       </header>
-      <form className="composer-card" onSubmit={askProblem}>
+      <form className="composer-card composer-card-compact" onSubmit={askProblem}>
         <div className="composer-top">
           <div className="subject-chip-wrap" onBlur={() => setTimeout(() => setPopover(false), 150)}>
             <button
@@ -154,9 +174,9 @@ export function HomePage({ runs, onRunsChange, onOpenProblem }) {
           ref={areaRef}
           className="composer-input composer-input-inset"
           value={prompt}
-          placeholder={PLACEHOLDERS[0]}
+          placeholder={PLACEHOLDERS[phIndex]}
           onChange={(e) => setPrompt(e.target.value)}
-          rows={3}
+          rows={2}
         />
         <div className="composer-footer">
           <span className="hint">
@@ -167,6 +187,28 @@ export function HomePage({ runs, onRunsChange, onOpenProblem }) {
           </button>
         </div>
       </form>
+      {packs.length > 0 ? (
+        <section className="home-section capabilities-section">
+          <h2>What Arc can do</h2>
+          <div className="capability-grid">
+            {packs.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                className="capability-card"
+                onClick={() => {
+                  setSubject(p.id);
+                  setSubjectLocked(true);
+                }}
+              >
+                <span className="capability-label">{p.label}</span>
+                <span className="capability-count">{p.recipe_count} recipes</span>
+                <span className="hint">{p.blurb}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      ) : null}
       <section className="home-section">
         <h2>Try an example</h2>
         <div className="example-grid example-grid-six">
@@ -188,6 +230,11 @@ export function HomePage({ runs, onRunsChange, onOpenProblem }) {
           ))}
         </div>
       </section>
+      {seeding && recent.length === 0 ? (
+        <section className="home-section">
+          <MascotState kind="loading" size={56} title="Preparing sample problems…" message="Checking a few recipes so Recent is not empty." />
+        </section>
+      ) : null}
       {recent.length > 0 ? (
         <section className="home-section continue-section">
           <h2>Continue</h2>
@@ -195,7 +242,10 @@ export function HomePage({ runs, onRunsChange, onOpenProblem }) {
             {recent.map((run) => (
               <button key={run.id} type="button" className="continue-card" onClick={() => onOpenProblem(run.id)}>
                 <span className="subject-chip-muted">{run.subject || subjectTag(run)}</span>
-                <span className="example-card-title">{displayTitle(run)}</span>
+                <span className="example-card-title">
+                  {displayTitle(run)}
+                  {run.sample ? <span className="sample-badge">Sample</span> : null}
+                </span>
                 <span className="hint continue-meta">{relativeTime(run.modified_at)}</span>
                 <span className={run.unchecked ? "status-badge unchecked" : "status-badge checked"}>
                   {run.unchecked ? "Unchecked" : "Checked"}

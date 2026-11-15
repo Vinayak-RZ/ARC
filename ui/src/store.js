@@ -4,9 +4,12 @@ const SIDEBAR_KEY = "arc-sidebar-collapsed";
 
 function readSidebarCollapsed() {
   try {
-    return localStorage.getItem(SIDEBAR_KEY) === "1";
+    const v = localStorage.getItem(SIDEBAR_KEY);
+    // Default collapsed on first visit (no stored preference).
+    if (v === null) return true;
+    return v === "1";
   } catch {
-    return false;
+    return true;
   }
 }
 
@@ -45,6 +48,17 @@ export const useLayout = create((set) => ({
     set({
       currentRunId: id,
       view: "problems",
+      graphDirty: false,
+      selectedNodeId: null,
+      capMessage: "",
+      flowNodes: [],
+      flowEdges: [],
+      parametersOpen: false,
+      parametersStale: false,
+    }),
+  clearRun: () =>
+    set({
+      currentRunId: null,
       graphDirty: false,
       selectedNodeId: null,
       capMessage: "",

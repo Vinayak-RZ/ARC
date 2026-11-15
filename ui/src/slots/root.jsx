@@ -7,6 +7,7 @@ import { VisualGallery } from "./gallery.jsx";
 import { ControlStudio } from "./control_studio/ControlStudio.jsx";
 import { buildAnswerRows, verificationNote } from "../formatAnswer.js";
 import { AnswerLine, VerificationStrip } from "../components/AnswerLine.jsx";
+import { MascotState } from "../components/MascotState.jsx";
 import { displayTitle } from "../runDisplay.js";
 import { useRun } from "../hooks/useRun.js";
 import { useLayout } from "../store.js";
@@ -44,7 +45,9 @@ function Result({ id }) {
   const verifierRaw = evid.verifier ? String(evid.verifier) : "";
   const note = verificationNote({ unchecked: error ? false : unchecked, error, verifierRaw, evid });
   if (loading) {
-    return <p className="loading-block" aria-live="polite">Loading run…</p>;
+    return (
+      <MascotState kind="loading" title="Loading run…" message="Pulling evidence for this problem." size={56} />
+    );
   }
   return (
     <article className={`answer-card${stale ? " is-stale" : ""}`} aria-live="polite">

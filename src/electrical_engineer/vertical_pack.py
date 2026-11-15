@@ -14,14 +14,11 @@ STATE_DIR = ".electrical-engineer"
 
 
 def repo_root() -> Path:
-    env = os.environ.get("EE_REPO_ROOT")
-    if env:
-        path = Path(env)
-        if path.is_dir():
-            return path.resolve()
-    cand = Path(__file__).resolve().parents[2]
-    if (cand / MANIFEST_REL).is_file():
-        return cand
+    from electrical_engineer.paths import install_root
+
+    root = install_root()
+    if (root / MANIFEST_REL).is_file():
+        return root
     raise FileNotFoundError("Arc repo root not found; set EE_REPO_ROOT")
 
 

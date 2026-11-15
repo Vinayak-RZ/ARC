@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useLayout } from "../store.js";
 import { displayTitle } from "../runDisplay.js";
+import { ArcMascot } from "../mascot/index.js";
 
 const PRIMARY = [
   { id: "home", label: "Home", icon: Home },
@@ -29,7 +30,7 @@ function statusDot(run) {
   return "checked";
 }
 
-export function Sidebar({ runs, onNavigate, onNewProblem }) {
+export function Sidebar({ runs, onNavigate, onNewProblem, seeding = false }) {
   const collapsed = useLayout((s) => s.sidebarCollapsed);
   const view = useLayout((s) => s.view);
   const current = useLayout((s) => s.currentRunId);
@@ -43,7 +44,7 @@ export function Sidebar({ runs, onNavigate, onNewProblem }) {
       aria-label="Main navigation"
     >
       <div className="sidebar-head">
-        <img className="brand-mark" src="/arc-icon.png" width="28" height="28" alt="Arc" />
+        <ArcMascot className="brand-mark brand-mascot" size={collapsed ? 28 : 32} label="Arc" mode="ambient" live />
         {!collapsed ? (
           <>
             <div className="sidebar-brand-text">
@@ -83,7 +84,8 @@ export function Sidebar({ runs, onNavigate, onNewProblem }) {
       {!collapsed ? (
         <div className="sidebar-recent">
           <p className="sidebar-section-label">Recent</p>
-          {recent.length === 0 ? <p className="hint">No problems yet.</p> : null}
+          {seeding && recent.length === 0 ? <p className="hint">Preparing samples…</p> : null}
+          {!seeding && recent.length === 0 ? <p className="hint">No problems yet.</p> : null}
           {recent.map((run) => (
             <button
               key={run.id}
@@ -94,7 +96,10 @@ export function Sidebar({ runs, onNavigate, onNewProblem }) {
               onClick={() => onNavigate({ view: "problems", runId: run.id })}
             >
               <span className={`subject-dot ${statusDot(run)}`} aria-hidden="true" />
-              <span className="sidebar-recent-title">{displayTitle(run)}</span>
+              <span className="sidebar-recent-title">
+                {displayTitle(run)}
+                {run.sample ? <span className="sample-badge">Sample</span> : null}
+              </span>
               <span className="sidebar-recent-status" aria-hidden="true">
                 {run.unchecked ? (
                   <AlertTriangle size={16} strokeWidth={1.5} />

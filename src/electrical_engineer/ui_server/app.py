@@ -3,12 +3,17 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
+import shutil
+import threading
 from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
+
+_LOG = logging.getLogger(__name__)
 
 BIND_HOST = "127.0.0.1"
 BIND_PORT = 8765
@@ -32,12 +37,17 @@ _SVG = "<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'></svg>"
 
 
 def _repo_root() -> Path:
-    return Path(__file__).resolve().parents[3]
+    from electrical_engineer.paths import checkout_root, install_root
+
+    return checkout_root() or install_root()
 
 
 def _icon_path() -> Path | None:
+    from electrical_engineer.paths import ui_dist_dir
+
     here = _repo_root()
     for cand in (
+        ui_dist_dir() / "arc-icon.png",
         here / "ui" / "dist" / "arc-icon.png",
         here / "ui" / "public" / "arc-icon.png",
         here / "assets" / "brand" / "arc-icon.png",
@@ -150,6 +160,17 @@ def _run_list_hidden(folder: Path) -> bool:
     return recipe == "unmatched-cosolver"
 
 
+def _is_sample_run(folder: Path) -> bool:
+    return (folder / "sample.json").is_file()
+
+
+def _mark_sample_run(folder: Path) -> None:
+    try:
+        (folder / "sample.json").write_text('{"sample":true}\n', encoding="utf-8")
+    except OSError as exc:
+        _LOG.warning("could not mark sample run %s: %s", folder, exc)
+
+
 def _run_list_item(folder: Path) -> dict:
     evid = _read_json(folder / "evidentiary.json") or _read_json(folder / "summary.json")
     name = folder.name
@@ -169,7 +190,51 @@ def _run_list_item(folder: Path) -> dict:
         "recipe_id": recipe_id,
         "modified_at": modified_at,
         "is_studio_session": name.startswith("cs-"),
+        "sample": _is_sample_run(folder),
     }
+
+
+def _visible_run_dirs(runs_dir: Path) -> list[Path]:
+    if not runs_dir.is_dir():
+        return []
+    return [p for p in sorted(runs_dir.iterdir()) if p.is_dir() and not _run_list_hidden(p)]
+
+
+def _seed_disabled() -> bool:
+    return os.environ.get("EE_NO_SEED", "") in {"1", "true", "TRUE"}
+
+
+def seed_sample_runs(cwd: Path, runs_dir: Path) -> int:
+    """Execute curated UI examples into runs_dir; mark each with sample.json. Returns count seeded."""
+    from electrical_engineer.runner.execute import execute
+
+    runs_dir.mkdir(parents=True, exist_ok=True)
+    seeded = 0
+    for ex in _UI_EXAMPLES:
+        try:
+            out = execute(str(ex["recipe_id"]), cwd=cwd, problem=dict(ex["problem"]))
+            rid = out.get("run_id")
+            if not rid:
+                continue
+            folder = runs_dir / str(rid)
+            if folder.is_dir():
+                _mark_sample_run(folder)
+                seeded += 1
+        except Exception as exc:  # noqa: BLE001
+            _LOG.warning("sample seed skipped for %s: %s", ex.get("id"), exc)
+    return seeded
+
+
+def clear_sample_runs(runs_dir: Path) -> int:
+    """Delete runs that carry sample.json. Returns count removed."""
+    removed = 0
+    if not runs_dir.is_dir():
+        return 0
+    for folder in list(runs_dir.iterdir()):
+        if folder.is_dir() and _is_sample_run(folder):
+            shutil.rmtree(folder, ignore_errors=True)
+            removed += 1
+    return removed
 
 
 def _golden_thumb(rel: str) -> str:
@@ -283,6 +348,24 @@ def create_app(root: Path | None = None) -> FastAPI:
     app = FastAPI()
     runs = (root or Path.cwd()) / "runs"
     cwd = root or Path.cwd()
+    seed_state = {"active": False}
+
+    def _start_seed_if_needed() -> None:
+        if _seed_disabled() or seed_state["active"]:
+            return
+        if _visible_run_dirs(runs):
+            return
+        seed_state["active"] = True
+
+        def _worker() -> None:
+            try:
+                seed_sample_runs(cwd, runs)
+            finally:
+                seed_state["active"] = False
+
+        threading.Thread(target=_worker, name="arc-ui-seed", daemon=True).start()
+
+    _start_seed_if_needed()
 
     @app.get("/arc-icon.png", response_model=None)
     def brand_icon() -> FileResponse | Response:
@@ -295,6 +378,31 @@ def create_app(root: Path | None = None) -> FastAPI:
     def health() -> dict:
         return {"bind": BIND_HOST, "ok": True}
 
+    @app.get("/api/engines")
+    def engines_status() -> dict:
+        from importlib import import_module
+
+        from electrical_engineer import __version__
+
+        def probe(label: str, module: str | None = None, *, detail: str = "") -> dict:
+            if module is None:
+                return {"name": label, "available": False, "detail": detail or "via Arc, not installed"}
+            try:
+                import_module(module)
+                return {"name": label, "available": True, "detail": ""}
+            except Exception:  # noqa: BLE001
+                return {"name": label, "available": False, "detail": detail or "Not installed"}
+
+        rows = [
+            {"name": "Numeric (algebraic checks)", "available": True, "detail": ""},
+            probe("SPICE (ngspice / PySpice)", "PySpice"),
+            probe("python-control", "control"),
+            probe("pandapower", "pandapower"),
+            probe("MATLAB engine", detail="via Arc, not installed"),
+            probe("Simulink engine", detail="via Arc, not installed"),
+        ]
+        return {"engines": rows, "version": __version__}
+
     @app.get("/api/runs")
     def list_runs() -> dict:
         items = []
@@ -305,11 +413,73 @@ def create_app(root: Path | None = None) -> FastAPI:
                 if p.is_dir() and not _run_list_hidden(p)
             ]
         items = _dedupe_run_items(items)
-        return {"runs": items}
+        return {"runs": items, "seeding": bool(seed_state["active"])}
+
+    @app.delete("/api/runs/samples")
+    def delete_samples() -> dict:
+        n = clear_sample_runs(runs)
+        return {"removed": n}
+
+    @app.post("/api/runs/samples")
+    def reseed_samples() -> dict:
+        if seed_state["active"]:
+            return JSONResponse({"error": "seeding already running"}, status_code=409)
+        seed_state["active"] = True
+        try:
+            n = seed_sample_runs(cwd, runs)
+        finally:
+            seed_state["active"] = False
+        return {"seeded": n}
 
     @app.get("/api/examples")
     def list_examples() -> dict:
         return {"examples": [{k: ex[k] for k in ex if k != "problem"} for ex in _UI_EXAMPLES]}
+
+    @app.get("/api/reference")
+    def reference_search(q: str = "", limit: int = 20) -> dict:
+        from electrical_engineer.reference.catalog import list_domains, search_records
+
+        domains = list_domains()
+        hits = search_records(q, limit=max(1, min(limit, 50))) if q.strip() else []
+        return {
+            "domains": [{"id": k, "count": v} for k, v in sorted(domains.items())],
+            "results": hits,
+            "query": q,
+        }
+
+    @app.get("/api/reference/{record_id}")
+    def reference_get(record_id: str) -> dict:
+        from electrical_engineer.reference.catalog import get_record
+
+        rec = get_record(record_id)
+        if rec is None:
+            return JSONResponse({"error": "missing"}, status_code=404)
+        return {"record": rec}
+
+    @app.get("/api/capabilities")
+    def capabilities() -> dict:
+        from electrical_engineer.catalog import list_workflow_ids, workflows_root
+
+        root = workflows_root(cwd)
+        packs = [
+            {"id": "circuits", "label": "Circuits", "blurb": "Dividers, RLC, and SPICE checks"},
+            {"id": "control", "label": "Control", "blurb": "Bode, step response, block diagrams"},
+            {"id": "power", "label": "Power", "blurb": "Faults, swing, AGC, economic dispatch"},
+            {"id": "signals", "label": "Signals", "blurb": "FFT and frequency-domain homework"},
+            {"id": "machines", "label": "Machines", "blurb": "DC drives and steady-state speed"},
+        ]
+        ids = list_workflow_ids(cwd)
+        out = []
+        for pack in packs:
+            folder = root / pack["id"]
+            count = 0
+            if folder.is_dir():
+                count = len(list(folder.glob("**/*.yaml")))
+            if count == 0:
+                # fall back: count ids that mention the pack name
+                count = sum(1 for i in ids if pack["id"] in i.replace("_", "-") or pack["id"] in i)
+            out.append({**pack, "recipe_count": count})
+        return {"packs": out, "recipe_total": len(ids)}
 
     @app.post("/api/problems")
     async def create_problem(request: Request) -> dict:
@@ -603,7 +773,7 @@ def create_app(root: Path | None = None) -> FastAPI:
 
     @app.get("/api/frontier/scorecard")
     def frontier_scorecard() -> dict:
-        path = _repo_root() / "docs/planning/frontier-2026-11/SCORECARD.md"
+        path = _repo_root() / "docs/planning/SCORECARD.md"
         text = path.read_text(encoding="utf-8") if path.is_file() else ""
         return {"markdown": text, "path": str(path.relative_to(_repo_root()))}
 
@@ -630,7 +800,9 @@ def create_app(root: Path | None = None) -> FastAPI:
         media = "image/gif" if target.suffix == ".gif" else "image/png"
         return FileResponse(target, media_type=media)
 
-    ui_dist = Path(__file__).resolve().parents[3] / "ui" / "dist"
+    from electrical_engineer.paths import ui_dist_dir
+
+    ui_dist = ui_dist_dir()
     index = ui_dist / "index.html"
     if index.is_file():
         app.mount("/assets", StaticFiles(directory=ui_dist / "assets"), name="assets")

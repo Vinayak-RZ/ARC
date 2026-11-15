@@ -20,6 +20,7 @@ import { studioEdgeTypes } from "./edges.jsx";
 import { FitViewOnChange } from "./FitViewOnChange.jsx";
 import { diagramToFlow, flowToDiagram, humanBlockLabel, issuesByBlock } from "./utils.js";
 import { StudioToolbar } from "./StudioToolbar.jsx";
+import { MascotState } from "../../components/MascotState.jsx";
 import "../../control-studio/studio.css";
 
 const GRID = 16;
@@ -150,6 +151,10 @@ function ControlStudioInner({ sessionId, onSession }) {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [msg, setMsg] = useState("");
+  const [booting, setBooting] = useState(!sessionId);
+  const [bootError, setBootError] = useState("");
+  const [bootKey, setBootKey] = useState(0);
+  const sseDebounce = useRef(null);
   const [results, setResults] = useState(null);
   const [stepData, setStepData] = useState(null);
   const [margins, setMargins] = useState(null);
@@ -234,9 +239,20 @@ function ControlStudioInner({ sessionId, onSession }) {
 
   useEffect(() => {
     if (sessionId) {
+      setBooting(false);
+      setBootError("");
       loadSession(sessionId);
       return undefined;
     }
+    let cancelled = false;
+    setBooting(true);
+    setBootError("");
+    const timeout = setTimeout(() => {
+      if (!cancelled) {
+        setBootError("Studio took too long to start.");
+        setBooting(false);
+      }
+    }, 20_000);
     fetch("/api/control-studio/sessions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -244,23 +260,36 @@ function ControlStudioInner({ sessionId, onSession }) {
     })
       .then((r) => r.json())
       .then((p) => {
+        if (cancelled) return null;
         const url = new URL(window.location.href);
         url.searchParams.set("session", p.session_id);
         window.history.replaceState({}, "", url);
         onSession?.(p.session_id);
         paint(p);
         refreshValidation(p.session_id);
-        fetch(`/api/control-studio/sessions/${p.session_id}/simulate`, { method: "POST" })
+        return fetch(`/api/control-studio/sessions/${p.session_id}/simulate`, { method: "POST" })
           .then((r) => r.json())
-          .then((sim) =>
+          .then((sim) => {
+            if (cancelled) return;
             applySimAndAnalyze(p.session_id, sim, setResults, setMargins, setStepData, setMsg, () =>
               setLastSimRevision(p.revision || 0),
-            ),
-          );
+            );
+            setBooting(false);
+          });
       })
-      .catch(() => setMsg("Could not create session"));
-    return undefined;
-  }, [sessionId, loadSession, onSession, paint, refreshValidation]);
+      .catch(() => {
+        if (!cancelled) {
+          setBootError("Could not create session");
+          setBooting(false);
+          setMsg("Could not create session");
+        }
+      })
+      .finally(() => clearTimeout(timeout));
+    return () => {
+      cancelled = true;
+      clearTimeout(timeout);
+    };
+  }, [sessionId, loadSession, onSession, paint, refreshValidation, bootKey]);
 
   const resyncFlowFromDiagram = useCallback(
     (diagram) => {
@@ -304,13 +333,17 @@ function ControlStudioInner({ sessionId, onSession }) {
         if (data.type === "hello") return;
         if ((data.revision || 0) > revision) {
           setFitBump((n) => n + 1);
-          loadSession(sid);
+          if (sseDebounce.current) clearTimeout(sseDebounce.current);
+          sseDebounce.current = setTimeout(() => loadSession(sid), 250);
         }
       } catch {
         /* ignore */
       }
     };
-    return () => es.close();
+    return () => {
+      es.close();
+      if (sseDebounce.current) clearTimeout(sseDebounce.current);
+    };
   }, [session?.session_id, revision, loadSession]);
 
   const persist = useCallback(
@@ -439,6 +472,31 @@ function ControlStudioInner({ sessionId, onSession }) {
       .then((r) => r.json())
       .then(() => loadSession(session.session_id))
       .catch(() => {});
+  }
+
+  if (booting) {
+    return (
+      <section className="cs-app control-studio studio studio-booting">
+        <MascotState kind="loading" title="Building PID · DC motor loop…" message="Creating the golden session and first simulate." />
+      </section>
+    );
+  }
+  if (bootError && !session) {
+    return (
+      <section className="cs-app control-studio studio studio-booting">
+        <MascotState
+          kind="error"
+          title="Studio did not start"
+          message={bootError}
+          actionLabel="Retry"
+          onAction={() => {
+            setBootError("");
+            setBootKey((k) => k + 1);
+            setBooting(true);
+          }}
+        />
+      </section>
+    );
   }
 
   return (

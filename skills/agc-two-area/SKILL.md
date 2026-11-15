@@ -29,7 +29,7 @@ swing–tie–ACE. OSS twin only (no Simulink in CI).
 
 ## Goldens
 
-`artifacts/eec301-lab-goldens/exp07.json` · parity `docs/planning/eec301-lift/EXP7_SIMULINK_PARITY.md`.
+`artifacts/eec301-lab-goldens/exp07.json` · parity `docs/labs/eec301/EXP7_SIMULINK_PARITY.md`.
 
 ## Spawn
 

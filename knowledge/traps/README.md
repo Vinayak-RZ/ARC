@@ -2,7 +2,7 @@
 
 Short, high-signal notes for patterns where a **generic coding agent** reliably
 botches undergrad EE work. Each trap has an id (T1, T2, …) tracked in
-`docs/planning/eec301-lift/TRAP_CATALOG.md`.
+`docs/labs/eec301/TRAP_CATALOG.md`.
 
 Format:
 

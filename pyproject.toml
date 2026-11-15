@@ -1,13 +1,37 @@
 [build-system]
-requires = ["hatchling"]
+# hatchling 1.27+ emits Metadata-Version 2.5 (License-File) which older twine rejects.
+requires = ["hatchling>=1.21,<1.27"]
 build-backend = "hatchling.build"
 
 [project]
 name = "electrical-engineer"
 version = "0.1.0"
-description = "UG electrical engineering co-solver"
-license = "Apache-2.0"
+description = "UG electrical engineering co-solver (Arc domain kernel)"
+readme = "README.md"
+# text form keeps Metadata-Version 2.4 for twine/packaging; expression form emits 2.5.
+license = { text = "Apache-2.0" }
 requires-python = ">=3.11"
+authors = [{ name = "Vinayak-RZ" }]
+keywords = [
+    "electrical-engineering",
+    "education",
+    "spice",
+    "control-systems",
+    "mcp",
+    "arc",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Education",
+]
 dependencies = [
     "pyyaml>=6",
     "fastapi>=0.115",
@@ -19,11 +43,17 @@ dependencies = [
     "scipy>=1.11",
 ]
 
+[project.urls]
+Homepage = "https://github.com/Vinayak-RZ/ARC"
+Repository = "https://github.com/Vinayak-RZ/ARC"
+Issues = "https://github.com/Vinayak-RZ/ARC/issues"
+Documentation = "https://github.com/Vinayak-RZ/ARC/blob/main/docs/EXTENSIVE.md"
+
 [project.scripts]
 electrical-engineer = "electrical_engineer.cli:main"
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "ruff>=0.6", "Pillow>=10", "playwright>=1.49"]
+dev = ["pytest>=8", "ruff>=0.6", "Pillow>=10", "playwright>=1.49", "build>=1.2", "twine>=5"]
 rag = ["pypdf>=5"]
 rag-ocr = ["electrical-engineer[rag]", "ocrmypdf>=16"]
 rag-multimodal = ["electrical-engineer[rag]"]
@@ -37,6 +67,24 @@ engines = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/electrical_engineer"]
+
+# Ship recipes, host packs, and prebuilt UI with the wheel (see electrical_engineer.paths).
+# Prerequisite: `npm run build` in ui/ so ui/dist/index.html exists.
+[tool.hatch.build.targets.wheel.force-include]
+"workflows" = "electrical_engineer/_bundle/workflows"
+"hosts" = "electrical_engineer/_bundle/hosts"
+"ui/dist" = "electrical_engineer/_bundle/ui/dist"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/electrical_engineer",
+    "workflows",
+    "hosts",
+    "ui/dist",
+    "pyproject.toml",
+    "README.md",
+    "LICENSE",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

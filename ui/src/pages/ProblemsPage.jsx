@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
-import { AlertCircle, ArrowUpRight, Copy, FolderOpen, RotateCw } from "lucide-react";
+import { ArrowUpRight, Copy, RotateCw } from "lucide-react";
 import { displayTitle, subjectTag } from "../runDisplay.js";
 import { relativeTime } from "../units/format.js";
+import { MascotState } from "../components/MascotState.jsx";
 
 const STATUS_CHIPS = [
   { id: "all", label: "All" },
@@ -23,7 +24,7 @@ function titleCaseSubject(s) {
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-export function ProblemsPage({ runs, loading, error, onOpenProblem, onTryExample, onReload }) {
+export function ProblemsPage({ runs, loading, error, onOpenProblem, onTryExample, onReload, seeding = false }) {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
   const [subjectFilter, setSubjectFilter] = useState("all");
@@ -87,30 +88,41 @@ export function ProblemsPage({ runs, loading, error, onOpenProblem, onTryExample
   if (error) {
     return (
       <div className="problems-page problems-error problems-centered">
-        <AlertCircle size={40} strokeWidth={1.5} className="problems-empty-icon" aria-hidden />
-        <h1>Problems did not load</h1>
-        <p className="empty">Check that the Arc server is running, then try again.</p>
-        <div className="problems-centered-actions">
-          <button type="button" className="button-secondary" onClick={onReload}>
-            Try again
-          </button>
-          <details>
-            <summary>Details</summary>
-            <p className="hint">{String(error)}</p>
-          </details>
-        </div>
+        <MascotState
+          kind="error"
+          title="Problems did not load"
+          message="Check that the Arc server is running, then try again."
+          actionLabel="Try again"
+          onAction={onReload}
+        />
+        <details>
+          <summary>Details</summary>
+          <p className="hint">{String(error)}</p>
+        </details>
+      </div>
+    );
+  }
+  if (seeding && runs.length === 0) {
+    return (
+      <div className="problems-page problems-empty problems-centered">
+        <MascotState
+          kind="loading"
+          title="Preparing sample problems…"
+          message="Arc is running a few curated checks so the lab is not empty."
+        />
       </div>
     );
   }
   if (runs.length === 0) {
     return (
       <div className="problems-page problems-empty problems-centered">
-        <FolderOpen size={40} strokeWidth={1.5} className="problems-empty-icon" aria-hidden />
-        <h1>No problems yet</h1>
-        <p className="empty">Try an example to see Arc check an answer.</p>
-        <button type="button" className="button-secondary" onClick={onTryExample}>
-          Try an example
-        </button>
+        <MascotState
+          kind="empty"
+          title="No problems yet"
+          message="Try an example to see Arc check an answer."
+          actionLabel="Try an example"
+          onAction={onTryExample}
+        />
       </div>
     );
   }
@@ -194,7 +206,10 @@ export function ProblemsPage({ runs, loading, error, onOpenProblem, onTryExample
             <tbody>
               {items.map((run) => (
                 <tr key={run.id} className="problems-row" onClick={() => onOpenProblem(run.id)} title={run.id}>
-                  <td>{displayTitle(run)}</td>
+                  <td>
+                    {displayTitle(run)}
+                    {run.sample ? <span className="sample-badge">Sample</span> : null}
+                  </td>
                   <td>
                     <span className="subject-tag">{titleCaseSubject(run.subject || subjectTag(run))}</span>
                   </td>

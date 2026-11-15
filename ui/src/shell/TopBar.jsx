@@ -1,6 +1,7 @@
 import { SlidersHorizontal, MoreHorizontal } from "lucide-react";
 import { useLayout } from "../store.js";
 import { displayTitle } from "../runDisplay.js";
+import { ArcMascot } from "../mascot/index.js";
 
 const VIEW_LABEL = {
   home: "Home",
@@ -11,17 +12,17 @@ const VIEW_LABEL = {
   settings: "Settings",
 };
 
-export function TopBar({ runMeta, onPrimaryAction, primaryLabel, runAgainPrimary }) {
+export function TopBar({ runMeta, onPrimaryAction, primaryLabel, runAgainPrimary, onNavigate }) {
   const view = useLayout((s) => s.view);
   const id = useLayout((s) => s.currentRunId);
   const drawer = useLayout((s) => s.parametersOpen);
   const setDrawer = useLayout((s) => s.setParametersOpen);
-  const setView = useLayout((s) => s.setView);
   const agentEditing = useLayout((s) => s.agentEditing);
+  const go = onNavigate || (() => {});
   const crumbs = [];
-  crumbs.push(VIEW_LABEL[view] || "Arc");
+  crumbs.push({ label: VIEW_LABEL[view] || "Arc", view, clickable: Boolean(id && view === "problems") });
   if (view === "problems" && id && runMeta) {
-    crumbs.push(displayTitle(runMeta));
+    crumbs.push({ label: displayTitle(runMeta), view: null, clickable: false });
   }
   const showParams = view === "problems" && Boolean(id);
   const runAgainClass = runAgainPrimary ? "button-primary button-compact" : "button-secondary button-compact";
@@ -29,17 +30,30 @@ export function TopBar({ runMeta, onPrimaryAction, primaryLabel, runAgainPrimary
     <header className="product-topbar">
       <nav className="breadcrumb" aria-label="Breadcrumb">
         {crumbs.map((c, i) => (
-          <span key={c}>
+          <span key={`${c.label}-${i}`}>
             {i > 0 ? <span className="breadcrumb-sep">/</span> : null}
-            <span className={i === crumbs.length - 1 ? "breadcrumb-current" : ""}>{c}</span>
+            {c.clickable ? (
+              <button type="button" className="breadcrumb-link" onClick={() => go({ view: c.view || "problems" })}>
+                {c.label}
+              </button>
+            ) : (
+              <span className={i === crumbs.length - 1 ? "breadcrumb-current" : ""}>{c.label}</span>
+            )}
           </span>
         ))}
       </nav>
       <div className="topbar-actions">
+        <ArcMascot
+          className="topbar-mascot"
+          size={28}
+          mode={agentEditing ? "thinking" : "asleep"}
+          label={agentEditing ? "Agent busy" : "Arc idle"}
+          idleTimes={{ bored: 20, sleepy: 40, doze: 60 }}
+        />
         {agentEditing ? <span className="presence-chip">Agent editing</span> : null}
         {showParams ? (
           <>
-            <button type="button" className="button-secondary button-compact" onClick={() => setView("studio")}>
+            <button type="button" className="button-secondary button-compact" onClick={() => go({ view: "studio" })}>
               Open in Studio
             </button>
             <button
@@ -61,7 +75,7 @@ export function TopBar({ runMeta, onPrimaryAction, primaryLabel, runAgainPrimary
             </button>
           </>
         ) : view === "problems" && !id ? (
-          <button type="button" className="button-primary button-compact" onClick={() => setView("home")}>
+          <button type="button" className="button-primary button-compact" onClick={() => go({ view: "home" })}>
             New problem
           </button>
         ) : null}

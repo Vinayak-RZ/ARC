@@ -45,7 +45,9 @@ def adapters_dir() -> Path:
         if path.is_dir():
             return path
         raise FileNotFoundError(f"EE_ADAPTERS_DIR not a directory: {env}")
-    cand = Path(__file__).resolve().parents[2] / "hosts" / "adapters"
+    from electrical_engineer.paths import hosts_dir
+
+    cand = hosts_dir() / "adapters"
     if cand.is_dir():
         return cand
     raise FileNotFoundError("hosts/adapters not found; run from checkout or set EE_ADAPTERS_DIR")

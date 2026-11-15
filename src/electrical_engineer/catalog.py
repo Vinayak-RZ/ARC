@@ -6,12 +6,12 @@ from pathlib import Path
 
 import yaml
 
+from electrical_engineer.paths import workflows_dir
 from electrical_engineer.runner.fsm import Recipe, parse_recipe
-from electrical_engineer.runner.runs import project_root
 
 
 def workflows_root(cwd: Path | None = None) -> Path:
-    return project_root(cwd) / "workflows"
+    return workflows_dir(cwd)
 
 
 def list_workflow_ids(cwd: Path | None = None) -> list[str]:

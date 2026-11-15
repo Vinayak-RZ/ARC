@@ -6,3 +6,4 @@ def test_zustand_store() -> None:
     assert "currentRunId" in text
     assert "graphDirty" in text
     assert "create" in text
+    assert "clearRun" in text

@@ -46,7 +46,9 @@ sequenceDiagram
   UI-->>S: slots + confirm POST
 ```
 
-Install with pip (`pip install -e ".[dev]"`) or uv (`uv sync --extra dev`). Entry: `electrical-engineer` → `electrical_engineer.cli:main`. UI auto-opens unless `EE_NO_BROWSER=1`. MCP is line-delimited JSON-RPC on stdio. Agents are the primary consumer: paste job briefs from the README, load `skills/SKILL.md`, run recipes, open `127.0.0.1:8765` for schematic (`graph.json`) and control block diagrams (`control_diagram.json`).
+**Consumer install:** `pip install electrical-engineer` or `uvx electrical-engineer <cmd>` (after PyPI publish, or from a local wheel). The wheel bundles `workflows/`, `hosts/`, and `ui/dist` under `electrical_engineer/_bundle/` (see `electrical_engineer.paths.install_root`). Build: `npm run build` in `ui/`, then `scripts/build_release_wheel.py`; smoke: `scripts/smoke_wheel_install.py`.
+
+**Contributor install:** pip (`pip install -e ".[dev]"`) or uv (`uv sync --extra dev`) from a clone. Entry: `electrical-engineer` → `electrical_engineer.cli:main`. UI auto-opens unless `EE_NO_BROWSER=1`. MCP is line-delimited JSON-RPC on stdio. Agents are the primary consumer: paste job briefs from the README, load `skills/SKILL.md`, run recipes, open `127.0.0.1:8765` for schematic (`graph.json`) and control block diagrams (`control_diagram.json`).
 
 ## 3. Package map
 
@@ -177,11 +179,11 @@ Python 3.11+, `uv`, hatchling. Optional tools (PySpice, python-control, pandapow
 - [`docs/PID.md`](PID.md), [`docs/PRD.md`](PRD.md), [`docs/ARCHITECTURE.md`](ARCHITECTURE.md)
 - [`docs/WORKFLOWS.md`](WORKFLOWS.md), [`docs/CANNOT_DO.md`](CANNOT_DO.md)
 - [`docs/design/DESIGN-coinbase.md`](design/DESIGN-coinbase.md)
-- [`docs/planning/R1_BOOT.md`](planning/R1_BOOT.md), [`docs/planning/R1_BOOT_SIMULINK.md`](planning/R1_BOOT_SIMULINK.md), [`docs/planning/T1_TRIALS.md`](planning/T1_TRIALS.md), [`docs/planning/T1_HOST.md`](planning/T1_HOST.md), [`docs/planning/T1_SIMULINK_AGENTS.md`](planning/T1_SIMULINK_AGENTS.md)
+- [`docs/planning/R1_BOOT.md`](planning/R1_BOOT.md), [`docs/planning/R1_BOOT_SHIP.md`](planning/R1_BOOT_SHIP.md), [`docs/planning/SCORECARD.md`](planning/SCORECARD.md)
 - Spike: [`research/notes/rag-spike-results-2026-09.md`](../research/notes/rag-spike-results-2026-09.md)
 
 ## 8. Future advancements
 
 1. Re-run the RAG spike on a licensed chapter with LightRAG 1.5 numbers before swapping engines.
 2. Live licensed MATLAB on a student desktop; CI keeps the fake stdio stub. Simulink toolkit is kernel-mediated (`run-simulink-if-present`); live `.slx` gold is later.
-3. BYOK / HTTP MCP / PyPI — explicitly later-graph in PID; do not pretend they shipped.
+3. BYOK / HTTP MCP — explicitly later-graph in PID; do not pretend they shipped. Wheel packaging and `uvx` path are in-tree (`scripts/build_release_wheel.py`); live PyPI upload still needs a maintainer token / release.
