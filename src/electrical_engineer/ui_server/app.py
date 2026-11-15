@@ -663,6 +663,7 @@ def create_app(root: Path | None = None) -> FastAPI:
         state = "waiting-human" if waiting else "done"
         graph = _read_json(d / "graph.json")
         control_diagram = _read_json(d / "control_diagram.json")
+        diagram = _read_json(d / "diagram.json")
         problem = _read_json(d / "problem.json")
         try:
             modified_at = d.stat().st_mtime
@@ -709,6 +710,7 @@ def create_app(root: Path | None = None) -> FastAPI:
             "trace_excerpt": trace_excerpt,
             "graph": graph,
             "control_diagram": control_diagram,
+            "diagram": diagram,
             "work_steps": _work_steps(d),
             "activity_feed": activity_feed,
             "state": state,

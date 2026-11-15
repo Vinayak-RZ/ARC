@@ -12,6 +12,7 @@ _LOG = logging.getLogger(__name__)
 
 from electrical_engineer.circuit.graph import default_graph_for, write_graph
 from electrical_engineer.control.diagram import control_diagram_for_recipe, write_control_diagram
+from electrical_engineer.visual_kit.diagram_spec import diagram_for_run, write_diagram_json
 
 
 def seed_run_visuals(run_dir: Path, recipe_id: str, problem: dict[str, Any] | None) -> None:
@@ -28,6 +29,10 @@ def seed_run_visuals(run_dir: Path, recipe_id: str, problem: dict[str, Any] | No
         write_control_diagram(run_dir, diagram)
     elif cd_path.is_file():
         cd_path.unlink()
+    try:
+        write_diagram_json(run_dir, diagram_for_run(run_dir, recipe_id, problem))
+    except Exception as exc:  # noqa: BLE001
+        _LOG.warning("diagram.json seed skipped for %s: %s", recipe_id, exc)
     try:
         _seed_figures(run_dir, recipe_id, problem)
     except Exception as exc:  # noqa: BLE001
