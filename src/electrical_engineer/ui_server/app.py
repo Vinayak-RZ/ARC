@@ -515,28 +515,48 @@ def _work_steps(run_dir: Path) -> list[dict]:
     return work_steps(run_dir)
 
 
+_SUBJECT_RECIPE: dict[str, str] = {
+    "circuits": "solve-circuit-problem",
+    "signals": "solve-signals-problem",
+    "electronics": "solve-electronics-problem",
+    "machines": "solve-machines-problem",
+    "power": "solve-power-problem",
+    "control": "solve-control-problem",
+    "power_electronics": "solve-power-electronics-problem",
+    "measurements": "solve-measurements-problem",
+    "em": "solve-em-problem",
+    "maths": "solve-maths-for-ee",
+}
+
+
 def _recipe_from_prompt(prompt: str, subject: str) -> tuple[str, dict]:
     text = (prompt or "").strip().lower()
     subj = (subject or "circuits").strip().lower()
-    if subj == "control" or "bode" in text or "transfer" in text:
+    if "bode" in text or "transfer" in text:
         return "solve-control-problem", {"tf": "1/(s+1)", "prompt": prompt}
-    if subj == "power" or "swing" in text or "fault" in text:
-        return "smib-swing-study", {}
-    if subj in {"machines", "drives"} or "motor" in text or "drive" in text:
+    if "swing" in text:
+        return "smib-swing-study", {"prompt": prompt}
+    if "divider" in text or "vout" in text:
+        return "solve-circuit-problem", {
+            "kind": "voltage_divider",
+            "vin": 10,
+            "r1": 1000,
+            "r2": 1000,
+            "prompt": prompt,
+        }
+    if "motor" in text or "drive" in text:
         return "solve-drives-problem", {
             "kind": "dc",
             "v_dc": 120,
             "ra_ohm": 1,
             "k_torque": 0.5,
             "t_load_nm": 5,
+            "prompt": prompt,
         }
-    if subj in {"power_electronics", "electronics"} or "z-transform" in text:
-        return "solve-digital-control-problem", {"num": [0.1], "den": [1.0, -0.5], "ts": 0.01}
-    if subj == "signals":
-        return "solve-signals-problem", {"prompt": prompt}
-    if "divider" in text or "vout" in text:
-        return "solve-circuit-problem", {"kind": "voltage_divider", "vin": 10, "r1": 1000, "r2": 1000}
-    return "solve-circuit-problem", {"kind": "ohms_law", "v": 12, "r": 4, "prompt": prompt}
+    recipe = _SUBJECT_RECIPE.get(subj, "solve-circuit-problem")
+    if recipe == "solve-circuit-problem" and subj == "circuits":
+        return recipe, {"kind": "ohms_law", "v": 12, "r": 4, "prompt": prompt}
+    return recipe, {"prompt": prompt}
 
 
 def _safe_book_id(raw: str | None) -> str:
