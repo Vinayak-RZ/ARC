@@ -920,7 +920,11 @@ def main() -> int:
                     raise
                 page.wait_for_timeout(400)
                 snap("studio-step-unsettled-dark.png")
-                _click_window(page, "30 s")
+                try:
+                    _click_window(page, "30 s")
+                except RuntimeError:
+                    page.locator(".studio-window-segment button", has_text="30 s").click(force=True)
+                    page.wait_for_timeout(400)
                 page.wait_for_timeout(300)
                 snap("studio-step-extended-dark.png")
 
