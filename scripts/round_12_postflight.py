@@ -251,6 +251,20 @@ def main() -> int:
         ngspice_txt.write_text(ver + "\n", encoding="utf-8")
     pf_path.write_text(json.dumps(pf, indent=2) + "\n", encoding="utf-8")
 
+    notes = [
+        "# Round 12 captures",
+        "",
+        f"PNG count: {len(pngs)}",
+        "",
+        "Includes round-11 coverage, 1280×800 home scroll companions, collab-03–05 (live forward-Euler mismatch), and `lab-rectifier-full3-rl-alpha75` (Vo ≈ 145.1 V).",
+        "",
+        f"Capture HEAD: `{pf.get('git_sha_short')}` · CI run `{pf.get('ci_workflow_run_id', '—')}` · `git_dirty_lines`: {pf.get('git_dirty_lines')}.",
+        "",
+    ]
+    if known:
+        notes.extend(["## Known issues", ""] + [f"- {x}" for x in known] + [""])
+    (OUT / "NOTES.md").write_text("\n".join(notes), encoding="utf-8")
+
     md5_lines = []
     for path in pngs:
         md5_lines.append(f"{path.name}  {hashlib.md5(path.read_bytes()).hexdigest()}")

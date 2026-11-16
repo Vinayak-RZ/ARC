@@ -182,7 +182,24 @@ def agent_rederive_circuit_lab(run_dir: Path) -> dict[str, Any]:
         problem.update(params)
         problem.setdefault("kind", "series_rlc")
         problem.setdefault("analysis", "tran")
+        if str(problem.get("kind") or "") == "series_rlc":
+            from electrical_engineer.engines.rlc_transient import series_rlc_step
+
+            m = series_rlc_step(
+                float(params.get("r_ohm") or 10),
+                float(params.get("l_h") or 0.01),
+                float(params.get("c_f") or 100e-6),
+                float(params.get("vin") or params.get("v_step") or 10),
+            )
+            if float(m.get("overshoot_pct") or 0) < 0.5:
+                problem["t_s"] = float(
+                    m.get("settling_2pct_entry_s") or m.get("settling_time_2pct_s") or problem.get("t_s", 0)
+                )
+            problem.pop("cir", None)
+            problem.pop("netlist", None)
+            problem["allow_template_fallback"] = True
     derived = derive(problem)
+    (run_dir / "problem.json").write_text(json.dumps(problem, indent=2) + "\n", encoding="utf-8")
     (run_dir / "circuit_derive.json").write_text(json.dumps(derived, indent=2), encoding="utf-8")
     verify = refresh_circuit_lab_verify(run_dir, problem, derived=derived, graph=graph)
     verify = apply_verify_semantics(verify, meta, graph) or verify

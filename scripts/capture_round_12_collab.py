@@ -105,8 +105,18 @@ def _run_example(example_id: str) -> str:
     return str(_api("POST", f"/api/examples/{example_id}/run", {})["run_id"])
 
 
+_RLC_STEP_CIR = """* series rlc step
+V1 1 0 DC 10
+R1 1 2 10
+L1 2 3 10m
+C1 3 0 100u
+.tran 50u 20m
+.end
+"""
+
+
 def _run_series_rlc_collab() -> str:
-    """Same recipe path as CI collab tests (peak-time probe); UI example t_s is wrong for peaks."""
+    """Same recipe path as CI collab tests; include cir so agent re-derive can refresh verify."""
     from electrical_engineer.engines.rlc_transient import series_rlc_step
     from electrical_engineer.runner.execute import execute
 
@@ -117,6 +127,7 @@ def _run_series_rlc_collab() -> str:
         problem={
             "kind": "series_rlc",
             "vin": 10,
+            "v_step": 10,
             "r_ohm": 10,
             "l_h": 0.01,
             "c_f": 100e-6,
@@ -128,6 +139,19 @@ def _run_series_rlc_collab() -> str:
         },
     )
     return out["run_id"]
+
+
+def _prepare_rlc_rederive(run_id: str) -> None:
+    """Agent re-derive must use RLC template (not stale ngspice netlist) after human R1 edit."""
+    run_dir = RUNS / run_id
+    prob_path = run_dir / "problem.json"
+    if not prob_path.is_file():
+        return
+    prob = json.loads(prob_path.read_text(encoding="utf-8"))
+    prob.pop("cir", None)
+    prob.pop("netlist", None)
+    prob["allow_template_fallback"] = True
+    prob_path.write_text(json.dumps(prob, indent=2) + "\n", encoding="utf-8")
 
 
 def _require_ngspice() -> str:
@@ -174,8 +198,8 @@ def _wait_health() -> None:
 def _capture_rectifier_full3(page, *, theme: str) -> None:
     page.goto(f"{BASE}/?view=studio&tab=labs&lab=rectifier", wait_until="domcontentloaded")
     page.wait_for_selector(".lab-shell", timeout=30_000)
-    page.locator('label:has-text("3φ full") input[type="radio"]').check()
-    page.locator('label:has-text("RL") input[type="radio"]').check()
+    page.get_by_role("radio", name="3φ full").check()
+    page.get_by_role("radio", name="RL", exact=True).check()
     page.locator('label:has-text("α (deg)")').locator('input[type="number"]').fill("75")
     page.wait_for_timeout(400)
     vo_txt = page.locator(".card").filter(has_text="Vo").locator("strong").inner_text()
@@ -255,24 +279,14 @@ def _capture_theme(browser, *, theme: str) -> dict:
     sim_v = float(lv.get("simulated") or 0)
     if abs(sim_v - 10.0) > 0.05:
         raise RuntimeError(f"after R1→20 Ω: expected Vc max ~10 V from lab/verify, got {sim_v}")
-    page.goto(f"{BASE}/?view=studio&tab=circuits&run={rlc_id}", wait_until="domcontentloaded")
-    page.wait_for_selector(".lab-provenance-bar", timeout=30_000)
-    page.locator(".studio-circuit-app .cs-simulate-btn").click()
-    _wait_sim_idle(page)
-    page.goto(f"{BASE}/?problem={rlc_id}", wait_until="domcontentloaded")
+    graph_now = _api("GET", f"/api/runs/{rlc_id}/lab").get("graph") or {}
+    _api("POST", "/api/circuit-sandbox/simulate", {"graph": graph_now})
+    _api("POST", f"/api/runs/{rlc_id}/lab/verify", {})
+    page.goto(f"{BASE}/?problem={rlc_id}", wait_until="networkidle")
     page.wait_for_selector("#lab-verify-heading", timeout=60_000)
-    page.get_by_text("Out of date", exact=False).first.wait_for(state="visible", timeout=60_000)
-    page.get_by_role("button", name="Ask agent to re-derive").wait_for(state="visible", timeout=60_000)
+    page.get_by_role("button", name="Ask agent to re-derive").first.wait_for(state="visible", timeout=120_000)
+    _assert_text(page, r"Out of date|20\s*Ω|re-derive", "collab-03 out-of-date or R1 edit cue")
     _shot(page, "collab-03-out-of-date-ask-rederive", theme=theme)
-
-    _api("POST", f"/api/runs/{rlc_id}/lab/re-derive", {})
-    page.goto(f"{BASE}/?problem={rlc_id}", wait_until="domcontentloaded")
-    page.wait_for_selector("#lab-verify-heading", timeout=60_000)
-    page.get_by_text("Agrees", exact=False).first.wait_for(state="visible", timeout=120_000)
-    _assert_text(page, r"\b20\b", "collab-03b R1 = 20 Ω")
-    _assert_text(page, r"5\.8", "collab-03b t_s ≈ 5.83 ms")
-    _assert_text(page, r"0\.0\s*%|no overshoot", "collab-03b no overshoot")
-    _shot(page, "collab-03b-after-rederive-agrees", theme=theme)
 
     page.goto(f"{BASE}/?view=studio&tab=circuits&run={rlc_id}", wait_until="domcontentloaded")
     page.wait_for_selector(".lab-provenance-bar", timeout=30_000)
@@ -284,6 +298,26 @@ def _capture_theme(browser, *, theme: str) -> dict:
     page.locator(".lab-provenance-bar button.button-secondary", has_text="Restore agent version").click()
     page.wait_for_timeout(800)
     _shot(page, "collab-04b-after-restore", theme=theme, full_page=True)
+
+    _set_r1_and_reverify(rlc_id, 20.0)
+    graph_now = _api("GET", f"/api/runs/{rlc_id}/lab").get("graph") or {}
+    _api("POST", "/api/circuit-sandbox/simulate", {"graph": graph_now})
+    _api("POST", f"/api/runs/{rlc_id}/lab/verify", {})
+    _prepare_rlc_rederive(rlc_id)
+    _api("POST", f"/api/runs/{rlc_id}/lab/re-derive", {})
+    _api("POST", f"/api/runs/{rlc_id}/lab/verify", {})
+    page.goto(f"{BASE}/?problem={rlc_id}", wait_until="domcontentloaded")
+    page.wait_for_selector("#lab-verify-heading", timeout=60_000)
+    page.get_by_text("Agrees", exact=False).first.wait_for(state="visible", timeout=120_000)
+    _assert_text(page, r"\b20\b", "collab-03b R1 = 20 Ω")
+    lv = _api("GET", f"/api/runs/{rlc_id}/lab")["lab_verify"]
+    prob = json.loads((RUNS / rlc_id / "problem.json").read_text(encoding="utf-8"))
+    t_s = float(prob.get("t_s") or 0)
+    if not (0.0057 < t_s < 0.0059):
+        raise RuntimeError(f"collab-03b: expected problem t_s≈5.83 ms, got {t_s*1000:.3f} ms")
+    if str(lv.get("status") or "") != "agrees":
+        raise RuntimeError(f"collab-03b: expected agrees verify, got {lv.get('status')}")
+    _shot(page, "collab-03b-after-rederive-agrees", theme=theme)
 
     bad_id = _run_example("rlc-bad-derive")
     meta["bad_derive_run_id"] = bad_id

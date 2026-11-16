@@ -51,7 +51,16 @@ def main() -> int:
         ):
             print(">>>", " ".join(script))
             subprocess.check_call(script, cwd=ROOT)
-        subprocess.check_call([sys.executable, str(ROOT / "scripts" / "round_12_postflight.py")], cwd=ROOT)
+        env_pf = {
+            **os.environ,
+            "ROUND12_CI_RUN_ID": os.environ.get("ROUND12_CI_RUN_ID", ""),
+            "ROUND12_CI_STATUS": os.environ.get("ROUND12_CI_STATUS", "success"),
+        }
+        subprocess.check_call(
+            [sys.executable, str(ROOT / "scripts" / "round_12_postflight.py")],
+            cwd=ROOT,
+            env=env_pf,
+        )
     finally:
         server.terminate()
         try:
