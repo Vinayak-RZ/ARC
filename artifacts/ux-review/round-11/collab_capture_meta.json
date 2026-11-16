@@ -1,9 +1,23 @@
 {
-  "rlc_run_id": "070s-20261116T171851Z",
-  "control_run_id": "40fr-20261116T171852Z",
-  "control_session_id": "cs-43828509eceb",
-  "control_step_run_id": "2fs5-20261116T171854Z",
-  "control_step_session_id": "cs-67b63a65de84",
-  "rectifier_run_id": null,
-  "idmt_run_id": null
+  "ngspice_version": "** ngspice-42 : Circuit level simulation program",
+  "light": {
+    "rectifier_run_id": "mvnc-20261116T185602Z",
+    "idmt_run_id": "htxn-20261116T185602Z",
+    "control_step_run_id": "9bxx-20261116T185604Z",
+    "control_step_session_id": "cs-run-9bxx-20261116T185604Z",
+    "rlc_run_id": "4b5b-20261116T185613Z",
+    "bad_derive_run_id": "4rrw-20261116T185621Z",
+    "control_run_id": "5kg6-20261116T185623Z",
+    "control_session_id": "cs-run-5kg6-20261116T185623Z"
+  },
+  "dark": {
+    "rectifier_run_id": "ay4r-20261116T185653Z",
+    "idmt_run_id": "yp4r-20261116T185653Z",
+    "control_step_run_id": "g26d-20261116T185655Z",
+    "control_step_session_id": "cs-run-g26d-20261116T185655Z",
+    "rlc_run_id": "c3d2-20261116T185705Z",
+    "bad_derive_run_id": "8rm3-20261116T185714Z",
+    "control_run_id": "55fd-20261116T185715Z",
+    "control_session_id": "cs-run-55fd-20261116T185715Z"
+  }
 }

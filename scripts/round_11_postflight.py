@@ -206,11 +206,11 @@ def main() -> int:
     head = pf.get("git_sha") or subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     pf["git_sha"] = head
     pf["git_sha_short"] = pf.get("git_sha_short") or head[:7]
-    pf["merged_collab_pr62_head"] = "83968d8f74046cb738c5a7bbcdbcbcd0ae54d364"
+    pf["merged_collab_pr62_head"] = "73420104379c93b767aa4f04854525839e3524a4"
     pf["ci_reference"] = {
         "pr": 62,
-        "head_sha_short": "83968d8",
-        "workflow_run_id": "43910447419",
+        "head_sha_short": "7342010",
+        "workflow_run_id": "43926478759",
         "status": "success",
     }
     pf["png_count"] = len(pngs)

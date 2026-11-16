@@ -133,11 +133,11 @@ def _preflight(out_dir: Path) -> dict:
         "git_sha": sha,
         "git_sha_short": sha_short,
         "ngspice_version": ngspice_version,
-        "merged_collab_pr62_head": "83968d8f74046cb738c5a7bbcdbcbcd0ae54d364",
+        "merged_collab_pr62_head": "73420104379c93b767aa4f04854525839e3524a4",
         "ci_reference": {
             "pr": 62,
-            "head_sha_short": "83968d8",
-            "workflow_run_id": "43910447419",
+            "head_sha_short": "7342010",
+            "workflow_run_id": "43926478759",
             "status": "success",
         },
         "git_dirty_lines": len(dirty_lines),
@@ -212,6 +212,30 @@ def _run_example(example_id: str) -> str:
     if not rid:
         raise RuntimeError(f"no run_id for {example_id}: {body}")
     return str(rid)
+
+
+def _run_series_rlc_step() -> str:
+    from electrical_engineer.engines.rlc_transient import series_rlc_step
+    from electrical_engineer.runner.execute import execute
+
+    meta = series_rlc_step(10, 0.01, 100e-6, 10.0)
+    out = execute(
+        "series-rlc-transient",
+        cwd=ROOT,
+        problem={
+            "kind": "series_rlc",
+            "vin": 10,
+            "r_ohm": 10,
+            "l_h": 0.01,
+            "c_f": 100e-6,
+            "analysis": "tran",
+            "t_s": float(meta["t_Vc_peak_s"]),
+            "probe": "v(3)",
+            "tol": 0.02,
+            "prompt": "Series RLC step",
+        },
+    )
+    return out["run_id"]
 
 
 def _backup_runs() -> Path | None:
@@ -725,12 +749,13 @@ def main() -> int:
                     page.wait_for_selector(".lab-shell", timeout=30000)
                     page.wait_for_timeout(500)
                     snap(f"{stem}.png")
-                circuit_rid = _run_example("rlc-step")
+                circuit_rid = _run_series_rlc_step() if args.round >= 11 else _run_example("rlc-step")
                 go(f"?problem={circuit_rid}")
                 page.wait_for_selector(".answer-line", timeout=120000)
                 snap("problem-circuit-checked.png")
                 page.get_by_role("tab", name="Work").click()
-                page.wait_for_selector(".checked-tag, .answer-line.is-checked", timeout=120000)
+                work_sel = ".step-timeline-row" if args.round >= 11 else ".checked-tag, .answer-line.is-checked"
+                page.wait_for_selector(work_sel, timeout=120000)
                 snap("problem-circuit-checked-work.png")
                 page.get_by_role("tab", name="Diagram").click()
                 page.wait_for_selector(".static-diagram, .diagram-shell svg", timeout=30000)
@@ -964,6 +989,8 @@ def main() -> int:
                 snap("studio-step-extended-dark.png")
 
             if args.round >= 5:
+                if args.round >= 11:
+                    _clear_runs()
                 _set_theme(page, "dark")
                 go("?view=home")
                 snap("home-dark.png")
