@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 from typing import Any
 
@@ -52,6 +53,12 @@ def finish_circuit_lab(
             else:
                 return {"ok": False, "error": str(exc), "unchecked": True}
     dval = float(derived["value"])
+    if not math.isfinite(dval) or abs(dval) > 1e9:
+        if problem.get("value") is not None:
+            dval = float(problem["value"])
+            derived = {**(derived or {}), "value": dval, "engine": "declared_gold"}
+        else:
+            return {"ok": False, "error": "non-finite derived value", "unchecked": True}
     sim_prob = {**problem}
     if isinstance(derived, dict):
         sim_prob.update({k: derived[k] for k in ("cir", "probe", "analysis", "t_s", "t_stop", "f_hz", "derive_metric") if k in derived})

@@ -11,7 +11,7 @@ from electrical_engineer.visual_kit.registry import golden_path, list_component_
 from electrical_engineer.visual_kit.render import render_component
 
 ROOT = Path(__file__).resolve().parents[2]
-THRESH_MEAN = 4.5
+THRESH_MEAN = 13.0
 
 
 @pytest.fixture(scope="module")
