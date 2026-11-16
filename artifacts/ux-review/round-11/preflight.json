@@ -33,15 +33,15 @@
       },
       {
         "file": "collab-01-run-sim-vs-derived-agrees-dark.png",
-        "mean_luminance": 3.49
+        "mean_luminance": 3.96
       },
       {
         "file": "collab-01-run-sim-vs-derived-agrees-light.png",
-        "mean_luminance": 3.3
+        "mean_luminance": 3.37
       },
       {
         "file": "collab-02-lab-provenance-vc-activity-dark.png",
-        "mean_luminance": 1.27
+        "mean_luminance": 1.28
       },
       {
         "file": "collab-02-lab-provenance-vc-activity-light.png",
@@ -49,35 +49,35 @@
       },
       {
         "file": "collab-03-human-r1-resim-activity-you-dark.png",
-        "mean_luminance": 1.31
+        "mean_luminance": 1.32
       },
       {
         "file": "collab-03-human-r1-resim-activity-you-light.png",
-        "mean_luminance": 1.44
+        "mean_luminance": 1.41
       },
       {
         "file": "collab-04-changes-restore-agent-dark.png",
-        "mean_luminance": 1.3
-      },
-      {
-        "file": "collab-04-changes-restore-agent-light.png",
-        "mean_luminance": 1.44
-      },
-      {
-        "file": "collab-05-needs-review-bad-derive-dark.png",
-        "mean_luminance": 3.53
-      },
-      {
-        "file": "collab-05-needs-review-bad-derive-light.png",
-        "mean_luminance": 3.37
-      },
-      {
-        "file": "collab-06-control-unity-lab-agreement-dark.png",
         "mean_luminance": 1.29
       },
       {
+        "file": "collab-04-changes-restore-agent-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "collab-05-needs-review-bad-derive-dark.png",
+        "mean_luminance": 3.49
+      },
+      {
+        "file": "collab-05-needs-review-bad-derive-light.png",
+        "mean_luminance": 3.63
+      },
+      {
+        "file": "collab-06-control-unity-lab-agreement-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
         "file": "collab-06-control-unity-lab-agreement-light.png",
-        "mean_luminance": 1.45
+        "mean_luminance": 1.44
       },
       {
         "file": "collab-06-control-unity-run-agrees-dark.png",
@@ -85,7 +85,7 @@
       },
       {
         "file": "collab-06-control-unity-run-agrees-light.png",
-        "mean_luminance": 3.03
+        "mean_luminance": 3.04
       },
       {
         "file": "focus-button-dark.png",
@@ -270,6 +270,30 @@
       {
         "file": "problem-circuit-checked-work-light.png",
         "mean_luminance": 4.39
+      },
+      {
+        "file": "problem-control-checked-dark.png",
+        "mean_luminance": 3.3
+      },
+      {
+        "file": "problem-control-checked-lab-agreement-dark.png",
+        "mean_luminance": 1.3
+      },
+      {
+        "file": "problem-control-checked-lab-agreement-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "problem-control-checked-light.png",
+        "mean_luminance": 3.09
+      },
+      {
+        "file": "problem-control-checked-work-dark.png",
+        "mean_luminance": 3.29
+      },
+      {
+        "file": "problem-control-checked-work-light.png",
+        "mean_luminance": 3.14
       },
       {
         "file": "problem-dark.png",
@@ -665,6 +689,21 @@
         "reason": "mean luminance too close to light"
       },
       {
+        "dark": "problem-control-checked-dark.png",
+        "light": "problem-control-checked-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "problem-control-checked-lab-agreement-dark.png",
+        "light": "problem-control-checked-lab-agreement-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "problem-control-checked-work-dark.png",
+        "light": "problem-control-checked-work-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
         "dark": "problem-divider-run-1024-dark.png",
         "light": "problem-divider-run-1024-light.png",
         "reason": "mean luminance too close to light"
@@ -797,7 +836,7 @@
       {
         "name": "test",
         "state": "FAILURE",
-        "url": "https://github.com/Vinayak-RZ/ARC/actions/runs/43866930821/job/133297766600"
+        "url": "https://github.com/Vinayak-RZ/ARC/actions/runs/43915686068/job/133469054523"
       }
     ]
   },
@@ -808,5 +847,6 @@
     "workflow_run_id": "43910447419",
     "status": "success"
   },
-  "png_count": 127
+  "png_count": 133,
+  "ngspice_version": "** ngspice-42 : Circuit level simulation program"
 }

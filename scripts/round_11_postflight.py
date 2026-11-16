@@ -3,8 +3,10 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
+import shutil
 import struct
 import subprocess
 import zlib
@@ -128,6 +130,17 @@ def _describe_file(name: str) -> tuple[str, str, str, str]:
             vp,
             "Unity-feedback run page agreement card.",
         )
+    if stem.startswith("problem-control-checked-lab-agreement"):
+        return (
+            "Control-step studio lab",
+            theme,
+            vp,
+            "First-order step gallery run: simulated vs derived in lab drawer after Simulate.",
+        )
+    if stem.startswith("problem-control-checked-work"):
+        return ("Control-step run", theme, vp, "Gallery first-order step, Work tab checked.")
+    if stem.startswith("problem-control-checked"):
+        return ("Control-step run", theme, vp, "Gallery first-order step with agreement card.")
     if "collab-06-control-unity-lab" in stem:
         return (
             "Collaboration 6 · Control lab",
@@ -201,12 +214,20 @@ def main() -> int:
         "status": "success",
     }
     pf["png_count"] = len(pngs)
+    ngspice_txt = OUT / ".ngspice_version"
+    if ngspice_txt.is_file():
+        pf["ngspice_version"] = ngspice_txt.read_text(encoding="utf-8").strip()
+    elif shutil.which("ngspice"):
+        proc = subprocess.run(["ngspice", "-v"], capture_output=True, text=True, check=False)
+        pf["ngspice_version"] = (proc.stdout + proc.stderr).strip().splitlines()[0]
     pf_path.write_text(json.dumps(pf, indent=2) + "\n", encoding="utf-8")
 
-    known: list[str] = [
-        "Capture VM has no ngspice on PATH; collab RLC Agrees and Vc waveform used analytical staging in `capture_round_11_collab.py` (derived/simulated from `series_rlc_step`). CI PR #62 run 43910447419 uses ngspice.",
-        "`control-step` gallery run pages were not in the main sweep when the API returned 500 on an older server; re-capture can add `problem-control-checked-*` at 83968d8 (API now returns 200).",
-    ]
+    md5_lines = []
+    for path in pngs:
+        md5_lines.append(f"{path.name}  {hashlib.md5(path.read_bytes()).hexdigest()}")
+    (OUT / "md5.txt").write_text("\n".join(md5_lines) + "\n", encoding="utf-8")
+
+    known: list[str] = []
     if scan["dark_integrity_failures"]:
         known.append(
             "Automated dark vs light luminance pairs flagged (spot-check): "

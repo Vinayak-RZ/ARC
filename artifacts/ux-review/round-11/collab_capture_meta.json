@@ -1,7 +1,9 @@
 {
-  "rlc_run_id": "d589-20261116T170919Z",
-  "control_run_id": "nz6j-20261116T170920Z",
-  "control_session_id": "cs-35132ffeab31",
-  "rectifier_run_id": "nzc6-20261116T170922Z",
-  "idmt_run_id": "zesp-20261116T170922Z"
+  "rlc_run_id": "070s-20261116T171851Z",
+  "control_run_id": "40fr-20261116T171852Z",
+  "control_session_id": "cs-43828509eceb",
+  "control_step_run_id": "2fs5-20261116T171854Z",
+  "control_step_session_id": "cs-67b63a65de84",
+  "rectifier_run_id": null,
+  "idmt_run_id": null
 }

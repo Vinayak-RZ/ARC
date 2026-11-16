@@ -2,7 +2,7 @@
 
 Git HEAD: `83968d8f74046cb738c5a7bbcdbcbcd0ae54d364`
 Short SHA: `83968d8`
-PNG count: 127
+PNG count: 133
 
 ## How to read
 
@@ -71,6 +71,12 @@ PNG count: 127
 | `problem-circuit-checked-diagram-light.png` | Run page | light | 1440×900 | RLC example checked. |
 | `problem-circuit-checked-light.png` | Run page | light | 1440×900 | RLC example checked. |
 | `problem-circuit-checked-work-light.png` | Run page | light | 1440×900 | RLC example checked. |
+| `problem-control-checked-dark.png` | Control-step run | dark | 1440×900 | Gallery first-order step with agreement card. |
+| `problem-control-checked-lab-agreement-dark.png` | Control-step studio lab | dark | 1440×900 | First-order step gallery run: simulated vs derived in lab drawer after Simulate. |
+| `problem-control-checked-lab-agreement-light.png` | Control-step studio lab | light | 1440×900 | First-order step gallery run: simulated vs derived in lab drawer after Simulate. |
+| `problem-control-checked-light.png` | Control-step run | light | 1440×900 | Gallery first-order step with agreement card. |
+| `problem-control-checked-work-dark.png` | Control-step run | dark | 1440×900 | Gallery first-order step, Work tab checked. |
+| `problem-control-checked-work-light.png` | Control-step run | light | 1440×900 | Gallery first-order step, Work tab checked. |
 | `problem-dark.png` | problem dark | dark | 1440×900 | Main product surface. |
 | `problem-divider-run-1024-dark.png` | problem divider run 1024 dark | dark | 1024×900 | Main product surface. |
 | `problem-divider-run-1024-light.png` | problem divider run 1024 light | light | 1024×900 | Main product surface. |
@@ -147,4 +153,4 @@ PNG count: 127
 
 ## Known issues
 
-- Dark-frame integrity: cmdk-open-dark.png; collab-01-run-sim-vs-derived-agrees-dark.png; collab-02-lab-provenance-vc-activity-dark.png; collab-03-human-r1-resim-activity-you-dark.png; collab-04-changes-restore-agent-dark.png; collab-05-needs-review-bad-derive-dark.png
+- Automated dark vs light luminance pairs flagged (spot-check): cmdk-open-dark.png; collab-01-run-sim-vs-derived-agrees-dark.png; collab-02-lab-provenance-vc-activity-dark.png; collab-03-human-r1-resim-activity-you-dark.png; collab-04-changes-restore-agent-dark.png; collab-05-needs-review-bad-derive-dark.png; collab-06-control-unity-lab-agreement-dark.png; collab-06-control-unity-run-agrees-dark.png

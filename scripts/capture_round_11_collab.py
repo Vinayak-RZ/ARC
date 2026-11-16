@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
 import sys
 import time
@@ -91,69 +92,44 @@ def _run_example(example_id: str) -> str:
     return str(rid)
 
 
-def _seed_lab_simulate_trace(run_id: str, problem: dict) -> None:
-    """Analytical Vc trace for lab UI when ngspice is not on PATH (capture staging)."""
-    from electrical_engineer.engines.rlc_transient import series_rlc_step
-
-    r = float(problem.get("r_ohm") or problem.get("r") or 10)
-    l = float(problem.get("l_h") or problem.get("l") or 0.01)
-    c = float(problem.get("c_f") or problem.get("c") or 100e-6)
-    vin = float(problem.get("v_step") or problem.get("vin") or 10)
-    trace = series_rlc_step(r, l, c, vin)
-    run_dir = ROOT / "runs" / run_id
-    payload = {
-        "ok": True,
-        "engine": "rlc_analytic",
-        "simulated": float(trace["Vc_peak_V"]),
-        "trace": trace,
-        "vc_trace_ms": trace.get("vc_trace_ms"),
-        "problem": problem,
-    }
-    (run_dir / "lab_simulate.json").write_text(json.dumps(payload, indent=2), encoding="utf-8")
-
-
-def _ensure_rlc_lab_agrees(run_id: str, problem: dict) -> None:
-    """When ngspice is absent, write agrees lab_verify from the same analytical gold the agent used."""
-    from electrical_engineer.collab.workflow import finish_circuit_lab
-    from electrical_engineer.engines.rlc_transient import series_rlc_step
-
-    run_dir = ROOT / "runs" / run_id
-    finish_circuit_lab(run_dir, problem)
-    verify_path = run_dir / "lab_verify.json"
-    if not verify_path.is_file():
-        return
-    verify = json.loads(verify_path.read_text(encoding="utf-8"))
-    if verify.get("status") == "agrees" and verify.get("simulated") is not None:
-        return
-    r = float(problem.get("r_ohm") or problem.get("r") or 10)
-    l = float(problem.get("l_h") or problem.get("l") or 0.01)
-    c = float(problem.get("c_f") or problem.get("c") or 100e-6)
-    vin = float(problem.get("v_step") or problem.get("vin") or 10)
-    peak = float(series_rlc_step(r, l, c, vin)["Vc_peak_V"])
-    verify.update(
-        {
-            "ok": True,
-            "derived": peak,
-            "simulated": peak,
-            "rel_err_pct": 0.0,
-            "mismatch": False,
-            "needs_review": False,
-            "status": "agrees",
-            "status_label": "Agrees (limit 2%)",
-            "sim_engine": "series_rlc_step (capture staging; ngspice unavailable)",
-        }
-    )
-    if verify.get("metrics"):
-        verify["metrics"][0].update(
-            {
-                "derived": peak,
-                "simulated": peak,
-                "rel_err_pct": 0.0,
-                "status": "agrees",
-                "status_label": verify["status_label"],
-            }
+def _require_ngspice() -> str:
+    if not shutil.which("ngspice"):
+        raise RuntimeError(
+            "ngspice is not on PATH. Install with: sudo apt-get update && sudo apt-get install -y ngspice"
         )
-    verify_path.write_text(json.dumps(verify, indent=2), encoding="utf-8")
+    proc = subprocess.run(["ngspice", "-v"], capture_output=True, text=True, check=False)
+    banner = (proc.stdout + proc.stderr).strip()
+    if not banner:
+        raise RuntimeError("ngspice -v produced no output")
+    first_line = next(
+        (ln.strip() for ln in banner.splitlines() if "ngspice" in ln.lower()),
+        banner.splitlines()[0].strip(),
+    )
+    from electrical_engineer.engines.spice_runner import simulator_status
+
+    st = simulator_status()
+    if not st.get("available"):
+        raise RuntimeError(f"simulator_status reports unavailable: {st.get('reason')!r}")
+    return first_line
+
+
+def _assert_rlc_lab_agrees(run_dir: Path, problem: dict) -> dict:
+    from electrical_engineer.collab.workflow import finish_circuit_lab
+
+    verify = finish_circuit_lab(run_dir, problem)
+    if verify.get("status") != "agrees":
+        raise RuntimeError(f"RLC lab verify must agree with ngspice; got {verify.get('status')!r} ({verify})")
+    if verify.get("simulated") is None:
+        raise RuntimeError(f"RLC lab verify missing simulated value: {verify}")
+    sim_engine = str(verify.get("sim_engine") or "")
+    if "ngspice" not in sim_engine.lower():
+        raise RuntimeError(f"RLC sim_engine must be ngspice; got {sim_engine!r}")
+    sim_path = run_dir / "lab_simulate.json"
+    if sim_path.is_file():
+        sim = json.loads(sim_path.read_text(encoding="utf-8"))
+        if not sim.get("ok"):
+            raise RuntimeError(f"lab_simulate.json not ok: {sim}")
+    return verify
 
 
 def _put_graph(run_id: str, graph: dict) -> None:
@@ -187,6 +163,9 @@ def _wait_health() -> None:
 
 
 def main() -> int:
+    ngspice_version = _require_ngspice()
+    print("ngspice:", ngspice_version)
+    (OUT / ".ngspice_version").write_text(ngspice_version + "\n", encoding="utf-8")
     OUT.mkdir(parents=True, exist_ok=True)
     try:
         from playwright.sync_api import sync_playwright
@@ -235,8 +214,8 @@ def _capture(sync_playwright) -> int:
     }
     rlc = execute("series-rlc-transient", cwd=ROOT, problem=rlc_problem)
     rlc_id = rlc["run_id"]
-    _ensure_rlc_lab_agrees(rlc_id, rlc_problem)
-    _seed_lab_simulate_trace(rlc_id, rlc_problem)
+    rlc_dir = Path(rlc["run_dir"])
+    _assert_rlc_lab_agrees(rlc_dir, rlc_problem)
     control = execute(
         "solve-control-problem",
         cwd=ROOT,
@@ -254,8 +233,17 @@ def _capture(sync_playwright) -> int:
     if lab_meta_path.is_file():
         ctl_sid = json.loads(lab_meta_path.read_text(encoding="utf-8")).get("control_session_id")
 
-    rect_id = _run_example("rectifier-3ph")
-    idmt_id = _run_example("idmt-relay")
+    control_step_id = _run_example("control-step")
+    control_step_sid = None
+    cs_meta = ROOT / "runs" / control_step_id / "lab_meta.json"
+    if cs_meta.is_file():
+        control_step_sid = json.loads(cs_meta.read_text(encoding="utf-8")).get("control_session_id")
+
+    rect_id = None
+    idmt_id = None
+    if os.environ.get("ROUND11_FULL", "") == "1":
+        rect_id = _run_example("rectifier-3ph")
+        idmt_id = _run_example("idmt-relay")
 
     meta_path = OUT / "collab_capture_meta.json"
     meta_path.write_text(
@@ -264,6 +252,8 @@ def _capture(sync_playwright) -> int:
                 "rlc_run_id": rlc_id,
                 "control_run_id": ctl_id,
                 "control_session_id": ctl_sid,
+                "control_step_run_id": control_step_id,
+                "control_step_session_id": control_step_sid,
                 "rectifier_run_id": rect_id,
                 "idmt_run_id": idmt_id,
             },
@@ -292,11 +282,28 @@ def _capture(sync_playwright) -> int:
             page.goto(f"{BASE}/?view=home", wait_until="domcontentloaded")
             _set_theme(page, theme)
 
-            # Supplemental example run pages (rectifier, IDMT)
-            for run_id, stem in [(rect_id, "run-rectifier"), (idmt_id, "run-idmt")]:
-                page.goto(f"{BASE}/?problem={run_id}", wait_until="domcontentloaded")
-                page.wait_for_selector(".answer-line, .problem-header", timeout=120_000)
-                _shot(page, stem, theme=theme)
+            if rect_id and idmt_id:
+                for run_id, stem in [(rect_id, "run-rectifier"), (idmt_id, "run-idmt")]:
+                    page.goto(f"{BASE}/?problem={run_id}", wait_until="domcontentloaded")
+                    page.wait_for_selector(".answer-line, .problem-header", timeout=120_000)
+                    _shot(page, stem, theme=theme)
+
+            # Control-step example (gallery run + lab agreement)
+            page.goto(f"{BASE}/?problem={control_step_id}", wait_until="domcontentloaded")
+            page.wait_for_selector(".answer-line", timeout=120_000)
+            page.wait_for_selector("#lab-verify-heading", timeout=60_000)
+            _shot(page, "problem-control-checked", theme=theme)
+            page.get_by_role("tab", name="Work").click()
+            page.wait_for_selector(".step-timeline-row, .checked-tag", timeout=120_000)
+            _shot(page, "problem-control-checked-work", theme=theme)
+            if control_step_sid:
+                page.goto(f"{BASE}/?view=studio&tab=control&session={control_step_sid}", wait_until="domcontentloaded")
+                page.wait_for_selector(".cs-simulate-btn", timeout=30_000)
+                page.locator(".cs-simulate-btn").click()
+                page.wait_for_selector(".studio-margins .num, .studio-step-chart", timeout=120_000)
+                page.wait_for_selector(".studio-step-chart svg", timeout=60_000)
+                _wait_sim_idle(page)
+                _shot(page, "problem-control-checked-lab-agreement", theme=theme, full_page=True)
 
             # Collab step 1 — agent solved RLC, Agrees
             page.goto(f"{BASE}/?problem={rlc_id}", wait_until="domcontentloaded")
@@ -312,10 +319,7 @@ def _capture(sync_playwright) -> int:
             sim = page.locator(".studio-circuit-app .cs-simulate-btn")
             sim.click()
             _wait_sim_idle(page)
-            page.wait_for_selector(
-                ".studio-circuit-results .se-waveform, .studio-circuit-results .answer-num, .studio-circuit-probes",
-                timeout=120_000,
-            )
+            page.wait_for_selector(".studio-circuit-results .se-waveform", timeout=120_000)
             _shot(page, "collab-02-lab-provenance-vc-activity", theme=theme, full_page=True)
 
             # Collab step 3 — human changes R1, re-simulate
@@ -388,6 +392,9 @@ def _capture(sync_playwright) -> int:
                 _shot(page, "collab-06-control-unity-lab-agreement", theme=theme, full_page=True)
 
             ctx.close()
+
+            if os.environ.get("ROUND11_FULL", "") != "1":
+                continue
 
             narrow_ctx = browser.new_context(viewport={"width": 1024, "height": H})
             if theme == "dark":

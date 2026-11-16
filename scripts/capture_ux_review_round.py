@@ -120,9 +120,19 @@ def _preflight(out_dir: Path) -> dict:
     with urllib.request.urlopen(fin_req, timeout=180) as resp:
         fin_payload = json.loads(resp.read().decode())
     fin_m = (fin_payload.get("step_series") or {}).get("metrics") or {}
+    ngspice_version = None
+    try:
+        import shutil
+
+        if shutil.which("ngspice"):
+            nv = subprocess.run(["ngspice", "-v"], capture_output=True, text=True, check=False)
+            ngspice_version = (nv.stdout + nv.stderr).strip().splitlines()[0] if (nv.stdout + nv.stderr).strip() else None
+    except OSError:
+        pass
     data = {
         "git_sha": sha,
         "git_sha_short": sha_short,
+        "ngspice_version": ngspice_version,
         "merged_collab_pr62_head": "83968d8f74046cb738c5a7bbcdbcbcd0ae54d364",
         "ci_reference": {
             "pr": 62,
