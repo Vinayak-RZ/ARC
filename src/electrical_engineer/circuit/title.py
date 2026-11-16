@@ -36,6 +36,55 @@ RECIPE_HEAD = {
 }
 
 
+RECIPE_QUANTITY = {
+    "rectifier-3ph-study": "Vo",
+    "rectifier-1ph-study": "Vo",
+    "idmt-relay-study": "Relay time t",
+}
+
+
+def _unit_for_label(label: str) -> str:
+    lower = str(label or "").strip().lower()
+    if lower in {"vo", "vout", "vc,peak", "vc"} or lower.startswith("vo,"):
+        return "V"
+    if "relay time" in lower or (lower.startswith("t") and "time" in lower):
+        return "s"
+    if lower == "i":
+        return "A"
+    if lower == "rpm" or "rpm" in lower:
+        return "rpm"
+    if "db" in lower:
+        return "dB"
+    return ""
+
+
+def quantity_label(recipe_id: str, problem: dict[str, Any] | None) -> str:
+    problem = problem or {}
+    if recipe_id in RECIPE_QUANTITY:
+        return RECIPE_QUANTITY[recipe_id]
+    kind = str(problem.get("kind") or "")
+    find = str(problem.get("find") or KIND_FIND.get(kind) or "")
+    if find:
+        return find
+    if recipe_id == "solve-control-problem":
+        return "y(∞)"
+    head = run_title(recipe_id, problem)
+    if "·" in head:
+        return head.rsplit("·", 1)[-1].strip()
+    return "Answer"
+
+
+def run_headline(recipe_id: str, problem: dict[str, Any] | None, value: Any, unchecked: bool) -> str | None:
+    if unchecked or value is None or value == "unchecked":
+        return None
+    label = quantity_label(recipe_id, problem)
+    qty = _format_qty(value, recipe_id)
+    unit = _unit_for_label(label)
+    if unit:
+        return f"{label} = {qty} {unit}"
+    return f"{label} = {qty}"
+
+
 def _format_qty(val: Any, recipe_id: str) -> str:
     try:
         n = float(val)
@@ -67,16 +116,7 @@ def run_title(recipe_id: str, problem: dict[str, Any] | None = None) -> str:
 
 
 def title_with_value(recipe_id: str, problem: dict[str, Any] | None, value: Any, unchecked: bool) -> str:
-    base = run_title(recipe_id, problem)
-    if unchecked or value is None or value == "unchecked":
-        return base
-    qty = _format_qty(value, recipe_id)
-    if "·" in base:
-        return base
-    kind = str((problem or {}).get("kind") or "")
-    find = KIND_FIND.get(kind) or "Result"
-    unit = " V" if find in {"Vout", "Vc,peak", "Vc"} else ""
-    if recipe_id == "solve-control-problem":
-        find = "y(∞)"
-        unit = ""
-    return f"{base} · {find} = {qty}{unit}"
+    headline = run_headline(recipe_id, problem, value, unchecked)
+    if headline:
+        return headline
+    return run_title(recipe_id, problem)

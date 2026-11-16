@@ -2773,8 +2773,22 @@ a { color: var(--ee-color-primary); }
 .lab-activity-filters { display: flex; gap: 6px; flex-wrap: wrap; }
 .lab-activity-filters button { font-size: 11px; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--ee-color-hairline); background: transparent; }
 .lab-activity-filters button.is-active { border-color: var(--ee-color-primary); color: var(--ee-color-primary); }
-.lab-activity-timeline { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
-.lab-activity-item { display: flex; gap: 8px; align-items: flex-start; }
+.lab-activity-timeline { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.lab-activity-item {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  min-height: 32px;
+  padding: 4px 6px;
+  border-radius: var(--ee-radius-m, 6px);
+}
+.lab-activity-item:hover { background: var(--ee-color-surface-subtle, #f7f8fa); }
+.lab-activity-actions { display: flex; gap: 8px; opacity: 0; pointer-events: none; transition: opacity 120ms ease; }
+.lab-activity-item:hover .lab-activity-actions { opacity: 1; pointer-events: auto; }
+.lab-activity-rev-chip { font-size: 11px; color: var(--ee-color-muted); font-variant-numeric: tabular-nums; }
+.lab-activity-time { color: var(--ee-color-muted); font-size: 12px; }
+.lab-activity-sentence { margin: 0; font-size: 13px; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .lab-activity-avatar.is-human {
   width: 20px; height: 20px; border-radius: 50%; background: var(--ee-color-muted); color: #fff;
   font-size: 9px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
@@ -2864,12 +2878,6 @@ a { color: var(--ee-color-primary); }
 .studio-lab-drawer h3 {
   margin: 12px 0 8px;
   font-size: 13px;
-}
-.lab-activity-sentence {
-  font-size: 13px;
-  line-height: 1.35;
-  word-break: normal;
-  overflow-wrap: anywhere;
 }
 .lab-surface-circuit.has-linked-run .studio-circuit-presets {
   grid-column: 1;

@@ -77,13 +77,17 @@ def _opaque_title(title: str, folder_name: str) -> bool:
 
 
 def _human_run_title(folder: Path, evid: dict) -> str:
-    from electrical_engineer.circuit.title import run_title, title_with_value
+    from electrical_engineer.circuit.title import run_headline, run_title, title_with_value
 
+    problem = _read_json(folder / "problem.json")
+    recipe_id = str(evid.get("recipe_id") or problem.get("recipe_id") or "")
+
+    headline = run_headline(recipe_id, problem, evid.get("value"), bool(evid.get("unchecked")))
+    if headline:
+        return headline
     title = str(evid.get("title") or "").strip()
     if title and not _opaque_title(title, folder.name):
         return title
-    problem = _read_json(folder / "problem.json")
-    recipe_id = str(evid.get("recipe_id") or problem.get("recipe_id") or "")
     if problem:
         derived = run_title(recipe_id or "solve-circuit-problem", problem)
         if derived and not _opaque_title(derived, folder.name):
@@ -995,6 +999,19 @@ def create_app(root: Path | None = None) -> FastAPI:
             return JSONResponse({"error": "missing"}, status_code=404)
         try:
             verify = agent_rederive_circuit_lab(d)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=400)
+        return {"ok": True, "lab_verify": verify}
+
+    @app.post("/api/runs/{run_id}/lab/accept-simulated")
+    def post_lab_accept_simulated(run_id: str) -> dict:
+        from electrical_engineer.collab.lab_verify import accept_simulated_lab
+
+        d = runs / run_id
+        if not d.is_dir():
+            return JSONResponse({"error": "missing"}, status_code=404)
+        try:
+            verify = accept_simulated_lab(d)
         except ValueError as exc:
             return JSONResponse({"error": str(exc)}, status_code=400)
         return {"ok": True, "lab_verify": verify}

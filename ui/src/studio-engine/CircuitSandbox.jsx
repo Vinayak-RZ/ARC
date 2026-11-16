@@ -440,11 +440,16 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
     const vStep = Number(probeParams.v_step ?? probeParams.vin ?? 10);
     const noOvershoot = Number(sim.result?.overshoot_pct ?? (peakV <= vStep * 1.005 ? 0 : 99)) < 0.5;
     const peakMs = 1000 * Number(sim.result.t_Vc_peak_s);
+    const settleMs =
+      1000 *
+      Number(sim.result.settling_2pct_entry_s ?? sim.result.settling_time_2pct_s ?? sim.result.t_Vc_peak_s ?? 0);
+    const tMax = Math.min(Math.max(5 * settleMs, peakMs * 1.2, 8), 80);
+    const points = sim.result.vc_trace_ms.filter(([t]) => t <= tMax);
     return {
       title: "Capacitor voltage",
       x: { label: "t", unit: "ms", scale: "linear" },
       y: { label: "Vc", unit: "V", scale: "linear" },
-      series: [{ id: "vc", label: "Vc", points: sim.result.vc_trace_ms, style: "primary" }],
+      series: [{ id: "vc", label: "Vc", points, style: "primary" }],
       markers: noOvershoot ? [] : [{ x: peakMs, label: "peak" }],
       hlines: [{ y: noOvershoot ? vStep : peakV, label: noOvershoot ? "Vc,final" : "Vc,peak" }],
     };
@@ -618,6 +623,14 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
             compact
             onAskAgent={linkedRunId ? () => void askAgentReDerive() : undefined}
             onReRun={linkedRunId ? () => void runSimulate(null, { silent: false }) : undefined}
+            onAcceptSimulated={
+              linkedRunId
+                ? async () => {
+                    await fetch(`/api/runs/${linkedRunId}/lab/accept-simulated`, { method: "POST" });
+                    loadLinkedRun(true);
+                  }
+                : undefined
+            }
           />
           <h3>Activity</h3>
           <LabActivity labMeta={labMeta} onRestore={() => restoreAgent()} />

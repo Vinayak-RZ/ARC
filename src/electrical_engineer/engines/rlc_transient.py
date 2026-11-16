@@ -158,7 +158,8 @@ def series_rlc_step(
     t_settle_2pct = _rk4_vc_tail(
         r_ohm, l_h, c_f, v_step, wn=wn, t_start=t_peak, t_end=max(12.0 / wn, 3.0), h=h
     )
-    t_plot_end = min(max(5.0 * t_peak, 12.0 / wn), 0.05)
+    t_ref = t_settle_2pct if t_settle_2pct is not None else max(t_peak * 1.5, 4.0 / wn)
+    t_plot_end = min(max(5.0 * float(t_ref), 12.0 / wn), 0.08)
     vc_trace_ms = _rk4_integrate_vc(r_ohm, l_h, c_f, v_step, t_end=max(t_plot_end, 0.02), n=480)
     overshoot_pct = max(0.0, (float(vc_peak) - v_step) / v_step * 100.0) if v_step else 0.0
     settling_entry_s: float | None = None

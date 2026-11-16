@@ -21,7 +21,15 @@ import { FitViewOnChange } from "./FitViewOnChange.jsx";
 import { diagramToFlow, flowToDiagram, humanBlockLabel, issuesByBlock } from "./utils.js";
 import { StudioToolbar } from "./StudioToolbar.jsx";
 import { MascotState } from "../../components/MascotState.jsx";
+import { LabProvenanceBar } from "../../components/LabProvenanceBar.jsx";
+import { LabVerifyPanel } from "../../components/LabVerifyPanel.jsx";
 import "../../control-studio/studio.css";
+
+function runIdFromSession(sessionId) {
+  const sid = String(sessionId || "");
+  const prefix = "cs-run-";
+  return sid.startsWith(prefix) ? sid.slice(prefix.length) : "";
+}
 
 const GRID = 16;
 
@@ -184,6 +192,8 @@ function ControlStudioInner({ sessionId, onSession, autoBoot = false }) {
   );
   const [validation, setValidation] = useState({ ok: true, issues: [], warnings: [] });
   const [highlight, setHighlight] = useState({ ids: new Set(), author: null });
+  const linkedRunId = useMemo(() => runIdFromSession(sessionId), [sessionId]);
+  const [linkedRun, setLinkedRun] = useState(null);
   const diagramBase = useRef({});
   const blockIssues = useMemo(() => issuesByBlock(validation), [validation]);
   // paint() must keep a stable identity: it feeds loadSession, which feeds the effect that
@@ -245,6 +255,32 @@ function ControlStudioInner({ sessionId, onSession, autoBoot = false }) {
     },
     [paint, refreshValidation],
   );
+
+  useEffect(() => {
+    if (!linkedRunId) {
+      setLinkedRun(null);
+      return undefined;
+    }
+    let cancelled = false;
+    fetch(`/api/runs/${linkedRunId}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((body) => {
+        if (!cancelled && body) setLinkedRun(body);
+      })
+      .catch(() => {
+        if (!cancelled) setLinkedRun(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [linkedRunId, lastSimRevision, revision]);
+
+  async function refreshLinkedLab() {
+    if (!linkedRunId) return;
+    await fetch(`/api/runs/${linkedRunId}/lab/verify`, { method: "POST" }).catch(() => {});
+    const body = await fetch(`/api/runs/${linkedRunId}`).then((r) => (r.ok ? r.json() : null));
+    if (body) setLinkedRun(body);
+  }
 
   useEffect(() => {
     fetch("/api/control-studio/palette")
@@ -558,7 +594,42 @@ function ControlStudioInner({ sessionId, onSession, autoBoot = false }) {
     );
   }
 
+  const humanEdits = (linkedRun?.lab?.op_log || []).filter(
+    (e) => e.author === "human" && e.op !== "restore" && e.electrical !== false,
+  ).length;
+
   return (
+    <>
+      {linkedRunId ? (
+        <LabProvenanceBar
+          runTitle={linkedRun?.title}
+          problemId={linkedRunId}
+          revision={linkedRun?.lab?.revision}
+          humanEdits={humanEdits}
+          viewMode="yours"
+          onViewMode={() => {}}
+          onBackToProblem={() => {
+            window.location.href = `/?problem=${linkedRunId}`;
+          }}
+          onRestore={() => {}}
+          restoreDisabled
+        />
+      ) : null}
+      {linkedRunId && linkedRun?.lab_verify ? (
+        <div className="control-studio-lab-verify">
+          <LabVerifyPanel
+            labVerify={linkedRun.lab_verify}
+            labMeta={linkedRun.lab}
+            compact
+            onReRun={() => {
+              runSim();
+              void refreshLinkedLab();
+            }}
+            onAskAgent={() => void fetch(`/api/runs/${linkedRunId}/lab/re-derive`, { method: "POST" }).then(() => refreshLinkedLab())}
+            onAcceptSimulated={() => void fetch(`/api/runs/${linkedRunId}/lab/accept-simulated`, { method: "POST" }).then(() => refreshLinkedLab())}
+          />
+        </div>
+      ) : null}
     <section
       className={`cs-app control-studio studio${selected ? " has-selection" : ""}`}
     >
@@ -660,6 +731,7 @@ function ControlStudioInner({ sessionId, onSession, autoBoot = false }) {
         {msg ? <p className="studio-toast cs-status-msg">{msg}</p> : null}
       </ReactFlowProvider>
     </section>
+    </>
   );
 }
 

@@ -240,3 +240,69 @@ def reverify_circuit_lab(run_dir: Path) -> dict[str, Any]:
     }
     lab_meta.save_lab_meta(run_dir, meta)
     return verify
+
+
+def accept_simulated_lab(run_dir: Path) -> dict[str, Any]:
+    """Human accepts the lab simulation as the trusted headline value."""
+    from electrical_engineer.circuit.run_session import append_lab_op
+    from electrical_engineer.collab import lab_meta
+    from electrical_engineer.collab.verify_policy import status_label
+
+    verify = _read_json(run_dir / "lab_verify.json")
+    if not verify:
+        raise ValueError("missing lab_verify.json")
+    simulated = verify.get("simulated")
+    if simulated is None:
+        for row in verify.get("metrics") or []:
+            if isinstance(row, dict) and row.get("simulated") is not None:
+                simulated = row["simulated"]
+                break
+    if simulated is None:
+        raise ValueError("no simulated value to accept")
+
+    old_value = None
+    for name in ("evidentiary.json", "summary.json"):
+        path = run_dir / name
+        if not path.is_file():
+            continue
+        evid = _read_json(path)
+        old_value = evid.get("value")
+        evid["value"] = simulated
+        if isinstance(evid.get("values"), dict):
+            evid["values"]["value"] = simulated
+        path.write_text(json.dumps(evid, indent=2), encoding="utf-8")
+
+    derived_was = verify.get("derived")
+    verify["derived"] = simulated
+    verify["mismatch"] = False
+    verify["needs_review"] = False
+    verify["ok"] = True
+    verify["status"] = "agrees"
+    verify["rel_err_pct"] = 0.0
+    verify["status_label"] = status_label(agrees=True, rel_err_pct=0.0)
+    verify.pop("disagreement_banner", None)
+    for row in verify.get("metrics") or []:
+        if not isinstance(row, dict):
+            continue
+        row["rel_err_pct"] = 0.0
+        row["status"] = "agrees"
+        row["status_label"] = verify["status_label"]
+    (run_dir / "lab_verify.json").write_text(json.dumps(verify, indent=2), encoding="utf-8")
+
+    meta = lab_meta.load_lab_meta(run_dir)
+    meta["lab_verify"] = {
+        "mismatch": False,
+        "derived": simulated,
+        "simulated": simulated,
+    }
+    append_lab_op(
+        run_dir,
+        author="human",
+        op="accept_simulated",
+        target="value",
+        before=old_value if old_value is not None else derived_was,
+        after=simulated,
+        electrical=False,
+    )
+    lab_meta.save_lab_meta(run_dir, meta)
+    return verify

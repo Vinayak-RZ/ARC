@@ -83,28 +83,25 @@ export function LabActivity({ labMeta, onRestore, onPreview }) {
         {rows.map((entry) => {
           const isNow = entry.rev === currentRev;
           return (
-            <li key={entry.id} className={`lab-activity-item is-${entry.author || "agent"}`}>
+            <li key={entry.id} className={`lab-activity-item is-${entry.author || "agent"}${isNow ? " is-now" : ""}`}>
               <Avatar author={entry.author} />
-              <div className="lab-activity-body">
-                <p className="lab-activity-sentence">
-                  {sentenceFor(entry)}
-                  {entry.rev != null ? ` · rev ${entry.rev}` : ""}
-                  {` · ${relTime(entry.ts_ms) || "just now"}`}
-                </p>
-                <div className="lab-activity-meta" hidden>
-                  <span className="lab-activity-rev">r{entry.rev ?? "—"}</span>
-                </div>
-                {!isNow ? (
-                  <div className="lab-activity-actions">
-                    <button type="button" className="text-link" onClick={() => onPreview?.(entry)}>
-                      Preview
-                    </button>
-                    <button type="button" className="text-link" onClick={() => onRestore?.(entry)}>
-                      Restore to here
-                    </button>
-                  </div>
+              <p className="lab-activity-sentence">
+                {sentenceFor(entry)}
+                {entry.rev != null ? (
+                  <span className="lab-activity-rev-chip"> r{entry.rev}</span>
                 ) : null}
-              </div>
+                <span className="lab-activity-time"> · {relTime(entry.ts_ms) || "just now"}</span>
+              </p>
+              {!isNow ? (
+                <div className="lab-activity-actions">
+                  <button type="button" className="text-link" onClick={() => onPreview?.(entry)}>
+                    Preview
+                  </button>
+                  <button type="button" className="text-link" onClick={() => onRestore?.(entry)}>
+                    Restore
+                  </button>
+                </div>
+              ) : null}
             </li>
           );
         })}

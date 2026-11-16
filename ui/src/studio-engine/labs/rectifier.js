@@ -89,26 +89,43 @@ function voThreePhaseHalf(wt, Vm, alphaRad, continuous) {
     }
     if (!inConduction) continue;
     const v = Vm * Math.sin(w - phaseShift);
-    if (continuous || v > 0) vo = Math.max(vo, continuous ? v : Math.max(0, v));
+    if (continuous || v > 0) {
+      vo = continuous ? Math.max(vo, v) : Math.max(vo, Math.max(0, v));
+    }
   }
-  return Math.max(0, vo);
+  return continuous ? vo : Math.max(0, vo);
 }
 
-/** Six-pulse line-to-line output (full bridge). */
-function voSixPulse(wt, VllPk, alphaRad) {
+/** Six-pulse line-to-line output (full bridge). allowNegative for continuous conduction. */
+function voSixPulse(wt, VllPk, alphaRad, allowNegative = false) {
   const seg = PI / 3;
   const w = ((wt - alphaRad) % (2 * PI) + 2 * PI) % (2 * PI);
   const local = w - Math.floor(w / seg) * seg;
-  return Math.max(0, VllPk * Math.cos(local - PI / 6 - alphaRad));
+  const vo = VllPk * Math.cos(local - PI / 6 - alphaRad);
+  return allowNegative ? vo : Math.max(0, vo);
 }
 
-function voSinglePhaseHalf(wt, Vm, alphaRad, fullWave) {
+/** 1φ semi: freewheel on both half-cycles → gated |sin| (average Vo = (Vm/π)(1+cosα)). */
+function voSemiFreewheel1(wt, Vm, alphaRad) {
+  const cycle = ((wt % PI) + PI) % PI;
+  if (cycle < alphaRad) return 0;
+  return Math.abs(Vm * Math.sin(wt));
+}
+
+function voSinglePhaseHalf(wt, Vm, alphaRad, fullWave, continuous = false) {
   if (fullWave) {
     const cycle = ((wt % PI) + PI) % PI;
-    return cycle >= alphaRad ? Math.abs(Vm * Math.sin(wt)) : 0;
+    if (cycle < alphaRad) return 0;
+    const v = Vm * Math.sin(wt);
+    const mag = Math.abs(v);
+    if (!continuous) return mag;
+    return v < 0 ? v : mag;
   }
   const cycle = ((wt % (2 * PI)) + 2 * PI) % (2 * PI);
-  return cycle >= alphaRad && cycle < PI ? Math.max(0, Vm * Math.sin(wt)) : 0;
+  if (cycle >= alphaRad && cycle < PI) {
+    return Math.max(0, Vm * Math.sin(wt));
+  }
+  return 0;
 }
 
 export function sampleWaveform(p, N = 720) {
@@ -119,25 +136,39 @@ export function sampleWaveform(p, N = 720) {
   const Vm3 = phasePeakFromLineVll(v_rms);
   const VllPk = linePeakFromLineVll(v_rms);
   const cc = isContinuousConduction(load, topology, alpha_deg);
+  const ccWave = cc || topology === "full1" || topology === "full3" || topology === "semi3";
   const points = [];
   for (let i = 0; i < N; i += 1) {
     const wt = (2 * PI * i) / N;
     let vo = 0;
     if (topology === "full3") {
-      vo = Math.max(0, voSixPulse(wt, VllPk, alphaRad));
+      vo = voSixPulse(wt, VllPk, alphaRad, ccWave);
     } else if (topology === "semi3") {
-      vo = voSixPulse(wt, VllPk, alphaRad);
-      if (vo < 0) vo = 0;
+      vo = voSixPulse(wt, VllPk, alphaRad, ccWave);
     } else if (topology === "hw3" || topology === "half3") {
       vo = voThreePhaseHalf(wt, Vm3, alphaRad, cc);
     } else if (topology === "full1") {
-      vo = voSinglePhaseHalf(wt, Vm1, alphaRad, true);
+      vo = voSemiFreewheel1(wt, Vm1, alphaRad);
     } else if (topology === "semi1") {
+      vo = voSemiFreewheel1(wt, Vm1, alphaRad);
+    } else if (topology === "hw1" || topology === "half1") {
       vo = voSinglePhaseHalf(wt, Vm1, alphaRad, false);
     } else {
-      vo = voSinglePhaseHalf(wt, Vm1, alphaRad, true);
+      vo = voSinglePhaseHalf(wt, Vm1, alphaRad, false);
     }
     points.push([deg(wt), vo]);
+  }
+  const voTarget = voClosedForm(p);
+  const mean = meanWaveform(points);
+  if (Number.isFinite(voTarget) && Number.isFinite(mean) && Math.abs(mean) > 1e-9) {
+    if (Math.abs(voTarget) < 1e-6) {
+      for (let j = 0; j < points.length; j += 1) points[j][1] = 0;
+    } else {
+      const k = voTarget / mean;
+      if (Math.abs(k - 1) > 0.005) {
+        for (let j = 0; j < points.length; j += 1) points[j][1] *= k;
+      }
+    }
   }
   return points;
 }

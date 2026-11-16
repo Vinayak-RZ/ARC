@@ -55,6 +55,7 @@ function Result({ id }) {
         : state === "Working"
           ? "Working"
           : "";
+  const needsReview = Boolean(data?.lab_verify?.needs_review);
   const { rows } = buildAnswerRows(evid, data);
   const verifierRaw = evid.verifier ? String(evid.verifier) : "";
   const note = verificationNote({ unchecked: error ? false : unchecked, error, verifierRaw, evid });
@@ -69,7 +70,7 @@ function Result({ id }) {
         <p className="answer-value">Run unavailable</p>
       ) : unchecked && rows.length === 0 ? (
         <p className="answer-value">Pending verification</p>
-      ) : rows.length > 1 ? (
+      ) : needsReview ? null : rows.length > 1 ? (
         <div className="answer-lines">
           {rows.map((row) => (
             <AnswerLine key={row.name} parts={row} checked={!unchecked} />
@@ -77,7 +78,7 @@ function Result({ id }) {
         </div>
       ) : rows.length === 1 ? (
         <AnswerLine parts={rows[0]} checked={!unchecked && !error} />
-      ) : (
+      ) : needsReview ? null : (
         <p className="answer-line">Working…</p>
       )}
       {!error ? (
@@ -86,7 +87,7 @@ function Result({ id }) {
           unchecked={unchecked}
           modifiedAt={data?.modified_at}
           stale={stale}
-          needsReview={Boolean(data?.lab_verify?.needs_review)}
+          needsReview={needsReview}
           reviewNote={data?.lab_verify?.status_label || data?.lab_verify?.disagreement_banner}
           note={(data?.work_steps || []).find((step) => step.title === "Check")?.result}
         />

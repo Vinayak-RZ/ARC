@@ -6,6 +6,9 @@ import math
 from collections.abc import Callable
 from typing import Any
 
+from electrical_engineer.engines.rectifier_waveforms import (
+    sample_waveform as rectifier_sample_waveform,
+)
 from electrical_engineer.engines.solvers import power as _power_solvers
 from electrical_engineer.engines.solvers.power_electronics import (
     buck_boost_ccm,
@@ -95,40 +98,17 @@ def _rectifier_bridge() -> dict[str, Any]:
 
 
 def _sample_rectifier_1ph(problem: dict[str, Any], n: int = 720) -> list[list[float]]:
-    v_rms = float(problem.get("v_rms") or 230)
-    alpha = math.radians(float(problem.get("alpha_deg") or 0))
-    topology = str(problem.get("topology") or "full")
-    vm = _SQRT2 * v_rms
-    points: list[list[float]] = []
-    for i in range(n):
-        wt = _TWO_PI * i / n
-        deg = math.degrees(wt)
-        vo = 0.0
-        if topology == "full":
-            half = wt % _PI
-            vo = abs(vm * math.sin(wt)) if half >= alpha else 0.0
-        else:
-            half = wt % _TWO_PI
-            vo = max(0.0, vm * math.sin(wt)) if alpha <= half < _PI + alpha else 0.0
-        points.append([deg, vo])
-    return _cap(points)
+    topo = str(problem.get("topology") or "full")
+    mapped = {"full": "full1", "half": "hw1", "semi": "semi1"}.get(topo, topo)
+    payload = {**problem, "topology": mapped, "load": problem.get("load") or "R"}
+    return _cap(rectifier_sample_waveform(payload, n))
 
 
 def _sample_rectifier_3ph(problem: dict[str, Any], n: int = 720) -> list[list[float]]:
-    v_ll = float(problem.get("v_ll_rms") or 415)
-    alpha = math.radians(float(problem.get("alpha_deg") or 0))
-    vll_pk = _SQRT2 * v_ll
-    points: list[list[float]] = []
-    for i in range(n):
-        wt = _TWO_PI * i / n
-        deg = math.degrees(wt)
-        sector = int(((wt - alpha + _TWO_PI) % _TWO_PI) // (_PI / 3))
-        mid = sector * (_PI / 3) + alpha + _PI / 6
-        vo = vll_pk * math.cos(wt - mid)
-        if vo < 0:
-            vo = 0.0
-        points.append([deg, vo])
-    return _cap(points)
+    topo = str(problem.get("topology") or "full")
+    mapped = {"full": "full3", "half": "hw3", "semi": "semi3"}.get(topo, topo)
+    payload = {**problem, "topology": mapped, "load": problem.get("load") or "R"}
+    return _cap(rectifier_sample_waveform(payload, n))
 
 
 def rectifier_1ph_study(problem: dict[str, Any]) -> dict[str, Any]:

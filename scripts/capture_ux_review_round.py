@@ -120,9 +120,31 @@ def _preflight(out_dir: Path) -> dict:
     with urllib.request.urlopen(fin_req, timeout=180) as resp:
         fin_payload = json.loads(resp.read().decode())
     fin_m = (fin_payload.get("step_series") or {}).get("metrics") or {}
+    ngspice_version = None
+    try:
+        import shutil
+
+        if shutil.which("ngspice"):
+            nv = subprocess.run(["ngspice", "-v"], capture_output=True, text=True, check=False)
+            banner = (nv.stdout + nv.stderr).strip().splitlines()
+            ngspice_version = (
+                next((ln.strip().strip("*").strip() for ln in banner if "ngspice" in ln.lower()), banner[0] if banner else None)
+                if banner
+                else None
+            )
+    except OSError:
+        pass
     data = {
         "git_sha": sha,
         "git_sha_short": sha_short,
+        "ngspice_version": ngspice_version,
+        "merged_collab_pr62_head": "73420104379c93b767aa4f04854525839e3524a4",
+        "ci_reference": {
+            "pr": 62,
+            "head_sha_short": "7342010",
+            "workflow_run_id": "43926478759",
+            "status": "success",
+        },
         "git_dirty_lines": len(dirty_lines),
         "git_untracked_lines": len(untracked_src),
         "git_diff_sha256": hashlib.sha256(diff).hexdigest()[:16] if diff else None,
@@ -195,6 +217,30 @@ def _run_example(example_id: str) -> str:
     if not rid:
         raise RuntimeError(f"no run_id for {example_id}: {body}")
     return str(rid)
+
+
+def _run_series_rlc_step() -> str:
+    from electrical_engineer.engines.rlc_transient import series_rlc_step
+    from electrical_engineer.runner.execute import execute
+
+    meta = series_rlc_step(10, 0.01, 100e-6, 10.0)
+    out = execute(
+        "series-rlc-transient",
+        cwd=ROOT,
+        problem={
+            "kind": "series_rlc",
+            "vin": 10,
+            "r_ohm": 10,
+            "l_h": 0.01,
+            "c_f": 100e-6,
+            "analysis": "tran",
+            "t_s": float(meta["t_Vc_peak_s"]),
+            "probe": "v(3)",
+            "tol": 0.02,
+            "prompt": "Series RLC step",
+        },
+    )
+    return out["run_id"]
 
 
 def _backup_runs() -> Path | None:
@@ -603,7 +649,7 @@ def main() -> int:
                     page.wait_for_timeout(400)
                 page.wait_for_timeout(300)
                 snap("studio-step-extended.png")
-            if args.round >= 4 and args.round < 10:
+            if args.round >= 4:
                 wide_studio = browser.new_page(viewport={"width": 1440, "height": 900})
                 req1440 = urllib.request.Request(
                     f"http://{HOST}:{PORT}/api/control-studio/sessions",
@@ -690,7 +736,7 @@ def main() -> int:
                 page.wait_for_selector(".studio-home", timeout=15000)
                 snap("studio-landing.png")
                 go("?view=studio&tab=circuits")
-                page.wait_for_selector(".studio-circuit-sandbox", timeout=20000)
+                page.wait_for_selector(".studio-circuit-app", timeout=20000)
                 page.evaluate("() => localStorage.removeItem('arc-circuit-sandbox-v1')")
                 page.reload(wait_until="domcontentloaded")
                 page.wait_for_selector(".product-shell", timeout=30000)
@@ -708,23 +754,29 @@ def main() -> int:
                     page.wait_for_selector(".lab-shell", timeout=30000)
                     page.wait_for_timeout(500)
                     snap(f"{stem}.png")
-                circuit_rid = _run_example("rlc-step")
+                circuit_rid = _run_series_rlc_step() if args.round >= 11 else _run_example("rlc-step")
                 go(f"?problem={circuit_rid}")
                 page.wait_for_selector(".answer-line", timeout=120000)
                 snap("problem-circuit-checked.png")
                 page.get_by_role("tab", name="Work").click()
-                page.wait_for_selector(".checked-tag, .answer-line.is-checked", timeout=120000)
+                work_sel = ".step-timeline-row" if args.round >= 11 else ".checked-tag, .answer-line.is-checked"
+                page.wait_for_selector(work_sel, timeout=120000)
                 snap("problem-circuit-checked-work.png")
                 page.get_by_role("tab", name="Diagram").click()
                 page.wait_for_selector(".static-diagram, .diagram-shell svg", timeout=30000)
                 snap("problem-circuit-checked-diagram.png")
-                control_rid = _run_example("control-step")
-                go(f"?problem={control_rid}")
-                page.wait_for_selector(".answer-line", timeout=120000)
-                snap("problem-control-checked.png")
-                page.get_by_role("tab", name="Work").click()
-                page.wait_for_selector(".checked-tag, .answer-line.is-checked", timeout=120000)
-                snap("problem-control-checked-work.png")
+                try:
+                    control_rid = _run_example("control-step")
+                except (RuntimeError, OSError, ValueError) as exc:
+                    index_notes.append(f"control-step example run failed ({exc}); skipped control run page captures.")
+                    control_rid = None
+                if control_rid:
+                    go(f"?problem={control_rid}")
+                    page.wait_for_selector(".answer-line", timeout=120000)
+                    snap("problem-control-checked.png")
+                    page.get_by_role("tab", name="Work").click()
+                    page.wait_for_selector(".checked-tag, .answer-line.is-checked", timeout=120000)
+                    snap("problem-control-checked-work.png")
 
             go("?view=gallery")
             page.wait_for_selector(".gallery-card", timeout=10000)
@@ -840,7 +892,7 @@ def main() -> int:
                 narrow.wait_for_timeout(300)
                 snap(narrow_name, narrow)
                 narrow.close()
-                if args.round < 10:
+                if args.round < 10 or args.round >= 11:
                     wide = browser.new_page(viewport={"width": 1440, "height": H})
                     wide.goto(f"http://{HOST}:{PORT}/?view=home", wait_until="domcontentloaded")
                     wide.wait_for_selector(".example-grid-six", timeout=15000)
@@ -848,6 +900,14 @@ def main() -> int:
                     wide.wait_for_timeout(300)
                     snap("home-scrolled-1440.png", wide)
                     wide.close()
+                if args.round >= 11:
+                    mid = browser.new_page(viewport={"width": 1280, "height": 800})
+                    mid.goto(f"http://{HOST}:{PORT}/?view=home", wait_until="domcontentloaded")
+                    mid.wait_for_selector(".example-grid-six", timeout=15000)
+                    mid.evaluate("() => document.querySelector('.agent-card')?.scrollIntoView({block: 'end'})")
+                    mid.wait_for_timeout(300)
+                    snap("home-scrolled-1280.png", mid)
+                    mid.close()
 
                 go("?view=problems")
                 page.wait_for_selector(".problems-row", timeout=15000)
@@ -942,6 +1002,8 @@ def main() -> int:
                 snap("studio-step-extended-dark.png")
 
             if args.round >= 5:
+                if args.round >= 11:
+                    _clear_runs()
                 _set_theme(page, "dark")
                 go("?view=home")
                 snap("home-dark.png")
@@ -1016,7 +1078,7 @@ def main() -> int:
                     page.wait_for_selector(".studio-home", timeout=15000)
                     snap("studio-landing-dark.png")
                     go("?view=studio&tab=circuits")
-                    page.wait_for_selector(".studio-circuit-sandbox", timeout=20000)
+                    page.wait_for_selector(".studio-circuit-app", timeout=20000)
                     page.get_by_role("button", name="Series RLC").click()
                     page.wait_for_timeout(800)
                     snap("studio-circuit-series-rlc-dark.png")

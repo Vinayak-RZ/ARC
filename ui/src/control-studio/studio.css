@@ -1449,3 +1449,9 @@
 }
 
 .studio-results.is-empty .studio-results-layout { grid-template-rows: minmax(0, 1fr); }
+
+.control-studio-lab-verify {
+  border-bottom: 1px solid var(--cs-border, var(--ee-color-hairline));
+  padding: 8px 16px;
+  background: var(--ee-color-surface-subtle, #f7f8fa);
+}

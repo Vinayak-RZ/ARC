@@ -21,7 +21,20 @@ function loopStaleCopy() {
   return "Re-simulate the loop to refresh this check.";
 }
 
-export function LabVerifyPanel({ labVerify, labMeta, compact = false, onAskAgent, onReRun }) {
+function labEditCount(n) {
+  const c = Number(n) || 0;
+  if (!c) return "";
+  return `${c} lab edit${c === 1 ? "" : "s"}`;
+}
+
+export function LabVerifyPanel({
+  labVerify,
+  labMeta,
+  compact = false,
+  onAskAgent,
+  onReRun,
+  onAcceptSimulated,
+}) {
   if (!labVerify || (labVerify.derived == null && labVerify.simulated == null && !labVerify.metrics?.length)) {
     return null;
   }
@@ -87,6 +100,28 @@ export function LabVerifyPanel({ labVerify, labMeta, compact = false, onAskAgent
     </div>
   ) : null;
 
+  const reviewCta = labVerify.needs_review ? (
+    <div className="lab-verify-stale-banner is-review" role="group" aria-label="Review actions">
+      <div className="lab-verify-cta-row">
+        {onReRun ? (
+          <button type="button" className="text-button" onClick={onReRun}>
+            Re-run
+          </button>
+        ) : null}
+        {onAskAgent ? (
+          <button type="button" className="text-button" onClick={onAskAgent}>
+            Ask agent to re-derive
+          </button>
+        ) : null}
+        {onAcceptSimulated ? (
+          <button type="button" className="text-button" onClick={onAcceptSimulated}>
+            Accept simulated value
+          </button>
+        ) : null}
+      </div>
+    </div>
+  ) : null;
+
   function renderDerivedCell(row) {
     if (row.derived_out_of_date) {
       return (
@@ -105,14 +140,14 @@ export function LabVerifyPanel({ labVerify, labMeta, compact = false, onAskAgent
       <section className="lab-verify-panel card-surface is-compact" aria-labelledby="lab-verify-heading">
         <header className="lab-verify-head">
           <h2 id="lab-verify-heading">Simulated vs derived</h2>
-          {labVerify.needs_review ? <span className="lab-needs-review">Needs review</span> : null}
         </header>
         {globalStaleBanner}
         {rederiveBanner}
+        {reviewCta}
         <p className="lab-verify-engine-line">
           Simulated with {engine}
           {labVerify.graph_revision != null ? (
-            <span className="lab-verify-rev-tag"> · verified at r{labVerify.graph_revision}</span>
+            <span className="lab-verify-rev-tag"> · simulated at r{labVerify.graph_revision}</span>
           ) : null}
         </p>
         <ul className="lab-verify-stack">
@@ -137,7 +172,7 @@ export function LabVerifyPanel({ labVerify, labMeta, compact = false, onAskAgent
           ))}
         </ul>
         {labMeta?.op_log?.length ? (
-          <p className="hint">{labMeta.op_log.length} lab edit(s) recorded (see Activity).</p>
+          <p className="hint">{labEditCount(labMeta.op_log.length)} recorded (see Activity).</p>
         ) : null}
       </section>
     );
@@ -147,10 +182,10 @@ export function LabVerifyPanel({ labVerify, labMeta, compact = false, onAskAgent
     <section className="lab-verify-panel card-surface" aria-labelledby="lab-verify-heading">
       <header className="lab-verify-head">
         <h2 id="lab-verify-heading">Simulated vs derived</h2>
-        {labVerify.needs_review ? <span className="lab-needs-review">Needs review</span> : null}
       </header>
       {globalStaleBanner}
       {rederiveBanner}
+      {reviewCta}
       <table className="lab-verify-table">
         <thead>
           <tr>
@@ -183,7 +218,7 @@ export function LabVerifyPanel({ labVerify, labMeta, compact = false, onAskAgent
         </tbody>
       </table>
       {labMeta?.op_log?.length ? (
-        <p className="hint">{labMeta.op_log.length} lab edit(s) recorded (see Activity).</p>
+        <p className="hint">{labEditCount(labMeta.op_log.length)} recorded (see Activity).</p>
       ) : null}
     </section>
   );
