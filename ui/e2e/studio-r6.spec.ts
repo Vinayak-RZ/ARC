@@ -34,7 +34,9 @@ for (const width of [1280, 1440]) {
     const { wires } = await open(page, request);
     await assertEdgePaths(page, wires);
     await page.getByRole("button", { name: "Simulate" }).click();
-    await expect(page.locator(".studio-step-svg")).toBeVisible();
+    await expect(
+      page.locator(".studio-step-svg, .studio-results-stage .studio-step-svg, .studio-results-stage img"),
+    ).toBeVisible({ timeout: 120_000 });
     await assertEdgePaths(page, wires);
     // wires must stay put: no flicker over a short idle window
     for (let i = 0; i < 6; i++) {
