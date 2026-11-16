@@ -76,9 +76,22 @@ export function Waveform({ panel }) {
   const xt = logX ? logTicks(bounds.xMin, bounds.xMax) : niceTicks(bounds.xMin, bounds.xMax, 5);
   const yt = logY ? logTicks(bounds.yMin, bounds.yMax) : niceTicks(bounds.yMin, bounds.yMax, 5);
   const { w, h } = size;
+  const xTitle = [panel.x?.label, panel.x?.unit].filter(Boolean).join(" (");
+  const xAxis = panel.x?.unit ? `${xTitle})` : panel.x?.label || "x";
+  const yTitle = [panel.y?.label, panel.y?.unit].filter(Boolean).join(" (");
+  const yAxis = panel.y?.unit ? `${yTitle})` : panel.y?.label || "y";
 
   return (
     <div className="se-waveform" ref={ref}>
+      <div className="se-waveform-head">
+        {panel.title ? <h4 className="se-waveform-title">{panel.title}</h4> : null}
+        <span className="se-waveform-axes" aria-hidden>
+          {yAxis} vs {xAxis}
+        </span>
+        <button type="button" className="button-secondary button-compact" onClick={() => setShowTable((v) => !v)}>
+          {showTable ? "Hide values" : "Show values"}
+        </button>
+      </div>
       <svg
         width="100%"
         height={h}
@@ -163,10 +176,20 @@ export function Waveform({ panel }) {
             </g>
           );
         })}
+        <text x={w / 2} y={h - 2} textAnchor="middle" fontSize={12} fill="var(--ee-color-body)">
+          {xAxis}
+        </text>
+        <text
+          x={14}
+          y={h / 2}
+          textAnchor="middle"
+          fontSize={12}
+          fill="var(--ee-color-body)"
+          transform={`rotate(-90 14 ${h / 2})`}
+        >
+          {yAxis}
+        </text>
       </svg>
-      <button type="button" className="button-secondary button-compact" onClick={() => setShowTable((v) => !v)}>
-        {showTable ? "Hide values" : "Show values"}
-      </button>
       {showTable ? (
         <table className="se-wave-table">
           <thead>

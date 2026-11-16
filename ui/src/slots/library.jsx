@@ -130,6 +130,7 @@ function ReferenceTab() {
 }
 
 function BooksTab() {
+  const [addOpen, setAddOpen] = useState(false);
   const [items, setItems] = useState([]);
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
@@ -214,6 +215,7 @@ function BooksTab() {
       if (!r.ok) throw new Error(body.error || "upload");
       setStatus(`Ingested ${file.name} as ${bid}.`);
       setFile(null);
+      setAddOpen(false);
       load();
     } catch (exc) {
       setError(exc.message || "Could not ingest the file.");
@@ -225,6 +227,9 @@ function BooksTab() {
       <p className="hint">Add textbooks and lab sheets you have rights to. They stay on this machine.</p>
       <div className="library-sources-toolbar">
         <input className="run-search" type="search" placeholder="Search sources" value={query} onChange={(e) => setQuery(e.target.value)} />
+        <button type="button" className="button-primary button-compact" onClick={() => setAddOpen(true)}>
+          Add a book
+        </button>
       </div>
       <table className="library-sources-table">
         <thead>
@@ -253,8 +258,22 @@ function BooksTab() {
       {!loading && items.length === 0 ? (
         <MascotState kind="empty" size={48} title="No books yet" message="Add a PDF you have rights to; it stays on this machine." />
       ) : null}
-      <form className="library-form card-surface" onSubmit={ingest}>
-        <h2>Add a book</h2>
+      {addOpen ? (
+        <div className="library-dialog-overlay" role="presentation" onClick={() => setAddOpen(false)}>
+          <div
+            className="library-dialog card-surface"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="library-add-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 id="library-add-title">Add a book</h2>
+            <form
+              className="library-form"
+              onSubmit={(ev) => {
+                void ingest(ev);
+              }}
+            >
         <label className="field">
           Book
           <select value={bookId} onChange={(e) => setBookId(e.target.value)} aria-label="Book">
@@ -308,12 +327,20 @@ function BooksTab() {
         <label className="rights">
           <input type="checkbox" checked={rights} onChange={(e) => setRights(e.target.checked)} />I have rights to this file. Do not upload a commercial textbook into git.
         </label>
-        <button className="button-primary" type="submit" disabled={!rights}>
-          Ingest
-        </button>
+        <div className="library-dialog-actions">
+          <button type="button" className="button-secondary" onClick={() => setAddOpen(false)}>
+            Cancel
+          </button>
+          <button className="button-primary" type="submit" disabled={!rights}>
+            Ingest
+          </button>
+        </div>
         {error ? <p className="error-text">{error}</p> : null}
         {status ? <p className="hint">{status}</p> : null}
-      </form>
+            </form>
+          </div>
+        </div>
+      ) : null}
       <form
         className="library-form card-surface"
         onSubmit={async (ev) => {

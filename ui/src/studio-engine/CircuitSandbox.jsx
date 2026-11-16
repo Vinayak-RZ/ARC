@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -12,6 +12,7 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { Palette } from "../slots/canvas/Palette.jsx";
+import { Waveform } from "./renderers/Waveform.jsx";
 import {
   fromFlow,
   MAX_EDGES,
@@ -37,6 +38,7 @@ const SERIES_RLC = {
     { id: "r1", type: "resistor", refdes: "R1", value: 10, unit: "ohm", x: 180, y: 40, rot: 0 },
     { id: "l1", type: "inductor", refdes: "L1", value: 0.01, unit: "H", x: 320, y: 40, rot: 0 },
     { id: "c1", type: "capacitor", refdes: "C1", value: 0.0001, unit: "F", x: 460, y: 120, rot: 90 },
+    { id: "jret", type: "junction", refdes: "", value: 0, unit: "", x: 24, y: 188, rot: 0 },
     { id: "gnd", type: "ground", refdes: "Gnd", value: 0, unit: "", x: 40, y: 220, rot: 0 },
   ],
   edges: [
@@ -44,7 +46,8 @@ const SERIES_RLC = {
     { id: "e2", from: "r1.n2", to: "l1.n1" },
     { id: "e3", from: "l1.n2", to: "c1.n1" },
     { id: "e4", from: "c1.n2", to: "gnd.n1" },
-    { id: "e5", from: "vin.n2", to: "gnd.n1" },
+    { id: "e5", from: "vin.n2", to: "jret.w" },
+    { id: "e5b", from: "jret.e", to: "gnd.n1" },
   ],
 };
 
@@ -267,6 +270,20 @@ function CircuitSandboxInner() {
     }
   }
 
+  const vcPanel = useMemo(() => {
+    if (!sim?.result?.vc_trace_ms?.length) return null;
+    const peakMs = 1000 * Number(sim.result.t_Vc_peak_s);
+    const peakV = Number(sim.result.Vc_peak_V);
+    return {
+      title: "Capacitor voltage",
+      x: { label: "t", unit: "ms", scale: "linear" },
+      y: { label: "Vc", unit: "V", scale: "linear" },
+      series: [{ id: "vc", label: "Vc", points: sim.result.vc_trace_ms, style: "primary" }],
+      markers: [{ x: peakMs, label: "peak" }],
+      hlines: [{ y: peakV, label: "Vc,peak" }],
+    };
+  }, [sim]);
+
   function clearCanvas() {
     snapshot();
     setNodes([]);
@@ -281,14 +298,19 @@ function CircuitSandboxInner() {
       <div className="canvas-lab studio-circuit-sandbox">
         <div className="studio-circuit-toolbar">
           <Palette onAdd={addPart} />
-          <button type="button" className="cs-btn cs-btn-primary cs-simulate-btn" disabled={simBusy} onClick={runSimulate}>
+          <button
+            type="button"
+            className="cs-btn cs-btn-primary cs-simulate-btn studio-circuit-simulate-btn"
+            disabled={simBusy}
+            onClick={runSimulate}
+          >
             {simBusy ? "Simulating…" : "Simulate"}
           </button>
         </div>
+        <p className="canvas-wire-hint studio-circuit-hint">
+          Drag a port onto another port. Double-click a wire to add a junction. Click a wire, then Delete, to remove it.
+        </p>
         <div className="flow-wrap" ref={wrapRef}>
-          <p className="canvas-wire-hint">
-            Drag a port onto another port. Double-click a wire to add a junction. Click a wire, then Delete, to remove it.
-          </p>
           {msg ? <p className="hint">{msg}</p> : null}
           <ReactFlow
             nodes={nodes}
@@ -321,6 +343,14 @@ function CircuitSandboxInner() {
             <p className="hint">Press Simulate to see the step response (built-in RLC solver).</p>
           ) : (
             <>
+              <div className="studio-circuit-probes" aria-label="Probe readouts">
+                <span>
+                  V<sub>step</sub> = {sim.problem?.v_step ?? "—"} V
+                </span>
+                <span>R = {sim.problem?.r_ohm ?? "—"} Ω</span>
+                <span>L = {((sim.problem?.l_h ?? 0) * 1000).toFixed(1)} mH</span>
+                <span>C = {((sim.problem?.c_f ?? 0) * 1e6).toFixed(0)} µF</span>
+              </div>
               <p className="hint">
                 Engine: {sim.engine}. ζ = {sim.result?.zeta?.toFixed(2)}, ω<sub>n</sub> ={" "}
                 {sim.result?.omega_n_rad_s?.toFixed(0)} rad/s
@@ -328,13 +358,14 @@ function CircuitSandboxInner() {
               <p className="answer-line">
                 <span className="answer-name">Vc,peak</span>
                 <span className="answer-eq"> = </span>
-                <span className="answer-num tabular-nums">{Number(sim.result?.Vc_peak_V).toFixed(2)}</span>
+                <span className="answer-num tabular-nums">{Number(sim.result?.Vc_peak_V).toFixed(3)}</span>
                 <span className="answer-unit"> V</span>
                 <span className="hint">
                   {" "}
                   at {(1000 * Number(sim.result?.t_Vc_peak_s)).toFixed(2)} ms
                 </span>
               </p>
+              {vcPanel ? <Waveform panel={vcPanel} /> : null}
             </>
           )}
         </section>

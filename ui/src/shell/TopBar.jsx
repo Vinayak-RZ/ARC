@@ -9,6 +9,7 @@ const VIEW_LABEL = {
   studio: "Studio",
   gallery: "Gallery",
   library: "Library",
+  learn: "Learn",
   settings: "Settings",
 };
 

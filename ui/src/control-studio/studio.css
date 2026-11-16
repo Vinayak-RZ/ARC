@@ -448,6 +448,13 @@
   color: var(--cs-text-secondary);
 }
 
+@media (max-height: 720px) {
+  .studio-palette-pane {
+    mask-image: linear-gradient(to bottom, #000 0%, #000 82%, transparent 100%);
+    padding-bottom: 24px;
+  }
+}
+
 .studio-palette-pane {
   grid-area: palette;
   min-height: 0;

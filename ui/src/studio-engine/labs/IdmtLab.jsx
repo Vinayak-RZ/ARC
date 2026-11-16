@@ -167,7 +167,7 @@ export function IdmtLab() {
     >
       <Waveform
         panel={{
-          title: "t vs I",
+          title: "IDMT coordination",
           kind: "waveform",
           x: { label: "I", unit: "A", scale: "log" },
           y: { label: "t", unit: "s", scale: "log" },

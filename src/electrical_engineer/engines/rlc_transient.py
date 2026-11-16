@@ -60,6 +60,39 @@ def _underdamped_peak(v_step: float, zeta: float, wn: float) -> tuple[float, flo
     return vc_peak, t_peak
 
 
+def _rk4_integrate_vc(
+    r_ohm: float, l_h: float, c_f: float, v_step: float, *, t_end: float, n: int = 320
+) -> list[list[float]]:
+    """Sample capacitor voltage (V) versus time (ms) for plotting."""
+    if n < 2:
+        n = 2
+    h = t_end / (n - 1)
+
+    def deriv(_t: float, state: tuple[float, float]) -> tuple[float, float]:
+        ii, vcc = state
+        return (v_step - vcc - r_ohm * ii) / l_h, ii / c_f
+
+    def rk4_step(t: float, state: tuple[float, float], step: float) -> tuple[float, float]:
+        di1, dvc1 = deriv(t, state)
+        di2, dvc2 = deriv(t + step / 2, (state[0] + di1 * step / 2, state[1] + dvc1 * step / 2))
+        di3, dvc3 = deriv(t + step / 2, (state[0] + di2 * step / 2, state[1] + dvc2 * step / 2))
+        di4, dvc4 = deriv(t + step, (state[0] + di3 * step, state[1] + dvc3 * step))
+        ii = state[0] + (step / 6) * (di1 + 2 * di2 + 2 * di3 + di4)
+        vcc = state[1] + (step / 6) * (dvc1 + 2 * dvc2 + 2 * dvc3 + dvc4)
+        return ii, vcc
+
+    pts: list[list[float]] = []
+    state = (0.0, 0.0)
+    t = 0.0
+    for _ in range(n):
+        pts.append([t * 1000.0, float(state[1])])
+        if t >= t_end - 1e-15:
+            break
+        state = rk4_step(t, state, h)
+        t += h
+    return pts
+
+
 def _overdamped_peak(v_step: float, r_ohm: float, l_h: float, c_f: float, zeta: float, wn: float) -> tuple[float, float]:
     h = 1.0 / (200.0 * wn)
     t_end = max(8.0 / wn, 3.0)
@@ -106,6 +139,8 @@ def series_rlc_step(
     t_settle_2pct = _rk4_vc_tail(
         r_ohm, l_h, c_f, v_step, wn=wn, t_start=t_peak, t_end=max(12.0 / wn, 3.0), h=h
     )
+    t_plot_end = min(max(5.0 * t_peak, 12.0 / wn), 0.05)
+    vc_trace_ms = _rk4_integrate_vc(r_ohm, l_h, c_f, v_step, t_end=t_plot_end, n=360)
 
     return {
         "damping_type": damping,
@@ -114,6 +149,7 @@ def series_rlc_step(
         "Vc_peak_V": float(vc_peak),
         "t_Vc_peak_s": float(t_peak),
         "settling_time_2pct_s": float(t_settle_2pct) if t_settle_2pct is not None else None,
+        "vc_trace_ms": vc_trace_ms,
     }
 
 

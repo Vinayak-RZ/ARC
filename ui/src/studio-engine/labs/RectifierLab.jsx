@@ -146,10 +146,10 @@ export function RectifierLab() {
     >
       <Waveform
         panel={{
-          title: "vo",
           kind: "waveform",
-          x: { label: "ωt", unit: "deg", scale: "linear" },
-          y: { label: "vo", unit: "V", scale: "linear" },
+          title: "Rectifier output",
+          x: { label: "ωt", unit: "°", scale: "linear" },
+          y: { label: "v_o", unit: "V", scale: "linear" },
           series: [{ id: "vo", label: "vo", points: result.points, style: "primary" }],
           hlines: [{ y: result.Vo, label: "Vo avg" }],
           markers: [{ x: alpha, label: "α" }],
