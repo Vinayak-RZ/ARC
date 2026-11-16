@@ -20,24 +20,96 @@ def series_rlc_graph(
     l_h: float = 1e-3,
     c_f: float = 1e-6,
 ) -> dict[str, Any]:
-    """Series R-L-C: V+ → R → L → C → GND, V− → GND (single series loop)."""
+    """Series R-L-C: V+ → R → L → C → return rail → V−, GND on V−."""
     return {
         "schema": SCHEMA,
         "nodes": [
-            {"id": "vin", "type": "source_v", "refdes": "V1", "value": vin, "unit": "V", "x": 56, "y": 96, "rot": 0},
-            {"id": "r1", "type": "resistor", "refdes": "R1", "value": r_ohm, "unit": "ohm", "x": 200, "y": 96, "rot": 0},
-            {"id": "l1", "type": "inductor", "refdes": "L1", "value": l_h, "unit": "H", "x": 344, "y": 96, "rot": 0},
-            {"id": "c1", "type": "capacitor", "refdes": "C1", "value": c_f, "unit": "F", "x": 488, "y": 96, "rot": 0},
-            {"id": "gnd", "type": "ground", "refdes": "GND", "value": 0, "unit": "", "x": 56, "y": 248, "rot": 0},
+            {"id": "vin", "type": "source_v", "refdes": "V1", "value": vin, "unit": "V", "x": 64, "y": 120, "rot": 0},
+            {"id": "r1", "type": "resistor", "refdes": "R1", "value": r_ohm, "unit": "ohm", "x": 184, "y": 72, "rot": 0},
+            {"id": "l1", "type": "inductor", "refdes": "L1", "value": l_h, "unit": "H", "x": 304, "y": 72, "rot": 0},
+            {"id": "c1", "type": "capacitor", "refdes": "C1", "value": c_f, "unit": "F", "x": 424, "y": 72, "rot": 0},
+            {"id": "jret", "type": "junction", "refdes": "", "value": 0, "unit": "", "x": 424, "y": 168, "rot": 0},
+            {"id": "gnd", "type": "ground", "refdes": "GND", "value": 0, "unit": "", "x": 64, "y": 200, "rot": 0},
         ],
         "edges": [
             {"id": "e1", "from": "vin.n1", "to": "r1.n1"},
             {"id": "e2", "from": "r1.n2", "to": "l1.n1"},
             {"id": "e3", "from": "l1.n2", "to": "c1.n1"},
-            {"id": "e4", "from": "c1.n2", "to": "gnd.n1"},
-            {"id": "e5", "from": "vin.n2", "to": "gnd.n1"},
+            {"id": "e4", "from": "c1.n2", "to": "jret.n"},
+            {"id": "e5", "from": "vin.n2", "to": "jret.w"},
+            {"id": "e6", "from": "jret.s", "to": "gnd.n1"},
         ],
     }
+
+
+def probe_for_capacitor(graph: dict[str, Any]) -> str | None:
+    """SPICE probe expression for the first capacitor in the graph."""
+    parsed = parse_graph(graph)
+    caps = [n for n in parsed["nodes"] if n["type"] == "capacitor"]
+    if not caps:
+        return None
+    cid = caps[0]["id"]
+    parent: dict[str, str] = {}
+
+    def find(x: str) -> str:
+        parent.setdefault(x, x)
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    def union(a: str, b: str) -> None:
+        parent[find(a)] = find(b)
+
+    for edge in parsed["edges"]:
+        union(str(edge["from"]), str(edge["to"]))
+    for node in parsed["nodes"]:
+        if node["type"] == "junction":
+            jid = str(node["id"])
+            ports = [f"{jid}.{p}" for p in ("n", "e", "s", "w")]
+            for other in ports[1:]:
+                union(ports[0], other)
+    spice_of: dict[str, int] = {}
+    next_id = 1
+    ground_roots: set[str] = set()
+    for node in parsed["nodes"]:
+        if node["type"] == "ground":
+            ground_roots.add(find(f"{node['id']}.n1"))
+
+    def spice(port: str) -> int:
+        nonlocal next_id
+        root = find(port)
+        if root in ground_roots:
+            return 0
+        if root not in spice_of:
+            spice_of[root] = next_id
+            next_id += 1
+        return spice_of[root]
+
+    for node in parsed["nodes"]:
+        if node["type"] != "junction":
+            spice(f"{node['id']}.n1")
+            if node["type"] != "ground":
+                spice(f"{node['id']}.n2")
+        else:
+            for p in "nesw":
+                spice(f"{node['id']}.{p}")
+    n = spice(f"{cid}.n1")
+    return f"v({n})"
+
+
+def series_rlc_netlist_signature(cir: str) -> tuple[str, ...]:
+    """Sorted branch keys for topology regression (refdes and spice nodes)."""
+
+    lines = []
+    for raw in cir.splitlines():
+        line = raw.strip()
+        if not line or line.startswith("*") or line.upper().startswith("."):
+            continue
+        parts = line.split()
+        if len(parts) >= 4:
+            lines.append(f"{parts[0]}:{parts[1]}-{parts[2]}")
+    return tuple(sorted(lines))
 
 
 def graph_port_errors(graph: dict[str, Any]) -> list[str]:
@@ -54,6 +126,18 @@ def graph_port_errors(graph: dict[str, Any]) -> list[str]:
             p = f"{nid}.n1"
             if port_use.get(p, 0) < 1:
                 errors.append(f"{p} unconnected")
+            continue
+        if node["type"] == "junction":
+            hits = 0
+            for port in ("n", "e", "s", "w"):
+                p = f"{nid}.{port}"
+                used = port_use.get(p, 0)
+                if used > 1:
+                    errors.append(f"junction {p} has {used} wires (expected 1)")
+                elif used == 1:
+                    hits += 1
+            if hits < 2:
+                errors.append(f"junction {nid} needs at least 2 connections")
             continue
         for port in ("n1", "n2"):
             p = f"{nid}.{port}"

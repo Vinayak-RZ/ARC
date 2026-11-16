@@ -163,6 +163,8 @@ def verify_circuit_spice(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[s
 @register("seed-control-lab")
 def seed_control_lab(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
     from electrical_engineer.collab.workflow import finish_control_lab
+    from electrical_engineer.control_studio import simulate as cs_simulate
+    from electrical_engineer.control_studio.goldens import GOLDENS
 
     problem = dict(_problem(spec))
     derived_value: float | None = None
@@ -170,18 +172,29 @@ def seed_control_lab(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, 
     for v in inputs.values():
         if not isinstance(v, dict):
             continue
-        if v.get("value") is not None:
-            try:
-                derived_value = float(v["value"])
-            except (TypeError, ValueError):
-                pass
         if v.get("y_ss") is not None:
             try:
                 derived_value = float(v["y_ss"])
             except (TypeError, ValueError):
                 pass
+        elif v.get("value") is not None and (
+            v.get("tool") == "python-control"
+            or (derived_value is None and v.get("tool") != "ee-v2-solver")
+        ):
+            try:
+                derived_value = float(v["value"])
+            except (TypeError, ValueError):
+                pass
         if not golden and v.get("golden"):
             golden = str(v["golden"])
+    gkey = golden or str(problem.get("golden") or "")
+    if gkey in GOLDENS:
+        ref = cs_simulate.simulate(GOLDENS[gkey]())
+        metrics = (ref.get("step_series") or {}).get("metrics") or {}
+        if metrics.get("final_value") is not None:
+            derived_value = float(metrics["final_value"])
+        elif ref.get("y_ss") is not None:
+            derived_value = float(ref["y_ss"])
     run_dir_s = spec.get("run_dir")
     if not run_dir_s:
         return {"ok": False, "unchecked": True, "error": "missing run_dir"}

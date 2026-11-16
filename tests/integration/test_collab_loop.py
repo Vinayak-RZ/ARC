@@ -217,6 +217,12 @@ def test_solve_control_workflow_seeds_lab(tmp_path: Path) -> None:
     assert (run_dir / "lab_meta.json").is_file()
     meta = json.loads((run_dir / "lab_meta.json").read_text(encoding="utf-8"))
     assert meta.get("control_session_id")
+    verify = json.loads((run_dir / "lab_verify.json").read_text(encoding="utf-8"))
+    assert verify.get("metrics")
+    y_row = next(m for m in verify["metrics"] if m["id"] == "y_ss")
+    assert y_row["derived"] == pytest.approx(10 / 11, rel=0.02)
+    assert y_row["simulated"] == pytest.approx(10 / 11, rel=0.02)
+    assert verify.get("mismatch") is False
 
 
 def test_derive_circuit_workflow_seeds_lab(tmp_path: Path) -> None:

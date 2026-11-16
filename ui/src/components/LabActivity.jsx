@@ -80,11 +80,13 @@ export function LabActivity({ labMeta, onRestore, onPreview }) {
             <li key={entry.id} className={`lab-activity-item is-${entry.author || "agent"}`}>
               <Avatar author={entry.author} />
               <div className="lab-activity-body">
-                <p className="lab-activity-sentence">{sentenceFor(entry)}</p>
-                <div className="lab-activity-meta">
+                <p className="lab-activity-sentence">
+                  {sentenceFor(entry)}
+                  {entry.rev != null ? ` · rev ${entry.rev}` : ""}
+                  {` · ${relTime(entry.ts_ms) || "just now"}`}
+                </p>
+                <div className="lab-activity-meta" hidden>
                   <span className="lab-activity-rev">r{entry.rev ?? "—"}</span>
-                  <span className="lab-activity-time">{relTime(entry.ts_ms)}</span>
-                  {isNow ? <span className="lab-activity-now">Now</span> : null}
                 </div>
                 {!isNow ? (
                   <div className="lab-activity-actions">

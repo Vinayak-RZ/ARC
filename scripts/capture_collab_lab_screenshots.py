@@ -29,7 +29,7 @@ def _shot_run_page(page, run_id: str, path: Path, *, diagram_tab: bool = False, 
     page.wait_for_selector(".lab-verify-panel, .lab-verify-table", timeout=20_000)
     page.locator(".lab-verify-table td, .lab-verify-panel").first.wait_for(state="visible", timeout=20_000)
     if need_agree:
-        page.get_by_text("Agrees within", exact=False).first.wait_for(state="visible", timeout=60_000)
+        page.get_by_text("Agrees (limit", exact=False).first.wait_for(state="visible", timeout=60_000)
     if diagram_tab:
         page.get_by_role("tab", name="Diagram").click()
         page.wait_for_selector(".diagram-shell svg, .diagram-shell .react-flow", timeout=20_000)
@@ -55,8 +55,11 @@ def _shot_control_lab(page, session_id: str, path: Path) -> None:
 def _shot_circuit_lab(page, run_id: str, path: Path) -> None:
     page.goto(f"{HOST}/?view=studio&tab=circuits&run={run_id}")
     page.wait_for_selector(".react-flow", timeout=45_000)
+    page.wait_for_selector(".react-flow__node", timeout=45_000)
     page.wait_for_selector(".lab-provenance-bar", timeout=20_000)
     page.wait_for_selector(".studio-lab-drawer", timeout=20_000)
+    page.locator(".part-ref", has_text="R1").first.wait_for(state="visible", timeout=45_000)
+    page.wait_for_selector(".studio-circuit-results .se-waveform", timeout=90_000)
     page.wait_for_timeout(800)
     page.screenshot(path=str(path), full_page=True)
 
@@ -172,6 +175,7 @@ def main() -> int:
         _shot_circuit_lab(page, rlc["run_id"], shots["agent_series_rlc_lab"])
         if ctl_sid:
             _shot_control_lab(page, str(ctl_sid), shots["agent_control_unity_lab"])
+        _shot_run_page(page, control["run_id"], OUT / "agent_control_unity_run.png", need_agree=True)
         browser.close()
     print(json.dumps({k: str(v) for k, v in shots.items()}, indent=2))
     return 0

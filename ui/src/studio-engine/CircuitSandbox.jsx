@@ -38,18 +38,20 @@ const STORAGE_KEY = "arc-circuit-sandbox-v1";
 const SERIES_RLC = {
   schema: "arc.circuit.v1",
   nodes: [
-    { id: "vin", type: "source_v", refdes: "V1", value: 10, unit: "V", x: 56, y: 96, rot: 0 },
-    { id: "r1", type: "resistor", refdes: "R1", value: 10, unit: "ohm", x: 200, y: 96, rot: 0 },
-    { id: "l1", type: "inductor", refdes: "L1", value: 0.01, unit: "H", x: 344, y: 96, rot: 0 },
-    { id: "c1", type: "capacitor", refdes: "C1", value: 0.0001, unit: "F", x: 488, y: 96, rot: 0 },
-    { id: "gnd", type: "ground", refdes: "Gnd", value: 0, unit: "", x: 56, y: 248, rot: 0 },
+    { id: "vin", type: "source_v", refdes: "V1", value: 10, unit: "V", x: 64, y: 120, rot: 0 },
+    { id: "r1", type: "resistor", refdes: "R1", value: 10, unit: "ohm", x: 184, y: 72, rot: 0 },
+    { id: "l1", type: "inductor", refdes: "L1", value: 0.01, unit: "H", x: 304, y: 72, rot: 0 },
+    { id: "c1", type: "capacitor", refdes: "C1", value: 0.0001, unit: "F", x: 424, y: 72, rot: 0 },
+    { id: "jret", type: "junction", refdes: "", value: 0, unit: "", x: 424, y: 168, rot: 0 },
+    { id: "gnd", type: "ground", refdes: "GND", value: 0, unit: "", x: 64, y: 200, rot: 0 },
   ],
   edges: [
     { id: "e1", from: "vin.n1", to: "r1.n1" },
     { id: "e2", from: "r1.n2", to: "l1.n1" },
     { id: "e3", from: "l1.n2", to: "c1.n1" },
-    { id: "e4", from: "c1.n2", to: "gnd.n1" },
-    { id: "e5", from: "vin.n2", to: "gnd.n1" },
+    { id: "e4", from: "c1.n2", to: "jret.n" },
+    { id: "e5", from: "vin.n2", to: "jret.w" },
+    { id: "e6", from: "jret.s", to: "gnd.n1" },
   ],
 };
 
@@ -143,13 +145,43 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
   const past = useRef([]);
   const future = useRef([]);
   const hydrated = useRef(false);
+  const graphReady = useRef(false);
   const revision = useRef(0);
   const wrapRef = useRef(null);
   const { screenToFlowPosition } = useReactFlow();
 
+  function applyLabSimulate(labSimulate, labVerify) {
+    if (!labSimulate?.ok && !labSimulate?.simulated) return;
+    const trace = labSimulate.trace || labSimulate.spice || labSimulate;
+    const peakV = Number(labSimulate.simulated ?? trace?.Vc_peak_V ?? labVerify?.simulated);
+    const tPeak = Number(trace?.t_Vc_peak_s ?? labVerify?.derive?.t_s ?? 0);
+    const vcMs = trace?.vc_trace_ms;
+    if (vcMs?.length) {
+      setSim({
+        ok: true,
+        engine: labSimulate.engine || labSimulate.simulator?.backend || "ngspice",
+        result: {
+          Vc_peak_V: peakV,
+          t_Vc_peak_s: tPeak,
+          vc_trace_ms: vcMs,
+          zeta: trace?.zeta,
+          omega_n_rad_s: trace?.omega_n_rad_s,
+        },
+        problem: labSimulate.problem,
+      });
+      return;
+    }
+    setSim({
+      ok: true,
+      engine: labSimulate.engine || "circuit_graph_sim",
+      result: { Vc_peak_V: peakV, t_Vc_peak_s: tPeak },
+    });
+  }
+
   const loadLinkedRun = useCallback(
     (force = false) => {
       if (!linkedRunId) return;
+      graphReady.current = false;
       Promise.all([
         fetch(`/api/runs/${linkedRunId}/lab`).then((r) => (r.ok ? r.json() : Promise.reject())),
         fetch(`/api/runs/${linkedRunId}`).then((r) => (r.ok ? r.json() : null)),
@@ -162,6 +194,7 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
             viewMode === "agent" && body?.lab_meta?.agent_baseline_graph
               ? body.lab_meta.agent_baseline_graph
               : body?.graph || {};
+          graphReady.current = Boolean(graph?.nodes?.length);
           const { nodes: n, edges: e } = toFlow(graph);
           const withMarks = showAuthorship
             ? n.map((node) => ({ ...node, className: "has-author-dot is-agent-authored" }))
@@ -173,6 +206,12 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
           setRunTitle(detail?.title || linkedRunId);
           hydrated.current = true;
           setFitKey((k) => k + 1);
+          const tracePts = body?.lab_simulate?.trace?.vc_trace_ms || body?.lab_simulate?.vc_trace_ms;
+          if (tracePts?.length) {
+            applyLabSimulate(body.lab_simulate, body.lab_verify);
+          } else if (graph?.nodes?.length) {
+            void runSimulate(graph);
+          }
         })
         .catch(() => setMsg("Could not load shared circuit for this run."));
     },
@@ -226,9 +265,10 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
 
   useEffect(() => {
     if (!hydrated.current) return;
+    if (linkedRunId && (!graphReady.current || nodes.length === 0)) return;
     const t = window.setTimeout(() => persist(nodes, edges), 400);
     return () => window.clearTimeout(t);
-  }, [nodes, edges, persist]);
+  }, [nodes, edges, persist, linkedRunId]);
 
   useEffect(() => {
     const el = wrapRef.current;
@@ -305,10 +345,13 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
     setFitKey((k) => k + 1);
   }
 
-  async function runSimulate() {
+  async function runSimulate(graphOverride = null) {
     setSimBusy(true);
     setMsg("");
-    const graph = fromFlow(nodes, edges);
+    const graph =
+      graphOverride && typeof graphOverride === "object" && graphOverride.schema
+        ? graphOverride
+        : fromFlow(nodes, edges);
     try {
       const r = await fetch("/api/circuit-sandbox/simulate", {
         method: "POST",
@@ -404,7 +447,7 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
               type="button"
               className="cs-btn cs-btn-primary cs-simulate-btn studio-circuit-simulate-btn"
               disabled={simBusy}
-              onClick={runSimulate}
+              onClick={() => runSimulate()}
             >
               {simBusy ? "Simulating…" : "Simulate"}
             </button>
@@ -447,7 +490,7 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
         </div>
         <section className="studio-results studio-circuit-results card-surface" aria-live="polite">
           {!sim ? (
-            <p className="hint">Press Simulate to see the step response (built-in RLC solver).</p>
+            <p className="hint">Press Simulate to plot capacitor voltage Vc(t) from this netlist.</p>
           ) : (
             <>
               <div className="studio-circuit-probes" aria-label="Probe readouts">

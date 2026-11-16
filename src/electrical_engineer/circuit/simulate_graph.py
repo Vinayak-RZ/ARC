@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from electrical_engineer.circuit.graph import parse_graph
+from electrical_engineer.circuit.graph import parse_graph, probe_for_capacitor
 from electrical_engineer.circuit.netlist import CompileError, compile_netlist
 from electrical_engineer.engines.spice_runner import run_spice_netlist, simulator_status
 
@@ -18,13 +18,17 @@ def simulate_graph(
     run_dir: Path,
 ) -> dict[str, Any]:
     parsed = parse_graph(graph)
-    explicit_cir = str(problem.get("cir") or "").strip()
     try:
-        base_cir = explicit_cir or compile_netlist(parsed)
+        base_cir = compile_netlist(parsed)
     except CompileError as exc:
         return {"ok": False, "error": str(exc), "unchecked": True, "engine": "circuit_graph_sim"}
     analysis = str(problem.get("analysis") or "dc").lower()
-    probe = str(problem.get("probe") or problem.get("probe_expr") or "v(2)")
+    probe = str(
+        problem.get("probe")
+        or problem.get("probe_expr")
+        or probe_for_capacitor(parsed)
+        or "v(2)"
+    )
     prob = {
         "analysis": analysis,
         "probe": probe,

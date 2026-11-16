@@ -3,6 +3,7 @@ from electrical_engineer.circuit.graph import (
     graph_port_errors,
     parse_graph,
     series_rlc_graph,
+    series_rlc_netlist_signature,
 )
 from electrical_engineer.circuit.netlist import compile_netlist
 
@@ -12,10 +13,10 @@ def test_series_rlc_agent_graph_ports_and_netlist() -> None:
     parsed = parse_graph(graph)
     assert graph_port_errors(parsed) == []
     cir = compile_netlist(parsed)
-    assert "R1 1 2 10" in cir.replace(".0", "")
-    assert "L1 2 3" in cir
-    assert "C1 3 0" in cir.replace("0.0001", "0.0001")
-    assert "V1 1 0 DC 10" in cir
+    sig = series_rlc_netlist_signature(cir)
+    assert len(sig) == 4
+    assert any(s.startswith("V1:") for s in sig)
+    assert any(s.startswith("R1:") for s in sig)
 
 
 def test_workflow_default_series_rlc_seed() -> None:

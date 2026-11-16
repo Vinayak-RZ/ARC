@@ -39,16 +39,50 @@ export function LabVerifyPanel({ labVerify, labMeta, compact = false }) {
             (skipped
               ? "Not simulated"
               : labVerify.mismatch
-                ? `Differs by ${formatDiffPct(labVerify.rel_err_pct)} (limit ${formatDiffPct(labVerify.rel_tol_pct ?? 2)})`
-                : `Agrees within ${formatDiffPct(labVerify.rel_tol_pct ?? 2)}`),
+                ? `Differs by ${formatDiffPct(labVerify.rel_err_pct)} (limit 2%)`
+                : "Agrees (limit 2%)"),
         },
       ];
   const engine = labVerify.sim_engine || (skipped ? "ngspice not available" : "ngspice");
+
+  if (compact) {
+    return (
+      <section className="lab-verify-panel card-surface is-compact" aria-labelledby="lab-verify-heading">
+        <header className="lab-verify-head">
+          <h2 id="lab-verify-heading">Simulated vs derived</h2>
+          {labVerify.needs_review ? <span className="lab-needs-review">Needs review</span> : null}
+        </header>
+        <p className="lab-verify-engine-line">Simulated with {engine}</p>
+        <ul className="lab-verify-stack">
+          {metrics.map((row) => (
+            <li key={row.id} className="lab-verify-stack-row">
+              <div className="lab-verify-stack-metric">{row.label}</div>
+              <div className="lab-verify-stack-values tabular-nums">
+                <span title="Derived (agent)">{formatLabValue(row.derived, row.unit)}</span>
+                <span className="lab-verify-stack-sep">vs</span>
+                <span title="Simulated (lab)">
+                  {row.status === "not_simulated" || row.simulated == null
+                    ? "—"
+                    : formatLabValue(row.simulated, row.unit)}
+                </span>
+                <span className="lab-verify-stack-sep">·</span>
+                <span className="lab-verify-stack-diff">
+                  {row.rel_err_pct == null ? "—" : formatDiffPct(row.rel_err_pct)}
+                </span>
+              </div>
+              <span className={badgeClass(row.status)}>{row.status_label}</span>
+            </li>
+          ))}
+        </ul>
+        {labMeta?.op_log?.length ? (
+          <p className="hint">{labMeta.op_log.length} lab edit(s) recorded (see Activity).</p>
+        ) : null}
+      </section>
+    );
+  }
+
   return (
-    <section
-      className={`lab-verify-panel card-surface${compact ? " is-compact" : ""}`}
-      aria-labelledby="lab-verify-heading"
-    >
+    <section className="lab-verify-panel card-surface" aria-labelledby="lab-verify-heading">
       <header className="lab-verify-head">
         <h2 id="lab-verify-heading">Simulated vs derived</h2>
         {labVerify.needs_review ? <span className="lab-needs-review">Needs review</span> : null}
@@ -76,9 +110,7 @@ export function LabVerifyPanel({ labVerify, labMeta, compact = false }) {
                   ? "Not simulated"
                   : formatLabValue(row.simulated, row.unit)}
               </td>
-              <td className="tabular-nums">
-                {row.rel_err_pct == null ? "—" : formatDiffPct(row.rel_err_pct)}
-              </td>
+              <td className="tabular-nums">{row.rel_err_pct == null ? "—" : formatDiffPct(row.rel_err_pct)}</td>
               <td>
                 <span className={badgeClass(row.status)}>{row.status_label}</span>
               </td>

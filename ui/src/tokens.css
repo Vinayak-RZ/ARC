@@ -2713,7 +2713,14 @@ a { color: var(--ee-color-primary); }
 .lab-verify-badge.is-differs { color: #b45309; background: color-mix(in srgb, #b45309 12%, transparent); }
 .lab-verify-badge.is-mismatch { color: var(--ee-semantic-down); background: color-mix(in srgb, var(--ee-semantic-down) 12%, transparent); }
 .lab-verify-badge.is-muted { color: var(--ee-color-muted); background: var(--ee-color-surface-subtle, #f4f5f7); }
-.lab-verify-panel.is-compact { margin: 0; border-left: 1px solid var(--ee-color-hairline); max-width: 360px; padding: var(--ee-space-m); }
+.lab-verify-panel.is-compact { margin: 0; max-width: none; padding: 0 0 var(--ee-space-s); border: none; }
+.lab-verify-engine-line { font-size: 11px; color: var(--ee-color-muted); margin: 4px 0 8px; }
+.lab-verify-stack { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.lab-verify-stack-row { display: flex; flex-direction: column; gap: 4px; padding-bottom: 10px; border-bottom: 1px solid var(--ee-color-hairline); }
+.lab-verify-stack-metric { font-size: 12px; font-weight: 600; }
+.lab-verify-stack-values { font-size: 12px; line-height: 1.35; color: var(--ee-color-ink); }
+.lab-verify-stack-sep { margin: 0 4px; color: var(--ee-color-muted); }
+.lab-verify-stack-diff { color: var(--ee-color-muted); }
 .lab-needs-review,
 .lab-needs-review-banner { color: #b45309; font-weight: 600; font-size: var(--ee-type-caption); }
 .verification-review { border-color: #b45309; background: color-mix(in srgb, #b45309 8%, transparent); }

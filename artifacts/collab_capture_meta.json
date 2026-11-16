@@ -1,16 +1,16 @@
 {
   "circuit_run": {
-    "run_id": "wn03-20261116T123441Z",
-    "run_dir": "/agent/repos/ARC/runs/wn03-20261116T123441Z",
+    "run_id": "116x-20261116T133531Z",
+    "run_dir": "/agent/repos/ARC/runs/116x-20261116T133531Z",
     "summary": {
       "recipe_id": "derive-circuit",
-      "run_id": "wn03-20261116T123441Z",
+      "run_id": "116x-20261116T133531Z",
       "title": "Voltage divider \u00b7 Vout",
       "unchecked": false,
       "token": null,
       "value": 5.0,
       "paths": [
-        "/agent/repos/ARC/runs/wn03-20261116T123441Z/summary.json"
+        "/agent/repos/ARC/runs/116x-20261116T133531Z/summary.json"
       ],
       "citations": [],
       "web_verification": null,
@@ -44,11 +44,11 @@
         "value": 5.0
       },
       "artifact_paths": [
-        "/agent/repos/ARC/runs/wn03-20261116T123441Z/summary.json"
+        "/agent/repos/ARC/runs/116x-20261116T133531Z/summary.json"
       ]
     },
     "observation": {
-      "run_id": "wn03-20261116T123441Z",
+      "run_id": "116x-20261116T133531Z",
       "capabilities": [
         "algebraic-check",
         "label-unverified",
@@ -92,17 +92,17 @@
     }
   },
   "rlc_run": {
-    "run_id": "02qq-20261116T123441Z",
-    "run_dir": "/agent/repos/ARC/runs/02qq-20261116T123441Z",
+    "run_id": "m9bc-20261116T133531Z",
+    "run_dir": "/agent/repos/ARC/runs/m9bc-20261116T133531Z",
     "summary": {
       "recipe_id": "series-rlc-transient",
-      "run_id": "02qq-20261116T123441Z",
+      "run_id": "m9bc-20261116T133531Z",
       "title": "Series RLC \u00b7 Vc,peak",
       "unchecked": false,
       "token": null,
       "value": 11.630335348215805,
       "paths": [
-        "/agent/repos/ARC/runs/02qq-20261116T123441Z/summary.json"
+        "/agent/repos/ARC/runs/m9bc-20261116T133531Z/summary.json"
       ],
       "citations": [],
       "web_verification": null,
@@ -136,11 +136,11 @@
         "value": 11.630335348215805
       },
       "artifact_paths": [
-        "/agent/repos/ARC/runs/02qq-20261116T123441Z/summary.json"
+        "/agent/repos/ARC/runs/m9bc-20261116T133531Z/summary.json"
       ]
     },
     "observation": {
-      "run_id": "02qq-20261116T123441Z",
+      "run_id": "m9bc-20261116T133531Z",
       "capabilities": [
         "algebraic-check",
         "label-unverified",
@@ -184,34 +184,34 @@
     }
   },
   "control_run": {
-    "run_id": "ak46-20261116T123441Z",
-    "run_dir": "/agent/repos/ARC/runs/ak46-20261116T123441Z",
+    "run_id": "1813-20261116T133531Z",
+    "run_dir": "/agent/repos/ARC/runs/1813-20261116T133531Z",
     "summary": {
       "recipe_id": "solve-control-problem",
-      "run_id": "ak46-20261116T123441Z",
+      "run_id": "1813-20261116T133531Z",
       "title": "Control step",
       "unchecked": false,
       "token": null,
-      "value": 9.989999999999998,
+      "value": 0.9090909090909084,
       "paths": [
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/bode.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/step.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/artifact.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/artifact.svg",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/bode.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/step.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/artifact.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/artifact.svg",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/evidence/trap_prm.json",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/bode.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/step.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/artifact.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/artifact.svg",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/bode.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/step.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/artifact.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/artifact.svg",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/summary.json"
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/bode.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/step.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/artifact.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/artifact.svg",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/bode.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/step.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/artifact.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/artifact.svg",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/evidence/trap_prm.json",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/bode.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/step.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/artifact.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/artifact.svg",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/bode.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/step.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/artifact.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/artifact.svg",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/summary.json"
       ],
       "citations": [],
       "web_verification": {
@@ -265,31 +265,31 @@
       },
       "verifier": "algebraic-check via check-numeric",
       "values": {
-        "value": 9.989999999999998
+        "value": 0.9090909090909084
       },
       "artifact_paths": [
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/bode.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/step.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/artifact.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/artifact.svg",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/bode.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/step.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/artifact.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/artifact.svg",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/evidence/trap_prm.json",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/bode.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/step.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/artifact.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/artifact.svg",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/bode.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/step.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/artifact.png",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/artifact.svg",
-        "/agent/repos/ARC/runs/ak46-20261116T123441Z/summary.json"
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/bode.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/step.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/artifact.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/artifact.svg",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/bode.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/step.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/artifact.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/artifact.svg",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/evidence/trap_prm.json",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/bode.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/step.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/artifact.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/artifact.svg",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/bode.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/step.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/artifact.png",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/artifact.svg",
+        "/agent/repos/ARC/runs/1813-20261116T133531Z/summary.json"
       ]
     },
     "observation": {
-      "run_id": "ak46-20261116T123441Z",
+      "run_id": "1813-20261116T133531Z",
       "capabilities": [
         "algebraic-check",
         "label-unverified",
@@ -349,5 +349,5 @@
       }
     }
   },
-  "control_session_id": "cs-5c5c191ecf63"
+  "control_session_id": "cs-4780d811a0c8"
 }

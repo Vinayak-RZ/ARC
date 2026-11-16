@@ -214,25 +214,67 @@ def register_studio_routes(app: FastAPI, *, root: Path) -> None:
 
     @app.post("/api/circuit-sandbox/simulate")
     async def circuit_sandbox_simulate(request: Request) -> dict:
+        import tempfile
+
+        from electrical_engineer.circuit.graph import (
+            GraphError,
+            graph_port_errors,
+            parse_graph,
+            probe_for_capacitor,
+        )
+        from electrical_engineer.circuit.simulate_graph import simulate_graph
         from electrical_engineer.engines.rlc_transient import solve_from_problem
 
         body = await request.json()
         graph = body.get("graph") if isinstance(body, dict) else {}
         if not graph:
             return JSONResponse({"ok": False, "error": "Missing circuit graph"}, status_code=400)
-        problem = _graph_series_rlc(graph if isinstance(graph, dict) else {})
+        try:
+            parsed = parse_graph(graph if isinstance(graph, dict) else {})
+        except GraphError as exc:
+            return JSONResponse({"ok": False, "error": str(exc)}, status_code=400)
+        port_errs = graph_port_errors(parsed)
+        if port_errs:
+            return JSONResponse({"ok": False, "error": "; ".join(port_errs[:3])}, status_code=400)
+        problem = _graph_series_rlc(parsed)
         if problem is None:
             return JSONResponse(
-                {"ok": False, "error": "Built-in solver supports a series R–L–C step circuit only."},
+                {"ok": False, "error": "Sandbox simulate needs a series R–L–C graph (V, R, L, C, GND)."},
                 status_code=400,
             )
+        problem |= {
+            "analysis": "tran",
+            "t_s": body.get("t_s") if isinstance(body, dict) else None,
+            "derive_metric": "Vc_peak",
+            "probe": probe_for_capacitor(parsed) or "v(3)",
+            "tol": 0.02,
+        }
+        if not problem.get("t_s"):
+            try:
+                meta = solve_from_problem({**problem, "v_step": problem["v_step"]})
+                problem["t_s"] = float(meta.get("t_Vc_peak_s") or 0.003628)
+            except (TypeError, ValueError):
+                problem["t_s"] = 0.003628
+        with tempfile.TemporaryDirectory() as tmp:
+            sim = simulate_graph(parsed, problem, run_dir=Path(tmp))
+        if not sim.get("ok") and sim.get("skipped"):
+            return JSONResponse(
+                {"ok": False, "error": sim.get("reason") or "ngspice not available", "skipped": True},
+                status_code=503,
+            )
+        if not sim.get("ok"):
+            return JSONResponse({"ok": False, "error": sim.get("error") or "simulate failed"}, status_code=400)
         try:
-            result = solve_from_problem(problem)
-        except ValueError as exc:
-            return JSONResponse({"ok": False, "error": str(exc)}, status_code=400)
+            trace = solve_from_problem({**problem, "v_step": problem["v_step"]})
+        except ValueError:
+            trace = {"Vc_peak_V": sim.get("simulated"), "t_Vc_peak_s": problem.get("t_s")}
+        peak = float(sim.get("simulated") if sim.get("simulated") is not None else trace.get("Vc_peak_V"))
+        trace = {**trace, "Vc_peak_V": peak}
+        backend = (sim.get("simulator") or {}).get("backend") or sim.get("engine") or "ngspice"
         return {
             "ok": True,
-            "engine": "built-in RLC solver",
+            "engine": backend,
             "problem": problem,
-            "result": result,
+            "result": trace,
+            "sim": sim,
         }

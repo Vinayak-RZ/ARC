@@ -68,7 +68,16 @@ def _ensure_control_block(
         f = float(f_hz or 1000.0)
         text += f"\n.ac lin 1 {f} {f}\n"
     if analysis == "tran" and ".tran" not in low:
-        text += "\n.tran 1m 0.1\n"
+        metric = str(derive_metric or "").lower()
+        if metric in {"vc_peak", "peak", "max"} and t_s is not None:
+            stop = max(float(t_s) * 2.5, 1e-3)
+            step = min(stop / 4000.0, 50e-6)
+            m = re.search(r"v\((\d+)\)", probe)
+            if m and ".ic" not in low:
+                text += f"\n.ic v({m.group(1)})=0"
+            text += f"\n.tran {step:g} {stop:g} uic\n"
+        else:
+            text += "\n.tran 1m 0.1\n"
     if analysis == "ac":
         probe_inner = probe
         if not probe.lower().startswith("mag("):
@@ -268,11 +277,13 @@ def run_spice_netlist(
     combined = (proc.stdout or "") + "\n" + (proc.stderr or "")
     derive_metric = str(problem.get("derive_metric") or "").lower()
     if analysis == "tran" and derive_metric in {"vc_peak", "peak", "max"}:
-        series = _parse_tran_series(combined, probe)
-        if series:
-            value = max(v for _, v in series)
-        else:
-            value = _parse_print_voltage(combined, "_arc_out") or _parse_print_voltage(combined, probe)
+        value = _parse_print_voltage(combined, "_arc_out")
+        if value is None:
+            series = _parse_tran_series(combined, probe)
+            if series:
+                value = max(v for _, v in series)
+            else:
+                value = _parse_print_voltage(combined, probe)
     else:
         value = _parse_print_voltage(combined, probe)
     if value is None and proc.returncode != 0:

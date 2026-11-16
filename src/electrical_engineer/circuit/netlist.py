@@ -29,6 +29,12 @@ def compile_netlist(graph: dict[str, Any]) -> str:
 
     for edge in edges:
         union(str(edge["from"]), str(edge["to"]))
+    for node in nodes:
+        if node.get("type") == "junction":
+            jid = str(node["id"])
+            ports = [f"{jid}.{p}" for p in ("n", "e", "s", "w")]
+            for other in ports[1:]:
+                union(ports[0], other)
 
     ground_roots = set()
     for node in nodes:
@@ -51,7 +57,7 @@ def compile_netlist(graph: dict[str, Any]) -> str:
     lines = ["* arc.circuit.v1"]
     for node in nodes:
         kind = node.get("type")
-        if kind == "ground":
+        if kind in {"ground", "junction"}:
             continue
         n1 = spice(f"{node['id']}.n1")
         n2 = spice(f"{node['id']}.n2")

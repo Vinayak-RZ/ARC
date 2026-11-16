@@ -19,5 +19,6 @@ export function formatDiffPct(pct) {
   if (pct == null || Number.isNaN(Number(pct))) return "—";
   const v = Number(pct);
   if (v < 0.05) return "0.0%";
+  if (v < 0.1) return `${v.toFixed(3)}%`;
   return `${v.toFixed(1)}%`;
 }
