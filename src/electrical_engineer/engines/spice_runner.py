@@ -78,7 +78,7 @@ def _ensure_control_block(
         metric = str(derive_metric or "").lower()
         if metric in {"vc_peak", "peak", "max"}:
             text += f"\n.measure tran _arc_out max {probe}\n"
-            cmd = "run\nprint _arc_out\n"
+            cmd = f"run\nprint tran {probe}\nprint _arc_out\n"
         elif t_s is not None:
             text += f"\n.measure tran _arc_out find {probe} at={float(t_s)}\n"
             cmd = "run\nprint _arc_out\n"
@@ -261,7 +261,14 @@ def run_spice_netlist(
                 "tool": "ngspice",
             }
     combined = (proc.stdout or "") + "\n" + (proc.stderr or "")
+    derive_metric = str(problem.get("derive_metric") or "").lower()
     value = _parse_print_voltage(combined, probe)
+    if analysis == "tran" and derive_metric in {"vc_peak", "peak", "max"}:
+        series = _parse_tran_series(combined, probe)
+        if series:
+            peak = max(v for _, v in series)
+            if value is None or peak > float(value) + 1e-6:
+                value = peak
     if value is None and proc.returncode != 0:
         return {
             "ok": False,
