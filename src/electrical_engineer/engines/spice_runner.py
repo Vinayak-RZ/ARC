@@ -130,25 +130,7 @@ def _parse_tran_series(stdout: str, probe: str) -> list[tuple[float, float]]:
                 rows.append((float(parts[0]), float(parts[1])))
             except ValueError:
                 continue
-    if not rows:
-        for line in stdout.splitlines():
-            parts = line.split()
-            if len(parts) >= 2 and any(p.replace(".", "", 1).replace("-", "", 1).isdigit() for p in parts):
-                try:
-                    floats = [float(p) for p in parts if _looks_float(p)]
-                    if len(floats) >= 2:
-                        rows.append((floats[-2], floats[-1]))
-                except ValueError:
-                    continue
     return rows
-
-
-def _looks_float(token: str) -> bool:
-    try:
-        float(token)
-        return True
-    except ValueError:
-        return False
 
 
 def _interp_series_at_t(rows: list[tuple[float, float]], t_query: float) -> float | None:
