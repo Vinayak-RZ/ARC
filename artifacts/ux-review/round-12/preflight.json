@@ -9,7 +9,7 @@
     "workflow_run_id": "43926478759",
     "status": "success"
   },
-  "git_dirty_lines": 38,
+  "git_dirty_lines": 34,
   "git_untracked_lines": 0,
   "git_diff_sha256": null,
   "package_path": "/agent/repos/ARC/src/electrical_engineer/__init__.py",

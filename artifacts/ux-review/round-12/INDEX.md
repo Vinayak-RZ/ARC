@@ -3,7 +3,7 @@
 Git HEAD: `87a566e3e46d1232ba91b8a17ec9ce3275447ec1`
 Short SHA: `87a566e`
 CI workflow run: `43946948182`
-`git_dirty_lines`: 38
+`git_dirty_lines`: 34
 PNG count: 145
 
 ## How to read
