@@ -236,6 +236,8 @@ def finish_control_lab(
         simulated = float(step_metrics["final_value"])
     elif sim.get("y_ss") is not None:
         simulated = float(sim["y_ss"])
+    elif sim.get("y_final") is not None:
+        simulated = float(sim["y_final"])
     sim_t = step_metrics.get("t_settle_s")
     derived_t = problem.get("t_settle_s")
     limit_pct = DEFAULT_REL_TOL * 100.0

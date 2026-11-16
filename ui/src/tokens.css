@@ -2826,3 +2826,9 @@ a { color: var(--ee-color-primary); }
   grid-column: 1;
   grid-row: 2;
 }
+.lab-surface-circuit.has-linked-run .studio-circuit-canvas {
+  min-height: 400px;
+}
+.product-workspace .studio-workspace-pane.studio-circuits {
+  min-height: min(720px, calc(100vh - 7rem));
+}

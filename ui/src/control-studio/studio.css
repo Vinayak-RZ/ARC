@@ -682,7 +682,13 @@
 .cs-btn-primary {
   border-color: var(--cs-accent);
   background: var(--cs-accent);
-  color: var(--cs-text-inverse);
+  color: var(--ee-color-on-primary, var(--cs-text-inverse));
+}
+
+[data-theme="dark"] .cs-btn-primary {
+  background: var(--ee-color-primary-active, var(--cs-accent));
+  color: var(--ee-color-on-primary, var(--cs-text-inverse));
+  border-color: var(--ee-color-primary-active, var(--cs-accent));
 }
 
 .cs-btn-primary:hover {

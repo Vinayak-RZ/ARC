@@ -977,10 +977,17 @@ def create_app(root: Path | None = None) -> FastAPI:
 
     @app.get("/api/runs/{run_id}/events")
     async def run_events(run_id: str):
-
         from electrical_engineer.collab.run_events import sse_stream
 
-        return StreamingResponse(sse_stream(run_id), media_type="text/event-stream")
+        return StreamingResponse(
+            sse_stream(run_id),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache, no-transform",
+                "Connection": "keep-alive",
+                "X-Accel-Buffering": "no",
+            },
+        )
 
     @app.post("/api/runs/{run_id}/confirm")
     async def confirm(run_id: str, request: Request) -> dict:

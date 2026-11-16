@@ -20,8 +20,9 @@ def simulate_graph(
     run_dir.mkdir(parents=True, exist_ok=True)
     prob = {k: v for k, v in problem.items() if k != "cir"}
     parsed = parse_graph(graph)
+    step_src = str(prob.get("analysis") or "").lower() == "tran"
     try:
-        base_cir = compile_netlist(parsed)
+        base_cir = compile_netlist(parsed, step_sources=step_src)
     except CompileError as exc:
         return {"ok": False, "error": str(exc), "unchecked": True, "engine": "circuit_graph_sim"}
     analysis = str(problem.get("analysis") or "dc").lower()

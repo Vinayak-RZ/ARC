@@ -14,6 +14,7 @@ import "../studio-engine/labs/LeadLab.jsx";
 export function StudioPage({ onNavigate }) {
   const tab = useLayout((s) => s.studioTab) || "home";
   const lab = useLayout((s) => s.studioLab);
+  const studioRunId = useLayout((s) => s.studioRunId) || "";
   const setStudio = useLayout((s) => s.setStudio);
   const [runs, setRuns] = useState([]);
   const [selected, setSelected] = useState("");
@@ -143,9 +144,7 @@ export function StudioPage({ onNavigate }) {
 
       {tab === "circuits" ? (
         <div className="studio-workspace-pane studio-circuits">
-          <CircuitSandbox
-            linkedRunId={typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("run") || "" : ""}
-          />
+          <CircuitSandbox linkedRunId={studioRunId} />
         </div>
       ) : null}
 

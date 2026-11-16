@@ -53,10 +53,6 @@ def live_ui_server():
         proc.kill()
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="ARC-TE-007: live GET /events returns 200 but streams zero bytes (hello never flushed)",
-)
 def test_sse_revision_order_under_concurrent_edits(live_ui_server: str) -> None:
     base = live_ui_server
     seed = httpx.post(f"{base}/api/examples/divider/run", timeout=120.0)

@@ -228,6 +228,7 @@ def simulate(
         "step_png": str(step_png),
         "impulse_png": str(impulse_png),
         "y_ss": y_ss,
+        "y_final": y_ss,
         "step_series": step_series,
         "compose": meta,
     }

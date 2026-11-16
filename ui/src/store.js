@@ -27,12 +27,36 @@ export function normalizeView(view) {
   return view;
 }
 
+function bootRouteFromUrl() {
+  if (typeof window === "undefined") return {};
+  const q = new URLSearchParams(window.location.search);
+  const problem = q.get("problem");
+  if (problem) {
+    return { view: "problems", currentRunId: problem, studioTab: "home", studioRunId: null, studioLab: null };
+  }
+  const view = q.get("view");
+  if (!view) return {};
+  const tab = q.get("tab");
+  const session = q.get("session");
+  const studioTab = view === "studio" ? tab || (session ? "control" : "home") : "home";
+  return {
+    view: normalizeView(view),
+    learnSubjectId: view === "learn" ? q.get("subject") : null,
+    studioTab,
+    studioRunId: view === "studio" ? q.get("run") : null,
+    studioLab: view === "studio" ? q.get("lab") : null,
+  };
+}
+
+const _bootRoute = bootRouteFromUrl();
+
 export const useLayout = create((set) => ({
-  currentRunId: null,
-  view: "home",
-  learnSubjectId: null,
-  studioTab: "home",
-  studioLab: null,
+  currentRunId: _bootRoute.currentRunId ?? null,
+  view: _bootRoute.view ?? "home",
+  learnSubjectId: _bootRoute.learnSubjectId ?? null,
+  studioTab: _bootRoute.studioTab ?? "home",
+  studioRunId: _bootRoute.studioRunId ?? null,
+  studioLab: _bootRoute.studioLab ?? null,
   sidebarCollapsed: readSidebarCollapsed(),
   sidebarLastToggledAt: 0,
   agentEditing: false,
@@ -73,11 +97,13 @@ export const useLayout = create((set) => ({
   setParametersStale: (parametersStale) => set({ parametersStale }),
   setView: (view) => set({ view: normalizeView(view) }),
   setLearnSubject: (learnSubjectId) => set({ learnSubjectId }),
-  setStudio: ({ tab, lab } = {}) =>
+  setStudio: ({ tab, lab, runId } = {}) =>
     set((s) => ({
       studioTab: tab != null ? tab : s.studioTab,
       studioLab: lab !== undefined ? lab : s.studioLab,
+      studioRunId: runId !== undefined ? runId : s.studioRunId,
     })),
+  setStudioRunId: (studioRunId) => set({ studioRunId }),
   setAgentEditing: (agentEditing) => set({ agentEditing }),
   toggleSidebar: () =>
     set((s) => {

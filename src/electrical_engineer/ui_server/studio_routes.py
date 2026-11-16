@@ -160,7 +160,15 @@ def register_studio_routes(app: FastAPI, *, root: Path) -> None:
 
     @app.get("/api/control-studio/sessions/{session_id}/events")
     async def studio_events(session_id: str) -> StreamingResponse:
-        return StreamingResponse(sse_stream(session_id), media_type="text/event-stream")
+        return StreamingResponse(
+            sse_stream(session_id),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache, no-transform",
+                "Connection": "keep-alive",
+                "X-Accel-Buffering": "no",
+            },
+        )
 
     @app.post("/api/control-studio/sessions/{session_id}/notes")
     async def studio_note(session_id: str, request: Request) -> dict:

@@ -9,7 +9,7 @@ class CompileError(ValueError):
     pass
 
 
-def compile_netlist(graph: dict[str, Any]) -> str:
+def compile_netlist(graph: dict[str, Any], *, step_sources: bool = False) -> str:
     nodes = list(graph.get("nodes") or [])
     edges = list(graph.get("edges") or [])
     if not any(n.get("type") == "ground" for n in nodes):
@@ -65,7 +65,13 @@ def compile_netlist(graph: dict[str, Any]) -> str:
         val = node.get("value")
         if val is None:
             raise CompileError(f"missing value for {ref}")
-        if kind in {"source_v", "source_i"}:
+        if kind == "source_v":
+            if step_sources:
+                v = float(val)
+                lines.append(f"{ref} {n1} {n2} PULSE(0 {v} 0 1p 1p)")
+            else:
+                lines.append(f"{ref} {n1} {n2} DC {val}")
+        elif kind == "source_i":
             lines.append(f"{ref} {n1} {n2} DC {val}")
         elif kind in {"resistor", "capacitor", "inductor"}:
             lines.append(f"{ref} {n1} {n2} {val}")
