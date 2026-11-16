@@ -876,7 +876,7 @@ def main() -> int:
             go(f"?problem={run_id}")
             page.wait_for_selector(".answer-line", timeout=30000)
             page.get_by_role("tab", name="Diagram").click()
-            page.wait_for_selector(".static-diagram", timeout=15000)
+            page.wait_for_selector(".static-diagram, .diagram-shell svg", timeout=30000)
             snap("dark-problem.png")
 
             req = urllib.request.Request(
@@ -1033,7 +1033,7 @@ def main() -> int:
                     snap(f"{stem}-dark.png")
                 go(f"?problem={run_id}")
                 page.get_by_role("tab", name="Diagram").click()
-                page.wait_for_selector(".static-diagram", timeout=15000)
+                page.wait_for_selector(".static-diagram, .diagram-shell svg", timeout=30000)
                 snap("problem-answer-dark.png")
                 page.get_by_role("tab", name="Work").click()
                 page.wait_for_selector(".step-timeline-row", timeout=10000)
