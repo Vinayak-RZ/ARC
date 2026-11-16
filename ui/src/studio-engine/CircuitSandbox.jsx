@@ -114,23 +114,53 @@ function readStoredGraph() {
   }
 }
 
-function CircuitSandboxInner() {
+function CircuitSandboxInner({ linkedRunId }) {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [msg, setMsg] = useState("");
+  const [labPresence, setLabPresence] = useState(null);
   const past = useRef([]);
   const future = useRef([]);
   const hydrated = useRef(false);
+  const revision = useRef(0);
   const { screenToFlowPosition } = useReactFlow();
 
+  const loadLinkedRun = useCallback(
+    (force = false) => {
+      if (!linkedRunId) return;
+      fetch(`/api/runs/${linkedRunId}/lab`)
+        .then((r) => (r.ok ? r.json() : Promise.reject()))
+        .then((body) => {
+          const rev = body?.lab_meta?.revision ?? 0;
+          if (!force && rev <= revision.current && hydrated.current) return;
+          revision.current = rev;
+          const graph = body?.graph || {};
+          const { nodes: n, edges: e } = toFlow(graph);
+          setNodes(n);
+          setEdges(e);
+          setLabPresence(body?.lab_meta?.presence || null);
+          hydrated.current = true;
+        })
+        .catch(() => setMsg("Could not load shared circuit for this run."));
+    },
+    [linkedRunId, setEdges, setNodes],
+  );
+
   useEffect(() => {
+    if (linkedRunId) {
+      loadLinkedRun(true);
+      const es = new EventSource(`/api/runs/${linkedRunId}/events`);
+      es.onmessage = () => loadLinkedRun(false);
+      return () => es.close();
+    }
     if (hydrated.current) return;
     const graph = readStoredGraph() || DIVIDER_SEED;
     const { nodes: n, edges: e } = toFlow(graph);
     setNodes(n);
     setEdges(e);
     hydrated.current = true;
-  }, [setEdges, setNodes]);
+    return undefined;
+  }, [linkedRunId, loadLinkedRun, setEdges, setNodes]);
 
   const snapshot = useCallback(() => {
     past.current = [...past.current, { nodes, edges }].slice(-40);
@@ -139,13 +169,22 @@ function CircuitSandboxInner() {
 
   const persist = useCallback(
     (ns, es) => {
+      const graph = fromFlow(ns, es);
+      if (linkedRunId) {
+        fetch(`/api/runs/${linkedRunId}/graph`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(graph),
+        }).catch(() => setMsg("Could not save shared circuit."));
+        return;
+      }
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(fromFlow(ns, es)));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(graph));
       } catch {
         /* ignore */
       }
     },
-    [],
+    [linkedRunId],
   );
 
   useEffect(() => {
@@ -276,10 +315,10 @@ function CircuitSandboxInner() {
   );
 }
 
-export function CircuitSandbox() {
+export function CircuitSandbox({ linkedRunId = "" }) {
   return (
     <ReactFlowProvider>
-      <CircuitSandboxInner />
+      <CircuitSandboxInner linkedRunId={linkedRunId || ""} />
     </ReactFlowProvider>
   );
 }

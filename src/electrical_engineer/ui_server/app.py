@@ -10,7 +10,7 @@ import threading
 from pathlib import Path
 
 from fastapi import FastAPI, Request
-from fastapi.responses import FileResponse, JSONResponse, Response
+from fastapi.responses import FileResponse, JSONResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 _LOG = logging.getLogger(__name__)
@@ -848,6 +848,16 @@ def create_app(root: Path | None = None) -> FastAPI:
                 }
             )
         disagreement = wv.get("disagreement_banner") or evid_obj.get("disagreement_banner")
+        lab_meta_obj = _read_json(d / "lab_meta.json")
+        lab_verify = _read_json(d / "lab_verify.json")
+        if lab_verify.get("disagreement_banner") and not disagreement:
+            disagreement = lab_verify.get("disagreement_banner")
+        lab = None
+        if lab_meta_obj:
+            lab = {
+                **lab_meta_obj,
+                "ui_url": lab_meta_obj.get("ui_url"),
+            }
         return {
             "id": run_id,
             "title": _human_run_title(d, evid_obj),
@@ -862,6 +872,8 @@ def create_app(root: Path | None = None) -> FastAPI:
             "similar_problems": similar_probs or None,
             "source_chips": source_chips,
             "disagreement_banner": disagreement,
+            "lab": lab,
+            "lab_verify": lab_verify or None,
             "plan": plan,
             "observation": observation,
             "observation_excerpt": observation_excerpt,
@@ -906,16 +918,46 @@ def create_app(root: Path | None = None) -> FastAPI:
 
     @app.put("/api/runs/{run_id}/graph", response_model=None)
     async def put_graph(run_id: str, request: Request):
-        from electrical_engineer.circuit.graph import GraphError, write_graph
+        from electrical_engineer.circuit.graph import GraphError
+        from electrical_engineer.circuit.run_session import apply_graph
+        from electrical_engineer.collab import lab_meta as lab_meta_mod
 
         d = runs / run_id
         d.mkdir(parents=True, exist_ok=True)
+        lab_meta_mod.ensure_lab_meta(d, kind="circuit")
         try:
             body = await request.json()
-            out = write_graph(d, body if isinstance(body, dict) else {})
+            out = apply_graph(d, body if isinstance(body, dict) else {}, author="human", op="ui_save")
         except GraphError as exc:
             return JSONResponse({"error": str(exc)}, status_code=400)
         return {"id": run_id, **out}
+
+    @app.get("/api/runs/{run_id}/lab")
+    def run_lab_meta(run_id: str) -> dict:
+        from electrical_engineer.circuit.run_session import load_graph
+        from electrical_engineer.collab.lab_meta import load_lab_meta
+
+        d = runs / run_id
+        if not d.is_dir():
+            return JSONResponse({"error": "missing"}, status_code=404)
+        meta = load_lab_meta(d)
+        graph = load_graph(d)
+        payload = {"run_id": run_id, "lab_meta": meta, "graph": graph}
+        sim_path = d / "lab_simulate.json"
+        if sim_path.is_file():
+            payload["lab_simulate"] = _read_json(sim_path)
+        verify_path = d / "lab_verify.json"
+        if verify_path.is_file():
+            payload["lab_verify"] = _read_json(verify_path)
+        return payload
+
+    @app.get("/api/runs/{run_id}/events")
+    async def run_events(run_id: str):
+        import asyncio
+
+        from electrical_engineer.collab.run_events import sse_stream
+
+        return StreamingResponse(sse_stream(run_id), media_type="text/event-stream")
 
     @app.post("/api/runs/{run_id}/confirm")
     async def confirm(run_id: str, request: Request) -> dict:

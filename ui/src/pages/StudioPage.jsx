@@ -142,7 +142,7 @@ export function StudioPage({ onNavigate }) {
 
       {tab === "circuits" ? (
         <div className="studio-workspace-pane">
-          <CircuitSandbox />
+          <CircuitSandbox linkedRunId={typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("run") : ""} />
         </div>
       ) : null}
 

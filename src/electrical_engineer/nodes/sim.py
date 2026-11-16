@@ -160,6 +160,39 @@ def verify_circuit_spice(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[s
     return {**out, "capability": "lumped-circuit-sim", "tool": "circuit_verify"}
 
 
+@register("seed-circuit-lab")
+def seed_circuit_lab(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
+    from electrical_engineer.collab.workflow import finish_circuit_lab
+
+    problem = dict(_problem(spec))
+    derived: dict[str, Any] | None = None
+    for v in inputs.values():
+        if isinstance(v, dict) and v.get("derived"):
+            derived = v["derived"] if isinstance(v["derived"], dict) else v
+            break
+        if isinstance(v, dict) and v.get("tool") == "circuit_derive":
+            derived = v
+    if derived:
+        problem = {**problem, **{k: derived[k] for k in ("value", "cir", "probe", "analysis", "unit") if k in derived}}
+    run_dir_s = spec.get("run_dir")
+    if not run_dir_s:
+        return {"ok": False, "unchecked": True, "error": "missing run_dir"}
+    run_dir = Path(run_dir_s)
+    out = finish_circuit_lab(run_dir, problem, derived=derived)
+    if out.get("mismatch"):
+        out["disagreement_banner"] = out.get("disagreement_banner") or "derive vs lab simulation mismatch"
+    ok = "error" not in out and out.get("derived") is not None and not out.get("mismatch")
+    unchecked = False
+    return {
+        **out,
+        "ok": ok,
+        "unchecked": unchecked,
+        "value": out.get("derived"),
+        "capability": "lumped-circuit-sim",
+        "tool": "circuit_lab",
+    }
+
+
 @register("run-spice")
 def run_spice(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
     from electrical_engineer.engines.spice_runner import run_spice_netlist, spice_available

@@ -24,7 +24,8 @@ function readUrlState() {
   const subject = q.get("subject");
   const tab = q.get("tab");
   const lab = q.get("lab");
-  return { view, problem, subject, tab, lab };
+  const studioRun = q.get("run");
+  return { view, problem, subject, tab, lab, studioRun };
 }
 
 export function AppShell() {

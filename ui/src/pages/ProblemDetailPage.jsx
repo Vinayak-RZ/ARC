@@ -4,7 +4,7 @@ import { EngineArtifacts } from "../slots/engine/EngineArtifacts.jsx";
 import { StepTimeline, TraceDiagnostics } from "../components/StepTimeline.jsx";
 import { ParametersPanel } from "../components/ParametersPanel.jsx";
 import { ProblemHeader } from "../components/ProblemHeader.jsx";
-import { labForRecipe, openLab } from "../studio-engine/labs/openExample.js";
+import { labForRecipe, openLab, openRunLab } from "../studio-engine/labs/openExample.js";
 
 const TABS = [
   { id: "work", label: "Work" },
@@ -31,7 +31,12 @@ export function ProblemDetailPage({ id, data, runMeta }) {
   return (
     <div className="page-column problem-detail">
       <ProblemHeader runMeta={runMeta} data={data} />
-      {labForRecipe(recipeId) ? (
+      {data?.lab ? (
+        <button type="button" className="button-primary" onClick={() => openRunLab(data)}>
+          Open in lab
+        </button>
+      ) : null}
+      {!data?.lab && labForRecipe(recipeId) ? (
         <button type="button" className="button-secondary" onClick={() => openLab(labForRecipe(recipeId))}>
           Open simulation lab
         </button>

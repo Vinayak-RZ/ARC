@@ -40,6 +40,24 @@ def series_rlc_graph(
     }
 
 
+def rc_lowpass_graph(vin: float = 5, r_ohm: float = 1000, c_f: float = 1e-6) -> dict[str, Any]:
+    return {
+        "schema": SCHEMA,
+        "nodes": [
+            {"id": "vin", "type": "source_v", "refdes": "V1", "value": vin, "unit": "V", "x": 40, "y": 100},
+            {"id": "r1", "type": "resistor", "refdes": "R1", "value": r_ohm, "unit": "ohm", "x": 200, "y": 40},
+            {"id": "c1", "type": "capacitor", "refdes": "C1", "value": c_f, "unit": "F", "x": 360, "y": 120, "rot": 90},
+            {"id": "gnd", "type": "ground", "refdes": "Gnd", "value": 0, "unit": "", "x": 40, "y": 220},
+        ],
+        "edges": [
+            {"id": "e1", "from": "vin.n1", "to": "r1.n1"},
+            {"id": "e2", "from": "r1.n2", "to": "c1.n1"},
+            {"id": "e3", "from": "c1.n2", "to": "gnd.n1"},
+            {"id": "e4", "from": "vin.n2", "to": "gnd.n1"},
+        ],
+    }
+
+
 def divider_graph(vin: float = 10, r1: float = 1000, r2: float = 1000) -> dict[str, Any]:
     return {
         "schema": SCHEMA,
@@ -73,6 +91,12 @@ def default_graph_for(problem: dict[str, Any] | None) -> dict[str, Any] | None:
             vin=float(problem.get("vin") or 10),
             r1=float(problem.get("r1") or 1000),
             r2=float(problem.get("r2") or 1000),
+        )
+    if kind in {"rc_lowpass", "rc_low_pass"}:
+        return rc_lowpass_graph(
+            vin=float(problem.get("vin") or 5),
+            r_ohm=float(problem.get("r") or problem.get("r_ohm") or 1000),
+            c_f=float(problem.get("c") or problem.get("c_f") or 1e-6),
         )
     if kind == "series_rlc":
         return series_rlc_graph(
