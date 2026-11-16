@@ -314,10 +314,26 @@ body { margin: 0; background: var(--ee-color-canvas); height: 100dvh; overflow: 
   grid-area: palette;
   grid-column: auto;
   grid-row: auto;
-  padding: 8px;
+  padding: 6px 8px;
   border-right: 1px solid var(--cs-border, var(--ee-color-hairline));
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   min-height: 0;
+  max-height: 100%;
+  gap: 8px;
+}
+.cs-app.control-studio.studio.studio-circuit-app .palette-group {
+  gap: 4px;
+}
+.cs-app.control-studio.studio.studio-circuit-app .palette-label {
+  margin: 0 0 2px;
+  font-size: 11px;
+}
+.cs-app.control-studio.studio.studio-circuit-app .palette-btn {
+  min-height: 34px;
+  padding: 0 10px;
+  font-size: 12px;
+  border-radius: 8px;
 }
 .cs-app.control-studio.studio.studio-circuit-app .studio-circuit-canvas {
   grid-area: canvas;
@@ -346,12 +362,15 @@ body { margin: 0; background: var(--ee-color-canvas); height: 100dvh; overflow: 
 }
 .cs-app.control-studio.studio.studio-circuit-app .studio-circuit-hint {
   position: absolute;
-  left: 12px;
+  right: 12px;
   bottom: 12px;
+  left: auto;
+  top: auto;
   z-index: 5;
   margin: 0;
-  max-width: 26rem;
+  max-width: 15rem;
   pointer-events: none;
+  text-align: right;
 }
 .cs-app.control-studio.studio.studio-circuit-app .studio-circuit-msg {
   position: absolute;

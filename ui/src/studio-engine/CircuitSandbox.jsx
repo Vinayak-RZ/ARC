@@ -412,10 +412,12 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
         </header>
         <Palette onAdd={addPart} disabled={simBusy} />
         <div className="studio-circuit-canvas flow-wrap" ref={wrapRef}>
-          <p className="canvas-wire-hint studio-circuit-hint">
-            Drag a port onto another port. Double-click a wire to add a junction. Click a wire, then Delete, to
-            remove it.
-          </p>
+          {!sim ? (
+            <p className="canvas-wire-hint studio-circuit-hint">
+              Drag a port onto another port. Double-click a wire to add a junction. Click a wire, then Delete, to
+              remove it.
+            </p>
+          ) : null}
           {msg ? <p className="hint studio-circuit-msg">{msg}</p> : null}
           <ReactFlow
             nodes={nodes}
@@ -484,7 +486,6 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
         <button type="button" className="button-secondary" onClick={clearCanvas}>
           Clear canvas
         </button>
-      </div>
       </div>
       {linkedRunId ? (
         <aside className="studio-lab-drawer card-surface" aria-label="Lab collaboration">

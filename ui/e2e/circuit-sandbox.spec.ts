@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { circuitLayoutProblem, svgAxisOverlapProblem } from "./layout-helpers.js";
+import { circuitLayoutProblem, prepareTheme, reinforceTheme, svgAxisOverlapProblem } from "./layout-helpers.js";
 
 const BASE = process.env.ARC_UI_URL || "http://127.0.0.1:8765";
 
@@ -7,7 +7,9 @@ test.describe("Circuit sandbox", () => {
   test("Series RLC simulate reports Vc,peak near 11.630 V with unit", async ({ page }) => {
     test.setTimeout(90_000);
     await page.setViewportSize({ width: 1440, height: 900 });
+    await prepareTheme(page, "light");
     await page.goto(`${BASE}/?view=studio&tab=circuits`);
+    await reinforceTheme(page, "light");
     await page.evaluate(() => localStorage.removeItem("arc-circuit-sandbox-v1"));
     await page.getByRole("button", { name: "Series RLC" }).click();
     await page.locator(".part-ref", { hasText: "V1" }).waitFor();
