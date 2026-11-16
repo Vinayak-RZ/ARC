@@ -19,13 +19,16 @@ test.describe("Circuit sandbox", () => {
       simBtn.click(),
     ]);
     await expect(page.locator(".studio-circuit-results .se-waveform")).toBeVisible({ timeout: 30000 });
-    const num = page.locator(".studio-circuit-results .answer-num");
-    await expect(num).toBeVisible();
-    await expect(page.locator(".studio-circuit-results .answer-unit")).toHaveText(/V/);
-    const v = parseFloat(await num.innerText());
+    const line = page.locator(".studio-circuit-results .answer-line");
+    await expect(line).toBeVisible();
+    const headline = await line.innerText();
+    const m = headline.match(/([\d.]+)\s*V/);
+    expect(m).toBeTruthy();
+    const v = parseFloat(m[1]);
     expect(Number.isFinite(v)).toBeTruthy();
     expect(Math.abs(v - 11.63) / 11.63).toBeLessThan(0.005);
-    await expect(page.locator(".studio-circuit-probes")).toBeVisible();
+    await expect(page.locator(".studio-circuit-param-strip")).toContainText("V 10 V");
+    await expect(page.locator(".studio-circuit-param-strip")).toContainText("100 µF");
     expect(await circuitLayoutProblem(page)).toBeNull();
     expect(await svgAxisOverlapProblem(page, ".studio-circuit-results .se-waveform")).toBeNull();
   });
