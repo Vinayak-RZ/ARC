@@ -169,6 +169,9 @@ def seed_control_lab(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, 
     problem = dict(_problem(spec))
     derived_value: float | None = None
     golden = str(problem.get("golden") or "")
+    ctrl_ok = any(
+        isinstance(v, dict) and v.get("tool") == "python-control" and v.get("ok") for v in inputs.values()
+    )
     for v in inputs.values():
         if not isinstance(v, dict):
             continue
@@ -188,7 +191,7 @@ def seed_control_lab(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, 
         if not golden and v.get("golden"):
             golden = str(v["golden"])
     gkey = golden or str(problem.get("golden") or "")
-    if gkey in GOLDENS:
+    if ctrl_ok and gkey in GOLDENS:
         ref = cs_simulate.simulate(GOLDENS[gkey]())
         metrics = (ref.get("step_series") or {}).get("metrics") or {}
         if metrics.get("final_value") is not None:
@@ -201,6 +204,17 @@ def seed_control_lab(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, 
     run_dir = Path(run_dir_s)
     if golden:
         problem["golden"] = golden
+    if not ctrl_ok:
+        from electrical_engineer.engines.control_runner import control_available
+
+        if not control_available():
+            return {
+                "ok": False,
+                "unchecked": True,
+                "error": "python-control missing",
+                "tool": "control_lab",
+                "capability": "lumped-control-sim",
+            }
     out = finish_control_lab(
         run_dir,
         problem,
