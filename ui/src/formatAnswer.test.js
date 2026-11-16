@@ -39,6 +39,20 @@ describe("buildAnswerRows", () => {
     assert.match(rows[0].display, /^Vo = /);
   });
 
+  it("shows no-overshoot RLC headline from transient", () => {
+    const display = runHeadline(
+      { recipe_id: "simulate-circuit", value: 11.63, unchecked: false },
+      {
+        problem: { kind: "series_rlc", vin: 10 },
+        circuit_derive: { value: 10 },
+        rlc_transient: { overshoot_pct: 0, settling_2pct_entry_s: 0.00583, Vc_peak_V: 10 },
+      },
+    );
+    assert.match(display, /No overshoot/);
+    assert.match(display, /10\.00 V/);
+    assert.match(display, /5\.83 ms/);
+  });
+
   it("omits numeric row when lab needs review", () => {
     const { rows } = buildAnswerRows(
       { recipe_id: "simulate-circuit", value: 11.963, unchecked: false },

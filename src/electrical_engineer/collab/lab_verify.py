@@ -75,6 +75,9 @@ def _decorate_metric_rows(verify: dict[str, Any], meta: dict[str, Any], graph: d
             row["derived_note"] = derived_label
             row["derived_status"] = "out_of_date"
             row["derived_status_label"] = "Out of date"
+            row["status"] = "out_of_date"
+            row["status_label"] = "Out of date"
+            row["rel_err_pct"] = None
         if row.get("simulated_out_of_date"):
             row["simulated_status"] = "out_of_date"
             row["simulated_status_label"] = "Out of date"
@@ -131,7 +134,7 @@ def apply_verify_semantics(
             out["stale_reason"] = out.get("stale_reason") or (
                 "Simulation is behind the current lab revision — run Simulate again."
             )
-        elif not out["derivation_matches_graph"]:
+        if not out["derivation_matches_graph"]:
             notes = human_edit_notes(meta.get("agent_baseline_graph"), graph or {})
             if notes:
                 out["human_edit_notes"] = notes
@@ -140,7 +143,14 @@ def apply_verify_semantics(
                 if notes
                 else "The agent derived for a different circuit than the lab shows now."
             )
+        if not out["derivation_matches_graph"]:
+            out["needs_review"] = False
+            out["mismatch"] = False
+            out.pop("disagreement_banner", None)
+        elif out.get("mismatch") and out.get("verdict_current"):
             out["needs_review"] = True
+        else:
+            out["needs_review"] = False
     if graph is not None:
         _decorate_metric_rows(out, meta, graph)
         rows = [r for r in (out.get("metrics") or []) if isinstance(r, dict)]
@@ -182,8 +192,29 @@ def agent_rederive_circuit_lab(run_dir: Path) -> dict[str, Any]:
         problem.update(params)
         problem.setdefault("kind", "series_rlc")
         problem.setdefault("analysis", "tran")
+    if str(problem.get("kind") or "") == "series_rlc":
+        problem.setdefault("allow_template_fallback", True)
     derived = derive(problem)
     (run_dir / "circuit_derive.json").write_text(json.dumps(derived, indent=2), encoding="utf-8")
+    params = series_rlc_params_from_graph(graph) or problem
+    if str(problem.get("kind") or "") == "series_rlc" or params.get("r_ohm") is not None:
+        from electrical_engineer.engines.rlc_transient import series_rlc_step
+
+        rlc = series_rlc_step(
+            float(params.get("r_ohm") or 10),
+            float(params.get("l_h") or 0.01),
+            float(params.get("c_f") or 100e-6),
+            float(params.get("v_step") or params.get("vin") or 10),
+        )
+        (run_dir / "rlc_transient.json").write_text(json.dumps(rlc, indent=2), encoding="utf-8")
+        for name in ("evidentiary.json", "summary.json"):
+            path = run_dir / name
+            if not path.is_file():
+                continue
+            evid = _read_json(path)
+            if not evid.get("unchecked"):
+                evid["value"] = float(derived.get("value") if derived.get("value") is not None else rlc["Vc_peak_V"])
+                path.write_text(json.dumps(evid, indent=2), encoding="utf-8")
     verify = refresh_circuit_lab_verify(run_dir, problem, derived=derived, graph=graph)
     verify = apply_verify_semantics(verify, meta, graph) or verify
     (run_dir / "lab_verify.json").write_text(json.dumps(verify, indent=2), encoding="utf-8")

@@ -82,6 +82,10 @@ def _human_run_title(folder: Path, evid: dict) -> str:
     problem = _read_json(folder / "problem.json")
     recipe_id = str(evid.get("recipe_id") or problem.get("recipe_id") or "")
 
+    if problem:
+        stable = run_title(recipe_id or "solve-circuit-problem", problem)
+        if stable and not _opaque_title(stable, folder.name):
+            return stable
     headline = run_headline(recipe_id, problem, evid.get("value"), bool(evid.get("unchecked")))
     if headline:
         return headline
@@ -918,6 +922,8 @@ def create_app(root: Path | None = None) -> FastAPI:
             "control_diagram": control_diagram,
             "diagram": diagram,
             "work_steps": _work_steps(d),
+            "circuit_derive": _read_json(d / "circuit_derive.json") or None,
+            "rlc_transient": _read_json(d / "rlc_transient.json") or None,
             "activity_feed": activity_feed,
             "state": state,
         }

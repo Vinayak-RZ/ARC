@@ -2537,6 +2537,19 @@ a { color: var(--ee-color-primary); }
 .se-waveform-title { margin: 0; font-size: var(--ee-type-caption); font-weight: 600; color: var(--ee-color-ink); }
 .se-waveform-axes { font-size: var(--ee-type-caption); color: var(--ee-color-muted); flex: 1 1 auto; }
 .studio-circuit-hint { margin: 0 0 var(--ee-space-s); font-size: var(--ee-type-caption); color: var(--ee-color-muted); }
+.studio-bar-hint {
+  margin: 0 12px 0 0;
+  flex: 1 1 auto;
+  max-width: 36rem;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--ee-color-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.studio-bar-hint .text-link { font-size: 12px; flex-shrink: 0; }
 .studio-circuit-probes {
   display: flex;
   flex-wrap: wrap;

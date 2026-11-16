@@ -55,7 +55,37 @@ export function answerPartsFromRow(label, scalar, digits) {
   return { name, value, unit, display: unit ? `${name} = ${value} ${unit}` : `${name} = ${value}` };
 }
 
+function isSeriesRlc(data, evid) {
+  const kind = String(data?.problem?.kind || evid?.problem_kind || "").toLowerCase();
+  const recipe = String(evid?.recipe_id || "");
+  return kind === "series_rlc" || recipe === "simulate-circuit" || recipe === "series-rlc-transient";
+}
+
+function rlcAnswerDisplay(data, evid) {
+  const tr = data?.rlc_transient;
+  const derive = data?.circuit_derive;
+  const lv = data?.lab_verify;
+  if (!isSeriesRlc(data, evid) || (!tr && !derive && !lv)) return null;
+  if (lv?.needs_review) return null;
+  const overshoot = Number(tr?.overshoot_pct ?? (derive?.overshoot_pct ?? 99)) < 0.5;
+  const vStep = Number(data?.problem?.v_step ?? data?.problem?.vin ?? evid?.vin ?? 10);
+  if (overshoot) {
+    const finalV = Number(derive?.value ?? lv?.derived ?? tr?.Vc_peak_V ?? vStep);
+    const tMs =
+      1000 *
+      Number(
+        tr?.settling_2pct_entry_s ?? tr?.settling_time_2pct_s ?? derive?.settling_2pct_entry_s ?? 0,
+      );
+    return `No overshoot · Final value ${finalV.toFixed(2)} V · Settling (2%) ${tMs.toFixed(2)} ms`;
+  }
+  const peak = Number(derive?.value ?? lv?.derived ?? evid?.value);
+  const tMs = 1000 * Number(derive?.t_s ?? tr?.t_Vc_peak_s ?? 0);
+  return `Vc,peak = ${peak.toFixed(3)} V at ${tMs.toFixed(2)} ms`;
+}
+
 export function runHeadline(evid, data) {
+  const rlc = rlcAnswerDisplay(data, evid);
+  if (rlc) return rlc;
   if (data?.lab_verify?.needs_review) return "";
   const { rows } = buildAnswerRows(evid, data);
   if (rows.length === 1) return rows[0].display;
@@ -67,6 +97,11 @@ export function buildAnswerRows(evid, data) {
   const title = data?.title || evid?.title || "";
   const { head, quantity } = parseTitleParts(title);
   const rows = [];
+  const rlcLine = rlcAnswerDisplay(data, evid);
+  if (rlcLine) {
+    rows.push({ name: "Result", value: rlcLine, unit: "", display: rlcLine, plain: true });
+    return { head, rows };
+  }
   const rawValues = evid?.values && typeof evid.values === "object" ? evid.values : {};
   const entries = Object.entries(rawValues).filter(
     ([k, v]) => k !== "token" && v != null && v !== "unchecked" && typeof v !== "object",
@@ -82,7 +117,12 @@ export function buildAnswerRows(evid, data) {
   if (lv?.needs_review) {
     return { head, rows: [] };
   }
-  const scalar = evid?.value;
+  const scalar =
+    data?.circuit_derive?.value != null
+      ? data.circuit_derive.value
+      : lv?.derived != null && lv.derivation_matches_graph !== false
+        ? lv.derived
+        : evid?.value;
   if (scalar == null || scalar === "unchecked") {
     return { head, rows: [] };
   }

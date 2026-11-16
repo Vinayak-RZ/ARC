@@ -1,18 +1,9 @@
 import { subjectTag, displayTitle } from "../runDisplay.js";
-import { runHeadline } from "../formatAnswer.js";
 import { relativeTime } from "../units/format.js";
 
 export function ProblemHeader({ runMeta, data }) {
   const subject = runMeta?.subject || subjectTag(runMeta || {});
-  const evid = (() => {
-    try {
-      return JSON.parse(data?.summary || "{}");
-    } catch {
-      return {};
-    }
-  })();
-  const headline = runHeadline(evid, data);
-  const title = headline || displayTitle({ ...runMeta, title: data?.title || runMeta?.display_title });
+  const title = displayTitle({ ...runMeta, title: data?.title, recipe_id: runMeta?.recipe_id });
   const updated = relativeTime(runMeta?.modified_at);
   return (
     <header className="problem-header">
