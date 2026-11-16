@@ -9,7 +9,7 @@ def test_run_list_and_detail(tmp_path, monkeypatch) -> None:
     runs = tmp_path / "runs" / "abcd-1"
     runs.mkdir(parents=True)
     (runs / "summary.json").write_text(
-        '{"recipe_id":"x","unchecked":true,"title":"Voltage divider · Vout"}',
+        '{"recipe_id":"x","unchecked":false,"title":"Voltage divider · Vout"}',
         encoding="utf-8",
     )
     client = TestClient(create_app(tmp_path))
@@ -19,7 +19,7 @@ def test_run_list_and_detail(tmp_path, monkeypatch) -> None:
     assert any(row["id"] == "abcd-1" for row in listed)
     item = next(row for row in listed if row["id"] == "abcd-1")
     assert item["title"] == "Voltage divider · Vout"
-    assert item["unchecked"] is True
+    assert item["unchecked"] is False
     assert item["recipe_id"] == "x"
     assert item.get("sample") is False
     detail = client.get("/api/runs/abcd-1")

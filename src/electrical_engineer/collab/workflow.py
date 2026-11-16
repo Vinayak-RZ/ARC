@@ -52,7 +52,10 @@ def finish_circuit_lab(
             else:
                 return {"ok": False, "error": str(exc), "unchecked": True}
     dval = float(derived["value"])
-    sim = simulate_graph(graph, {**problem, **derived}, run_dir=run_dir)
+    sim_prob = {**problem}
+    if isinstance(derived, dict):
+        sim_prob.update({k: derived[k] for k in ("cir", "probe", "analysis", "t_s", "t_stop", "f_hz", "derive_metric") if k in derived})
+    sim = simulate_graph(graph, sim_prob, run_dir=run_dir)
     simulated = sim.get("simulated") if isinstance(sim.get("simulated"), (int, float)) else sim.get("value")
     if simulated is not None:
         try:

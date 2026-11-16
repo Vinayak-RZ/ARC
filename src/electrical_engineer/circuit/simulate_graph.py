@@ -18,8 +18,9 @@ def simulate_graph(
     run_dir: Path,
 ) -> dict[str, Any]:
     parsed = parse_graph(graph)
+    explicit_cir = str(problem.get("cir") or "").strip()
     try:
-        base_cir = compile_netlist(parsed)
+        base_cir = explicit_cir or compile_netlist(parsed)
     except CompileError as exc:
         return {"ok": False, "error": str(exc), "unchecked": True, "engine": "circuit_graph_sim"}
     analysis = str(problem.get("analysis") or "dc").lower()

@@ -960,12 +960,12 @@
 }
 
 .studio-pid.studio-block {
-  width: 148px;
-  min-width: 148px;
-  max-width: 148px;
-  height: 44px;
-  min-height: 44px;
-  max-height: 44px;
+  width: 168px;
+  min-width: 168px;
+  max-width: 168px;
+  height: 56px;
+  min-height: 56px;
+  max-height: 56px;
 }
 
 .studio-pid-line {
