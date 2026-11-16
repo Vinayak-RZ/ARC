@@ -12,7 +12,11 @@ from electrical_engineer.collab.workflow import finish_circuit_lab, finish_contr
 from electrical_engineer.engines.solvers.power import idmt_relay_time
 from electrical_engineer.runner.execute import execute
 from electrical_engineer.ui_server.app import create_app
-from tests.golden_numerics_refs import HEADLINE_CONTROL_Y_SS, HEADLINE_IDMT_T_S, HEADLINE_RLC_VC_PEAK_V
+from tests.golden_numerics_refs import (
+    HEADLINE_CONTROL_Y_SS,
+    HEADLINE_IDMT_T_S,
+    HEADLINE_RLC_VC_PEAK_V,
+)
 
 
 @pytest.fixture

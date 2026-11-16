@@ -54,7 +54,9 @@ def test_sse_delivers_graph_revisions_in_process(inproc_ui_server: str) -> None:
     base = inproc_ui_server
     base_graph = {
         "schema": "arc.circuit.v1",
-        "nodes": [{"id": "gnd", "type": "ground", "refdes": "G", "value": 0, "unit": "", "x": 0, "y": 0}],
+        "nodes": [
+            {"id": "gnd", "type": "ground", "refdes": "G", "value": 0, "unit": "", "x": 0, "y": 0}
+        ],
         "edges": [],
     }
     httpx.put(f"{base}/api/runs/{rid}/graph", json=base_graph, timeout=30.0)
@@ -63,19 +65,21 @@ def test_sse_delivers_graph_revisions_in_process(inproc_ui_server: str) -> None:
 
     def reader() -> None:
         try:
-            with httpx.Client(timeout=None) as client:
-                with client.stream("GET", f"{base}/api/runs/{rid}/events") as resp:
-                    for line in resp.iter_lines():
-                        if stop.is_set():
-                            break
-                        if not line.startswith("data:"):
-                            continue
-                        payload = json.loads(line[5:].strip())
-                        if payload.get("type") == "graph" and "revision" in payload:
-                            revisions.append(int(payload["revision"]))
-        except Exception as exc:  # noqa: BLE001
+            with (
+                httpx.Client(timeout=None) as client,
+                client.stream("GET", f"{base}/api/runs/{rid}/events") as resp,
+            ):
+                for line in resp.iter_lines():
+                    if stop.is_set():
+                        break
+                    if not line.startswith("data:"):
+                        continue
+                    payload = json.loads(line[5:].strip())
+                    if payload.get("type") == "graph" and "revision" in payload:
+                        revisions.append(int(payload["revision"]))
+        except Exception:
             stop.set()
-            raise exc
+            raise
 
     th = threading.Thread(target=reader, daemon=True)
     th.start()

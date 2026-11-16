@@ -6,11 +6,11 @@ import math
 
 import pytest
 
+from electrical_engineer.circuit.graph import parse_graph, series_rlc_graph
 from electrical_engineer.circuit.netlist import CompileError, compile_netlist
 from electrical_engineer.circuit.simulate_graph import compare_derived
 from electrical_engineer.engines.rlc_transient import series_rlc_step
 from electrical_engineer.engines.solvers.power import idmt_relay_time
-from electrical_engineer.circuit.graph import parse_graph, series_rlc_graph
 from tests.golden_numerics_refs import HEADLINE_IDMT_T_S, HEADLINE_RLC_VC_PEAK_V
 
 
@@ -34,7 +34,9 @@ def test_compile_netlist_ground_node_zero() -> None:
 
 def test_compile_netlist_rejects_no_ground() -> None:
     with pytest.raises(CompileError):
-        compile_netlist(parse_graph({"nodes": [{"id": "r1", "type": "resistor", "value": 1}], "edges": []}))
+        compile_netlist(
+            parse_graph({"nodes": [{"id": "r1", "type": "resistor", "value": 1}], "edges": []})
+        )
 
 
 def test_idmt_standard_curve_k_factor() -> None:

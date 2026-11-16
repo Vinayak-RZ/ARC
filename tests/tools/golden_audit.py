@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Emit golden→derived contamination candidates for TEST_REPORT (read-only scan)."""
 
 from __future__ import annotations
@@ -10,10 +9,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 OUT = Path("/opt/cursor/artifacts/golden-audit.json")
 PATTERNS = (
-    re.compile(r'"value"\s*:\s*[\d.]+', re.M),
-    re.compile(r"declared_gold", re.M),
-    re.compile(r"derived_value", re.M),
-    re.compile(r"expected\s*[:=]", re.M),
+    re.compile(r'"value"\s*:\s*[\d.]+', re.MULTILINE),
+    re.compile(r"declared_gold", re.MULTILINE),
+    re.compile(r"derived_value", re.MULTILINE),
+    re.compile(r"expected\s*[:=]", re.MULTILINE),
 )
 
 

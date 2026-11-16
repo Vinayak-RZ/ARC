@@ -11,8 +11,8 @@ from hypothesis import strategies as st
 
 from electrical_engineer.circuit.graph import SCHEMA, GraphError, parse_graph, series_rlc_graph
 from electrical_engineer.circuit.netlist import CompileError, compile_netlist
-from electrical_engineer.circuit.simulate_graph import simulate_graph
 from electrical_engineer.circuit.run_session import apply_graph
+from electrical_engineer.circuit.simulate_graph import simulate_graph
 from electrical_engineer.collab.workflow import finish_circuit_lab
 from electrical_engineer.engines.rlc_transient import series_rlc_step
 from electrical_engineer.engines.spice_runner import simulator_status

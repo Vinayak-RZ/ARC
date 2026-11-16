@@ -12,6 +12,7 @@ from pathlib import Path
 import httpx
 import pytest
 
+
 def _repo_root() -> Path:
     return Path(__file__).resolve().parents[2]
 
@@ -64,17 +65,19 @@ def test_sse_revision_order_under_concurrent_edits(live_ui_server: str) -> None:
 
     def reader() -> None:
         try:
-            with httpx.Client(timeout=None) as client:
-                with client.stream("GET", f"{base}/api/runs/{rid}/events") as resp:
-                    assert resp.status_code == 200
-                    for line in resp.iter_lines():
-                        if stop.is_set():
-                            break
-                        if not line.startswith("data:"):
-                            continue
-                        payload = json.loads(line[5:].strip())
-                        if payload.get("type") == "graph" and "revision" in payload:
-                            revisions.append(int(payload["revision"]))
+            with (
+                httpx.Client(timeout=None) as client,
+                client.stream("GET", f"{base}/api/runs/{rid}/events") as resp,
+            ):
+                assert resp.status_code == 200
+                for line in resp.iter_lines():
+                    if stop.is_set():
+                        break
+                    if not line.startswith("data:"):
+                        continue
+                    payload = json.loads(line[5:].strip())
+                    if payload.get("type") == "graph" and "revision" in payload:
+                        revisions.append(int(payload["revision"]))
         except Exception as exc:  # noqa: BLE001
             errors.append(str(exc))
 

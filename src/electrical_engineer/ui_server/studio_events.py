@@ -7,8 +7,9 @@ import json
 import queue
 import time
 from collections import defaultdict
+from collections.abc import AsyncIterator
 from functools import partial
-from typing import Any, AsyncIterator
+from typing import Any
 
 _subscribers: dict[str, list[queue.Queue]] = defaultdict(list)
 

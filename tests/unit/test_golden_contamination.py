@@ -3,16 +3,14 @@
 from __future__ import annotations
 
 import json
-import re
 from pathlib import Path
 
 import pytest
 
 from electrical_engineer.collab.workflow import finish_circuit_lab, finish_control_lab
-from electrical_engineer.control_studio.simulate import simulate
 from electrical_engineer.control_studio.goldens import GOLDENS
+from electrical_engineer.control_studio.simulate import simulate
 from electrical_engineer.engines.circuit_derive import derive
-
 
 _REPO = Path(__file__).resolve().parents[2]
 _SCAN_GLOBS = (
