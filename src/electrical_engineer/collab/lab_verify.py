@@ -1,10 +1,16 @@
-"""Lab verify freshness: revision stamping, stale detection, human-edit re-sim."""
+"""Lab verify freshness: verdict vs derivation, human-edit re-sim, agent re-derive."""
 
 from __future__ import annotations
 
 import json
 from pathlib import Path
 from typing import Any
+
+from electrical_engineer.circuit.graph import (
+    graph_resistor_values,
+    graphs_electrically_equal,
+    series_rlc_params_from_graph,
+)
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -15,21 +21,6 @@ def _read_json(path: Path) -> dict[str, Any]:
     except json.JSONDecodeError:
         return {}
     return data if isinstance(data, dict) else {}
-
-
-def graph_resistor_values(graph: dict[str, Any]) -> dict[str, float]:
-    out: dict[str, float] = {}
-    for node in graph.get("nodes") or []:
-        if str(node.get("type") or "").lower() != "resistor":
-            continue
-        ref = str(node.get("refdes") or node.get("id") or "").upper()
-        if node.get("value") is None:
-            continue
-        try:
-            out[ref or str(node.get("id"))] = float(node["value"])
-        except (TypeError, ValueError):
-            continue
-    return out
 
 
 def human_edit_notes(
@@ -51,54 +42,170 @@ def human_edit_notes(
     return notes
 
 
-def attach_verify_freshness(verify: dict[str, Any] | None, meta: dict[str, Any]) -> dict[str, Any] | None:
+def _baseline_derived_rev(meta: dict[str, Any]) -> int:
+    return int(meta.get("agent_baseline_rev") or meta.get("revision") or 1)
+
+
+def derived_for_label(meta: dict[str, Any], *, target: str = "r1") -> str:
+    base = meta.get("agent_baseline_graph")
+    if not isinstance(base, dict):
+        return f"Derived for r{_baseline_derived_rev(meta)}"
+    vals = graph_resistor_values(base)
+    ref = next((k for k in vals if k.upper() == "R1"), None) or next(iter(vals.keys()), "R1")
+    rev = _baseline_derived_rev(meta)
+    if ref in vals:
+        return f"Derived for r{rev} ({ref} = {vals[ref]:g} Ω)"
+    return f"Derived for r{rev}"
+
+
+def _decorate_metric_rows(verify: dict[str, Any], meta: dict[str, Any], graph: dict[str, Any]) -> None:
+    matches = derivation_matches_graph(meta, graph or {})
+    deriv_rev = _baseline_derived_rev(meta)
+    sim_rev = int(verify.get("computed_at_revision") or verify.get("graph_revision") or 0)
+    verdict_current = bool(verify.get("verdict_current", True))
+    derived_label = derived_for_label(meta)
+    for row in verify.get("metrics") or []:
+        if not isinstance(row, dict):
+            continue
+        row["derived_revision"] = deriv_rev
+        row["simulated_revision"] = sim_rev if verdict_current else None
+        row["derived_out_of_date"] = not matches
+        row["simulated_out_of_date"] = not verdict_current
+        if row.get("derived_out_of_date"):
+            row["derived_note"] = derived_label
+            row["derived_status"] = "out_of_date"
+            row["derived_status_label"] = "Out of date"
+        if row.get("simulated_out_of_date"):
+            row["simulated_status"] = "out_of_date"
+            row["simulated_status_label"] = "Out of date"
+
+
+def derivation_matches_graph(meta: dict[str, Any], graph: dict[str, Any]) -> bool:
+    baseline = meta.get("agent_baseline_graph")
+    if not isinstance(baseline, dict) or not baseline.get("nodes"):
+        return True
+    return graphs_electrically_equal(baseline, graph)
+
+
+def rlc_compare_metric_label(
+    meta: dict[str, Any],
+    graph: dict[str, Any],
+    *,
+    no_overshoot: bool,
+) -> str:
+    if not no_overshoot:
+        return "Capacitor peak"
+    base = meta.get("agent_baseline_graph") if isinstance(meta.get("agent_baseline_graph"), dict) else {}
+    params_b = series_rlc_params_from_graph(base) or {}
+    params_c = series_rlc_params_from_graph(graph) or {}
+    r_base = params_b.get("r_ohm", 10)
+    r_cur = params_c.get("r_ohm", r_base)
+    return f"Agent's Vc,peak (R={r_base:g} Ω) vs lab Vc max (R={r_cur:g} Ω)"
+
+
+def apply_verify_semantics(
+    verify: dict[str, Any] | None,
+    meta: dict[str, Any],
+    graph: dict[str, Any] | None = None,
+) -> dict[str, Any] | None:
     if not verify:
         return verify
-    rev = int(meta.get("revision") or 0)
-    vrev = int(verify.get("graph_revision") or verify.get("computed_at_revision") or 0)
     out = dict(verify)
-    if vrev <= 0:
-        out.setdefault("stale", True)
-        out["status"] = "out_of_date"
-        out["status_label"] = "Out of date — re-simulate the lab"
-        return out
-    if rev > vrev:
-        out["stale"] = True
-        out["graph_revision"] = vrev
-        out["current_graph_revision"] = rev
-        if out.get("status") == "agrees" and not out.get("mismatch"):
+    kind = str(out.get("lab_kind") or meta.get("kind") or "circuit")
+    rev = int(meta.get("revision") or 0)
+    vrev = int(out.get("computed_at_revision") or out.get("graph_revision") or 0)
+    if kind == "control":
+        out["verdict_current"] = vrev > 0 and rev <= vrev
+        out["derivation_matches_graph"] = True
+        out["stale"] = not out["verdict_current"]
+        if out["stale"]:
             out["status"] = "out_of_date"
-            out["status_label"] = "Out of date — lab changed since this check"
-        out.setdefault(
-            "stale_reason",
-            "The circuit no longer matches the graph this verification used.",
-        )
+            out["stale_reason"] = "Re-simulate the loop to refresh this check."
     else:
-        out["stale"] = False
+        out["derivation_matches_graph"] = derivation_matches_graph(meta, graph or {})
+        out["verdict_current"] = vrev > 0 and rev <= vrev
+        out["stale"] = not out["verdict_current"]
+        if not out["verdict_current"]:
+            if out.get("status") == "agrees" and not out.get("mismatch"):
+                out["status"] = "out_of_date"
+            out["stale_reason"] = out.get("stale_reason") or (
+                "Simulation is behind the current lab revision — run Simulate again."
+            )
+        elif not out["derivation_matches_graph"]:
+            notes = human_edit_notes(meta.get("agent_baseline_graph"), graph or {})
+            if notes:
+                out["human_edit_notes"] = notes
+            out["re_derive_reason"] = (
+                (notes[0] + "; the agent's derivation no longer applies.")
+                if notes
+                else "The agent derived for a different circuit than the lab shows now."
+            )
+            out["needs_review"] = True
+    if graph is not None:
+        _decorate_metric_rows(out, meta, graph)
+        rows = [r for r in (out.get("metrics") or []) if isinstance(r, dict)]
+        out["all_rows_out_of_date"] = bool(
+            rows
+            and all(bool(r.get("derived_out_of_date")) and bool(r.get("simulated_out_of_date")) for r in rows)
+        )
     return out
 
 
-def mark_circuit_verify_stale(run_dir: Path) -> None:
-    """Bump revision without a new sim — GET /lab will report stale until re-verify."""
-    path = run_dir / "lab_verify.json"
-    if not path.is_file():
-        return
-    verify = _read_json(path)
+def attach_verify_freshness(
+    verify: dict[str, Any] | None,
+    meta: dict[str, Any],
+    *,
+    run_dir: Path | None = None,
+    graph: dict[str, Any] | None = None,
+) -> dict[str, Any] | None:
+    if not verify:
+        return verify
+    if graph is None and run_dir is not None:
+        from electrical_engineer.circuit.run_session import load_graph
+
+        graph = load_graph(run_dir)
+    return apply_verify_semantics(verify, meta, graph or {})
+
+
+def agent_rederive_circuit_lab(run_dir: Path) -> dict[str, Any]:
+    """Re-run derive on agent baseline params (or updated problem) and refresh verify."""
+    from electrical_engineer.circuit.run_session import load_graph
     from electrical_engineer.collab import lab_meta
+    from electrical_engineer.collab.workflow import refresh_circuit_lab_verify
+    from electrical_engineer.engines.circuit_derive import derive
 
     meta = lab_meta.load_lab_meta(run_dir)
-    verify = attach_verify_freshness(verify, meta) or verify
-    verify["stale"] = True
-    verify["status"] = "out_of_date"
-    verify["status_label"] = "Out of date — re-simulate to refresh"
-    notes = human_edit_notes(meta.get("agent_baseline_graph"), _read_json(run_dir / "graph.json"))
-    if notes:
-        verify["human_edit_notes"] = notes
-        verify["stale_reason"] = (
-            f"{notes[0]}; the agent's derivation no longer applies to this circuit."
-        )
-        verify["needs_review"] = True
-    path.write_text(json.dumps(verify, indent=2), encoding="utf-8")
+    problem = dict(_read_json(run_dir / "problem.json"))
+    graph = load_graph(run_dir)
+    params = series_rlc_params_from_graph(graph)
+    if params:
+        problem.update(params)
+        problem.setdefault("kind", "series_rlc")
+        problem.setdefault("analysis", "tran")
+    derived = derive(problem)
+    (run_dir / "circuit_derive.json").write_text(json.dumps(derived, indent=2), encoding="utf-8")
+    verify = refresh_circuit_lab_verify(run_dir, problem, derived=derived, graph=graph)
+    verify = apply_verify_semantics(verify, meta, graph) or verify
+    (run_dir / "lab_verify.json").write_text(json.dumps(verify, indent=2), encoding="utf-8")
+    meta = lab_meta.load_lab_meta(run_dir)
+    meta["agent_baseline_graph"] = graph
+    meta["agent_baseline_rev"] = int(meta.get("revision") or 1)
+    meta["lab_verify"] = {
+        "mismatch": verify.get("mismatch"),
+        "derived": verify.get("derived"),
+        "simulated": verify.get("simulated"),
+    }
+    from electrical_engineer.circuit.run_session import append_lab_op
+
+    append_lab_op(
+        run_dir,
+        author="agent",
+        op="re_derive",
+        detail={"engine": derived.get("engine"), "value": derived.get("value")},
+        electrical=False,
+    )
+    lab_meta.save_lab_meta(run_dir, meta)
+    return verify
 
 
 def reverify_circuit_lab(run_dir: Path) -> dict[str, Any]:
@@ -117,17 +224,13 @@ def reverify_circuit_lab(run_dir: Path) -> dict[str, Any]:
         if isinstance(old.get("derive"), dict):
             derived = old["derive"]
     graph = load_graph(run_dir)
+    params = series_rlc_params_from_graph(graph)
+    if params:
+        problem = {**problem, **params}
     verify = refresh_circuit_lab_verify(run_dir, problem, derived=derived or None, graph=graph)
-    notes = human_edit_notes(meta.get("agent_baseline_graph"), graph)
-    if notes:
-        verify["human_edit_notes"] = notes
-        if verify.get("mismatch") or verify.get("status") != "agrees":
-            verify["stale_reason"] = (
-                f"{notes[0]}; the agent's derivation no longer applies to this circuit."
-            )
-            verify["needs_review"] = True
+    verify = apply_verify_semantics(verify, meta, graph) or verify
     verify["graph_revision"] = int(meta.get("revision") or verify.get("graph_revision") or 0)
-    verify["stale"] = False
+    verify["computed_at_revision"] = verify["graph_revision"]
     (run_dir / "lab_verify.json").write_text(json.dumps(verify, indent=2), encoding="utf-8")
     meta = lab_meta.load_lab_meta(run_dir)
     meta["lab_verify"] = {

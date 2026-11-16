@@ -21,8 +21,14 @@ function sentenceFor(entry) {
       return `${who} added${target}`;
     case "connect":
       return `${who} wired${target}`;
+    case "layout_save":
+      return `${who} moved parts (layout only)`;
+    case "re_derive":
+      return entry.author === "agent"
+        ? `Agent re-derived (${entry.detail?.value != null ? `${entry.detail.value} V` : "updated derivation"})`
+        : `${who} requested a re-derive`;
     case "ui_save":
-      return `${who} saved the circuit layout`;
+      return `${who} saved the circuit`;
     case "set":
       if (entry.before != null && entry.after != null) {
         return `${who} changed ${entry.target || "a value"} to ${entry.after}`;
@@ -31,7 +37,7 @@ function sentenceFor(entry) {
     case "simulate":
       return `${who} re-ran the simulation`;
     case "restore":
-      return `${who} restored ${entry.detail?.rev ? `r${entry.detail.rev}` : "a prior revision"}`;
+      return `${who} restored ${entry.target || (entry.detail?.rev ? `r${entry.detail.rev}` : "agent version")}`;
     default:
       return `${who} ${entry.op || "edited"}${target}`;
   }

@@ -24,7 +24,8 @@ def test_op_log_actor_label_and_monotonic_revision(tmp_path: Path) -> None:
     a1 = apply_graph(run_dir, base, author="agent", op="seed")
     a2 = apply_graph(run_dir, base, author="human", op="ui_save")
     meta = load_lab_meta(run_dir)
-    assert a2["revision"] > a1["revision"]
+    assert a2["revision"] == a1["revision"]
+    assert meta["op_log"][-1].get("op") == "layout_save"
     assert meta["op_log"][-1]["actor_label"] == "You"
     assert meta["op_log"][-2]["actor_label"] == "Agent"
     assert meta["op_log"][-1]["rev"] == meta["revision"]
@@ -94,9 +95,18 @@ def test_run_events_publish_increments_revision(tmp_path: Path) -> None:
     }
     a = apply_graph(run_dir, base, author="agent", op="seed")
     publish(rid, {"type": "graph", "revision": a["revision"]})
-    b = apply_graph(run_dir, base, author="human", op="save")
+    moved = json.loads(json.dumps(base))
+    moved["nodes"][0]["x"] = 40.0
+    b = apply_graph(run_dir, moved, author="human", op="save")
     publish(rid, {"type": "graph", "revision": b["revision"]})
-    assert b["revision"] > a["revision"]
+    assert b["revision"] == a["revision"]
+    changed = json.loads(json.dumps(moved))
+    changed["nodes"].append(
+        {"id": "r1", "type": "resistor", "refdes": "R1", "value": 10, "unit": "ohm", "x": 80, "y": 0}
+    )
+    c = apply_graph(run_dir, changed, author="human", op="add_part", target="r1")
+    publish(rid, {"type": "graph", "revision": c["revision"]})
+    assert c["revision"] > a["revision"]
 
 
 def test_mcp_get_idempotent_on_retry(tmp_path: Path, monkeypatch) -> None:

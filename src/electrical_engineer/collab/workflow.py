@@ -16,6 +16,7 @@ from electrical_engineer.circuit.graph import (
 from electrical_engineer.circuit.run_session import apply_graph, load_graph
 from electrical_engineer.circuit.simulate_graph import compare_derived, simulate_graph
 from electrical_engineer.collab import lab_meta
+from electrical_engineer.collab.lab_verify import apply_verify_semantics, rlc_compare_metric_label
 from electrical_engineer.collab.verify_policy import DEFAULT_REL_TOL
 from electrical_engineer.collab.verify_policy import status_label as verify_status_label
 from electrical_engineer.engines.circuit_derive import DeriveError, derive
@@ -72,6 +73,7 @@ def refresh_circuit_lab_verify(
     from electrical_engineer.collab import lab_meta
 
     graph = graph or load_graph(run_dir)
+    meta = lab_meta.load_lab_meta(run_dir)
     if derived is None:
         derive_path = run_dir / "circuit_derive.json"
         if derive_path.is_file():
@@ -103,7 +105,11 @@ def refresh_circuit_lab_verify(
     rel_err = float(check.get("rel_err_pct") or 0.0)
     rel_lim = float(check.get("rel_tol_pct") or rel_tol * 100)
     status, status_lbl = _metric_status(check, sim_skipped=sim_skipped, limit_pct=limit_pct, rel_err=rel_err)
-    metric_label = _primary_metric_label(problem, sim if isinstance(sim, dict) else {}, derived)
+    no_overshoot = _primary_metric_label(problem, sim if isinstance(sim, dict) else {}, derived).startswith("Final")
+    if str(problem.get("kind") or "") == "series_rlc":
+        metric_label = rlc_compare_metric_label(meta, graph, no_overshoot=no_overshoot)
+    else:
+        metric_label = _primary_metric_label(problem, sim if isinstance(sim, dict) else {}, derived)
     metrics = [
         {
             "id": "primary",
@@ -121,7 +127,6 @@ def refresh_circuit_lab_verify(
     if t_derived is not None and str((derived or {}).get("derive_metric") or "") == "Vc_peak":
         t_derived_f = float(t_derived)
         t_sim = (sim or {}).get("t_peak_s") if isinstance(sim, dict) else None
-        no_overshoot = metric_label.startswith("Final")
         if no_overshoot:
             metrics.append(
                 {
@@ -158,7 +163,6 @@ def refresh_circuit_lab_verify(
                     "status_label": t_label,
                 }
             )
-    meta = lab_meta.load_lab_meta(run_dir)
     vrev = int(meta.get("revision") or 1)
     verify = {
         "ok": True if sim_skipped else bool(check.get("match")),
@@ -179,14 +183,13 @@ def refresh_circuit_lab_verify(
         "sim_skipped": sim_skipped,
         "graph_revision": vrev,
         "computed_at_revision": vrev,
-        "stale": False,
     }
     if mismatch and not sim_skipped:
         verify["disagreement_banner"] = status_lbl
         verify["ok"] = False
         if rel_err > 2.0:
             verify["needs_review"] = True
-    return verify
+    return apply_verify_semantics(verify, meta, graph) or verify
 
 
 def finish_circuit_lab(
@@ -269,8 +272,13 @@ def finish_circuit_lab(
     mismatch = bool(check.get("mismatch")) and not sim_skipped
     rel_err = float(check.get("rel_err_pct") or 0.0)
     rel_lim = float(check.get("rel_tol_pct") or rel_tol * 100)
+    meta = lab_meta.load_lab_meta(run_dir)
     status, status_lbl = _metric_status(check, sim_skipped=sim_skipped, limit_pct=limit_pct, rel_err=rel_err)
-    metric_label = _primary_metric_label(problem, sim if isinstance(sim, dict) else {}, derived)
+    no_overshoot = _primary_metric_label(problem, sim if isinstance(sim, dict) else {}, derived).startswith("Final")
+    if str(problem.get("kind") or "") == "series_rlc":
+        metric_label = rlc_compare_metric_label(meta, graph, no_overshoot=no_overshoot)
+    else:
+        metric_label = _primary_metric_label(problem, sim if isinstance(sim, dict) else {}, derived)
     metrics = [
         {
             "id": "primary",
@@ -288,7 +296,6 @@ def finish_circuit_lab(
     if t_derived is not None and str((derived or {}).get("derive_metric") or "") == "Vc_peak":
         t_derived_f = float(t_derived)
         t_sim = (sim or {}).get("t_peak_s") if isinstance(sim, dict) else None
-        no_overshoot = metric_label.startswith("Final")
         if no_overshoot:
             metrics.append(
                 {
@@ -348,10 +355,9 @@ def finish_circuit_lab(
         verify["ok"] = False
         if rel_err > 2.0:
             verify["needs_review"] = True
-    meta = lab_meta.load_lab_meta(run_dir)
     verify["graph_revision"] = int(meta.get("revision") or 1)
     verify["computed_at_revision"] = verify["graph_revision"]
-    verify["stale"] = False
+    verify = apply_verify_semantics(verify, meta, graph) or verify
     (run_dir / "lab_verify.json").write_text(json.dumps(verify, indent=2), encoding="utf-8")
     meta["lab_verify"] = {
         "mismatch": verify["mismatch"],
@@ -481,14 +487,15 @@ def finish_control_lab(
     if mismatch:
         verify["disagreement_banner"] = status_lbl
         verify["needs_review"] = rel_err > limit_pct
-    verify["graph_revision"] = 0
-    verify["computed_at_revision"] = 0
-    verify["stale"] = False
+    meta = lab_meta.load_lab_meta(run_dir)
+    vrev = int(meta.get("revision") or 1)
+    verify["graph_revision"] = vrev
+    verify["computed_at_revision"] = vrev
+    verify = apply_verify_semantics(verify, meta, None) or verify
     (run_dir / "lab_verify.json").write_text(json.dumps(verify, indent=2), encoding="utf-8")
     link_path = run_dir / "control_diagram.json"
     if not link_path.is_file():
         link_path.write_text(json.dumps(diagram, indent=2), encoding="utf-8")
-    meta = lab_meta.load_lab_meta(run_dir)
     meta["ui_url"] = lab_meta.ui_lab_url(run_dir.name, meta, _ui_base())
     meta["lab_verify"] = {"mismatch": mismatch, "derived": derived_value, "simulated": simulated}
     lab_meta.save_lab_meta(run_dir, meta)

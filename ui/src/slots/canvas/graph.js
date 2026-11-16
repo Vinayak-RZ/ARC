@@ -42,6 +42,23 @@ export function toFlow(graph) {
   return { nodes, edges };
 }
 
+/** Read V/R/L/C from a series RLC flow graph (first of each kind). */
+export function seriesRlcParamsFromFlow(nodes, edges) {
+  const graph = fromFlow(nodes, edges);
+  const byType = (t) => (graph.nodes || []).find((n) => n.type === t);
+  const src = byType("source_v");
+  const res = byType("resistor");
+  const ind = byType("inductor");
+  const cap = byType("capacitor");
+  if (!src || !res || !ind || !cap) return null;
+  const v = Number(src.value);
+  const r = Number(res.value);
+  const l = Number(ind.value);
+  const c = Number(cap.value);
+  if (![v, r, l, c].every((x) => Number.isFinite(x))) return null;
+  return { v_step: v, vin: v, r_ohm: r, l_h: l, c_f: c };
+}
+
 export function fromFlow(nodes, edges) {
   return {
     schema: SCHEMA,

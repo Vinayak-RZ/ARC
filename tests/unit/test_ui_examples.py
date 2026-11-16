@@ -11,6 +11,7 @@ from electrical_engineer.ui_server.work_steps import work_steps
 
 _EXAMPLE_IDS = (
     "rlc-step",
+    "rlc-bad-derive",
     "smib-swing",
     "lg-fault",
     "ed-dispatch",

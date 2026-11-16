@@ -84,6 +84,15 @@ TOOL_DEFS: list[dict[str, Any]] = [
         },
     },
     {
+        "name": "arc_circuit_lab_re_derive",
+        "description": "Re-run agent derivation for the current lab graph and refresh verify.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"run_id": {"type": "string"}},
+            "required": ["run_id"],
+        },
+    },
+    {
         "name": "arc_circuit_lab_get",
         "description": "Read graph, lab_meta, and last simulation on a run.",
         "inputSchema": {
@@ -159,6 +168,13 @@ def handle_tool(name: str, args: dict[str, Any]) -> dict[str, Any]:
                 "mismatch": verify.get("mismatch"),
                 "waits": False,
             }
+        if name == "arc_circuit_lab_re_derive":
+            run_dir = _run_dir(args["run_id"], root)
+            from electrical_engineer.collab.lab_verify import agent_rederive_circuit_lab
+
+            verify = agent_rederive_circuit_lab(run_dir)
+            meta = lab_meta.load_lab_meta(run_dir)
+            return {"run_id": run_dir.name, "verify": verify, "lab_meta": meta, "waits": False}
         if name == "arc_circuit_lab_get":
             run_dir = _run_dir(args["run_id"], root)
             meta = lab_meta.load_lab_meta(run_dir)
