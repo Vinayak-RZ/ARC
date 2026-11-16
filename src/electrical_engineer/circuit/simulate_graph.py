@@ -55,6 +55,10 @@ def simulate_graph(
     if sim_out.get("ok") and sim_out.get("value") is not None:
         out["simulated"] = float(sim_out["value"])
         out["unit"] = sim_out.get("unit") or problem.get("unit") or "V"
+    if sim_out.get("t_peak_s") is not None:
+        out["t_peak_s"] = float(sim_out["t_peak_s"])
+    if sim_out.get("trace"):
+        out["trace"] = sim_out["trace"]
     (run_dir / "lab_simulate.json").write_text(json.dumps(out, indent=2), encoding="utf-8")
     return out
 

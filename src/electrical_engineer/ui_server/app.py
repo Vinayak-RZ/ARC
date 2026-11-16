@@ -853,6 +853,10 @@ def create_app(root: Path | None = None) -> FastAPI:
         disagreement = wv.get("disagreement_banner") or evid_obj.get("disagreement_banner")
         lab_meta_obj = _read_json(d / "lab_meta.json")
         lab_verify = _read_json(d / "lab_verify.json")
+        if lab_verify and lab_meta_obj:
+            from electrical_engineer.collab.lab_verify import attach_verify_freshness
+
+            lab_verify = attach_verify_freshness(lab_verify, lab_meta_obj) or lab_verify
         if lab_verify.get("disagreement_banner") and not disagreement:
             disagreement = lab_verify.get("disagreement_banner")
         lab = None
@@ -951,8 +955,25 @@ def create_app(root: Path | None = None) -> FastAPI:
             payload["lab_simulate"] = _read_json(sim_path)
         verify_path = d / "lab_verify.json"
         if verify_path.is_file():
-            payload["lab_verify"] = _read_json(verify_path)
+            lab_verify = _read_json(verify_path)
+            from electrical_engineer.collab.lab_verify import attach_verify_freshness
+
+            payload["lab_verify"] = attach_verify_freshness(lab_verify, meta) or lab_verify
         return payload
+
+    @app.post("/api/runs/{run_id}/lab/verify")
+    def post_lab_verify(run_id: str) -> dict:
+        from electrical_engineer.collab.lab_meta import load_lab_meta
+        from electrical_engineer.collab.lab_verify import reverify_circuit_lab
+
+        d = runs / run_id
+        if not d.is_dir():
+            return JSONResponse({"error": "missing"}, status_code=404)
+        try:
+            verify = reverify_circuit_lab(d)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=400)
+        return {"ok": True, "lab_verify": verify, "revision": load_lab_meta(d).get("revision")}
 
     @app.post("/api/runs/{run_id}/lab/restore")
     async def restore_lab(run_id: str) -> dict:

@@ -29,6 +29,166 @@ def _ui_base() -> str:
     return f"http://{host}:{port}/"
 
 
+def _metric_status(
+    chk: dict[str, Any],
+    *,
+    sim_skipped: bool,
+    limit_pct: float,
+    rel_err: float,
+) -> tuple[str, str]:
+    if sim_skipped:
+        return "not_simulated", "Not simulated"
+    if chk.get("match") or rel_err < limit_pct:
+        return "agrees", verify_status_label(agrees=True, rel_err_pct=rel_err, limit_pct=limit_pct)
+    if rel_err > 5.0:
+        return "mismatch", "Mismatch"
+    return "differs", verify_status_label(agrees=False, rel_err_pct=rel_err, limit_pct=limit_pct)
+
+
+def _primary_metric_label(problem: dict[str, Any], sim: dict[str, Any], derived: dict[str, Any] | None) -> str:
+    if str(problem.get("kind") or "") != "series_rlc":
+        return "Probe"
+    v_step = float(problem.get("vin") or problem.get("v_step") or 10)
+    sim_v = sim.get("simulated")
+    dval = (derived or {}).get("value")
+    try:
+        peak = float(sim_v if sim_v is not None else dval)
+    except (TypeError, ValueError):
+        peak = v_step
+    if peak <= v_step * 1.002:
+        return "Final Vc (no overshoot)"
+    return "Capacitor peak"
+
+
+def refresh_circuit_lab_verify(
+    run_dir: Path,
+    problem: dict[str, Any],
+    *,
+    derived: dict[str, Any] | None = None,
+    graph: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Simulate ``graph`` (current lab) and compare to frozen agent derivation."""
+    from electrical_engineer.circuit.run_session import load_graph
+    from electrical_engineer.collab import lab_meta
+
+    graph = graph or load_graph(run_dir)
+    if derived is None:
+        derive_path = run_dir / "circuit_derive.json"
+        if derive_path.is_file():
+            derived = json.loads(derive_path.read_text(encoding="utf-8"))
+    if derived is None:
+        raise ValueError("missing agent derivation for re-verify")
+    dval = float(derived["value"])
+    sim_prob = {**problem}
+    graph_probe = probe_for_capacitor(graph)
+    if graph_probe:
+        sim_prob["probe"] = graph_probe
+    sim_prob.update(
+        {k: derived[k] for k in ("analysis", "t_s", "t_stop", "f_hz", "derive_metric") if k in derived}
+    )
+    sim = simulate_graph(graph, sim_prob, run_dir=run_dir)
+    simulated = sim.get("simulated") if isinstance(sim.get("simulated"), (int, float)) else sim.get("value")
+    if simulated is not None:
+        try:
+            simulated = float(simulated)
+        except (TypeError, ValueError):
+            simulated = None
+    sim_skipped = bool(sim.get("skipped")) or simulated is None
+    unit = str((derived or {}).get("unit") or problem.get("unit") or "V")
+    tol = problem.get("tol")
+    rel_tol = float(tol) if tol is not None else DEFAULT_REL_TOL
+    limit_pct = rel_tol * 100.0
+    check = compare_derived(dval, simulated, tol=tol if tol is not None else None, rel_tol=rel_tol)
+    mismatch = bool(check.get("mismatch")) and not sim_skipped
+    rel_err = float(check.get("rel_err_pct") or 0.0)
+    rel_lim = float(check.get("rel_tol_pct") or rel_tol * 100)
+    status, status_lbl = _metric_status(check, sim_skipped=sim_skipped, limit_pct=limit_pct, rel_err=rel_err)
+    metric_label = _primary_metric_label(problem, sim if isinstance(sim, dict) else {}, derived)
+    metrics = [
+        {
+            "id": "primary",
+            "label": metric_label,
+            "derived": dval,
+            "simulated": simulated,
+            "unit": unit,
+            "rel_err_pct": None if sim_skipped else rel_err,
+            "rel_tol_pct": rel_lim,
+            "status": status,
+            "status_label": status_lbl,
+        }
+    ]
+    t_derived = (derived or {}).get("t_s")
+    if t_derived is not None and str((derived or {}).get("derive_metric") or "") == "Vc_peak":
+        t_derived_f = float(t_derived)
+        t_sim = (sim or {}).get("t_peak_s") if isinstance(sim, dict) else None
+        no_overshoot = metric_label.startswith("Final")
+        if no_overshoot:
+            metrics.append(
+                {
+                    "id": "t_peak",
+                    "label": "Peak time",
+                    "derived": t_derived_f,
+                    "simulated": None,
+                    "unit": "s",
+                    "rel_err_pct": None,
+                    "rel_tol_pct": limit_pct,
+                    "status": "not_simulated",
+                    "status_label": "No peak (no overshoot)",
+                }
+            )
+        elif t_sim is not None:
+            t_chk = compare_derived(
+                t_derived_f, float(t_sim), tol=problem.get("t_tol") or 5e-5, rel_tol=rel_tol
+            )
+            t_rel = float(t_chk.get("rel_err_pct") or 0.0)
+            t_lim = float(t_chk.get("rel_tol_pct") or limit_pct)
+            t_status, t_label = _metric_status(
+                t_chk, sim_skipped=sim_skipped, limit_pct=limit_pct, rel_err=t_rel
+            )
+            metrics.append(
+                {
+                    "id": "t_peak",
+                    "label": "Peak time",
+                    "derived": t_derived_f,
+                    "simulated": float(t_sim),
+                    "unit": "s",
+                    "rel_err_pct": None if sim_skipped else t_rel,
+                    "rel_tol_pct": t_lim,
+                    "status": t_status,
+                    "status_label": t_label,
+                }
+            )
+    meta = lab_meta.load_lab_meta(run_dir)
+    vrev = int(meta.get("revision") or 1)
+    verify = {
+        "ok": True if sim_skipped else bool(check.get("match")),
+        "derived": dval,
+        "simulated": simulated,
+        "unit": unit,
+        "mismatch": mismatch,
+        "status": status,
+        "status_label": status_lbl,
+        "rel_err_pct": rel_err,
+        "rel_tol_pct": rel_lim,
+        "metrics": metrics,
+        "sim_engine": (sim.get("simulator") or {}).get("backend") or sim.get("engine"),
+        "lab_kind": "circuit",
+        "derive": derived,
+        "simulate": sim,
+        "check": check,
+        "sim_skipped": sim_skipped,
+        "graph_revision": vrev,
+        "computed_at_revision": vrev,
+        "stale": False,
+    }
+    if mismatch and not sim_skipped:
+        verify["disagreement_banner"] = status_lbl
+        verify["ok"] = False
+        if rel_err > 2.0:
+            verify["needs_review"] = True
+    return verify
+
+
 def finish_circuit_lab(
     run_dir: Path,
     problem: dict[str, Any],
@@ -75,6 +235,9 @@ def finish_circuit_lab(
                 }
             else:
                 return {"ok": False, "error": str(exc), "unchecked": True}
+    derive_path = run_dir / "circuit_derive.json"
+    if derived and not derive_path.is_file():
+        derive_path.write_text(json.dumps(derived, indent=2), encoding="utf-8")
     dval = float(derived["value"])
     if not math.isfinite(dval) or abs(dval) > 1e9:
         if problem.get("allow_declared_gold") and problem.get("value") is not None:
@@ -106,19 +269,8 @@ def finish_circuit_lab(
     mismatch = bool(check.get("mismatch")) and not sim_skipped
     rel_err = float(check.get("rel_err_pct") or 0.0)
     rel_lim = float(check.get("rel_tol_pct") or rel_tol * 100)
-    if sim_skipped:
-        status = "not_simulated"
-        status_lbl = "Not simulated"
-    elif check.get("match"):
-        status = "agrees"
-        status_lbl = verify_status_label(agrees=True, rel_err_pct=rel_err, limit_pct=limit_pct)
-    elif rel_err > 5.0:
-        status = "mismatch"
-        status_lbl = "Mismatch"
-    else:
-        status = "differs"
-        status_lbl = verify_status_label(agrees=False, rel_err_pct=rel_err, limit_pct=limit_pct)
-    metric_label = "Capacitor peak" if str(problem.get("kind") or "") == "series_rlc" else "Probe"
+    status, status_lbl = _metric_status(check, sim_skipped=sim_skipped, limit_pct=limit_pct, rel_err=rel_err)
+    metric_label = _primary_metric_label(problem, sim if isinstance(sim, dict) else {}, derived)
     metrics = [
         {
             "id": "primary",
@@ -136,38 +288,43 @@ def finish_circuit_lab(
     if t_derived is not None and str((derived or {}).get("derive_metric") or "") == "Vc_peak":
         t_derived_f = float(t_derived)
         t_sim = (sim or {}).get("t_peak_s") if isinstance(sim, dict) else None
-        if (
-            t_sim is None
-            and simulated is not None
-            and str(problem.get("analysis") or derived.get("analysis") or "").lower() == "tran"
-        ):
-            t_sim = float(problem.get("t_s") or t_derived_f)
-        t_chk = compare_derived(t_derived_f, float(t_sim) if t_sim is not None else None, tol=problem.get("t_tol") or 5e-5)
-        t_rel = float(t_chk.get("rel_err_pct") or 0.0)
-        t_lim = float(t_chk.get("rel_tol_pct") or 100.0 * 5e-5 / max(abs(t_derived_f), 1e-12))
-        if sim_skipped or t_sim is None:
-            t_status, t_label = "not_simulated", "Not simulated"
-        elif t_chk.get("match"):
-            t_status = "agrees"
-            t_label = verify_status_label(agrees=True, rel_err_pct=t_rel, limit_pct=limit_pct)
-        elif t_rel > 5.0:
-            t_status, t_label = "mismatch", "Mismatch"
-        else:
-            t_status = "differs"
-            t_label = verify_status_label(agrees=False, rel_err_pct=t_rel, limit_pct=limit_pct)
-        metrics.append(
-            {
-                "id": "t_peak",
-                "label": "Peak time",
-                "derived": t_derived_f,
-                "simulated": t_sim,
-                "unit": "s",
-                "rel_err_pct": None if sim_skipped or t_sim is None else t_rel,
-                "rel_tol_pct": t_lim,
-                "status": t_status,
-                "status_label": t_label,
-            }
-        )
+        no_overshoot = metric_label.startswith("Final")
+        if no_overshoot:
+            metrics.append(
+                {
+                    "id": "t_peak",
+                    "label": "Peak time",
+                    "derived": t_derived_f,
+                    "simulated": None,
+                    "unit": "s",
+                    "rel_err_pct": None,
+                    "rel_tol_pct": limit_pct,
+                    "status": "not_simulated",
+                    "status_label": "No peak (no overshoot)",
+                }
+            )
+        elif t_sim is not None:
+            t_chk = compare_derived(
+                t_derived_f, float(t_sim), tol=problem.get("t_tol") or 5e-5, rel_tol=rel_tol
+            )
+            t_rel = float(t_chk.get("rel_err_pct") or 0.0)
+            t_lim = float(t_chk.get("rel_tol_pct") or limit_pct)
+            t_status, t_label = _metric_status(
+                t_chk, sim_skipped=sim_skipped, limit_pct=limit_pct, rel_err=t_rel
+            )
+            metrics.append(
+                {
+                    "id": "t_peak",
+                    "label": "Peak time",
+                    "derived": t_derived_f,
+                    "simulated": float(t_sim),
+                    "unit": "s",
+                    "rel_err_pct": None if sim_skipped else t_rel,
+                    "rel_tol_pct": t_lim,
+                    "status": t_status,
+                    "status_label": t_label,
+                }
+            )
     verify = {
         "ok": True if sim_skipped else bool(check.get("match")),
         "derived": dval,
@@ -191,8 +348,11 @@ def finish_circuit_lab(
         verify["ok"] = False
         if rel_err > 2.0:
             verify["needs_review"] = True
-    (run_dir / "lab_verify.json").write_text(json.dumps(verify, indent=2), encoding="utf-8")
     meta = lab_meta.load_lab_meta(run_dir)
+    verify["graph_revision"] = int(meta.get("revision") or 1)
+    verify["computed_at_revision"] = verify["graph_revision"]
+    verify["stale"] = False
+    (run_dir / "lab_verify.json").write_text(json.dumps(verify, indent=2), encoding="utf-8")
     meta["lab_verify"] = {
         "mismatch": verify["mismatch"],
         "derived": dval,
@@ -210,6 +370,8 @@ def finish_control_lab(
     golden: str | None = None,
     derived_value: float | None = None,
 ) -> dict[str, Any]:
+    from electrical_engineer.collab.control_derive import _plant_first_order
+    from electrical_engineer.control.diagram import control_diagram_for_recipe
     from electrical_engineer.control_studio import session as cs_session
     from electrical_engineer.control_studio import simulate as cs_simulate
     from electrical_engineer.control_studio.goldens import GOLDENS
@@ -217,19 +379,35 @@ def finish_control_lab(
 
     root = project_root()
     title = str(problem.get("title") or problem.get("kind") or "Control lab")
+    plant = _plant_first_order(problem)
     gkey = golden or str(problem.get("golden") or "")
-    if gkey not in GOLDENS:
-        if "unity" in str(problem.get("kind") or "").lower():
-            gkey = "unity_first_order"
-        elif "lead" in str(problem.get("kind") or "").lower():
-            gkey = "lead_compensator"
-        else:
-            gkey = "unity_first_order"
-    payload = cs_session.create_session(title, root, golden=gkey)
-    sid = payload["session_id"]
-    lab_meta.ensure_lab_meta(run_dir, kind="control", control_session_id=sid)
-    diagram = payload["diagram"]
-    sim = cs_simulate.simulate(diagram, run_dir=root / "runs" / sid)
+    if plant is not None:
+        k, tau = plant
+        sid = cs_session.run_session_id(run_dir.name)
+        diagram = cs_session.ensure_run_session(
+            sid,
+            title,
+            root,
+            plant_k=k,
+            plant_tau=tau,
+        )["diagram"]
+        lab_meta.ensure_lab_meta(run_dir, kind="control", control_session_id=sid)
+        ui_diagram = control_diagram_for_recipe("solve-control-problem", problem)
+        if ui_diagram:
+            (run_dir / "control_diagram.json").write_text(json.dumps(ui_diagram, indent=2), encoding="utf-8")
+    else:
+        if gkey not in GOLDENS:
+            if "unity" in str(problem.get("kind") or "").lower():
+                gkey = "unity_first_order"
+            elif "lead" in str(problem.get("kind") or "").lower():
+                gkey = "lead_compensator"
+            else:
+                gkey = "unity_first_order"
+        payload = cs_session.create_session(title, root, golden=gkey)
+        sid = payload["session_id"]
+        lab_meta.ensure_lab_meta(run_dir, kind="control", control_session_id=sid)
+        diagram = payload["diagram"]
+    sim = cs_simulate.simulate(diagram, run_dir=run_dir)
     step_metrics = (sim.get("step_series") or {}).get("metrics") or {}
     simulated = None
     if step_metrics.get("final_value") is not None:
@@ -303,9 +481,13 @@ def finish_control_lab(
     if mismatch:
         verify["disagreement_banner"] = status_lbl
         verify["needs_review"] = rel_err > limit_pct
+    verify["graph_revision"] = 0
+    verify["computed_at_revision"] = 0
+    verify["stale"] = False
     (run_dir / "lab_verify.json").write_text(json.dumps(verify, indent=2), encoding="utf-8")
     link_path = run_dir / "control_diagram.json"
-    link_path.write_text(json.dumps(diagram, indent=2), encoding="utf-8")
+    if not link_path.is_file():
+        link_path.write_text(json.dumps(diagram, indent=2), encoding="utf-8")
     meta = lab_meta.load_lab_meta(run_dir)
     meta["ui_url"] = lab_meta.ui_lab_url(run_dir.name, meta, _ui_base())
     meta["lab_verify"] = {"mismatch": mismatch, "derived": derived_value, "simulated": simulated}

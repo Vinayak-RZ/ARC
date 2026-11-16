@@ -7,7 +7,12 @@ import time
 from pathlib import Path
 from typing import Any
 
-from electrical_engineer.circuit.graph import GraphError, parse_graph, write_graph
+from electrical_engineer.circuit.graph import (
+    GraphError,
+    graph_port_errors,
+    parse_graph,
+    write_graph,
+)
 from electrical_engineer.collab import lab_meta as lab_meta_mod
 
 
@@ -62,6 +67,18 @@ def apply_graph(
         body["detail"] = detail
     entry = _append_op(meta, body, author)
     lab_meta_mod.save_lab_meta(run_dir, meta)
+    if author == "human" and op not in ("restore",):
+        try:
+            from electrical_engineer.collab.lab_verify import (
+                mark_circuit_verify_stale,
+                reverify_circuit_lab,
+            )
+
+            mark_circuit_verify_stale(run_dir)
+            if not graph_port_errors(parsed):
+                reverify_circuit_lab(run_dir)
+        except (ImportError, ValueError, OSError, KeyError):
+            pass
     try:
         from electrical_engineer.collab.run_events import publish
 

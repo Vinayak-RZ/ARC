@@ -208,9 +208,12 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
           setRunTitle(detail?.title || linkedRunId);
           hydrated.current = true;
           setFitKey((k) => k + 1);
+          const verifyStale = Boolean(body?.lab_verify?.stale);
           const tracePts = body?.lab_simulate?.trace?.vc_trace_ms || body?.lab_simulate?.vc_trace_ms;
-          if (tracePts?.length) {
+          if (tracePts?.length && !verifyStale) {
             applyLabSimulate(body.lab_simulate, body.lab_verify);
+          } else if (verifyStale) {
+            setSim(null);
           } else if (graph?.nodes?.length && autoSimForRun.current !== linkedRunId) {
             autoSimForRun.current = linkedRunId;
             void runSimulate(graph, { silent: true });
@@ -369,6 +372,18 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
         setSim(null);
       } else {
         setSim(body);
+        if (linkedRunId) {
+          const vr = await fetch(`/api/runs/${linkedRunId}/lab/verify`, { method: "POST" });
+          if (vr.ok) {
+            const payload = await vr.json();
+            setLabVerify(payload.lab_verify || null);
+            if (payload.lab_verify?.simulate?.trace?.vc_trace_ms?.length) {
+              applyLabSimulate(payload.lab_verify.simulate, payload.lab_verify);
+            } else if (body.result?.vc_trace_ms?.length) {
+              applyLabSimulate({ ok: true, simulated: body.result?.Vc_peak_V, trace: body.result }, payload.lab_verify);
+            }
+          }
+        }
       }
     } catch {
       setMsg("Could not reach the solver.");
@@ -382,13 +397,15 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
     if (!sim?.result?.vc_trace_ms?.length) return null;
     const peakMs = 1000 * Number(sim.result.t_Vc_peak_s);
     const peakV = Number(sim.result.Vc_peak_V);
+    const vStep = Number(sim.problem?.vin ?? sim.problem?.v_step ?? 10);
+    const noOvershoot = peakV <= vStep * 1.002;
     return {
       title: "Capacitor voltage",
       x: { label: "t", unit: "ms", scale: "linear" },
       y: { label: "Vc", unit: "V", scale: "linear" },
       series: [{ id: "vc", label: "Vc", points: sim.result.vc_trace_ms, style: "primary" }],
-      markers: [{ x: peakMs, label: "peak" }],
-      hlines: [{ y: peakV, label: "Vc,peak" }],
+      markers: [{ x: peakMs, label: noOvershoot ? "settled" : "peak" }],
+      hlines: [{ y: peakV, label: noOvershoot ? "Vc,final" : "Vc,peak" }],
     };
   }, [sim]);
 
@@ -537,7 +554,18 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
       </div>
       {linkedRunId ? (
         <aside className="studio-lab-drawer card-surface" aria-label="Lab collaboration">
-          <LabVerifyPanel labVerify={labVerify} labMeta={labMeta} compact />
+          <LabVerifyPanel
+            labVerify={labVerify}
+            labMeta={labMeta}
+            compact
+            onAskAgent={
+              linkedRunId
+                ? () => {
+                    window.location.href = `/?problem=${linkedRunId}#ask-re-derive`;
+                  }
+                : undefined
+            }
+          />
           <h3>Activity</h3>
           <LabActivity labMeta={labMeta} onRestore={() => restoreAgent()} />
         </aside>
