@@ -60,6 +60,8 @@ def rectifier_3ph(
     io_a: float = 0.0,
     ls_h: float = 0.0,
     f_hz: float = 50.0,
+    *,
+    load: str = "R",
 ) -> dict:
     alpha = math.radians(alpha_deg)
     cos_a = math.cos(alpha)
@@ -67,7 +69,12 @@ def rectifier_3ph(
     w = 2.0 * _PI * f_hz
     vm_ph = vll_pk / _SQRT3
     if topology == "half":
-        vo = (3.0 * _SQRT3 * vm_ph / (2.0 * _PI)) * cos_a - (3.0 * w * ls_h * io_a) / (2.0 * _PI)
+        continuous = load != "R" or alpha_deg <= 30.0
+        if continuous:
+            vo = (3.0 * _SQRT3 * vm_ph / (2.0 * _PI)) * cos_a - (3.0 * w * ls_h * io_a) / (2.0 * _PI)
+        else:
+            vo = (3.0 * vm_ph / (2.0 * _PI)) * (1.0 + math.cos(alpha + _PI / 6.0))
+            vo -= (3.0 * w * ls_h * io_a) / (2.0 * _PI)
     elif topology == "full":
         vo = (3.0 * vll_pk / _PI) * cos_a - (3.0 * w * ls_h * io_a) / _PI
     else:

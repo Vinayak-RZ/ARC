@@ -79,10 +79,6 @@ def test_injected_wrong_derived_must_not_equal_perturbed_gold(tmp_path: Path) ->
         assert verify.get("mismatch") is True or verify.get("needs_review") is True
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="ARC-TE-005: finish_control_lab reads y_final but simulate exposes y_ss; simulated stays None",
-)
 def test_control_seed_derived_mismatch_when_derived_value_perturbed(tmp_path: Path) -> None:
     pytest.importorskip("control")
     diagram = GOLDENS["unity_first_order"]()

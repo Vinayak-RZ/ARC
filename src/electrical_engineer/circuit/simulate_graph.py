@@ -17,6 +17,8 @@ def simulate_graph(
     *,
     run_dir: Path,
 ) -> dict[str, Any]:
+    run_dir.mkdir(parents=True, exist_ok=True)
+    prob = {k: v for k, v in problem.items() if k != "cir"}
     parsed = parse_graph(graph)
     try:
         base_cir = compile_netlist(parsed)
@@ -29,15 +31,17 @@ def simulate_graph(
         or probe_for_capacitor(parsed)
         or "v(2)"
     )
-    prob = {
-        "analysis": analysis,
-        "probe": probe,
-        "f_hz": problem.get("f_hz"),
-        "t_s": problem.get("t_s") or problem.get("t_stop"),
-        "kind": problem.get("kind"),
-        "derive_metric": problem.get("derive_metric")
-        or ("Vc_peak" if str(problem.get("kind") or "") == "series_rlc" else None),
-    }
+    prob.update(
+        {
+            "analysis": analysis,
+            "probe": probe,
+            "f_hz": prob.get("f_hz"),
+            "t_s": prob.get("t_s") or prob.get("t_stop"),
+            "kind": prob.get("kind"),
+            "derive_metric": prob.get("derive_metric")
+            or ("Vc_peak" if str(prob.get("kind") or "") == "series_rlc" else None),
+        }
+    )
     sim_status = simulator_status()
     out: dict[str, Any] = {"simulator": sim_status, "engine": "circuit_graph_sim"}
     if not sim_status.get("available"):
@@ -64,10 +68,15 @@ def compare_derived(
 ) -> dict[str, Any]:
     if simulated is None:
         return {"match": False, "mismatch": True, "reason": "no_simulation"}
-    margin = float(tol) if tol is not None else max(abs_tol, rel_tol * max(abs(derived), 1.0))
+    denom = max(abs(derived), abs_tol)
+    if tol is not None and 0 < float(tol) < 1:
+        rel = float(tol)
+        margin = max(abs_tol, rel * denom)
+    else:
+        rel = float(rel_tol)
+        margin = max(abs_tol, rel * denom)
     delta = abs(simulated - derived)
     match = delta <= margin
-    denom = max(abs(derived), 1e-12)
     rel_err_pct = 100.0 * delta / denom
     return {
         "match": match,
@@ -77,5 +86,5 @@ def compare_derived(
         "delta": delta,
         "tol": margin,
         "rel_err_pct": rel_err_pct,
-        "rel_tol_pct": 100.0 * margin / denom,
+        "rel_tol_pct": 100.0 * rel,
     }

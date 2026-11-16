@@ -12,6 +12,7 @@ from electrical_engineer.catalog import load_recipe_meta
 from electrical_engineer.learn import courses as courses_mod
 from electrical_engineer.learn import progress as progress_mod
 from electrical_engineer.learn.curriculum import expand_topics, load_curriculum
+from electrical_engineer.paths import install_root
 
 
 def _err(code: str, message: str, status: int) -> JSONResponse:
@@ -50,14 +51,20 @@ def _recipe_refs(ids: list[str], cwd: Path) -> list[dict[str, Any]]:
     return refs
 
 
-def curriculum_payload(cwd: Path, *, progress: dict[str, Any] | None = None) -> dict[str, Any]:
-    data = load_curriculum(cwd)
+def curriculum_payload(
+    cwd: Path,
+    *,
+    progress: dict[str, Any] | None = None,
+    asset_root: Path | None = None,
+) -> dict[str, Any]:
+    assets = asset_root or install_root()
+    data = load_curriculum()
     done = (progress or {}).get("topics_done") or {}
     semesters: list[dict[str, Any]] = []
     for sem in data.get("semesters") or []:
         subjects: list[dict[str, Any]] = []
         for subj in sem.get("subjects") or []:
-            topics_raw = expand_topics(subj, cwd)
+            topics_raw = expand_topics(subj, assets)
             topics: list[dict[str, Any]] = []
             for t in topics_raw:
                 key = f"{subj['id']}/{t['id']}"
@@ -66,7 +73,7 @@ def curriculum_payload(cwd: Path, *, progress: dict[str, Any] | None = None) -> 
                         "id": t["id"],
                         "title": t.get("title") or t["id"],
                         "anchor": t.get("anchor") or "",
-                        "recipes": _recipe_refs(list(t.get("recipes") or []), cwd),
+                        "recipes": _recipe_refs(list(t.get("recipes") or []), assets),
                         "labs": list(t.get("labs") or []),
                         "done": key in done,
                     }
@@ -80,7 +87,7 @@ def curriculum_payload(cwd: Path, *, progress: dict[str, Any] | None = None) -> 
                     "pack": subj.get("pack"),
                     "source": subj.get("source"),
                     "note": subj.get("note"),
-                    "notes": _notes_for_subject(subj, cwd),
+                    "notes": _notes_for_subject(subj, assets),
                     "topics": topics,
                     "progress": {"done": n_done, "total": len(topics)},
                 }
@@ -96,7 +103,7 @@ def curriculum_payload(cwd: Path, *, progress: dict[str, Any] | None = None) -> 
 def register_learn_routes(app: FastAPI, *, root: Path) -> None:
     @app.get("/api/learn/curriculum")
     def learn_curriculum() -> dict:
-        return curriculum_payload(root, progress=progress_mod.load(root))
+        return curriculum_payload(root, progress=progress_mod.load(root), asset_root=install_root())
 
     @app.get("/api/learn/courses/{code}/{file}")
     def learn_course_file(code: str, file: str) -> Response:

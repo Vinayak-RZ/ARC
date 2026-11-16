@@ -12,6 +12,7 @@ from hypothesis import strategies as st
 from electrical_engineer.circuit.graph import SCHEMA, GraphError, parse_graph, series_rlc_graph
 from electrical_engineer.circuit.netlist import CompileError, compile_netlist
 from electrical_engineer.circuit.simulate_graph import simulate_graph
+from electrical_engineer.circuit.run_session import apply_graph
 from electrical_engineer.collab.workflow import finish_circuit_lab
 from electrical_engineer.engines.rlc_transient import series_rlc_step
 from electrical_engineer.engines.spice_runner import simulator_status
@@ -92,10 +93,6 @@ def test_editing_r1_value_changes_compiled_netlist() -> None:
 
 
 @pytest.mark.skipif(not simulator_status().get("available"), reason="ngspice missing")
-@pytest.mark.xfail(
-    strict=True,
-    reason="ARC-TE-006: compiled graph netlist lacks UIC .tran; ngspice returns Vc≈Vin DC (10 V) not peak 11.63 V",
-)
 def test_graph_only_simulation_matches_derived_rlc_peak(tmp_path: Path) -> None:
     meta = series_rlc_step(HEADLINE_RLC_R_OHM, HEADLINE_RLC_L_H, HEADLINE_RLC_C_F, HEADLINE_RLC_VIN)
     graph = series_rlc_graph(
@@ -121,10 +118,6 @@ def test_graph_only_simulation_matches_derived_rlc_peak(tmp_path: Path) -> None:
 
 
 @pytest.mark.skipif(not simulator_status().get("available"), reason="ngspice missing")
-@pytest.mark.xfail(
-    strict=True,
-    reason="ARC-TE-001: finish_circuit_lab passes derive cir into simulate_graph, masking a shorted drawn graph",
-)
 def test_shorted_drawn_graph_must_not_match_analytic_peak(tmp_path: Path) -> None:
     """Extra wire vin.n1→c1.n2 parallel-shorts the RLC string; verify must disagree when graph is wrong."""
     meta = series_rlc_step(HEADLINE_RLC_R_OHM, HEADLINE_RLC_L_H, HEADLINE_RLC_C_F, HEADLINE_RLC_VIN)
@@ -136,6 +129,8 @@ def test_shorted_drawn_graph_must_not_match_analytic_peak(tmp_path: Path) -> Non
     )
     graph["edges"].append({"id": "short", "from": "vin.n1", "to": "c1.n2"})
     run_dir = tmp_path / "short_lab"
+    run_dir.mkdir(parents=True)
+    apply_graph(run_dir, graph, author="human", op="add_short", detail={"edge": "short"})
     problem = {
         "kind": "series_rlc",
         "vin": HEADLINE_RLC_VIN,

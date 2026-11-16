@@ -13,7 +13,7 @@ from electrical_engineer.circuit.graph import (
     parse_graph,
     probe_for_capacitor,
 )
-from electrical_engineer.circuit.run_session import apply_graph
+from electrical_engineer.circuit.run_session import apply_graph, load_graph
 from electrical_engineer.circuit.simulate_graph import compare_derived, simulate_graph
 from electrical_engineer.collab import lab_meta
 from electrical_engineer.collab.verify_policy import DEFAULT_REL_TOL
@@ -38,17 +38,23 @@ def finish_circuit_lab(
     """Attach circuit graph, simulate, compare to derive output."""
     run_dir.mkdir(parents=True, exist_ok=True)
     lab_meta.ensure_lab_meta(run_dir, kind="circuit")
-    graph = default_graph_for(problem)
-    if graph is None and derived and derived.get("cir"):
-        graph = default_graph_for({**problem, "cir": derived["cir"]})
-    if graph is None:
-        return {"ok": False, "error": "no graph seed for problem", "unchecked": True}
-    port_errs = graph_port_errors(parse_graph(graph))
-    if port_errs:
-        return {"ok": False, "error": "invalid agent graph wiring", "detail": port_errs, "unchecked": True}
-    seed_out = apply_graph(
-        run_dir, graph, author="agent", op="seed_from_problem", detail={"kind": problem.get("kind")}
-    )
+    graph_path = run_dir / "graph.json"
+    graph = load_graph(run_dir) if graph_path.is_file() else {"nodes": [], "edges": []}
+    if not graph.get("nodes"):
+        graph = default_graph_for(problem)
+        if graph is None and derived and derived.get("cir"):
+            graph = default_graph_for({**problem, "cir": derived["cir"]})
+        if graph is None:
+            return {"ok": False, "error": "no graph seed for problem", "unchecked": True}
+        port_errs = graph_port_errors(parse_graph(graph))
+        if port_errs:
+            return {"ok": False, "error": "invalid agent graph wiring", "detail": port_errs, "unchecked": True}
+        seed_out = apply_graph(
+            run_dir, graph, author="agent", op="seed_from_problem", detail={"kind": problem.get("kind")}
+        )
+    else:
+        # Human-edited lab graphs may add parallel shorts; still compile + simulate from graph.
+        seed_out = {"graph": graph}
     meta_seed = lab_meta.load_lab_meta(run_dir)
     if "agent_baseline_graph" not in meta_seed:
         meta_seed["agent_baseline_graph"] = seed_out.get("graph") or graph

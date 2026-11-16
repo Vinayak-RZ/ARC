@@ -12,6 +12,7 @@ from electrical_engineer.control_studio.goldens import GOLDENS
 from electrical_engineer.control_studio.simulate import simulate
 from electrical_engineer.engines.rlc_transient import series_rlc_step
 from electrical_engineer.engines.solvers.power import idmt_relay_time
+from electrical_engineer.engines.solvers.power_electronics import rectifier_3ph
 from tests.golden_numerics_refs import (
     HEADLINE_CONTROL_TS_S,
     HEADLINE_CONTROL_Y_SS,
@@ -43,6 +44,32 @@ def test_headline_series_rlc_zeta_wn_peak_time() -> None:
 def test_three_phase_hw3_rectifier_discontinuous_alpha_45() -> None:
     vo = hw3_discontinuous_vo_v(415.0, 45.0)
     assert abs(vo - HEADLINE_RECTIFIER_VO_V) < 0.5
+
+
+def test_rectifier_3ph_half_discontinuous_matches_ui_at_45() -> None:
+    out = rectifier_3ph(415.0, 45.0, "half")
+    ref = hw3_discontinuous_vo_v(415.0, 45.0)
+    assert abs(out["Vo_V"] - ref) < 0.5
+    assert abs(out["Vo_V"] - HEADLINE_RECTIFIER_VO_V) < 0.5
+
+
+def test_rectifier_3ph_half_continuous_below_30_deg() -> None:
+    alpha = 20.0
+    vm = math.sqrt(2) * 415.0 / math.sqrt(3)
+    expected = (3.0 * math.sqrt(3) * vm / (2.0 * math.pi)) * math.cos(math.radians(alpha))
+    out = rectifier_3ph(415.0, alpha, "half")
+    assert abs(out["Vo_V"] - expected) < 0.5
+
+
+def test_rectifier_3ph_half_switches_at_30_deg_boundary() -> None:
+    at_30 = rectifier_3ph(415.0, 30.0, "half")["Vo_V"]
+    above = rectifier_3ph(415.0, 30.1, "half")["Vo_V"]
+    vm = math.sqrt(2) * 415.0 / math.sqrt(3)
+    cont_30 = (3.0 * math.sqrt(3) * vm / (2.0 * math.pi)) * math.cos(math.radians(30.0))
+    disc_301 = hw3_discontinuous_vo_v(415.0, 30.1)
+    assert abs(at_30 - cont_30) < 0.6
+    assert abs(above - disc_301) < 0.6
+    assert above < at_30
 
 
 def test_unity_feedback_k10_step_ss_and_settling() -> None:
