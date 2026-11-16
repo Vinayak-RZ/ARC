@@ -14,7 +14,7 @@ KIND_HEAD = {
 KIND_FIND = {
     "voltage_divider": "Vout",
     "ohms_law": "I",
-    "series_rlc": "Vc",
+    "series_rlc": "Vc,peak",
     "dc": "rpm",
 }
 
@@ -73,5 +73,10 @@ def title_with_value(recipe_id: str, problem: dict[str, Any] | None, value: Any,
     qty = _format_qty(value, recipe_id)
     if "·" in base:
         return base
-    find = KIND_FIND.get(str((problem or {}).get("kind") or "")) or "Result"
-    return f"{base} · {find} = {qty}"
+    kind = str((problem or {}).get("kind") or "")
+    find = KIND_FIND.get(kind) or "Result"
+    unit = " V" if find in {"Vout", "Vc,peak", "Vc"} else ""
+    if recipe_id == "solve-control-problem":
+        find = "y(∞)"
+        unit = ""
+    return f"{base} · {find} = {qty}{unit}"

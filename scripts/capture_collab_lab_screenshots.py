@@ -24,10 +24,12 @@ def _wait_run(page, run_id: str) -> None:
     )
 
 
-def _shot_run_page(page, run_id: str, path: Path, *, diagram_tab: bool = False) -> None:
+def _shot_run_page(page, run_id: str, path: Path, *, diagram_tab: bool = False, need_agree: bool = False) -> None:
     _wait_run(page, run_id)
     page.wait_for_selector(".lab-verify-panel, .lab-verify-table", timeout=20_000)
     page.locator(".lab-verify-table td, .lab-verify-panel").first.wait_for(state="visible", timeout=20_000)
+    if need_agree:
+        page.get_by_text("Agrees within", exact=False).first.wait_for(state="visible", timeout=60_000)
     if diagram_tab:
         page.get_by_role("tab", name="Diagram").click()
         page.wait_for_selector(".diagram-shell svg, .diagram-shell .react-flow", timeout=20_000)
@@ -41,7 +43,10 @@ def _shot_control_lab(page, session_id: str, path: Path) -> None:
     page.goto(f"{HOST}/?view=studio&tab=control&session={session_id}")
     page.wait_for_selector(".react-flow", timeout=45_000)
     page.get_by_role("button", name="Simulate").click()
-    page.wait_for_selector(".studio-margins .num, .results-dock, .step-chart", timeout=45_000)
+    page.wait_for_selector(".studio-margins .num", timeout=45_000)
+    page.get_by_role("button", name="Simulate again").click()
+    page.wait_for_selector(".studio-step-chart svg, .studio-step-chart", timeout=45_000)
+    page.get_by_text("0.909", exact=False).first.wait_for(state="visible", timeout=45_000)
     page.wait_for_timeout(800)
     page.screenshot(path=str(path), full_page=False)
 
@@ -49,8 +54,9 @@ def _shot_control_lab(page, session_id: str, path: Path) -> None:
 def _shot_circuit_lab(page, run_id: str, path: Path) -> None:
     page.goto(f"{HOST}/?view=studio&tab=circuits&run={run_id}")
     page.wait_for_selector(".react-flow", timeout=45_000)
-    page.wait_for_selector(".studio-lab-activity", timeout=20_000)
-    page.wait_for_timeout(500)
+    page.wait_for_selector(".lab-provenance-bar", timeout=20_000)
+    page.wait_for_selector(".studio-lab-drawer", timeout=20_000)
+    page.wait_for_timeout(800)
     page.screenshot(path=str(path), full_page=False)
 
 
@@ -71,9 +77,9 @@ def main() -> int:
         "c_f": 100e-6,
         "probe_node": 3,
         "analysis": "tran",
-        "t_s": 0.0005,
+        "t_s": 0.003628,
         "probe": "v(3)",
-        "tol": 0.15,
+        "tol": 0.02,
     }
     rlc = execute("series-rlc-transient", cwd=ROOT, problem=rlc_problem)
     control = execute(
@@ -122,6 +128,7 @@ def main() -> int:
     shots = {
         "agent_circuit_divider_lab": OUT / "agent_circuit_divider_lab.png",
         "agent_series_rlc_run": OUT / "agent_series_rlc_run.png",
+        "agent_series_rlc_run_bad_derive": OUT / "agent_series_rlc_run_bad_derive.png",
         "agent_series_rlc_lab": OUT / "agent_series_rlc_lab.png",
         "agent_control_unity_lab": OUT / "agent_control_unity_lab.png",
     }
@@ -129,7 +136,38 @@ def main() -> int:
         browser = p.chromium.launch()
         page = browser.new_page(viewport={"width": 1280, "height": 900})
         _shot_run_page(page, divider["run_id"], shots["agent_circuit_divider_lab"], diagram_tab=True)
-        _shot_run_page(page, rlc["run_id"], shots["agent_series_rlc_run"], diagram_tab=False)
+        _shot_run_page(page, rlc["run_id"], shots["agent_series_rlc_run"], diagram_tab=False, need_agree=True)
+        bad_dir = ROOT / "runs" / rlc["run_id"]
+        verify_path = bad_dir / "lab_verify.json"
+        summary_path = bad_dir / "summary.json"
+        verify_bak = verify_path.read_text(encoding="utf-8") if verify_path.is_file() else None
+        summary_bak = summary_path.read_text(encoding="utf-8") if summary_path.is_file() else None
+        if verify_path.is_file():
+            verify = json.loads(verify_path.read_text(encoding="utf-8"))
+            verify["derived"] = 11.963
+            verify["simulated"] = 11.630
+            verify["rel_err_pct"] = 2.9
+            verify["mismatch"] = True
+            verify["needs_review"] = True
+            verify["ok"] = False
+            verify["status"] = "differs"
+            verify["status_label"] = "Differs by 2.9% (limit 2.0%)"
+            if verify.get("metrics"):
+                verify["metrics"][0]["derived"] = 11.963
+                verify["metrics"][0]["rel_err_pct"] = 2.9
+                verify["metrics"][0]["status"] = "differs"
+                verify["metrics"][0]["status_label"] = verify["status_label"]
+            verify_path.write_text(json.dumps(verify, indent=2), encoding="utf-8")
+        if summary_path.is_file():
+            summ = json.loads(summary_path.read_text(encoding="utf-8"))
+            summ["value"] = 11.963
+            summ["unchecked"] = True
+            summary_path.write_text(json.dumps(summ, indent=2), encoding="utf-8")
+        _shot_run_page(page, rlc["run_id"], shots["agent_series_rlc_run_bad_derive"], diagram_tab=False)
+        if verify_bak is not None:
+            verify_path.write_text(verify_bak, encoding="utf-8")
+        if summary_bak is not None:
+            summary_path.write_text(summary_bak, encoding="utf-8")
         _shot_circuit_lab(page, rlc["run_id"], shots["agent_series_rlc_lab"])
         if ctl_sid:
             _shot_control_lab(page, str(ctl_sid), shots["agent_control_unity_lab"])

@@ -74,6 +74,8 @@ def _walk_checked(inputs: Mapping[str, Any]) -> bool:
         v = frontier.pop()
         if not isinstance(v, dict):
             continue
+        if v.get("tool") == "circuit_lab" and (v.get("needs_review") or v.get("sim_skipped") or v.get("mismatch")):
+            continue
         if v.get("ok") is True and (v.get("value") is not None or v.get("tool") == "web-verify"):
             if v.get("tool") == "web-verify":
                 continue

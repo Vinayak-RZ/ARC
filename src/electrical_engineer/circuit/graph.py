@@ -20,24 +20,49 @@ def series_rlc_graph(
     l_h: float = 1e-3,
     c_f: float = 1e-6,
 ) -> dict[str, Any]:
-    """Series R-L-C with DC source (orthogonal lab schematic seed)."""
+    """Series R-L-C: V+ → R → L → C → GND, V− → GND (single series loop)."""
     return {
         "schema": SCHEMA,
         "nodes": [
-            {"id": "vin", "type": "source_v", "refdes": "V1", "value": vin, "unit": "V", "x": 48, "y": 128},
-            {"id": "r1", "type": "resistor", "refdes": "R1", "value": r_ohm, "unit": "ohm", "x": 192, "y": 128},
-            {"id": "l1", "type": "inductor", "refdes": "L1", "value": l_h, "unit": "H", "x": 336, "y": 128},
-            {"id": "c1", "type": "capacitor", "refdes": "C1", "value": c_f, "unit": "F", "x": 480, "y": 128},
-            {"id": "gnd", "type": "ground", "refdes": "GND", "value": 0, "unit": "", "x": 48, "y": 304},
+            {"id": "vin", "type": "source_v", "refdes": "V1", "value": vin, "unit": "V", "x": 56, "y": 96, "rot": 0},
+            {"id": "r1", "type": "resistor", "refdes": "R1", "value": r_ohm, "unit": "ohm", "x": 200, "y": 96, "rot": 0},
+            {"id": "l1", "type": "inductor", "refdes": "L1", "value": l_h, "unit": "H", "x": 344, "y": 96, "rot": 0},
+            {"id": "c1", "type": "capacitor", "refdes": "C1", "value": c_f, "unit": "F", "x": 488, "y": 96, "rot": 0},
+            {"id": "gnd", "type": "ground", "refdes": "GND", "value": 0, "unit": "", "x": 56, "y": 248, "rot": 0},
         ],
         "edges": [
             {"id": "e1", "from": "vin.n1", "to": "r1.n1"},
             {"id": "e2", "from": "r1.n2", "to": "l1.n1"},
             {"id": "e3", "from": "l1.n2", "to": "c1.n1"},
-            {"id": "e4", "from": "vin.n2", "to": "gnd.n1"},
-            {"id": "e5", "from": "c1.n2", "to": "gnd.n1"},
+            {"id": "e4", "from": "c1.n2", "to": "gnd.n1"},
+            {"id": "e5", "from": "vin.n2", "to": "gnd.n1"},
         ],
     }
+
+
+def graph_port_errors(graph: dict[str, Any]) -> list[str]:
+    """Dangling or duplicate-free port wiring checks for agent seeds."""
+    parsed = parse_graph(graph)
+    nodes = {n["id"]: n for n in parsed["nodes"]}
+    port_use: dict[str, int] = {}
+    for edge in parsed["edges"]:
+        for end in (edge["from"], edge["to"]):
+            port_use[end] = port_use.get(end, 0) + 1
+    errors: list[str] = []
+    for nid, node in nodes.items():
+        if node["type"] == "ground":
+            p = f"{nid}.n1"
+            if port_use.get(p, 0) < 1:
+                errors.append(f"{p} unconnected")
+            continue
+        for port in ("n1", "n2"):
+            p = f"{nid}.{port}"
+            used = port_use.get(p, 0)
+            if used == 0:
+                errors.append(f"dangling port {p}")
+            elif used > 1:
+                errors.append(f"port {p} has {used} wires (expected 1)")
+    return errors
 
 
 def rc_lowpass_graph(vin: float = 5, r_ohm: float = 1000, c_f: float = 1e-6) -> dict[str, Any]:

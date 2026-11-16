@@ -3,6 +3,7 @@ import { BookMarked, Compass } from "lucide-react";
 import { useCurriculum, useAchievements } from "../hooks/useLearn.js";
 import { MascotState } from "../components/MascotState.jsx";
 import { ArcMascot } from "../mascot/index.js";
+import { packLabel } from "../lib/packLabels.js";
 
 export function LearnPage({ onOpenSubject, onOpenAchievements }) {
   const { data, error, loading, reload } = useCurriculum();
@@ -106,7 +107,7 @@ export function LearnPage({ onOpenSubject, onOpenAchievements }) {
                 {subj.code || "No course code"}
               </span>
               <strong className="learn-subject-title">{subj.title}</strong>
-              {subj.pack ? <span className="tag copper">{subj.pack}</span> : null}
+              {subj.pack ? <span className="tag">{packLabel(subj.pack)}</span> : null}
               <span className={subj.source === "provided" ? "learn-source provided" : "learn-source inferred"}>
                 {subj.source === "provided" ? (
                   <>
@@ -136,7 +137,9 @@ export function LearnPage({ onOpenSubject, onOpenAchievements }) {
                   />
                 </div>
                 <span className="hint">
-                  {subj.progress?.done || 0} / {subj.progress?.total || 0} topics
+                  {subj.progress?.total
+                    ? `${subj.progress?.done || 0} / ${subj.progress.total} topics`
+                    : "Not started"}
                 </span>
               </div>
             </button>

@@ -192,3 +192,47 @@ def register_studio_routes(app: FastAPI, *, root: Path) -> None:
             media_type="image/png",
             headers={"Cache-Control": "no-store"},
         )
+
+    def _graph_series_rlc(graph: dict) -> dict | None:
+        by_type: dict[str, list] = {}
+        for node in graph.get("nodes") or []:
+            t = str(node.get("type") or "")
+            by_type.setdefault(t, []).append(node)
+        need = {"source_v", "resistor", "inductor", "capacitor"}
+        if not need <= set(by_type):
+            return None
+        try:
+            return {
+                "kind": "series_rlc",
+                "v_step": float(by_type["source_v"][0].get("value") or 10),
+                "r_ohm": float(by_type["resistor"][0].get("value") or 10),
+                "l_h": float(by_type["inductor"][0].get("value") or 0.01),
+                "c_f": float(by_type["capacitor"][0].get("value") or 1e-6),
+            }
+        except (TypeError, ValueError):
+            return None
+
+    @app.post("/api/circuit-sandbox/simulate")
+    async def circuit_sandbox_simulate(request: Request) -> dict:
+        from electrical_engineer.engines.rlc_transient import solve_from_problem
+
+        body = await request.json()
+        graph = body.get("graph") if isinstance(body, dict) else {}
+        if not graph:
+            return JSONResponse({"ok": False, "error": "Missing circuit graph"}, status_code=400)
+        problem = _graph_series_rlc(graph if isinstance(graph, dict) else {})
+        if problem is None:
+            return JSONResponse(
+                {"ok": False, "error": "Built-in solver supports a series R–L–C step circuit only."},
+                status_code=400,
+            )
+        try:
+            result = solve_from_problem(problem)
+        except ValueError as exc:
+            return JSONResponse({"ok": False, "error": str(exc)}, status_code=400)
+        return {
+            "ok": True,
+            "engine": "built-in RLC solver",
+            "problem": problem,
+            "result": result,
+        }

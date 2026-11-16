@@ -7,7 +7,7 @@ import math
 from pathlib import Path
 from typing import Any
 
-from electrical_engineer.circuit.graph import default_graph_for
+from electrical_engineer.circuit.graph import default_graph_for, graph_port_errors, parse_graph
 from electrical_engineer.circuit.run_session import apply_graph
 from electrical_engineer.circuit.simulate_graph import compare_derived, simulate_graph
 from electrical_engineer.collab import lab_meta
@@ -36,6 +36,9 @@ def finish_circuit_lab(
         graph = default_graph_for({**problem, "cir": derived["cir"]})
     if graph is None:
         return {"ok": False, "error": "no graph seed for problem", "unchecked": True}
+    port_errs = graph_port_errors(parse_graph(graph))
+    if port_errs:
+        return {"ok": False, "error": "invalid agent graph wiring", "detail": port_errs, "unchecked": True}
     seed_out = apply_graph(
         run_dir, graph, author="agent", op="seed_from_problem", detail={"kind": problem.get("kind")}
     )

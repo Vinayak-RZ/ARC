@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -12,6 +12,7 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { Palette } from "../slots/canvas/Palette.jsx";
+import { Waveform } from "./renderers/Waveform.jsx";
 import {
   fromFlow,
   MAX_EDGES,
@@ -28,6 +29,7 @@ import { nodeTypes } from "../slots/canvas/nodes.jsx";
 import { LabActivity } from "../components/LabActivity.jsx";
 import { LabProvenanceBar } from "../components/LabProvenanceBar.jsx";
 import { LabVerifyPanel } from "../components/LabVerifyPanel.jsx";
+import "../control-studio/studio.css";
 
 const EDGE_STYLE = { stroke: "var(--ee-color-ink)", strokeWidth: 1.5 };
 const GRID = 16;
@@ -36,11 +38,11 @@ const STORAGE_KEY = "arc-circuit-sandbox-v1";
 const SERIES_RLC = {
   schema: "arc.circuit.v1",
   nodes: [
-    { id: "vin", type: "source_v", refdes: "V1", value: 10, unit: "V", x: 40, y: 120, rot: 0 },
-    { id: "r1", type: "resistor", refdes: "R1", value: 1000, unit: "ohm", x: 180, y: 40, rot: 0 },
-    { id: "l1", type: "inductor", refdes: "L1", value: 0.01, unit: "H", x: 320, y: 40, rot: 0 },
-    { id: "c1", type: "capacitor", refdes: "C1", value: 1e-6, unit: "F", x: 460, y: 120, rot: 90 },
-    { id: "gnd", type: "ground", refdes: "Gnd", value: 0, unit: "", x: 40, y: 220, rot: 0 },
+    { id: "vin", type: "source_v", refdes: "V1", value: 10, unit: "V", x: 56, y: 96, rot: 0 },
+    { id: "r1", type: "resistor", refdes: "R1", value: 10, unit: "ohm", x: 200, y: 96, rot: 0 },
+    { id: "l1", type: "inductor", refdes: "L1", value: 0.01, unit: "H", x: 344, y: 96, rot: 0 },
+    { id: "c1", type: "capacitor", refdes: "C1", value: 0.0001, unit: "F", x: 488, y: 96, rot: 0 },
+    { id: "gnd", type: "ground", refdes: "Gnd", value: 0, unit: "", x: 56, y: 248, rot: 0 },
   ],
   edges: [
     { id: "e1", from: "vin.n1", to: "r1.n1" },
@@ -117,11 +119,22 @@ function readStoredGraph() {
   }
 }
 
-function CircuitSandboxInner({ linkedRunId }) {
+function FitViewOnChange({ signal }) {
+  const { fitView } = useReactFlow();
+  useEffect(() => {
+    const id = requestAnimationFrame(() => fitView({ padding: 0.2, duration: 0 }));
+    return () => cancelAnimationFrame(id);
+  }, [signal, fitView]);
+  return null;
+}
+
+function CircuitSandboxInner({ linkedRunId = "" }) {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [msg, setMsg] = useState("");
-  const [labPresence, setLabPresence] = useState(null);
+  const [fitKey, setFitKey] = useState(0);
+  const [sim, setSim] = useState(null);
+  const [simBusy, setSimBusy] = useState(false);
   const [labMeta, setLabMeta] = useState(null);
   const [labVerify, setLabVerify] = useState(null);
   const [runTitle, setRunTitle] = useState("");
@@ -131,7 +144,8 @@ function CircuitSandboxInner({ linkedRunId }) {
   const future = useRef([]);
   const hydrated = useRef(false);
   const revision = useRef(0);
-  const { screenToFlowPosition, fitView } = useReactFlow();
+  const wrapRef = useRef(null);
+  const { screenToFlowPosition } = useReactFlow();
 
   const loadLinkedRun = useCallback(
     (force = false) => {
@@ -150,23 +164,19 @@ function CircuitSandboxInner({ linkedRunId }) {
               : body?.graph || {};
           const { nodes: n, edges: e } = toFlow(graph);
           const withMarks = showAuthorship
-            ? n.map((node) => ({
-                ...node,
-                className: "has-author-dot is-agent-authored",
-              }))
+            ? n.map((node) => ({ ...node, className: "has-author-dot is-agent-authored" }))
             : n;
           setNodes(withMarks);
           setEdges(e);
-          setLabPresence(body?.lab_meta?.presence || null);
           setLabMeta(body?.lab_meta || null);
           setLabVerify(body?.lab_verify || null);
           setRunTitle(detail?.title || linkedRunId);
           hydrated.current = true;
-          window.setTimeout(() => fitView({ padding: 0.2, duration: 0 }), 60);
+          setFitKey((k) => k + 1);
         })
         .catch(() => setMsg("Could not load shared circuit for this run."));
     },
-    [fitView, linkedRunId, setEdges, setNodes, showAuthorship, viewMode],
+    [linkedRunId, setEdges, setNodes, showAuthorship, viewMode],
   );
 
   useEffect(() => {
@@ -219,6 +229,14 @@ function CircuitSandboxInner({ linkedRunId }) {
     const t = window.setTimeout(() => persist(nodes, edges), 400);
     return () => window.clearTimeout(t);
   }, [nodes, edges, persist]);
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return undefined;
+    const ro = new ResizeObserver(() => setFitKey((k) => k + 1));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const onConnect = useCallback(
     (conn) => {
@@ -282,15 +300,55 @@ function CircuitSandboxInner({ linkedRunId }) {
     const { nodes: n, edges: e } = toFlow(seed);
     setNodes(n);
     setEdges(e);
+    setSim(null);
     setMsg("");
-    window.setTimeout(() => fitView({ padding: 0.2, duration: 0 }), 60);
+    setFitKey((k) => k + 1);
   }
+
+  async function runSimulate() {
+    setSimBusy(true);
+    setMsg("");
+    const graph = fromFlow(nodes, edges);
+    try {
+      const r = await fetch("/api/circuit-sandbox/simulate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ graph }),
+      });
+      const body = await r.json();
+      if (!r.ok || !body.ok) {
+        setMsg(body.error || "Simulate failed");
+        setSim(null);
+      } else {
+        setSim(body);
+      }
+    } catch {
+      setMsg("Could not reach the solver.");
+      setSim(null);
+    } finally {
+      setSimBusy(false);
+    }
+  }
+
+  const vcPanel = useMemo(() => {
+    if (!sim?.result?.vc_trace_ms?.length) return null;
+    const peakMs = 1000 * Number(sim.result.t_Vc_peak_s);
+    const peakV = Number(sim.result.Vc_peak_V);
+    return {
+      title: "Capacitor voltage",
+      x: { label: "t", unit: "ms", scale: "linear" },
+      y: { label: "Vc", unit: "V", scale: "linear" },
+      series: [{ id: "vc", label: "Vc", points: sim.result.vc_trace_ms, style: "primary" }],
+      markers: [{ x: peakMs, label: "peak" }],
+      hlines: [{ y: peakV, label: "Vc,peak" }],
+    };
+  }, [sim]);
 
   const humanEdits = (labMeta?.op_log || []).filter((e) => e.author === "human" && e.op !== "restore").length;
 
   async function restoreAgent() {
     if (!linkedRunId) return;
-    if (!window.confirm("Replace your changes with the agent's version? You can undo from Activity.")) return;
+    if (!window.confirm("Replace your changes with the agent's version?")) return;
     await fetch(`/api/runs/${linkedRunId}/lab/restore`, { method: "POST" });
     loadLinkedRun(true);
   }
@@ -299,11 +357,13 @@ function CircuitSandboxInner({ linkedRunId }) {
     snapshot();
     setNodes([]);
     setEdges([]);
+    setSim(null);
     setMsg("");
+    setFitKey((k) => k + 1);
   }
 
   return (
-    <div className="lab-surface lab-surface-circuit">
+    <div className={`lab-surface lab-surface-circuit${linkedRunId ? " has-linked-run" : ""}`}>
       {linkedRunId ? (
         <LabProvenanceBar
           runTitle={runTitle}
@@ -324,11 +384,14 @@ function CircuitSandboxInner({ linkedRunId }) {
           Viewing the agent&apos;s version. Switch to Yours to keep editing.
         </p>
       ) : null}
-      <div className="canvas-lab studio-circuit-sandbox">
-        <Palette onAdd={addPart} />
-        <div className="flow-wrap">
-          {linkedRunId ? (
-            <div className="circuit-lab-toolbar">
+      <div className={`studio-circuit-lab-shell${linkedRunId ? " is-collab" : ""}`}>
+      <div className="cs-app control-studio studio studio-circuit-app">
+        <header className="studio-bar" aria-label="Circuit toolbar">
+          <div className="studio-crumb">
+            <span className="breadcrumb-current">Circuit sandbox</span>
+          </div>
+          <div className="studio-bar-actions">
+            {linkedRunId ? (
               <button
                 type="button"
                 className={showAuthorship ? "button-primary" : "button-secondary"}
@@ -336,12 +399,24 @@ function CircuitSandboxInner({ linkedRunId }) {
               >
                 Show authorship
               </button>
-            </div>
-          ) : null}
-          <p className="canvas-wire-hint">
-            Drag a port onto another port. Double-click a wire to add a junction. Click a wire, then Delete, to remove it.
+            ) : null}
+            <button
+              type="button"
+              className="cs-btn cs-btn-primary cs-simulate-btn studio-circuit-simulate-btn"
+              disabled={simBusy}
+              onClick={runSimulate}
+            >
+              {simBusy ? "Simulating…" : "Simulate"}
+            </button>
+          </div>
+        </header>
+        <Palette onAdd={addPart} disabled={simBusy} />
+        <div className="studio-circuit-canvas flow-wrap" ref={wrapRef}>
+          <p className="canvas-wire-hint studio-circuit-hint">
+            Drag a port onto another port. Double-click a wire to add a junction. Click a wire, then Delete, to
+            remove it.
           </p>
-          {msg ? <p className="hint">{msg}</p> : null}
+          {msg ? <p className="hint studio-circuit-msg">{msg}</p> : null}
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -360,33 +435,64 @@ function CircuitSandboxInner({ linkedRunId }) {
             deleteKeyCode={["Backspace", "Delete"]}
             edgesFocusable
             elementsSelectable
-            fitView
             minZoom={0.4}
             maxZoom={1.6}
             proOptions={{ hideAttribution: true }}
           >
+            <FitViewOnChange signal={fitKey} />
             <Background gap={16} color="var(--ee-color-hairline)" />
           </ReactFlow>
         </div>
-        <div className="confirm-row">
-          {EXAMPLES.map(([id, label]) => (
-            <button key={id} type="button" className="button-secondary" onClick={() => loadExample(id)}>
-              {label}
-            </button>
-          ))}
-          <button type="button" className="button-secondary" onClick={clearCanvas}>
-            Clear canvas
+        <section className="studio-results studio-circuit-results card-surface" aria-live="polite">
+          {!sim ? (
+            <p className="hint">Press Simulate to see the step response (built-in RLC solver).</p>
+          ) : (
+            <>
+              <div className="studio-circuit-probes" aria-label="Probe readouts">
+                <span>
+                  V<sub>step</sub> = {sim.problem?.v_step ?? "—"} V
+                </span>
+                <span>R = {sim.problem?.r_ohm ?? "—"} Ω</span>
+                <span>L = {((sim.problem?.l_h ?? 0) * 1000).toFixed(1)} mH</span>
+                <span>C = {((sim.problem?.c_f ?? 0) * 1e6).toFixed(0)} µF</span>
+              </div>
+              <p className="hint">
+                Engine: {sim.engine}. ζ = {sim.result?.zeta?.toFixed(2)}, ω<sub>n</sub> ={" "}
+                {sim.result?.omega_n_rad_s?.toFixed(0)} rad/s
+              </p>
+              <p className="answer-line">
+                <span className="answer-name">Vc,peak</span>
+                <span className="answer-eq"> = </span>
+                <span className="answer-num tabular-nums">{Number(sim.result?.Vc_peak_V).toFixed(3)}</span>
+                <span className="answer-unit"> V</span>
+                <span className="hint">
+                  {" "}
+                  at {(1000 * Number(sim.result?.t_Vc_peak_s)).toFixed(2)} ms
+                </span>
+              </p>
+              {vcPanel ? <Waveform panel={vcPanel} /> : null}
+            </>
+          )}
+        </section>
+      </div>
+      <div className="studio-circuit-presets confirm-row">
+        {EXAMPLES.map(([id, label]) => (
+          <button key={id} type="button" className="button-secondary" onClick={() => loadExample(id)}>
+            {label}
           </button>
-        </div>
-        {linkedRunId ? (
-          <>
-            <LabVerifyPanel labVerify={labVerify} labMeta={labMeta} compact />
-            <aside className="studio-lab-activity card-surface" aria-label="Lab activity">
-              <h3>Activity</h3>
-              <LabActivity labMeta={labMeta} onRestore={() => restoreAgent()} />
-            </aside>
-          </>
-        ) : null}
+        ))}
+        <button type="button" className="button-secondary" onClick={clearCanvas}>
+          Clear canvas
+        </button>
+      </div>
+      </div>
+      {linkedRunId ? (
+        <aside className="studio-lab-drawer card-surface" aria-label="Lab collaboration">
+          <LabVerifyPanel labVerify={labVerify} labMeta={labMeta} compact />
+          <h3>Activity</h3>
+          <LabActivity labMeta={labMeta} onRestore={() => restoreAgent()} />
+        </aside>
+      ) : null}
       </div>
     </div>
   );

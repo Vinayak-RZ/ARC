@@ -46,8 +46,8 @@ export function IdmtLab() {
     () =>
       curvePoints(
         { ct_primary_a: r1Ct, plug_setting: r1Plug, tms: r1Tms, curve: r1Curve },
-        r1Ct * r1Plug * 1.05,
-        iFault * 3,
+        100,
+        10000,
       ),
     [r1Ct, r1Plug, r1Tms, r1Curve, iFault],
   );
@@ -55,8 +55,8 @@ export function IdmtLab() {
     if (result.error || result.r2_tms == null) return [];
     return curvePoints(
       { ct_primary_a: r2Ct, plug_setting: r2Plug, tms: result.r2_tms, curve: r2Curve },
-      r2Ct * r2Plug * 1.05,
-      iFault * 3,
+      100,
+      10000,
     );
   }, [r2Ct, r2Plug, r2Curve, result, iFault]);
 
@@ -81,7 +81,10 @@ export function IdmtLab() {
         </label>
         <label>
           TMS
-          <input type="range" min={0.05} max={1} step={0.01} value={r1Tms} onChange={(e) => setR1Tms(+e.target.value)} />
+          <div className="lab-slider-row">
+            <input type="range" min={0.05} max={1} step={0.01} value={r1Tms} onChange={(e) => setR1Tms(+e.target.value)} />
+            <input type="number" step={0.01} min={0.05} max={1} value={r1Tms} onChange={(e) => setR1Tms(+e.target.value)} />
+          </div>
         </label>
         <label>
           Curve
@@ -167,7 +170,7 @@ export function IdmtLab() {
     >
       <Waveform
         panel={{
-          title: "t vs I",
+          title: "IDMT coordination",
           kind: "waveform",
           x: { label: "I", unit: "A", scale: "log" },
           y: { label: "t", unit: "s", scale: "log" },

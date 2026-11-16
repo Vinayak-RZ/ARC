@@ -5,6 +5,7 @@ import { DiagramView } from "../studio-engine/DiagramView.jsx";
 import { CircuitSandbox } from "../studio-engine/CircuitSandbox.jsx";
 import { STUDIO_WORKSPACES } from "../studio-engine/catalog.js";
 import { LAB_REGISTRY } from "../studio-engine/labs/registry.js";
+import { packLabel } from "../lib/packLabels.js";
 import "../studio-engine/labs/RectifierLab.jsx";
 import "../studio-engine/labs/ConverterLab.jsx";
 import "../studio-engine/labs/IdmtLab.jsx";
@@ -126,7 +127,7 @@ export function StudioPage({ onNavigate }) {
               {LAB_REGISTRY.map((l) => (
                 <button key={l.id} type="button" className="learn-lab-card" onClick={() => openSimLab(l.id)}>
                   <strong>{l.title}</strong>
-                  <span className="hint">{l.pack}</span>
+                  <span className="hint">{packLabel(l.pack)}</span>
                 </button>
               ))}
             </div>
@@ -141,8 +142,10 @@ export function StudioPage({ onNavigate }) {
       ) : null}
 
       {tab === "circuits" ? (
-        <div className="studio-workspace-pane">
-          <CircuitSandbox linkedRunId={typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("run") : ""} />
+        <div className="studio-workspace-pane studio-circuits">
+          <CircuitSandbox
+            linkedRunId={typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("run") || "" : ""}
+          />
         </div>
       ) : null}
 

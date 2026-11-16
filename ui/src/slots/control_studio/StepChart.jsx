@@ -96,7 +96,8 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
         : `Settling time ${fmtTime(metrics.t_settle_s)} s` +
           (offTarget
             ? ` · Final value ${finalText} · ${fmt(metrics.steady_state_error_pct, 1)}% ${metrics.direction || "below"} setpoint`
-            : metrics.overshoot_pct != null
+            : metrics.overshoot_pct != null &&
+                !(metrics.overshoot_pct > 0.5 && metrics.peak_t_s != null)
               ? ` · Overshoot ${fmt(metrics.overshoot_pct, 1)}%`
               : "")
       : "";
@@ -104,6 +105,8 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
     flat && metrics.overshoot_pct > 0.5 && metrics.peak_t_s != null
       ? { px: x(metrics.peak_t_s), py: ypx(metrics.peak_value) }
       : null;
+  const peakLabelAbove =
+    peak && Math.abs(peak.py - spY) > 18 ? peak.py - 10 : peak ? peak.py + 14 : 0;
   const ts = metrics.t_settle_s;
   const settleX =
     flat && ts != null && ts >= series.t0 && ts <= series.t1 ? x(ts) : null;
@@ -231,7 +234,7 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
         {peak ? (
           <>
             <circle cx={peak.px} cy={peak.py} r={3.5} className="studio-step-peak" />
-            <text x={peak.px + 8} y={peak.py - 10} className="studio-step-peak-label">
+            <text x={peak.px + 8} y={peakLabelAbove} className="studio-step-peak-label">
               {fmt(metrics.overshoot_pct, 1)}%
             </text>
           </>

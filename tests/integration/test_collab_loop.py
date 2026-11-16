@@ -55,7 +55,7 @@ def test_series_rlc_transient_lab(run_root: Path, monkeypatch) -> None:
         "analysis": "tran",
         "t_s": float(meta["t_Vc_peak_s"]),
         "probe": "v(3)",
-        "tol": 0.2,
+        "tol": 0.05,
         "value": gold,
     }
     derived = {

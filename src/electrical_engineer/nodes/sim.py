@@ -246,12 +246,20 @@ def seed_circuit_lab(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, 
     out = finish_circuit_lab(run_dir, problem, derived=derived)
     if out.get("mismatch"):
         out["disagreement_banner"] = out.get("disagreement_banner") or "derive vs lab simulation mismatch"
-    ok = "error" not in out and out.get("derived") is not None and not out.get("mismatch")
-    unchecked = False
+    sim_skipped = bool(out.get("sim_skipped"))
+    needs_review = bool(out.get("needs_review"))
+    mismatch = bool(out.get("mismatch"))
+    ok = (
+        "error" not in out
+        and out.get("derived") is not None
+        and not mismatch
+        and not needs_review
+        and not sim_skipped
+    )
     return {
         **out,
         "ok": ok,
-        "unchecked": unchecked,
+        "unchecked": not ok,
         "value": out.get("derived"),
         "capability": "lumped-circuit-sim",
         "tool": "circuit_lab",

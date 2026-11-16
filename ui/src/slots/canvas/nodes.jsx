@@ -17,10 +17,13 @@ function Glyph({ kind }) {
   }
   if (kind === "source_v") {
     return (
-      <svg width="20" height="20" aria-hidden="true">
-        <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" strokeWidth="1.6" />
-        <text x="10" y="13.5" textAnchor="middle" fontSize="9" fill="currentColor">
-          V
+      <svg width="24" height="20" aria-hidden="true">
+        <circle cx="12" cy="10" r="8" fill="none" stroke="currentColor" strokeWidth="1.6" />
+        <text x="7.5" y="11" textAnchor="middle" fontSize="10" fontWeight="600" fill="currentColor">
+          +
+        </text>
+        <text x="16.5" y="11" textAnchor="middle" fontSize="10" fontWeight="600" fill="currentColor">
+          −
         </text>
       </svg>
     );
@@ -57,8 +60,9 @@ function formatPartValue(kind, value, unit) {
     return `${v} Ω`;
   }
   if (kind === "capacitor") {
-    if (v <= 1e-6) return `${(v * 1e6).toFixed(1)} µF`;
-    if (v <= 1e-3) return `${(v * 1e3).toFixed(1)} mF`;
+    if (v < 1e-6) return `${(v * 1e9).toFixed(0)} nF`;
+    if (v < 1e-3) return `${(v * 1e6).toFixed(v * 1e6 >= 10 ? 0 : 1)} µF`;
+    if (v < 1) return `${(v * 1e3).toFixed(1)} mF`;
     return `${v} F`;
   }
   if (kind === "inductor") {

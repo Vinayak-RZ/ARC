@@ -173,8 +173,18 @@ export function SettingsPage({ onRunsChange }) {
           {tab === "about" ? (
             <section className="settings-section card-surface">
               <h2>About</h2>
-              <p className="hint">electrical-engineer {version || "…"}</p>
-              {scorecardDetail ? <pre className="settings-scorecard">{scorecardDetail}</pre> : <p className="hint">Scorecard unavailable.</p>}
+              <p className="hint">
+                Arc co-solver · <strong>electrical-engineer {version || "…"}</strong>
+              </p>
+              <p className="hint">
+                <a href="https://github.com/Vinayak-RZ/Electrical-Engineer" target="_blank" rel="noreferrer">
+                  Source on GitHub
+                </a>
+                {" · "}
+                <a href="/api/frontier/scorecard" target="_blank" rel="noreferrer">
+                  Frontier scorecard (JSON)
+                </a>
+              </p>
             </section>
           ) : null}
         </div>

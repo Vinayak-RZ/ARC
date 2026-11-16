@@ -16,13 +16,18 @@ function sentenceFor(entry) {
   const target = entry.target ? ` ${entry.target}` : "";
   switch (entry.op) {
     case "seed_from_problem":
-      return `${who} seeded the lab artifact`;
+      return entry.author === "agent" ? "Agent built the circuit" : `${who} built the circuit`;
     case "add_part":
       return `${who} added${target}`;
     case "connect":
       return `${who} wired${target}`;
     case "ui_save":
-      return `${who} saved the circuit`;
+      return `${who} saved the circuit layout`;
+    case "set":
+      if (entry.before != null && entry.after != null) {
+        return `${who} changed ${entry.target || "a value"} to ${entry.after}`;
+      }
+      return `${who} updated ${entry.target || "a part"}`;
     case "simulate":
       return `${who} re-ran the simulation`;
     case "restore":

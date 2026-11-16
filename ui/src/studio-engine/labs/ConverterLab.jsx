@@ -141,7 +141,7 @@ export function ConverterLab() {
         panel={{
           title: "iL ripple",
           kind: "waveform",
-          x: { label: "t", unit: "T", scale: "linear" },
+          x: { label: "t", unit: "periods", scale: "linear" },
           y: { label: "iL", unit: "A", scale: "linear" },
           series: [{ id: "il", label: "ΔiL", points: iL, style: "primary" }],
         }}
@@ -150,7 +150,7 @@ export function ConverterLab() {
         panel={{
           title: "vo",
           kind: "waveform",
-          x: { label: "t", unit: "T", scale: "linear" },
+          x: { label: "t", unit: "periods", scale: "linear" },
           y: { label: "vo", unit: "V", scale: "linear" },
           series: [{ id: "vo", label: "vo", points: vo, style: "primary" }],
           hlines: [{ y: result.Vo, label: "Vo" }],

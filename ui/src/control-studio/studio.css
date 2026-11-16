@@ -21,7 +21,7 @@
   gap: 0;
   grid-template-columns: 220px minmax(0, 1fr);
   --studio-results-h: auto;
-  grid-template-rows: 44px minmax(420px, 1fr) auto;
+  grid-template-rows: 44px minmax(280px, 1fr) minmax(220px, 38vh);
   min-height: 0;
   max-height: 100%;
   grid-template-areas:
@@ -446,6 +446,13 @@
   min-width: 3ch;
   font-size: 12px;
   color: var(--cs-text-secondary);
+}
+
+@media (max-height: 720px) {
+  .studio-palette-pane {
+    mask-image: linear-gradient(to bottom, #000 0%, #000 82%, transparent 100%);
+    padding-bottom: 24px;
+  }
 }
 
 .studio-palette-pane {
@@ -913,12 +920,12 @@
 .studio-block {
   position: relative;
   overflow: visible;
-  width: 96px;
-  min-width: 96px;
-  max-width: 96px;
-  height: 56px;
-  min-height: 56px;
-  max-height: 56px;
+  width: 72px;
+  min-width: 72px;
+  max-width: 120px;
+  height: auto;
+  min-height: 48px;
+  max-height: none;
   background: var(--cs-surface);
   border: 1px solid var(--cs-border-strong);
   border-radius: var(--cs-radius-md);
@@ -935,10 +942,10 @@
   justify-content: center;
   flex: 1;
   gap: 2px;
-  padding: 4px 6px;
-  min-height: 0;
+  padding: 6px 8px;
+  min-height: 36px;
   text-align: center;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .studio-block.is-selected {
@@ -960,12 +967,12 @@
 }
 
 .studio-pid.studio-block {
-  width: 168px;
-  min-width: 168px;
-  max-width: 168px;
-  height: 56px;
-  min-height: 56px;
-  max-height: 56px;
+  width: 148px;
+  min-width: 148px;
+  max-width: 148px;
+  height: 44px;
+  min-height: 44px;
+  max-height: 44px;
 }
 
 .studio-pid-line {
@@ -1066,28 +1073,8 @@
 }
 
 .plant-label {
-  font-size: 11px;
-  line-height: 1.15;
-  white-space: nowrap;
-  max-width: 88px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.studio-source.studio-block {
-  width: 72px;
-  min-width: 72px;
-  max-width: 72px;
-}
-
-.studio-source .studio-block-body {
-  padding: 6px 4px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.studio-plant.studio-block {
-  overflow: visible;
+  font-size: 13px;
+  line-height: 16px;
 }
 
 .studio-port-col-left {
@@ -1369,8 +1356,10 @@
   max-width: none; /* global .empty { max-width: 36rem } no longer matches, kept as a guard */
 }
 
-.studio-results {
-  max-height: 180px;
+.studio-results:not(.is-empty) {
+  max-height: none;
+  min-height: 200px;
+  flex: 1 1 auto;
 }
 .studio-results.is-empty {
   max-height: none;
