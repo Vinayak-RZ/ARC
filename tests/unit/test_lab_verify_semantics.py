@@ -7,8 +7,10 @@ import json
 
 import pytest
 
-from electrical_engineer.circuit.graph import format_series_rlc_param_strip, series_rlc_params_from_graph
-from electrical_engineer.engines.rlc_transient import series_rlc_step
+from electrical_engineer.circuit.graph import (
+    format_series_rlc_param_strip,
+    series_rlc_params_from_graph,
+)
 from electrical_engineer.circuit.run_session import apply_graph, load_graph
 from electrical_engineer.collab.lab_meta import ensure_lab_meta, load_lab_meta
 from electrical_engineer.collab.lab_verify import derivation_matches_graph
