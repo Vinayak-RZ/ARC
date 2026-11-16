@@ -149,7 +149,7 @@ export function RectifierLab() {
           kind: "waveform",
           title: "Rectifier output",
           x: { label: "ωt", unit: "°", scale: "linear" },
-          y: { label: "v_o", unit: "V", scale: "linear" },
+          y: { label: "v", sub: "o", unit: "V", scale: "linear" },
           series: [{ id: "vo", label: "vo", points: result.points, style: "primary" }],
           hlines: [{ y: result.Vo, label: "Vo avg" }],
           markers: [{ x: alpha, label: "α" }],

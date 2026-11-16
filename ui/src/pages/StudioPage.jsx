@@ -142,7 +142,7 @@ export function StudioPage({ onNavigate }) {
       ) : null}
 
       {tab === "circuits" ? (
-        <div className="studio-workspace-pane">
+        <div className="studio-workspace-pane studio-circuits">
           <CircuitSandbox />
         </div>
       ) : null}

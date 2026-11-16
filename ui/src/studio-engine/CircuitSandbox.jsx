@@ -26,6 +26,7 @@ import {
   toFlow,
 } from "../slots/canvas/graph.js";
 import { nodeTypes } from "../slots/canvas/nodes.jsx";
+import "../control-studio/studio.css";
 
 const EDGE_STYLE = { stroke: "var(--ee-color-ink)", strokeWidth: 1.5 };
 const GRID = 16;
@@ -295,23 +296,29 @@ function CircuitSandboxInner() {
 
   return (
     <div className="lab-surface lab-surface-circuit">
-      <div className="canvas-lab studio-circuit-sandbox">
-        <div className="studio-circuit-toolbar">
-          <Palette onAdd={addPart} />
-          <button
-            type="button"
-            className="cs-btn cs-btn-primary cs-simulate-btn studio-circuit-simulate-btn"
-            disabled={simBusy}
-            onClick={runSimulate}
-          >
-            {simBusy ? "Simulating…" : "Simulate"}
-          </button>
-        </div>
-        <p className="canvas-wire-hint studio-circuit-hint">
-          Drag a port onto another port. Double-click a wire to add a junction. Click a wire, then Delete, to remove it.
-        </p>
-        <div className="flow-wrap" ref={wrapRef}>
-          {msg ? <p className="hint">{msg}</p> : null}
+      <div className="cs-app control-studio studio studio-circuit-app">
+        <header className="studio-bar" aria-label="Circuit toolbar">
+          <div className="studio-crumb">
+            <span className="breadcrumb-current">Circuit sandbox</span>
+          </div>
+          <div className="studio-bar-actions">
+            <button
+              type="button"
+              className="cs-btn cs-btn-primary cs-simulate-btn studio-circuit-simulate-btn"
+              disabled={simBusy}
+              onClick={runSimulate}
+            >
+              {simBusy ? "Simulating…" : "Simulate"}
+            </button>
+          </div>
+        </header>
+        <Palette onAdd={addPart} disabled={simBusy} />
+        <div className="studio-circuit-canvas flow-wrap" ref={wrapRef}>
+          <p className="canvas-wire-hint studio-circuit-hint">
+            Drag a port onto another port. Double-click a wire to add a junction. Click a wire, then Delete, to
+            remove it.
+          </p>
+          {msg ? <p className="hint studio-circuit-msg">{msg}</p> : null}
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -338,7 +345,7 @@ function CircuitSandboxInner() {
             <Background gap={16} color="var(--ee-color-hairline)" />
           </ReactFlow>
         </div>
-        <section className="studio-circuit-results card-surface" aria-live="polite">
+        <section className="studio-results studio-circuit-results card-surface" aria-live="polite">
           {!sim ? (
             <p className="hint">Press Simulate to see the step response (built-in RLC solver).</p>
           ) : (
@@ -369,16 +376,16 @@ function CircuitSandboxInner() {
             </>
           )}
         </section>
-        <div className="confirm-row">
-          {EXAMPLES.map(([id, label]) => (
-            <button key={id} type="button" className="button-secondary" onClick={() => loadExample(id)}>
-              {label}
-            </button>
-          ))}
-          <button type="button" className="button-secondary" onClick={clearCanvas}>
-            Clear canvas
+      </div>
+      <div className="studio-circuit-presets confirm-row">
+        {EXAMPLES.map(([id, label]) => (
+          <button key={id} type="button" className="button-secondary" onClick={() => loadExample(id)}>
+            {label}
           </button>
-        </div>
+        ))}
+        <button type="button" className="button-secondary" onClick={clearCanvas}>
+          Clear canvas
+        </button>
       </div>
     </div>
   );

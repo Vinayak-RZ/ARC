@@ -81,7 +81,10 @@ export function IdmtLab() {
         </label>
         <label>
           TMS
-          <input type="range" min={0.05} max={1} step={0.01} value={r1Tms} onChange={(e) => setR1Tms(+e.target.value)} />
+          <div className="lab-slider-row">
+            <input type="range" min={0.05} max={1} step={0.01} value={r1Tms} onChange={(e) => setR1Tms(+e.target.value)} />
+            <input type="number" step={0.01} min={0.05} max={1} value={r1Tms} onChange={(e) => setR1Tms(+e.target.value)} />
+          </div>
         </label>
         <label>
           Curve
