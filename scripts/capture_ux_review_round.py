@@ -698,6 +698,7 @@ def main() -> int:
                 circuit_rid = _run_example("rlc-step")
                 go(f"?problem={circuit_rid}")
                 page.wait_for_selector(".answer-line", timeout=120000)
+                snap("problem-circuit-checked.png")
                 page.get_by_role("tab", name="Work").click()
                 page.wait_for_selector(".checked-tag, .answer-line.is-checked", timeout=120000)
                 snap("problem-circuit-checked-work.png")
@@ -707,12 +708,10 @@ def main() -> int:
                 control_rid = _run_example("control-step")
                 go(f"?problem={control_rid}")
                 page.wait_for_selector(".answer-line", timeout=120000)
+                snap("problem-control-checked.png")
                 page.get_by_role("tab", name="Work").click()
                 page.wait_for_selector(".checked-tag, .answer-line.is-checked", timeout=120000)
                 snap("problem-control-checked-work.png")
-                page.get_by_role("tab", name="Figures").click()
-                page.wait_for_selector(".figure-card img, .engine-figures", timeout=60000)
-                snap("problem-control-checked-figures.png")
 
             go("?view=gallery")
             page.wait_for_selector(".gallery-card", timeout=10000)
@@ -1107,7 +1106,7 @@ def main() -> int:
                 "problem-circuit-checked-work": "Series RLC example, Work tab, checked",
                 "problem-circuit-checked-diagram": "Series RLC example, Diagram tab",
                 "problem-control-checked-work": "First-order step example, Work tab, checked",
-                "problem-control-checked-figures": "First-order step, Figures tab",
+                "problem-control-checked": "First-order step, result summary checked",
                 "learn-landing": "Learn landing, semester rail",
                 "learn-subject-power-electronics": "Learn subject EEC-303",
                 "learn-achievements": "Achievements drawer from Learn",
