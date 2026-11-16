@@ -731,7 +731,7 @@ def main() -> int:
                     ("Data", "settings-data.png"),
                     ("About", "settings-about.png"),
                 ]:
-                    page.get_by_role("tab", name=tab).click()
+                    page.get_by_role("button", name=tab).click()
                     page.wait_for_timeout(200)
                     snap(name)
             else:
@@ -1028,7 +1028,7 @@ def main() -> int:
                     ("Data", "settings-data"),
                     ("About", "settings-about"),
                 ]:
-                    page.get_by_role("tab", name=tab).click()
+                    page.get_by_role("button", name=tab).click()
                     page.wait_for_timeout(200)
                     snap(f"{stem}-dark.png")
                 go(f"?problem={run_id}")
@@ -1103,6 +1103,7 @@ def main() -> int:
                 "problems-list": "Problems table with runs",
                 "problem-answer": "Checked divider, Diagram tab",
                 "problem-work-tab": "Checked divider, Work tab",
+                "problem-circuit-checked": "Series RLC example, checked summary",
                 "problem-circuit-checked-work": "Series RLC example, Work tab, checked",
                 "problem-circuit-checked-diagram": "Series RLC example, Diagram tab",
                 "problem-control-checked-work": "First-order step example, Work tab, checked",
