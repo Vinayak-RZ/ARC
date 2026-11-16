@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { PNG } from "pngjs";
 import type { Page } from "@playwright/test";
 
 export async function circuitLayoutProblem(page: Page): Promise<string | null> {
@@ -13,10 +15,24 @@ export async function circuitLayoutProblem(page: Page): Promise<string | null> {
     if (r.top < c.bottom - 12) return "results overlaps canvas";
     if (p.top < r.bottom - 4) return "presets overlap results";
     const wrap = canvasEl.getBoundingClientRect();
-    for (const node of document.querySelectorAll(".studio-circuit-app .react-flow__node")) {
+    const nodes = [...document.querySelectorAll(".studio-circuit-app .react-flow__node")];
+    for (const node of nodes) {
       const b = node.getBoundingClientRect();
       if (b.top < wrap.top - 2 || b.bottom > wrap.bottom + 2 || b.left < wrap.left - 2 || b.right > wrap.right + 2) {
         return "node outside canvas";
+      }
+    }
+    const hint = document.querySelector(".studio-circuit-hint");
+    if (hint) {
+      const style = getComputedStyle(hint);
+      if (style.display !== "none" && style.visibility !== "hidden") {
+        const h = hint.getBoundingClientRect();
+        for (const node of nodes) {
+          const b = node.getBoundingClientRect();
+          const overlap =
+            h.left < b.right - 2 && h.right > b.left + 2 && h.top < b.bottom - 2 && h.bottom > b.top + 2;
+          if (overlap) return "hint overlaps node";
+        }
       }
     }
     return null;
@@ -47,8 +63,57 @@ export async function svgAxisOverlapProblem(page: Page, root: string): Promise<s
   }, root);
 }
 
-export async function setTheme(page: Page, theme: "light" | "dark") {
-  await page.evaluate((t) => {
+export async function prepareTheme(page: Page, theme: "light" | "dark") {
+  await page.addInitScript((t) => {
+    try {
+      localStorage.setItem("arc-theme", t);
+    } catch {
+      /* ignore */
+    }
     document.documentElement.setAttribute("data-theme", t);
   }, theme);
+}
+
+export async function reinforceTheme(page: Page, theme: "light" | "dark") {
+  await page.evaluate((t) => {
+    try {
+      localStorage.setItem("arc-theme", t);
+    } catch {
+      /* ignore */
+    }
+    document.documentElement.setAttribute("data-theme", t);
+  }, theme);
+}
+
+/** Luminance of circuit canvas CSS background (0–1). Dark should be well below 0.2. */
+export async function circuitCanvasLuminance(page: Page): Promise<number> {
+  return page.evaluate(() => {
+    const el = document.querySelector(".studio-circuit-app .studio-circuit-canvas");
+    if (!el) return 1;
+    const bg = getComputedStyle(el).backgroundColor;
+    const m = bg.match(/[\d.]+/g);
+    if (!m || m.length < 3) return 1;
+    const [r, g, b] = m.map(Number);
+    return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+  });
+}
+
+/** Sample PNG pixels in the circuit canvas band; fail if average RGB looks like light theme (#fafaf9). */
+export function assertDarkPngCanvasNotLight(pngPath: string) {
+  const png = PNG.sync.read(readFileSync(pngPath));
+  const { width: w, height: h, data } = png;
+  const pts: [number, number][] = [
+    [Math.floor(w * 0.26), Math.floor(h * 0.22)],
+    [Math.floor(w * 0.42), Math.floor(h * 0.32)],
+    [Math.floor(w * 0.3), Math.floor(h * 0.38)],
+  ];
+  let sum = 0;
+  for (const [x, y] of pts) {
+    const i = (y * w + x) * 4;
+    sum += (data[i] + data[i + 1] + data[i + 2]) / 3;
+  }
+  const avg = sum / pts.length;
+  if (avg >= 95) {
+    throw new Error(`dark capture looks light (avg rgb ${avg.toFixed(1)})`);
+  }
 }

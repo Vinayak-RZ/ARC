@@ -314,10 +314,12 @@ function CircuitSandboxInner() {
         </header>
         <Palette onAdd={addPart} disabled={simBusy} />
         <div className="studio-circuit-canvas flow-wrap" ref={wrapRef}>
-          <p className="canvas-wire-hint studio-circuit-hint">
-            Drag a port onto another port. Double-click a wire to add a junction. Click a wire, then Delete, to
-            remove it.
-          </p>
+          {!sim ? (
+            <p className="canvas-wire-hint studio-circuit-hint">
+              Drag a port onto another port. Double-click a wire to add a junction. Click a wire, then Delete, to
+              remove it.
+            </p>
+          ) : null}
           {msg ? <p className="hint studio-circuit-msg">{msg}</p> : null}
           <ReactFlow
             nodes={nodes}
