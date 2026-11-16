@@ -17,3 +17,4 @@ dist/
 
 # Kernel-harden raw run dirs (traces are bulky); CORPUS_INDEX.jsonl is committed
 artifacts/kernel-harden/raw/
+ui/test-results/
