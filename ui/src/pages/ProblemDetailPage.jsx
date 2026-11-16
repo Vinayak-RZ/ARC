@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useState } from "react";
 import { useLayout } from "../store.js";
 import { renderSlot } from "../slots/registry.js";
 import { EngineArtifacts } from "../slots/engine/EngineArtifacts.jsx";
@@ -14,7 +15,31 @@ const TABS = [
   { id: "activity", label: "Activity" },
 ];
 
-export function ProblemDetailPage({ id, data, runMeta }) {
+export function ProblemDetailPage({ id, data: initialData, runMeta }) {
+  const [data, setData] = useState(initialData);
+  useEffect(() => {
+    setData(initialData);
+  }, [initialData, id]);
+
+  const refreshRun = useCallback(async () => {
+    if (!id) return;
+    try {
+      const r = await fetch(`/api/runs/${id}`);
+      if (r.ok) setData(await r.json());
+    } catch {
+      /* keep prior */
+    }
+  }, [id]);
+
+  const labPost = useCallback(
+    async (path) => {
+      if (!id) return;
+      await fetch(`/api/runs/${id}/lab/${path}`, { method: "POST" });
+      await refreshRun();
+    },
+    [id, refreshRun],
+  );
+
   const tab = useLayout((s) => s.problemTab);
   const setTab = useLayout((s) => s.setProblemTab);
   const drawer = useLayout((s) => s.parametersOpen);
@@ -26,6 +51,7 @@ export function ProblemDetailPage({ id, data, runMeta }) {
   } catch {
     recipeId = "";
   }
+
   return (
     <div className="page-column problem-detail">
       <ProblemHeader runMeta={runMeta} data={data} />
@@ -35,7 +61,13 @@ export function ProblemDetailPage({ id, data, runMeta }) {
         </p>
       ) : null}
       {renderSlot("run.result", { id, runMeta })}
-      <LabVerifyPanel labVerify={data?.lab_verify} labMeta={data?.lab} />
+      <LabVerifyPanel
+        labVerify={data?.lab_verify}
+        labMeta={data?.lab}
+        onAskAgent={() => labPost("re-derive")}
+        onReRun={() => labPost("verify")}
+        onAcceptSimulated={() => labPost("accept-simulated")}
+      />
       <div className="problem-tabs tabs-underline" role="tablist">
         {TABS.map((t) => (
           <button

@@ -285,10 +285,35 @@ _UI_EXAMPLES = (
             "c_f": 100e-6,
             "probe_node": 3,
             "analysis": "tran",
-            "t_s": 0.0005,
+            "t_s": 0.003628,
             "probe": "v(3)",
             "tol": 0.15,
             "prompt": "Series RLC step",
+            "cir": _RLC_CIR,
+        },
+    },
+    {
+        "id": "rlc-bad-derive",
+        "title": "Series RLC (bad derive)",
+        "caption": "Agent uses forward Euler — lab ngspice disagrees",
+        "subject": "Circuits",
+        "thumbnail": _golden_thumb("circuits/schematic.rlc_series.png"),
+        "recipe_id": "series-rlc-transient",
+        "problem": {
+            "kind": "series_rlc",
+            "vin": 10,
+            "v_step": 10,
+            "r_ohm": 10,
+            "l_h": 0.01,
+            "c_f": 100e-6,
+            "probe_node": 3,
+            "analysis": "tran",
+            "t_s": 0.003628,
+            "probe": "v(3)",
+            "tol": 0.02,
+            "derive_bug": "forward_euler",
+            "allow_template_fallback": True,
+            "prompt": "Series RLC step (bad derive demo)",
             "cir": _RLC_CIR,
         },
     },
@@ -860,7 +885,7 @@ def create_app(root: Path | None = None) -> FastAPI:
         if lab_verify and lab_meta_obj:
             from electrical_engineer.collab.lab_verify import attach_verify_freshness
 
-            lab_verify = attach_verify_freshness(lab_verify, lab_meta_obj) or lab_verify
+            lab_verify = attach_verify_freshness(lab_verify, lab_meta_obj, run_dir=d) or lab_verify
         if lab_verify.get("disagreement_banner") and not disagreement:
             disagreement = lab_verify.get("disagreement_banner")
         lab = None
@@ -962,8 +987,34 @@ def create_app(root: Path | None = None) -> FastAPI:
             lab_verify = _read_json(verify_path)
             from electrical_engineer.collab.lab_verify import attach_verify_freshness
 
-            payload["lab_verify"] = attach_verify_freshness(lab_verify, meta) or lab_verify
+            payload["lab_verify"] = attach_verify_freshness(lab_verify, meta, run_dir=d) or lab_verify
         return payload
+
+    @app.post("/api/runs/{run_id}/lab/re-derive")
+    def post_lab_re_derive(run_id: str) -> dict:
+        from electrical_engineer.collab.lab_verify import agent_rederive_circuit_lab
+
+        d = runs / run_id
+        if not d.is_dir():
+            return JSONResponse({"error": "missing"}, status_code=404)
+        try:
+            verify = agent_rederive_circuit_lab(d)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=400)
+        return {"ok": True, "lab_verify": verify}
+
+    @app.post("/api/runs/{run_id}/lab/accept-simulated")
+    def post_lab_accept_simulated(run_id: str) -> dict:
+        from electrical_engineer.collab.lab_verify import accept_simulated_lab
+
+        d = runs / run_id
+        if not d.is_dir():
+            return JSONResponse({"error": "missing"}, status_code=404)
+        try:
+            verify = accept_simulated_lab(d)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=400)
+        return {"ok": True, "lab_verify": verify}
 
     @app.post("/api/runs/{run_id}/lab/verify")
     def post_lab_verify(run_id: str) -> dict:
@@ -996,6 +1047,7 @@ def create_app(root: Path | None = None) -> FastAPI:
             graph,
             author="human",
             op="restore",
+            target="r1",
             detail={"rev": meta.get("agent_baseline_rev"), "source": "agent_baseline"},
         )
         return {"ok": True, **out}

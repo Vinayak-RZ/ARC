@@ -17,11 +17,28 @@ function badgeClass(status) {
   }
 }
 
-export function LabVerifyPanel({ labVerify, labMeta, compact = false, onAskAgent }) {
+function loopStaleCopy() {
+  return "Re-simulate the loop to refresh this check.";
+}
+
+function labEditCount(n) {
+  const c = Number(n) || 0;
+  if (!c) return "";
+  return `${c} lab edit${c === 1 ? "" : "s"}`;
+}
+
+export function LabVerifyPanel({
+  labVerify,
+  labMeta,
+  compact = false,
+  onAskAgent,
+  onReRun,
+  onAcceptSimulated,
+}) {
   if (!labVerify || (labVerify.derived == null && labVerify.simulated == null && !labVerify.metrics?.length)) {
     return null;
   }
-  const stale = Boolean(labVerify.stale) || labVerify.status === "out_of_date";
+  const needRederive = labVerify.derivation_matches_graph === false;
   const skipped = Boolean(labVerify.sim_skipped);
   const metrics = labVerify.metrics?.length
     ? labVerify.metrics
@@ -45,32 +62,92 @@ export function LabVerifyPanel({ labVerify, labMeta, compact = false, onAskAgent
         },
       ];
   const engine = labVerify.sim_engine || (skipped ? "ngspice not available" : "ngspice");
+  const allRowsStale = Boolean(labVerify.all_rows_out_of_date);
+
+  const globalStaleBanner = allRowsStale ? (
+    <div className="lab-verify-stale-banner" role="status">
+      <p>
+        {labVerify.stale_reason ||
+          (labVerify.lab_kind === "control" ? loopStaleCopy() : "Re-run simulation for every metric.")}
+      </p>
+      {onReRun ? (
+        <button type="button" className="text-button" onClick={onReRun}>
+          Re-run
+        </button>
+      ) : null}
+    </div>
+  ) : null;
+
+  const rederiveBanner = needRederive ? (
+    <div className="lab-verify-stale-banner is-rederive" role="status">
+      <p>
+        {labVerify.re_derive_reason ||
+          labVerify.human_edit_notes?.[0] ||
+          "The agent's derivation no longer matches the lab circuit."}
+      </p>
+      <div className="lab-verify-cta-row">
+        {onAskAgent ? (
+          <button type="button" className="text-button" onClick={onAskAgent}>
+            Ask agent to re-derive
+          </button>
+        ) : null}
+        {onReRun ? (
+          <button type="button" className="text-button" onClick={onReRun}>
+            Re-run
+          </button>
+        ) : null}
+      </div>
+    </div>
+  ) : null;
+
+  const reviewCta = labVerify.needs_review ? (
+    <div className="lab-verify-stale-banner is-review" role="group" aria-label="Review actions">
+      <div className="lab-verify-cta-row">
+        {onReRun ? (
+          <button type="button" className="text-button" onClick={onReRun}>
+            Re-run
+          </button>
+        ) : null}
+        {onAskAgent ? (
+          <button type="button" className="text-button" onClick={onAskAgent}>
+            Ask agent to re-derive
+          </button>
+        ) : null}
+        {onAcceptSimulated ? (
+          <button type="button" className="text-button" onClick={onAcceptSimulated}>
+            Accept simulated value
+          </button>
+        ) : null}
+      </div>
+    </div>
+  ) : null;
+
+  function renderDerivedCell(row) {
+    if (row.derived_out_of_date) {
+      return (
+        <span className="lab-verify-ood-derived" title={row.derived_note}>
+          <span className="lab-verify-ood-label">{formatLabValue(row.derived, row.unit)}</span>
+          <span className="lab-verify-badge is-muted">Out of date</span>
+          <span className="lab-verify-ood-note">{row.derived_note}</span>
+        </span>
+      );
+    }
+    return formatLabValue(row.derived, row.unit);
+  }
 
   if (compact) {
     return (
       <section className="lab-verify-panel card-surface is-compact" aria-labelledby="lab-verify-heading">
         <header className="lab-verify-head">
           <h2 id="lab-verify-heading">Simulated vs derived</h2>
-          {labVerify.needs_review ? <span className="lab-needs-review">Needs review</span> : null}
         </header>
-        {stale ? (
-          <div className="lab-verify-stale-banner" role="status">
-            <p>
-              {labVerify.stale_reason ||
-                labVerify.human_edit_notes?.[0] ||
-                "This check is out of date for the current circuit."}
-            </p>
-            {onAskAgent ? (
-              <button type="button" className="text-button" onClick={onAskAgent}>
-                Ask agent to re-derive
-              </button>
-            ) : null}
-          </div>
-        ) : null}
+        {globalStaleBanner}
+        {rederiveBanner}
+        {reviewCta}
         <p className="lab-verify-engine-line">
           Simulated with {engine}
           {labVerify.graph_revision != null ? (
-            <span className="lab-verify-rev-tag"> · verified at r{labVerify.graph_revision}</span>
+            <span className="lab-verify-rev-tag"> · simulated at r{labVerify.graph_revision}</span>
           ) : null}
         </p>
         <ul className="lab-verify-stack">
@@ -78,7 +155,7 @@ export function LabVerifyPanel({ labVerify, labMeta, compact = false, onAskAgent
             <li key={row.id} className="lab-verify-stack-row">
               <div className="lab-verify-stack-metric">{row.label}</div>
               <div className="lab-verify-stack-values tabular-nums">
-                <span title="Derived (agent)">{formatLabValue(row.derived, row.unit)}</span>
+                <span title="Derived (agent)">{renderDerivedCell(row)}</span>
                 <span className="lab-verify-stack-sep">vs</span>
                 <span title="Simulated (lab)">
                   {row.status === "not_simulated" || row.simulated == null
@@ -95,7 +172,7 @@ export function LabVerifyPanel({ labVerify, labMeta, compact = false, onAskAgent
           ))}
         </ul>
         {labMeta?.op_log?.length ? (
-          <p className="hint">{labMeta.op_log.length} lab edit(s) recorded (see Activity).</p>
+          <p className="hint">{labEditCount(labMeta.op_log.length)} recorded (see Activity).</p>
         ) : null}
       </section>
     );
@@ -105,22 +182,10 @@ export function LabVerifyPanel({ labVerify, labMeta, compact = false, onAskAgent
     <section className="lab-verify-panel card-surface" aria-labelledby="lab-verify-heading">
       <header className="lab-verify-head">
         <h2 id="lab-verify-heading">Simulated vs derived</h2>
-        {labVerify.needs_review ? <span className="lab-needs-review">Needs review</span> : null}
       </header>
-      {stale ? (
-        <div className="lab-verify-stale-banner" role="status">
-          <p>
-            {labVerify.stale_reason ||
-              labVerify.human_edit_notes?.[0] ||
-              "This check is out of date for the current circuit."}
-          </p>
-          {onAskAgent ? (
-            <button type="button" className="text-button" onClick={onAskAgent}>
-              Ask agent to re-derive
-            </button>
-          ) : null}
-        </div>
-      ) : null}
+      {globalStaleBanner}
+      {rederiveBanner}
+      {reviewCta}
       <table className="lab-verify-table">
         <thead>
           <tr>
@@ -138,7 +203,7 @@ export function LabVerifyPanel({ labVerify, labMeta, compact = false, onAskAgent
           {metrics.map((row) => (
             <tr key={row.id}>
               <th scope="row">{row.label}</th>
-              <td className="tabular-nums">{formatLabValue(row.derived, row.unit)}</td>
+              <td className="tabular-nums">{renderDerivedCell(row)}</td>
               <td className="tabular-nums">
                 {row.status === "not_simulated" || row.simulated == null
                   ? "Not simulated"
@@ -153,7 +218,7 @@ export function LabVerifyPanel({ labVerify, labMeta, compact = false, onAskAgent
         </tbody>
       </table>
       {labMeta?.op_log?.length ? (
-        <p className="hint">{labMeta.op_log.length} lab edit(s) recorded (see Activity).</p>
+        <p className="hint">{labEditCount(labMeta.op_log.length)} recorded (see Activity).</p>
       ) : null}
     </section>
   );

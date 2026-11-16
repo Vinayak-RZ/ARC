@@ -56,6 +56,7 @@ export function answerPartsFromRow(label, scalar, digits) {
 }
 
 export function runHeadline(evid, data) {
+  if (data?.lab_verify?.needs_review) return "";
   const { rows } = buildAnswerRows(evid, data);
   if (rows.length === 1) return rows[0].display;
   if (rows.length > 1) return rows.map((r) => r.display).join(" · ");
@@ -77,11 +78,11 @@ export function buildAnswerRows(evid, data) {
     }
     return { head, rows };
   }
-  let scalar = evid?.value;
   const lv = data?.lab_verify;
-  if (lv?.needs_review && lv.derived != null) {
-    scalar = lv.derived;
+  if (lv?.needs_review) {
+    return { head, rows: [] };
   }
+  const scalar = evid?.value;
   if (scalar == null || scalar === "unchecked") {
     return { head, rows: [] };
   }

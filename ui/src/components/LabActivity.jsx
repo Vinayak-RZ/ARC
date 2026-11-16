@@ -21,8 +21,14 @@ function sentenceFor(entry) {
       return `${who} added${target}`;
     case "connect":
       return `${who} wired${target}`;
+    case "layout_save":
+      return `${who} moved parts (layout only)`;
+    case "re_derive":
+      return entry.author === "agent"
+        ? `Agent re-derived (${entry.detail?.value != null ? `${entry.detail.value} V` : "updated derivation"})`
+        : `${who} requested a re-derive`;
     case "ui_save":
-      return `${who} saved the circuit layout`;
+      return `${who} saved the circuit`;
     case "set":
       if (entry.before != null && entry.after != null) {
         return `${who} changed ${entry.target || "a value"} to ${entry.after}`;
@@ -31,7 +37,7 @@ function sentenceFor(entry) {
     case "simulate":
       return `${who} re-ran the simulation`;
     case "restore":
-      return `${who} restored ${entry.detail?.rev ? `r${entry.detail.rev}` : "a prior revision"}`;
+      return `${who} restored ${entry.target || (entry.detail?.rev ? `r${entry.detail.rev}` : "agent version")}`;
     default:
       return `${who} ${entry.op || "edited"}${target}`;
   }
@@ -77,28 +83,25 @@ export function LabActivity({ labMeta, onRestore, onPreview }) {
         {rows.map((entry) => {
           const isNow = entry.rev === currentRev;
           return (
-            <li key={entry.id} className={`lab-activity-item is-${entry.author || "agent"}`}>
+            <li key={entry.id} className={`lab-activity-item is-${entry.author || "agent"}${isNow ? " is-now" : ""}`}>
               <Avatar author={entry.author} />
-              <div className="lab-activity-body">
-                <p className="lab-activity-sentence">
-                  {sentenceFor(entry)}
-                  {entry.rev != null ? ` · rev ${entry.rev}` : ""}
-                  {` · ${relTime(entry.ts_ms) || "just now"}`}
-                </p>
-                <div className="lab-activity-meta" hidden>
-                  <span className="lab-activity-rev">r{entry.rev ?? "—"}</span>
-                </div>
-                {!isNow ? (
-                  <div className="lab-activity-actions">
-                    <button type="button" className="text-link" onClick={() => onPreview?.(entry)}>
-                      Preview
-                    </button>
-                    <button type="button" className="text-link" onClick={() => onRestore?.(entry)}>
-                      Restore to here
-                    </button>
-                  </div>
+              <p className="lab-activity-sentence">
+                {sentenceFor(entry)}
+                {entry.rev != null ? (
+                  <span className="lab-activity-rev-chip"> r{entry.rev}</span>
                 ) : null}
-              </div>
+                <span className="lab-activity-time"> · {relTime(entry.ts_ms) || "just now"}</span>
+              </p>
+              {!isNow ? (
+                <div className="lab-activity-actions">
+                  <button type="button" className="text-link" onClick={() => onPreview?.(entry)}>
+                    Preview
+                  </button>
+                  <button type="button" className="text-link" onClick={() => onRestore?.(entry)}>
+                    Restore
+                  </button>
+                </div>
+              ) : null}
             </li>
           );
         })}

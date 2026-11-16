@@ -38,7 +38,7 @@ def derive(problem: dict[str, Any], *, item_root: Path | None = None) -> dict[st
         if allow and kind and kind in _KINDS:
             out = _KINDS[kind](problem)
             out["kind"] = kind
-            out["engine"] = "circuit_derive"
+            out.setdefault("engine", "circuit_derive")
             out["derived_via"] = "template_fallback"
             return out
         raise
@@ -59,7 +59,7 @@ def derive(problem: dict[str, Any], *, item_root: Path | None = None) -> dict[st
         if allow and kind and kind in _KINDS:
             out = _KINDS[kind](problem)
             out["kind"] = kind
-            out["engine"] = "circuit_derive"
+            out.setdefault("engine", "circuit_derive")
             out["derived_via"] = "template_fallback"
             return out
         raise DeriveError(str(exc)) from exc
@@ -128,9 +128,18 @@ def _series_rlc(problem: dict[str, Any]) -> dict[str, Any]:
     c_f = float(problem.get("c_f") or problem.get("c") or 1e-6)
     step_v = float(problem.get("v_step") or vin)
     meta = series_rlc_step(r_ohm, l_h, c_f, step_v)
-    t_stop = float(problem.get("t_s") or max(float(meta["t_Vc_peak_s"]) * 1.2, 1e-4))
+    t_peak_s = float(meta["t_Vc_peak_s"])
+    t_stop = float(problem.get("t_s") or max(t_peak_s * 1.2, 1e-4))
     probe = str(problem.get("probe") or problem.get("probe_expr") or "v(3)")
-    value = float(meta["Vc_peak_V"])
+    bug = str(problem.get("derive_bug") or "").lower()
+    if bug in ("forward_euler", "euler"):
+        from electrical_engineer.engines.rlc_transient import forward_euler_vc_peak
+
+        value, t_peak_s = forward_euler_vc_peak(r_ohm, l_h, c_f, step_v)
+        engine = "forward_euler_bug"
+    else:
+        value = float(meta["Vc_peak_V"])
+        engine = "circuit_derive"
     cir = (
         "* arc series rlc\n"
         f"V1 1 0 DC {step_v}\n"
@@ -145,9 +154,10 @@ def _series_rlc(problem: dict[str, Any]) -> dict[str, Any]:
         "probe": probe,
         "probe_node": str(problem.get("probe_node") or "3"),
         "analysis": "tran",
-        "t_s": float(meta["t_Vc_peak_s"]),
+        "t_s": t_peak_s,
         "t_stop": t_stop,
         "derive_metric": "Vc_peak",
+        "engine": engine,
     }
 
 

@@ -61,6 +61,8 @@ def test_human_r1_edit_reverify_disagrees_at_current_revision(tmp_path: Path, mo
     lab = client.get(f"/api/runs/{rid}/lab").json()
     assert lab["lab_verify"]["graph_revision"] == meta_lab["revision"]
     assert not lab["lab_verify"].get("stale")
+    assert lab["lab_verify"].get("verdict_current") is not False
+    assert lab["lab_verify"].get("derivation_matches_graph") is False
 
 
 def test_two_control_runs_use_distinct_sessions(tmp_path: Path, monkeypatch) -> None:

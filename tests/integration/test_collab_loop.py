@@ -203,7 +203,7 @@ def test_series_rlc_transient_workflow_seeds_lab(tmp_path: Path) -> None:
         "l_h": 0.01,
         "c_f": 100e-6,
         "analysis": "tran",
-        "t_s": 0.0005,
+        "t_s": 0.003628,
         "probe": "v(3)",
         "tol": 0.15,
     }

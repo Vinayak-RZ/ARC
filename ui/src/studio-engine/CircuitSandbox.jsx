@@ -23,8 +23,10 @@ import {
   partCount,
   PARTS,
   splitEdgeAt,
+  seriesRlcParamsFromFlow,
   toFlow,
 } from "../slots/canvas/graph.js";
+import { decorateFlowNodes, diffCircuitGraphs, formatValueChip } from "../slots/canvas/graphDiff.js";
 import { nodeTypes } from "../slots/canvas/nodes.jsx";
 import { LabActivity } from "../components/LabActivity.jsx";
 import { LabProvenanceBar } from "../components/LabProvenanceBar.jsx";
@@ -154,6 +156,7 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
   const revision = useRef(0);
   const autoSimForRun = useRef("");
   const simToken = useRef(0);
+  const userTouched = useRef(false);
   const wrapRef = useRef(null);
   const { screenToFlowPosition } = useReactFlow();
 
@@ -197,23 +200,32 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
           const rev = body?.lab_meta?.revision ?? 0;
           if (!force && rev <= revision.current && hydrated.current) return;
           revision.current = rev;
+          const baseline = body?.lab_meta?.agent_baseline_graph;
+          const currentGraph = body?.graph || {};
           const graph =
-            viewMode === "agent" && body?.lab_meta?.agent_baseline_graph
-              ? body.lab_meta.agent_baseline_graph
-              : body?.graph || {};
+            viewMode === "agent" && baseline
+              ? baseline
+              : currentGraph;
           graphReady.current = Boolean(graph?.nodes?.length);
           const { nodes: n, edges: e } = toFlow(graph);
-          const withMarks = showAuthorship
-            ? n.map((node) => ({ ...node, className: "has-author-dot is-agent-authored" }))
-            : n;
-          setNodes(withMarks);
+          let flowNodes = n;
+          if (viewMode === "changes" && baseline?.nodes?.length) {
+            const diff = diffCircuitGraphs(baseline, currentGraph);
+            flowNodes = decorateFlowNodes(n, diff, baseline);
+          } else if (showAuthorship) {
+            flowNodes = n.map((node) => ({ ...node, className: "has-author-dot is-agent-authored" }));
+          }
+          setNodes(flowNodes);
           setEdges(e);
           setLabMeta(body?.lab_meta || null);
           setLabVerify(body?.lab_verify || null);
           setRunTitle(detail?.title || linkedRunId);
           hydrated.current = true;
+          userTouched.current = false;
           setFitKey((k) => k + 1);
-          const verifyStale = Boolean(body?.lab_verify?.stale);
+          const verifyStale =
+            body?.lab_verify?.verdict_current === false ||
+            Boolean(body?.lab_verify?.stale);
           const tracePts = body?.lab_simulate?.trace?.vc_trace_ms || body?.lab_simulate?.vc_trace_ms;
           if (tracePts?.length && !verifyStale) {
             applyLabSimulate(body.lab_simulate, body.lab_verify);
@@ -258,6 +270,7 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
 
   const persist = useCallback(
     (ns, es) => {
+      if (linkedRunId && !userTouched.current) return;
       const graph = fromFlow(ns, es);
       if (linkedRunId) {
         fetch(`/api/runs/${linkedRunId}/graph`, {
@@ -276,9 +289,20 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
     [linkedRunId],
   );
 
+  const onNodesChangeWrapped = useCallback(
+    (changes) => {
+      if (hydrated.current && changes.some((c) => c.type === "position" || c.type === "remove" || c.type === "add")) {
+        userTouched.current = true;
+      }
+      onNodesChange(changes);
+    },
+    [onNodesChange],
+  );
+
   useEffect(() => {
     if (!hydrated.current) return;
     if (linkedRunId && (!graphReady.current || nodes.length === 0)) return;
+    if (linkedRunId && !userTouched.current) return;
     const t = window.setTimeout(() => persist(nodes, edges), 400);
     return () => window.clearTimeout(t);
   }, [nodes, edges, persist, linkedRunId]);
@@ -297,6 +321,7 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
         setMsg("16 parts or 24 wires is the cap for this lab.");
         return;
       }
+      userTouched.current = true;
       snapshot();
       setEdges((eds) =>
         addEdge({ ...conn, id: nextEdgeId(eds), type: "step", style: EDGE_STYLE }, eds),
@@ -379,6 +404,10 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
         setMsg(body.error || "Simulate failed");
         setSim(null);
       } else {
+        const params = seriesRlcParamsFromFlow(nodes, edges);
+        if (params) {
+          body.problem = { ...(body.problem || {}), ...params };
+        }
         setSim(body);
         if (linkedRunId) {
           const vr = await fetch(`/api/runs/${linkedRunId}/lab/verify`, { method: "POST" });
@@ -401,23 +430,59 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
     }
   }
 
+  const diffChips = useMemo(() => {
+    if (viewMode !== "changes" || !labMeta?.agent_baseline_graph) return [];
+    const diff = diffCircuitGraphs(labMeta.agent_baseline_graph, fromFlow(nodes, edges));
+    return (diff.changed || []).map(formatValueChip);
+  }, [viewMode, labMeta, nodes, edges]);
+
+  const probeParams = useMemo(() => {
+    const fromGraph = seriesRlcParamsFromFlow(nodes, edges);
+    if (fromGraph) return fromGraph;
+    return sim?.problem || {};
+  }, [nodes, edges, sim?.problem]);
+
   const vcPanel = useMemo(() => {
     if (!sim?.result?.vc_trace_ms?.length) return null;
-    const peakMs = 1000 * Number(sim.result.t_Vc_peak_s);
     const peakV = Number(sim.result.Vc_peak_V);
-    const vStep = Number(sim.problem?.vin ?? sim.problem?.v_step ?? 10);
-    const noOvershoot = peakV <= vStep * 1.002;
+    const vStep = Number(probeParams.v_step ?? probeParams.vin ?? 10);
+    const noOvershoot = Number(sim.result?.overshoot_pct ?? (peakV <= vStep * 1.005 ? 0 : 99)) < 0.5;
+    const peakMs = 1000 * Number(sim.result.t_Vc_peak_s);
+    const settleMs =
+      1000 *
+      Number(sim.result.settling_2pct_entry_s ?? sim.result.settling_time_2pct_s ?? sim.result.t_Vc_peak_s ?? 0);
+    const tMax = Math.min(Math.max(5 * settleMs, peakMs * 1.2, 8), 80);
+    const points = sim.result.vc_trace_ms.filter(([t]) => t <= tMax);
     return {
       title: "Capacitor voltage",
       x: { label: "t", unit: "ms", scale: "linear" },
       y: { label: "Vc", unit: "V", scale: "linear" },
-      series: [{ id: "vc", label: "Vc", points: sim.result.vc_trace_ms, style: "primary" }],
-      markers: [{ x: peakMs, label: noOvershoot ? "settled" : "peak" }],
-      hlines: [{ y: peakV, label: noOvershoot ? "Vc,final" : "Vc,peak" }],
+      series: [{ id: "vc", label: "Vc", points, style: "primary" }],
+      markers: noOvershoot ? [] : [{ x: peakMs, label: "peak" }],
+      hlines: [{ y: noOvershoot ? vStep : peakV, label: noOvershoot ? "Vc,final" : "Vc,peak" }],
     };
-  }, [sim]);
+  }, [sim, probeParams]);
 
-  const humanEdits = (labMeta?.op_log || []).filter((e) => e.author === "human" && e.op !== "restore").length;
+  const humanEdits = (labMeta?.op_log || []).filter(
+    (e) => e.author === "human" && e.op !== "restore" && e.electrical !== false,
+  ).length;
+
+  async function askAgentReDerive() {
+    if (!linkedRunId) return;
+    setMsg("");
+    try {
+      const r = await fetch(`/api/runs/${linkedRunId}/lab/re-derive`, { method: "POST" });
+      const body = await r.json();
+      if (!r.ok) {
+        setMsg(body.error || "Re-derive failed");
+        return;
+      }
+      setLabVerify(body.lab_verify || null);
+      loadLinkedRun(true);
+    } catch {
+      setMsg("Could not reach re-derive.");
+    }
+  }
 
   async function restoreAgent() {
     if (!linkedRunId) return;
@@ -457,6 +522,15 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
           Viewing the agent&apos;s version. Switch to Yours to keep editing.
         </p>
       ) : null}
+      {linkedRunId && viewMode === "changes" && diffChips.length ? (
+        <div className="lab-changes-chip-row" role="status">
+          {diffChips.map((chip) => (
+            <span key={chip} className="lab-changes-chip">
+              {chip}
+            </span>
+          ))}
+        </div>
+      ) : null}
       <div className={`studio-circuit-lab-shell${linkedRunId ? " is-collab" : ""}`}>
       <div className="cs-app control-studio studio studio-circuit-app">
         <header className="studio-bar" aria-label="Circuit toolbar">
@@ -495,7 +569,7 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
           <ReactFlow
             nodes={nodes}
             edges={edges}
-            onNodesChange={onNodesChange}
+            onNodesChange={onNodesChangeWrapped}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
             onEdgeDoubleClick={onEdgeDoubleClick}
@@ -523,27 +597,16 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
             <p className="hint">{simulateEmptyHint(sandboxPreset)}</p>
           ) : (
             <>
-              <div className="studio-circuit-probes" aria-label="Probe readouts">
-                <span>
-                  V<sub>step</sub> = {sim.problem?.v_step ?? "—"} V
-                </span>
-                <span>R = {sim.problem?.r_ohm ?? "—"} Ω</span>
-                <span>L = {((sim.problem?.l_h ?? 0) * 1000).toFixed(1)} mH</span>
-                <span>C = {((sim.problem?.c_f ?? 0) * 1e6).toFixed(0)} µF</span>
+              <div className="studio-circuit-probes studio-circuit-param-strip" aria-label="Probe readouts">
+                {sim.param_strip || "—"}
               </div>
               <p className="hint">
                 Engine: {sim.engine}. ζ = {sim.result?.zeta?.toFixed(2)}, ω<sub>n</sub> ={" "}
                 {sim.result?.omega_n_rad_s?.toFixed(0)} rad/s
               </p>
-              <p className="answer-line">
-                <span className="answer-name">Vc,peak</span>
-                <span className="answer-eq"> = </span>
-                <span className="answer-num tabular-nums">{Number(sim.result?.Vc_peak_V).toFixed(3)}</span>
-                <span className="answer-unit"> V</span>
-                <span className="hint">
-                  {" "}
-                  at {(1000 * Number(sim.result?.t_Vc_peak_s)).toFixed(2)} ms
-                </span>
+              <p className="answer-line tabular-nums">
+                {sim.headline ||
+                  `Vc,peak = ${Number(sim.result?.Vc_peak_V).toFixed(3)} V at ${(1000 * Number(sim.result?.t_Vc_peak_s)).toFixed(2)} ms`}
               </p>
               {vcPanel ? <Waveform panel={vcPanel} /> : null}
             </>
@@ -566,10 +629,13 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
             labVerify={labVerify}
             labMeta={labMeta}
             compact
-            onAskAgent={
+            onAskAgent={linkedRunId ? () => void askAgentReDerive() : undefined}
+            onReRun={linkedRunId ? () => void runSimulate(null, { silent: false }) : undefined}
+            onAcceptSimulated={
               linkedRunId
-                ? () => {
-                    window.location.href = `/?problem=${linkedRunId}#ask-re-derive`;
+                ? async () => {
+                    await fetch(`/api/runs/${linkedRunId}/lab/accept-simulated`, { method: "POST" });
+                    loadLinkedRun(true);
                   }
                 : undefined
             }

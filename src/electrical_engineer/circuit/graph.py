@@ -40,6 +40,106 @@ def series_rlc_graph(
     }
 
 
+def _node_by_role(parsed: dict[str, Any], role: str) -> dict[str, Any] | None:
+    for node in parsed.get("nodes") or []:
+        nid = str(node.get("id") or "").lower()
+        rtype = str(node.get("type") or "").lower()
+        if role == "source_v" and rtype == "source_v":
+            return node
+        if role == "r1" and rtype == "resistor" and nid in ("r1", "r_1"):
+            return node
+        if role == "r1" and rtype == "resistor" and node.get("refdes", "").upper() == "R1":
+            return node
+    by_type: dict[str, list] = {}
+    for node in parsed.get("nodes") or []:
+        by_type.setdefault(str(node.get("type") or ""), []).append(node)
+    if role == "source_v":
+        return (by_type.get("source_v") or [None])[0]
+    if role == "resistor":
+        return (by_type.get("resistor") or [None])[0]
+    if role == "inductor":
+        return (by_type.get("inductor") or [None])[0]
+    if role == "capacitor":
+        return (by_type.get("capacitor") or [None])[0]
+    return None
+
+
+def format_series_rlc_param_strip(graph: dict[str, Any]) -> str | None:
+    """Human strip from compiled netlist values: ``V 10 V · R 10 Ω · L 10.0 mH · C 100 µF``."""
+    params = series_rlc_params_from_graph(graph)
+    if not params:
+        return None
+    v = float(params["v_step"])
+    r = float(params["r_ohm"])
+    l_mh = float(params["l_h"]) * 1000.0
+    c_uf = float(params["c_f"]) * 1e6
+    return f"V {v:g} V · R {r:g} Ω · L {l_mh:.1f} mH · C {c_uf:.0f} µF"
+
+
+def series_rlc_params_from_graph(graph: dict[str, Any]) -> dict[str, float] | None:
+    """Read V/R/L/C from the drawn series RLC graph (first of each kind)."""
+    parsed = parse_graph(graph)
+    src = _node_by_role(parsed, "source_v")
+    res = _node_by_role(parsed, "resistor")
+    ind = _node_by_role(parsed, "inductor")
+    cap = _node_by_role(parsed, "capacitor")
+    if not all((src, res, ind, cap)):
+        return None
+    try:
+        return {
+            "v_step": float(src.get("value") or 10.0),
+            "r_ohm": float(res.get("value") or 10.0),
+            "l_h": float(ind.get("value") or 1e-3),
+            "c_f": float(cap.get("value") or 1e-6),
+        }
+    except (TypeError, ValueError):
+        return None
+
+
+def _electrical_nodes(nodes: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    out: list[dict[str, Any]] = []
+    for node in sorted(nodes, key=lambda n: str(n.get("id") or "")):
+        out.append(
+            {
+                "id": node.get("id"),
+                "type": node.get("type"),
+                "value": node.get("value"),
+                "unit": node.get("unit"),
+                "refdes": node.get("refdes"),
+            }
+        )
+    return out
+
+
+def graph_resistor_values(graph: dict[str, Any]) -> dict[str, float]:
+    """Map refdes (or id) to resistance for change notes."""
+    parsed = parse_graph(graph)
+    out: dict[str, float] = {}
+    for node in parsed.get("nodes") or []:
+        if node.get("type") != "resistor":
+            continue
+        key = str(node.get("refdes") or node.get("id") or "R")
+        try:
+            out[key] = float(node.get("value"))
+        except (TypeError, ValueError):
+            continue
+    return out
+
+
+def graph_electrical_signature(graph: dict[str, Any]) -> str:
+    parsed = parse_graph(graph)
+    edges = sorted(
+        [{"id": e.get("id"), "from": e.get("from"), "to": e.get("to")} for e in parsed.get("edges") or []],
+        key=lambda e: str(e.get("id") or ""),
+    )
+    payload = {"nodes": _electrical_nodes(parsed.get("nodes") or []), "edges": edges}
+    return json.dumps(payload, sort_keys=True)
+
+
+def graphs_electrically_equal(a: dict[str, Any], b: dict[str, Any]) -> bool:
+    return graph_electrical_signature(a) == graph_electrical_signature(b)
+
+
 def probe_for_capacitor(graph: dict[str, Any]) -> str | None:
     """SPICE probe expression for the first capacitor in the graph."""
     parsed = parse_graph(graph)

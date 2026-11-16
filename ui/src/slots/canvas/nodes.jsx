@@ -105,6 +105,8 @@ export function PartNode({ data, selected }) {
       <Glyph kind={kind} />
       <span className="part-ref">{data?.refdes}</span>
       {valueLabel ? <span className="part-value">{valueLabel}</span> : null}
+      {data?.diffChip ? <span className="lab-changes-chip part-diff-chip">{data.diffChip}</span> : null}
+      {data?.ghost ? <span className="part-diff-ghost-tag">−</span> : null}
       {twoPort ? <Handle type="source" position={n2Pos} id="n2" className="circuit-port" /> : null}
     </div>
   );

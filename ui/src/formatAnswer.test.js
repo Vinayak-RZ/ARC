@@ -39,6 +39,14 @@ describe("buildAnswerRows", () => {
     assert.match(rows[0].display, /^Vo = /);
   });
 
+  it("omits numeric row when lab needs review", () => {
+    const { rows } = buildAnswerRows(
+      { recipe_id: "simulate-circuit", value: 11.963, unchecked: false },
+      { lab_verify: { needs_review: true, derived: 11.963, simulated: 11.63 } },
+    );
+    assert.equal(rows.length, 0);
+  });
+
   it("formats IDMT headline", () => {
     const { rows } = buildAnswerRows(
       { recipe_id: "idmt-relay-study", value: 2.971, unchecked: false },

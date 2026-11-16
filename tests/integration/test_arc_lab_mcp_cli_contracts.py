@@ -19,6 +19,7 @@ LAB_TOOL_NAMES = {
     "arc_circuit_lab_simulate",
     "arc_circuit_lab_finish_solve",
     "arc_circuit_lab_get",
+    "arc_circuit_lab_re_derive",
 }
 
 

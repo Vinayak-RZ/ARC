@@ -2779,8 +2779,22 @@ a { color: var(--ee-color-primary); }
 .lab-activity-filters { display: flex; gap: 6px; flex-wrap: wrap; }
 .lab-activity-filters button { font-size: 11px; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--ee-color-hairline); background: transparent; }
 .lab-activity-filters button.is-active { border-color: var(--ee-color-primary); color: var(--ee-color-primary); }
-.lab-activity-timeline { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
-.lab-activity-item { display: flex; gap: 8px; align-items: flex-start; }
+.lab-activity-timeline { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.lab-activity-item {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  min-height: 32px;
+  padding: 4px 6px;
+  border-radius: var(--ee-radius-m, 6px);
+}
+.lab-activity-item:hover { background: var(--ee-color-surface-subtle, #f7f8fa); }
+.lab-activity-actions { display: flex; gap: 8px; opacity: 0; pointer-events: none; transition: opacity 120ms ease; }
+.lab-activity-item:hover .lab-activity-actions { opacity: 1; pointer-events: auto; }
+.lab-activity-rev-chip { font-size: 11px; color: var(--ee-color-muted); font-variant-numeric: tabular-nums; }
+.lab-activity-time { color: var(--ee-color-muted); font-size: 12px; }
+.lab-activity-sentence { margin: 0; font-size: 13px; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .lab-activity-avatar.is-human {
   width: 20px; height: 20px; border-radius: 50%; background: var(--ee-color-muted); color: #fff;
   font-size: 9px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
@@ -2791,6 +2805,29 @@ a { color: var(--ee-color-primary); }
   background: var(--ee-color-primary); z-index: 2;
 }
 .lab-activity-panel { margin-top: var(--ee-space-m); }
+.studio-circuit-param-strip { font-size: 13px; font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
+.lab-verify-cta-row { display: flex; gap: 12px; margin-top: 6px; flex-wrap: wrap; }
+.lab-verify-ood-derived { display: flex; flex-direction: column; gap: 2px; color: var(--ee-color-muted); }
+.lab-verify-ood-derived .lab-verify-ood-label { opacity: 0.55; text-decoration: line-through; text-decoration-color: var(--ee-color-hairline); }
+.lab-verify-ood-note { font-size: 11px; color: var(--ee-color-muted); }
+.lab-changes-chip-row { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 16px; border-bottom: 1px solid var(--ee-color-hairline); }
+.lab-changes-chip {
+  font-size: 12px; padding: 2px 8px; border-radius: 4px; border: 1px dashed var(--ee-color-primary);
+  background: color-mix(in srgb, var(--ee-color-primary) 8%, transparent);
+}
+.react-flow__node.is-diff-added .react-flow__node-default,
+.react-flow__node.part.is-diff-added {
+  outline: 2px dashed var(--ee-color-primary); outline-offset: 2px;
+}
+.react-flow__node.is-diff-changed .react-flow__node-default,
+.react-flow__node.part.is-diff-changed {
+  outline: 2px dashed var(--ee-color-primary); outline-offset: 2px;
+}
+.react-flow__node.is-diff-removed { opacity: 0.3; pointer-events: none; }
+.react-flow__node.is-diff-removed .react-flow__node-default,
+.react-flow__node.part.is-diff-removed {
+  outline: 2px dashed var(--ee-color-muted); outline-offset: 2px;
+}
 .lab-activity-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .lab-activity-item {
   display: grid;
@@ -2847,12 +2884,6 @@ a { color: var(--ee-color-primary); }
 .studio-lab-drawer h3 {
   margin: 12px 0 8px;
   font-size: 13px;
-}
-.lab-activity-sentence {
-  font-size: 13px;
-  line-height: 1.35;
-  word-break: normal;
-  overflow-wrap: anywhere;
 }
 .lab-surface-circuit.has-linked-run .studio-circuit-presets {
   grid-column: 1;

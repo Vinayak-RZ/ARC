@@ -226,6 +226,7 @@ def register_studio_routes(app: FastAPI, *, root: Path) -> None:
 
         from electrical_engineer.circuit.graph import (
             GraphError,
+            format_series_rlc_param_strip,
             graph_port_errors,
             parse_graph,
             probe_for_capacitor,
@@ -279,10 +280,27 @@ def register_studio_routes(app: FastAPI, *, root: Path) -> None:
         peak = float(sim.get("simulated") if sim.get("simulated") is not None else trace.get("Vc_peak_V"))
         trace = {**trace, "Vc_peak_V": peak}
         backend = (sim.get("simulator") or {}).get("backend") or sim.get("engine") or "ngspice"
+        param_strip = format_series_rlc_param_strip(parsed)
+        final_v = float(
+            sim.get("simulated")
+            if sim.get("simulated") is not None
+            else (trace.get("Vc_peak_V") or peak)
+        )
+        trace = {**trace, "Vc_peak_V": final_v}
+        overshoot_pct = float(trace.get("overshoot_pct") or 0.0)
+        headline = None
+        if overshoot_pct < 0.5:
+            t_set_ms = float(trace.get("settling_2pct_entry_s") or trace.get("settling_time_2pct_s") or 0) * 1000
+            headline = f"No overshoot · Final value {final_v:.2f} V · Settling (2%) {t_set_ms:.2f} ms"
+        else:
+            t_pk_ms = float(trace.get("t_Vc_peak_s") or 0) * 1000
+            headline = f"Vc,peak = {final_v:.3f} V at {t_pk_ms:.2f} ms"
         return {
             "ok": True,
             "engine": backend,
             "problem": problem,
-            "result": trace,
+            "result": {**trace, "Vc_peak_V": final_v, "simulated_Vc_peak_V": final_v},
             "sim": sim,
+            "param_strip": param_strip,
+            "headline": headline,
         }

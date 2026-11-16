@@ -90,6 +90,28 @@ def _rk4_integrate_vc(
     return pts
 
 
+def forward_euler_vc_peak(
+    r_ohm: float, l_h: float, c_f: float, v_step: float, *, steps_per_wn: float = 200.0
+) -> tuple[float, float]:
+    """Intentionally coarse forward Euler peak (demo bad-derive path)."""
+    wn = 1.0 / math.sqrt(l_h * c_f)
+    h = 1.0 / (steps_per_wn * wn)
+    t_end = max(5.0 / wn, 3.0 * h)
+    state = (0.0, 0.0)
+    v_peak = 0.0
+    t_peak = 0.0
+    t = 0.0
+    while t < t_end:
+        di = (v_step - state[1] - r_ohm * state[0]) / l_h * h
+        dvc = (state[0] / c_f) * h
+        state = (state[0] + di, state[1] + dvc)
+        t += h
+        if state[1] > v_peak:
+            v_peak = state[1]
+            t_peak = t
+    return v_peak, t_peak
+
+
 def _overdamped_peak(v_step: float, r_ohm: float, l_h: float, c_f: float, zeta: float, wn: float) -> tuple[float, float]:
     h = 1.0 / (200.0 * wn)
     t_end = max(8.0 / wn, 3.0)
@@ -136,8 +158,16 @@ def series_rlc_step(
     t_settle_2pct = _rk4_vc_tail(
         r_ohm, l_h, c_f, v_step, wn=wn, t_start=t_peak, t_end=max(12.0 / wn, 3.0), h=h
     )
-    t_plot_end = min(max(5.0 * t_peak, 12.0 / wn), 0.05)
-    vc_trace_ms = _rk4_integrate_vc(r_ohm, l_h, c_f, v_step, t_end=t_plot_end, n=360)
+    t_ref = t_settle_2pct if t_settle_2pct is not None else max(t_peak * 1.5, 4.0 / wn)
+    t_plot_end = min(max(5.0 * float(t_ref), 12.0 / wn), 0.08)
+    vc_trace_ms = _rk4_integrate_vc(r_ohm, l_h, c_f, v_step, t_end=max(t_plot_end, 0.02), n=480)
+    overshoot_pct = max(0.0, (float(vc_peak) - v_step) / v_step * 100.0) if v_step else 0.0
+    settling_entry_s: float | None = None
+    band = 0.02 * v_step
+    for t_ms, vc in vc_trace_ms:
+        if vc >= v_step - band:
+            settling_entry_s = float(t_ms) / 1000.0
+            break
 
     return {
         "damping_type": damping,
@@ -146,6 +176,8 @@ def series_rlc_step(
         "Vc_peak_V": float(vc_peak),
         "t_Vc_peak_s": float(t_peak),
         "settling_time_2pct_s": float(t_settle_2pct) if t_settle_2pct is not None else None,
+        "settling_2pct_entry_s": settling_entry_s,
+        "overshoot_pct": overshoot_pct,
         "vc_trace_ms": vc_trace_ms,
         "engine": "rlc_analytic",
     }
