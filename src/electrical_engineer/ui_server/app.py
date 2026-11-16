@@ -77,13 +77,17 @@ def _opaque_title(title: str, folder_name: str) -> bool:
 
 
 def _human_run_title(folder: Path, evid: dict) -> str:
-    from electrical_engineer.circuit.title import run_title, title_with_value
+    from electrical_engineer.circuit.title import run_headline, run_title, title_with_value
 
+    problem = _read_json(folder / "problem.json")
+    recipe_id = str(evid.get("recipe_id") or problem.get("recipe_id") or "")
+
+    headline = run_headline(recipe_id, problem, evid.get("value"), bool(evid.get("unchecked")))
+    if headline:
+        return headline
     title = str(evid.get("title") or "").strip()
     if title and not _opaque_title(title, folder.name):
         return title
-    problem = _read_json(folder / "problem.json")
-    recipe_id = str(evid.get("recipe_id") or problem.get("recipe_id") or "")
     if problem:
         derived = run_title(recipe_id or "solve-circuit-problem", problem)
         if derived and not _opaque_title(derived, folder.name):

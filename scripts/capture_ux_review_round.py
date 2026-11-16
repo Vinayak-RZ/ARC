@@ -126,7 +126,12 @@ def _preflight(out_dir: Path) -> dict:
 
         if shutil.which("ngspice"):
             nv = subprocess.run(["ngspice", "-v"], capture_output=True, text=True, check=False)
-            ngspice_version = (nv.stdout + nv.stderr).strip().splitlines()[0] if (nv.stdout + nv.stderr).strip() else None
+            banner = (nv.stdout + nv.stderr).strip().splitlines()
+            ngspice_version = (
+                next((ln.strip().strip("*").strip() for ln in banner if "ngspice" in ln.lower()), banner[0] if banner else None)
+                if banner
+                else None
+            )
     except OSError:
         pass
     data = {
@@ -644,7 +649,7 @@ def main() -> int:
                     page.wait_for_timeout(400)
                 page.wait_for_timeout(300)
                 snap("studio-step-extended.png")
-            if args.round >= 4 and args.round < 10:
+            if args.round >= 4:
                 wide_studio = browser.new_page(viewport={"width": 1440, "height": 900})
                 req1440 = urllib.request.Request(
                     f"http://{HOST}:{PORT}/api/control-studio/sessions",
@@ -762,7 +767,7 @@ def main() -> int:
                 snap("problem-circuit-checked-diagram.png")
                 try:
                     control_rid = _run_example("control-step")
-                except Exception as exc:
+                except (RuntimeError, OSError, ValueError) as exc:
                     index_notes.append(f"control-step example run failed ({exc}); skipped control run page captures.")
                     control_rid = None
                 if control_rid:
@@ -887,7 +892,7 @@ def main() -> int:
                 narrow.wait_for_timeout(300)
                 snap(narrow_name, narrow)
                 narrow.close()
-                if args.round < 10:
+                if args.round < 10 or args.round >= 11:
                     wide = browser.new_page(viewport={"width": 1440, "height": H})
                     wide.goto(f"http://{HOST}:{PORT}/?view=home", wait_until="domcontentloaded")
                     wide.wait_for_selector(".example-grid-six", timeout=15000)
@@ -895,6 +900,14 @@ def main() -> int:
                     wide.wait_for_timeout(300)
                     snap("home-scrolled-1440.png", wide)
                     wide.close()
+                if args.round >= 11:
+                    mid = browser.new_page(viewport={"width": 1280, "height": 800})
+                    mid.goto(f"http://{HOST}:{PORT}/?view=home", wait_until="domcontentloaded")
+                    mid.wait_for_selector(".example-grid-six", timeout=15000)
+                    mid.evaluate("() => document.querySelector('.agent-card')?.scrollIntoView({block: 'end'})")
+                    mid.wait_for_timeout(300)
+                    snap("home-scrolled-1280.png", mid)
+                    mid.close()
 
                 go("?view=problems")
                 page.wait_for_selector(".problems-row", timeout=15000)

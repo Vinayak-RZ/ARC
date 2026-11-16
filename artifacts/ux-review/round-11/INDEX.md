@@ -2,7 +2,7 @@
 
 Git HEAD: `5f3cd2eca561fe7cdcf3c8d0e1cb9635c31bf142`
 Short SHA: `5f3cd2e`
-PNG count: 133
+PNG count: 140
 
 ## How to read
 
@@ -44,6 +44,9 @@ PNG count: 133
 | `home-empty-1024-light.png` | Home | light | 1024×900 | Empty composer, six example tiles. |
 | `home-empty-light.png` | Home | light | 1440×900 | Empty composer, six example tiles. |
 | `home-scrolled-1024-light.png` | home scrolled 1024 light | light | 1024×900 | Main product surface. |
+| `home-scrolled-1280-light.png` | home scrolled 1280 light | light | 1440×900 | Main product surface. |
+| `home-scrolled-1280.png` | home scrolled 1280 | light | 1440×900 | Main product surface. |
+| `home-scrolled-1440-light.png` | home scrolled 1440 light | light | 1440×900 | Main product surface. |
 | `home-scrolled-dark.png` | home scrolled dark | dark | 1440×900 | Main product surface. |
 | `home-with-recent-light.png` | Home | light | 1440×900 | Recent run strip after divider. |
 | `lab-converter-dark.png` | lab converter dark | dark | 1440×900 | Main product surface. |
@@ -128,7 +131,11 @@ PNG count: 133
 | `studio-control-1024-light.png` | studio control 1024 light | light | 1024×900 | Main product surface. |
 | `studio-landing-dark.png` | studio landing dark | dark | 1440×900 | Main product surface. |
 | `studio-landing-light.png` | studio landing light | light | 1440×900 | Main product surface. |
+| `studio-layout-after-simulate-1440-dark.png` | Studio · Control | dark | 1440×900 | PID golden after Simulate. |
+| `studio-layout-after-simulate-1440-light.png` | Studio · Control | light | 1440×900 | PID golden after Simulate. |
 | `studio-layout-after-simulate-light.png` | Studio · Control | light | 1440×900 | PID golden after Simulate. |
+| `studio-layout-before-simulate-1440-dark.png` | studio layout before simulate 1440 dark | dark | 1440×900 | Main product surface. |
+| `studio-layout-before-simulate-1440-light.png` | studio layout before simulate 1440 light | light | 1440×900 | Main product surface. |
 | `studio-layout-before-simulate-light.png` | studio layout before simulate light | light | 1440×900 | Main product surface. |
 | `studio-margins-finite-dark.png` | studio margins finite dark | dark | 1440×900 | Main product surface. |
 | `studio-margins-finite-light.png` | studio margins finite light | light | 1440×900 | Main product surface. |

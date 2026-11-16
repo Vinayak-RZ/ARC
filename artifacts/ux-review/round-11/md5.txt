@@ -34,6 +34,9 @@ home-empty-1024-dark.png  157146b8b47babaa19a8c3c1d4bcbf23
 home-empty-1024-light.png  c19c7106e9ddd6e1623897d98cfc9c11
 home-empty-light.png  0105f40d7ee151e36ac27f59f2363a1e
 home-scrolled-1024-light.png  6bf6f028e5f17e97019ddbe6d772ac0d
+home-scrolled-1280-light.png  45aa6caf8c8c6e76c2fbd8db49c480d2
+home-scrolled-1280.png  45aa6caf8c8c6e76c2fbd8db49c480d2
+home-scrolled-1440-light.png  a8f0f866b4a83b3715556ee676ec0b49
 home-scrolled-dark.png  a95fee6f683dbdc1f9557e0bffada3cd
 home-with-recent-light.png  328a2534429bdbb9a87c43a5981cc911
 lab-converter-dark.png  bf3ffd483c024114dae6a97030eeff7f
@@ -118,7 +121,11 @@ studio-control-1024-dark.png  95980ecccdb3438b5efbf8602671646b
 studio-control-1024-light.png  f5c130d956eacda3bf8255f7ea3e511f
 studio-landing-dark.png  c389e37a7ec3a1ff67b7afe212af7845
 studio-landing-light.png  a3814f09cb1a3d189776e555428adda7
+studio-layout-after-simulate-1440-dark.png  74a26a576b4cda1c86c68fee0034a2d3
+studio-layout-after-simulate-1440-light.png  78343dde7f13dd86039e0b41ad46dbe5
 studio-layout-after-simulate-light.png  dbcf5c3fe452d4136d3eedfe54b5dabb
+studio-layout-before-simulate-1440-dark.png  786d69cb10890d120f1c47f642cfba47
+studio-layout-before-simulate-1440-light.png  143037e45c306e6cc8a0e04dcf752748
 studio-layout-before-simulate-light.png  50e52fb19b9148af4a1254976657fcb2
 studio-margins-finite-dark.png  4baaaae8f454f6d6a246f71dd76d774b
 studio-margins-finite-light.png  338df9525dd24490d099ee362872ad6f

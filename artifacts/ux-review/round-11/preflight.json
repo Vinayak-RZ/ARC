@@ -1,7 +1,7 @@
 {
   "git_sha": "5f3cd2eca561fe7cdcf3c8d0e1cb9635c31bf142",
   "git_sha_short": "5f3cd2e",
-  "ngspice_version": "******",
+  "ngspice_version": "ngspice-42 : Circuit level simulation program",
   "merged_collab_pr62_head": "73420104379c93b767aa4f04854525839e3524a4",
   "ci_reference": {
     "pr": 62,
@@ -170,6 +170,18 @@
       {
         "file": "home-scrolled-1024-light.png",
         "mean_luminance": 2.22
+      },
+      {
+        "file": "home-scrolled-1280-light.png",
+        "mean_luminance": 3.04
+      },
+      {
+        "file": "home-scrolled-1280.png",
+        "mean_luminance": 3.04
+      },
+      {
+        "file": "home-scrolled-1440-light.png",
+        "mean_luminance": 3.47
       },
       {
         "file": "home-scrolled-dark.png",
@@ -508,8 +520,24 @@
         "mean_luminance": 2.27
       },
       {
+        "file": "studio-layout-after-simulate-1440-dark.png",
+        "mean_luminance": 2.79
+      },
+      {
+        "file": "studio-layout-after-simulate-1440-light.png",
+        "mean_luminance": 2.72
+      },
+      {
         "file": "studio-layout-after-simulate-light.png",
         "mean_luminance": 2.65
+      },
+      {
+        "file": "studio-layout-before-simulate-1440-dark.png",
+        "mean_luminance": 2.78
+      },
+      {
+        "file": "studio-layout-before-simulate-1440-light.png",
+        "mean_luminance": 2.72
       },
       {
         "file": "studio-layout-before-simulate-light.png",
@@ -812,6 +840,16 @@
         "reason": "mean luminance too close to light"
       },
       {
+        "dark": "studio-layout-after-simulate-1440-dark.png",
+        "light": "studio-layout-after-simulate-1440-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "studio-layout-before-simulate-1440-dark.png",
+        "light": "studio-layout-before-simulate-1440-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
         "dark": "studio-margins-finite-dark.png",
         "light": "studio-margins-finite-light.png",
         "reason": "mean luminance too close to light"
@@ -844,9 +882,9 @@
       {
         "name": "test",
         "state": "FAILURE",
-        "url": "https://github.com/Vinayak-RZ/ARC/actions/runs/43917300219/job/133474801759"
+        "url": "https://github.com/Vinayak-RZ/ARC/actions/runs/43934430161/job/133535167194"
       }
     ]
   },
-  "png_count": 133
+  "png_count": 140
 }

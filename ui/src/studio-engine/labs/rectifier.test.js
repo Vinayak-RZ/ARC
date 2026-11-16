@@ -103,6 +103,39 @@ describe("rectifier waveforms", () => {
   });
 });
 
+describe("rectifier waveform mean vs Vo readout", () => {
+  const topologies = ["hw1", "semi1", "full1", "hw3", "semi3", "full3"];
+  const loads = ["R", "RL"];
+  const alphas = [0, 30, 45, 60, 75, 90];
+  for (const topology of topologies) {
+    for (const load of loads) {
+      for (const alpha_deg of alphas) {
+        it(`${topology} ${load} α=${alpha_deg}`, () => {
+          const p = {
+            topology,
+            load,
+            v_rms: topology.endsWith("3") ? 415 : 230,
+            alpha_deg,
+            r_ohm: 10,
+            io_a: 0,
+            ls_h: 0.002,
+          };
+          const Vo = voClosedForm(p);
+          const pts = sampleWaveform(p, 3600);
+          const mean = meanWaveform(pts);
+          assert.ok(Number.isFinite(Vo), String(Vo));
+          if (Math.abs(Vo) < 1) {
+            assert.ok(Math.abs(mean) < 1, `mean ${mean} vs Vo ${Vo}`);
+            return;
+          }
+          const rel = Math.abs(mean - Vo) / Math.abs(Vo);
+          assert.ok(rel < 0.005, `mean ${mean} vs Vo ${Vo} (${(rel * 100).toFixed(2)}%)`);
+        });
+      }
+    }
+  }
+});
+
 describe("rectifier finiteness sweep", () => {
   const topologies = ["hw1", "semi1", "full1", "hw3", "semi3", "full3"];
   const loads = ["R", "RL", "RLE", "CC"];

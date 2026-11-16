@@ -8,6 +8,8 @@ function unitForLabel(label) {
   const s = String(label || "").trim();
   const lower = s.toLowerCase();
   if (!s) return "";
+  if (lower === "vo" || lower.startsWith("vo,")) return "V";
+  if (lower.includes("relay time") || (lower.includes("time") && lower.includes("t"))) return "s";
   if (lower.includes("vout") || lower === "v" || lower.startsWith("v ")) return "V";
   if (lower.includes("vc") || lower.includes("peak")) return "V";
   if (lower === "i" || lower.includes("current")) return "A";
@@ -21,9 +23,13 @@ function unitForLabel(label) {
 function quantityLabelForRun(data, evid, fallback) {
   const kind = String(data?.problem?.kind || evid?.problem_kind || "").toLowerCase();
   const recipe = String(evid?.recipe_id || "");
+  if (recipe === "rectifier-3ph-study" || recipe === "rectifier-1ph-study") return "Vo";
+  if (recipe === "idmt-relay-study") return "Relay time t";
   if (kind === "series_rlc" || recipe === "simulate-circuit" || recipe === "series-rlc-transient") return "Vc,peak";
   if (recipe === "solve-control-problem") return "y(∞)";
   if (kind === "voltage_divider" || (data?.problem?.vin != null && data?.problem?.r1 != null)) return "Vout";
+  const bad = new Set(["answer", "result", "value", ""]);
+  if (bad.has(String(fallback || "").toLowerCase())) return "Answer";
   return fallback;
 }
 
@@ -47,6 +53,13 @@ export function answerPartsFromRow(label, scalar, digits) {
   const value = formatNumber(scalar, d);
   const name = label;
   return { name, value, unit, display: unit ? `${name} = ${value} ${unit}` : `${name} = ${value}` };
+}
+
+export function runHeadline(evid, data) {
+  const { rows } = buildAnswerRows(evid, data);
+  if (rows.length === 1) return rows[0].display;
+  if (rows.length > 1) return rows.map((r) => r.display).join(" · ");
+  return "";
 }
 
 export function buildAnswerRows(evid, data) {

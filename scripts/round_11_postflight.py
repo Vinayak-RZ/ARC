@@ -14,7 +14,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "artifacts" / "ux-review" / "round-11"
-BAD_RE = re.compile(r"\b(NaN|undefined)\b", re.I)
+BAD_RE = re.compile(r"\b(NaN|undefined)\b", re.IGNORECASE)
 
 
 def _png_mean_luminance(path: Path) -> float:
@@ -24,6 +24,7 @@ def _png_mean_luminance(path: Path) -> float:
     pos = 8
     data = b""
     width = height = 0
+    color_type = 2
     while pos < len(raw):
         ln = struct.unpack(">I", raw[pos : pos + 4])[0]
         kind = raw[pos + 4 : pos + 8]
@@ -31,23 +32,25 @@ def _png_mean_luminance(path: Path) -> float:
         pos += 12 + ln
         if kind == b"IHDR":
             width, height = struct.unpack(">II", chunk[:8])
+            color_type = chunk[9] if len(chunk) > 9 else 2
         elif kind == b"IDAT":
             data += chunk
         elif kind == b"IEND":
             break
     if not data or not width:
         return 128.0
+    bpp = 4 if color_type in (4, 6) else 3
     stream = zlib.decompress(data)
-    stride = width * 3 + 1
+    row_bytes = width * bpp
     total = 0.0
     count = 0
     y = 0
     off = 0
     while y < height and off < len(stream):
         off += 1
-        row = stream[off : off + width * 3]
-        off += width * 3
-        for i in range(0, len(row), 3):
+        row = stream[off : off + row_bytes]
+        off += row_bytes
+        for i in range(0, len(row) - 2, bpp):
             r, g, b = row[i : i + 3]
             total += 0.2126 * r + 0.7152 * g + 0.0722 * b
             count += 1
@@ -190,11 +193,12 @@ def main() -> int:
         if path.name.endswith("-dark.png") or "-dark." in path.name:
             light_name = path.name.replace("-dark.png", "-light.png").replace("-dark.", "-light.")
             light_path = OUT / light_name
-            if light_path.is_file():
-                if abs(lum - light_lums.get(light_name, _png_mean_luminance(light_path))) < 4:
-                    scan["dark_integrity_failures"].append(
-                        {"dark": path.name, "light": light_name, "reason": "mean luminance too close to light"}
-                    )
+            if light_path.is_file() and abs(
+                lum - light_lums.get(light_name, _png_mean_luminance(light_path))
+            ) < 4:
+                scan["dark_integrity_failures"].append(
+                    {"dark": path.name, "light": light_name, "reason": "mean luminance too close to light"}
+                )
             if lum > 95:
                 scan["dark_integrity_failures"].append({"dark": path.name, "reason": f"mean luminance {lum:.1f} too bright"})
         else:
@@ -215,11 +219,15 @@ def main() -> int:
     }
     pf["png_count"] = len(pngs)
     ngspice_txt = OUT / ".ngspice_version"
-    if ngspice_txt.is_file():
-        pf["ngspice_version"] = ngspice_txt.read_text(encoding="utf-8").strip()
+    ng_cached = ngspice_txt.read_text(encoding="utf-8").strip() if ngspice_txt.is_file() else ""
+    if ng_cached and not ng_cached.startswith("*"):
+        pf["ngspice_version"] = ng_cached
     elif shutil.which("ngspice"):
         proc = subprocess.run(["ngspice", "-v"], capture_output=True, text=True, check=False)
-        pf["ngspice_version"] = (proc.stdout + proc.stderr).strip().splitlines()[0]
+        banner = (proc.stdout + proc.stderr).strip().splitlines()
+        ver = next((ln.strip().strip("*").strip() for ln in banner if "ngspice" in ln.lower()), banner[-1] if banner else "")
+        pf["ngspice_version"] = ver
+        ngspice_txt.write_text(ver + "\n", encoding="utf-8")
     pf_path.write_text(json.dumps(pf, indent=2) + "\n", encoding="utf-8")
 
     md5_lines = []

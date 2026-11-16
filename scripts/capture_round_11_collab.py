@@ -20,7 +20,7 @@ HOST = "127.0.0.1"
 PORT = 8765
 BASE = f"http://{HOST}:{PORT}"
 W, H = 1440, 900
-BAD_TEXT = re.compile(r"(\bNaN\b|undefined|\[object Object\]|Simulating…|Loading…)", re.I)
+BAD_TEXT = re.compile(r"(\bNaN\b|undefined|\[object Object\]|Simulating…|Loading…)", re.IGNORECASE)
 
 
 def _clear_runs() -> None:
@@ -151,7 +151,7 @@ def _set_r1_and_reverify(run_id: str, ohms: float) -> dict:
 
 def _assert_text(page, pattern: str, label: str) -> None:
     body = page.locator("body").inner_text()
-    if not re.search(pattern, body, re.I):
+    if not re.search(pattern, body, re.IGNORECASE):
         raise RuntimeError(f"{label}: pattern {pattern!r} not found in page text")
 
 
