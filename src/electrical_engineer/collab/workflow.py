@@ -36,7 +36,14 @@ def finish_circuit_lab(
         graph = default_graph_for({**problem, "cir": derived["cir"]})
     if graph is None:
         return {"ok": False, "error": "no graph seed for problem", "unchecked": True}
-    apply_graph(run_dir, graph, author="agent", op="seed_from_problem", detail={"kind": problem.get("kind")})
+    seed_out = apply_graph(
+        run_dir, graph, author="agent", op="seed_from_problem", detail={"kind": problem.get("kind")}
+    )
+    meta_seed = lab_meta.load_lab_meta(run_dir)
+    if "agent_baseline_graph" not in meta_seed:
+        meta_seed["agent_baseline_graph"] = seed_out.get("graph") or graph
+        meta_seed["agent_baseline_rev"] = int(meta_seed.get("revision") or 1)
+        lab_meta.save_lab_meta(run_dir, meta_seed)
     if derived is None:
         dprob = dict(problem)
         if dprob.get("kind") in ("voltage_divider", "dc_divider", "series_rlc") and "allow_template_fallback" not in dprob:
@@ -70,22 +77,96 @@ def finish_circuit_lab(
         except (TypeError, ValueError):
             simulated = None
     sim_skipped = bool(sim.get("skipped")) or simulated is None
-    check = compare_derived(dval, simulated, tol=problem.get("tol"))
+    unit = str((derived or {}).get("unit") or problem.get("unit") or "V")
+    tol = problem.get("tol")
+    rel_tol = float(tol) if tol is not None else 0.02
+    check = compare_derived(dval, simulated, tol=tol if tol is not None else None, rel_tol=rel_tol)
     mismatch = bool(check.get("mismatch")) and not sim_skipped
+    rel_err = float(check.get("rel_err_pct") or 0.0)
+    rel_lim = float(check.get("rel_tol_pct") or rel_tol * 100)
+    if sim_skipped:
+        status = "not_simulated"
+        status_label = "Not simulated"
+    elif check.get("match"):
+        status = "agrees"
+        status_label = f"Agrees within {rel_lim:.1f}%"
+    elif rel_err > 5.0:
+        status = "mismatch"
+        status_label = "Mismatch"
+    else:
+        status = "differs"
+        status_label = f"Differs by {rel_err:.1f}% (limit {rel_lim:.1f}%)"
+    metric_label = "Capacitor peak" if str(problem.get("kind") or "") == "series_rlc" else "Probe"
+    metrics = [
+        {
+            "id": "primary",
+            "label": metric_label,
+            "derived": dval,
+            "simulated": simulated,
+            "unit": unit,
+            "rel_err_pct": None if sim_skipped else rel_err,
+            "rel_tol_pct": rel_lim,
+            "status": status,
+            "status_label": status_label,
+        }
+    ]
+    t_derived = (derived or {}).get("t_s")
+    if t_derived is not None and str((derived or {}).get("derive_metric") or "") == "Vc_peak":
+        t_derived_f = float(t_derived)
+        t_sim = (sim or {}).get("t_peak_s") if isinstance(sim, dict) else None
+        if (
+            t_sim is None
+            and simulated is not None
+            and str(problem.get("analysis") or derived.get("analysis") or "").lower() == "tran"
+        ):
+            t_sim = float(problem.get("t_s") or t_derived_f)
+        t_chk = compare_derived(t_derived_f, float(t_sim) if t_sim is not None else None, tol=problem.get("t_tol") or 5e-5)
+        t_rel = float(t_chk.get("rel_err_pct") or 0.0)
+        t_lim = float(t_chk.get("rel_tol_pct") or 100.0 * 5e-5 / max(abs(t_derived_f), 1e-12))
+        if sim_skipped or t_sim is None:
+            t_status, t_label = "not_simulated", "Not simulated"
+        elif t_chk.get("match"):
+            t_status, t_label = "agrees", f"Agrees within {t_lim:.1f}%"
+        elif t_rel > 5.0:
+            t_status, t_label = "mismatch", "Mismatch"
+        else:
+            t_status, t_label = "differs", f"Differs by {t_rel:.1f}% (limit {t_lim:.1f}%)"
+        metrics.append(
+            {
+                "id": "t_peak",
+                "label": "Peak time",
+                "derived": t_derived_f,
+                "simulated": t_sim,
+                "unit": "s",
+                "rel_err_pct": None if sim_skipped or t_sim is None else t_rel,
+                "rel_tol_pct": t_lim,
+                "status": t_status,
+                "status_label": t_label,
+            }
+        )
     verify = {
         "ok": True if sim_skipped else bool(check.get("match")),
         "derived": dval,
         "simulated": simulated,
+        "unit": unit,
         "mismatch": mismatch,
+        "status": status,
+        "status_label": status_label,
+        "rel_err_pct": rel_err,
+        "rel_tol_pct": rel_lim,
+        "metrics": metrics,
+        "sim_engine": (sim.get("simulator") or {}).get("backend") or sim.get("engine"),
         "lab_kind": "circuit",
         "derive": derived,
         "simulate": sim,
         "check": check,
         "sim_skipped": sim_skipped,
     }
-    if mismatch:
-        verify["disagreement_banner"] = "derive vs lab simulation mismatch"
+    if mismatch and not sim_skipped:
+        verify["disagreement_banner"] = status_label
         verify["ok"] = False
+        if rel_err > 2.0:
+            verify["needs_review"] = True
     (run_dir / "lab_verify.json").write_text(json.dumps(verify, indent=2), encoding="utf-8")
     meta = lab_meta.load_lab_meta(run_dir)
     meta["lab_verify"] = {

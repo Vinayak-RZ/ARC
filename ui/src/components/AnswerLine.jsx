@@ -21,7 +21,18 @@ export function AnswerLine({ parts, checked }) {
   );
 }
 
-export function VerificationStrip({ checked, unchecked, modifiedAt, stale, note }) {
+export function VerificationStrip({ checked, unchecked, modifiedAt, stale, note, needsReview, reviewNote }) {
+  if (needsReview) {
+    return (
+      <div className="verification-strip verification-review" role="status">
+        <AlertTriangle size={16} strokeWidth={1.5} className="verification-icon" aria-hidden="true" />
+        <span className="status-tag needs-review-tag">Needs review</span>
+        <span className="verification-body">
+          {reviewNote || "Derived and simulated values disagree beyond tolerance."}
+        </span>
+      </div>
+    );
+  }
   if (stale && checked && !unchecked) {
     return (
       <div className="verification-strip verification-stale" role="status">

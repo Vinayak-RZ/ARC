@@ -26,6 +26,8 @@ import {
 } from "../slots/canvas/graph.js";
 import { nodeTypes } from "../slots/canvas/nodes.jsx";
 import { LabActivity } from "../components/LabActivity.jsx";
+import { LabProvenanceBar } from "../components/LabProvenanceBar.jsx";
+import { LabVerifyPanel } from "../components/LabVerifyPanel.jsx";
 
 const EDGE_STYLE = { stroke: "var(--ee-color-ink)", strokeWidth: 1.5 };
 const GRID = 16;
@@ -121,33 +123,55 @@ function CircuitSandboxInner({ linkedRunId }) {
   const [msg, setMsg] = useState("");
   const [labPresence, setLabPresence] = useState(null);
   const [labMeta, setLabMeta] = useState(null);
+  const [labVerify, setLabVerify] = useState(null);
+  const [runTitle, setRunTitle] = useState("");
+  const [viewMode, setViewMode] = useState("yours");
+  const [showAuthorship, setShowAuthorship] = useState(false);
   const past = useRef([]);
   const future = useRef([]);
   const hydrated = useRef(false);
   const revision = useRef(0);
-  const { screenToFlowPosition } = useReactFlow();
+  const { screenToFlowPosition, fitView } = useReactFlow();
 
   const loadLinkedRun = useCallback(
     (force = false) => {
       if (!linkedRunId) return;
-      fetch(`/api/runs/${linkedRunId}/lab`)
-        .then((r) => (r.ok ? r.json() : Promise.reject()))
-        .then((body) => {
+      Promise.all([
+        fetch(`/api/runs/${linkedRunId}/lab`).then((r) => (r.ok ? r.json() : Promise.reject())),
+        fetch(`/api/runs/${linkedRunId}`).then((r) => (r.ok ? r.json() : null)),
+      ])
+        .then(([body, detail]) => {
           const rev = body?.lab_meta?.revision ?? 0;
           if (!force && rev <= revision.current && hydrated.current) return;
           revision.current = rev;
-          const graph = body?.graph || {};
+          const graph =
+            viewMode === "agent" && body?.lab_meta?.agent_baseline_graph
+              ? body.lab_meta.agent_baseline_graph
+              : body?.graph || {};
           const { nodes: n, edges: e } = toFlow(graph);
-          setNodes(n);
+          const withMarks = showAuthorship
+            ? n.map((node) => ({
+                ...node,
+                className: "has-author-dot is-agent-authored",
+              }))
+            : n;
+          setNodes(withMarks);
           setEdges(e);
           setLabPresence(body?.lab_meta?.presence || null);
           setLabMeta(body?.lab_meta || null);
+          setLabVerify(body?.lab_verify || null);
+          setRunTitle(detail?.title || linkedRunId);
           hydrated.current = true;
+          window.setTimeout(() => fitView({ padding: 0.2, duration: 0 }), 60);
         })
         .catch(() => setMsg("Could not load shared circuit for this run."));
     },
-    [linkedRunId, setEdges, setNodes],
+    [fitView, linkedRunId, setEdges, setNodes, showAuthorship, viewMode],
   );
+
+  useEffect(() => {
+    if (linkedRunId) loadLinkedRun(true);
+  }, [viewMode, linkedRunId, loadLinkedRun]);
 
   useEffect(() => {
     if (linkedRunId) {
@@ -259,6 +283,16 @@ function CircuitSandboxInner({ linkedRunId }) {
     setNodes(n);
     setEdges(e);
     setMsg("");
+    window.setTimeout(() => fitView({ padding: 0.2, duration: 0 }), 60);
+  }
+
+  const humanEdits = (labMeta?.op_log || []).filter((e) => e.author === "human" && e.op !== "restore").length;
+
+  async function restoreAgent() {
+    if (!linkedRunId) return;
+    if (!window.confirm("Replace your changes with the agent's version? You can undo from Activity.")) return;
+    await fetch(`/api/runs/${linkedRunId}/lab/restore`, { method: "POST" });
+    loadLinkedRun(true);
   }
 
   function clearCanvas() {
@@ -270,9 +304,40 @@ function CircuitSandboxInner({ linkedRunId }) {
 
   return (
     <div className="lab-surface lab-surface-circuit">
+      {linkedRunId ? (
+        <LabProvenanceBar
+          runTitle={runTitle}
+          problemId={linkedRunId}
+          revision={labMeta?.revision}
+          humanEdits={humanEdits}
+          viewMode={viewMode}
+          onViewMode={setViewMode}
+          onBackToProblem={() => {
+            window.location.href = `/?problem=${linkedRunId}`;
+          }}
+          onRestore={restoreAgent}
+          restoreDisabled={humanEdits === 0}
+        />
+      ) : null}
+      {linkedRunId && viewMode === "agent" ? (
+        <p className="lab-agent-view-strip" role="status">
+          Viewing the agent&apos;s version. Switch to Yours to keep editing.
+        </p>
+      ) : null}
       <div className="canvas-lab studio-circuit-sandbox">
         <Palette onAdd={addPart} />
         <div className="flow-wrap">
+          {linkedRunId ? (
+            <div className="circuit-lab-toolbar">
+              <button
+                type="button"
+                className={showAuthorship ? "button-primary" : "button-secondary"}
+                onClick={() => setShowAuthorship((v) => !v)}
+              >
+                Show authorship
+              </button>
+            </div>
+          ) : null}
           <p className="canvas-wire-hint">
             Drag a port onto another port. Double-click a wire to add a junction. Click a wire, then Delete, to remove it.
           </p>
@@ -314,10 +379,13 @@ function CircuitSandboxInner({ linkedRunId }) {
           </button>
         </div>
         {linkedRunId ? (
-          <aside className="studio-lab-activity card-surface" aria-label="Lab activity">
-            <h3>Activity</h3>
-            <LabActivity labMeta={labMeta} />
-          </aside>
+          <>
+            <LabVerifyPanel labVerify={labVerify} labMeta={labMeta} compact />
+            <aside className="studio-lab-activity card-surface" aria-label="Lab activity">
+              <h3>Activity</h3>
+              <LabActivity labMeta={labMeta} onRestore={() => restoreAgent()} />
+            </aside>
+          </>
         ) : null}
       </div>
     </div>

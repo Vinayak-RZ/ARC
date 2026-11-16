@@ -12,14 +12,18 @@ from electrical_engineer.collab import lab_meta as lab_meta_mod
 
 
 def _append_op(meta: dict[str, Any], op: dict[str, Any], author: str) -> dict[str, Any]:
+    next_rev = int(meta.get("revision") or 0) + 1
+    actor_label = "You" if author == "human" else "Agent"
     entry = {
         "id": f"op-{len(meta.get('op_log') or []) + 1}",
+        "rev": next_rev,
         "ts_ms": int(time.time() * 1000),
         "author": author if author in ("human", "agent") else "agent",
+        "actor_label": actor_label,
         **op,
     }
     meta.setdefault("op_log", []).append(entry)
-    meta["revision"] = int(meta.get("revision") or 0) + 1
+    meta["revision"] = next_rev
     meta["updated_at_ms"] = entry["ts_ms"]
     presence = meta.setdefault(
         "presence",

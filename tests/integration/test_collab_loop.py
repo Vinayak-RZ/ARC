@@ -58,11 +58,67 @@ def test_series_rlc_transient_lab(run_root: Path, monkeypatch) -> None:
     verify = finish_circuit_lab(run_root, problem, derived=derived)
     assert abs(float(verify["derived"]) - gold) < 1e-6
     if verify.get("simulated") is not None:
-        if verify.get("mismatch"):
-            rel_err = abs(float(verify["simulated"]) - gold) / max(abs(gold), 1e-9)
-            assert rel_err < 1.05
-        else:
-            assert verify.get("mismatch") is False
+        assert verify.get("mismatch") is False
+
+
+def test_series_rlc_headline_verify_catches_bad_derive(run_root: Path, monkeypatch) -> None:
+    monkeypatch.chdir(run_root.parent.parent)
+    r, l, c, vin = 10.0, 0.01, 100e-6, 10.0
+    meta = series_rlc_step(r, l, c, vin)
+    gold = float(meta["Vc_peak_V"])
+    assert abs(gold - 11.630) < 0.01
+    euler_wrong = 11.963
+    cir = (
+        "* rlc headline\n"
+        f"V1 1 0 DC {vin}\nR1 1 2 {r}\nL1 2 3 {l}\nC1 3 0 {c}\n"
+        f".tran 1u {float(meta['t_Vc_peak_s']) * 2}\n.end\n"
+    )
+    problem = {
+        "kind": "series_rlc",
+        "r_ohm": r,
+        "l_h": l,
+        "c_f": c,
+        "vin": vin,
+        "cir": cir,
+        "analysis": "tran",
+        "t_s": float(meta["t_Vc_peak_s"]),
+        "probe": "v(3)",
+        "tol": 0.02,
+        "value": euler_wrong,
+    }
+    derived = {
+        "value": euler_wrong,
+        "unit": "V",
+        "cir": cir,
+        "probe": "v(3)",
+        "analysis": "tran",
+        "t_s": problem["t_s"],
+        "derive_metric": "Vc_peak",
+        "engine": "forward_euler_bug",
+    }
+    verify = finish_circuit_lab(run_root, problem, derived=derived)
+    assert abs(float(verify["derived"]) - euler_wrong) < 1e-6
+    if verify.get("simulated") is not None and not verify.get("sim_skipped"):
+        assert verify.get("needs_review") is True or verify.get("mismatch") is True
+        sim = float(verify["simulated"])
+        if abs(sim - gold) / gold < 0.02:
+            assert verify.get("rel_err_pct", 0) > 2.0
+
+
+def test_series_rlc_headline_lab_closed_form(run_root: Path, monkeypatch) -> None:
+    monkeypatch.chdir(run_root.parent.parent)
+    problem = {
+        "kind": "series_rlc",
+        "vin": 10,
+        "r_ohm": 10,
+        "l_h": 0.01,
+        "c_f": 100e-6,
+        "tol": 0.02,
+    }
+    verify = finish_circuit_lab(run_root, problem)
+    assert abs(float(verify["derived"]) - 11.630) < 0.01
+    if verify.get("simulated") is not None and not verify.get("sim_skipped"):
+        assert verify.get("needs_review") is not True
 
 
 def test_rc_lowpass_bode_lab(run_root: Path, monkeypatch) -> None:

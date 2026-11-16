@@ -26,8 +26,8 @@ def _wait_run(page, run_id: str) -> None:
 
 def _shot_run_page(page, run_id: str, path: Path, *, diagram_tab: bool = False) -> None:
     _wait_run(page, run_id)
-    page.wait_for_selector(".lab-verify-panel", timeout=20_000)
-    page.locator(".lab-verify-panel dd").first.wait_for(state="visible")
+    page.wait_for_selector(".lab-verify-panel, .lab-verify-table", timeout=20_000)
+    page.locator(".lab-verify-table td, .lab-verify-panel").first.wait_for(state="visible", timeout=20_000)
     if diagram_tab:
         page.get_by_role("tab", name="Diagram").click()
         page.wait_for_selector(".diagram-shell svg, .diagram-shell .react-flow", timeout=20_000)

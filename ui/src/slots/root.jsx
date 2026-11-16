@@ -82,10 +82,12 @@ function Result({ id }) {
       )}
       {!error ? (
         <VerificationStrip
-          checked={!unchecked}
+          checked={!unchecked && !data?.lab_verify?.needs_review}
           unchecked={unchecked}
           modifiedAt={data?.modified_at}
           stale={stale}
+          needsReview={Boolean(data?.lab_verify?.needs_review)}
+          reviewNote={data?.lab_verify?.status_label || data?.lab_verify?.disagreement_banner}
           note={(data?.work_steps || []).find((step) => step.title === "Check")?.result}
         />
       ) : (

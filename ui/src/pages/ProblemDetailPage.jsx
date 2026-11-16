@@ -43,6 +43,11 @@ export function ProblemDetailPage({ id, data, runMeta }) {
           Open simulation lab
         </button>
       ) : null}
+      {data?.lab_verify?.needs_review ? (
+        <p className="lab-needs-review-banner" role="status">
+          Needs review — derived and simulated values disagree beyond tolerance.
+        </p>
+      ) : null}
       {renderSlot("run.result", { id, runMeta })}
       <LabVerifyPanel labVerify={data?.lab_verify} labMeta={data?.lab} />
       <div className="problem-tabs tabs-underline" role="tablist">

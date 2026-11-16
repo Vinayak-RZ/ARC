@@ -62,6 +62,8 @@ def compare_derived(
     margin = float(tol) if tol is not None else max(abs_tol, rel_tol * max(abs(derived), 1.0))
     delta = abs(simulated - derived)
     match = delta <= margin
+    denom = max(abs(derived), 1e-12)
+    rel_err_pct = 100.0 * delta / denom
     return {
         "match": match,
         "mismatch": not match,
@@ -69,4 +71,6 @@ def compare_derived(
         "simulated": simulated,
         "delta": delta,
         "tol": margin,
+        "rel_err_pct": rel_err_pct,
+        "rel_tol_pct": 100.0 * margin / denom,
     }

@@ -2523,6 +2523,54 @@ a { color: var(--ee-color-primary); }
 .lab-verify-grid dt { font-size: var(--ee-type-caption); color: var(--ee-color-muted); margin: 0; }
 .lab-verify-grid dd { font-size: 1.125rem; font-weight: 600; margin: 4px 0 0; font-variant-numeric: tabular-nums; }
 .lab-verify-mismatch { color: var(--ee-semantic-down); font-weight: 600; }
+.lab-verify-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.lab-verify-table { width: 100%; border-collapse: collapse; font-size: var(--ee-type-caption); margin-top: 8px; }
+.lab-verify-table th,
+.lab-verify-table td { padding: 8px 10px; border-bottom: 1px solid var(--ee-color-hairline); text-align: left; vertical-align: top; }
+.lab-verify-engine { display: block; font-size: 11px; font-weight: 400; color: var(--ee-color-muted); margin-top: 2px; }
+.lab-verify-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.lab-verify-badge.is-agrees { color: var(--ee-semantic-up); background: color-mix(in srgb, var(--ee-semantic-up) 12%, transparent); }
+.lab-verify-badge.is-differs { color: #b45309; background: color-mix(in srgb, #b45309 12%, transparent); }
+.lab-verify-badge.is-mismatch { color: var(--ee-semantic-down); background: color-mix(in srgb, var(--ee-semantic-down) 12%, transparent); }
+.lab-verify-badge.is-muted { color: var(--ee-color-muted); background: var(--ee-color-surface-subtle, #f4f5f7); }
+.lab-verify-panel.is-compact { margin: 0; border-left: 1px solid var(--ee-color-hairline); max-width: 360px; padding: var(--ee-space-m); }
+.lab-needs-review,
+.lab-needs-review-banner { color: #b45309; font-weight: 600; font-size: var(--ee-type-caption); }
+.verification-review { border-color: #b45309; background: color-mix(in srgb, #b45309 8%, transparent); }
+.needs-review-tag { color: #b45309; }
+.lab-provenance-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  min-height: 40px; padding: 6px 16px; background: var(--ee-color-surface-subtle, #f7f8fa);
+  border-bottom: 1px solid var(--ee-color-hairline); font-size: 13px;
+}
+.lab-provenance-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.lab-provenance-edited-pill {
+  padding: 2px 8px; border-radius: 4px; border: 1px solid var(--ee-color-hairline); font-size: 12px;
+}
+.lab-provenance-segment { display: inline-flex; border: 1px solid var(--ee-color-hairline); border-radius: 6px; overflow: hidden; }
+.lab-provenance-segment button {
+  border: 0; background: transparent; padding: 4px 10px; font-size: 12px; cursor: pointer;
+}
+.lab-provenance-segment button.is-active { background: var(--ee-color-primary); color: #fff; }
+.lab-agent-view-strip {
+  margin: 0; padding: 8px 16px; font-size: 12px; background: var(--ee-color-surface-subtle, #f7f8fa);
+  border-bottom: 1px solid var(--ee-color-hairline);
+}
+.lab-activity-wrap { display: flex; flex-direction: column; gap: 8px; }
+.lab-activity-filters { display: flex; gap: 6px; flex-wrap: wrap; }
+.lab-activity-filters button { font-size: 11px; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--ee-color-hairline); background: transparent; }
+.lab-activity-filters button.is-active { border-color: var(--ee-color-primary); color: var(--ee-color-primary); }
+.lab-activity-timeline { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.lab-activity-item { display: flex; gap: 8px; align-items: flex-start; }
+.lab-activity-avatar.is-human {
+  width: 20px; height: 20px; border-radius: 50%; background: var(--ee-color-muted); color: #fff;
+  font-size: 9px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.has-author-dot { position: relative; }
+.has-author-dot.is-agent-authored::before {
+  content: ""; position: absolute; top: 2px; left: 2px; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--ee-color-primary); z-index: 2;
+}
 .lab-activity-panel { margin-top: var(--ee-space-m); }
 .lab-activity-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .lab-activity-item {
