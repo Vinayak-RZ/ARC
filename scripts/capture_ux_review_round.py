@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Capture UX review screenshots at 1280x800 into artifacts/ux-review/round-<N>/."""
+"""Capture UX review screenshots into artifacts/ux-review/round-<N>/ (1280x800; round 10+ uses 1440x900)."""
 
 from __future__ import annotations
 
@@ -320,6 +320,10 @@ def main() -> int:
     out_dir = ROOT / "artifacts" / "ux-review" / f"round-{args.round}"
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    global W, H
+    if args.round >= 10:
+        W, H = 1440, 900
+
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
@@ -338,6 +342,7 @@ def main() -> int:
         stderr=subprocess.DEVNULL,
     )
     hashes: dict[str, str] = {}
+    index_notes: list[str] = []
     backup = None
     measurements: dict[str, object] = {}
     try:
@@ -376,6 +381,9 @@ def main() -> int:
                     raise RuntimeError(f"duplicate screenshot: {name} matches {dup} (md5={digest})")
                 hashes[name] = digest
                 print(f"wrote {path} md5={digest}")
+
+            def studio_go(session_id: str) -> None:
+                go(f"?view=studio&tab=control&session={session_id}")
 
             def go(query: str = "") -> None:
                 page.goto(f"http://{HOST}:{PORT}/{query}", wait_until="domcontentloaded", timeout=60000)
@@ -491,7 +499,7 @@ def main() -> int:
             )
             with urllib.request.urlopen(req, timeout=60) as resp:
                 pid_sess = json.loads(resp.read().decode())["session_id"]
-            go(f"?view=studio&session={pid_sess}")
+            studio_go(pid_sess)
             _studio_wires_ready(page)
             page.wait_for_timeout(400)
             snap("studio-layout-before-simulate.png")
@@ -546,18 +554,18 @@ def main() -> int:
                 )
                 with urllib.request.urlopen(req_u, timeout=60) as resp:
                     u_sid = json.loads(resp.read().decode())["session_id"]
-                go(f"?view=studio&session={u_sid}")
+                studio_go(u_sid)
                 page.locator(".cs-simulate-btn").click()
                 page.wait_for_selector(".studio-step-svg", timeout=120000)
                 page.wait_for_timeout(400)
                 snap("studio-step-offtarget.png")
                 page.set_viewport_size({"width": 1280, "height": 680})
-                go(f"?view=studio&session={pid_sess}")
+                studio_go(pid_sess)
                 page.wait_for_timeout(800)
                 snap("studio-after-resize.png")
                 page.set_viewport_size({"width": W, "height": H})
             if args.round >= 7:
-                go(f"?view=studio&session={pid_sess}")
+                studio_go(pid_sess)
                 page.locator(".cs-simulate-btn").click()
                 page.wait_for_selector(".studio-settled-pill", timeout=120000)
                 snap("studio-step-settled.png")
@@ -574,7 +582,7 @@ def main() -> int:
                 _click_window(page, "30 s")
                 page.wait_for_timeout(300)
                 snap("studio-step-extended.png")
-            if args.round >= 4:
+            if args.round >= 4 and args.round < 10:
                 wide_studio = browser.new_page(viewport={"width": 1440, "height": 900})
                 req1440 = urllib.request.Request(
                     f"http://{HOST}:{PORT}/api/control-studio/sessions",
@@ -585,7 +593,7 @@ def main() -> int:
                 with urllib.request.urlopen(req1440, timeout=60) as resp:
                     wide_sid = json.loads(resp.read().decode())["session_id"]
                 wide_studio.goto(
-                    f"http://{HOST}:{PORT}/?view=studio&session={wide_sid}",
+                    f"http://{HOST}:{PORT}/?view=studio&tab=control&session={wide_sid}",
                     wait_until="domcontentloaded",
                 )
                 wide_studio.wait_for_selector(".studio-canvas", timeout=15000)
@@ -617,7 +625,7 @@ def main() -> int:
                 with urllib.request.urlopen(req, timeout=60) as resp:
                     low = json.loads(resp.read().decode())
                 sid = low["session_id"]
-                go(f"?view=studio&session={sid}")
+                studio_go(sid)
                 page.wait_for_selector(".cs-simulate-btn", timeout=15000)
                 page.click(".cs-simulate-btn")
                 page.wait_for_selector(".studio-margins .studio-margin", timeout=60000)
@@ -635,7 +643,7 @@ def main() -> int:
                 )
                 with urllib.request.urlopen(req, timeout=60) as resp:
                     fin = json.loads(resp.read().decode())["session_id"]
-                go(f"?view=studio&session={fin}")
+                studio_go(fin)
                 page.wait_for_selector(".cs-simulate-btn", timeout=15000)
                 page.click(".cs-simulate-btn")
                 page.wait_for_selector(".studio-margins .studio-margin", timeout=120000)
@@ -643,6 +651,60 @@ def main() -> int:
                 snap("studio-margins-finite.png")
                 if args.round >= 8:
                     snap("studio-margins-finite-dark.png")
+
+            if args.round >= 10:
+                go("?view=learn")
+                page.wait_for_selector(".learn-page h1", timeout=30000)
+                snap("learn-landing.png")
+                go("?view=learn&subject=eec-303")
+                page.wait_for_selector(".learn-subject-page", timeout=30000)
+                snap("learn-subject-power-electronics.png")
+                go("?view=learn")
+                page.wait_for_selector(".learn-page", timeout=15000)
+                page.get_by_role("button", name="View all").click()
+                page.wait_for_selector(".learn-drawer-overlay", timeout=10000)
+                snap("learn-achievements.png")
+                page.keyboard.press("Escape")
+                go("?view=studio")
+                page.wait_for_selector(".studio-home", timeout=15000)
+                snap("studio-landing.png")
+                go("?view=studio&tab=circuits")
+                page.wait_for_selector(".studio-circuit-sandbox", timeout=20000)
+                page.evaluate("() => localStorage.removeItem('arc-circuit-sandbox-v1')")
+                page.reload(wait_until="domcontentloaded")
+                page.wait_for_selector(".product-shell", timeout=30000)
+                page.wait_for_selector("button:has-text('Series RLC')", timeout=15000)
+                page.get_by_role("button", name="Series RLC").click()
+                page.wait_for_timeout(800)
+                snap("studio-circuit-series-rlc.png")
+                for lab_id, stem in [
+                    ("rectifier", "lab-rectifier"),
+                    ("converter", "lab-converter"),
+                    ("idmt", "lab-idmt"),
+                    ("lead", "lab-lead"),
+                ]:
+                    go(f"?view=studio&tab=labs&lab={lab_id}")
+                    page.wait_for_selector(".lab-surface", timeout=30000)
+                    page.wait_for_timeout(500)
+                    snap(f"{stem}.png")
+                circuit_rid = _run_example("rlc-step")
+                go(f"?problem={circuit_rid}")
+                page.wait_for_selector(".answer-line", timeout=120000)
+                page.get_by_role("tab", name="Work").click()
+                page.wait_for_selector(".checked-tag, .answer-line.is-checked", timeout=120000)
+                snap("problem-circuit-checked-work.png")
+                page.get_by_role("tab", name="Diagram").click()
+                page.wait_for_selector(".static-diagram, .diagram-shell svg", timeout=30000)
+                snap("problem-circuit-checked-diagram.png")
+                control_rid = _run_example("control-step")
+                go(f"?problem={control_rid}")
+                page.wait_for_selector(".answer-line", timeout=120000)
+                page.get_by_role("tab", name="Work").click()
+                page.wait_for_selector(".checked-tag, .answer-line.is-checked", timeout=120000)
+                snap("problem-control-checked-work.png")
+                page.get_by_role("tab", name="Diagram").click()
+                page.wait_for_selector(".static-diagram", timeout=30000)
+                snap("problem-control-checked-diagram.png")
 
             go("?view=gallery")
             page.wait_for_selector(".gallery-card", timeout=10000)
@@ -749,14 +811,23 @@ def main() -> int:
                 go("?view=home")
                 page.evaluate("() => document.querySelector('.agent-card')?.scrollIntoView({block: 'end'})")
                 page.wait_for_timeout(300)
-                snap("home-scrolled-1280.png")
-                wide = browser.new_page(viewport={"width": 1440, "height": H})
-                wide.goto(f"http://{HOST}:{PORT}/?view=home", wait_until="domcontentloaded")
-                wide.wait_for_selector(".example-grid-six", timeout=15000)
-                wide.evaluate("() => document.querySelector('.agent-card')?.scrollIntoView({block: 'end'})")
-                wide.wait_for_timeout(300)
-                snap("home-scrolled-1440.png", wide)
-                wide.close()
+                narrow_w = 1024 if args.round >= 10 else 1280
+                narrow_name = "home-scrolled-1024.png" if args.round >= 10 else "home-scrolled-1280.png"
+                narrow = browser.new_page(viewport={"width": narrow_w, "height": H})
+                narrow.goto(f"http://{HOST}:{PORT}/?view=home", wait_until="domcontentloaded")
+                narrow.wait_for_selector(".example-grid-six", timeout=15000)
+                narrow.evaluate("() => document.querySelector('.agent-card')?.scrollIntoView({block: 'end'})")
+                narrow.wait_for_timeout(300)
+                snap(narrow_name, narrow)
+                narrow.close()
+                if args.round < 10:
+                    wide = browser.new_page(viewport={"width": 1440, "height": H})
+                    wide.goto(f"http://{HOST}:{PORT}/?view=home", wait_until="domcontentloaded")
+                    wide.wait_for_selector(".example-grid-six", timeout=15000)
+                    wide.evaluate("() => document.querySelector('.agent-card')?.scrollIntoView({block: 'end'})")
+                    wide.wait_for_timeout(300)
+                    snap("home-scrolled-1440.png", wide)
+                    wide.close()
 
                 go("?view=problems")
                 page.wait_for_selector(".problems-row", timeout=15000)
@@ -809,7 +880,7 @@ def main() -> int:
             )
             with urllib.request.urlopen(req, timeout=60) as resp:
                 dark_sid = json.loads(resp.read().decode())["session_id"]
-            go(f"?view=studio&session={dark_sid}")
+            studio_go(dark_sid)
             _studio_wires_ready(page)
             page.wait_for_timeout(800)
             snap("studio-before-simulate-dark.png")
@@ -905,6 +976,36 @@ def main() -> int:
                 page.keyboard.press("Control+k")
                 page.wait_for_selector(".cmdk-root", timeout=5000)
                 snap("cmdk-open-dark.png")
+                if args.round >= 10:
+                    go("?view=learn")
+                    page.wait_for_selector(".learn-page h1", timeout=30000)
+                    snap("learn-landing-dark.png")
+                    go("?view=learn&subject=eec-303")
+                    page.wait_for_selector(".learn-subject-page", timeout=30000)
+                    snap("learn-subject-power-electronics-dark.png")
+                    go("?view=learn")
+                    page.get_by_role("button", name="View all").click()
+                    page.wait_for_selector(".learn-drawer-overlay", timeout=10000)
+                    snap("learn-achievements-dark.png")
+                    page.keyboard.press("Escape")
+                    go("?view=studio")
+                    page.wait_for_selector(".studio-home", timeout=15000)
+                    snap("studio-landing-dark.png")
+                    go("?view=studio&tab=circuits")
+                    page.wait_for_selector(".studio-circuit-sandbox", timeout=20000)
+                    page.get_by_role("button", name="Series RLC").click()
+                    page.wait_for_timeout(800)
+                    snap("studio-circuit-series-rlc-dark.png")
+                    for lab_id, stem in [
+                        ("rectifier", "lab-rectifier"),
+                        ("converter", "lab-converter"),
+                        ("idmt", "lab-idmt"),
+                        ("lead", "lab-lead"),
+                    ]:
+                        go(f"?view=studio&tab=labs&lab={lab_id}")
+                        page.wait_for_selector(".lab-surface", timeout=30000)
+                        page.wait_for_timeout(500)
+                        snap(f"{stem}-dark.png")
                 go("?view=gallery")
                 page.wait_for_selector(".gallery-card", timeout=10000)
                 snap("gallery-dark.png")
@@ -965,6 +1066,73 @@ def main() -> int:
         (out_dir / "sidebar-measurements.json").write_text(
             json.dumps(measurements, indent=2) + "\n", encoding="utf-8"
         )
+        if args.round >= 10:
+            pf = {}
+            pf_path = out_dir / "preflight.json"
+            if pf_path.is_file():
+                pf = json.loads(pf_path.read_text(encoding="utf-8"))
+            lines = [
+                f"# Round {args.round} capture index",
+                "",
+                f"Commit: `{pf.get('git_sha_short', '?')}` (`git_dirty_lines`: {pf.get('git_dirty_lines', '?')})",
+                f"Viewport: {W}x{H}; narrow home at 1024px width.",
+                "",
+                "## Fixes this round",
+                "",
+            ]
+            fixes = [
+                "Studio deep links with `?session=` now open the Control workspace tab (was Studio landing).",
+            ]
+            fixes.extend(index_notes)
+            for i, fix in enumerate(fixes, 1):
+                lines.append(f"{i}. {fix}")
+            lines.extend(["", "## Images", ""])
+            descriptions = {
+                "home-empty": "Home, no recent runs, composer empty",
+                "home-with-recent": "Home after running the divider example",
+                "home-dark": "Home dark theme",
+                "home-scrolled-1024": "Home scrolled (1024px viewport)",
+                "home-scrolled-dark": "Home scrolled, dark",
+                "problems-list": "Problems table with runs",
+                "problem-answer": "Checked divider, Diagram tab",
+                "problem-work-tab": "Checked divider, Work tab",
+                "problem-circuit-checked-work": "Series RLC example, Work tab, checked",
+                "problem-circuit-checked-diagram": "Series RLC example, Diagram tab",
+                "problem-control-checked-work": "First-order step example, Work tab, checked",
+                "problem-control-checked-diagram": "First-order step, Diagram tab",
+                "learn-landing": "Learn landing, semester rail",
+                "learn-subject-power-electronics": "Learn subject EEC-303",
+                "learn-achievements": "Achievements drawer from Learn",
+                "studio-landing": "Studio home, workspaces and labs",
+                "studio-layout-before-simulate": "Control Studio before Simulate (PID golden)",
+                "studio-layout-after-simulate": "Control Studio after step simulate",
+                "studio-circuit-series-rlc": "Circuit canvas with Series RLC preset",
+                "lab-rectifier": "Rectifier lab",
+                "lab-converter": "DC-DC converter lab",
+                "lab-idmt": "IDMT coordination lab",
+                "lab-lead": "Lead compensator lab",
+                "gallery": "Gallery",
+                "library": "Library",
+                "settings-agents": "Settings Agents tab",
+                "settings-engines": "Settings Engines tab",
+                "settings-appearance": "Settings Appearance tab",
+                "settings-data": "Settings Data tab",
+                "settings-about": "Settings About tab",
+                "cmdk-open": "Command palette open",
+                "cmdk-query": "Command palette with query",
+                "sidebar-collapsed": "Collapsed sidebar",
+                "focus-composer": "Keyboard focus on composer (Tab)",
+                "focus-tile": "Focus on example card",
+                "focus-table-row": "Focus on problems row",
+                "focus-tab": "Focus on Work tab",
+                "focus-button": "Focus on Run again",
+            }
+            for name in sorted(hashes):
+                stem = name.replace("-light.png", "").replace("-dark.png", "")
+                theme = "dark" if name.endswith("-dark.png") else "light"
+                desc = descriptions.get(stem, stem.replace("-", " "))
+                lines.append(f"- `{name}` ({theme}): {desc}")
+            (out_dir / "INDEX.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
         print("md5.txt written", out_dir / "md5.txt")
         return 0
     finally:
