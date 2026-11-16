@@ -1,6 +1,6 @@
 {
-  "git_sha": "67c86e8280f5f7ca408f3d1fce67d7512b05a23a",
-  "git_sha_short": "67c86e8",
+  "git_sha": "a55bf8b45041b5cba4d46c60b97597b92566794b",
+  "git_sha_short": "a55bf8b",
   "ngspice_version": "ngspice-42 : Circuit level simulation program",
   "merged_collab_pr62_head": "73420104379c93b767aa4f04854525839e3524a4",
   "ci_reference": {
@@ -9,7 +9,7 @@
     "workflow_run_id": "43926478759",
     "status": "success"
   },
-  "git_dirty_lines": 4,
+  "git_dirty_lines": 3,
   "git_untracked_lines": 0,
   "git_diff_sha256": null,
   "package_path": "/agent/repos/ARC/src/electrical_engineer/__init__.py",
@@ -41,19 +41,19 @@
       },
       {
         "file": "collab-01-run-sim-vs-derived-agrees-dark.png",
-        "mean_luminance": 3.25
+        "mean_luminance": 3.24
       },
       {
         "file": "collab-01-run-sim-vs-derived-agrees-light.png",
-        "mean_luminance": 2.95
+        "mean_luminance": 2.94
       },
       {
         "file": "collab-02-lab-provenance-vc-activity-dark.png",
-        "mean_luminance": 1.31
+        "mean_luminance": 1.29
       },
       {
         "file": "collab-02-lab-provenance-vc-activity-light.png",
-        "mean_luminance": 1.45
+        "mean_luminance": 1.44
       },
       {
         "file": "collab-03-out-of-date-ask-rederive-dark.png",
@@ -65,7 +65,7 @@
       },
       {
         "file": "collab-03b-after-rederive-agrees-dark.png",
-        "mean_luminance": 3.24
+        "mean_luminance": 3.25
       },
       {
         "file": "collab-03b-after-rederive-agrees-light.png",
@@ -73,7 +73,7 @@
       },
       {
         "file": "collab-04-changes-r1-chip-dark.png",
-        "mean_luminance": 1.31
+        "mean_luminance": 1.3
       },
       {
         "file": "collab-04-changes-r1-chip-light.png",
@@ -85,7 +85,7 @@
       },
       {
         "file": "collab-04b-after-restore-light.png",
-        "mean_luminance": 1.44
+        "mean_luminance": 1.39
       },
       {
         "file": "collab-05-forward-euler-mismatch-dark.png",
@@ -93,19 +93,19 @@
       },
       {
         "file": "collab-05-forward-euler-mismatch-light.png",
-        "mean_luminance": 3.36
+        "mean_luminance": 3.4
       },
       {
         "file": "collab-06-control-unity-lab-agreement-dark.png",
-        "mean_luminance": 1.29
+        "mean_luminance": 1.3
       },
       {
         "file": "collab-06-control-unity-lab-agreement-light.png",
-        "mean_luminance": 1.45
+        "mean_luminance": 1.43
       },
       {
         "file": "collab-06-control-unity-run-agrees-dark.png",
-        "mean_luminance": 2.66
+        "mean_luminance": 2.7
       },
       {
         "file": "collab-06-control-unity-run-agrees-light.png",
@@ -153,11 +153,11 @@
       },
       {
         "file": "gallery-1024-dark.png",
-        "mean_luminance": 1.49
+        "mean_luminance": 1.5
       },
       {
         "file": "gallery-1024-light.png",
-        "mean_luminance": 1.44
+        "mean_luminance": 1.43
       },
       {
         "file": "gallery-dark.png",
@@ -177,7 +177,7 @@
       },
       {
         "file": "home-empty-1024-light.png",
-        "mean_luminance": 2.23
+        "mean_luminance": 2.19
       },
       {
         "file": "home-empty-light.png",
@@ -233,7 +233,7 @@
       },
       {
         "file": "lab-rectifier-full3-rl-alpha75-dark.png",
-        "mean_luminance": 1.31
+        "mean_luminance": 1.33
       },
       {
         "file": "lab-rectifier-full3-rl-alpha75-light.png",
@@ -253,11 +253,11 @@
       },
       {
         "file": "learn-landing-1024-dark.png",
-        "mean_luminance": 1.21
+        "mean_luminance": 1.23
       },
       {
         "file": "learn-landing-1024-light.png",
-        "mean_luminance": 1.26
+        "mean_luminance": 1.3
       },
       {
         "file": "learn-landing-dark.png",
@@ -281,7 +281,7 @@
       },
       {
         "file": "library-1024-light.png",
-        "mean_luminance": 1.03
+        "mean_luminance": 1.04
       },
       {
         "file": "library-dark.png",
@@ -313,15 +313,15 @@
       },
       {
         "file": "problem-control-checked-dark.png",
-        "mean_luminance": 2.69
+        "mean_luminance": 2.7
       },
       {
         "file": "problem-control-checked-lab-agreement-dark.png",
-        "mean_luminance": 1.33
+        "mean_luminance": 1.3
       },
       {
         "file": "problem-control-checked-lab-agreement-light.png",
-        "mean_luminance": 1.42
+        "mean_luminance": 1.45
       },
       {
         "file": "problem-control-checked-light.png",
@@ -329,7 +329,7 @@
       },
       {
         "file": "problem-control-checked-work-dark.png",
-        "mean_luminance": 2.69
+        "mean_luminance": 2.7
       },
       {
         "file": "problem-control-checked-work-light.png",
@@ -341,11 +341,11 @@
       },
       {
         "file": "problem-divider-run-1024-dark.png",
-        "mean_luminance": 3.97
+        "mean_luminance": 3.96
       },
       {
         "file": "problem-divider-run-1024-light.png",
-        "mean_luminance": 3.66
+        "mean_luminance": 3.7
       },
       {
         "file": "problem-parameters-drawer-light.png",
@@ -385,11 +385,11 @@
       },
       {
         "file": "problems-list-1024-dark.png",
-        "mean_luminance": 2.26
+        "mean_luminance": 2.25
       },
       {
         "file": "problems-list-1024-light.png",
-        "mean_luminance": 2.17
+        "mean_luminance": 2.1
       },
       {
         "file": "problems-list-dark.png",
@@ -413,19 +413,19 @@
       },
       {
         "file": "run-idmt-dark.png",
-        "mean_luminance": 3.02
+        "mean_luminance": 3.01
       },
       {
         "file": "run-idmt-light.png",
-        "mean_luminance": 2.87
+        "mean_luminance": 2.85
       },
       {
         "file": "run-rectifier-dark.png",
-        "mean_luminance": 3.07
+        "mean_luminance": 3.09
       },
       {
         "file": "run-rectifier-light.png",
-        "mean_luminance": 2.84
+        "mean_luminance": 2.82
       },
       {
         "file": "settings-about-dark.png",
@@ -437,7 +437,7 @@
       },
       {
         "file": "settings-agents-1024-dark.png",
-        "mean_luminance": 1.97
+        "mean_luminance": 1.98
       },
       {
         "file": "settings-agents-1024-light.png",
@@ -509,11 +509,11 @@
       },
       {
         "file": "studio-circuit-sandbox-1024-dark.png",
-        "mean_luminance": 1.44
+        "mean_luminance": 1.43
       },
       {
         "file": "studio-circuit-sandbox-1024-light.png",
-        "mean_luminance": 1.58
+        "mean_luminance": 1.59
       },
       {
         "file": "studio-circuit-series-rlc-dark.png",
@@ -525,11 +525,11 @@
       },
       {
         "file": "studio-control-1024-dark.png",
-        "mean_luminance": 1.75
+        "mean_luminance": 1.74
       },
       {
         "file": "studio-control-1024-light.png",
-        "mean_luminance": 1.91
+        "mean_luminance": 1.9
       },
       {
         "file": "studio-landing-dark.png",
@@ -917,11 +917,11 @@
       {
         "name": "test",
         "state": "SUCCESS",
-        "url": "https://github.com/Vinayak-RZ/ARC/actions/runs/43974204444/job/133673855312"
+        "url": "https://github.com/Vinayak-RZ/ARC/actions/runs/43979422265/job/133691710660"
       }
     ]
   },
-  "ci_workflow_run_id": "43974204444",
+  "ci_workflow_run_id": "43979422265",
   "ci_workflow_status": "success",
   "png_count": 145
 }

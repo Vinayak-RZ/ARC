@@ -330,6 +330,16 @@ def _capture_theme(browser, *, theme: str) -> dict:
         ".lab-needs-review, .lab-needs-review-banner, .lab-verify-badge.is-differs, .lab-verify-badge.is-mismatch",
         timeout=90_000,
     )
+    lv_bad = _api("GET", f"/api/runs/{bad_id}/lab").get("lab_verify") or {}
+    m0 = (lv_bad.get("metrics") or [{}])[0]
+    derived_bad = float(m0.get("derived") or 0)
+    sim_bad = m0.get("simulated")
+    if abs(derived_bad - 11.96) > 0.08:
+        raise RuntimeError(f"collab-05: expected forward-Euler derived ~11.96 V, got {derived_bad}")
+    if str(lv_bad.get("status") or "") not in ("mismatch", "differs"):
+        raise RuntimeError(f"collab-05: expected mismatch verify, got {lv_bad.get('status')}")
+    if sim_bad is not None and abs(float(sim_bad) - 11.63) > 0.15:
+        raise RuntimeError(f"collab-05: expected sim ~11.63 V, got {sim_bad}")
     _shot(page, "collab-05-forward-euler-mismatch", theme=theme)
 
     from electrical_engineer.runner.execute import execute

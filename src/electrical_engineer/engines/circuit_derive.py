@@ -32,6 +32,12 @@ def derive(problem: dict[str, Any], *, item_root: Path | None = None) -> dict[st
     """Return derived scalar from MNA on the item netlist (templates only as fallback)."""
     allow = bool(problem.get("allow_template_fallback"))
     kind = str(problem.get("kind") or problem.get("circuit_kind") or "").lower()
+    if str(problem.get("derive_bug") or "").strip() and kind in _KINDS:
+        out = _KINDS[kind](problem)
+        out["kind"] = kind
+        out.setdefault("engine", "circuit_derive")
+        out["derived_via"] = "derive_bug"
+        return out
     try:
         cir = _load_cir(problem, item_root)
     except DeriveError:
@@ -144,7 +150,7 @@ def _series_rlc(problem: dict[str, Any]) -> dict[str, Any]:
     if bug in ("forward_euler", "euler"):
         from electrical_engineer.engines.rlc_transient import forward_euler_vc_peak
 
-        value, t_peak_s = forward_euler_vc_peak(r_ohm, l_h, c_f, step_v)
+        value, t_peak_s = forward_euler_vc_peak(r_ohm, l_h, c_f, step_v, steps_per_wn=10.0)
         engine = "forward_euler_bug"
     elif no_overshoot:
         value = step_v
