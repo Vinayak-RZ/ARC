@@ -251,6 +251,13 @@ def main() -> int:
         ngspice_txt.write_text(ver + "\n", encoding="utf-8")
     pf_path.write_text(json.dumps(pf, indent=2) + "\n", encoding="utf-8")
 
+    known: list[str] = []
+    if scan["dark_integrity_failures"]:
+        known.append(
+            "Automated dark vs light luminance pairs flagged (spot-check): "
+            + "; ".join(f"{f.get('dark')}" for f in scan["dark_integrity_failures"][:8])
+        )
+
     notes = [
         "# Round 12 captures",
         "",
@@ -269,13 +276,6 @@ def main() -> int:
     for path in pngs:
         md5_lines.append(f"{path.name}  {hashlib.md5(path.read_bytes()).hexdigest()}")
     (OUT / "md5.txt").write_text("\n".join(md5_lines) + "\n", encoding="utf-8")
-
-    known: list[str] = []
-    if scan["dark_integrity_failures"]:
-        known.append(
-            "Automated dark vs light luminance pairs flagged (spot-check): "
-            + "; ".join(f"{f.get('dark')}" for f in scan["dark_integrity_failures"][:8])
-        )
 
     fixture_stems: set[str] = set()
 
