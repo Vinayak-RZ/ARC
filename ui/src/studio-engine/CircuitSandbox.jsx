@@ -34,9 +34,9 @@ const SERIES_RLC = {
   schema: "arc.circuit.v1",
   nodes: [
     { id: "vin", type: "source_v", refdes: "V1", value: 10, unit: "V", x: 40, y: 120, rot: 0 },
-    { id: "r1", type: "resistor", refdes: "R1", value: 1000, unit: "ohm", x: 180, y: 40, rot: 0 },
+    { id: "r1", type: "resistor", refdes: "R1", value: 10, unit: "ohm", x: 180, y: 40, rot: 0 },
     { id: "l1", type: "inductor", refdes: "L1", value: 0.01, unit: "H", x: 320, y: 40, rot: 0 },
-    { id: "c1", type: "capacitor", refdes: "C1", value: 1e-6, unit: "F", x: 460, y: 120, rot: 90 },
+    { id: "c1", type: "capacitor", refdes: "C1", value: 0.0001, unit: "F", x: 460, y: 120, rot: 90 },
     { id: "gnd", type: "ground", refdes: "Gnd", value: 0, unit: "", x: 40, y: 220, rot: 0 },
   ],
   edges: [
@@ -114,13 +114,26 @@ function readStoredGraph() {
   }
 }
 
+function FitViewOnChange({ signal }) {
+  const { fitView } = useReactFlow();
+  useEffect(() => {
+    const id = requestAnimationFrame(() => fitView({ padding: 0.2, duration: 0 }));
+    return () => cancelAnimationFrame(id);
+  }, [signal, fitView]);
+  return null;
+}
+
 function CircuitSandboxInner() {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [msg, setMsg] = useState("");
+  const [fitKey, setFitKey] = useState(0);
+  const [sim, setSim] = useState(null);
+  const [simBusy, setSimBusy] = useState(false);
   const past = useRef([]);
   const future = useRef([]);
   const hydrated = useRef(false);
+  const wrapRef = useRef(null);
   const { screenToFlowPosition } = useReactFlow();
 
   useEffect(() => {
@@ -153,6 +166,14 @@ function CircuitSandboxInner() {
     const t = window.setTimeout(() => persist(nodes, edges), 400);
     return () => window.clearTimeout(t);
   }, [nodes, edges, persist]);
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return undefined;
+    const ro = new ResizeObserver(() => setFitKey((k) => k + 1));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const onConnect = useCallback(
     (conn) => {
@@ -216,21 +237,55 @@ function CircuitSandboxInner() {
     const { nodes: n, edges: e } = toFlow(seed);
     setNodes(n);
     setEdges(e);
+    setSim(null);
     setMsg("");
+    setFitKey((k) => k + 1);
+  }
+
+  async function runSimulate() {
+    setSimBusy(true);
+    setMsg("");
+    const graph = fromFlow(nodes, edges);
+    try {
+      const r = await fetch("/api/circuit-sandbox/simulate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ graph }),
+      });
+      const body = await r.json();
+      if (!r.ok || !body.ok) {
+        setMsg(body.error || "Simulate failed");
+        setSim(null);
+      } else {
+        setSim(body);
+      }
+    } catch {
+      setMsg("Could not reach the solver.");
+      setSim(null);
+    } finally {
+      setSimBusy(false);
+    }
   }
 
   function clearCanvas() {
     snapshot();
     setNodes([]);
     setEdges([]);
+    setSim(null);
     setMsg("");
+    setFitKey((k) => k + 1);
   }
 
   return (
     <div className="lab-surface lab-surface-circuit">
       <div className="canvas-lab studio-circuit-sandbox">
-        <Palette onAdd={addPart} />
-        <div className="flow-wrap">
+        <div className="studio-circuit-toolbar">
+          <Palette onAdd={addPart} />
+          <button type="button" className="cs-btn cs-btn-primary cs-simulate-btn" disabled={simBusy} onClick={runSimulate}>
+            {simBusy ? "Simulating…" : "Simulate"}
+          </button>
+        </div>
+        <div className="flow-wrap" ref={wrapRef}>
           <p className="canvas-wire-hint">
             Drag a port onto another port. Double-click a wire to add a junction. Click a wire, then Delete, to remove it.
           </p>
@@ -253,14 +308,36 @@ function CircuitSandboxInner() {
             deleteKeyCode={["Backspace", "Delete"]}
             edgesFocusable
             elementsSelectable
-            fitView
             minZoom={0.4}
             maxZoom={1.6}
             proOptions={{ hideAttribution: true }}
           >
+            <FitViewOnChange signal={fitKey} />
             <Background gap={16} color="var(--ee-color-hairline)" />
           </ReactFlow>
         </div>
+        <section className="studio-circuit-results card-surface" aria-live="polite">
+          {!sim ? (
+            <p className="hint">Press Simulate to see the step response (built-in RLC solver).</p>
+          ) : (
+            <>
+              <p className="hint">
+                Engine: {sim.engine}. ζ = {sim.result?.zeta?.toFixed(2)}, ω<sub>n</sub> ={" "}
+                {sim.result?.omega_n_rad_s?.toFixed(0)} rad/s
+              </p>
+              <p className="answer-line">
+                <span className="answer-name">Vc,peak</span>
+                <span className="answer-eq"> = </span>
+                <span className="answer-num tabular-nums">{Number(sim.result?.Vc_peak_V).toFixed(2)}</span>
+                <span className="answer-unit"> V</span>
+                <span className="hint">
+                  {" "}
+                  at {(1000 * Number(sim.result?.t_Vc_peak_s)).toFixed(2)} ms
+                </span>
+              </p>
+            </>
+          )}
+        </section>
         <div className="confirm-row">
           {EXAMPLES.map(([id, label]) => (
             <button key={id} type="button" className="button-secondary" onClick={() => loadExample(id)}>

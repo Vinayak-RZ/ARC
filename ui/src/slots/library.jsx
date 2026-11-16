@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { MascotState } from "../components/MascotState.jsx";
+import { packLabel } from "../lib/packLabels.js";
 
 const DOMAINS = [
   "circuits",
@@ -96,7 +97,7 @@ function ReferenceTab() {
               setTimeout(() => search({ preventDefault() {} }), 0);
             }}
           >
-            {d.id} · {d.count}
+            {packLabel(d.id)} · {d.count}
           </button>
         ))}
       </div>

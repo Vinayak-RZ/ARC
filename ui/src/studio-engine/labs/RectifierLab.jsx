@@ -66,12 +66,14 @@ export function RectifierLab() {
         ))}
       </fieldset>
       <label>
-        V rms
+        Line voltage (V rms, line-to-line)
         <div className="lab-slider-row">
           <input type="range" min={50} max={500} step={5} value={vRms} onChange={(e) => setVRms(+e.target.value)} />
           <input type="number" value={vRms} onChange={(e) => setVRms(+e.target.value)} />
+          <span className="lab-field-unit">V</span>
         </div>
       </label>
+      <p className="hint">Phase peak Vm = {result.phasePeakVm.toFixed(1)} V</p>
       <label>
         α (deg)
         <div className="lab-slider-row">
@@ -86,15 +88,19 @@ export function RectifierLab() {
           <input type="number" value={rOhm} onChange={(e) => setROhm(+e.target.value)} />
         </div>
       </label>
-      <label>
-        Io (A)
-        <div className="lab-slider-row">
-          <input type="range" min={1} max={100} value={io} onChange={(e) => setIo(+e.target.value)} />
-          <input type="number" value={io} onChange={(e) => setIo(+e.target.value)} />
-        </div>
-      </label>
-      <label>
-        <input type="checkbox" checked={useLs} onChange={(e) => setUseLs(e.target.checked)} /> Source Ls
+      {load === "CC" ? (
+        <label>
+          Io (A)
+          <div className="lab-slider-row">
+            <input type="range" min={1} max={100} value={io} onChange={(e) => setIo(+e.target.value)} />
+            <input type="number" value={io} onChange={(e) => setIo(+e.target.value)} />
+            <span className="lab-field-unit">A</span>
+          </div>
+        </label>
+      ) : null}
+      <label className="lab-checkbox-row">
+        <input type="checkbox" checked={useLs} onChange={(e) => setUseLs(e.target.checked)} />
+        Source inductance L<sub>s</sub> (mH)
       </label>
       {useLs ? (
         <label>
@@ -116,11 +122,11 @@ export function RectifierLab() {
         <>
           <div className="card">
             <div className="learn-code-label">Vo</div>
-            <strong>{result.Vo.toFixed(2)} V</strong>
+            <strong>{result.VoFinite ? `${result.Vo.toFixed(2)} V` : "—"}</strong>
           </div>
           <div className="card">
             <div className="learn-code-label">Io</div>
-            <strong>{result.Io.toFixed(2)} A</strong>
+            <strong>{result.VoFinite ? `${result.Io.toFixed(2)} A` : "—"}</strong>
           </div>
           {result.PF != null ? (
             <div className="card">
@@ -134,7 +140,7 @@ export function RectifierLab() {
       onOpenExample={openMatchingProblem}
       check={
         <p className="hint">
-          Closed-form Vo from the EEC-303 formula sheet. The trace is the gated sine envelope for that firing angle.
+          Output follows the phase voltage from each firing angle; average Vo matches the closed-form readout.
         </p>
       }
     >

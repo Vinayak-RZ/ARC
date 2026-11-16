@@ -75,6 +75,16 @@ def _preflight(out_dir: Path) -> dict:
     gm_tip = str((sim.get("analyze") or {}).get("margin_tooltips", {}).get("gm_db", ""))
     dirty = subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True).strip()
     dirty_lines = [ln for ln in dirty.splitlines() if ln and not ln.startswith("??")]
+    capture_prefix = "artifacts/ux-review/"
+    untracked_src = []
+    for ln in dirty.splitlines():
+        if not ln.startswith("??"):
+            continue
+        path = ln[3:].strip()
+        if path.startswith(capture_prefix):
+            continue
+        if path.startswith("src/") or path.startswith("ui/src/"):
+            untracked_src.append(path)
     diff = subprocess.check_output(["git", "diff", "HEAD"], cwd=ROOT)
     req_low = urllib.request.Request(
         f"http://{HOST}:{PORT}/api/control-studio/sessions",
@@ -114,6 +124,7 @@ def _preflight(out_dir: Path) -> dict:
         "git_sha": sha,
         "git_sha_short": sha_short,
         "git_dirty_lines": len(dirty_lines),
+        "git_untracked_lines": len(untracked_src),
         "git_diff_sha256": hashlib.sha256(diff).hexdigest()[:16] if diff else None,
         "package_path": pkg_path,
         "dist_index_mtime": dist_mtime,
@@ -129,6 +140,8 @@ def _preflight(out_dir: Path) -> dict:
             "steady_state_error_pct": fin_m.get("steady_state_error_pct"),
         },
     }
+    if untracked_src:
+        raise RuntimeError(f"preflight: untracked source files: {untracked_src[:8]}")
     if kp != 50:
         raise RuntimeError(f"preflight kp={kp}, expected 50 (stale backend?)")
     if not sim.get("step_series"):

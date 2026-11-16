@@ -46,8 +46,8 @@ export function IdmtLab() {
     () =>
       curvePoints(
         { ct_primary_a: r1Ct, plug_setting: r1Plug, tms: r1Tms, curve: r1Curve },
-        r1Ct * r1Plug * 1.05,
-        iFault * 3,
+        100,
+        10000,
       ),
     [r1Ct, r1Plug, r1Tms, r1Curve, iFault],
   );
@@ -55,8 +55,8 @@ export function IdmtLab() {
     if (result.error || result.r2_tms == null) return [];
     return curvePoints(
       { ct_primary_a: r2Ct, plug_setting: r2Plug, tms: result.r2_tms, curve: r2Curve },
-      r2Ct * r2Plug * 1.05,
-      iFault * 3,
+      100,
+      10000,
     );
   }, [r2Ct, r2Plug, r2Curve, result, iFault]);
 

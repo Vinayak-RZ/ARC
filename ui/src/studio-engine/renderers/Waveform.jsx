@@ -18,7 +18,12 @@ function mapX(x, xMin, xMax, w, pad, log) {
   return pad + ((x - xMin) / (xMax - xMin || 1)) * (w - 2 * pad);
 }
 
-function mapY(y, yMin, yMax, h, pad) {
+function mapY(y, yMin, yMax, h, pad, log) {
+  if (log) {
+    const a = Math.log10(Math.max(yMin, 1e-12));
+    const b = Math.log10(Math.max(yMax, 1e-12));
+    return h - pad - ((Math.log10(Math.max(y, 1e-12)) - a) / (b - a || 1)) * (h - 2 * pad);
+  }
   return h - pad - ((y - yMin) / (yMax - yMin || 1)) * (h - 2 * pad);
 }
 
@@ -67,8 +72,9 @@ export function Waveform({ panel }) {
 
   const pad = 36;
   const logX = panel.x?.scale === "log";
+  const logY = panel.y?.scale === "log";
   const xt = logX ? logTicks(bounds.xMin, bounds.xMax) : niceTicks(bounds.xMin, bounds.xMax, 5);
-  const yt = niceTicks(bounds.yMin, bounds.yMax, 5);
+  const yt = logY ? logTicks(bounds.yMin, bounds.yMax) : niceTicks(bounds.yMin, bounds.yMax, 5);
   const { w, h } = size;
 
   return (
@@ -86,24 +92,24 @@ export function Waveform({ panel }) {
             return <line key={`x${t}`} x1={x} y1={pad} x2={x} y2={h - pad} stroke="currentColor" strokeWidth={0.5} />;
           })}
           {yt.map((t) => {
-            const y = mapY(t, bounds.yMin, bounds.yMax, h, pad);
+            const y = mapY(t, bounds.yMin, bounds.yMax, h, pad, logY);
             return <line key={`y${t}`} x1={pad} y1={y} x2={w - pad} y2={y} stroke="currentColor" strokeWidth={0.5} />;
           })}
         </g>
-        <g style={{ color: "var(--ee-color-muted)", fontSize: 11 }}>
+        <g style={{ color: "var(--ee-color-muted)", fontSize: 12 }}>
           {xt.map((t) => (
             <text key={`xl${t}`} x={mapX(t, bounds.xMin, bounds.xMax, w, pad, logX)} y={h - 8} textAnchor="middle">
               {t}
             </text>
           ))}
           {yt.map((t) => (
-            <text key={`yl${t}`} x={8} y={mapY(t, bounds.yMin, bounds.yMax, h, pad) + 3}>
+            <text key={`yl${t}`} x={8} y={mapY(t, bounds.yMin, bounds.yMax, h, pad, logY) + 3}>
               {t}
             </text>
           ))}
         </g>
         {(panel.hlines || []).map((hl, i) => {
-          const y = mapY(hl.y, bounds.yMin, bounds.yMax, h, pad);
+          const y = mapY(hl.y, bounds.yMin, bounds.yMax, h, pad, logY);
           return (
             <g key={i}>
               <line x1={pad} y1={y} x2={w - pad} y2={y} stroke="var(--ee-color-muted)" strokeDasharray="4 4" />
@@ -130,7 +136,7 @@ export function Waveform({ panel }) {
           const d = pts
             .map((p, i) => {
               const x = mapX(p[0], bounds.xMin, bounds.xMax, w, pad, logX);
-              const y = mapY(p[1], bounds.yMin, bounds.yMax, h, pad);
+              const y = mapY(p[1], bounds.yMin, bounds.yMax, h, pad, logY);
               return `${i ? "L" : "M"} ${x} ${y}`;
             })
             .join(" ");
@@ -148,7 +154,7 @@ export function Waveform({ panel }) {
               />
               <text
                 x={mapX(last[0], bounds.xMin, bounds.xMax, w, pad, logX)}
-                y={mapY(last[1], bounds.yMin, bounds.yMax, h, pad) - 6}
+                y={mapY(last[1], bounds.yMin, bounds.yMax, h, pad, logY) - 6}
                 fontSize={12}
                 fill={STYLE_COLOR[style]}
               >

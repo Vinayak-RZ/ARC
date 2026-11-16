@@ -2404,9 +2404,17 @@ a { color: var(--ee-color-primary); }
 .learn-ach .hint { grid-column: 2; }
 .learn-ach .learn-progress-bar { grid-column: 2; }
 .learn-unlock-toast {
-  position: fixed; bottom: 24px; right: 24px; z-index: 70;
-  padding: 12px 16px; background: var(--ee-color-primary); color: var(--ee-color-on-primary);
-  border-radius: 4px; font-weight: 600;
+  position: fixed; top: 56px; right: 16px; z-index: 70;
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 8px 12px; background: var(--ee-color-surface-card); color: var(--ee-color-ink);
+  border: 1px solid var(--ee-color-hairline); border-left: 3px solid var(--ee-color-primary);
+  border-radius: var(--ee-radius-xl); font-size: var(--ee-type-caption); font-weight: 500;
+  box-shadow: var(--ee-shadow-1);
+  max-width: min(320px, calc(100vw - 32px));
+}
+.learn-unlock-toast-close {
+  border: 0; background: transparent; font: inherit; font-size: 18px; line-height: 1;
+  cursor: pointer; color: var(--ee-color-muted); padding: 0 2px;
 }
 @media (prefers-reduced-motion: reduce) {
   .learn-unlock-toast { transition: none; }
@@ -2503,9 +2511,65 @@ a { color: var(--ee-color-primary); }
 .studio-diagrams-toolbar { display: flex; gap: var(--ee-space-m); align-items: center; margin-bottom: var(--ee-space-m); }
 .lab-shell-grid { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: var(--ee-space-l); }
 @media (max-width: 900px) { .lab-shell-grid { grid-template-columns: 1fr; } }
-.lab-controls { display: flex; flex-direction: column; gap: 12px; }
-.lab-controls label { display: flex; flex-direction: column; gap: 4px; font-size: var(--ee-type-caption); }
-.lab-controls .lab-slider-row { display: flex; gap: 8px; align-items: center; }
+.lab-controls { display: flex; flex-direction: column; gap: 12px; max-width: 100%; }
+.lab-controls label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--ee-type-caption);
+  min-height: 32px;
+}
+.lab-controls label input[type="radio"],
+.lab-controls label input[type="checkbox"] {
+  margin: 0;
+  accent-color: var(--ee-color-primary);
+}
+.lab-controls fieldset label {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  min-height: 32px;
+  margin-right: 8px;
+}
+.lab-controls input[type="number"],
+.lab-controls input[type="text"],
+.lab-controls select {
+  width: 72px;
+  max-width: 72px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  background: var(--ee-color-surface);
+  color: var(--ee-color-ink);
+  border: 1px solid var(--ee-color-hairline);
+  border-radius: var(--ee-radius-sm);
+}
+.lab-controls input[type="range"] {
+  flex: 1 1 0;
+  min-width: 0;
+  accent-color: var(--ee-color-primary);
+}
+.lab-controls .lab-slider-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 72px auto;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+}
+.lab-controls .lab-field-unit { font-size: var(--ee-type-caption); color: var(--ee-color-muted); }
+.lab-checkbox-row { gap: 8px; }
+.studio-circuit-toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ee-space-m);
+  margin-bottom: var(--ee-space-s);
+}
+.studio-circuit-results {
+  margin-top: var(--ee-space-m);
+  padding: var(--ee-space-m);
+  min-height: 64px;
+}
 .lab-readouts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .lab-readouts .card {
   padding: 8px 12px; border: 1px solid var(--ee-color-hairline); border-radius: 4px; min-width: 100px;
