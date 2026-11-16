@@ -13,7 +13,7 @@ def unity_first_order() -> dict[str, Any]:
         "blocks": [
             {"id": "r", "type": "step", "x": 40, "y": 120, "params": {"amplitude": 1.0}},
             {"id": "sum1", "type": "sum", "x": 200, "y": 120, "params": {"signs": "+-"}},
-            {"id": "G", "type": "plant_first_order", "x": 360, "y": 120, "params": {"k": 10.0, "tau": 1.0}},
+            {"id": "G", "type": "plant_first_order", "x": 360, "y": 120, "params": {"k": 10.0, "tau": 1.0}, "label": "Plant"},
             {"id": "y", "type": "scope", "x": 540, "y": 120, "params": {}},
         ],
         "wires": [

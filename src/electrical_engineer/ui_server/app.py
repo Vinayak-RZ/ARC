@@ -271,7 +271,7 @@ _UI_EXAMPLES = (
         "caption": "Underdamped capacitor voltage after a 10 V step",
         "subject": "Circuits",
         "thumbnail": _golden_thumb("circuits/schematic.rlc_series.png"),
-        "recipe_id": "simulate-circuit",
+        "recipe_id": "series-rlc-transient",
         "problem": {
             "kind": "series_rlc",
             "vin": 10,
@@ -281,6 +281,9 @@ _UI_EXAMPLES = (
             "c_f": 100e-6,
             "probe_node": 3,
             "analysis": "tran",
+            "t_s": 0.0005,
+            "probe": "v(3)",
+            "tol": 0.15,
             "prompt": "Series RLC step",
             "cir": _RLC_CIR,
         },

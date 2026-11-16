@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import math
 from pathlib import Path
 
@@ -102,6 +103,37 @@ def test_lead_compensator_control_lab(run_root: Path, monkeypatch) -> None:
     monkeypatch.chdir(run_root.parent.parent)
     verify = finish_control_lab(run_root, {"kind": "lead", "golden": "lead_compensator"})
     assert verify.get("simulate", {}).get("ok")
+
+
+def test_series_rlc_transient_workflow_seeds_lab(tmp_path: Path) -> None:
+    problem = {
+        "kind": "series_rlc",
+        "vin": 10,
+        "r_ohm": 10,
+        "l_h": 0.01,
+        "c_f": 100e-6,
+        "analysis": "tran",
+        "t_s": 0.0005,
+        "probe": "v(3)",
+        "tol": 0.15,
+    }
+    out = execute("series-rlc-transient", run_root=tmp_path, problem=problem)
+    run_dir = Path(out["run_dir"])
+    assert (run_dir / "graph.json").is_file()
+    assert (run_dir / "lab_meta.json").is_file()
+    assert (run_dir / "lab_verify.json").is_file()
+
+
+def test_solve_control_workflow_seeds_lab(tmp_path: Path) -> None:
+    out = execute(
+        "solve-control-problem",
+        run_root=tmp_path,
+        problem={"golden": "unity_first_order", "num": [10], "den": [1, 1]},
+    )
+    run_dir = Path(out["run_dir"])
+    assert (run_dir / "lab_meta.json").is_file()
+    meta = json.loads((run_dir / "lab_meta.json").read_text(encoding="utf-8"))
+    assert meta.get("control_session_id")
 
 
 def test_derive_circuit_workflow_seeds_lab(tmp_path: Path) -> None:

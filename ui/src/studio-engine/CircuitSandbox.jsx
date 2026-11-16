@@ -25,6 +25,7 @@ import {
   toFlow,
 } from "../slots/canvas/graph.js";
 import { nodeTypes } from "../slots/canvas/nodes.jsx";
+import { LabActivity } from "../components/LabActivity.jsx";
 
 const EDGE_STYLE = { stroke: "var(--ee-color-ink)", strokeWidth: 1.5 };
 const GRID = 16;
@@ -119,6 +120,7 @@ function CircuitSandboxInner({ linkedRunId }) {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [msg, setMsg] = useState("");
   const [labPresence, setLabPresence] = useState(null);
+  const [labMeta, setLabMeta] = useState(null);
   const past = useRef([]);
   const future = useRef([]);
   const hydrated = useRef(false);
@@ -139,6 +141,7 @@ function CircuitSandboxInner({ linkedRunId }) {
           setNodes(n);
           setEdges(e);
           setLabPresence(body?.lab_meta?.presence || null);
+          setLabMeta(body?.lab_meta || null);
           hydrated.current = true;
         })
         .catch(() => setMsg("Could not load shared circuit for this run."));
@@ -310,6 +313,12 @@ function CircuitSandboxInner({ linkedRunId }) {
             Clear canvas
           </button>
         </div>
+        {linkedRunId ? (
+          <aside className="studio-lab-activity card-surface" aria-label="Lab activity">
+            <h3>Activity</h3>
+            <LabActivity labMeta={labMeta} />
+          </aside>
+        ) : null}
       </div>
     </div>
   );

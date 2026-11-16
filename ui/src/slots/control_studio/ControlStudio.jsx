@@ -232,6 +232,14 @@ function ControlStudioInner({ sessionId, onSession, autoBoot = false }) {
         .then((payload) => {
           paint(payload);
           refreshValidation(sid);
+          fetch(`/api/control-studio/sessions/${sid}/simulate`, { method: "POST" })
+            .then((r) => r.json())
+            .then((sim) =>
+              applySimAndAnalyze(sid, sim, setResults, setMargins, setStepData, setMsg, () =>
+                setLastSimRevision(payload.revision || 0),
+              ),
+            )
+            .catch(() => {});
         })
         .catch(() => setMsg("Session load failed"));
     },

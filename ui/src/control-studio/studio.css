@@ -912,13 +912,13 @@
 
 .studio-block {
   position: relative;
-  overflow: hidden;
-  width: 72px;
-  min-width: 72px;
-  max-width: 72px;
-  height: 40px;
-  min-height: 40px;
-  max-height: 40px;
+  overflow: visible;
+  width: 96px;
+  min-width: 96px;
+  max-width: 96px;
+  height: 56px;
+  min-height: 56px;
+  max-height: 56px;
   background: var(--cs-surface);
   border: 1px solid var(--cs-border-strong);
   border-radius: var(--cs-radius-md);
@@ -1066,8 +1066,28 @@
 }
 
 .plant-label {
-  font-size: 13px;
-  line-height: 16px;
+  font-size: 11px;
+  line-height: 1.15;
+  white-space: nowrap;
+  max-width: 88px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.studio-source.studio-block {
+  width: 72px;
+  min-width: 72px;
+  max-width: 72px;
+}
+
+.studio-source .studio-block-body {
+  padding: 6px 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.studio-plant.studio-block {
+  overflow: visible;
 }
 
 .studio-port-col-left {

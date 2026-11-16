@@ -20,11 +20,12 @@ import { renderSlot } from "../slots/registry.js";
 function readUrlState() {
   const q = new URLSearchParams(window.location.search);
   const view = q.get("view");
-  const problem = q.get("problem") || q.get("run");
+  const runParam = q.get("run");
+  const problem = q.get("problem") || (view === "studio" ? null : runParam);
   const subject = q.get("subject");
   const tab = q.get("tab");
   const lab = q.get("lab");
-  const studioRun = q.get("run");
+  const studioRun = view === "studio" ? runParam : null;
   return { view, problem, subject, tab, lab, studioRun };
 }
 

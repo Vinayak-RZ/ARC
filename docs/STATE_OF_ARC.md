@@ -82,7 +82,7 @@ Control Studio: MCP/CLI/UI → session JSON under .electrical-engineer/control_s
 ## Remaining gaps
 
 - AC/tran probes on **compiled graphs** need tolerant golds when ngspice node numbering differs from hand templates.
-- Control problems on the generic `solve-control-problem` path do not yet auto-call `arc_lab_finish_control` in the YAML DAG (MCP/CLI only).
+- `solve-control-problem` ends with `seed-control-lab` (`finish_control_lab`) in the YAML DAG; other control recipes still need the same hook where they produce studio artifacts.
 - Full activity-feed UI for per-op human vs agent provenance (data is in `lab_meta.op_log`; minimal UI surfacing only).
 - Visual regression failures on `main` in this VM (unrelated fonts/assets); CI on GitHub may differ.
 

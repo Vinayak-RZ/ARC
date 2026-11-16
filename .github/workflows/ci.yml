@@ -9,8 +9,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
       - name: Install ngspice (optional engine backend for CI tests)
         run: sudo apt-get update && sudo apt-get install -y ngspice fonts-inter
+      - name: Build UI before Python editable install
+        run: cd ui && npm ci && npm run build
       - run: uv sync --extra dev --extra engines
       - run: uv run ruff check .
       - run: uv run pytest -q
@@ -25,7 +30,7 @@ jobs:
       - name: UI build and Studio layout (Playwright)
         run: |
           uv sync --extra dev --extra control
-          cd ui && npm ci && npx playwright install --with-deps chromium && npm run build
+          cd ui && npx playwright install --with-deps chromium && npm run build
           cd ..
           EE_NO_BROWSER=1 uv run electrical-engineer ui &
           for i in $(seq 1 60); do curl -sf http://127.0.0.1:8765/api/health && break; sleep 1; done

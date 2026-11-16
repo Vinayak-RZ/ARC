@@ -160,12 +160,72 @@ def verify_circuit_spice(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[s
     return {**out, "capability": "lumped-circuit-sim", "tool": "circuit_verify"}
 
 
+@register("seed-control-lab")
+def seed_control_lab(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
+    from electrical_engineer.collab.workflow import finish_control_lab
+
+    problem = dict(_problem(spec))
+    derived_value: float | None = None
+    golden = str(problem.get("golden") or "")
+    for v in inputs.values():
+        if not isinstance(v, dict):
+            continue
+        if v.get("value") is not None:
+            try:
+                derived_value = float(v["value"])
+            except (TypeError, ValueError):
+                pass
+        if v.get("y_ss") is not None:
+            try:
+                derived_value = float(v["y_ss"])
+            except (TypeError, ValueError):
+                pass
+        if not golden and v.get("golden"):
+            golden = str(v["golden"])
+    run_dir_s = spec.get("run_dir")
+    if not run_dir_s:
+        return {"ok": False, "unchecked": True, "error": "missing run_dir"}
+    run_dir = Path(run_dir_s)
+    if golden:
+        problem["golden"] = golden
+    out = finish_control_lab(
+        run_dir,
+        problem,
+        golden=golden or None,
+        derived_value=derived_value,
+    )
+    ok = "error" not in out and not out.get("mismatch")
+    return {
+        **out,
+        "ok": ok,
+        "unchecked": False,
+        "value": derived_value if derived_value is not None else out.get("simulated"),
+        "capability": "lumped-control-sim",
+        "tool": "control_lab",
+    }
+
+
 @register("seed-circuit-lab")
 def seed_circuit_lab(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
     from electrical_engineer.collab.workflow import finish_circuit_lab
 
     problem = dict(_problem(spec))
+    run_dir_s = spec.get("run_dir")
+    run_dir = Path(run_dir_s) if run_dir_s else None
+    if run_dir and not problem.get("cir"):
+        net = run_dir / "netlist.cir"
+        if net.is_file() and net.read_text(encoding="utf-8").strip():
+            problem["cir"] = net.read_text(encoding="utf-8")
     derived: dict[str, Any] | None = None
+    if run_dir:
+        derive_file = run_dir / "circuit_derive.json"
+        if derive_file.is_file():
+            try:
+                import json
+
+                derived = json.loads(derive_file.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError):
+                derived = None
     for v in inputs.values():
         if isinstance(v, dict) and v.get("derived"):
             derived = v["derived"] if isinstance(v["derived"], dict) else v
@@ -173,11 +233,16 @@ def seed_circuit_lab(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, 
         if isinstance(v, dict) and v.get("tool") == "circuit_derive":
             derived = v
     if derived:
-        problem = {**problem, **{k: derived[k] for k in ("value", "cir", "probe", "analysis", "unit") if k in derived}}
-    run_dir_s = spec.get("run_dir")
+        problem = {
+            **problem,
+            **{
+                k: derived[k]
+                for k in ("value", "cir", "probe", "analysis", "unit", "t_s", "t_stop", "derive_metric")
+                if k in derived
+            },
+        }
     if not run_dir_s:
         return {"ok": False, "unchecked": True, "error": "missing run_dir"}
-    run_dir = Path(run_dir_s)
     out = finish_circuit_lab(run_dir, problem, derived=derived)
     if out.get("mismatch"):
         out["disagreement_banner"] = out.get("disagreement_banner") or "derive vs lab simulation mismatch"

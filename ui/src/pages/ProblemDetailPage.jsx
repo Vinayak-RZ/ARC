@@ -4,6 +4,8 @@ import { EngineArtifacts } from "../slots/engine/EngineArtifacts.jsx";
 import { StepTimeline, TraceDiagnostics } from "../components/StepTimeline.jsx";
 import { ParametersPanel } from "../components/ParametersPanel.jsx";
 import { ProblemHeader } from "../components/ProblemHeader.jsx";
+import { LabVerifyPanel } from "../components/LabVerifyPanel.jsx";
+import { LabActivityPanel } from "../components/LabActivityPanel.jsx";
 import { labForRecipe, openLab, openRunLab } from "../studio-engine/labs/openExample.js";
 
 const TABS = [
@@ -42,6 +44,7 @@ export function ProblemDetailPage({ id, data, runMeta }) {
         </button>
       ) : null}
       {renderSlot("run.result", { id, runMeta })}
+      <LabVerifyPanel labVerify={data?.lab_verify} labMeta={data?.lab} />
       <div className="problem-tabs tabs-underline" role="tablist">
         {TABS.map((t) => (
           <button
@@ -67,6 +70,7 @@ export function ProblemDetailPage({ id, data, runMeta }) {
           ) : null}
           {tab === "activity" ? (
             <>
+              <LabActivityPanel labMeta={data?.lab} />
               {renderSlot("run.more", { id })}
               <TraceDiagnostics trace={data?.trace_excerpt} />
             </>

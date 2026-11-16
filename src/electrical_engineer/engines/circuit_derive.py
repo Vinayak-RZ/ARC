@@ -119,7 +119,40 @@ def _dc_divider(problem: dict[str, Any]) -> dict[str, Any]:
     return {"value": vout, "unit": "V", "cir": cir, "probe_node": "2", "probe": probe}
 
 
+def _series_rlc(problem: dict[str, Any]) -> dict[str, Any]:
+    from electrical_engineer.engines.rlc_transient import series_rlc_step
+
+    vin = float(problem.get("vin") or problem.get("v_step") or 10)
+    r_ohm = float(problem.get("r_ohm") or problem.get("r") or 10)
+    l_h = float(problem.get("l_h") or problem.get("l") or 1e-3)
+    c_f = float(problem.get("c_f") or problem.get("c") or 1e-6)
+    step_v = float(problem.get("v_step") or vin)
+    meta = series_rlc_step(r_ohm, l_h, c_f, step_v)
+    t_stop = float(problem.get("t_s") or max(float(meta["t_Vc_peak_s"]) * 1.2, 1e-4))
+    probe = str(problem.get("probe") or problem.get("probe_expr") or "v(3)")
+    value = float(meta["Vc_peak_V"])
+    cir = (
+        "* arc series rlc\n"
+        f"V1 1 0 DC {step_v}\n"
+        f"R1 1 2 {r_ohm}\nL1 2 3 {l_h}\nC1 3 0 {c_f}\n"
+        f".tran {max(t_stop / 500, 1e-7):g} {t_stop}\n.end\n"
+    )
+    return {
+        "value": value,
+        "unit": "V",
+        "cir": cir,
+        "probe": probe,
+        "probe_node": str(problem.get("probe_node") or "3"),
+        "analysis": "tran",
+        "t_s": float(meta["t_Vc_peak_s"]),
+        "t_stop": t_stop,
+        "derive_metric": "Vc_peak",
+    }
+
+
 _KINDS = {
     "dc_divider": _dc_divider,
     "voltage_divider": _dc_divider,
+    "series_rlc": _series_rlc,
+    "rlc": _series_rlc,
 }
