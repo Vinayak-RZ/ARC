@@ -108,24 +108,47 @@ def _parse_tran_series(stdout: str, probe: str) -> list[tuple[float, float]]:
         if "time" in compact and needle in compact:
             in_table = True
             continue
+        if not in_table and needle in compact and "index" in compact:
+            in_table = True
+            continue
         if not in_table:
             continue
         if line.strip().startswith("Note:"):
             break
+        if line.strip().startswith("---"):
+            continue
         parts = line.split()
-        if len(parts) >= 3:
+        if len(parts) >= 3 and parts[0].isdigit():
             try:
                 t_s = float(parts[-2])
                 v = float(parts[-1])
+                rows.append((t_s, v))
             except ValueError:
                 continue
-            rows.append((t_s, v))
         elif len(parts) == 2:
             try:
                 rows.append((float(parts[0]), float(parts[1])))
             except ValueError:
                 continue
+    if not rows:
+        for line in stdout.splitlines():
+            parts = line.split()
+            if len(parts) >= 2 and any(p.replace(".", "", 1).replace("-", "", 1).isdigit() for p in parts):
+                try:
+                    floats = [float(p) for p in parts if _looks_float(p)]
+                    if len(floats) >= 2:
+                        rows.append((floats[-2], floats[-1]))
+                except ValueError:
+                    continue
     return rows
+
+
+def _looks_float(token: str) -> bool:
+    try:
+        float(token)
+        return True
+    except ValueError:
+        return False
 
 
 def _interp_series_at_t(rows: list[tuple[float, float]], t_query: float) -> float | None:
@@ -262,13 +285,14 @@ def run_spice_netlist(
             }
     combined = (proc.stdout or "") + "\n" + (proc.stderr or "")
     derive_metric = str(problem.get("derive_metric") or "").lower()
-    value = _parse_print_voltage(combined, probe)
     if analysis == "tran" and derive_metric in {"vc_peak", "peak", "max"}:
         series = _parse_tran_series(combined, probe)
         if series:
-            peak = max(v for _, v in series)
-            if value is None or peak > float(value) + 1e-6:
-                value = peak
+            value = max(v for _, v in series)
+        else:
+            value = _parse_print_voltage(combined, "_arc_out") or _parse_print_voltage(combined, probe)
+    else:
+        value = _parse_print_voltage(combined, probe)
     if value is None and proc.returncode != 0:
         return {
             "ok": False,
