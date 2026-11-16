@@ -83,7 +83,7 @@ def _preflight(out_dir: Path) -> dict:
         path = ln[3:].strip()
         if path.startswith(capture_prefix):
             continue
-        if path.startswith("src/") or path.startswith("ui/src/"):
+        if path.startswith(("src/", "ui/src/")):
             untracked_src.append(path)
     diff = subprocess.check_output(["git", "diff", "HEAD"], cwd=ROOT)
     req_low = urllib.request.Request(

@@ -10,8 +10,6 @@ def _rk4_vc_tail(
     r_ohm: float, l_h: float, c_f: float, v_step: float, *, wn: float, t_start: float, t_end: float, h: float
 ) -> float | None:
     """2% settling time after the peak (vc within band of v_step)."""
-    i = 0.0
-    vc = 0.0
     if t_start > 0:
         # Seed from state at t_start would need full history; integrate from 0 for settling metric.
         pass
@@ -64,8 +62,7 @@ def _rk4_integrate_vc(
     r_ohm: float, l_h: float, c_f: float, v_step: float, *, t_end: float, n: int = 320
 ) -> list[list[float]]:
     """Sample capacitor voltage (V) versus time (ms) for plotting."""
-    if n < 2:
-        n = 2
+    n = max(n, 2)
     h = t_end / (n - 1)
 
     def deriv(_t: float, state: tuple[float, float]) -> tuple[float, float]:

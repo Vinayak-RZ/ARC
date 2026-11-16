@@ -1,4 +1,9 @@
-from electrical_engineer.circuit.graph import default_graph_for, graph_port_errors, parse_graph, series_rlc_graph
+from electrical_engineer.circuit.graph import (
+    default_graph_for,
+    graph_port_errors,
+    parse_graph,
+    series_rlc_graph,
+)
 from electrical_engineer.circuit.netlist import compile_netlist
 
 
