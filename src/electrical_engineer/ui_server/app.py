@@ -956,7 +956,6 @@ def create_app(root: Path | None = None) -> FastAPI:
 
     @app.get("/api/runs/{run_id}/events")
     async def run_events(run_id: str):
-        import asyncio
 
         from electrical_engineer.collab.run_events import sse_stream
 

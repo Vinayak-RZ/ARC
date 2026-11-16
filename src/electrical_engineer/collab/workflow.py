@@ -11,6 +11,8 @@ from electrical_engineer.circuit.run_session import apply_graph
 from electrical_engineer.circuit.simulate_graph import compare_derived, simulate_graph
 from electrical_engineer.collab import lab_meta
 from electrical_engineer.engines.circuit_derive import DeriveError, derive
+
+
 def _ui_base() -> str:
     import os
 

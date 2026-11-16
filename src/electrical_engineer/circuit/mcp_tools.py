@@ -6,13 +6,13 @@ import json
 from pathlib import Path
 from typing import Any
 
+from electrical_engineer.circuit import mcp_lab
 from electrical_engineer.engines.circuit_multimodal import (
     confirm_and_write,
     propose_netlist_from_component,
     propose_netlist_from_image,
 )
 from electrical_engineer.engines.circuit_verify import verify_after_derive
-from electrical_engineer.circuit import mcp_lab
 from electrical_engineer.runner.execute import execute
 from electrical_engineer.runner.runs import create_run_dir, new_run_id, project_root
 

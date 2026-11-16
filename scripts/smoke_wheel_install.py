@@ -54,6 +54,7 @@ def main() -> int:
             env=env,
             text=True,
             capture_output=True,
+            check=False,
         )
         if doctor.returncode != 0:
             print(doctor.stdout + doctor.stderr, file=sys.stderr)
@@ -63,10 +64,12 @@ def main() -> int:
             [
                 str(py),
                 "-c",
-                "from electrical_engineer.paths import ui_dist_dir, bundle_root; "
-                "assert bundle_root() is not None; "
-                "assert (ui_dist_dir() / 'index.html').is_file(); "
-                "print('ui_ok')",
+                (
+                    "from electrical_engineer.paths import ui_dist_dir, bundle_root; "
+                    "assert bundle_root() is not None; "
+                    "assert (ui_dist_dir() / 'index.html').is_file(); "
+                    "print('ui_ok')"
+                ),
             ],
             cwd=work,
             env=env,
