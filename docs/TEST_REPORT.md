@@ -1,113 +1,163 @@
 # Arc independent test report
 
-Last run: 2026-11-16  
+Last updated: 2026-11-16 (round 2)  
 Branch: `cursor/independent-test-engineer-43f2`  
 Base: `cursor/collab-loop-f29f`  
-Role: independent test engineer (tests and fixtures only; no `src/` or `ui/src` product edits)
+Role: independent test engineer (tests and tooling only; no `src/` or `ui/src` product edits)
 
-## Summary
+## Executive summary (round 2)
 
 | Metric | Value |
 |--------|------:|
-| New test modules | 8 Python + 1 Playwright spec |
-| New test functions (pytest) | 47 |
-| Passing (new suite) | 44 |
-| Skipped (ngspice absent) | 3 |
-| xfail strict (known bugs) | 1 |
-| Playwright cases | 3 viewport/theme rows |
+| Independent pytest functions (round 1+2) | 66 collected in this PR slice |
+| Passing (with ngspice installed) | 61 |
+| Skipped | 1 (`ARC_LIVE_UI` live SSE optional) |
+| xfail strict (known product bugs) | 4 |
+| Playwright full suite (local, UI up) | 38 passed, 13 failed, 5 did not run |
+| Mutation testing (mutmut 2.5) | **No score** (0 files mutated; stats pass blocked by `test_scenario_bank` in global pytest) |
+| Golden audit candidates | 70 paths (`/opt/cursor/artifacts/golden-audit.json`) |
+| ngspice | Installed (`ngspice 42`); former 3 spice skips now run (2 xfails document bugs) |
 
-Commands:
+Head SHA for this report: see latest push on `cursor/independent-test-engineer-43f2`.
+
+### What we actually ran
 
 ```bash
-uv sync --extra dev --extra engines --extra control
-uv run pytest -q \
-  tests/unit/test_independent_golden_numerics.py \
-  tests/unit/test_graph_netlist_fidelity.py \
-  tests/unit/test_verify_after_derive_edges.py \
-  tests/integration/test_collab_lab_semantics.py \
-  tests/integration/test_arc_lab_mcp_cli_contracts.py \
-  tests/integration/test_independent_robustness.py \
-  tests/integration/test_independent_capability_smoke.py
-cd ui && npm ci && npm run test:e2e -- e2e/independent-full-collab-loop.spec.ts
+sudo apt-get install -y ngspice
+cd ui && npm install && npm run build
+EE_NO_BROWSER=1 uv run electrical-engineer ui &
+curl -sf http://127.0.0.1:8765/api/health
+cd ui && STUDIO_URL=http://127.0.0.1:8765 npm run test:e2e   # full suite ~12.3m
+uv run pytest -q tests/unit/test_*.py tests/integration/test_*independent* \
+  tests/integration/test_collab_lab_semantics.py tests/integration/test_arc_lab_mcp_cli_contracts.py \
+  tests/integration/test_four_sample_wiring.py tests/integration/test_sse_inprocess_ordering.py \
+  tests/integration/test_live_sse_ordering.py
+uv run python tests/tools/golden_audit.py
+bash scripts/mutation/run_verify_path_mutmut.sh   # attempted; see mutation section
 ```
 
-## Capability coverage matrix
+Artifacts: `playwright-full-suite.log`, `playwright-round2-summary.txt`, `golden-audit.json`, `mutmut-run.log` under `/opt/cursor/artifacts/`.
+
+## Round 2 additions
+
+| Area | New assets |
+|------|------------|
+| Live / in-process SSE | `tests/integration/test_live_sse_ordering.py`, `tests/integration/test_sse_inprocess_ordering.py` |
+| Four sample wiring | `tests/integration/test_four_sample_wiring.py` (divider, rlc-step API, control workflow, rectifier + IDMT recipes) |
+| Golden contamination | `tests/unit/test_golden_contamination.py`, `tests/tools/golden_audit.py` |
+| Mutation kill-suite | `tests/unit/test_mutation_targets.py`, `mutmut.ini`, `scripts/mutation/run_verify_path_mutmut.sh` |
+| Playwright | `independent-full-collab-loop.spec.ts` in `testMatch`; `ui/package-lock.json` updated for `@axe-core/playwright` |
+
+## Capability coverage matrix (updated)
 
 | Capability | Tested | Passing | Failing / xfail | Untested |
 |------------|--------|---------|-----------------|----------|
-| Lab model (`lab_meta.json`, revision, `op_log`, `actor_label`, restore) | Yes | Yes | | |
-| MCP `arc_circuit_lab_*` + `arc_lab_finish_control` schemas | Yes | Yes | | Control finish not exercised end-to-end here |
-| CLI `electrical-engineer lab get\|finish\|simulate\|open` | Yes | Yes | | |
-| API `GET /api/runs/{id}/lab`, `POST .../lab/restore` | Yes | Yes | | |
-| SSE `/api/runs/{id}/events` | Partial | Yes (publish + route wiring) | Live stream ordering not blocked in CI | Full ordering under load |
-| Verify-after-derive (`needs_review` > 2%) | Yes | Yes | | |
-| Circuit graph compile + ngspice simulate | Yes | Yes when ngspice present | ARC-TE-001 xfail | |
-| Graph vs derive-netlist fidelity on shorts | Yes | xfail | ARC-TE-001 | |
-| Control Studio goldens (unity K=10) | Yes | Yes | | Bode/locus/margins not re-goldened here |
-| Rectifier hw3 closed form | Yes | Yes | | UI lab only; Python `rectifier_3ph` differs topology |
-| IDMT IEC standard | Yes | Yes | | |
-| Series RLC headline goldens | Yes | Yes | | |
-| Problems / gallery / learn APIs | Yes | Yes | | Full Playwright learn/gallery |
-| Web-verify node | Yes | Yes | | Citation workflow not replayed |
-| Circuit sandbox | Existing + collab e2e | | | Dedicated sandbox fuzz |
-| Playwright full collab loop | New spec | Pending CI / local UI | | |
+| Lab meta, revisions, `op_log`, restore | Yes | Yes | | |
+| MCP + CLI lab contracts | Yes | Yes | | |
+| Verify-after-derive 2% edges | Yes | Yes | ARC-TE-003 documented | |
+| Graph compile + ngspice (graph-only RLC tran) | Yes | | ARC-TE-006 xfail | |
+| Derive netlist bypass on shorted graph | Yes | | ARC-TE-001 xfail | |
+| Control lab mismatch (`y_ss` vs `y_final`) | Yes | | ARC-TE-005 xfail | |
+| SSE live ordering | Yes | | ARC-TE-007 xfail | |
+| SSE in-process (TestClient) | Yes | | ARC-TE-007 xfail | |
+| Four examples E2E (API + workflows) | Yes | Yes | | |
+| IDMT + rectifier solver recipes | Yes | Yes | ARC-TE-002 formula gap | UI hw3 vs Python |
+| Golden perturbation (declared `value`) | Yes | Yes | | |
+| Playwright collab loop spec | Yes | | 3/3 fail (studio circuit shell) | |
+| Playwright full suite | Yes | 38 | 13 fail (mixed collab + studio URL bugs) | 5 not run |
+| Mutation (compare_derived, netlist, IDMT, RLC) | Attempted | Partial (`test_mutation_targets` only) | mutmut blocked | cosmic-ray not run |
 
-## Prioritized bug list
+## Mutation testing
+
+**Goal:** mutmut on `compare_derived`, `compile_netlist`, IDMT and RLC solvers.
+
+**Result:** `mutmut run` with `mutmut.ini` reported **0 files mutated, 207 unmodified** on the first stats pass; a full-repo pytest runner used for statistics failed on `tests/unit/test_scenario_bank.py` import (`annotate_scenarios`). Surviving mutants were **not** enumerated.
+
+**Mitigation in this PR:** `tests/unit/test_mutation_targets.py` (6 focused tests) targets branches in those modules. **Mutation score: N/A until** mutmut is configured with an isolated runner that only executes `test_mutation_targets.py` (or `test_scenario_bank` is fixed / excluded in CI stats).
+
+**Better use of time vs full-repo mutmut right now:** extend `test_mutation_targets.py` after each P0 fix; or adopt `cosmic-ray` with an explicit `cosmic-ray.toml` test path list (not done in this pass).
+
+## Playwright (real run)
+
+- **Build:** `ui/npm run build` succeeded (Vite).
+- **Server:** `electrical-engineer ui` on `127.0.0.1:8765` healthy.
+- **Full suite:** 38 passed, 13 failed, 5 did not run (~12.3m). See `/opt/cursor/artifacts/playwright-round2-summary.txt`.
+- **Collab-specific failures:** `collab-lab` and `independent-full-collab-loop` timeout on `.react-flow` or `.studio-circuit-app .cs-simulate-btn` / `.answer-num` (circuits lab shell with `?run=`).
+- **Note:** Many failures are **pre-existing** studio/layout specs, not introduced by this PR.
+
+## Golden audit
+
+- Scanned 70 repo files where goldens and derive/simulate paths co-occur (`tests/tools/golden_audit.py`).
+- **Known contamination pattern:** `seed-control-lab` copies upstream `value` / `y_ss` into `derived_value` without independent derive (`nodes/sim.py`).
+- **Tests:** `test_circuit_derived_moves_when_declared_value_perturbed` proves `finish_circuit_lab` ignores bogus `problem["value"]` when derive succeeds; `test_injected_wrong_derived_*` flags injected wrong derive.
+- **Script hazard:** `scripts/capture_collab_lab_screenshots.py` sets `summ["value"] = 11.963` (intentionally wrong Euler demo).
+
+## Prioritized bug list (full)
 
 ### P0
 
-**ARC-TE-001: Verify-after-derive simulates derive netlist, not compiled graph**
-
-- **Repro**
-  1. Seed headline series RLC lab via `finish_circuit_lab`.
-  2. Append graph edge `vin.n1` → `c1.n2` (parallel short).
-  3. Call `simulate_graph(graph, problem)` **without** `problem["cir"]`.
-  4. Call `finish_circuit_lab` with the same shorted graph still seeded from problem.
-- **Expected:** Simulated peak disagrees with analytic 11.630 V; `mismatch` / `needs_review`.
-- **Actual:** `finish_circuit_lab` merges `derived["cir"]` into `sim_prob` (`collab/workflow.py` ~74; `circuit/simulate_graph.py` ~21-24), so ngspice runs the correct template netlist while the drawn graph is shorted.
-- **Suspect:** `src/electrical_engineer/circuit/simulate_graph.py:21-24`, `src/electrical_engineer/collab/workflow.py:72-75`
-- **Test:** `tests/unit/test_graph_netlist_fidelity.py::test_shorted_drawn_graph_must_not_match_analytic_peak` (`xfail strict=True`)
+**ARC-TE-001: Verify path simulates derive netlist, not drawn graph** (unchanged; `xfail` strict)
 
 ### P1
 
-**ARC-TE-002: Python `rectifier_3ph` half-wave formula does not match hw3 discontinuous R-load lab**
+**ARC-TE-002:** Python `rectifier_3ph` vs UI hw3 discontinuous Vo (unchanged)
 
-- **Repro:** Compare `electrical_engineer.engines.solvers.power_electronics.rectifier_3ph(..., topology="half")` at 415 V, α=45° to UI `voClosedForm` hw3 discontinuous (203.7 V).
-- **Expected:** Same Vo within 0.5 V for the teaching case.
-- **Actual:** Python uses continuous `cos(α)` form (`power_electronics.py` ~69-70); UI uses `(3Vm/2π)(1+cos(α+30°))` when discontinuous.
-- **Suspect:** `src/electrical_engineer/engines/solvers/power_electronics.py:69-70` vs `ui/src/studio-engine/labs/rectifier.js:54-60` (UI not modified by this PR)
+**ARC-TE-007: SSE `/api/runs/{id}/events` delivers no bytes to clients**
+
+- **Repro:** `GET /events` with curl or httpx for 3s while `PUT /graph`.
+- **Expected:** `data: {"type":"hello",...}` then `data: {"type":"graph","revision":N,...}`.
+- **Actual:** HTTP 200 `text/event-stream`, **zero body** (see `/opt/cursor/artifacts/sse-stream-sample.txt`).
+- **Suspect:** `src/electrical_engineer/collab/run_events.py` + `StreamingResponse` flush/`asyncio.to_thread` interaction.
+- **Tests:** `test_live_sse_ordering` (optional `ARC_LIVE_UI=1`), `test_sse_delivers_graph_revisions_in_process` (`xfail strict`).
 
 ### P2
 
-**ARC-TE-003: `compare_derived(tol=0.02)` treats tol as absolute volts, not relative fraction**
+**ARC-TE-003:** `compare_derived(tol=)` absolute vs relative (unchanged)
 
-- **Repro:** `compare_derived(100, 102, tol=0.02)` → mismatch; `compare_derived(100, 102, rel_tol=0.02)` → match.
-- **Expected:** Documented `tol` on problems is relative (per PRD collab loop).
-- **Actual:** `compare_derived` uses `tol` as absolute margin when set (`simulate_graph.py` ~63).
-- **Suspect:** `src/electrical_engineer/circuit/simulate_graph.py:53-64`
+**ARC-TE-004:** Learn API with empty `create_app(tmp_path)` (unchanged)
 
-**ARC-TE-004: Learn curriculum API returns empty shape when `create_app(tmp_path)` without repo learn files**
+**ARC-TE-005: `finish_control_lab` reads `y_final`, simulate returns `y_ss`**
 
-- **Repro:** `TestClient(create_app(tmp_path)).get("/api/learn/curriculum")` from empty tmp cwd.
-- **Expected:** Stable payload or explicit error.
-- **Actual:** Depends on `curriculum_payload(root)` with non-repo root.
-- **Suspect:** `src/electrical_engineer/ui_server/learn_routes.py:96-99`
+- **Repro:** `finish_control_lab(..., derived_value=wrong)` with unity golden.
+- **Expected:** `mismatch=True` when `derived_value` off by 5.
+- **Actual:** `simulated=None`, `mismatch=False`.
+- **Suspect:** `collab/workflow.py` ~213-214 vs `control_studio/simulate.py` ~230.
+- **Test:** `test_control_seed_derived_mismatch_when_derived_value_perturbed` (`xfail strict`).
 
-## Files added (test-only)
+**ARC-TE-006: Graph-only RLC tran peak wrong without UIC `.tran` in compiled netlist**
 
-- `tests/golden_numerics_refs.py`
-- `tests/__init__.py`
-- `tests/unit/test_independent_golden_numerics.py`
-- `tests/unit/test_graph_netlist_fidelity.py`
-- `tests/unit/test_verify_after_derive_edges.py`
-- `tests/integration/test_collab_lab_semantics.py`
-- `tests/integration/test_arc_lab_mcp_cli_contracts.py`
-- `tests/integration/test_independent_robustness.py`
-- `tests/integration/test_independent_capability_smoke.py`
-- `ui/e2e/independent-full-collab-loop.spec.ts`
-- `pyproject.toml` (hypothesis in dev extra)
-- `ui/package.json` (`@axe-core/playwright` devDependency)
+- **Repro:** `simulate_graph(series_rlc_graph(), {analysis: tran, ...})` without `problem["cir"]`.
+- **Expected:** Vc peak ~11.63 V.
+- **Actual:** ngspice returns ~10 V (DC-like).
+- **Suspect:** `circuit/netlist.py` (compile only `.end`); tran setup in `spice_runner` when `cir` omitted.
+- **Test:** `test_graph_only_simulation_matches_derived_rlc_peak` (`xfail strict`).
 
-## CI note
+**ARC-TE-008 (e2e): Open run in studio circuits lab does not expose simulate results**
 
-Ensure `ngspice` is on `PATH` in CI for spice-dependent tests (existing collab suite + new graph fidelity tests). Skips apply locally when simulator is missing.
+- **Repro:** Playwright `/?view=studio&tab=circuits&run={rlc-step run_id}`, click simulate.
+- **Expected:** `.studio-circuit-results .answer-num` visible.
+- **Actual:** timeout 45s (3 viewports).
+- **Suspect:** collab branch UI routing / circuit shell (not modified in this PR).
+
+## Is any of this pointless right now?
+
+**Full Playwright regression (13 failures):** Low signal until collab branch stabilizes studio URLs (`studioUrl&tab=control` invalid URL) and `?run=` circuit studio shell. **Better:** gate CI on `collab-lab` + `independent-full-collab-loop` + `circuit-sandbox` only.
+
+**Repo-wide mutmut:** Blocked and noisy on this tree. **Better:** module-scoped cosmic-ray or mutmut with runner = `pytest tests/unit/test_mutation_targets.py` only after fixing scenario_bank collection.
+
+**Live SSE test with second server:** Redundant once ARC-TE-007 is fixed; keep in-process test only.
+
+## Commands (CI parity)
+
+```bash
+uv sync --extra dev --extra engines --extra control
+sudo apt-get install -y ngspice   # match .github/workflows/ci.yml
+cd ui && npm ci && npm run build
+uv run pytest -q tests/unit/test_independent_golden_numerics.py \
+  tests/unit/test_graph_netlist_fidelity.py tests/unit/test_verify_after_derive_edges.py \
+  tests/integration/test_collab_lab_semantics.py tests/integration/test_arc_lab_mcp_cli_contracts.py \
+  tests/integration/test_independent_robustness.py tests/integration/test_independent_capability_smoke.py \
+  tests/unit/test_mutation_targets.py tests/unit/test_golden_contamination.py \
+  tests/integration/test_four_sample_wiring.py tests/integration/test_sse_inprocess_ordering.py
+# optional: ARC_LIVE_UI=1 pytest tests/integration/test_live_sse_ordering.py
+```

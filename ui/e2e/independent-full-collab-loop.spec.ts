@@ -25,7 +25,7 @@ test.describe("Full collab loop (independent TE)", () => {
       await page.setViewportSize({ width: vp.width, height: vp.height });
       await prepareTheme(page, vp.theme);
 
-      const seed = await request.post(`${BASE}/api/examples/series-rlc/run`);
+      const seed = await request.post(`${BASE}/api/examples/rlc-step/run`);
       test.skip(!seed.ok(), "series-rlc example API unavailable");
       const { run_id: runId } = await seed.json();
       expect(runId).toBeTruthy();

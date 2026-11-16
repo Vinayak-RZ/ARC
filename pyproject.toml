@@ -53,7 +53,7 @@ Documentation = "https://github.com/Vinayak-RZ/ARC/blob/main/docs/EXTENSIVE.md"
 electrical-engineer = "electrical_engineer.cli:main"
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "ruff>=0.6", "Pillow>=10", "playwright>=1.49", "build>=1.2", "twine>=5", "hypothesis>=6"]
+dev = ["pytest>=8", "ruff>=0.6", "Pillow>=10", "playwright>=1.49", "build>=1.2", "twine>=5", "hypothesis>=6", "mutmut>=2.5"]
 rag = ["pypdf>=5"]
 rag-ocr = ["electrical-engineer[rag]", "ocrmypdf>=16"]
 rag-multimodal = ["electrical-engineer[rag]"]
