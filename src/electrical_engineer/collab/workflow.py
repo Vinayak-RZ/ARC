@@ -371,10 +371,10 @@ def finish_control_lab(
     derived_value: float | None = None,
 ) -> dict[str, Any]:
     from electrical_engineer.collab.control_derive import _plant_first_order
+    from electrical_engineer.control.diagram import control_diagram_for_recipe
     from electrical_engineer.control_studio import session as cs_session
     from electrical_engineer.control_studio import simulate as cs_simulate
     from electrical_engineer.control_studio.goldens import GOLDENS
-    from electrical_engineer.control.diagram import control_diagram_for_recipe
     from electrical_engineer.runner.runs import project_root
 
     root = project_root()

@@ -1,13 +1,10 @@
-#!/usr/bin/env python3
 """Round-11 collab screenshots (isolated runs per theme)."""
 
 from __future__ import annotations
 
 import json
-import os
 import subprocess
 import sys
-import time
 import urllib.request
 from pathlib import Path
 
