@@ -1,0 +1,812 @@
+{
+  "git_sha": "83968d8f74046cb738c5a7bbcdbcbcd0ae54d364",
+  "git_sha_short": "83968d8",
+  "git_dirty_lines": 1,
+  "git_untracked_lines": 0,
+  "git_diff_sha256": "3e692ab1c2c9ed2f",
+  "package_path": "/agent/repos/ARC/src/electrical_engineer/__init__.py",
+  "dist_index_mtime": 1794847913.6886423,
+  "kp": 50.0,
+  "step_series": true,
+  "gain_margin_caption": "No \u2212180\u00b0 crossing in 0.001 to 100,000 rad/s.",
+  "low_gain_pm_deg": "Not defined",
+  "finite_crossover": {
+    "status": "settled_off_target",
+    "final_value": 0.9090909090909084,
+    "t_settle_s": 0.35577647940957396,
+    "overshoot_pct": 0.0,
+    "steady_state_error_pct": 9.1
+  },
+  "capture_scan": {
+    "files": [
+      {
+        "file": "cmdk-open-dark.png",
+        "mean_luminance": 3.1
+      },
+      {
+        "file": "cmdk-open-light.png",
+        "mean_luminance": 2.98
+      },
+      {
+        "file": "cmdk-query-light.png",
+        "mean_luminance": 2.97
+      },
+      {
+        "file": "collab-01-run-sim-vs-derived-agrees-dark.png",
+        "mean_luminance": 3.49
+      },
+      {
+        "file": "collab-01-run-sim-vs-derived-agrees-light.png",
+        "mean_luminance": 3.3
+      },
+      {
+        "file": "collab-02-lab-provenance-vc-activity-dark.png",
+        "mean_luminance": 1.27
+      },
+      {
+        "file": "collab-02-lab-provenance-vc-activity-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "collab-03-human-r1-resim-activity-you-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "collab-03-human-r1-resim-activity-you-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "collab-04-changes-restore-agent-dark.png",
+        "mean_luminance": 1.3
+      },
+      {
+        "file": "collab-04-changes-restore-agent-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "collab-05-needs-review-bad-derive-dark.png",
+        "mean_luminance": 3.53
+      },
+      {
+        "file": "collab-05-needs-review-bad-derive-light.png",
+        "mean_luminance": 3.37
+      },
+      {
+        "file": "collab-06-control-unity-lab-agreement-dark.png",
+        "mean_luminance": 1.29
+      },
+      {
+        "file": "collab-06-control-unity-lab-agreement-light.png",
+        "mean_luminance": 1.45
+      },
+      {
+        "file": "collab-06-control-unity-run-agrees-dark.png",
+        "mean_luminance": 3.14
+      },
+      {
+        "file": "collab-06-control-unity-run-agrees-light.png",
+        "mean_luminance": 3.03
+      },
+      {
+        "file": "focus-button-dark.png",
+        "mean_luminance": 5.07
+      },
+      {
+        "file": "focus-button-light.png",
+        "mean_luminance": 4.71
+      },
+      {
+        "file": "focus-composer-dark.png",
+        "mean_luminance": 2.32
+      },
+      {
+        "file": "focus-composer-light.png",
+        "mean_luminance": 2.3
+      },
+      {
+        "file": "focus-tab-dark.png",
+        "mean_luminance": 4.91
+      },
+      {
+        "file": "focus-tab-light.png",
+        "mean_luminance": 4.56
+      },
+      {
+        "file": "focus-table-row-dark.png",
+        "mean_luminance": 3.05
+      },
+      {
+        "file": "focus-table-row-light.png",
+        "mean_luminance": 3.0
+      },
+      {
+        "file": "focus-tile-dark.png",
+        "mean_luminance": 2.31
+      },
+      {
+        "file": "focus-tile-light.png",
+        "mean_luminance": 2.29
+      },
+      {
+        "file": "gallery-1024-dark.png",
+        "mean_luminance": 1.5
+      },
+      {
+        "file": "gallery-1024-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "gallery-dark.png",
+        "mean_luminance": 2.21
+      },
+      {
+        "file": "gallery-light.png",
+        "mean_luminance": 2.11
+      },
+      {
+        "file": "home-dark.png",
+        "mean_luminance": 2.29
+      },
+      {
+        "file": "home-empty-1024-dark.png",
+        "mean_luminance": 2.19
+      },
+      {
+        "file": "home-empty-1024-light.png",
+        "mean_luminance": 2.22
+      },
+      {
+        "file": "home-empty-light.png",
+        "mean_luminance": 1.09
+      },
+      {
+        "file": "home-scrolled-1024-light.png",
+        "mean_luminance": 2.22
+      },
+      {
+        "file": "home-scrolled-dark.png",
+        "mean_luminance": 2.26
+      },
+      {
+        "file": "home-with-recent-light.png",
+        "mean_luminance": 2.3
+      },
+      {
+        "file": "lab-converter-dark.png",
+        "mean_luminance": 2.65
+      },
+      {
+        "file": "lab-converter-light.png",
+        "mean_luminance": 2.65
+      },
+      {
+        "file": "lab-idmt-dark.png",
+        "mean_luminance": 2.64
+      },
+      {
+        "file": "lab-idmt-light.png",
+        "mean_luminance": 2.65
+      },
+      {
+        "file": "lab-lead-dark.png",
+        "mean_luminance": 2.65
+      },
+      {
+        "file": "lab-lead-light.png",
+        "mean_luminance": 2.67
+      },
+      {
+        "file": "lab-rectifier-dark.png",
+        "mean_luminance": 2.65
+      },
+      {
+        "file": "lab-rectifier-light.png",
+        "mean_luminance": 2.66
+      },
+      {
+        "file": "learn-achievements-dark.png",
+        "mean_luminance": 2.97
+      },
+      {
+        "file": "learn-achievements-light.png",
+        "mean_luminance": 2.88
+      },
+      {
+        "file": "learn-landing-1024-dark.png",
+        "mean_luminance": 1.21
+      },
+      {
+        "file": "learn-landing-1024-light.png",
+        "mean_luminance": 1.27
+      },
+      {
+        "file": "learn-landing-dark.png",
+        "mean_luminance": 1.99
+      },
+      {
+        "file": "learn-landing-light.png",
+        "mean_luminance": 1.99
+      },
+      {
+        "file": "learn-subject-power-electronics-dark.png",
+        "mean_luminance": 2.32
+      },
+      {
+        "file": "learn-subject-power-electronics-light.png",
+        "mean_luminance": 2.31
+      },
+      {
+        "file": "library-1024-dark.png",
+        "mean_luminance": 1.06
+      },
+      {
+        "file": "library-1024-light.png",
+        "mean_luminance": 1.02
+      },
+      {
+        "file": "library-dark.png",
+        "mean_luminance": 2.14
+      },
+      {
+        "file": "library-light.png",
+        "mean_luminance": 2.07
+      },
+      {
+        "file": "problem-answer-dark.png",
+        "mean_luminance": 4.91
+      },
+      {
+        "file": "problem-answer-light.png",
+        "mean_luminance": 4.57
+      },
+      {
+        "file": "problem-circuit-checked-diagram-light.png",
+        "mean_luminance": 4.38
+      },
+      {
+        "file": "problem-circuit-checked-light.png",
+        "mean_luminance": 4.37
+      },
+      {
+        "file": "problem-circuit-checked-work-light.png",
+        "mean_luminance": 4.39
+      },
+      {
+        "file": "problem-dark.png",
+        "mean_luminance": 4.9
+      },
+      {
+        "file": "problem-divider-run-1024-dark.png",
+        "mean_luminance": 5.4
+      },
+      {
+        "file": "problem-divider-run-1024-light.png",
+        "mean_luminance": 5.25
+      },
+      {
+        "file": "problem-parameters-drawer-light.png",
+        "mean_luminance": 4.59
+      },
+      {
+        "file": "problem-parameters-stale-light.png",
+        "mean_luminance": 4.74
+      },
+      {
+        "file": "problem-stale-dark.png",
+        "mean_luminance": 5.06
+      },
+      {
+        "file": "problem-work-dark.png",
+        "mean_luminance": 4.89
+      },
+      {
+        "file": "problem-work-tab-light.png",
+        "mean_luminance": 4.56
+      },
+      {
+        "file": "problems-empty-dark.png",
+        "mean_luminance": 2.66
+      },
+      {
+        "file": "problems-empty-light.png",
+        "mean_luminance": 2.56
+      },
+      {
+        "file": "problems-error-dark.png",
+        "mean_luminance": 2.67
+      },
+      {
+        "file": "problems-error-light.png",
+        "mean_luminance": 2.61
+      },
+      {
+        "file": "problems-list-1024-dark.png",
+        "mean_luminance": 2.24
+      },
+      {
+        "file": "problems-list-1024-light.png",
+        "mean_luminance": 2.15
+      },
+      {
+        "file": "problems-list-dark.png",
+        "mean_luminance": 3.03
+      },
+      {
+        "file": "problems-list-light.png",
+        "mean_luminance": 2.99
+      },
+      {
+        "file": "problems-loading-light.png",
+        "mean_luminance": 1.73
+      },
+      {
+        "file": "problems-row-hover-dark.png",
+        "mean_luminance": 3.05
+      },
+      {
+        "file": "problems-row-hover-light.png",
+        "mean_luminance": 2.96
+      },
+      {
+        "file": "run-idmt-dark.png",
+        "mean_luminance": 3.08
+      },
+      {
+        "file": "run-idmt-light.png",
+        "mean_luminance": 3.05
+      },
+      {
+        "file": "run-rectifier-dark.png",
+        "mean_luminance": 3.5
+      },
+      {
+        "file": "run-rectifier-light.png",
+        "mean_luminance": 3.28
+      },
+      {
+        "file": "settings-about-dark.png",
+        "mean_luminance": 2.37
+      },
+      {
+        "file": "settings-about-light.png",
+        "mean_luminance": 2.38
+      },
+      {
+        "file": "settings-agents-1024-dark.png",
+        "mean_luminance": 1.95
+      },
+      {
+        "file": "settings-agents-1024-light.png",
+        "mean_luminance": 1.91
+      },
+      {
+        "file": "settings-agents-dark.png",
+        "mean_luminance": 2.42
+      },
+      {
+        "file": "settings-agents-light.png",
+        "mean_luminance": 2.35
+      },
+      {
+        "file": "settings-appearance-dark.png",
+        "mean_luminance": 2.4
+      },
+      {
+        "file": "settings-appearance-light.png",
+        "mean_luminance": 2.38
+      },
+      {
+        "file": "settings-data-dark.png",
+        "mean_luminance": 2.38
+      },
+      {
+        "file": "settings-data-light.png",
+        "mean_luminance": 2.39
+      },
+      {
+        "file": "settings-engines-dark.png",
+        "mean_luminance": 2.38
+      },
+      {
+        "file": "settings-engines-light.png",
+        "mean_luminance": 2.36
+      },
+      {
+        "file": "sidebar-collapsed-dark.png",
+        "mean_luminance": 3.52
+      },
+      {
+        "file": "sidebar-collapsed-light.png",
+        "mean_luminance": 1.73
+      },
+      {
+        "file": "studio-after-resize-light.png",
+        "mean_luminance": 2.71
+      },
+      {
+        "file": "studio-after-simulate-dark.png",
+        "mean_luminance": 2.63
+      },
+      {
+        "file": "studio-before-simulate-dark.png",
+        "mean_luminance": 2.63
+      },
+      {
+        "file": "studio-block-selected-after-simulate-light.png",
+        "mean_luminance": 2.65
+      },
+      {
+        "file": "studio-block-selected-dark.png",
+        "mean_luminance": 2.63
+      },
+      {
+        "file": "studio-block-selected-light.png",
+        "mean_luminance": 2.65
+      },
+      {
+        "file": "studio-circuit-sandbox-1024-dark.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "studio-circuit-sandbox-1024-light.png",
+        "mean_luminance": 1.58
+      },
+      {
+        "file": "studio-circuit-series-rlc-dark.png",
+        "mean_luminance": 2.63
+      },
+      {
+        "file": "studio-circuit-series-rlc-light.png",
+        "mean_luminance": 2.66
+      },
+      {
+        "file": "studio-control-1024-dark.png",
+        "mean_luminance": 1.75
+      },
+      {
+        "file": "studio-control-1024-light.png",
+        "mean_luminance": 1.92
+      },
+      {
+        "file": "studio-landing-dark.png",
+        "mean_luminance": 2.33
+      },
+      {
+        "file": "studio-landing-light.png",
+        "mean_luminance": 2.19
+      },
+      {
+        "file": "studio-layout-after-simulate-light.png",
+        "mean_luminance": 2.66
+      },
+      {
+        "file": "studio-layout-before-simulate-light.png",
+        "mean_luminance": 2.65
+      },
+      {
+        "file": "studio-margins-finite-dark.png",
+        "mean_luminance": 2.65
+      },
+      {
+        "file": "studio-margins-finite-light.png",
+        "mean_luminance": 2.66
+      },
+      {
+        "file": "studio-margins-no-crossover-dark.png",
+        "mean_luminance": 2.64
+      },
+      {
+        "file": "studio-margins-no-crossover-light.png",
+        "mean_luminance": 2.66
+      },
+      {
+        "file": "studio-step-extended-dark.png",
+        "mean_luminance": 2.62
+      },
+      {
+        "file": "studio-step-extended-light.png",
+        "mean_luminance": 2.64
+      },
+      {
+        "file": "studio-step-offtarget-light.png",
+        "mean_luminance": 2.67
+      },
+      {
+        "file": "studio-step-settled-dark.png",
+        "mean_luminance": 2.62
+      },
+      {
+        "file": "studio-step-settled-light.png",
+        "mean_luminance": 2.65
+      },
+      {
+        "file": "studio-step-unsettled-dark.png",
+        "mean_luminance": 2.63
+      },
+      {
+        "file": "studio-step-unsettled-light.png",
+        "mean_luminance": 2.67
+      }
+    ],
+    "dark_integrity_failures": [
+      {
+        "dark": "cmdk-open-dark.png",
+        "light": "cmdk-open-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "collab-01-run-sim-vs-derived-agrees-dark.png",
+        "light": "collab-01-run-sim-vs-derived-agrees-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "collab-02-lab-provenance-vc-activity-dark.png",
+        "light": "collab-02-lab-provenance-vc-activity-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "collab-03-human-r1-resim-activity-you-dark.png",
+        "light": "collab-03-human-r1-resim-activity-you-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "collab-04-changes-restore-agent-dark.png",
+        "light": "collab-04-changes-restore-agent-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "collab-05-needs-review-bad-derive-dark.png",
+        "light": "collab-05-needs-review-bad-derive-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "collab-06-control-unity-lab-agreement-dark.png",
+        "light": "collab-06-control-unity-lab-agreement-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "collab-06-control-unity-run-agrees-dark.png",
+        "light": "collab-06-control-unity-run-agrees-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "focus-button-dark.png",
+        "light": "focus-button-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "focus-composer-dark.png",
+        "light": "focus-composer-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "focus-tab-dark.png",
+        "light": "focus-tab-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "focus-table-row-dark.png",
+        "light": "focus-table-row-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "focus-tile-dark.png",
+        "light": "focus-tile-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "gallery-1024-dark.png",
+        "light": "gallery-1024-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "gallery-dark.png",
+        "light": "gallery-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "home-empty-1024-dark.png",
+        "light": "home-empty-1024-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-converter-dark.png",
+        "light": "lab-converter-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-idmt-dark.png",
+        "light": "lab-idmt-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-lead-dark.png",
+        "light": "lab-lead-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-dark.png",
+        "light": "lab-rectifier-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "learn-achievements-dark.png",
+        "light": "learn-achievements-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "learn-landing-1024-dark.png",
+        "light": "learn-landing-1024-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "learn-landing-dark.png",
+        "light": "learn-landing-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "learn-subject-power-electronics-dark.png",
+        "light": "learn-subject-power-electronics-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "library-1024-dark.png",
+        "light": "library-1024-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "library-dark.png",
+        "light": "library-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "problem-answer-dark.png",
+        "light": "problem-answer-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "problem-divider-run-1024-dark.png",
+        "light": "problem-divider-run-1024-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "problems-empty-dark.png",
+        "light": "problems-empty-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "problems-error-dark.png",
+        "light": "problems-error-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "problems-list-1024-dark.png",
+        "light": "problems-list-1024-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "problems-list-dark.png",
+        "light": "problems-list-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "problems-row-hover-dark.png",
+        "light": "problems-row-hover-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "run-idmt-dark.png",
+        "light": "run-idmt-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "run-rectifier-dark.png",
+        "light": "run-rectifier-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "settings-about-dark.png",
+        "light": "settings-about-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "settings-agents-1024-dark.png",
+        "light": "settings-agents-1024-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "settings-agents-dark.png",
+        "light": "settings-agents-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "settings-appearance-dark.png",
+        "light": "settings-appearance-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "settings-data-dark.png",
+        "light": "settings-data-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "settings-engines-dark.png",
+        "light": "settings-engines-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "sidebar-collapsed-dark.png",
+        "light": "sidebar-collapsed-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "studio-block-selected-dark.png",
+        "light": "studio-block-selected-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "studio-circuit-sandbox-1024-dark.png",
+        "light": "studio-circuit-sandbox-1024-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "studio-circuit-series-rlc-dark.png",
+        "light": "studio-circuit-series-rlc-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "studio-control-1024-dark.png",
+        "light": "studio-control-1024-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "studio-landing-dark.png",
+        "light": "studio-landing-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "studio-margins-finite-dark.png",
+        "light": "studio-margins-finite-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "studio-margins-no-crossover-dark.png",
+        "light": "studio-margins-no-crossover-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "studio-step-extended-dark.png",
+        "light": "studio-step-extended-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "studio-step-settled-dark.png",
+        "light": "studio-step-settled-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "studio-step-unsettled-dark.png",
+        "light": "studio-step-unsettled-light.png",
+        "reason": "mean luminance too close to light"
+      }
+    ],
+    "nan_text_hits": []
+  },
+  "ci_status": {
+    "checks": [
+      {
+        "name": "test",
+        "state": "FAILURE",
+        "url": "https://github.com/Vinayak-RZ/ARC/actions/runs/43866930821/job/133297766600"
+      }
+    ]
+  },
+  "merged_collab_pr62_head": "83968d8f74046cb738c5a7bbcdbcbcd0ae54d364",
+  "ci_reference": {
+    "pr": 62,
+    "head_sha_short": "83968d8",
+    "workflow_run_id": "43910447419",
+    "status": "success"
+  },
+  "png_count": 127
+}

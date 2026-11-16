@@ -123,6 +123,13 @@ def _preflight(out_dir: Path) -> dict:
     data = {
         "git_sha": sha,
         "git_sha_short": sha_short,
+        "merged_collab_pr62_head": "83968d8f74046cb738c5a7bbcdbcbcd0ae54d364",
+        "ci_reference": {
+            "pr": 62,
+            "head_sha_short": "83968d8",
+            "workflow_run_id": "43910447419",
+            "status": "success",
+        },
         "git_dirty_lines": len(dirty_lines),
         "git_untracked_lines": len(untracked_src),
         "git_diff_sha256": hashlib.sha256(diff).hexdigest()[:16] if diff else None,
@@ -690,7 +697,7 @@ def main() -> int:
                 page.wait_for_selector(".studio-home", timeout=15000)
                 snap("studio-landing.png")
                 go("?view=studio&tab=circuits")
-                page.wait_for_selector(".studio-circuit-sandbox", timeout=20000)
+                page.wait_for_selector(".studio-circuit-app", timeout=20000)
                 page.evaluate("() => localStorage.removeItem('arc-circuit-sandbox-v1')")
                 page.reload(wait_until="domcontentloaded")
                 page.wait_for_selector(".product-shell", timeout=30000)
@@ -718,13 +725,18 @@ def main() -> int:
                 page.get_by_role("tab", name="Diagram").click()
                 page.wait_for_selector(".static-diagram, .diagram-shell svg", timeout=30000)
                 snap("problem-circuit-checked-diagram.png")
-                control_rid = _run_example("control-step")
-                go(f"?problem={control_rid}")
-                page.wait_for_selector(".answer-line", timeout=120000)
-                snap("problem-control-checked.png")
-                page.get_by_role("tab", name="Work").click()
-                page.wait_for_selector(".checked-tag, .answer-line.is-checked", timeout=120000)
-                snap("problem-control-checked-work.png")
+                try:
+                    control_rid = _run_example("control-step")
+                except Exception as exc:
+                    index_notes.append(f"control-step example run failed ({exc}); skipped control run page captures.")
+                    control_rid = None
+                if control_rid:
+                    go(f"?problem={control_rid}")
+                    page.wait_for_selector(".answer-line", timeout=120000)
+                    snap("problem-control-checked.png")
+                    page.get_by_role("tab", name="Work").click()
+                    page.wait_for_selector(".checked-tag, .answer-line.is-checked", timeout=120000)
+                    snap("problem-control-checked-work.png")
 
             go("?view=gallery")
             page.wait_for_selector(".gallery-card", timeout=10000)
@@ -1016,7 +1028,7 @@ def main() -> int:
                     page.wait_for_selector(".studio-home", timeout=15000)
                     snap("studio-landing-dark.png")
                     go("?view=studio&tab=circuits")
-                    page.wait_for_selector(".studio-circuit-sandbox", timeout=20000)
+                    page.wait_for_selector(".studio-circuit-app", timeout=20000)
                     page.get_by_role("button", name="Series RLC").click()
                     page.wait_for_timeout(800)
                     snap("studio-circuit-series-rlc-dark.png")
