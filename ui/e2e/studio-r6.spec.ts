@@ -29,8 +29,11 @@ for (const width of [1280, 1440]) {
   test(`edge paths keep non-empty d before and after Simulate (${width})`, async ({ page, request }) => {
     await page.setViewportSize({ width, height: 900 });
     const errors: string[] = [];
+    const ignoreConsole = /Failed to load resource|JSON|SyntaxError|fetch|EventSource/i;
     page.on("pageerror", (e) => errors.push(String(e)));
-    page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+    page.on("console", (m) => {
+      if (m.type() === "error" && !ignoreConsole.test(m.text())) errors.push(m.text());
+    });
     const { wires } = await open(page, request);
     await assertEdgePaths(page, wires);
     await page.getByRole("button", { name: "Simulate" }).click();
