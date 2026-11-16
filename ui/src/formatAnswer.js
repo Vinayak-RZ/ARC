@@ -38,9 +38,12 @@ function parseTitleParts(title) {
   return { head: parts[0] || "Result", quantity: "Answer" };
 }
 
-export function answerPartsFromRow(label, scalar) {
+export function answerPartsFromRow(label, scalar, digits) {
   const unit = unitForLabel(label);
-  const value = formatNumber(scalar);
+  const d =
+    digits ??
+    (String(label).toLowerCase().includes("peak") || String(label).toLowerCase().includes("vc") ? 3 : 2);
+  const value = formatNumber(scalar, d);
   const name = label;
   return { name, value, unit, display: unit ? `${name} = ${value} ${unit}` : `${name} = ${value}` };
 }
@@ -60,7 +63,11 @@ export function buildAnswerRows(evid, data) {
     }
     return { head, rows };
   }
-  const scalar = evid?.value;
+  let scalar = evid?.value;
+  const lv = data?.lab_verify;
+  if (lv?.needs_review && lv.derived != null) {
+    scalar = lv.derived;
+  }
   if (scalar == null || scalar === "unchecked") {
     return { head, rows: [] };
   }

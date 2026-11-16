@@ -42,13 +42,14 @@ def _shot_run_page(page, run_id: str, path: Path, *, diagram_tab: bool = False, 
 def _shot_control_lab(page, session_id: str, path: Path) -> None:
     page.goto(f"{HOST}/?view=studio&tab=control&session={session_id}")
     page.wait_for_selector(".react-flow", timeout=45_000)
-    page.get_by_role("button", name="Simulate").click()
+    sim_btn = page.locator(".cs-simulate-btn, .studio-circuit-simulate-btn").first
+    sim_btn.click()
     page.wait_for_selector(".studio-margins .num", timeout=45_000)
-    page.get_by_role("button", name="Simulate again").click()
+    sim_btn.click()
     page.wait_for_selector(".studio-step-chart svg, .studio-step-chart", timeout=45_000)
     page.get_by_text("0.909", exact=False).first.wait_for(state="visible", timeout=45_000)
     page.wait_for_timeout(800)
-    page.screenshot(path=str(path), full_page=False)
+    page.screenshot(path=str(path), full_page=True)
 
 
 def _shot_circuit_lab(page, run_id: str, path: Path) -> None:
@@ -57,7 +58,7 @@ def _shot_circuit_lab(page, run_id: str, path: Path) -> None:
     page.wait_for_selector(".lab-provenance-bar", timeout=20_000)
     page.wait_for_selector(".studio-lab-drawer", timeout=20_000)
     page.wait_for_timeout(800)
-    page.screenshot(path=str(path), full_page=False)
+    page.screenshot(path=str(path), full_page=True)
 
 
 def main() -> int:
@@ -134,7 +135,7 @@ def main() -> int:
     }
     with sync_playwright() as p:
         browser = p.chromium.launch()
-        page = browser.new_page(viewport={"width": 1280, "height": 900})
+        page = browser.new_page(viewport={"width": 1440, "height": 900})
         _shot_run_page(page, divider["run_id"], shots["agent_circuit_divider_lab"], diagram_tab=True)
         _shot_run_page(page, rlc["run_id"], shots["agent_series_rlc_run"], diagram_tab=False, need_agree=True)
         bad_dir = ROOT / "runs" / rlc["run_id"]

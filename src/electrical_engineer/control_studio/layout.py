@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
-BLOCK_W = 96
-PID_W = 168
+BLOCK_W = 72
+PID_W = 148
 BLOCK_H = 56
 GAP = 48
 GRID = 8

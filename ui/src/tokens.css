@@ -2783,8 +2783,20 @@ a { color: var(--ee-color-primary); }
 .studio-circuit-lab-shell.is-collab {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
+  grid-template-rows: auto auto;
   gap: 0;
   align-items: stretch;
+}
+.studio-circuit-lab-shell.is-collab > .studio-circuit-app,
+.studio-circuit-lab-shell.is-collab > .cs-app {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+}
+.studio-circuit-lab-shell.is-collab .studio-lab-drawer {
+  grid-column: 2;
+  grid-row: 1 / -1;
+  align-self: stretch;
 }
 .studio-lab-drawer {
   border-left: 1px solid var(--ee-color-hairline);
@@ -2804,5 +2816,6 @@ a { color: var(--ee-color-primary); }
   overflow-wrap: anywhere;
 }
 .lab-surface-circuit.has-linked-run .studio-circuit-presets {
-  grid-column: 1 / -1;
+  grid-column: 1;
+  grid-row: 2;
 }
