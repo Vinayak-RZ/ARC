@@ -691,7 +691,7 @@ def main() -> int:
                     ("lead", "lab-lead"),
                 ]:
                     go(f"?view=studio&tab=labs&lab={lab_id}")
-                    page.wait_for_selector(".lab-surface", timeout=30000)
+                    page.wait_for_selector(".lab-shell", timeout=30000)
                     page.wait_for_timeout(500)
                     snap(f"{stem}.png")
                 circuit_rid = _run_example("rlc-step")
@@ -1010,7 +1010,7 @@ def main() -> int:
                         ("lead", "lab-lead"),
                     ]:
                         go(f"?view=studio&tab=labs&lab={lab_id}")
-                        page.wait_for_selector(".lab-surface", timeout=30000)
+                        page.wait_for_selector(".lab-shell", timeout=30000)
                         page.wait_for_timeout(500)
                         snap(f"{stem}-dark.png")
                 go("?view=gallery")
