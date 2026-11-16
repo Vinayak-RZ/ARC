@@ -54,7 +54,14 @@ def test_series_rlc_transient_lab(run_root: Path, monkeypatch) -> None:
         "tol": 0.2,
         "value": gold,
     }
-    derived = {"value": gold, "cir": cir, "probe": "v(3)", "analysis": "tran", "t_s": problem["t_s"]}
+    derived = {
+        "value": gold,
+        "cir": cir,
+        "probe": "v(3)",
+        "analysis": "tran",
+        "t_s": problem["t_s"],
+        "derive_metric": "Vc_peak",
+    }
     verify = finish_circuit_lab(run_root, problem, derived=derived)
     assert abs(float(verify["derived"]) - gold) < 1e-6
     if verify.get("simulated") is not None:

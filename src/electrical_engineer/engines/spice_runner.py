@@ -56,6 +56,7 @@ def _ensure_control_block(
     analysis: str = "dc",
     f_hz: float | None = None,
     t_s: float | None = None,
+    derive_metric: str | None = None,
 ) -> str:
     if ".control" in cir.lower():
         return cir
@@ -74,7 +75,11 @@ def _ensure_control_block(
             probe_inner = f"mag({probe})"
         cmd = f"run\nprint {probe_inner}\n"
     elif analysis == "tran":
-        if t_s is not None:
+        metric = str(derive_metric or "").lower()
+        if metric in {"vc_peak", "peak", "max"}:
+            text += f"\n.measure tran _arc_out max {probe}\n"
+            cmd = "run\nprint _arc_out\n"
+        elif t_s is not None:
             text += f"\n.measure tran _arc_out find {probe} at={float(t_s)}\n"
             cmd = "run\nprint _arc_out\n"
         else:
@@ -217,12 +222,14 @@ def run_spice_netlist(
     if not cir_body.startswith("*"):
         cir_body = "* arc netlist\n" + cir_body
     t_s = problem.get("t_s")
+    derive_metric = problem.get("derive_metric")
     body = _ensure_control_block(
         cir_body,
         probe=probe,
         analysis=analysis,
         f_hz=float(f_hz) if f_hz else None,
         t_s=float(t_s) if t_s is not None else None,
+        derive_metric=str(derive_metric) if derive_metric else None,
     )
     net_path = run_dir / "netlist.cir"
     net_path.write_text(body, encoding="utf-8")

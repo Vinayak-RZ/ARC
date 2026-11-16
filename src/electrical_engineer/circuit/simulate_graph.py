@@ -31,7 +31,8 @@ def simulate_graph(
         "f_hz": problem.get("f_hz"),
         "t_s": problem.get("t_s") or problem.get("t_stop"),
         "kind": problem.get("kind"),
-        "derive_metric": problem.get("derive_metric"),
+        "derive_metric": problem.get("derive_metric")
+        or ("Vc_peak" if str(problem.get("kind") or "") == "series_rlc" else None),
     }
     sim_status = simulator_status()
     out: dict[str, Any] = {"simulator": sim_status, "engine": "circuit_graph_sim"}
