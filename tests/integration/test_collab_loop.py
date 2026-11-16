@@ -177,7 +177,6 @@ def test_unity_feedback_control_lab(run_root: Path, monkeypatch) -> None:
     sim = cs_simulate.simulate(diagram, run_dir=run_root)
     assert sim.get("ok")
     assert sim.get("y_ss") is not None
-    y_ss = float(sim["y_ss"])
     from electrical_engineer.collab.control_derive import derive_unity_feedback
 
     hand = derive_unity_feedback({"num": [10], "den": [1, 1], "kind": "unity_feedback"})

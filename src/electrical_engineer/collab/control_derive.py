@@ -25,7 +25,7 @@ def _plant_first_order(problem: dict[str, Any]) -> tuple[float, float] | None:
     m = re.match(r"^(\d+(?:\.\d+)?)/\(s\+(\d+(?:\.\d+)?)\)$", tf)
     if m:
         return float(m.group(1)), float(m.group(2))
-    m = re.match(r"^(\d+(?:\.\d+)?)/\(τs\+(\d+(?:\.\d+)?)\)$", tf, re.I)
+    m = re.match(r"^(\d+(?:\.\d+)?)/\(τs\+(\d+(?:\.\d+)?)\)$", tf, re.IGNORECASE)
     if m:
         return float(m.group(1)), float(m.group(2))
     if problem.get("k") is not None and problem.get("tau") is not None:
