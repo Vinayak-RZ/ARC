@@ -229,9 +229,9 @@ def main() -> int:
 
     pf["capture_scan"] = scan
     pf["ci_status_rollup"] = _git_ci_status()
-    head = pf.get("git_sha") or subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     pf["git_sha"] = head
-    pf["git_sha_short"] = pf.get("git_sha_short") or head[:7]
+    pf["git_sha_short"] = head[:7]
     if os.environ.get("ROUND12_CI_RUN_ID"):
         pf["ci_workflow_run_id"] = os.environ["ROUND12_CI_RUN_ID"]
     if os.environ.get("ROUND12_CI_STATUS"):

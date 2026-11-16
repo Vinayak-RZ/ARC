@@ -4,7 +4,7 @@ PNG count: 145
 
 Includes round-11 coverage, 1280×800 home scroll companions, collab-03–05 (live forward-Euler mismatch), and `lab-rectifier-full3-rl-alpha75` (Vo ≈ 145.1 V).
 
-Capture HEAD: `87a566e` · CI run `43946948182` · `git_dirty_lines`: 34.
+Capture HEAD: `67c86e8` · CI run `43974204444` · `git_dirty_lines`: 4.
 
 ## Known issues
 
