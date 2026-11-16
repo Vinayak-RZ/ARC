@@ -17,10 +17,11 @@ function badgeClass(status) {
   }
 }
 
-export function LabVerifyPanel({ labVerify, labMeta, compact = false }) {
+export function LabVerifyPanel({ labVerify, labMeta, compact = false, onAskAgent }) {
   if (!labVerify || (labVerify.derived == null && labVerify.simulated == null && !labVerify.metrics?.length)) {
     return null;
   }
+  const stale = Boolean(labVerify.stale) || labVerify.status === "out_of_date";
   const skipped = Boolean(labVerify.sim_skipped);
   const metrics = labVerify.metrics?.length
     ? labVerify.metrics
@@ -52,7 +53,26 @@ export function LabVerifyPanel({ labVerify, labMeta, compact = false }) {
           <h2 id="lab-verify-heading">Simulated vs derived</h2>
           {labVerify.needs_review ? <span className="lab-needs-review">Needs review</span> : null}
         </header>
-        <p className="lab-verify-engine-line">Simulated with {engine}</p>
+        {stale ? (
+          <div className="lab-verify-stale-banner" role="status">
+            <p>
+              {labVerify.stale_reason ||
+                labVerify.human_edit_notes?.[0] ||
+                "This check is out of date for the current circuit."}
+            </p>
+            {onAskAgent ? (
+              <button type="button" className="text-button" onClick={onAskAgent}>
+                Ask agent to re-derive
+              </button>
+            ) : null}
+          </div>
+        ) : null}
+        <p className="lab-verify-engine-line">
+          Simulated with {engine}
+          {labVerify.graph_revision != null ? (
+            <span className="lab-verify-rev-tag"> · verified at r{labVerify.graph_revision}</span>
+          ) : null}
+        </p>
         <ul className="lab-verify-stack">
           {metrics.map((row) => (
             <li key={row.id} className="lab-verify-stack-row">
@@ -87,6 +107,20 @@ export function LabVerifyPanel({ labVerify, labMeta, compact = false }) {
         <h2 id="lab-verify-heading">Simulated vs derived</h2>
         {labVerify.needs_review ? <span className="lab-needs-review">Needs review</span> : null}
       </header>
+      {stale ? (
+        <div className="lab-verify-stale-banner" role="status">
+          <p>
+            {labVerify.stale_reason ||
+              labVerify.human_edit_notes?.[0] ||
+              "This check is out of date for the current circuit."}
+          </p>
+          {onAskAgent ? (
+            <button type="button" className="text-button" onClick={onAskAgent}>
+              Ask agent to re-derive
+            </button>
+          ) : null}
+        </div>
+      ) : null}
       <table className="lab-verify-table">
         <thead>
           <tr>

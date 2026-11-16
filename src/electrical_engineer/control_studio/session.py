@@ -23,6 +23,66 @@ def new_session_id() -> str:
     return f"cs-{uuid.uuid4().hex[:12]}"
 
 
+def run_session_id(run_id: str) -> str:
+    """Stable control-studio session per saved run (one plant per problem run)."""
+    rid = "".join(c for c in run_id if c.isalnum() or c in "-_")[:48]
+    return f"cs-run-{rid}"
+
+
+def _unity_plant_diagram(*, k: float, tau: float, title: str) -> dict[str, Any]:
+    from electrical_engineer.control_studio.goldens import unity_first_order
+
+    diagram = parse_diagram(unity_first_order())
+    diagram["title"] = title
+    for block in diagram.get("blocks") or []:
+        if block.get("id") == "G" and block.get("type") == "plant_first_order":
+            block.setdefault("params", {})["k"] = float(k)
+            block["params"]["tau"] = float(tau)
+    pole = 1.0 / float(tau) if tau else 1.0
+    diagram["meta"] = {
+        "unity_feedback": {
+            "blocks": [
+                {"id": "G", "tf": f"{float(k)}/(s+{pole:g})"},
+                {"id": "H", "tf": "1"},
+            ],
+            "unity_feedback": {"forward": "G", "feedback": "H", "negative": True},
+        }
+    }
+    return layout_chain(diagram)
+
+
+def ensure_run_session(
+    session_id: str,
+    title: str,
+    root: Path | None = None,
+    *,
+    plant_k: float,
+    plant_tau: float,
+) -> dict[str, Any]:
+    path = session_path(session_id, root)
+    if path.is_file():
+        return load_session(session_id, root)
+    diagram = _unity_plant_diagram(k=plant_k, tau=plant_tau, title=title)
+    payload = {
+        "session_id": session_id,
+        "revision": 0,
+        "diagram": diagram,
+        "op_log": [],
+        "undo_stack": [json.loads(json.dumps(diagram))],
+        "redo_stack": [],
+        "presence": {"agent_editing": False, "last_author": "agent", "highlight_until_ms": 0},
+        "updated_at_ms": int(time.time() * 1000),
+        "run_binding": {"plant_k": plant_k, "plant_tau": plant_tau},
+    }
+    _append_op(
+        payload,
+        {"op": "create", "target": "problem_plant", "detail": {"k": plant_k, "tau": plant_tau}},
+        "agent",
+    )
+    save_session(session_id, payload, root)
+    return payload
+
+
 def session_path(session_id: str, root: Path | None = None) -> Path:
     sid = "".join(c for c in session_id if c.isalnum() or c in "-_")
     return _studio_dir(root) / f"{sid}.json"

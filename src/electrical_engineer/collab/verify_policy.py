@@ -12,9 +12,12 @@ DOCS = (
 
 
 def status_label(*, agrees: bool, rel_err_pct: float, limit_pct: float = DEFAULT_REL_TOL * 100) -> str:
-    if agrees:
+    if agrees or rel_err_pct < limit_pct:
         return f"Agrees (limit {limit_pct:.0f}%)"
-    return f"Differs by {rel_err_pct:.1f}% (limit {limit_pct:.0f}%)"
+    shown = format_rel_err_pct(rel_err_pct)
+    if shown < 0.05:
+        return f"Differs by {shown:.3f}% (limit {limit_pct:.0f}%)"
+    return f"Differs by {shown:.1f}% (limit {limit_pct:.0f}%)"
 
 
 def format_rel_err_pct(rel_err_pct: float) -> float:

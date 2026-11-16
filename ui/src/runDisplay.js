@@ -8,6 +8,8 @@ const SUBJECT_TAGS = {
   "run-python-control": "Control",
   "lti-analysis": "Control",
   "compose-from-parts": "Control",
+  "solve-control-problem": "Control",
+  "series-rlc-transient": "Circuits",
   "unmatched-cosolver": "General",
   "explain-circuits": "Circuits",
   "explain-signals": "Signals",

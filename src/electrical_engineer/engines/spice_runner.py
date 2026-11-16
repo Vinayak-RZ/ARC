@@ -276,14 +276,21 @@ def run_spice_netlist(
             }
     combined = (proc.stdout or "") + "\n" + (proc.stderr or "")
     derive_metric = str(problem.get("derive_metric") or "").lower()
+    series: list[tuple[float, float]] = []
+    t_peak_s: float | None = None
     if analysis == "tran" and derive_metric in {"vc_peak", "peak", "max"}:
         value = _parse_print_voltage(combined, "_arc_out")
+        series = _parse_tran_series(combined, probe)
         if value is None:
-            series = _parse_tran_series(combined, probe)
             if series:
-                value = max(v for _, v in series)
+                peak_idx = max(range(len(series)), key=lambda i: series[i][1])
+                value = series[peak_idx][1]
+                t_peak_s = series[peak_idx][0]
             else:
                 value = _parse_print_voltage(combined, probe)
+        elif series:
+            peak_idx = max(range(len(series)), key=lambda i: series[i][1])
+            t_peak_s = series[peak_idx][0]
     else:
         value = _parse_print_voltage(combined, probe)
     if value is None and proc.returncode != 0:
@@ -306,7 +313,7 @@ def run_spice_netlist(
             "tool": "ngspice",
             "paths": paths,
         }
-    return {
+    out: dict[str, Any] = {
         "ok": True,
         "tool": "ngspice",
         "unchecked": False,
@@ -314,3 +321,12 @@ def run_spice_netlist(
         "probe": probe,
         "paths": paths,
     }
+    if t_peak_s is not None:
+        out["t_peak_s"] = float(t_peak_s)
+    if series:
+        out["trace"] = {
+            "vc_trace_ms": [[t * 1000.0, v] for t, v in series],
+            "t_Vc_peak_s": t_peak_s,
+            "Vc_peak_V": value,
+        }
+    return out
