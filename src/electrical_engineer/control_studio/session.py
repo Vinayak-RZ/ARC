@@ -29,16 +29,25 @@ def run_session_id(run_id: str) -> str:
     return f"cs-run-{rid}"
 
 
+def _human_control_lab_title(title: str, plant_k: float) -> str:
+    slug = str(title or "").strip()
+    if slug and slug not in {"unity_feedback", "control"}:
+        return slug
+    return f"Unity feedback, K = {plant_k:g}"
+
+
 def _unity_plant_diagram(*, k: float, tau: float, title: str) -> dict[str, Any]:
     from electrical_engineer.control_studio.goldens import unity_first_order
 
     diagram = parse_diagram(unity_first_order())
-    diagram["title"] = title
+    pole = 1.0 / float(tau) if tau else 1.0
+    tf_label = f"{float(k):g}/(s+{pole:g})"
+    diagram["title"] = _human_control_lab_title(title, float(k))
     for block in diagram.get("blocks") or []:
         if block.get("id") == "G" and block.get("type") == "plant_first_order":
             block.setdefault("params", {})["k"] = float(k)
             block["params"]["tau"] = float(tau)
-    pole = 1.0 / float(tau) if tau else 1.0
+            block["label"] = tf_label
     diagram["meta"] = {
         "unity_feedback": {
             "blocks": [

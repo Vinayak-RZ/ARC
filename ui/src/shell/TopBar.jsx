@@ -52,9 +52,6 @@ export function TopBar({ runMeta, onPrimaryAction, primaryLabel, runAgainPrimary
         ) : null}
         {showParams ? (
           <>
-            <button type="button" className="button-secondary button-compact" onClick={() => go({ view: "studio" })}>
-              Open in Studio
-            </button>
             <button
               type="button"
               className={drawer ? "button-secondary button-compact is-active topbar-params-toggle" : "button-secondary button-compact topbar-params-toggle"}

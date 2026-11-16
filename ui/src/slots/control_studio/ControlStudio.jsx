@@ -18,7 +18,7 @@ import { ResultsDock } from "./ResultsDock.jsx";
 import { studioNodeTypes } from "./nodes.jsx";
 import { studioEdgeTypes } from "./edges.jsx";
 import { FitViewOnChange } from "./FitViewOnChange.jsx";
-import { diagramToFlow, flowToDiagram, humanBlockLabel, issuesByBlock } from "./utils.js";
+import { diagramToFlow, displayStudioTitle, flowToDiagram, humanBlockLabel, issuesByBlock } from "./utils.js";
 import { StudioToolbar } from "./StudioToolbar.jsx";
 import { MascotState } from "../../components/MascotState.jsx";
 import "../../control-studio/studio.css";
@@ -564,7 +564,7 @@ function ControlStudioInner({ sessionId, onSession, autoBoot = false }) {
     >
       <ReactFlowProvider>
         <StudioToolbar
-          title={session?.diagram?.title}
+          title={displayStudioTitle(session?.diagram?.title)}
           resultsStale={resultsStale}
           zoomPct={zoomPct}
           onUndo={undo}

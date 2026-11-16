@@ -6,7 +6,6 @@ import { ParametersPanel } from "../components/ParametersPanel.jsx";
 import { ProblemHeader } from "../components/ProblemHeader.jsx";
 import { LabVerifyPanel } from "../components/LabVerifyPanel.jsx";
 import { LabActivityPanel } from "../components/LabActivityPanel.jsx";
-import { labForRecipe, openLab, openRunLab } from "../studio-engine/labs/openExample.js";
 
 const TABS = [
   { id: "work", label: "Work" },
@@ -23,26 +22,13 @@ export function ProblemDetailPage({ id, data, runMeta }) {
   const setStale = useLayout((s) => s.setParametersStale);
   let recipeId = "";
   try {
-    const evid = JSON.parse(data?.summary || "{}");
-    recipeId = evid.recipe_id || "";
+    recipeId = JSON.parse(data?.summary || "{}").recipe_id || "";
   } catch {
     recipeId = "";
   }
-  const hasStudy = Boolean(data?.control_diagram?.nodes?.length);
-
   return (
     <div className="page-column problem-detail">
       <ProblemHeader runMeta={runMeta} data={data} />
-      {data?.lab ? (
-        <button type="button" className="button-primary" onClick={() => openRunLab(data)}>
-          Open in lab
-        </button>
-      ) : null}
-      {!data?.lab && labForRecipe(recipeId) ? (
-        <button type="button" className="button-secondary" onClick={() => openLab(labForRecipe(recipeId))}>
-          Open simulation lab
-        </button>
-      ) : null}
       {data?.lab_verify?.needs_review ? (
         <p className="lab-needs-review-banner" role="status">
           Needs review — derived and simulated values disagree beyond tolerance.

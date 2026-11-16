@@ -1309,6 +1309,12 @@ a { color: var(--ee-color-primary); }
   margin-left: auto;
 }
 .verification-link:hover { text-decoration: underline; }
+.verification-lab-btn {
+  margin-left: 2px;
+  min-height: 28px;
+  padding: 4px 10px;
+  font-size: 12px;
+}
 .answer-card.is-stale .answer-line,
 .answer-card.is-stale .answer-lines { opacity: 0.6; }
 .status-tag { font-size: 12px; font-weight: 500; }

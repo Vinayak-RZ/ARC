@@ -21,7 +21,17 @@ export function AnswerLine({ parts, checked }) {
   );
 }
 
-export function VerificationStrip({ checked, unchecked, modifiedAt, stale, note, needsReview, reviewNote }) {
+export function VerificationStrip({
+  checked,
+  unchecked,
+  modifiedAt,
+  stale,
+  note,
+  needsReview,
+  reviewNote,
+  onOpenLab,
+  openLabLabel,
+}) {
   if (needsReview) {
     return (
       <div className="verification-strip verification-review" role="status">
@@ -57,6 +67,11 @@ export function VerificationStrip({ checked, unchecked, modifiedAt, stale, note,
     <div className="verification-strip verification-ok" role="status">
       <CheckCircle2 size={16} strokeWidth={1.5} className="verification-icon" aria-hidden="true" />
       <span className="checked-tag status-tag">Checked</span>
+      {onOpenLab ? (
+        <button type="button" className="button-secondary button-compact verification-lab-btn" onClick={onOpenLab}>
+          {openLabLabel || "Open in lab"}
+        </button>
+      ) : null}
       <span className="verification-body">
         {note || "Numeric check passed."} Checked {relativeTimeShort(modifiedAt)}.
       </span>

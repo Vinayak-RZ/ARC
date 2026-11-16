@@ -39,8 +39,19 @@ export function paramLine(params) {
   return "";
 }
 
+export function displayStudioTitle(title) {
+  const t = String(title || "").trim();
+  if (t === "unity_feedback") return "Unity feedback, K = 10";
+  return t || "PID · DC motor";
+}
+
 export function diagramToFlow(diagram, { issuesByBlock = {}, notes = [], highlightSet = new Set(), flashAuthor = null } = {}) {
   const blocksById = Object.fromEntries((diagram?.blocks || []).map((b) => [b.id, b]));
+  const tfById = Object.fromEntries(
+    (diagram?.meta?.unity_feedback?.blocks || [])
+      .filter((row) => row?.tf)
+      .map((row) => [row.id, row.tf]),
+  );
   const nodes = (diagram?.blocks || []).map((b) => ({
     id: b.id,
     type: nodeForType(b.type),
@@ -51,7 +62,7 @@ export function diagramToFlow(diagram, { issuesByBlock = {}, notes = [], highlig
     data: {
       blockId: b.id,
       blockType: b.type,
-      label: humanBlockLabel(b.type, b.label),
+      label: tfById[b.id] || humanBlockLabel(b.type, b.label),
       params: b.params || {},
       paramLine: paramLine(b.params),
       issues: issuesByBlock[b.id] || [],

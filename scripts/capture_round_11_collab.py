@@ -341,7 +341,7 @@ def _capture_theme(browser, *, theme: str) -> dict:
     ctrl_req = urllib.request.Request(
         f"{BASE}/api/control-studio/sessions",
         method="POST",
-        data=json.dumps({"title": "Round 11 · Unity", "golden": "pid_dc_motor"}).encode(),
+        data=json.dumps({"title": "Round 11 · Unity", "golden": "unity_first_order"}).encode(),
         headers={"Content-Type": "application/json"},
     )
     with urllib.request.urlopen(ctrl_req, timeout=60) as resp:

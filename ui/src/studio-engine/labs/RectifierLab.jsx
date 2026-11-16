@@ -6,6 +6,17 @@ import { registerLab } from "./registry.js";
 import { postProgress } from "../../hooks/useLearn.js";
 import { openMatchingProblem } from "./openExample.js";
 
+function firingMarkers(topology, alphaDeg) {
+  if (["hw3", "semi3", "full3"].includes(topology)) {
+  const pts = [alphaDeg + 30, alphaDeg + 150, alphaDeg + 270];
+    return pts.map((deg, i) => ({
+      x: ((deg % 360) + 360) % 360,
+      label: i === 0 ? `α = ${alphaDeg}° after natural commutation` : undefined,
+    }));
+  }
+  return [{ x: alphaDeg, label: `α = ${alphaDeg}°` }];
+}
+
 const TOPOS = [
   { id: "hw1", label: "1φ half" },
   { id: "semi1", label: "1φ semi" },
@@ -104,7 +115,7 @@ export function RectifierLab() {
       </label>
       {useLs ? (
         <label>
-          Ls (mH)
+          <span className="visually-hidden">Source inductance Ls (mH)</span>
           <div className="lab-slider-row">
             <input type="range" min={0.1} max={10} step={0.1} value={ls} onChange={(e) => setLs(+e.target.value)} />
             <input type="number" value={ls} onChange={(e) => setLs(+e.target.value)} />
@@ -152,7 +163,7 @@ export function RectifierLab() {
           y: { label: "v", sub: "o", unit: "V", scale: "linear" },
           series: [{ id: "vo", label: "vo", points: result.points, style: "primary" }],
           hlines: [{ y: result.Vo, label: "Vo avg" }],
-          markers: [{ x: alpha, label: "α" }],
+          markers: firingMarkers(topology, alpha),
         }}
       />
     </LabShell>
