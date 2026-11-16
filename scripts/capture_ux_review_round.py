@@ -709,9 +709,9 @@ def main() -> int:
                 page.get_by_role("tab", name="Work").click()
                 page.wait_for_selector(".checked-tag, .answer-line.is-checked", timeout=120000)
                 snap("problem-control-checked-work.png")
-                page.get_by_role("tab", name="Diagram").click()
-                page.wait_for_selector(".static-diagram", timeout=30000)
-                snap("problem-control-checked-diagram.png")
+                page.get_by_role("tab", name="Answer").click()
+                page.wait_for_selector(".answer-line", timeout=30000)
+                snap("problem-control-checked-answer.png")
 
             go("?view=gallery")
             page.wait_for_selector(".gallery-card", timeout=10000)
