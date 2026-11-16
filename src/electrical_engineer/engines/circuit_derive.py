@@ -135,7 +135,8 @@ def _series_rlc(problem: dict[str, Any]) -> dict[str, Any]:
         "* arc series rlc\n"
         f"V1 1 0 DC {step_v}\n"
         f"R1 1 2 {r_ohm}\nL1 2 3 {l_h}\nC1 3 0 {c_f}\n"
-        f".tran {max(t_stop / 500, 1e-7):g} {t_stop}\n.end\n"
+        f".ic v(3)=0\n"
+        f".tran {max(t_stop / 500, 1e-7):g} {t_stop:g} uic\n.end\n"
     )
     return {
         "value": value,
