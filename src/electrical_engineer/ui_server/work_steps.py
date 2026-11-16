@@ -82,6 +82,15 @@ def _rlc(problem: dict[str, Any], evid: dict[str, Any], transient: dict[str, Any
 
 def _control(problem: dict[str, Any], evid: dict[str, Any]) -> list[dict[str, str]]:
     tf = str(problem.get("tf") or "G(s)")
+    num, den = problem.get("num"), problem.get("den")
+    if (
+        isinstance(num, list)
+        and isinstance(den, list)
+        and len(num) == 1
+        and len(den) == 2
+        and abs(float(den[1]) - 1.0) < 1e-9
+    ):
+        tf = f"{num[0]}/(s+{int(den[0]) if float(den[0]).is_integer() else den[0]})"
     return [
         {"title": "Read the plant", "result": f"G(s) = {tf}", "author": "Agent"},
         {

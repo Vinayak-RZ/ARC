@@ -4,13 +4,15 @@ import { test, expect, Page } from "@playwright/test";
 const BASE = process.env.STUDIO_BASE ?? "http://127.0.0.1:8765";
 
 async function studioUrl(request: import("@playwright/test").APIRequestContext) {
-  if (process.env.STUDIO_URL) return process.env.STUDIO_URL;
+  const env = process.env.STUDIO_URL;
+  if (env && env.includes("session=")) return env;
   const res = await request.post(`${BASE}/api/control-studio/sessions`, {
     data: { title: "E2E layout", golden: "pid_dc_motor" },
   });
   expect(res.ok()).toBeTruthy();
   const body = await res.json();
-  return `${BASE}/?view=studio&session=${body.session_id}`;
+  const origin = env ? new URL(env).origin : BASE;
+  return `${origin}/?view=studio&session=${body.session_id}`;
 }
 const AREAS = {
   canvas: ".studio-canvas",

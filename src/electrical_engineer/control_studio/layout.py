@@ -7,7 +7,7 @@ from typing import Any
 BLOCK_W = 72
 PID_W = 148
 BLOCK_H = 56
-GAP = 48
+GAP = 64
 GRID = 8
 ORIGIN_X = 56
 ORIGIN_Y = 96

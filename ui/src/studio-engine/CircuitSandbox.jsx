@@ -38,12 +38,12 @@ const STORAGE_KEY = "arc-circuit-sandbox-v1";
 const SERIES_RLC = {
   schema: "arc.circuit.v1",
   nodes: [
-    { id: "vin", type: "source_v", refdes: "V1", value: 10, unit: "V", x: 64, y: 120, rot: 0 },
-    { id: "r1", type: "resistor", refdes: "R1", value: 10, unit: "ohm", x: 184, y: 72, rot: 0 },
-    { id: "l1", type: "inductor", refdes: "L1", value: 0.01, unit: "H", x: 304, y: 72, rot: 0 },
-    { id: "c1", type: "capacitor", refdes: "C1", value: 0.0001, unit: "F", x: 424, y: 72, rot: 0 },
-    { id: "jret", type: "junction", refdes: "", value: 0, unit: "", x: 424, y: 168, rot: 0 },
-    { id: "gnd", type: "ground", refdes: "GND", value: 0, unit: "", x: 64, y: 200, rot: 0 },
+    { id: "vin", type: "source_v", refdes: "V1", value: 10, unit: "V", x: 56, y: 104, rot: 0 },
+    { id: "r1", type: "resistor", refdes: "R1", value: 10, unit: "ohm", x: 176, y: 56, rot: 0 },
+    { id: "l1", type: "inductor", refdes: "L1", value: 0.01, unit: "H", x: 296, y: 56, rot: 0 },
+    { id: "c1", type: "capacitor", refdes: "C1", value: 0.0001, unit: "F", x: 416, y: 56, rot: 0 },
+    { id: "jret", type: "junction", refdes: "", value: 0, unit: "", x: 416, y: 144, rot: 0 },
+    { id: "gnd", type: "ground", refdes: "GND", value: 0, unit: "", x: 56, y: 176, rot: 0 },
   ],
   edges: [
     { id: "e1", from: "vin.n1", to: "r1.n1" },
@@ -147,6 +147,8 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
   const hydrated = useRef(false);
   const graphReady = useRef(false);
   const revision = useRef(0);
+  const autoSimForRun = useRef("");
+  const simToken = useRef(0);
   const wrapRef = useRef(null);
   const { screenToFlowPosition } = useReactFlow();
 
@@ -209,8 +211,9 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
           const tracePts = body?.lab_simulate?.trace?.vc_trace_ms || body?.lab_simulate?.vc_trace_ms;
           if (tracePts?.length) {
             applyLabSimulate(body.lab_simulate, body.lab_verify);
-          } else if (graph?.nodes?.length) {
-            void runSimulate(graph);
+          } else if (graph?.nodes?.length && autoSimForRun.current !== linkedRunId) {
+            autoSimForRun.current = linkedRunId;
+            void runSimulate(graph, { silent: true });
           }
         })
         .catch(() => setMsg("Could not load shared circuit for this run."));
@@ -345,8 +348,10 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
     setFitKey((k) => k + 1);
   }
 
-  async function runSimulate(graphOverride = null) {
-    setSimBusy(true);
+  async function runSimulate(graphOverride = null, options = {}) {
+    const silent = Boolean(options.silent);
+    const token = (simToken.current += 1);
+    if (!silent) setSimBusy(true);
     setMsg("");
     const graph =
       graphOverride && typeof graphOverride === "object" && graphOverride.schema
@@ -369,7 +374,7 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
       setMsg("Could not reach the solver.");
       setSim(null);
     } finally {
-      setSimBusy(false);
+      if (!silent && token === simToken.current) setSimBusy(false);
     }
   }
 
@@ -447,7 +452,7 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
               type="button"
               className="cs-btn cs-btn-primary cs-simulate-btn studio-circuit-simulate-btn"
               disabled={simBusy}
-              onClick={() => runSimulate()}
+              onClick={() => runSimulate(null, { silent: false })}
             >
               {simBusy ? "Simulating…" : "Simulate"}
             </button>

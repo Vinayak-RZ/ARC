@@ -40,9 +40,10 @@ function parseTitleParts(title) {
 
 export function answerPartsFromRow(label, scalar, digits) {
   const unit = unitForLabel(label);
+  const lower = String(label).toLowerCase();
   const d =
     digits ??
-    (String(label).toLowerCase().includes("peak") || String(label).toLowerCase().includes("vc") ? 3 : 2);
+    (lower.includes("peak") || lower.includes("vc") || lower.includes("y") ? 3 : 2);
   const value = formatNumber(scalar, d);
   const name = label;
   return { name, value, unit, display: unit ? `${name} = ${value} ${unit}` : `${name} = ${value}` };

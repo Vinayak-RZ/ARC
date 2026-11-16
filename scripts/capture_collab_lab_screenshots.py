@@ -60,6 +60,13 @@ def _shot_circuit_lab(page, run_id: str, path: Path) -> None:
     page.wait_for_selector(".studio-lab-drawer", timeout=20_000)
     page.locator(".part-ref", has_text="R1").first.wait_for(state="visible", timeout=45_000)
     page.wait_for_selector(".studio-circuit-results .se-waveform", timeout=90_000)
+    page.wait_for_function(
+        """() => {
+          const b = document.querySelector('.studio-circuit-simulate-btn');
+          return b && !b.disabled && /Simulate$/.test((b.textContent || '').trim());
+        }""",
+        timeout=60_000,
+    )
     page.wait_for_timeout(800)
     page.screenshot(path=str(path), full_page=True)
 
@@ -94,7 +101,7 @@ def main() -> int:
             "kind": "unity_feedback",
             "num": [10],
             "den": [1, 1],
-            "tf": "10/(s(s+1))",
+            "tf": "10/(s+1)",
         },
     )
     ctl_sid = None

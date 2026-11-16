@@ -61,7 +61,7 @@ def finish_circuit_lab(
         try:
             derived = derive(dprob)
         except (DeriveError, ValueError, TypeError, KeyError) as exc:
-            if problem.get("value") is not None:
+            if problem.get("allow_declared_gold") and problem.get("value") is not None:
                 derived = {
                     "value": float(problem["value"]),
                     "unit": problem.get("unit") or "V",
@@ -71,7 +71,7 @@ def finish_circuit_lab(
                 return {"ok": False, "error": str(exc), "unchecked": True}
     dval = float(derived["value"])
     if not math.isfinite(dval) or abs(dval) > 1e9:
-        if problem.get("value") is not None:
+        if problem.get("allow_declared_gold") and problem.get("value") is not None:
             dval = float(problem["value"])
             derived = {**(derived or {}), "value": dval, "engine": "declared_gold"}
         else:

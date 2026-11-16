@@ -178,7 +178,15 @@ def test_unity_feedback_control_lab(run_root: Path, monkeypatch) -> None:
     assert sim.get("ok")
     assert sim.get("y_ss") is not None
     y_ss = float(sim["y_ss"])
-    verify = finish_control_lab(run_root, {"kind": "unity_feedback", "golden": "unity_first_order"}, derived_value=y_ss)
+    from electrical_engineer.collab.control_derive import derive_unity_feedback
+
+    hand = derive_unity_feedback({"num": [10], "den": [1, 1], "kind": "unity_feedback"})
+    assert hand is not None
+    verify = finish_control_lab(
+        run_root,
+        {"kind": "unity_feedback", "golden": "unity_first_order", **hand},
+        derived_value=float(hand["y_ss"]),
+    )
     assert verify.get("mismatch") is False
 
 
@@ -222,6 +230,9 @@ def test_solve_control_workflow_seeds_lab(tmp_path: Path) -> None:
     y_row = next(m for m in verify["metrics"] if m["id"] == "y_ss")
     assert y_row["derived"] == pytest.approx(10 / 11, rel=0.02)
     assert y_row["simulated"] == pytest.approx(10 / 11, rel=0.02)
+    t_row = next((m for m in verify["metrics"] if m["id"] == "t_settle"), None)
+    assert t_row is not None
+    assert t_row["derived"] == pytest.approx(__import__("math").log(50.0) / 11.0, rel=0.02)
     assert verify.get("mismatch") is False
 
 
