@@ -448,6 +448,9 @@ def main() -> int:
 
             run_id = _run_example("divider")
             go("?view=home")
+            page.keyboard.press("Control+b")
+            page.wait_for_selector(".product-sidebar:not(.is-collapsed)", timeout=5000)
+            page.wait_for_timeout(200)
             page.wait_for_selector(".sidebar-recent-item", timeout=15000)
             page.wait_for_selector(".continue-section", timeout=15000)
             snap("home-with-recent.png")
@@ -579,7 +582,11 @@ def main() -> int:
                 page.locator(".cs-simulate-btn").click()
                 page.wait_for_selector(".studio-unsettled-pill", timeout=120000)
                 snap("studio-step-unsettled.png")
-                _click_window(page, "30 s")
+                try:
+                    _click_window(page, "30 s")
+                except RuntimeError:
+                    page.locator(".studio-window-segment button", has_text="30 s").click(force=True)
+                    page.wait_for_timeout(400)
                 page.wait_for_timeout(300)
                 snap("studio-step-extended.png")
             if args.round >= 4 and args.round < 10:
