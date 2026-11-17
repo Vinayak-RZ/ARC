@@ -392,7 +392,10 @@ def _capture_theme(browser, *, theme: str) -> dict:
 
     page.goto(f"{BASE}/?view=studio&tab=circuits&run={rlc_id}", wait_until="domcontentloaded")
     page.wait_for_selector(".lab-provenance-bar", timeout=30_000)
-    _assert_text(page, r"Series RLC step", "collab-04 lab header title")
+    # The bar mounts before the run detail loads; wait for the real title, never the raw run id.
+    page.locator(".lab-provenance-bar").get_by_text("Series RLC step").first.wait_for(state="visible", timeout=30_000)
+    if rlc_id in page.locator(".lab-provenance-bar").inner_text():
+        raise RuntimeError("collab-04: provenance bar shows the raw run id")
     page.get_by_role("tab", name="Changes").click()
     page.wait_for_selector(".lab-changes-chip", timeout=30_000)
     _assert_text(page, r"R1:\s*10.*20|R1.*10.*Ω.*20", "collab-04 R1 chip")
