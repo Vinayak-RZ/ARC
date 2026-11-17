@@ -45,23 +45,26 @@ def _bind_free(port: int) -> bool:
 
 
 def reserve_capture_port(preferred: int | None = None) -> int:
-    """Free preferred port or pick the next free one; fail if stale server still answers health."""
-    port = int(os.environ.get("ARC_CAPTURE_PORT", preferred or DEFAULT_PORT))
-    kill_port(port)
-    if _health_ok(port):
-        raise RuntimeError(
-            f"port {port} still serves /api/health after fuser -k — stale UI server; "
-            "stop it manually or set ARC_CAPTURE_PORT to another port"
-        )
-    if _bind_free(port):
-        return port
-    for candidate in range(DEFAULT_PORT, DEFAULT_PORT + 32):
-        if candidate == port:
+    """Free preferred port or pick the next free one; skip ports that still answer health after kill."""
+    start = int(os.environ.get("ARC_CAPTURE_PORT", preferred or DEFAULT_PORT))
+    seen: set[int] = set()
+    order = [start, *range(DEFAULT_PORT, DEFAULT_PORT + 32)]
+    for port in order:
+        if port in seen:
             continue
-        kill_port(candidate)
-        if _health_ok(candidate):
+        seen.add(port)
+        kill_port(port)
+        if _health_ok(port):
+            print(
+                f"port {port} still serves /api/health after fuser -k (stale UI); trying another",
+                flush=True,
+            )
             continue
-        if _bind_free(candidate):
-            print(f"capture port {port} busy; using {candidate}", flush=True)
-            return candidate
-    raise RuntimeError(f"no free capture port in {DEFAULT_PORT}-{DEFAULT_PORT + 31}")
+        if _bind_free(port):
+            if port != start:
+                print(f"capture using port {port} (preferred {start} unavailable)", flush=True)
+            return port
+    raise RuntimeError(
+        f"no free capture port in {DEFAULT_PORT}-{DEFAULT_PORT + 31}; "
+        "stop stale electrical-engineer ui processes or set ARC_CAPTURE_PORT"
+    )
