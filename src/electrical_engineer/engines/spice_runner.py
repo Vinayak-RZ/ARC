@@ -114,49 +114,68 @@ def _probe_node(problem: dict[str, Any], cir: str) -> str:
 
 
 def _parse_tran_series(stdout: str, probe: str) -> list[tuple[float, float]]:
-    """Parse ngspice `print tran` table as (time_s, probe_value) rows."""
+    """Parse ngspice `print` tran tables as (time_s, probe_value) rows.
+
+    `print all v(n)` prints every node vector, so the table header looks like
+    ``Index time V(1) V(2) V(3)``. Column positions come from the header; the
+    probe is not assumed to be the last column, nor time the second to last.
+    """
     needle = probe.replace(" ", "").lower()
     rows: list[tuple[float, float]] = []
-    in_table = False
+    t_col: int | None = None
+    v_col: int | None = None
     for line in stdout.splitlines():
-        compact = line.lower().replace(" ", "")
-        if "time" in compact and needle in compact:
-            in_table = True
-            continue
-        if not in_table and needle in compact and "index" in compact:
-            in_table = True
-            continue
-        if not in_table:
-            continue
-        if line.strip().startswith("Note:"):
-            break
-        if line.strip().startswith("---"):
-            continue
         parts = line.split()
-        if len(parts) >= 3 and parts[0].isdigit():
-            try:
-                t_s = float(parts[-2])
-                v = float(parts[-1])
-                rows.append((t_s, v))
-            except ValueError:
-                continue
-        elif len(parts) == 2:
-            try:
-                rows.append((float(parts[0]), float(parts[1])))
-            except ValueError:
-                continue
-    if not rows:
-        # ngspice `print all v(n)` emits an index column plus time/value columns.
-        for line in stdout.splitlines():
-            if needle not in line.lower().replace(" ", ""):
-                continue
-            parts = line.split()
-            if len(parts) >= 4 and parts[0].isdigit():
-                try:
-                    rows.append((float(parts[-2]), float(parts[-1])))
-                except ValueError:
-                    continue
-    return rows
+        if not parts:
+            continue
+        lowered = [p.lower() for p in parts]
+        if "time" in lowered and needle in lowered:
+            t_col = lowered.index("time")
+            v_col = lowered.index(needle)
+            # Header with an Index column has data rows with one leading integer too.
+            continue
+        if t_col is None or v_col is None:
+            continue
+        if line.strip().startswith(("Note:", "---")):
+            continue
+        if len(parts) <= max(t_col, v_col):
+            continue
+        if lowered[0] != "index" and not parts[0].lstrip("-").isdigit() and t_col > 0:
+            continue
+        try:
+            rows.append((float(parts[t_col]), float(parts[v_col])))
+        except ValueError:
+            continue
+    seen: set[float] = set()
+    unique: list[tuple[float, float]] = []
+    for t, v in rows:
+        if t in seen:
+            continue
+        seen.add(t)
+        unique.append((t, v))
+    return unique
+
+
+def _refine_peak_time(series: list[tuple[float, float]], idx: int) -> float:
+    """Peak time from a parabola through the sampled max and its neighbours.
+
+    ngspice samples on its own time grid, so the raw argmax time is quantised to
+    the step size; a three-point vertex fit recovers the time between samples.
+    """
+    t1, v1 = series[idx]
+    if idx <= 0 or idx >= len(series) - 1:
+        return t1
+    t0, v0 = series[idx - 1]
+    t2, v2 = series[idx + 1]
+    denom = (t0 - t1) * (t0 - t2) * (t1 - t2)
+    if denom == 0:
+        return t1
+    a = (t2 * (v1 - v0) + t1 * (v0 - v2) + t0 * (v2 - v1)) / denom
+    b = (t2 * t2 * (v0 - v1) + t1 * t1 * (v2 - v0) + t0 * t0 * (v1 - v2)) / denom
+    if a >= 0:
+        return t1
+    tv = -b / (2 * a)
+    return tv if t0 <= tv <= t2 else t1
 
 
 def _interp_crossing(
@@ -180,10 +199,7 @@ def _settling_2pct_last_entry(
     entry: float | None = None
     dwell_s = max((rows[-1][0] - rows[0][0]) * 0.02, 1e-6)
     in_band_at: float | None = None
-    peak_i = max(range(len(rows)), key=lambda i: rows[i][1])
     for i, (t, v) in enumerate(rows):
-        if i < peak_i:
-            continue
         if lo <= v <= hi:
             if in_band_at is None:
                 if i == 0:
@@ -199,7 +215,9 @@ def _settling_2pct_last_entry(
             elif entry is None and t - in_band_at >= dwell_s:
                 entry = in_band_at
         else:
+            # Leaving the band voids any earlier entry: settling is the LAST entry.
             in_band_at = None
+            entry = None
     return entry
 
 
@@ -349,12 +367,12 @@ def run_spice_netlist(
             if series:
                 peak_idx = max(range(len(series)), key=lambda i: series[i][1])
                 value = series[peak_idx][1]
-                t_peak_s = series[peak_idx][0]
+                t_peak_s = _refine_peak_time(series, peak_idx)
             else:
                 value = _parse_print_voltage(combined, probe)
         elif series:
             peak_idx = max(range(len(series)), key=lambda i: series[i][1])
-            t_peak_s = series[peak_idx][0]
+            t_peak_s = _refine_peak_time(series, peak_idx)
         v_step = problem.get("v_step") or problem.get("vin")
         if series and v_step is not None:
             settling_s = _settling_2pct_last_entry(series, float(v_step))

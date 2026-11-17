@@ -136,7 +136,9 @@ def _series_rlc(problem: dict[str, Any]) -> dict[str, Any]:
     elif overshoot and t_settle is not None:
         t_stop = max(float(t_settle) * 2.5, float(t_peak_s) * 1.2, 0.015)
     else:
-        t_stop = float(problem.get("t_s") or max(t_peak_s * 2.5, 1e-4))
+        # The simulator must find the peak itself, so the window runs well past it
+        # (same window as lab re-verify), never stopping at the analytic peak time.
+        t_stop = max(float(problem.get("t_s") or 0.0), t_peak_s * 2.5, 1e-3)
     probe = str(problem.get("probe") or problem.get("probe_expr") or "v(3)")
     bug = str(problem.get("derive_bug") or "").lower()
     if bug in ("forward_euler", "euler"):
