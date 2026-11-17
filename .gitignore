@@ -22,3 +22,4 @@ ui/test-results/
 
 # capture scratch (run backups and local round output before review)
 artifacts/ux-review/_runs_backup/
+build/readme-clips/

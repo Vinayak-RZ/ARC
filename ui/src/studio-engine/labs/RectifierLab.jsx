@@ -5,6 +5,7 @@ import { computeRectifier, firingAnglesDeg } from "./rectifier.js";
 import { registerLab } from "./registry.js";
 import { postProgress } from "../../hooks/useLearn.js";
 import { openMatchingProblem } from "./openExample.js";
+import { fixedYAxisFromSearch } from "./rectifier-axis.js";
 
 function firingMarkers(topology, alphaDeg) {
   return firingAnglesDeg(topology, alphaDeg).map((x, i) => ({
@@ -31,6 +32,11 @@ export function RectifierLab() {
   const [io, setIo] = useState(20);
   const [ls, setLs] = useState(2);
   const [useLs, setUseLs] = useState(false);
+  // Optional ?ymax= (and ?ymin=) holds the y axis fixed, e.g. for recordings of an alpha sweep.
+  const fixedY = useMemo(
+    () => fixedYAxisFromSearch(typeof window === "undefined" ? "" : window.location.search),
+    [],
+  );
 
   useMemo(() => {
     postProgress({ lab: "rectifier" }).catch(() => {});
@@ -165,7 +171,7 @@ export function RectifierLab() {
           kind: "waveform",
           title: "Rectifier output",
           x: { label: "ωt", unit: "°", scale: "linear" },
-          y: { label: "v", sub: "o", unit: "V", scale: "linear" },
+          y: { label: "v", sub: "o", unit: "V", scale: "linear", ...(fixedY || {}) },
           series: [{ id: "vo", label: "vo", points: result.points, style: "primary" }],
           hlines: [{ y: result.Vo, label: "Vo avg" }],
           markers: firingMarkers(topology, alpha),

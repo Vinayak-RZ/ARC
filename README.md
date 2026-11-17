@@ -12,6 +12,12 @@
 </p>
 
 <p align="center">
+  <img src="docs/assets/readme/hero-rlc.gif" width="960" alt="An agent places and wires a series RLC circuit, ngspice plots an 11.630 V overshoot that agrees with the agent's derivation, a human changes R1 from 10 to 20 ohm, the overshoot disappears, and the agent re-derives until every row agrees again">
+</p>
+<p align="center"><sub>Real screen recording, not a mockup. The agent builds the circuit over MCP, ngspice simulates it, you edit R1 from 10 to 20 Ω, the overshoot vanishes, and the agent re-derives until the checks agree again.</sub></p>
+
+<p align="center">
+  <a href="#see-it-work"><b>See it work</b></a> ·
   <a href="#quick-start"><b>Quick start</b></a> ·
   <a href="#domain-kernel"><b>Domain kernel</b></a> ·
   <a href="docs/DOMAIN_KERNEL_CAPABILITIES.md"><b>What Arc unlocks</b></a> ·
@@ -46,6 +52,52 @@ electrical-engineer eval --pack circuits
 ```
 
 That circuits pack check is **31/31**. Full `electrical-engineer eval` (no `--pack`) is **60** gold tasks across 10 packs. Circuit golds are ngspice oracles (see `scripts/capture_circuit_oracle.py`); `mna-ladder-01` checks a resistor ladder node voltage against SPICE, not `derive()` alone.
+
+## See it work
+
+Every number below was produced by the app. The screenshots come from the round 14 capture in `artifacts/ux-review/round-14/` (commit `6a9e2ce2`, ngspice 44.2) and the clips are screen recordings of the same build. Nothing is typed in by hand.
+
+### You and the agent work on the same circuit
+
+The agent builds a 10 Ω, 10 mH, 100 µF series RLC driven by a 10 V step. ngspice gives a capacitor peak of **11.630 V at 3.628 ms**, matching the agent's hand derivation (ζ = 0.5, ωn = 1000 rad/s). Change R1 to 20 Ω and the curve becomes critically damped: **no overshoot, final value 10.00 V, 2% settling 5.83 ms**. The agent's old numbers are marked out of date until it re-derives.
+
+| Simulated vs derived, all agree | Your edit makes the derivation out of date |
+|---|---|
+| ![Run page: capacitor peak 11.630 V at 3.628 ms, derived and simulated agree](docs/assets/readme/showcase-collab-01-run-sim-vs-derived-agrees-light.png) | ![R1 changed from 10 to 20 ohm: the agent's 11.630 V is marked out of date, the lab now reads 10.000 V and 5.834 ms](docs/assets/readme/showcase-collab-03-out-of-date-ask-rederive-light.png) |
+| **The agent re-derives, every row agrees again** | **A wrong derivation gets caught** |
+| ![After re-derive: final value 10.000 V and settling 5.834 ms agree in dark theme](docs/assets/readme/showcase-collab-03b-after-rederive-agrees-dark.png) | ![A forward Euler derivation claims 11.963 V; ngspice says 11.630 V, flagged as differing by 2.8 percent against a 2 percent limit](docs/assets/readme/showcase-collab-05-forward-euler-mismatch-light.png) |
+
+The last panel is the point of Arc: an agent that integrates the same circuit with forward Euler reports 11.963 V. The lab simulates 11.630 V, so the row is flagged **Differs by 2.8% (limit 2%)** instead of being accepted.
+
+### Drag the firing angle, watch the rectifier respond
+
+<p align="center">
+  <img src="docs/assets/readme/rectifier-sweep.gif" width="960" alt="Three-phase full-bridge rectifier, R load, 415 V line: the firing angle sweeps from 0 to 120 degrees, the output waveform chops and the average output voltage falls to 0 V">
+</p>
+
+Three-phase full bridge, R load, 415 V line to line. The y axis is held at 0 to 600 V (`?ymax=600`) so you can watch the waveform shrink: sweeping α from 0° to 120° moves the output from continuous six-pulse conduction (560.11 V at 2°) through 280.22 V at 60° into discontinuous pulses and down to 0 V. The capture script checks the lab's Vo readout against the Python closed-form references for each converter and load across a grid of firing angles.
+
+### More of the app
+
+| | |
+|---|---|
+| ![Home: ask a problem, with worked examples such as Series RLC step, SMIB swing and economic dispatch](docs/assets/readme/showcase-home-dark.png) | ![Control Studio: DC motor PID loop with gain and phase margins and a step response](docs/assets/readme/showcase-studio-layout-after-simulate-1440-dark.png) |
+| **Home.** Ask in plain words or start from a worked example. | **Control Studio.** Wire a block diagram, simulate, read margins and the step. |
+| ![Control Studio step response with settling time marked](docs/assets/readme/showcase-studio-step-settled-light.png) | ![Rectifier waveform lab with converter, load and firing angle controls](docs/assets/readme/showcase-lab-rectifier-light.png) |
+| **Step response.** Settling time and final value read off the simulation. | **Rectifier lab.** Six converters, four load types, live waveform and Vo, Io, PF. |
+| ![Gallery of engine-rendered figures: equal-area criterion, AGC, dispatch, Bode, Nyquist, root locus](docs/assets/readme/showcase-gallery-light.png) | ![Reference library with search across sources](docs/assets/readme/showcase-library-dark.png) |
+| **Gallery.** Every figure is rendered by an engine, not drawn by the model. | **Library.** The references the agent cites, searchable. |
+| ![Command palette open over the problems list](docs/assets/readme/showcase-cmdk-open-light.png) | ![Learn: courses by semester such as Power Systems and Power Electronics](docs/assets/readme/showcase-learn-landing-dark.png) |
+| **Cmd+K.** Jump anywhere from the keyboard. | **Learn.** Coursework organised by semester and subject. |
+
+Try it locally:
+
+```bash
+pip install -e ".[dev]"
+EE_NO_BROWSER=1 electrical-engineer ui    # then open http://127.0.0.1:8765
+```
+
+The clips are reproducible: `scripts/readme_clips/` records them with Playwright against a running UI and `make_gifs.sh` turns the recordings into the GIFs above.
 
 ## Domain kernel
 
@@ -243,28 +295,6 @@ One-command frontier validation:
 ```bash
 ./scripts/validate_frontier.sh
 ```
-
-### Product UI (localhost shell)
-
-**2× device captures** at **1440×900** (`deviceScaleFactor: 2`) from `127.0.0.1:8765`. Regenerate after `npm run build` in `ui/`:
-
-```bash
-pip install playwright pngquant-bin
-playwright install chromium
-EE_NO_BROWSER=1 electrical-engineer ui &
-python scripts/capture_readme_showcase.py
-```
-
-| View | Screenshot |
-|------|------------|
-| Home (recipes + recent runs) | ![Arc home](docs/assets/readme/home-light.png) |
-| Control Studio (block diagram + step) | ![Control Studio](docs/assets/readme/studio-hero-light.png) |
-| Checked divider problem | ![Circuit problem](docs/assets/readme/problem-checked-light.png) |
-| Visual kit gallery | ![Gallery](docs/assets/readme/gallery-light.png) |
-| Reference library | ![Library](docs/assets/readme/library-light.png) |
-| Studio (dark) | ![Studio dark](docs/assets/readme/studio-dark.png) |
-
-Legacy domain window shots (1280×900) remain under [`docs/media/`](docs/media/).
 
 ## How it works
 
