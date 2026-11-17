@@ -122,7 +122,7 @@ def _staged_for_file(stem: str, meta: dict) -> tuple[str, str]:
         return ("yes", f"Staged: control-step run {cm.get('control_step_run_id', '—')} + studio simulate")
     if stem.startswith("problem-control-checked"):
         return ("yes", f"Staged: example control-step run {cm.get('control_step_run_id', '—')}")
-    if stem.startswith("run-rectifier") or stem.startswith("run-idmt"):
+    if stem.startswith(("run-rectifier", "run-idmt")):
         return ("yes", f"Staged: example API run ({stem.replace('run-', '')})")
     # Passive surfaces from same capture pass — only navigation, no data mutation
     passive = (
