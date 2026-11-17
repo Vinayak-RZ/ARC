@@ -102,7 +102,14 @@ def _vo_single_phase_half(wt: float, vm: float, alpha_rad: float, full_wave: boo
 def sample_waveform(problem: dict, n: int = 720) -> list[list[float]]:
     from electrical_engineer.engines.rectifier_gate import gate_sample_vo
 
-    return gate_sample_vo(problem, n)
+    prob = dict(problem)
+    load = str(prob.get("load") or "R")
+    if load in {"RL", "RLE"} and float(prob.get("io_a") or 0) <= 0:
+        vo = _vo_closed_form(problem, None, None)
+        r_ohm = float(prob.get("r_ohm") or 10.0)
+        if vo and r_ohm > 0:
+            prob["io_a"] = max(1e-3, abs(vo) / r_ohm)
+    return gate_sample_vo(prob, n)
 
 
 def _vo_closed_form(problem: dict, rectifier_1ph, rectifier_3ph) -> float:
@@ -146,7 +153,7 @@ def _vo_closed_form(problem: dict, rectifier_1ph, rectifier_3ph) -> float:
     if topology == "semi3":
         return (3.0 * vll_pk / (2.0 * _PI)) * (1.0 + cos_a) - (3.0 * w * ls * io) / (2.0 * _PI)
     if load == "R" and ls <= 0:
-        if alpha_deg >= 90:
+        if alpha_deg > 120:
             return 0.0
         if alpha_deg > 60:
             return (3.0 * vll_pk / _PI) * (1.0 + math.cos(alpha + _PI / 3.0))
