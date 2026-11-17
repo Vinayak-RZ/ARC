@@ -165,7 +165,7 @@ def _series_rlc(problem: dict[str, Any]) -> dict[str, Any]:
         f".ic v(3)=0\n"
         f".tran {max(t_stop / 500, 1e-7):g} {t_stop:g} uic\n.end\n"
     )
-    return {
+    out = {
         "value": value,
         "unit": "V",
         "cir": cir,
@@ -176,7 +176,13 @@ def _series_rlc(problem: dict[str, Any]) -> dict[str, Any]:
         "t_stop": t_stop,
         "derive_metric": "Vc_final" if no_overshoot else "Vc_peak",
         "engine": engine,
+        "overshoot_pct": overshoot_pct,
     }
+    if no_overshoot:
+        out["settling_2pct_entry_s"] = float(
+            meta.get("settling_2pct_entry_s") or meta.get("settling_time_2pct_s") or t_peak_s
+        )
+    return out
 
 
 _KINDS = {

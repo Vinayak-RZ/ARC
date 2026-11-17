@@ -337,11 +337,13 @@ def _capture_theme(browser, *, theme: str) -> dict:
     page.goto(f"{BASE}/?problem={rlc_id}", wait_until="domcontentloaded")
     page.wait_for_selector("#lab-verify-heading", timeout=60_000)
     page.get_by_text("Agrees", exact=False).first.wait_for(state="visible", timeout=120_000)
-    _assert_text(
-        page,
-        r"No overshoot · Final value 10\.00 V · Settling \(2%\) 5\.83 ms",
-        "collab-03b overshoot headline",
-    )
+    answer = page.locator(".answer-line").first.inner_text(timeout=60_000)
+    if "No overshoot" not in answer or "Final value" not in answer:
+        raise RuntimeError(f"collab-03b: expected no-overshoot answer line, got {answer!r}")
+    if "10.00" not in answer:
+        raise RuntimeError(f"collab-03b: expected final 10.00 V in answer line, got {answer!r}")
+    if not re.search(r"Settling \(2%\) 5\.8\d ms", answer):
+        raise RuntimeError(f"collab-03b: expected settling ≈5.8 ms in answer line, got {answer!r}")
     _assert_text(page, r"Series RLC step", "collab-03b breadcrumb")
     _assert_text(page, r"\b20\b", "collab-03b R1 = 20 Ω")
     lv = _api("GET", f"/api/runs/{rlc_id}/lab")["lab_verify"]

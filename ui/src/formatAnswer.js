@@ -67,14 +67,20 @@ function rlcAnswerDisplay(data, evid) {
   const lv = data?.lab_verify;
   if (!isSeriesRlc(data, evid) || (!tr && !derive && !lv)) return null;
   if (lv?.needs_review) return null;
-  const overshoot = Number(tr?.overshoot_pct ?? (derive?.overshoot_pct ?? 99)) < 0.5;
+  const noOvershootDerive =
+    derive?.derive_metric === "Vc_final" || Number(derive?.overshoot_pct) < 0.5;
+  const overshoot = Number(tr?.overshoot_pct ?? (noOvershootDerive ? 0 : (derive?.overshoot_pct ?? 99))) < 0.5;
   const vStep = Number(data?.problem?.v_step ?? data?.problem?.vin ?? evid?.vin ?? 10);
   if (overshoot) {
     const finalV = Number(derive?.value ?? lv?.derived ?? tr?.Vc_peak_V ?? vStep);
     const tMs =
       1000 *
       Number(
-        tr?.settling_2pct_entry_s ?? tr?.settling_time_2pct_s ?? derive?.settling_2pct_entry_s ?? 0,
+        tr?.settling_2pct_entry_s ??
+          tr?.settling_time_2pct_s ??
+          derive?.settling_2pct_entry_s ??
+          derive?.t_s ??
+          0,
       );
     return `No overshoot · Final value ${finalV.toFixed(2)} V · Settling (2%) ${tMs.toFixed(2)} ms`;
   }
