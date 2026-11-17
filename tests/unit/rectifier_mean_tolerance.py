@@ -4,11 +4,9 @@ from __future__ import annotations
 
 
 def rectifier_mean_skip(topology: str, load: str, alpha_deg: float) -> bool:
-    if load in {"RL", "RLE"} and topology == "full1" and alpha_deg >= 45:
-        return True
-    if load in {"RL", "RLE"} and topology == "hw3" and alpha_deg > 45:
-        return True
-    return False
+    return load in {"RL", "RLE"} and (
+        (topology == "full1" and alpha_deg >= 45) or (topology == "hw3" and alpha_deg > 45)
+    )
 
 
 def rectifier_mean_rel_tol(topology: str, load: str, alpha_deg: float) -> float:

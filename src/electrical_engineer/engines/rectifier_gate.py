@@ -9,9 +9,9 @@ from typing import Any
 from electrical_engineer.engines.rectifier_steady import (
     line_peak_from_line_vll,
     phase_peak_from_line_vll,
-    vo_hw3_rl_continuous,
     vo_full3_analytic,
     vo_hw3_r_wave,
+    vo_hw3_rl_continuous,
 )
 
 _PI = math.pi
