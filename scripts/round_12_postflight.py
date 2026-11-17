@@ -333,7 +333,7 @@ def main() -> int:
             "3. `collab-03-out-of-date-ask-rederive-*.png` — Out of date + Ask agent to re-derive.",
             "3b. `collab-03b-after-rederive-agrees-*.png` — Agrees after re-derive; R1 = 20 Ω; t_s ≈ 5.83 ms.",
             "4. `collab-04-changes-r1-chip-*.png` — Changes tab with R1: 10 → 20 Ω chip.",
-            "4b. `collab-04b-after-restore-*.png` — Restore: R1=10 Ω, 11.630 V @ 3.628 ms, no Changes chip.",
+            "4b. `collab-04b-after-restore-*.png` — Restore: R1=10 Ω, 11.630 V @ 3.63 ms headline (ngspice 3.628 ms), no Changes chip.",
             "5. `collab-05-forward-euler-mismatch-*.png` — live forward-Euler derive vs ngspice (not a JSON fixture).",
             "6. `collab-06-control-unity-run-agrees-*.png` + `collab-06-control-unity-lab-agreement-*.png` — unity control run + lab.",
             "",

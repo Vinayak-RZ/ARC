@@ -1,0 +1,23 @@
+{
+  "ngspice_version": "** ngspice-42 : Circuit level simulation program",
+  "light": {
+    "rectifier_run_id": "0rhj-20261117T043303Z",
+    "idmt_run_id": "v8t5-20261117T043304Z",
+    "control_step_run_id": "nh7t-20261117T043306Z",
+    "control_step_session_id": "cs-run-nh7t-20261117T043306Z",
+    "rlc_run_id": "w9q4-20261117T043322Z",
+    "bad_derive_run_id": "182z-20261117T043340Z",
+    "control_run_id": "ja1c-20261117T043343Z",
+    "control_session_id": "cs-run-ja1c-20261117T043343Z"
+  },
+  "dark": {
+    "rectifier_run_id": "tv5r-20261117T043519Z",
+    "idmt_run_id": "v9jw-20261117T043520Z",
+    "control_step_run_id": "ha3r-20261117T043521Z",
+    "control_step_session_id": "cs-run-ha3r-20261117T043521Z",
+    "rlc_run_id": "knxa-20261117T043532Z",
+    "bad_derive_run_id": "drmf-20261117T043548Z",
+    "control_run_id": "ajr2-20261117T043551Z",
+    "control_session_id": "cs-run-ajr2-20261117T043551Z"
+  }
+}
