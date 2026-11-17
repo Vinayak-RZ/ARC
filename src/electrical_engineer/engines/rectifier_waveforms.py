@@ -58,11 +58,10 @@ def _vo_three_phase_half(wt: float, vm: float, alpha_rad: float, continuous: boo
 
 
 def _vo_six_pulse(wt: float, vll_pk: float, alpha_rad: float, allow_negative: bool) -> float:
-    seg = _PI / 3.0
-    w = ((wt - alpha_rad) % _TWO_PI + _TWO_PI) % _TWO_PI
-    local = w - math.floor(w / seg) * seg
-    vo = vll_pk * math.cos(local - _PI / 6.0 - alpha_rad)
-    return vo if allow_negative else max(0.0, vo)
+    """Legacy (wrong arcs); kept only for import stability — use gate / vo_full3_analytic."""
+    from electrical_engineer.engines.rectifier_steady import vo_full3_analytic
+
+    return vo_full3_analytic(wt, vll_pk, math.degrees(alpha_rad))
 
 
 def _vo_semi_freewheel_1(wt: float, vm: float, alpha_rad: float) -> float:
@@ -89,6 +88,18 @@ def _vo_single_phase_half(wt: float, vm: float, alpha_rad: float, full_wave: boo
 
 
 def sample_waveform(problem: dict, n: int = 720) -> list[list[float]]:
+    ls_h = float(problem.get("ls_h") or 0.0)
+    topo = str(problem.get("topology") or "full3")
+    if topo in {"half", "hw3"}:
+        topo = "hw3"
+    elif topo == "full":
+        topo = "full3"
+    elif topo == "semi":
+        topo = "semi3"
+    if ls_h <= 0 and topo in {"full3", "semi3"}:
+        from electrical_engineer.engines.rectifier_gate import gate_sample_vo
+
+        return gate_sample_vo(problem, n)
     topology = str(problem.get("topology") or "full3")
     if topology in {"half", "hw3"}:
         topology = "hw3"

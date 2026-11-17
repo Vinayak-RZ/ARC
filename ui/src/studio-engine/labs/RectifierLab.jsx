@@ -1,20 +1,16 @@
 import { useMemo, useState } from "react";
 import { LabShell } from "./LabShell.jsx";
 import { Waveform } from "../renderers/Waveform.jsx";
-import { computeRectifier } from "./rectifier.js";
+import { computeRectifier, firingAnglesDeg } from "./rectifier.js";
 import { registerLab } from "./registry.js";
 import { postProgress } from "../../hooks/useLearn.js";
 import { openMatchingProblem } from "./openExample.js";
 
 function firingMarkers(topology, alphaDeg) {
-  if (["hw3", "semi3", "full3"].includes(topology)) {
-  const pts = [alphaDeg + 30, alphaDeg + 150, alphaDeg + 270];
-    return pts.map((deg, i) => ({
-      x: ((deg % 360) + 360) % 360,
-      label: i === 0 ? `α = ${alphaDeg}° after natural commutation` : undefined,
-    }));
-  }
-  return [{ x: alphaDeg, label: `α = ${alphaDeg}°` }];
+  return firingAnglesDeg(topology, alphaDeg).map((x, i) => ({
+    x,
+    label: i === 0 ? `α = ${alphaDeg}° after natural commutation` : undefined,
+  }));
 }
 
 const TOPOS = [
@@ -111,7 +107,7 @@ export function RectifierLab() {
       ) : null}
       <label className="lab-checkbox-row">
         <input type="checkbox" checked={useLs} onChange={(e) => setUseLs(e.target.checked)} />
-        Source inductance L<sub>s</sub> (mH)
+        Source inductance Ls (mH)
       </label>
       {useLs ? (
         <label>
