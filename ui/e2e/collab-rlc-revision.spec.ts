@@ -75,6 +75,9 @@ test.describe("Collab RLC revision loop", () => {
 
     await page.goto(`${BASE}/?view=studio&tab=circuits&run=${runId}&view=changes`);
     await page.waitForSelector(".react-flow", { timeout: 45000 });
+    // Changes still diff against the agent's original build after the re-derive.
+    await page.getByRole("tab", { name: "Changes" }).click();
+    await expect(page.locator(".lab-changes-chip").first()).toContainText(/R1.*10.*20/, { timeout: 30000 });
 
     // restore — r3, original peak, no Changes chip
     const restore = await request.post(`${BASE}/api/runs/${runId}/lab/restore`);

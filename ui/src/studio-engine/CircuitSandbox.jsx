@@ -226,7 +226,9 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
           const rev = body?.lab_meta?.revision ?? 0;
           if (!force && rev <= revision.current && hydrated.current) return;
           revision.current = rev;
-          const baseline = body?.lab_meta?.agent_baseline_graph;
+          const baseline = body?.lab_meta?.agent_seed_graph?.nodes?.length
+            ? body.lab_meta.agent_seed_graph
+            : body?.lab_meta?.agent_baseline_graph;
           const currentGraph = body?.graph || {};
           const graph =
             viewMode === "agent" && baseline
@@ -461,8 +463,13 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
   }
 
   const diffChips = useMemo(() => {
-    if (viewMode !== "changes" || !labMeta?.agent_baseline_graph) return [];
-    const diff = diffCircuitGraphs(labMeta.agent_baseline_graph, fromFlow(nodes, edges));
+    // "Agent's version" everywhere (bar pill, Changes, Agent's, Restore) is the agent's
+    // original build; a re-derive on the human's edit must not erase the edit from Changes.
+    const agentVersion = labMeta?.agent_seed_graph?.nodes?.length
+      ? labMeta.agent_seed_graph
+      : labMeta?.agent_baseline_graph;
+    if (viewMode !== "changes" || !agentVersion) return [];
+    const diff = diffCircuitGraphs(agentVersion, fromFlow(nodes, edges));
     return (diff.changed || []).map(formatValueChip);
   }, [viewMode, labMeta, nodes, edges]);
 
