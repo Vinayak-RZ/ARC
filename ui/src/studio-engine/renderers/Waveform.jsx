@@ -1,6 +1,7 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { MAX_POINTS } from "../spec.js";
 import { niceTicks, logTicks } from "../math/ticks.js";
+import { waveformBounds } from "./waveformBounds.js";
 
 const STYLE_COLOR = {
   primary: "var(--ee-color-primary)",
@@ -29,32 +30,6 @@ function mapY(y, yMin, yMax, h, log) {
     return PAD.t + innerH - ((Math.log10(Math.max(y, 1e-12)) - a) / (b - a || 1)) * innerH;
   }
   return PAD.t + innerH - ((y - yMin) / (yMax - yMin || 1)) * innerH;
-}
-
-function expandBounds(xMin, xMax, yMin, yMax, logX, logY) {
-  if (logX && xMin > 0 && xMax > 0) {
-    const lo = Math.log10(xMin);
-    const hi = Math.log10(xMax);
-    const d = hi - lo || 1;
-    xMin = 10 ** (lo - d * 0.06);
-    xMax = 10 ** (hi + d * 0.04);
-  } else {
-    const xPad = (xMax - xMin) * 0.04 || 0.1;
-    xMin -= xPad;
-    xMax += xPad;
-  }
-  if (logY && yMin > 0 && yMax > 0) {
-    const lo = Math.log10(yMin);
-    const hi = Math.log10(yMax);
-    const d = hi - lo || 1;
-    yMin = 10 ** (lo - d * 0.1);
-    yMax = 10 ** (hi + d * 0.12);
-  } else {
-    const yPad = (yMax - yMin) * 0.1 || 0.1;
-    yMin -= yPad;
-    yMax += yPad;
-  }
-  return { xMin, xMax, yMin, yMax };
 }
 
 function AxisLabel({ axis }) {
@@ -126,28 +101,10 @@ export function Waveform({ panel }) {
     return () => ro.disconnect();
   }, []);
 
-  const bounds = useMemo(() => {
-    let xMin = Infinity;
-    let xMax = -Infinity;
-    let yMin = Infinity;
-    let yMax = -Infinity;
-    for (const s of series) {
-      for (const [x, y] of s.points || []) {
-        xMin = Math.min(xMin, x);
-        xMax = Math.max(xMax, x);
-        yMin = Math.min(yMin, y);
-        yMax = Math.max(yMax, y);
-      }
-    }
-    if (!Number.isFinite(xMin)) return { xMin: 0, xMax: 1, yMin: 0, yMax: 1 };
-    if (yMin === yMax) {
-      yMin -= 1;
-      yMax += 1;
-    }
-    const logX = panel.x?.scale === "log";
-    const logY = panel.y?.scale === "log";
-    return expandBounds(xMin, xMax, yMin, yMax, logX, logY);
-  }, [series, panel.x?.scale, panel.y?.scale]);
+  const bounds = useMemo(
+    () => waveformBounds(series, panel),
+    [series, panel.x?.scale, panel.y?.scale, panel.y?.min, panel.y?.max],
+  );
 
   if (overflow) {
     return <p className="hint">Waveform has too many points (max {MAX_POINTS}).</p>;
