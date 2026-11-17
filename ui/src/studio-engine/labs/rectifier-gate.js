@@ -5,10 +5,8 @@ import {
   phasePeakFromLineVll,
   voFull3Analytic,
   voHw3RWave,
-  voHw3RlContinuous,
-  voHw3RlWave,
 } from "./rectifier-analytic.js";
-import { loadInductanceH, rectifierRlConduction } from "./rectifier-rl.js";
+import { loadInductanceH } from "./rectifier-rl.js";
 const PI = Math.PI;
 const DEG = PI / 180;
 
@@ -103,14 +101,18 @@ function phaseVoltages(conv, vRms, n) {
   return out;
 }
 
-/** Gate-model samples [[deg, V], ...]; full3 uses analytic path (caller handles). */
-export function gateSampleWaveform(p, N = 720) {
+/** Gate steady state: points [[deg, vo], ...] and per-sample trace for RL mode. */
+export function gateSampleState(p, N = 720) {
   const conv = normTopo(p.topology);
   const load = p.load || "R";
   const alphaRaw = +p.alpha_deg || 0;
   const alphaLim = alphaLimitDeg(conv, load);
+  const rlLoad = load === "RL" || load === "RLE";
   if (load === "R" && (alphaRaw > alphaLim || alphaRaw < 0)) {
-    return Array.from({ length: N }, (_, i) => [(360 * i) / N, 0]);
+    return {
+      points: Array.from({ length: N }, (_, i) => [(360 * i) / N, 0]),
+      trace: [],
+    };
   }
   const alpha = alphaRaw;
   const vRms = p.v_rms ?? (conv.endsWith("3") ? 415 : 230);
@@ -119,67 +121,80 @@ export function gateSampleWaveform(p, N = 720) {
   const lsSource = p.ls_h ?? 0;
   let lh = loadInductanceH(p);
   if (load === "R" || load === "CC") lh = 0;
-  const rlCond = rectifierRlConduction(p);
-  const stiffRl = rlCond && !rlCond.finiteL;
   let io = p.io_a ?? 15;
   const cc = load === "CC";
-  if (stiffRl && io <= 0) io = 1;
   const fHz = p.f_hz ?? 50;
 
-
-  if (lsSource <= 0 && !cc && stiffRl && (load === "RL" || load === "RLE") && conv === "hw3") {
-    const vmPh = phasePeakFromLineVll(vRms);
-    const off = alpha > 90 && !(+eV > 0);
-    return Array.from({ length: N }, (_, i) => {
-      const wt = (2 * PI * i) / N;
-      const vo = off ? 0 : voHw3RlContinuous(wt, vmPh, alpha);
-      return [(360 * i) / N, vo];
-    });
+  if (rlLoad && conv === "hw3" && alpha > 90 && !(+eV > 0)) {
+    return {
+      points: Array.from({ length: N }, (_, i) => [(360 * i) / N, 0]),
+      trace: [],
+    };
   }
 
   if (lsSource <= 0 && !cc && load === "R" && conv === "hw3") {
     const vmPh = phasePeakFromLineVll(vRms);
-    return Array.from({ length: N }, (_, i) => {
-      const wt = (2 * PI * i) / N;
-      return [(360 * i) / N, voHw3RWave(wt, vmPh, alpha)];
-    });
+    return {
+      points: Array.from({ length: N }, (_, i) => {
+        const wt = (2 * PI * i) / N;
+        return [(360 * i) / N, voHw3RWave(wt, vmPh, alpha)];
+      }),
+      trace: [],
+    };
   }
 
 
   if (lsSource <= 0 && !cc && load === "R" && (conv === "hw1" || conv === "semi1" || conv === "full1")) {
     const Vm = vRms * SQRT2;
-    return Array.from({ length: N }, (_, i) => {
-      const wt = (2 * PI * i) / N;
-      let vo = 0;
-      const a = rad(alpha);
-      if (conv === "hw1") {
-        const cycle = ((wt % (2 * PI)) + 2 * PI) % (2 * PI);
-        if (cycle >= a && cycle < PI) vo = Math.max(0, Vm * Math.sin(wt));
-      } else if (conv === "semi1") {
-        const cycle = ((wt % PI) + PI) % PI;
-        if (cycle >= a) vo = Math.abs(Vm * Math.sin(wt));
-      } else if (alpha >= 180) {
-        vo = 0;
-      } else {
-        const cycle = ((wt % PI) + PI) % PI;
-        if (cycle >= a) vo = Math.abs(Vm * Math.sin(wt));
-      }
-      return [(360 * i) / N, vo];
-    });
+    return {
+      points: Array.from({ length: N }, (_, i) => {
+        const wt = (2 * PI * i) / N;
+        let vo = 0;
+        const a = rad(alpha);
+        if (conv === "hw1") {
+          const cycle = ((wt % (2 * PI)) + 2 * PI) % (2 * PI);
+          if (cycle >= a && cycle < PI) vo = Math.max(0, Vm * Math.sin(wt));
+        } else if (conv === "semi1") {
+          const cycle = ((wt % PI) + PI) % PI;
+          if (cycle >= a) vo = Math.abs(Vm * Math.sin(wt));
+        } else if (alpha >= 180) {
+          vo = 0;
+        } else {
+          const cycle = ((wt % PI) + PI) % PI;
+          if (cycle >= a) vo = Math.abs(Vm * Math.sin(wt));
+        }
+        return [(360 * i) / N, vo];
+      }),
+      trace: [],
+    };
   }
 
-  if (conv === "full3" && lsSource <= 0 && !cc) {
+  if (conv === "full3" && lsSource <= 0 && !cc && !rlLoad) {
     const vll = linePeakFromLineVll(vRms);
     const rectifierOff = load === "R" && alpha > 120;
-    const rlRectifierOnly = load !== "R" && load !== "CC" && alpha > 90 && !(+eV > 0);
-    return Array.from({ length: N }, (_, i) => {
-      const wt = (2 * PI * i) / N;
-      if (rectifierOff || rlRectifierOnly) return [(360 * i) / N, 0];
-      let vo = voFull3Analytic(wt, vll, alpha);
-      if (load === "R") vo = Math.max(0, vo);
-      else if (load === "RL" || load === "RLE") vo = vo;
-      return [(360 * i) / N, vo];
-    });
+    return {
+      points: Array.from({ length: N }, (_, i) => {
+        const wt = (2 * PI * i) / N;
+        if (rectifierOff) return [(360 * i) / N, 0];
+        let vo = voFull3Analytic(wt, vll, alpha);
+        if (load === "R") vo = Math.max(0, vo);
+        return [(360 * i) / N, vo];
+      }),
+      trace: [],
+    };
+  }
+
+  if (conv === "full3" && lsSource <= 0 && rlLoad) {
+    const vll = linePeakFromLineVll(vRms);
+    const rlRectifierOnly = alpha >= 90 && !(+eV > 0);
+    return {
+      points: Array.from({ length: N }, (_, i) => {
+        const wt = (2 * PI * i) / N;
+        if (rlRectifierOnly) return [(360 * i) / N, 0];
+        return [(360 * i) / N, voFull3Analytic(wt, vll, alpha)];
+      }),
+      trace: [],
+    };
   }
 
   const cfg = CFG[conv];
@@ -241,10 +256,17 @@ export function gateSampleWaveform(p, N = 720) {
     nI = -1;
   };
 
-  const stepCore = (recordVo) => {
+  const stepCore = (recordVo, recordTrace) => {
     const voOut = recordVo ? [] : null;
+    const traceOut = recordTrace ? [] : null;
     for (let s = 0; s < N; s += 1) {
       const v = vt[s];
+      const wt = (2 * PI * s) / N;
+      if (conv === "hw1" && lh > 0) {
+        const cycle = ((wt % (2 * PI)) + 2 * PI) % (2 * PI);
+        const a = rad(alpha);
+        if (on && (cycle < a || cycle >= PI)) kill();
+      }
       if (!on && !fwd && !cc) {
         const kp = bestPos(s, v);
         const kn = neg ? bestNeg(s, v) : -1;
@@ -293,7 +315,7 @@ export function gateSampleWaveform(p, N = 720) {
         const rp = v[pos[pI].ph];
         const rn = neg && nI >= 0 ? v[neg[nI].ph] : 0;
         vpath = rp - rn;
-        if (cfg.fwd && vpath < 0) {
+        if (cfg.fwd && vpath < 0 && lh <= 0) {
           on = false;
           fwd = true;
           pI = -1;
@@ -302,7 +324,7 @@ export function gateSampleWaveform(p, N = 720) {
         }
       }
       let vo;
-      if (cc || stiffRl) {
+      if (cc) {
         i = io;
         vo = on ? vpath : 0;
       } else if (on || fwd) {
@@ -329,20 +351,27 @@ export function gateSampleWaveform(p, N = 720) {
         vo = eV;
       }
       if (recordVo) voOut.push([(360 * s) / N, vo]);
+      if (recordTrace) traceOut.push({ deg: (360 * s) / N, vo, i, on: on || fwd });
     }
-    return voOut;
+  return recordTrace ? traceOut : voOut;
   };
 
   for (let c = 0; c < 2000; c += 1) {
     const prev = i;
-    stepCore(false);
+    stepCore(false, false);
     if (Math.abs(i - prev) < 1e-8 * (1 + Math.abs(i))) break;
   }
-  if (stiffRl || cc) {
+  if (cc) {
     i = Math.max(i, io);
   } else {
     kill();
     i = Math.max(i, 1e-6);
   }
-  return stepCore(true);
+  const trace = rlLoad ? stepCore(false, true) : [];
+  const points = stepCore(true, false);
+  return { points, trace };
+}
+
+export function gateSampleWaveform(p, N = 720) {
+  return gateSampleState(p, N).points;
 }

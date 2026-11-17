@@ -12,26 +12,10 @@ export function loadInductanceH(p) {
   return Number(p.l_h || 0.01);
 }
 
-/** UI + waveform routing label. */
-export function rectifierRlConduction(p) {
-  const load = p.load || "R";
-  if (load !== "RL" && load !== "RLE") return null;
+/** Whether load uses explicit small L (always gate ODE). */
+export function rectifierRlFiniteL(p) {
   const lh = loadInductanceH(p);
-  const finiteL = lh > 0 && lh < FINITE_L_THRESHOLD_H;
-  if (finiteL) {
-    return {
-      mode: "Discontinuous",
-      label: "Discontinuous",
-      finiteL: true,
-      simulate: "gate_ode",
-    };
-  }
-  return {
-    mode: "Continuous",
-    label: "Continuous",
-    finiteL: false,
-    simulate: "analytic_window",
-  };
+  return lh > 0 && lh < FINITE_L_THRESHOLD_H;
 }
 
 /** 1φ full bridge, stiff load current: v_o = V_m sin(ωt) from α to π+α. */

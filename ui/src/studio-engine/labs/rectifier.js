@@ -1,8 +1,8 @@
 /** Closed-form rectifier Vo and waveforms (EEC-303 style). V rms is line-to-line for 3φ. */
 
 import { firingAnglesDeg, linePeakFromLineVll, phasePeakFromLineVll, voFull3Analytic } from "./rectifier-analytic.js";
-import { gateSampleWaveform } from "./rectifier-gate.js";
-import { rectifierRlConduction } from "./rectifier-rl.js";
+import { gateSampleState, gateSampleWaveform } from "./rectifier-gate.js";
+import { rlConductionReadout } from "./rectifier-rl-steady.js";
 
 export { phasePeakFromLineVll, firingAnglesDeg };
 
@@ -221,19 +221,27 @@ export function powerFactorFromWaveform(p, points, Vo) {
 
 export function computeRectifier(p) {
   const clamp = clampRectifierAlpha(p);
-  const work = clamp.past_limit ? { ...p, alpha_deg: clamp.limit_deg, _past_alpha_limit: true } : p;
-  let VoRaw = voClosedForm(work);
-  if (clamp.past_limit) VoRaw = 0;
-  const Vo = Number.isFinite(VoRaw) ? VoRaw : NaN;
-  const Io = p.load === "CC" ? p.io_a : Vo / Math.max(p.r_ohm || 1, 1e-9);
-  const sampleP =
-    work.load === "RL" || work.load === "RLE"
-      ? { ...work, io_a: Number.isFinite(Io) ? Io : work.io_a }
-      : work;
-  const points = !clamp.past_limit && Number.isFinite(Vo) ? sampleWaveform(sampleP) : [];
+  const rlLoad = p.load === "RL" || p.load === "RLE";
+  const work =
+    clamp.past_limit && !rlLoad ? { ...p, alpha_deg: clamp.limit_deg, _past_alpha_limit: true } : p;
+  let points = [];
+  let trace = [];
+  if (!clamp.past_limit || rlLoad) {
+    const st = gateSampleState(work, 3600);
+    points = st.points;
+    trace = st.trace;
+  }
   const mean = meanWaveform(points);
+  let Vo;
+  if (clamp.past_limit && !rlLoad) Vo = 0;
+  else if (rlLoad) Vo = mean;
+  else {
+    const VoRaw = voClosedForm(work);
+    Vo = Number.isFinite(VoRaw) ? VoRaw : NaN;
+  }
+  const Io = p.load === "CC" ? p.io_a : Vo / Math.max(p.r_ohm || 1, 1e-9);
+  const rlConduction = rlLoad ? rlConductionReadout(work, trace) : null;
   const PF = powerFactorFromWaveform(work, points, Vo);
-  const rlConduction = rectifierRlConduction(p);
   return {
     Vo,
     Io: Number.isFinite(Io) ? Io : NaN,

@@ -145,8 +145,8 @@ export function RectifierLab() {
             <div className="card">
               <div className="learn-code-label">Conduction</div>
               <strong>{result.rlConduction.label}</strong>
-              {result.rlConduction.finiteL ? (
-                <p className="hint">Finite L — source-commutated i(t) ODE</p>
+              {result.rlConduction.mode === "Discontinuous" && result.rlConduction.beta_deg != null ? (
+                <p className="hint">β = {result.rlConduction.beta_deg.toFixed(1)}°</p>
               ) : null}
             </div>
           ) : null}
@@ -156,7 +156,7 @@ export function RectifierLab() {
       onOpenExample={openMatchingProblem}
       check={
         <p className="hint">
-          Output follows the phase voltage from each firing angle; average Vo matches the closed-form readout.
+          Vo is the time-average of the plotted v_o waveform; RL mode follows the gate ODE steady state.
         </p>
       }
     >

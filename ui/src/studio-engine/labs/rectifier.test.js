@@ -7,6 +7,7 @@ import {
   sampleWaveform,
   voClosedForm,
 } from "./rectifier.js";
+import { rlReferenceSlice, rlVoMeanClosedForm } from "./rectifier-rl-steady.js";
 
 const SQRT2 = Math.SQRT2;
 const SOURCE_PEAK_230 = SQRT2 * 230;
@@ -14,9 +15,12 @@ const SOURCE_PEAK_415 = SQRT2 * 415;
 const VM_415 = phasePeakFromLineVll(415);
 
 describe("rectifier closed form", () => {
-  it("full1 continuous alpha 30 (RL)", () => {
-    const Vo = voClosedForm({ topology: "full1", load: "RL", v_rms: 230, alpha_deg: 30, io_a: 0, ls_h: 0 });
-    assert.ok(Math.abs(Vo - 179.33) < 0.5, String(Vo));
+  it("full1 RL alpha 30 (DCM reference Vo)", () => {
+    const p = { topology: "full1", load: "RL", v_rms: 230, alpha_deg: 30, r_ohm: 10, l_h: 0.01, f_hz: 50 };
+    const Vo = rlVoMeanClosedForm(rlReferenceSlice(p));
+    const { Vo: readout, points } = computeRectifier(p);
+    assert.ok(Math.abs(Vo - 188.44) < 0.5, String(Vo));
+    assert.ok(Math.abs(readout - meanWaveform(points)) < 1e-6);
   });
   it("full3 alpha 45", () => {
     const Vo = voClosedForm({ topology: "full3", load: "RL", v_rms: 415, alpha_deg: 45, io_a: 0, ls_h: 0 });
@@ -206,8 +210,6 @@ describe("rectifier waveform mean vs Vo readout", () => {
     for (const load of loads) {
       for (const alpha_deg of alphas) {
         it(`${topology} ${load} α=${alpha_deg}`, () => {
-          if ((load === "RL" || load === "RLE") && topology === "full1" && alpha_deg > 45) return;
-          if ((load === "RL" || load === "RLE") && topology === "hw3" && alpha_deg > 45) return;
           const p = {
             topology,
             load,
@@ -216,23 +218,33 @@ describe("rectifier waveform mean vs Vo readout", () => {
             r_ohm: 10,
             io_a: 0,
             ls_h: 0,
+            f_hz: 50,
             ...(load === "RL" || load === "RLE" ? { l_h: 0.01 } : {}),
           };
-          const Vo = voClosedForm(p);
-          const pts = sampleWaveform(p, 3600);
-          const mean = meanWaveform(pts);
+          let Vo;
+          let pts;
+          let mean;
+          if (load === "RL" || load === "RLE") {
+            const ref = rlReferenceSlice(p);
+            Vo = rlVoMeanClosedForm(ref);
+            const run = computeRectifier(p);
+            pts = run.points;
+            mean = meanWaveform(pts);
+            assert.ok(Math.abs(run.Vo - mean) < 1e-6);
+          } else {
+            Vo = voClosedForm(p);
+            pts = sampleWaveform(p, 3600);
+            mean = meanWaveform(pts);
+          }
           assert.ok(Number.isFinite(Vo), String(Vo));
           if (Math.abs(Vo) < 1e-6) {
+            if (load === "RL" || load === "RLE") {
+              assert.ok(Math.abs(mean) < 1e-3, `mean ${mean} vs Vo ${Vo}`);
+            }
             return;
           }
-          if (Math.abs(Vo) < 5) {
-            assert.ok(Math.abs(mean) < 5, `mean ${mean} vs Vo ${Vo}`);
-          } else {
-            const rel = Math.abs(mean - Vo) / Math.abs(Vo);
-            let relTol = 0.0051;
-            if ((load === "RL" || load === "RLE") && topology === "full1") relTol = 0.085;
-            assert.ok(rel < relTol, `mean ${mean} vs Vo ${Vo} (${(rel * 100).toFixed(2)}%)`);
-          }
+          const rel = Math.abs(mean - Vo) / Math.abs(Vo);
+          assert.ok(rel < 0.0051, `mean ${mean} vs Vo ${Vo} (${(rel * 100).toFixed(2)}%)`);
           const peak = topology.endsWith("3") ? SOURCE_PEAK_415 : SOURCE_PEAK_230;
           const maxAbs = Math.max(...pts.map(([, y]) => Math.abs(y)));
           assert.ok(maxAbs <= peak + 2, `max |v| ${maxAbs} > source peak ${peak}`);
