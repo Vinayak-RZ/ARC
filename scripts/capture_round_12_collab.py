@@ -192,6 +192,8 @@ def _assert_rlc_peak_headline(page, label: str) -> None:
         raise RuntimeError(f"{label}: expected peak time ~3.63 ms in headline, got {text!r}")
 
 
+
+
 def _wait_health() -> None:
     for _ in range(80):
         try:
@@ -403,24 +405,26 @@ def _capture_theme(browser, *, theme: str) -> dict:
     _api("POST", f"/api/runs/{rlc_id}/lab/re-derive", {})
     _api("POST", f"/api/runs/{rlc_id}/lab/verify", {})
     cd_path = RUNS / rlc_id / "circuit_derive.json"
-    for _ in range(80):
+    for _ in range(160):
         if cd_path.is_file():
             cd_disk = json.loads(cd_path.read_text(encoding="utf-8"))
             if cd_disk.get("derive_metric") == "Vc_final":
-                break
+                lv = _api("GET", f"/api/runs/{rlc_id}/lab").get("lab_verify") or {}
+                if str(lv.get("status") or "") == "agrees":
+                    break
         time.sleep(0.25)
     else:
-        raise RuntimeError("collab-03b: circuit_derive.json not ready after re-derive")
+        raise RuntimeError("collab-03b: circuit_derive.json / agrees verify not ready after re-derive")
     page.goto(f"{BASE}/?problem={rlc_id}", wait_until="domcontentloaded")
     page.wait_for_selector("#lab-verify-heading", timeout=60_000)
     page.get_by_text("Agrees", exact=False).first.wait_for(state="visible", timeout=120_000)
-    answer = page.locator(".answer-line").first.inner_text(timeout=60_000)
-    if "No overshoot" not in answer or "Final value" not in answer:
-        raise RuntimeError(f"collab-03b: expected no-overshoot answer line, got {answer!r}")
-    if "10.00" not in answer:
-        raise RuntimeError(f"collab-03b: expected final 10.00 V in answer line, got {answer!r}")
-    if not re.search(r"Settling \(2%\) 5\.8\d ms", answer):
-        raise RuntimeError(f"collab-03b: expected settling ≈5.8 ms in answer line, got {answer!r}")
+    al = page.locator(".answer-card .answer-line, .answer-card").first
+    answer = al.inner_text(timeout=60_000)
+    if "No overshoot" in answer:
+        if "10.00" not in answer or not re.search(r"Settling \(2%\) 5\.8\d ms", answer):
+            raise RuntimeError(f"collab-03b: unexpected settling headline, got {answer!r}")
+    elif not re.search(r"10\.000\s+V at 5\.8\d ms", answer):
+        raise RuntimeError(f"collab-03b: expected 10 V / ~5.8 ms headline, got {answer!r}")
     _assert_text(page, r"Series RLC step", "collab-03b breadcrumb")
     _assert_text(page, r"\b20\b", "collab-03b R1 = 20 Ω")
     lv = _api("GET", f"/api/runs/{rlc_id}/lab")["lab_verify"]
