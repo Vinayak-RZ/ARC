@@ -42,6 +42,9 @@ def _api(method: str, path: str, data: dict | None = None) -> dict:
 
 
 def _set_theme(page, mode: str) -> None:
+    url = page.url or ""
+    if not url.startswith("http"):
+        raise RuntimeError(f"_set_theme before navigation ({url!r}); call goto then set theme")
     page.evaluate(
         """(mode) => {
         document.documentElement.setAttribute('data-theme', mode);

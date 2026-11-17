@@ -107,12 +107,22 @@ def _studio_wires_ready(page, minimum: int = 5, timeout_s: float = 60.0) -> None
 
 
 def main() -> int:
-    _kill_port(PORT)
+    global PORT, BASE
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from capture_port import reserve_capture_port
+
+    PORT = reserve_capture_port(int(os.environ.get("ARC_CAPTURE_PORT", PORT)))
+    BASE = f"http://{HOST}:{PORT}"
     subprocess.check_call(["uv", "pip", "install", "-q", "-e", "."], cwd=ROOT)
     subprocess.check_call(["npm", "run", "build"], cwd=ROOT / "ui")
     OUT.mkdir(parents=True, exist_ok=True)
 
-    env = {**os.environ, "EE_NO_BROWSER": "1"}
+    env = {
+        **os.environ,
+        "EE_NO_BROWSER": "1",
+        "EE_UI_PORT": str(PORT),
+        "ARC_CAPTURE_PORT": str(PORT),
+    }
     server = subprocess.Popen(
         [sys.executable, "-m", "electrical_engineer", "ui"],
         cwd=ROOT,

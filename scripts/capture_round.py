@@ -109,6 +109,13 @@ def main() -> int:
         return 0
 
     _assert_clean_tree()
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from capture_port import reserve_capture_port
+
+    port = reserve_capture_port()
+    port_s = str(port)
+    capture_env = {**capture_env, "ARC_CAPTURE_PORT": port_s, "EE_UI_PORT": port_s}
+    print(f"capture UI port {port_s}", flush=True)
 
     if not args.keep_artifacts and out.is_dir():
         shutil.rmtree(out)

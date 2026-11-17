@@ -16,7 +16,7 @@ from fastapi.staticfiles import StaticFiles
 _LOG = logging.getLogger(__name__)
 
 BIND_HOST = "127.0.0.1"
-BIND_PORT = 8765
+BIND_PORT = int(os.environ.get("EE_UI_PORT", os.environ.get("ARC_CAPTURE_PORT", "8765")))
 _UPLOAD_MAX = 20 * 1024 * 1024
 _UPLOAD_SUFFIX = {".md", ".txt", ".pdf"}
 

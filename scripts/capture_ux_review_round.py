@@ -363,6 +363,9 @@ def _assert_still_active(page, name: str, match_js: str) -> None:
 
 
 def _set_theme(page, mode: str) -> None:
+    url = page.url or ""
+    if not url.startswith("http"):
+        raise RuntimeError(f"_set_theme before navigation ({url!r}); call goto then set theme")
     page.evaluate(
         """(mode) => {
         document.documentElement.dataset.theme = mode;
@@ -380,7 +383,7 @@ def main() -> int:
     out_dir = ROOT / "artifacts" / "ux-review" / f"round-{args.round}"
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    global W, H
+    global W, H, PORT
     if args.round >= 10:
         W, H = 1440, 900
 
@@ -390,10 +393,14 @@ def main() -> int:
         print("pip install playwright && playwright install chromium", file=sys.stderr)
         return 1
 
-    _kill_port(PORT)
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from capture_port import reserve_capture_port
+
+    PORT = reserve_capture_port(PORT)
+    os.environ["ARC_CAPTURE_PORT"] = str(PORT)
     _prepare_capture_env()
 
-    env = {**os.environ, "EE_NO_BROWSER": "1"}
+    env = {**os.environ, "EE_NO_BROWSER": "1", "EE_UI_PORT": str(PORT), "ARC_CAPTURE_PORT": str(PORT)}
     server = subprocess.Popen(
         [sys.executable, "-m", "electrical_engineer", "ui"],
         cwd=ROOT,
@@ -911,8 +918,9 @@ def main() -> int:
                     snap("home-scrolled-1280.png", mid)
                     mid.close()
                     mid_dark = browser.new_page(viewport={"width": 1280, "height": 800})
-                    _set_theme(mid_dark, "dark")
                     mid_dark.goto(f"http://{HOST}:{PORT}/?view=home", wait_until="domcontentloaded")
+                    _set_theme(mid_dark, "dark")
+                    mid_dark.reload(wait_until="domcontentloaded")
                     mid_dark.wait_for_selector(".example-grid-six", timeout=15000)
                     mid_dark.evaluate("() => document.querySelector('.agent-card')?.scrollIntoView({block: 'end'})")
                     mid_dark.wait_for_timeout(300)

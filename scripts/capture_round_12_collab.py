@@ -49,6 +49,9 @@ def _api(method: str, path: str, data: dict | None = None) -> dict:
 
 
 def _set_theme(page, mode: str) -> None:
+    url = page.url or ""
+    if not url.startswith("http"):
+        raise RuntimeError(f"_set_theme before navigation ({url!r}); call goto then set theme")
     page.evaluate(
         """(mode) => {
         document.documentElement.setAttribute('data-theme', mode);
@@ -530,6 +533,9 @@ def _capture_theme(browser, *, theme: str) -> dict:
 
 
 def main() -> int:
+    global PORT, BASE
+    PORT = int(os.environ.get("ARC_CAPTURE_PORT", PORT))
+    BASE = f"http://{HOST}:{PORT}"
     ngspice_version = _require_ngspice()
     print("ngspice:", ngspice_version)
     OUT.mkdir(parents=True, exist_ok=True)
@@ -545,8 +551,19 @@ def main() -> int:
         return 1
 
     if os.environ.get("ROUND12_START_UI") == "1":
+        sys.path.insert(0, str(ROOT / "scripts"))
+        from capture_port import reserve_capture_port
+
+        PORT = reserve_capture_port(PORT)
+        os.environ["ARC_CAPTURE_PORT"] = str(PORT)
+        BASE = f"http://{HOST}:{PORT}"
         subprocess.check_call(["npm", "run", "build"], cwd=ROOT / "ui")
-        env = {**os.environ, "EE_NO_BROWSER": "1"}
+        env = {
+            **os.environ,
+            "EE_NO_BROWSER": "1",
+            "EE_UI_PORT": str(PORT),
+            "ARC_CAPTURE_PORT": str(PORT),
+        }
         server = subprocess.Popen(
             [sys.executable, "-m", "electrical_engineer", "ui"],
             cwd=ROOT,

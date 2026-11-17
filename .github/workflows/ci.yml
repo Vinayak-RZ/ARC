@@ -41,3 +41,30 @@ jobs:
           sleep 1
           uv run playwright install chromium
           uv run python scripts/capture_round.py --round 0 --smoke
+
+  capture-round-14:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install ngspice (circuit collab capture)
+        run: sudo apt-get update && sudo apt-get install -y ngspice fonts-inter
+      - name: Build UI before Python editable install
+        run: cd ui && npm ci && npm run build
+      - run: uv sync --extra dev --extra control --extra engines
+      - run: uv run playwright install chromium
+      - name: Full round 14 capture (UX + collab + postflight)
+        run: |
+          echo "CAPTURE_START=$(date +%s)" >> "$GITHUB_ENV"
+          uv run python scripts/capture_round.py --round 14
+          echo "CAPTURE_END=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Capture duration
+        run: echo "Round 14 capture seconds=$(( CAPTURE_END - CAPTURE_START ))"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ux-review-round-14
+          path: artifacts/ux-review/round-14/
+          if-no-files-found: error
