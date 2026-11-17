@@ -272,9 +272,11 @@ def main() -> int:
         "",
         f"PNG count: {len(pngs)}",
         "",
-        "Includes round-11 coverage, 1280×800 home scroll companions (incl. `home-scrolled-1280-dark.png`), "
-        "collab-03–05 (live forward-Euler mismatch), rectifier topology sweep (two α per topology), "
-        "and `lab-rectifier-full3-rl-alpha75` (Vo ≈ 145.1 V).",
+        (
+            "Includes round-11 coverage, 1280×800 home scroll companions (incl. `home-scrolled-1280-dark.png`), "
+            "collab-03–05 (live forward-Euler mismatch), rectifier topology sweep (two α per topology), "
+            "and `lab-rectifier-full3-rl-alpha75` (Vo ≈ 145.1 V)."
+        ),
         "",
         f"Capture HEAD: `{pf.get('git_sha_short')}` · CI run `{pf.get('ci_workflow_run_id', '—')}` · `git_dirty_lines`: {pf.get('git_dirty_lines')}.",
         "",
