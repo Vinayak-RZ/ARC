@@ -100,7 +100,6 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    _assert_clean_tree()
     subdir = f"round-{args.round}"
     out = ROOT / CAPTURE_PREFIX.rstrip("/") / subdir
     capture_env = {**os.environ, "ARC_UX_CAPTURE_DIR": subdir}
@@ -108,6 +107,8 @@ def main() -> int:
     if args.smoke:
         _run_fail_fast([sys.executable, str(ROOT / "scripts" / "capture_round_smoke.py")], env=capture_env)
         return 0
+
+    _assert_clean_tree()
 
     if not args.keep_artifacts and out.is_dir():
         shutil.rmtree(out)
