@@ -89,7 +89,10 @@ def test_full1_r_load_vo_past_90_degrees() -> None:
 
 
 def test_hw3_r_load_off_past_150_and_rl_conducts_at_90() -> None:
-    from electrical_engineer.engines.rectifier_rl_steady import rl_reference_slice, rl_vo_mean_closed_form
+    from electrical_engineer.engines.rectifier_rl_steady import (
+        rl_reference_slice,
+        rl_vo_mean_closed_form,
+    )
     from electrical_engineer.engines.rectifier_waveforms import _vo_closed_form
     from electrical_engineer.engines.solvers.power_electronics import rectifier_1ph, rectifier_3ph
 
