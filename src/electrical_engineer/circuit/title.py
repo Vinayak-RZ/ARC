@@ -108,6 +108,11 @@ def run_title(recipe_id: str, problem: dict[str, Any] | None = None) -> str:
             return one[:53] + "…"
         return one
     kind = str(problem.get("kind") or "")
+    if kind == "series_rlc" or recipe_id in ("simulate-circuit", "series-rlc-transient"):
+        prompt = str(problem.get("prompt") or "").strip()
+        if prompt:
+            return prompt
+        return "Series RLC step"
     head = KIND_HEAD.get(kind) or RECIPE_HEAD.get(recipe_id) or recipe_id.replace("-", " ").title()
     find = str(problem.get("find") or KIND_FIND.get(kind) or "")
     if find:

@@ -2543,6 +2543,26 @@ a { color: var(--ee-color-primary); }
 .se-waveform-title { margin: 0; font-size: var(--ee-type-caption); font-weight: 600; color: var(--ee-color-ink); }
 .se-waveform-axes { font-size: var(--ee-type-caption); color: var(--ee-color-muted); flex: 1 1 auto; }
 .studio-circuit-hint { margin: 0 0 var(--ee-space-s); font-size: var(--ee-type-caption); color: var(--ee-color-muted); }
+.studio-canvas-hint {
+  position: absolute;
+  top: var(--ee-space-s);
+  left: var(--ee-space-s);
+  right: var(--ee-space-s);
+  z-index: 2;
+  margin: 0;
+  padding: var(--ee-space-xs) var(--ee-space-s);
+  background: var(--ee-color-surface-raised);
+  border: 1px solid var(--ee-color-hairline);
+  border-radius: var(--ee-radius-s);
+}
+.answer-line.is-derived-stale .answer-stale-value {
+  text-decoration: line-through;
+  color: var(--ee-color-muted);
+}
+.answer-stale-rev {
+  color: var(--ee-color-muted);
+  font-size: var(--ee-type-caption);
+}
 .studio-bar-hint {
   margin: 0 12px 0 0;
   flex: 1 1 auto;

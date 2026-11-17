@@ -109,6 +109,12 @@ export function LabVerifyPanel({
   ) : null;
 
   function rowStatus(row) {
+    if (row.derived_out_of_date && !row.simulated_out_of_date) {
+      return {
+        status: row.status === "out_of_date" ? "agrees" : row.status,
+        label: row.status_label && row.status_label !== "Out of date" ? row.status_label : "—",
+      };
+    }
     if (row.derived_out_of_date) return { status: "out_of_date", label: "Out of date" };
     return { status: row.status, label: row.status_label };
   }

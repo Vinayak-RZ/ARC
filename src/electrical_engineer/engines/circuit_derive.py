@@ -32,12 +32,6 @@ def derive(problem: dict[str, Any], *, item_root: Path | None = None) -> dict[st
     """Return derived scalar from MNA on the item netlist (templates only as fallback)."""
     allow = bool(problem.get("allow_template_fallback"))
     kind = str(problem.get("kind") or problem.get("circuit_kind") or "").lower()
-    if str(problem.get("derive_bug") or "").strip() and kind in _KINDS:
-        out = _KINDS[kind](problem)
-        out["kind"] = kind
-        out.setdefault("engine", "circuit_derive")
-        out["derived_via"] = "derive_bug"
-        return out
     try:
         cir = _load_cir(problem, item_root)
     except DeriveError:
@@ -135,28 +129,18 @@ def _series_rlc(problem: dict[str, Any]) -> dict[str, Any]:
     step_v = float(problem.get("v_step") or vin)
     meta = series_rlc_step(r_ohm, l_h, c_f, step_v)
     t_peak_s = float(meta["t_Vc_peak_s"])
-    overshoot_pct = float(meta.get("overshoot_pct") or 0.0)
-    no_overshoot = overshoot_pct < 0.5
-    if no_overshoot:
-        settle_s = float(
-            meta.get("settling_2pct_entry_s") or meta.get("settling_time_2pct_s") or t_peak_s
-        )
-        t_peak_s = settle_s
-        t_stop = max(settle_s * 1.5, float(problem.get("t_s") or 0), 1e-4)
-    else:
-        t_stop = float(problem.get("t_s") or max(t_peak_s * 1.2, 1e-4))
+    t_settle = meta.get("settling_2pct_entry_s") or meta.get("settling_time_2pct_s")
+    t_stop = float(problem.get("t_s") or max(t_peak_s * 1.2, 1e-4))
     probe = str(problem.get("probe") or problem.get("probe_expr") or "v(3)")
     bug = str(problem.get("derive_bug") or "").lower()
     if bug in ("forward_euler", "euler"):
         from electrical_engineer.engines.rlc_transient import forward_euler_vc_peak
 
-        value, t_peak_s = forward_euler_vc_peak(r_ohm, l_h, c_f, step_v, steps_per_wn=10.0)
+        value, t_peak_s = forward_euler_vc_peak(r_ohm, l_h, c_f, step_v)
         engine = "forward_euler_bug"
-    elif no_overshoot:
-        value = step_v
-        engine = "circuit_derive"
     else:
-        value = float(meta["Vc_peak_V"])
+        overshoot = float(meta.get("overshoot_pct") or 0.0) < 0.5
+        value = float(step_v if overshoot else meta["Vc_peak_V"])
         engine = "circuit_derive"
     cir = (
         "* arc series rlc\n"
@@ -165,7 +149,7 @@ def _series_rlc(problem: dict[str, Any]) -> dict[str, Any]:
         f".ic v(3)=0\n"
         f".tran {max(t_stop / 500, 1e-7):g} {t_stop:g} uic\n.end\n"
     )
-    out = {
+    return {
         "value": value,
         "unit": "V",
         "cir": cir,
@@ -174,15 +158,11 @@ def _series_rlc(problem: dict[str, Any]) -> dict[str, Any]:
         "analysis": "tran",
         "t_s": t_peak_s,
         "t_stop": t_stop,
-        "derive_metric": "Vc_final" if no_overshoot else "Vc_peak",
+        "derive_metric": "Vc_final" if float(meta.get("overshoot_pct") or 0.0) < 0.5 else "Vc_peak",
+        "settling_2pct_entry_s": t_settle,
+        "settling_time_2pct_s": meta.get("settling_time_2pct_s"),
         "engine": engine,
-        "overshoot_pct": overshoot_pct,
     }
-    if no_overshoot:
-        out["settling_2pct_entry_s"] = float(
-            meta.get("settling_2pct_entry_s") or meta.get("settling_time_2pct_s") or t_peak_s
-        )
-    return out
 
 
 _KINDS = {

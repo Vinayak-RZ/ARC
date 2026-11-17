@@ -19,3 +19,11 @@ def test_home_example_rlc_peak() -> None:
     assert abs(r["Vc_peak_V"] - exact_peak) < 0.01
     assert abs(r["Vc_peak_V"] - 11.630) < 0.01
     assert abs(r["t_Vc_peak_s"] - 3.628e-3) < 0.05e-3
+
+
+def test_critical_damping_settling_2pct_ms() -> None:
+    """R = 20 Ω → ζ = 1, ωn = 1000 rad/s; 2% envelope crossing ≈ 5.83 ms."""
+    r = series_rlc_step(20.0, 0.01, 100e-6, 10.0)
+    assert r["damping_type"] == "critically_damped"
+    t_ms = 1000.0 * float(r["settling_2pct_entry_s"])
+    assert abs(t_ms - 5.83) < 0.02

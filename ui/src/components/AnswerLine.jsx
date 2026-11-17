@@ -29,9 +29,19 @@ export function VerificationStrip({
   note,
   needsReview,
   reviewNote,
-  onOpenLab,
-  openLabLabel,
+  derivedStale,
 }) {
+  if (derivedStale) {
+    return (
+      <div className="verification-strip verification-stale" role="status">
+        <AlertTriangle size={16} strokeWidth={1.5} className="verification-icon" aria-hidden="true" />
+        <span className="status-tag">Out of date</span>
+        <span className="verification-body">
+          Agent derivation does not match the lab graph. Re-derive or restore the agent circuit.
+        </span>
+      </div>
+    );
+  }
   if (needsReview) {
     return (
       <div className="verification-strip verification-review" role="status">
@@ -67,11 +77,6 @@ export function VerificationStrip({
     <div className="verification-strip verification-ok" role="status">
       <CheckCircle2 size={16} strokeWidth={1.5} className="verification-icon" aria-hidden="true" />
       <span className="checked-tag status-tag">Checked</span>
-      {onOpenLab ? (
-        <button type="button" className="button-secondary button-compact verification-lab-btn" onClick={onOpenLab}>
-          {openLabLabel || "Open in lab"}
-        </button>
-      ) : null}
       <span className="verification-body">
         {note || "Numeric check passed."} Checked {relativeTimeShort(modifiedAt)}.
       </span>

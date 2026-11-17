@@ -44,7 +44,7 @@ const SERIES_RLC = {
     { id: "r1", type: "resistor", refdes: "R1", value: 10, unit: "ohm", x: 176, y: 56, rot: 0 },
     { id: "l1", type: "inductor", refdes: "L1", value: 0.01, unit: "H", x: 296, y: 56, rot: 0 },
     { id: "c1", type: "capacitor", refdes: "C1", value: 0.0001, unit: "F", x: 416, y: 56, rot: 0 },
-    { id: "gnd", type: "ground", refdes: "GND", value: 0, unit: "", x: 56, y: 176, rot: 0 },
+    { id: "gnd", type: "ground", refdes: "GND", value: 0, unit: "", x: 56, y: 220, rot: 0 },
   ],
   edges: [
     { id: "e1", from: "vin.n1", to: "r1.n1" },
@@ -161,31 +161,55 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
   const wrapRef = useRef(null);
   const { screenToFlowPosition } = useReactFlow();
 
+  function rlcResultHeadline(result, problem) {
+    const vStep = Number(problem?.v_step ?? problem?.vin ?? 10);
+    const peakV = Number(result?.Vc_peak_V);
+    const noOvershoot = Number(result?.overshoot_pct ?? (peakV <= vStep * 1.005 ? 0 : 99)) < 0.5;
+    if (noOvershoot) {
+      const tSetMs =
+        1000 *
+        Number(result?.settling_2pct_entry_s ?? result?.settling_time_2pct_s ?? 0);
+      return `No overshoot · Final value ${peakV.toFixed(2)} V · Settling (2%) ${tSetMs.toFixed(2)} ms`;
+    }
+    const tPkMs = 1000 * Number(result?.t_Vc_peak_s ?? problem?.t_s ?? 0);
+    return `Vc,peak = ${peakV.toFixed(3)} V at ${tPkMs.toFixed(2)} ms`;
+  }
+
   function applyLabSimulate(labSimulate, labVerify) {
     if (!labSimulate?.ok && !labSimulate?.simulated) return;
     const trace = labSimulate.trace || labSimulate.spice || labSimulate;
     const peakV = Number(labSimulate.simulated ?? trace?.Vc_peak_V ?? labVerify?.simulated);
-    const tPeak = Number(trace?.t_Vc_peak_s ?? labVerify?.derive?.t_s ?? 0);
+    const tPeak = Number(
+      trace?.t_Vc_peak_s ?? labSimulate.t_peak_s ?? labVerify?.derive?.t_s ?? labSimulate.problem?.t_s ?? 0,
+    );
     const vcMs = trace?.vc_trace_ms;
+    const result = {
+      Vc_peak_V: peakV,
+      t_Vc_peak_s: tPeak,
+      vc_trace_ms: vcMs,
+      zeta: trace?.zeta,
+      omega_n_rad_s: trace?.omega_n_rad_s,
+      overshoot_pct: trace?.overshoot_pct,
+      settling_2pct_entry_s: trace?.settling_2pct_entry_s ?? trace?.settling_time_2pct_s,
+      settling_time_2pct_s: trace?.settling_time_2pct_s,
+    };
+    const problem = labSimulate.problem || labVerify?.derive || {};
     if (vcMs?.length) {
       setSim({
         ok: true,
         engine: labSimulate.engine || labSimulate.simulator?.backend || "ngspice",
-        result: {
-          Vc_peak_V: peakV,
-          t_Vc_peak_s: tPeak,
-          vc_trace_ms: vcMs,
-          zeta: trace?.zeta,
-          omega_n_rad_s: trace?.omega_n_rad_s,
-        },
-        problem: labSimulate.problem,
+        result,
+        problem,
+        headline: labSimulate.headline || rlcResultHeadline(result, problem),
       });
       return;
     }
     setSim({
       ok: true,
       engine: labSimulate.engine || "circuit_graph_sim",
-      result: { Vc_peak_V: peakV, t_Vc_peak_s: tPeak },
+      result,
+      problem,
+      headline: rlcResultHeadline(result, problem),
     });
   }
 
@@ -224,11 +248,8 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
           hydrated.current = true;
           userTouched.current = false;
           setFitKey((k) => k + 1);
-          const verifyStale =
-            body?.lab_verify?.verdict_current === false ||
-            Boolean(body?.lab_verify?.stale);
           const tracePts = body?.lab_simulate?.trace?.vc_trace_ms || body?.lab_simulate?.vc_trace_ms;
-          if (tracePts?.length && !verifyStale) {
+          if (tracePts?.length) {
             applyLabSimulate(body.lab_simulate, body.lab_verify);
           } else if (graph?.nodes?.length && autoSimForRun.current !== linkedRunId) {
             autoSimForRun.current = linkedRunId;
@@ -407,6 +428,9 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
         if (params) {
           body.problem = { ...(body.problem || {}), ...params };
         }
+        if (!body.headline && body.result) {
+          body.headline = rlcResultHeadline(body.result, body.problem || params);
+        }
         setSim(body);
         if (linkedRunId) {
           const vr = await fetch(`/api/runs/${linkedRunId}/lab/verify`, { method: "POST" });
@@ -486,8 +510,26 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
   async function restoreAgent() {
     if (!linkedRunId) return;
     if (!window.confirm("Replace your changes with the agent's version?")) return;
-    await fetch(`/api/runs/${linkedRunId}/lab/restore`, { method: "POST" });
-    loadLinkedRun(true);
+    setMsg("");
+    try {
+      const r = await fetch(`/api/runs/${linkedRunId}/lab/restore`, { method: "POST" });
+      const body = await r.json();
+      if (!r.ok) {
+        setMsg(body.error || "Restore failed");
+        return;
+      }
+      setLabVerify(body.lab_verify || null);
+      setViewMode("yours");
+      userTouched.current = false;
+      loadLinkedRun(true);
+      if (body.lab_verify?.simulate?.trace?.vc_trace_ms?.length) {
+        applyLabSimulate(body.lab_verify.simulate, body.lab_verify);
+      } else {
+        void runSimulate(null, { silent: true });
+      }
+    } catch {
+      setMsg("Could not restore agent version.");
+    }
   }
 
   function clearCanvas() {
@@ -537,14 +579,6 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
             <span className="breadcrumb-current">Circuit sandbox</span>
           </div>
           <div className="studio-bar-actions">
-            {wireHintOpen && !sim ? (
-              <p className="studio-circuit-hint studio-bar-hint">
-                Drag ports to wire. Double-click a wire for a junction. Results stay until you Simulate again.
-                <button type="button" className="text-link" onClick={() => setWireHintOpen(false)}>
-                  Dismiss
-                </button>
-              </p>
-            ) : null}
             {linkedRunId ? (
               <button
                 type="button"
@@ -566,6 +600,14 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
         </header>
         <Palette onAdd={addPart} disabled={simBusy} />
         <div className="studio-circuit-canvas flow-wrap" ref={wrapRef}>
+          {wireHintOpen && !sim ? (
+            <p className="hint studio-circuit-hint studio-canvas-hint">
+              Drag ports to wire. Double-click a wire for a junction.
+              <button type="button" className="text-link" onClick={() => setWireHintOpen(false)}>
+                Dismiss
+              </button>
+            </p>
+          ) : null}
           {msg ? <p className="hint studio-circuit-msg">{msg}</p> : null}
           <ReactFlow
             nodes={nodes}
@@ -606,8 +648,7 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
                 {sim.result?.omega_n_rad_s?.toFixed(0)} rad/s
               </p>
               <p className="answer-line tabular-nums">
-                {sim.headline ||
-                  `Vc,peak = ${Number(sim.result?.Vc_peak_V).toFixed(3)} V at ${(1000 * Number(sim.result?.t_Vc_peak_s)).toFixed(2)} ms`}
+                {sim.headline || rlcResultHeadline(sim.result, sim.problem)}
               </p>
               {vcPanel ? <Waveform panel={vcPanel} /> : null}
             </>

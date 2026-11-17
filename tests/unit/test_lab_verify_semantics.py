@@ -125,9 +125,9 @@ def test_human_resistor_edit_flags_derivation_mismatch(tmp_path) -> None:
     assert verify.get("needs_review") is not True
     assert verify.get("mismatch") is not True
     row = verify["metrics"][0]
-    assert row.get("status") == "out_of_date"
+    assert row.get("derived_out_of_date")
     assert row.get("rel_err_pct") is None
-    assert row.get("status_label") == "Out of date"
+    assert not row.get("simulated_out_of_date")
 
 
 def test_rederive_after_r20_updates_transient_and_value(tmp_path: Path) -> None:

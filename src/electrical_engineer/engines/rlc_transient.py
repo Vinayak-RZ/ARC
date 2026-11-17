@@ -51,6 +51,21 @@ def _rk4_vc_tail(
     return t_settle
 
 
+def _critical_settling_2pct_s(wn: float) -> float:
+    """ζ = 1: (1 + x) e^-x = 0.02 ⇒ x ≈ 5.834, t_s = x/ωn (2% envelope from below)."""
+    lo, hi = 0.0, 50.0
+    target = 0.02
+    for _ in range(72):
+        mid = (lo + hi) * 0.5
+        val = (1.0 + mid) * math.exp(-mid)
+        if val > target:
+            lo = mid
+        else:
+            hi = mid
+    x = (lo + hi) * 0.5
+    return x / wn
+
+
 def _underdamped_peak(v_step: float, zeta: float, wn: float) -> tuple[float, float]:
     wd = wn * math.sqrt(1.0 - zeta * zeta)
     vc_peak = v_step * (1.0 + math.exp(-math.pi * zeta / math.sqrt(1.0 - zeta * zeta)))
@@ -162,12 +177,15 @@ def series_rlc_step(
     t_plot_end = min(max(5.0 * float(t_ref), 12.0 / wn), 0.08)
     vc_trace_ms = _rk4_integrate_vc(r_ohm, l_h, c_f, v_step, t_end=max(t_plot_end, 0.02), n=480)
     overshoot_pct = max(0.0, (float(vc_peak) - v_step) / v_step * 100.0) if v_step else 0.0
-    settling_entry_s: float | None = None
-    band = 0.02 * v_step
-    for t_ms, vc in vc_trace_ms:
-        if vc >= v_step - band:
-            settling_entry_s = float(t_ms) / 1000.0
-            break
+    if damping == "critically_damped":
+        settling_entry_s = _critical_settling_2pct_s(wn)
+    else:
+        settling_entry_s = None
+        band = 0.02 * v_step
+        for t_ms, vc in vc_trace_ms:
+            if vc >= v_step - band:
+                settling_entry_s = float(t_ms) / 1000.0
+                break
 
     return {
         "damping_type": damping,

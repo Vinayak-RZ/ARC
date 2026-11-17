@@ -61,39 +61,33 @@ function isSeriesRlc(data, evid) {
   return kind === "series_rlc" || recipe === "simulate-circuit" || recipe === "series-rlc-transient";
 }
 
+function rlcPeakTimeMs(derive, tr, problem) {
+  for (const v of [derive?.t_s, tr?.t_Vc_peak_s, problem?.t_s]) {
+    const n = Number(v);
+    if (Number.isFinite(n) && n > 0) return n * 1000;
+  }
+  return 0;
+}
+
 function rlcAnswerDisplay(data, evid) {
   const tr = data?.rlc_transient;
   const derive = data?.circuit_derive;
   const lv = data?.lab_verify;
   if (!isSeriesRlc(data, evid) || (!tr && !derive && !lv)) return null;
-  if (lv?.needs_review) return null;
+  if (lv?.needs_review && lv?.derivation_matches_graph !== false) return null;
+  const noOvershoot = Number(tr?.overshoot_pct ?? derive?.overshoot_pct ?? 99) < 0.5;
   const vStep = Number(data?.problem?.v_step ?? data?.problem?.vin ?? evid?.vin ?? 10);
-  const lvDerived = lv?.derived != null ? Number(lv.derived) : null;
-  const agreesAtStep =
-    lv?.status === "agrees" &&
-    lvDerived != null &&
-    Math.abs(lvDerived - vStep) <= Math.max(0.05, 0.02 * Math.abs(vStep));
-  const noOvershootDerive =
-    derive?.derive_metric === "Vc_final" ||
-    Number(derive?.overshoot_pct) < 0.5 ||
-    agreesAtStep;
-  const overshoot = Number(tr?.overshoot_pct ?? (noOvershootDerive ? 0 : (derive?.overshoot_pct ?? 99))) < 0.5;
-  if (overshoot) {
+  if (noOvershoot) {
     const finalV = Number(derive?.value ?? lv?.derived ?? tr?.Vc_peak_V ?? vStep);
     const tMs =
       1000 *
       Number(
-        tr?.settling_2pct_entry_s ??
-          tr?.settling_time_2pct_s ??
-          derive?.settling_2pct_entry_s ??
-          derive?.t_s ??
-          Number(data?.problem?.t_s) ??
-          0,
+        tr?.settling_2pct_entry_s ?? tr?.settling_time_2pct_s ?? derive?.settling_2pct_entry_s ?? 0,
       );
     return `No overshoot · Final value ${finalV.toFixed(2)} V · Settling (2%) ${tMs.toFixed(2)} ms`;
   }
   const peak = Number(derive?.value ?? lv?.derived ?? evid?.value);
-  const tMs = 1000 * Number(derive?.t_s ?? tr?.t_Vc_peak_s ?? 0);
+  const tMs = rlcPeakTimeMs(derive, tr, data?.problem);
   return `Vc,peak = ${peak.toFixed(3)} V at ${tMs.toFixed(2)} ms`;
 }
 
@@ -107,13 +101,28 @@ export function runHeadline(evid, data) {
   return "";
 }
 
+export function staleDerivedRevision(data) {
+  const lv = data?.lab_verify;
+  if (!lv || lv.derivation_matches_graph !== false) return null;
+  return data?.lab?.revision ?? lv?.graph_revision ?? null;
+}
+
 export function buildAnswerRows(evid, data) {
   const title = data?.title || evid?.title || "";
   const { head, quantity } = parseTitleParts(title);
   const rows = [];
+  const staleRev = staleDerivedRevision(data);
   const rlcLine = rlcAnswerDisplay(data, evid);
   if (rlcLine) {
-    rows.push({ name: "Result", value: rlcLine, unit: "", display: rlcLine, plain: true });
+    rows.push({
+      name: "Result",
+      value: rlcLine,
+      unit: "",
+      display: rlcLine,
+      plain: true,
+      derivedStale: staleRev != null,
+      staleRev,
+    });
     return { head, rows };
   }
   const rawValues = evid?.values && typeof evid.values === "object" ? evid.values : {};
@@ -128,7 +137,7 @@ export function buildAnswerRows(evid, data) {
     return { head, rows };
   }
   const lv = data?.lab_verify;
-  if (lv?.needs_review) {
+  if (lv?.needs_review && lv?.derivation_matches_graph !== false) {
     return { head, rows: [] };
   }
   const scalar =
