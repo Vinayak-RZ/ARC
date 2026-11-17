@@ -207,6 +207,7 @@ export function AppShell() {
       <div className="product-main">
         <TopBar
           runMeta={runMeta}
+          runTitle={data?.title}
           primaryLabel={primaryLabel}
           onPrimaryAction={onPrimary}
           runAgainPrimary={view === "problems" && id && stale}

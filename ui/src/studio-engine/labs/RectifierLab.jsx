@@ -1,10 +1,17 @@
 import { useMemo, useState } from "react";
 import { LabShell } from "./LabShell.jsx";
 import { Waveform } from "../renderers/Waveform.jsx";
-import { computeRectifier } from "./rectifier.js";
+import { computeRectifier, firingAnglesDeg } from "./rectifier.js";
 import { registerLab } from "./registry.js";
 import { postProgress } from "../../hooks/useLearn.js";
 import { openMatchingProblem } from "./openExample.js";
+
+function firingMarkers(topology, alphaDeg) {
+  return firingAnglesDeg(topology, alphaDeg).map((x, i) => ({
+    x,
+    label: i === 0 ? `α = ${alphaDeg}° after natural commutation` : undefined,
+  }));
+}
 
 const TOPOS = [
   { id: "hw1", label: "1φ half" },
@@ -100,11 +107,11 @@ export function RectifierLab() {
       ) : null}
       <label className="lab-checkbox-row">
         <input type="checkbox" checked={useLs} onChange={(e) => setUseLs(e.target.checked)} />
-        Source inductance L<sub>s</sub> (mH)
+        Source inductance Ls (mH)
       </label>
       {useLs ? (
         <label>
-          Ls (mH)
+          <span className="visually-hidden">Source inductance Ls (mH)</span>
           <div className="lab-slider-row">
             <input type="range" min={0.1} max={10} step={0.1} value={ls} onChange={(e) => setLs(+e.target.value)} />
             <input type="number" value={ls} onChange={(e) => setLs(+e.target.value)} />
@@ -152,7 +159,7 @@ export function RectifierLab() {
           y: { label: "v", sub: "o", unit: "V", scale: "linear" },
           series: [{ id: "vo", label: "vo", points: result.points, style: "primary" }],
           hlines: [{ y: result.Vo, label: "Vo avg" }],
-          markers: [{ x: alpha, label: "α" }],
+          markers: firingMarkers(topology, alpha),
         }}
       />
     </LabShell>

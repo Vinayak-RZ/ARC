@@ -54,8 +54,8 @@ test.describe("Collab RLC revision loop", () => {
 
     await page.goto(`${BASE}/?problem=${runId}`);
     await expect(page.locator(".problem-display-title")).toHaveText("Series RLC step");
-    await expect(page.locator(".is-derived-stale, .verification-strip.verification-stale")).toBeVisible();
-    await expect(page.locator(".answer-card, .verification-strip")).toContainText(/Out of date/i);
+    await expect(page.locator(".is-derived-stale, .verification-strip.verification-stale").first()).toBeVisible();
+    await expect(page.locator(".answer-card, .verification-strip").first()).toContainText(/Out of date/i);
     await expect(page.getByText(/Needs review/i)).toHaveCount(0);
 
     await page.goto(`${BASE}/?view=studio&tab=circuits&run=${runId}`);

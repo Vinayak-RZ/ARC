@@ -188,10 +188,12 @@ def agent_rederive_circuit_lab(run_dir: Path) -> dict[str, Any]:
         problem.update(params)
         problem.setdefault("kind", "series_rlc")
         problem.setdefault("analysis", "tran")
-    if str(problem.get("kind") or "") == "series_rlc":
         problem.setdefault("allow_template_fallback", True)
+        problem.pop("cir", None)
     derived = derive(problem)
     (run_dir / "circuit_derive.json").write_text(json.dumps(derived, indent=2), encoding="utf-8")
+    if params:
+        (run_dir / "problem.json").write_text(json.dumps(problem, indent=2), encoding="utf-8")
     params = series_rlc_params_from_graph(graph) or problem
     if str(problem.get("kind") or "") == "series_rlc" or params.get("r_ohm") is not None:
         from electrical_engineer.engines.rlc_transient import series_rlc_step
@@ -286,6 +288,12 @@ def restore_agent_circuit_lab(run_dir: Path) -> dict[str, Any]:
         target="circuit",
         detail={"source": "agent_seed", "seed_rev": meta.get("agent_seed_rev")},
     )
+    graph_live = load_graph(run_dir)
+    params_restore = series_rlc_params_from_graph(graph_live) or {}
+    if params_restore:
+        problem0 = {**problem0, **params_restore}
+        problem0.setdefault("prompt", "Series RLC step")
+        (run_dir / "problem.json").write_text(json.dumps(problem0, indent=2), encoding="utf-8")
     meta = lab_meta.load_lab_meta(run_dir)
     meta["agent_baseline_graph"] = load_graph(run_dir)
     meta["agent_baseline_rev"] = int(meta.get("revision") or 1)

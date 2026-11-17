@@ -10,6 +10,15 @@ from typing import Any
 
 def work_steps(run_dir: Path) -> list[dict[str, str]]:
     problem = _load(run_dir / "problem.json")
+    try:
+        from electrical_engineer.circuit.graph import series_rlc_params_from_graph
+        from electrical_engineer.circuit.run_session import load_graph
+
+        params = series_rlc_params_from_graph(load_graph(run_dir))
+        if params:
+            problem = {**problem, **params}
+    except ImportError:
+        pass
     evid = _load(run_dir / "evidentiary.json") or _load(run_dir / "summary.json")
     recipe = str(evid.get("recipe_id") or "")
     kind = str(problem.get("kind") or "")

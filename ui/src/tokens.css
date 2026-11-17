@@ -2821,7 +2821,7 @@ a { color: var(--ee-color-primary); }
 .lab-activity-item:hover .lab-activity-actions { opacity: 1; pointer-events: auto; }
 .lab-activity-rev-chip { font-size: 11px; color: var(--ee-color-muted); font-variant-numeric: tabular-nums; }
 .lab-activity-time { color: var(--ee-color-muted); font-size: 12px; }
-.lab-activity-sentence { margin: 0; font-size: 13px; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lab-activity-sentence { margin: 0; font-size: 13px; line-height: 1.35; white-space: normal; overflow-wrap: anywhere; }
 .lab-activity-avatar.is-human {
   width: 20px; height: 20px; border-radius: 50%; background: var(--ee-color-muted); color: #fff;
   font-size: 9px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;

@@ -13,7 +13,7 @@ const VIEW_LABEL = {
   settings: "Settings",
 };
 
-export function TopBar({ runMeta, onPrimaryAction, primaryLabel, runAgainPrimary, onNavigate }) {
+export function TopBar({ runMeta, runTitle, onPrimaryAction, primaryLabel, runAgainPrimary, onNavigate }) {
   const view = useLayout((s) => s.view);
   const id = useLayout((s) => s.currentRunId);
   const drawer = useLayout((s) => s.parametersOpen);
@@ -23,7 +23,11 @@ export function TopBar({ runMeta, onPrimaryAction, primaryLabel, runAgainPrimary
   const crumbs = [];
   crumbs.push({ label: VIEW_LABEL[view] || "Arc", view, clickable: Boolean(id && view === "problems") });
   if (view === "problems" && id && runMeta) {
-    crumbs.push({ label: displayTitle(runMeta), view: null, clickable: false });
+    crumbs.push({
+      label: displayTitle({ ...runMeta, title: runTitle || runMeta.title }),
+      view: null,
+      clickable: false,
+    });
   }
   const showParams = view === "problems" && Boolean(id);
   const runAgainClass = runAgainPrimary ? "button-primary button-compact" : "button-secondary button-compact";

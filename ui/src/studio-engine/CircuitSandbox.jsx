@@ -165,7 +165,8 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
       return `No overshoot · Final value ${peakV.toFixed(2)} V · Settling (2%) ${tSetMs.toFixed(2)} ms`;
     }
     const tPkMs = 1000 * Number(result?.t_Vc_peak_s ?? problem?.t_s ?? 0);
-    return `Vc,peak = ${peakV.toFixed(3)} V at ${tPkMs.toFixed(2)} ms`;
+    const tFmt = tPkMs.toFixed(3);
+    return `Vc,peak = ${peakV.toFixed(3)} V at ${tFmt} ms`;
   }
 
   function applyLabSimulate(labSimulate, labVerify) {
@@ -476,9 +477,17 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
     };
   }, [sim, probeParams]);
 
-  const humanEdits = (labMeta?.op_log || []).filter(
-    (e) => e.author === "human" && e.op !== "restore" && e.electrical !== false,
-  ).length;
+  const humanEdits = useMemo(() => {
+    const seed = labMeta?.agent_seed_graph;
+    if (seed?.nodes?.length) {
+      const cur = fromFlow(nodes, edges);
+      const diff = diffCircuitGraphs(seed, cur);
+      if (!(diff.changed || []).length) return 0;
+    }
+    return (labMeta?.op_log || []).filter(
+      (e) => e.author === "human" && e.op !== "restore" && e.electrical !== false,
+    ).length;
+  }, [labMeta, nodes, edges]);
 
   async function askAgentReDerive() {
     if (!linkedRunId) return;

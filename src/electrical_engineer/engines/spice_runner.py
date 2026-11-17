@@ -88,6 +88,16 @@ def _ensure_control_block(
         if metric in {"vc_peak", "peak", "max"}:
             text += f"\n.measure tran _arc_out max {probe}\n"
             cmd = f"run\nprint tran {probe}\nprint _arc_out\n"
+        elif metric in {"vc_final", "final"} and t_s is not None:
+            stop = max(float(t_s) * 2.5, 1e-3)
+            step = min(stop / 4000.0, 50e-6)
+            m = re.search(r"v\((\d+)\)", probe)
+            if m and ".ic" not in low:
+                text += f"\n.ic v({m.group(1)})=0"
+            if ".tran" not in low:
+                text += f"\n.tran {step:g} {stop:g} uic\n"
+            text += f"\n.measure tran _arc_out max {probe}\n"
+            cmd = "run\nprint _arc_out\n"
         elif t_s is not None:
             text += f"\n.measure tran _arc_out find {probe} at={float(t_s)}\n"
             cmd = "run\nprint _arc_out\n"

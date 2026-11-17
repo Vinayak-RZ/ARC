@@ -23,12 +23,12 @@ _ALPHAS = (0, 30, 45, 60, 75, 90)
 @pytest.mark.parametrize("topology", _TOPO_1PH)
 def test_rectifier_1ph_mean_matches_vo(topology: str, load: str, alpha_deg: float) -> None:
     vo = _vo_closed_form(
-        {"topology": topology, "load": load, "v_rms": 230, "alpha_deg": alpha_deg, "io_a": 0, "ls_h": 0.002},
+        {"topology": topology, "load": load, "v_rms": 230, "alpha_deg": alpha_deg, "io_a": 0, "ls_h": 0},
         rectifier_1ph,
         rectifier_3ph,
     )
     pts = sample_waveform(
-        {"topology": topology, "load": load, "v_rms": 230, "alpha_deg": alpha_deg},
+        {"topology": topology, "load": load, "v_rms": 230, "alpha_deg": alpha_deg, "io_a": 0, "ls_h": 0},
         n=3600,
     )
     mean = mean_waveform(pts)
@@ -51,13 +51,13 @@ def test_rectifier_3ph_mean_matches_vo(topology: str, load: str, alpha_deg: floa
             "v_rms": 415,
             "alpha_deg": alpha_deg,
             "io_a": 0,
-            "ls_h": 0.002,
+            "ls_h": 0,
         },
         rectifier_1ph,
         rectifier_3ph,
     )
     pts = sample_waveform(
-        {"topology": topology, "load": load, "v_ll_rms": 415, "alpha_deg": alpha_deg},
+        {"topology": topology, "load": load, "v_ll_rms": 415, "v_rms": 415, "alpha_deg": alpha_deg, "io_a": 0, "ls_h": 0},
         n=3600,
     )
     mean = mean_waveform(pts)
