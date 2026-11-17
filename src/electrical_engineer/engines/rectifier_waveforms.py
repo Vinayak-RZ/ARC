@@ -29,9 +29,21 @@ def line_peak_from_line_vll(v_ll_rms: float) -> float:
 def is_continuous_conduction(load: str, topology: str, alpha_deg: float) -> bool:
     if load != "R":
         return True
-    if topology.endswith("3"):
+    if topology == "full1":
+        return False
+    if topology == "full3":
+        return alpha_deg <= 60.0
+    if topology in {"hw3", "half3"}:
         return alpha_deg <= 30.0
     return alpha_deg <= 0.0
+
+
+def source_peak_v(problem: dict) -> float:
+    topology = str(problem.get("topology") or "full3")
+    v_rms = float(problem.get("v_ll_rms") or problem.get("v_rms") or 415)
+    if topology.endswith("3"):
+        return line_peak_from_line_vll(v_rms)
+    return _SQRT2 * v_rms
 
 
 def _vo_three_phase_half(wt: float, vm: float, alpha_rad: float, continuous: bool) -> float:
@@ -88,62 +100,9 @@ def _vo_single_phase_half(wt: float, vm: float, alpha_rad: float, full_wave: boo
 
 
 def sample_waveform(problem: dict, n: int = 720) -> list[list[float]]:
-    ls_h = float(problem.get("ls_h") or 0.0)
-    topo = str(problem.get("topology") or "full3")
-    if topo in {"half", "hw3"}:
-        topo = "hw3"
-    elif topo == "full":
-        topo = "full3"
-    elif topo == "semi":
-        topo = "semi3"
-    if ls_h <= 0 and topo in {"full3", "semi3"}:
-        from electrical_engineer.engines.rectifier_gate import gate_sample_vo
+    from electrical_engineer.engines.rectifier_gate import gate_sample_vo
 
-        return gate_sample_vo(problem, n)
-    topology = str(problem.get("topology") or "full3")
-    if topology in {"half", "hw3"}:
-        topology = "hw3"
-    elif topology in {"full"}:
-        topology = "full3"
-    elif topology == "semi":
-        topology = "semi3"
-    load = str(problem.get("load") or "R")
-    if load == "continuous":
-        load = "RL"
-    v_rms = float(problem.get("v_ll_rms") or problem.get("v_rms") or 415)
-    alpha_deg = float(problem.get("alpha_deg") or 0)
-    alpha_rad = _rad(alpha_deg)
-    vm1 = _SQRT2 * v_rms if not topology.endswith("3") else 0.0
-    vm3 = phase_peak_from_line_vll(v_rms)
-    vll_pk = line_peak_from_line_vll(v_rms) if topology.endswith("3") else 0.0
-    cc = is_continuous_conduction(load, topology, alpha_deg)
-    cc_wave = cc or topology in {"full1", "full3", "semi3"}
-    points: list[list[float]] = []
-    for i in range(n):
-        wt = _TWO_PI * i / n
-        if topology == "full3" or topology == "semi3":
-            vo = _vo_six_pulse(wt, vll_pk, alpha_rad, cc_wave)
-        elif topology in {"hw3", "half3"}:
-            vo = _vo_three_phase_half(wt, vm3, alpha_rad, cc)
-        elif topology == "full1" or topology == "semi1":
-            vo = _vo_semi_freewheel_1(wt, vm1, alpha_rad)
-        else:
-            vo = _vo_single_phase_half(wt, vm1, alpha_rad, False, cc)
-        points.append([_deg(wt), vo])
-    from electrical_engineer.engines.solvers.power_electronics import rectifier_1ph, rectifier_3ph
-
-    vo_target = _vo_closed_form(problem, rectifier_1ph, rectifier_3ph)
-    mean = mean_waveform(points)
-    if math.isfinite(vo_target) and math.isfinite(mean) and abs(mean) > 1e-9:
-        if abs(vo_target) < 1e-6:
-            for row in points:
-                row[1] = 0.0
-        else:
-            scale = vo_target / mean
-            if abs(scale - 1.0) > 0.005:
-                for row in points:
-                    row[1] *= scale
-    return points
+    return gate_sample_vo(problem, n)
 
 
 def _vo_closed_form(problem: dict, rectifier_1ph, rectifier_3ph) -> float:
@@ -165,17 +124,36 @@ def _vo_closed_form(problem: dict, rectifier_1ph, rectifier_3ph) -> float:
         return (vm / _PI) * (1.0 + cos_a) - (w * ls * io) / _PI
     if topology == "full1":
         vm = _SQRT2 * v_rms
+        e_v = float(problem.get("e_v") or 0.0)
+        if ls <= 0 and load == "R":
+            if alpha_deg >= 90:
+                return 0.0
+            return (vm / _PI) * (1.0 + cos_a)
+        if alpha_deg >= 90 and e_v <= 0:
+            return 0.0
         return (2.0 * vm * cos_a) / _PI - (2.0 * w * ls * io) / _PI
     v_ll = float(problem.get("v_ll_rms") or problem.get("v_rms") or 415)
     vm_ph = phase_peak_from_line_vll(v_ll)
     vll_pk = line_peak_from_line_vll(v_ll)
     cc = is_continuous_conduction(load, topology, alpha_deg)
     if topology in {"hw3", "half3"}:
+        e_v = float(problem.get("e_v") or 0.0)
+        if load != "R" and alpha_deg > 90 and e_v <= 0:
+            return 0.0
         if cc:
             return (3.0 * _SQRT3 * vm_ph / (2.0 * _PI)) * cos_a - (3.0 * w * ls * io) / (2.0 * _PI)
         return (3.0 / (2.0 * _PI)) * vm_ph * (1.0 + math.cos(alpha + _PI / 6.0))
     if topology == "semi3":
         return (3.0 * vll_pk / (2.0 * _PI)) * (1.0 + cos_a) - (3.0 * w * ls * io) / (2.0 * _PI)
+    if load == "R" and ls <= 0:
+        if alpha_deg >= 90:
+            return 0.0
+        if alpha_deg > 60:
+            return (3.0 * vll_pk / _PI) * (1.0 + math.cos(alpha + _PI / 3.0))
+        return (3.0 * vll_pk / _PI) * cos_a
+    e_v = float(problem.get("e_v") or 0.0)
+    if load != "R" and alpha_deg > 90 and e_v <= 0:
+        return 0.0
     return (3.0 * vll_pk / _PI) * cos_a - (3.0 * w * ls * io) / _PI
 
 

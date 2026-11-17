@@ -16,11 +16,19 @@ function rad(degVal) {
   return (degVal * PI) / 180;
 }
 
+/** R-load discontinuous-mode boundaries (EEC-303); RL/CC use continuous bridge formulas. */
 function isContinuousConduction(load, topology, alphaDeg) {
   if (load !== "R") return true;
-  const three = topology.endsWith("3");
-  if (three) return alphaDeg <= 30;
+  if (topology === "full1") return false;
+  if (topology === "full3") return alphaDeg <= 60;
+  if (topology === "hw3" || topology === "half3") return alphaDeg <= 30;
   return alphaDeg <= 0;
+}
+
+function sourcePeakV(p) {
+  const { topology, v_rms } = p;
+  if (topology?.endsWith("3")) return linePeakFromLineVll(v_rms);
+  return SQRT2 * v_rms;
 }
 
 export function voClosedForm(p) {
@@ -40,6 +48,12 @@ export function voClosedForm(p) {
   }
   if (topology === "full1") {
     const Vm = SQRT2 * v_rms;
+    if (ls_h <= 0 && load === "R") {
+      if (alpha_deg >= 90) return 0;
+      return (Vm / PI) * (1 + cosA);
+    }
+    if (alpha_deg >= 90 && !(p.e_v > 0)) return 0;
+    if (alpha_deg > 90 && !(p.e_v > 0)) return 0;
     return (2 * Vm * cosA) / PI - (2 * w * ls_h * io_a) / PI;
   }
 
@@ -47,6 +61,7 @@ export function voClosedForm(p) {
   const VllPk = linePeakFromLineVll(v_rms);
 
   if (topology === "hw3" || topology === "half3") {
+    if (load !== "R" && alpha_deg > 90 && !(p.e_v > 0)) return 0;
     let Vo;
     if (cc) {
       Vo = ((3 * Math.sqrt(3) * Vm) / (2 * PI)) * cosA - (3 * w * ls_h * io_a) / (2 * PI);
@@ -57,6 +72,14 @@ export function voClosedForm(p) {
   }
   if (topology === "semi3") {
     return ((3 * VllPk) / (2 * PI)) * (1 + cosA) - (3 * w * ls_h * io_a) / (2 * PI);
+  }
+  if (load === "R" && ls_h <= 0) {
+    if (alpha_deg >= 90) return 0;
+    if (alpha_deg > 60) return ((3 * VllPk) / PI) * (1 + Math.cos(alpha + PI / 3));
+    return ((3 * VllPk) / PI) * cosA;
+  }
+  if (load !== "R" && alpha_deg > 90 && !(p.e_v > 0)) {
+    return 0;
   }
   return ((3 * VllPk) / PI) * cosA - (3 * w * ls_h * io_a) / PI;
 }
@@ -90,6 +113,15 @@ function voSemiFreewheel1(wt, Vm, alphaRad) {
   return Math.abs(Vm * Math.sin(wt));
 }
 
+function voFull1RWave(wt, Vm, alphaDeg) {
+  if (alphaDeg >= 90) return 0;
+  const alphaRad = rad(alphaDeg);
+  const cycle = ((wt % PI) + PI) % PI;
+  if (cycle < alphaRad) return 0;
+  if (alphaDeg < 60) return Math.abs(Vm * Math.sin(wt));
+  return Math.max(0, Vm * Math.sin(wt));
+}
+
 function voSinglePhaseHalf(wt, Vm, alphaRad, fullWave, continuous = false) {
   if (fullWave) {
     const cycle = ((wt % PI) + PI) % PI;
@@ -105,34 +137,10 @@ function voSinglePhaseHalf(wt, Vm, alphaRad, fullWave, continuous = false) {
 }
 
 export function sampleWaveform(p, N = 720) {
-  const { topology, load = "R", v_rms, alpha_deg } = p;
-  const ls = p.ls_h || 0;
-  if (ls <= 0 && (topology === "full3" || topology === "semi3")) {
-    const gp = { ...p };
-    if (gp.load === "RL" && gp.l_h == null) gp.l_h = 0.01;
-    return gateSampleWaveform(gp, N);
-  }
-  const alphaRad = rad(alpha_deg);
-  const Vm1 = SQRT2 * v_rms;
-  const Vm3 = phasePeakFromLineVll(v_rms);
-  const cc = isContinuousConduction(load, topology, alpha_deg);
-  const points = [];
-  for (let i = 0; i < N; i += 1) {
-    const wt = (2 * PI * i) / N;
-    let vo = 0;
-    if (topology === "hw3" || topology === "half3") vo = voThreePhaseHalf(wt, Vm3, alphaRad, cc);
-    else if (topology === "full1" || topology === "semi1") vo = voSemiFreewheel1(wt, Vm1, alphaRad);
-    else if (topology === "hw1" || topology === "half1") vo = voSinglePhaseHalf(wt, Vm1, alphaRad, false);
-    else vo = voSinglePhaseHalf(wt, Vm1, alphaRad, false);
-    points.push([deg(wt), vo]);
-  }
-  const voTarget = voClosedForm(p);
-  const mean = meanWaveform(points);
-  if (Number.isFinite(voTarget) && Number.isFinite(mean) && Math.abs(mean) > 1e-9 && Math.abs(voTarget) > 1e-6) {
-    const k = voTarget / mean;
-    if (Math.abs(k - 1) > 0.005) for (let j = 0; j < points.length; j += 1) points[j][1] *= k;
-  }
-  return points;
+  const gp = { ...p };
+  if (gp.load === "RL" && gp.l_h == null) gp.l_h = 0.01;
+  if (gp.load === "R" || gp.load === "CC") gp.l_h = 0;
+  return gateSampleWaveform(gp, N);
 }
 
 export function meanWaveform(points) {

@@ -154,7 +154,7 @@ def _describe_file(name: str) -> tuple[str, str, str, str]:
             "Lab · Rectifier",
             theme,
             vp,
-            "Rectifier topology sweep (R load) at two delay angles per capture.",
+            "Rectifier topology sweep — R load, α as in filename (no RL except full3-rl-alpha75).",
         )
     if "collab-06-control-unity-run" in stem:
         return (
@@ -245,7 +245,21 @@ def main() -> int:
     if os.environ.get("ROUND12_CI_STATUS"):
         pf["ci_workflow_status"] = os.environ["ROUND12_CI_STATUS"]
     dirty = subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True).strip()
-    pf["git_dirty_lines"] = len([ln for ln in dirty.splitlines() if ln and not ln.startswith("??")])
+    dirty_lines = [ln for ln in dirty.splitlines() if ln and not ln.startswith("??")]
+    pf["git_dirty_lines"] = len(dirty_lines)
+    diff = subprocess.check_output(["git", "diff", "HEAD"], cwd=ROOT, text=True)
+    pf["git_diff_sha256"] = hashlib.sha256(diff.encode()).hexdigest()[:16] if diff.strip() else None
+    ci_run = os.environ.get("ROUND12_CI_RUN_ID") or pf.get("ci_workflow_run_id")
+    pf_ci_status = os.environ.get("ROUND12_CI_STATUS") or pf.get("ci_workflow_status") or ""
+    product_sha = os.environ.get("CAPTURE_PRODUCT_SHA") or pf.get("capture_product_git_sha") or head
+    pf["ci_reference"] = {
+        "head_sha": product_sha,
+        "head_sha_short": product_sha[:7],
+        "workflow_run_id": str(ci_run) if ci_run else "",
+        "status": pf_ci_status,
+    }
+    if os.environ.get("CAPTURE_PRODUCT_SHA"):
+        pf["capture_product_git_sha"] = os.environ["CAPTURE_PRODUCT_SHA"]
     pf["png_count"] = len(pngs)
     ngspice_txt = OUT / ".ngspice_version"
     ng_cached = ngspice_txt.read_text(encoding="utf-8").strip() if ngspice_txt.is_file() else ""

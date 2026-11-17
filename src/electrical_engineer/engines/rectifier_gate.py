@@ -6,7 +6,14 @@ import math
 from dataclasses import dataclass
 from typing import Any
 
-from electrical_engineer.engines.rectifier_steady import line_peak_from_line_vll, vo_full3_analytic
+from electrical_engineer.engines.rectifier_steady import (
+    line_peak_from_line_vll,
+    phase_peak_from_line_vll,
+    vo_full1_rl_wave,
+    vo_full3_analytic,
+    vo_hw3_r_wave,
+    vo_hw3_rl_wave,
+)
 
 _PI = math.pi
 _DEG = _PI / 180.0
@@ -86,13 +93,36 @@ def _phase_voltages(conv: str, v_rms: float, n: int) -> list[list[float]]:
     return out
 
 
+def _sample_one_ph_r(conv: str, v_rms: float, alpha_deg: float, n: int) -> list[list[float]]:
+    vm = _SQRT2 * v_rms
+    alpha = math.radians(alpha_deg)
+    out: list[list[float]] = []
+    for i in range(n):
+        wt = 2.0 * _PI * i / n
+        vo = 0.0
+        if conv == "hw1":
+            cycle = ((wt % (2.0 * _PI)) + 2.0 * _PI) % (2.0 * _PI)
+            if alpha <= cycle < _PI:
+                vo = max(0.0, vm * math.sin(wt))
+        elif conv == "semi1":
+            cycle = ((wt % _PI) + _PI) % _PI
+            if cycle >= alpha:
+                vo = abs(vm * math.sin(wt))
+        elif conv == "full1":
+            if alpha_deg < 90:
+                cycle = ((wt % _PI) + _PI) % _PI
+                if cycle >= alpha:
+                    vo = abs(vm * math.sin(wt))
+        out.append([360.0 * i / n, vo])
+    return out
+
+
 def gate_sample_vo(problem: dict[str, Any], n: int = 720) -> list[list[float]]:
     conv = _norm_topo(str(problem.get("topology") or "full3"))
     load = str(problem.get("load") or "R")
     alpha = float(problem.get("alpha_deg") or 0.0)
     v_rms = float(problem.get("v_ll_rms") or problem.get("v_rms") or (415.0 if conv.endswith("3") else 230.0))
     r_ohm = float(problem.get("r_ohm") or 10.0)
-    e_v = float(problem.get("e_v") or 0.0)
     ls_source = float(problem.get("ls_h") or 0.0)
     lh = float(problem.get("l_h") if problem.get("l_h") is not None else 0.0)
     if lh <= 0 and load in {"RL", "RLE"}:
@@ -103,9 +133,49 @@ def gate_sample_vo(problem: dict[str, Any], n: int = 720) -> list[list[float]]:
     cc = load == "CC"
     f_hz = float(problem.get("f_hz") or 50.0)
 
+    e_v = float(problem.get("e_v") or 0.0)
+
+    if ls_source <= 0 and not cc and load in {"RL", "RLE"} and conv == "full1":
+        vm = _SQRT2 * v_rms
+        off = alpha >= 90 and e_v <= 0
+        return [
+            [360.0 * i / n, 0.0 if off else vo_full1_rl_wave(2.0 * _PI * i / n, vm, alpha)]
+            for i in range(n)
+        ]
+
+    if ls_source <= 0 and not cc and load == "R" and conv == "hw3":
+        vm_ph = phase_peak_from_line_vll(v_rms)
+        return [
+            [360.0 * i / n, vo_hw3_r_wave(2.0 * _PI * i / n, vm_ph, alpha)]
+            for i in range(n)
+        ]
+
+    if ls_source <= 0 and not cc and load in {"RL", "RLE"} and conv == "hw3":
+        vm_ph = phase_peak_from_line_vll(v_rms)
+        off = alpha > 90 and e_v <= 0
+        return [
+            [360.0 * i / n, 0.0 if off else vo_hw3_rl_wave(2.0 * _PI * i / n, vm_ph, alpha)]
+            for i in range(n)
+        ]
+
+    if ls_source <= 0 and not cc and load == "R" and conv in {"hw1", "semi1", "full1"}:
+        return _sample_one_ph_r(conv, v_rms, alpha, n)
+
     if conv == "full3" and ls_source <= 0 and not cc:
         vll = line_peak_from_line_vll(v_rms)
-        return [[360.0 * i / n, vo_full3_analytic(2.0 * _PI * i / n, vll, alpha)] for i in range(n)]
+        rectifier_off = load == "R" and alpha >= 90
+        rl_rectifier_only = load not in {"R", "CC"} and alpha > 90 and e_v <= 0
+        out: list[list[float]] = []
+        for i in range(n):
+            if rectifier_off or rl_rectifier_only:
+                out.append([360.0 * i / n, 0.0])
+                continue
+            wt = 2.0 * _PI * i / n
+            vo = vo_full3_analytic(wt, vll, alpha)
+            if load == "R":
+                vo = max(0.0, vo)
+            out.append([360.0 * i / n, vo])
+        return out
 
     cfg = _CFG[conv]
     vt = _phase_voltages(conv, v_rms, n)

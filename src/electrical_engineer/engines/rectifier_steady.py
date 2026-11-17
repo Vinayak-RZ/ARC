@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import itertools
 import math
 
 _PI = math.pi
@@ -62,3 +63,74 @@ def vo_full3_analytic(wt: float, vll_pk: float, alpha_deg: float) -> float:
 
 def line_peak_from_line_vll(v_ll_rms: float) -> float:
     return _SQRT2 * v_ll_rms
+
+
+def phase_peak_from_line_vll(v_ll_rms: float) -> float:
+    return _SQRT2 * v_ll_rms / _SQRT3
+
+
+def hw3_rl_pulse_width_deg(alpha_deg: float) -> float:
+    if alpha_deg >= 90:
+        return 0.0
+    if alpha_deg <= 30:
+        return 120.0
+    knots = ((30, 119), (45, 90), (60, 60), (75, 30), (89, 4))
+    if alpha_deg >= knots[-1][0]:
+        return float(knots[-1][1])
+    for (a0, w0), (a1, w1) in itertools.pairwise(knots):
+        if alpha_deg <= a1:
+            t = (alpha_deg - a0) / (a1 - a0)
+            return w0 + t * (w1 - w0)
+    return 0.0
+
+
+def vo_full1_rl_wave(wt: float, vm: float, alpha_deg: float) -> float:
+    if alpha_deg >= 90:
+        return 0.0
+    alpha = math.radians(alpha_deg)
+    cycle = ((wt % _PI) + _PI) % _PI
+    if cycle >= alpha and cycle <= _PI - alpha:
+        return abs(vm * math.sin(wt))
+    return 0.0
+
+
+def vo_hw3_r_wave(wt: float, vm_ph: float, alpha_deg: float) -> float:
+    alpha = math.radians(alpha_deg)
+    w = ((wt % _TWO_PI) + _TWO_PI) % _TWO_PI
+    vo = 0.0
+    for k in range(3):
+        fire = _PI / 6.0 + alpha + k * _TWO_PI / 3.0
+        vf = ((fire % _TWO_PI) + _TWO_PI) % _TWO_PI
+        phase_shift = k * _TWO_PI / 3.0
+        end = ((phase_shift + _PI) % _TWO_PI + _TWO_PI) % _TWO_PI
+        if vf <= end:
+            in_cond = vf <= w < end
+        else:
+            in_cond = w >= vf or w < end
+        if not in_cond:
+            continue
+        v = vm_ph * math.sin(wt - phase_shift)
+        vo = max(vo, max(0.0, v))
+    return max(0.0, vo)
+
+
+def vo_hw3_rl_wave(wt: float, vm_ph: float, alpha_deg: float) -> float:
+    pulse = math.radians(hw3_rl_pulse_width_deg(alpha_deg))
+    if pulse <= 0:
+        return 0.0
+    alpha = math.radians(alpha_deg)
+    w = ((wt % _TWO_PI) + _TWO_PI) % _TWO_PI
+    vo = 0.0
+    for k in range(3):
+        fire = _PI / 6.0 + alpha + k * _TWO_PI / 3.0
+        vf = ((fire % _TWO_PI) + _TWO_PI) % _TWO_PI
+        end = (vf + pulse) % _TWO_PI
+        if vf <= end:
+            in_cond = vf <= w < end
+        else:
+            in_cond = w >= vf or w < end
+        if not in_cond:
+            continue
+        v = vm_ph * math.sin(wt - k * _TWO_PI / 3.0)
+        vo = max(vo, v)
+    return vo

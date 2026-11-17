@@ -1,9 +1,20 @@
 /** Steady-state rectifier v_o (EEC-303 gate model; keep in sync with rectifier_gate.py). */
 
-import { linePeakFromLineVll, voFull3Analytic, phasePeakFromLineVll } from "./rectifier-analytic.js";
+import {
+  linePeakFromLineVll,
+  phasePeakFromLineVll,
+  voFull1RlWave,
+  voFull3Analytic,
+  voHw3RWave,
+  voHw3RlWave,
+} from "./rectifier-analytic.js";
 
 const PI = Math.PI;
 const DEG = PI / 180;
+
+function rad(degVal) {
+  return (degVal * PI) / 180;
+}
 const SQRT2 = Math.SQRT2;
 const SQRT3 = Math.sqrt(3);
 
@@ -102,11 +113,67 @@ export function gateSampleWaveform(p, N = 720) {
   const cc = load === "CC";
   const fHz = p.f_hz ?? 50;
 
-  if (conv === "full3" && lsSource <= 0 && !cc) {
-    const vll = linePeakFromLineVll(vRms);
+  if (lsSource <= 0 && !cc && (load === "RL" || load === "RLE") && conv === "full1") {
+    const Vm = vRms * SQRT2;
+    const off = alpha > 90 && !(+eV > 0);
     return Array.from({ length: N }, (_, i) => {
       const wt = (2 * PI * i) / N;
-      return [(360 * i) / N, voFull3Analytic(wt, vll, alpha)];
+      const vo = off ? 0 : voFull1RlWave(wt, Vm, alpha);
+      return [(360 * i) / N, vo];
+    });
+  }
+
+  if (lsSource <= 0 && !cc && load === "R" && conv === "hw3") {
+    const vmPh = phasePeakFromLineVll(vRms);
+    return Array.from({ length: N }, (_, i) => {
+      const wt = (2 * PI * i) / N;
+      return [(360 * i) / N, voHw3RWave(wt, vmPh, alpha)];
+    });
+  }
+
+  if (lsSource <= 0 && !cc && (load === "RL" || load === "RLE") && conv === "hw3") {
+    const vmPh = phasePeakFromLineVll(vRms);
+    const off = alpha > 90 && !(+eV > 0);
+    return Array.from({ length: N }, (_, i) => {
+      const wt = (2 * PI * i) / N;
+      const vo = off ? 0 : voHw3RlWave(wt, vmPh, alpha);
+      return [(360 * i) / N, vo];
+    });
+  }
+
+  if (lsSource <= 0 && !cc && load === "R" && (conv === "hw1" || conv === "semi1" || conv === "full1")) {
+    const Vm = vRms * SQRT2;
+    return Array.from({ length: N }, (_, i) => {
+      const wt = (2 * PI * i) / N;
+      let vo = 0;
+      const a = rad(alpha);
+      if (conv === "hw1") {
+        const cycle = ((wt % (2 * PI)) + 2 * PI) % (2 * PI);
+        if (cycle >= a && cycle < PI) vo = Math.max(0, Vm * Math.sin(wt));
+      } else if (conv === "semi1") {
+        const cycle = ((wt % PI) + PI) % PI;
+        if (cycle >= a) vo = Math.abs(Vm * Math.sin(wt));
+      } else {
+        if (alpha >= 90) vo = 0;
+        else {
+          const cycle = ((wt % PI) + PI) % PI;
+          if (cycle >= a) vo = Math.abs(Vm * Math.sin(wt));
+        }
+      }
+      return [(360 * i) / N, vo];
+    });
+  }
+
+  if (conv === "full3" && lsSource <= 0 && !cc) {
+    const vll = linePeakFromLineVll(vRms);
+    const rectifierOff = load === "R" && alpha >= 90;
+    const rlRectifierOnly = load !== "R" && load !== "CC" && alpha > 90 && !(+eV > 0);
+    return Array.from({ length: N }, (_, i) => {
+      const wt = (2 * PI * i) / N;
+      if (rectifierOff || rlRectifierOnly) return [(360 * i) / N, 0];
+      let vo = voFull3Analytic(wt, vll, alpha);
+      if (load === "R") vo = Math.max(0, vo);
+      return [(360 * i) / N, vo];
     });
   }
 
@@ -123,7 +190,8 @@ export function gateSampleWaveform(p, N = 720) {
         g.push(true);
         continue;
       }
-      const x = ((s * 360) / N - (dev.b + alpha) + 360) % 360;
+      const raw = (s * 360) / N - (dev.b + alpha);
+      const x = ((raw % 360) + 360) % 360;
       g.push(x < cfg.gw - 1e-9);
     }
     return g;

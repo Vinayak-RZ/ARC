@@ -142,19 +142,6 @@ def _run_series_rlc_collab() -> str:
     return out["run_id"]
 
 
-def _prepare_rlc_rederive(run_id: str) -> None:
-    """Agent re-derive must use RLC template (not stale ngspice netlist) after human R1 edit."""
-    run_dir = RUNS / run_id
-    prob_path = run_dir / "problem.json"
-    if not prob_path.is_file():
-        return
-    prob = json.loads(prob_path.read_text(encoding="utf-8"))
-    prob.pop("cir", None)
-    prob.pop("netlist", None)
-    prob["allow_template_fallback"] = True
-    prob_path.write_text(json.dumps(prob, indent=2) + "\n", encoding="utf-8")
-
-
 def _require_ngspice() -> str:
     if not shutil.which("ngspice"):
         raise RuntimeError(
@@ -197,12 +184,12 @@ def _wait_health() -> None:
 
 
 _RECTIFIER_TOPOS = [
-    ("hw1", "1φ half", 230, (30, 60)),
-    ("semi1", "1φ semi", 230, (30, 60)),
-    ("full1", "1φ full", 230, (30, 60)),
-    ("hw3", "3φ half", 415, (30, 75)),
-    ("semi3", "3φ semi", 415, (30, 75)),
-    ("full3", "3φ full", 415, (30, 75)),
+    ("hw1", "1φ half", 230, (30, 60, 90, 120)),
+    ("semi1", "1φ semi", 230, (30, 60, 90, 120)),
+    ("full1", "1φ full", 230, (30, 60, 90, 120)),
+    ("hw3", "3φ half", 415, (30, 75, 90, 120)),
+    ("semi3", "3φ semi", 415, (30, 75, 90, 120)),
+    ("full3", "3φ full", 415, (30, 75, 90, 120)),
 ]
 
 
@@ -331,7 +318,6 @@ def _capture_theme(browser, *, theme: str) -> dict:
     graph_now = _api("GET", f"/api/runs/{rlc_id}/lab").get("graph") or {}
     _api("POST", "/api/circuit-sandbox/simulate", {"graph": graph_now})
     _api("POST", f"/api/runs/{rlc_id}/lab/verify", {})
-    _prepare_rlc_rederive(rlc_id)
     _api("POST", f"/api/runs/{rlc_id}/lab/re-derive", {})
     _api("POST", f"/api/runs/{rlc_id}/lab/verify", {})
     cd_path = RUNS / rlc_id / "circuit_derive.json"

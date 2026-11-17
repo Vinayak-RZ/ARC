@@ -85,7 +85,9 @@ def _preflight(out_dir: Path) -> dict:
             continue
         if path.startswith(("src/", "ui/src/")):
             untracked_src.append(path)
-    diff = subprocess.check_output(["git", "diff", "HEAD"], cwd=ROOT)
+    diff = subprocess.check_output(["git", "diff", "HEAD"], cwd=ROOT, text=True)
+    ci_run = os.environ.get("ROUND12_CI_RUN_ID", "")
+    ci_status = os.environ.get("ROUND12_CI_STATUS", "success" if ci_run else "")
     req_low = urllib.request.Request(
         f"http://{HOST}:{PORT}/api/control-studio/sessions",
         method="POST",
@@ -138,16 +140,16 @@ def _preflight(out_dir: Path) -> dict:
         "git_sha": sha,
         "git_sha_short": sha_short,
         "ngspice_version": ngspice_version,
-        "merged_collab_pr62_head": "73420104379c93b767aa4f04854525839e3524a4",
+        "merged_collab_head": "a5d1fc11fd392663bffc0f221eb05d0424c07124",
         "ci_reference": {
-            "pr": 62,
-            "head_sha_short": "7342010",
-            "workflow_run_id": "43926478759",
-            "status": "success",
+            "head_sha": sha,
+            "head_sha_short": sha_short,
+            "workflow_run_id": ci_run,
+            "status": ci_status,
         },
         "git_dirty_lines": len(dirty_lines),
         "git_untracked_lines": len(untracked_src),
-        "git_diff_sha256": hashlib.sha256(diff).hexdigest()[:16] if diff else None,
+        "git_diff_sha256": hashlib.sha256(diff.encode()).hexdigest()[:16] if diff.strip() else None,
         "package_path": pkg_path,
         "dist_index_mtime": dist_mtime,
         "kp": kp,
