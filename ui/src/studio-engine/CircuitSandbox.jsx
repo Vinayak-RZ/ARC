@@ -139,6 +139,7 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
   const [simBusy, setSimBusy] = useState(false);
   const [labMeta, setLabMeta] = useState(null);
   const [labVerify, setLabVerify] = useState(null);
+  const [linkedRunData, setLinkedRunData] = useState(null);
   const [runTitle, setRunTitle] = useState("");
   const [viewMode, setViewMode] = useState("yours");
   const [showAuthorship, setShowAuthorship] = useState(false);
@@ -238,6 +239,15 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
           setEdges(e);
           setLabMeta(body?.lab_meta || null);
           setLabVerify(body?.lab_verify || null);
+          setLinkedRunData(
+            detail
+              ? {
+                  ...detail,
+                  lab: detail.lab || body?.lab_meta,
+                  lab_simulate: detail.lab_simulate || body?.lab_simulate,
+                }
+              : null,
+          );
           setRunTitle(detail?.title || linkedRunId);
           hydrated.current = true;
           userTouched.current = false;
@@ -667,6 +677,8 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
       {linkedRunId ? (
         <aside className="studio-lab-drawer card-surface" aria-label="Lab collaboration">
           <LabVerifyPanel
+            runId={linkedRunId}
+            runData={linkedRunData}
             labVerify={labVerify}
             labMeta={labMeta}
             compact

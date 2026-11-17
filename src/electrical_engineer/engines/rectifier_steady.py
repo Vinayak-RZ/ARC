@@ -85,12 +85,11 @@ def hw3_rl_pulse_width_deg(alpha_deg: float) -> float:
 
 
 def vo_full1_rl_wave(wt: float, vm: float, alpha_deg: float) -> float:
-    if alpha_deg >= 90:
-        return 0.0
     alpha = math.radians(alpha_deg)
-    cycle = ((wt % _PI) + _PI) % _PI
-    if cycle >= alpha and cycle <= _PI - alpha:
-        return abs(vm * math.sin(wt))
+    beta = _PI + alpha
+    w = ((wt % _TWO_PI) + _TWO_PI) % _TWO_PI
+    if alpha <= w < beta:
+        return vm * math.sin(wt)
     return 0.0
 
 

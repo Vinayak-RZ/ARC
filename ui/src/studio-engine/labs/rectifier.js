@@ -2,6 +2,7 @@
 
 import { firingAnglesDeg, linePeakFromLineVll, phasePeakFromLineVll, voFull3Analytic } from "./rectifier-analytic.js";
 import { gateSampleWaveform } from "./rectifier-gate.js";
+import { rectifierRlConduction } from "./rectifier-rl.js";
 
 export { phasePeakFromLineVll, firingAnglesDeg };
 
@@ -225,9 +226,14 @@ export function computeRectifier(p) {
   if (clamp.past_limit) VoRaw = 0;
   const Vo = Number.isFinite(VoRaw) ? VoRaw : NaN;
   const Io = p.load === "CC" ? p.io_a : Vo / Math.max(p.r_ohm || 1, 1e-9);
-  const points = !clamp.past_limit && Number.isFinite(Vo) ? sampleWaveform(work) : [];
+  const sampleP =
+    work.load === "RL" || work.load === "RLE"
+      ? { ...work, io_a: Number.isFinite(Io) ? Io : work.io_a }
+      : work;
+  const points = !clamp.past_limit && Number.isFinite(Vo) ? sampleWaveform(sampleP) : [];
   const mean = meanWaveform(points);
   const PF = powerFactorFromWaveform(work, points, Vo);
+  const rlConduction = rectifierRlConduction(p);
   return {
     Vo,
     Io: Number.isFinite(Io) ? Io : NaN,
@@ -236,6 +242,7 @@ export function computeRectifier(p) {
     PF,
     alpha_past_limit: clamp.past_limit,
     alpha_limit_deg: clamp.limit_deg,
+    rlConduction,
     phasePeakVm: p.topology.endsWith("3") ? phasePeakFromLineVll(p.v_rms) : SQRT2 * p.v_rms,
     VoFinite: Number.isFinite(Vo),
   };

@@ -1,7 +1,10 @@
 /** Derived vs lab simulation agreement (Problem + lab results strip). */
 
+import { useMemo } from "react";
 import { formatDiffPct, formatLabValue } from "./labFormat.js";
 import { openRunLab } from "../studio-engine/labs/openExample.js";
+import { LabVerifySparkline } from "./LabVerifySparkline.jsx";
+import { sparklineFromLabVerify } from "./labVerifySparklineData.js";
 
 function badgeClass(status) {
   switch (status) {
@@ -67,6 +70,7 @@ export function LabVerifyPanel({
       ];
   const engine = labVerify.sim_engine || (skipped ? "ngspice not available" : "ngspice");
   const allRowsStale = Boolean(labVerify.all_rows_out_of_date);
+  const sparkSpec = useMemo(() => sparklineFromLabVerify(runData, labVerify), [runData, labVerify]);
 
   const globalStaleBanner =
     allRowsStale && !derivedStale ? (
@@ -144,6 +148,9 @@ export function LabVerifyPanel({
         {globalStaleBanner}
         {contextBanner}
         {actionCta}
+        {runId && runData?.lab && sparkSpec ? (
+          <LabVerifySparkline spec={sparkSpec} width={180} height={44} />
+        ) : null}
         <p className="lab-verify-engine-line">
           Simulated with {engine}
           {labVerify.graph_revision != null ? (
@@ -203,6 +210,7 @@ export function LabVerifyPanel({
           width={160}
           height={72}
         />
+        {sparkSpec ? <LabVerifySparkline spec={sparkSpec} /> : null}
         <span className="lab-verify-lab-caption">
           Agent&apos;s circuit · r{labRev ?? "—"} · {engine} · Open in lab →
         </span>

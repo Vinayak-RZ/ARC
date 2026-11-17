@@ -141,6 +141,15 @@ export function RectifierLab() {
               <strong>{result.PF.toFixed(3)}</strong>
             </div>
           ) : null}
+          {result.rlConduction ? (
+            <div className="card">
+              <div className="learn-code-label">Conduction</div>
+              <strong>{result.rlConduction.label}</strong>
+              {result.rlConduction.finiteL ? (
+                <p className="hint">Finite L — source-commutated i(t) ODE</p>
+              ) : null}
+            </div>
+          ) : null}
         </>
       }
       exampleId="rectifier"

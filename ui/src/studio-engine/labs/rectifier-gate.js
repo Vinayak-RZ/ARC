@@ -3,11 +3,12 @@
 import {
   linePeakFromLineVll,
   phasePeakFromLineVll,
-  voFull1RlWave,
   voFull3Analytic,
   voHw3RWave,
+  voHw3RlContinuous,
   voHw3RlWave,
 } from "./rectifier-analytic.js";
+import { loadInductanceH, rectifierRlConduction } from "./rectifier-rl.js";
 const PI = Math.PI;
 const DEG = PI / 180;
 
@@ -116,19 +117,22 @@ export function gateSampleWaveform(p, N = 720) {
   const rOhm = p.r_ohm ?? 10;
   const eV = p.e_v ?? 0;
   const lsSource = p.ls_h ?? 0;
-  let lh = p.l_h ?? 0;
-  if (lh <= 0 && (load === "RL" || load === "RLE")) lh = 0.01;
+  let lh = loadInductanceH(p);
   if (load === "R" || load === "CC") lh = 0;
-  const io = p.io_a ?? 15;
+  const rlCond = rectifierRlConduction(p);
+  const stiffRl = rlCond && !rlCond.finiteL;
+  let io = p.io_a ?? 15;
   const cc = load === "CC";
+  if (stiffRl && io <= 0) io = 1;
   const fHz = p.f_hz ?? 50;
 
-  if (lsSource <= 0 && !cc && (load === "RL" || load === "RLE") && conv === "full1") {
-    const Vm = vRms * SQRT2;
+
+  if (lsSource <= 0 && !cc && stiffRl && (load === "RL" || load === "RLE") && conv === "hw3") {
+    const vmPh = phasePeakFromLineVll(vRms);
     const off = alpha > 90 && !(+eV > 0);
     return Array.from({ length: N }, (_, i) => {
       const wt = (2 * PI * i) / N;
-      const vo = off ? 0 : voFull1RlWave(wt, Vm, alpha);
+      const vo = off ? 0 : voHw3RlContinuous(wt, vmPh, alpha);
       return [(360 * i) / N, vo];
     });
   }
@@ -141,15 +145,6 @@ export function gateSampleWaveform(p, N = 720) {
     });
   }
 
-  if (lsSource <= 0 && !cc && (load === "RL" || load === "RLE") && conv === "hw3") {
-    const vmPh = phasePeakFromLineVll(vRms);
-    const off = alpha > 90 && !(+eV > 0);
-    return Array.from({ length: N }, (_, i) => {
-      const wt = (2 * PI * i) / N;
-      const vo = off ? 0 : voHw3RlWave(wt, vmPh, alpha);
-      return [(360 * i) / N, vo];
-    });
-  }
 
   if (lsSource <= 0 && !cc && load === "R" && (conv === "hw1" || conv === "semi1" || conv === "full1")) {
     const Vm = vRms * SQRT2;
@@ -182,6 +177,7 @@ export function gateSampleWaveform(p, N = 720) {
       if (rectifierOff || rlRectifierOnly) return [(360 * i) / N, 0];
       let vo = voFull3Analytic(wt, vll, alpha);
       if (load === "R") vo = Math.max(0, vo);
+      else if (load === "RL" || load === "RLE") vo = vo;
       return [(360 * i) / N, vo];
     });
   }
@@ -306,7 +302,7 @@ export function gateSampleWaveform(p, N = 720) {
         }
       }
       let vo;
-      if (cc) {
+      if (cc || stiffRl) {
         i = io;
         vo = on ? vpath : 0;
       } else if (on || fwd) {
@@ -342,7 +338,11 @@ export function gateSampleWaveform(p, N = 720) {
     stepCore(false);
     if (Math.abs(i - prev) < 1e-8 * (1 + Math.abs(i))) break;
   }
-  kill();
-  i = Math.max(i, 1e-6);
+  if (stiffRl || cc) {
+    i = Math.max(i, io);
+  } else {
+    kill();
+    i = Math.max(i, 1e-6);
+  }
   return stepCore(true);
 }

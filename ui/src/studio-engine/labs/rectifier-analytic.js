@@ -60,12 +60,34 @@ export function hw3RlPulseWidthDeg(alphaDeg) {
   return 0;
 }
 
+/** @deprecated use voFull1RlContinuous from rectifier-rl.js for stiff RL */
 export function voFull1RlWave(wt, vm, alphaDeg) {
-  if (alphaDeg >= 90) return 0;
   const a = (alphaDeg * PI) / 180;
-  const cycle = ((wt % PI) + PI) % PI;
-  if (cycle >= a && cycle <= PI - a) return Math.abs(vm * Math.sin(wt));
+  const beta = PI + a;
+  const w = ((wt % (2 * PI)) + 2 * PI) % (2 * PI);
+  if (w >= a && w < beta) return vm * Math.sin(wt);
   return 0;
+}
+
+/** 3φ half-wave stiff RL: next-fire commutation window (no pulse-width fit). */
+export function voHw3RlContinuous(wt, vmPh, alphaDeg) {
+  const alpha = (alphaDeg * PI) / 180;
+  const w = ((wt % (2 * PI)) + 2 * PI) % (2 * PI);
+  let vo = 0;
+  for (let k = 0; k < 3; k += 1) {
+    const fire = PI / 6 + alpha + k * ((2 * PI) / 3);
+    const vf = ((fire % (2 * PI)) + 2 * PI) % (2 * PI);
+    const phaseShift = k * ((2 * PI) / 3);
+    const nextFire = PI / 6 + alpha + ((k + 1) % 3) * ((2 * PI) / 3);
+    const end = ((nextFire % (2 * PI)) + 2 * PI) % (2 * PI);
+    let inCond;
+    if (vf <= end) inCond = w >= vf && w < end;
+    else inCond = w >= vf || w < end;
+    if (!inCond) continue;
+    const v = vmPh * Math.sin(w - phaseShift);
+    vo = Math.max(vo, v);
+  }
+  return vo;
 }
 
 export function voHw3RWave(wt, vmPh, alphaDeg) {

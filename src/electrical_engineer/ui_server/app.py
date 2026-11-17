@@ -905,6 +905,10 @@ def create_app(root: Path | None = None) -> FastAPI:
             lab_verify = attach_verify_freshness(lab_verify, lab_meta_obj, run_dir=d) or lab_verify
         if lab_verify.get("disagreement_banner") and not disagreement:
             disagreement = lab_verify.get("disagreement_banner")
+        if lab_verify and not lab_verify.get("simulate"):
+            sim_nest = _read_json_file(d / "lab_simulate.json")
+            if sim_nest:
+                lab_verify = {**lab_verify, "simulate": sim_nest}
         lab = None
         if lab_meta_obj:
             lab = {
@@ -937,6 +941,7 @@ def create_app(root: Path | None = None) -> FastAPI:
             "work_steps": _work_steps(d),
             "circuit_derive": _read_json_file(d / "circuit_derive.json"),
             "rlc_transient": _read_json_file(d / "rlc_transient.json"),
+            "lab_simulate": _read_json_file(d / "lab_simulate.json"),
             "activity_feed": activity_feed,
             "state": state,
         }
