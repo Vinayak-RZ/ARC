@@ -1,0 +1,1777 @@
+{
+  "git_sha": "3b59db3e04e9d6d19e90bc57d2045b685b211d44",
+  "git_sha_short": "3b59db3",
+  "ngspice_version": "ngspice-42 : Circuit level simulation program",
+  "merged_collab_pr62_head": "73420104379c93b767aa4f04854525839e3524a4",
+  "ci_reference": {
+    "head_sha": "3b59db3e04e9d6d19e90bc57d2045b685b211d44",
+    "head_sha_short": "3b59db3",
+    "workflow_run_id": "44025468905",
+    "status": "success"
+  },
+  "git_dirty_lines": 2,
+  "git_untracked_lines": 0,
+  "git_diff_sha256": "34ae90bf7eefb548",
+  "package_path": "/agent/repos/ARC-capture-3b59db3/src/electrical_engineer/__init__.py",
+  "dist_index_mtime": 1794900427.2880936,
+  "kp": 50.0,
+  "step_series": true,
+  "gain_margin_caption": "No \u2212180\u00b0 crossing in 0.001 to 100,000 rad/s.",
+  "low_gain_pm_deg": "Not defined",
+  "finite_crossover": {
+    "status": "settled_off_target",
+    "final_value": 0.9090909090909084,
+    "t_settle_s": 0.35577647940957396,
+    "overshoot_pct": 0.0,
+    "steady_state_error_pct": 9.1
+  },
+  "capture_scan": {
+    "files": [
+      {
+        "file": "cmdk-open-dark.png",
+        "mean_luminance": 3.1
+      },
+      {
+        "file": "cmdk-open-light.png",
+        "mean_luminance": 2.99
+      },
+      {
+        "file": "cmdk-query-light.png",
+        "mean_luminance": 2.96
+      },
+      {
+        "file": "collab-01-run-sim-vs-derived-agrees-dark.png",
+        "mean_luminance": 3.73
+      },
+      {
+        "file": "collab-01-run-sim-vs-derived-agrees-light.png",
+        "mean_luminance": 3.48
+      },
+      {
+        "file": "collab-02-lab-provenance-vc-activity-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "collab-02-lab-provenance-vc-activity-light.png",
+        "mean_luminance": 1.45
+      },
+      {
+        "file": "collab-03-out-of-date-ask-rederive-dark.png",
+        "mean_luminance": 3.73
+      },
+      {
+        "file": "collab-03-out-of-date-ask-rederive-light.png",
+        "mean_luminance": 3.48
+      },
+      {
+        "file": "collab-03b-after-rederive-agrees-dark.png",
+        "mean_luminance": 3.75
+      },
+      {
+        "file": "collab-03b-after-rederive-agrees-light.png",
+        "mean_luminance": 3.48
+      },
+      {
+        "file": "collab-04-changes-r1-chip-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "collab-04-changes-r1-chip-light.png",
+        "mean_luminance": 1.45
+      },
+      {
+        "file": "collab-04b-after-restore-dark.png",
+        "mean_luminance": 1.3
+      },
+      {
+        "file": "collab-04b-after-restore-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "collab-05-forward-euler-mismatch-dark.png",
+        "mean_luminance": 4.38
+      },
+      {
+        "file": "collab-05-forward-euler-mismatch-light.png",
+        "mean_luminance": 4.24
+      },
+      {
+        "file": "collab-06-control-unity-lab-agreement-dark.png",
+        "mean_luminance": 1.32
+      },
+      {
+        "file": "collab-06-control-unity-lab-agreement-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "collab-06-control-unity-run-agrees-dark.png",
+        "mean_luminance": 3.15
+      },
+      {
+        "file": "collab-06-control-unity-run-agrees-light.png",
+        "mean_luminance": 3.05
+      },
+      {
+        "file": "focus-button-dark.png",
+        "mean_luminance": 5.09
+      },
+      {
+        "file": "focus-button-light.png",
+        "mean_luminance": 4.71
+      },
+      {
+        "file": "focus-composer-dark.png",
+        "mean_luminance": 2.31
+      },
+      {
+        "file": "focus-composer-light.png",
+        "mean_luminance": 2.3
+      },
+      {
+        "file": "focus-tab-dark.png",
+        "mean_luminance": 4.91
+      },
+      {
+        "file": "focus-tab-light.png",
+        "mean_luminance": 4.57
+      },
+      {
+        "file": "focus-table-row-dark.png",
+        "mean_luminance": 3.05
+      },
+      {
+        "file": "focus-table-row-light.png",
+        "mean_luminance": 2.98
+      },
+      {
+        "file": "focus-tile-dark.png",
+        "mean_luminance": 2.32
+      },
+      {
+        "file": "focus-tile-light.png",
+        "mean_luminance": 2.29
+      },
+      {
+        "file": "gallery-1024-dark.png",
+        "mean_luminance": 1.49
+      },
+      {
+        "file": "gallery-1024-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "gallery-dark.png",
+        "mean_luminance": 2.22
+      },
+      {
+        "file": "gallery-light.png",
+        "mean_luminance": 2.1
+      },
+      {
+        "file": "home-dark.png",
+        "mean_luminance": 2.33
+      },
+      {
+        "file": "home-empty-1024-dark.png",
+        "mean_luminance": 2.19
+      },
+      {
+        "file": "home-empty-1024-light.png",
+        "mean_luminance": 2.22
+      },
+      {
+        "file": "home-empty-light.png",
+        "mean_luminance": 1.1
+      },
+      {
+        "file": "home-scrolled-1024-light.png",
+        "mean_luminance": 2.48
+      },
+      {
+        "file": "home-scrolled-1280-dark.png",
+        "mean_luminance": 1.45
+      },
+      {
+        "file": "home-scrolled-1280-light.png",
+        "mean_luminance": 0.82
+      },
+      {
+        "file": "home-scrolled-1440-light.png",
+        "mean_luminance": 0.84
+      },
+      {
+        "file": "home-scrolled-dark.png",
+        "mean_luminance": 2.87
+      },
+      {
+        "file": "home-with-recent-light.png",
+        "mean_luminance": 2.31
+      },
+      {
+        "file": "lab-converter-dark.png",
+        "mean_luminance": 2.64
+      },
+      {
+        "file": "lab-converter-light.png",
+        "mean_luminance": 2.65
+      },
+      {
+        "file": "lab-idmt-dark.png",
+        "mean_luminance": 2.63
+      },
+      {
+        "file": "lab-idmt-light.png",
+        "mean_luminance": 2.67
+      },
+      {
+        "file": "lab-lead-dark.png",
+        "mean_luminance": 2.65
+      },
+      {
+        "file": "lab-lead-light.png",
+        "mean_luminance": 3.65
+      },
+      {
+        "file": "lab-rectifier-dark.png",
+        "mean_luminance": 2.65
+      },
+      {
+        "file": "lab-rectifier-full1-r-alpha0-dark.png",
+        "mean_luminance": 1.32
+      },
+      {
+        "file": "lab-rectifier-full1-r-alpha0-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "lab-rectifier-full1-r-alpha120-dark.png",
+        "mean_luminance": 1.3
+      },
+      {
+        "file": "lab-rectifier-full1-r-alpha120-light.png",
+        "mean_luminance": 1.45
+      },
+      {
+        "file": "lab-rectifier-full1-r-alpha30-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-full1-r-alpha30-light.png",
+        "mean_luminance": 1.38
+      },
+      {
+        "file": "lab-rectifier-full1-r-alpha60-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-full1-r-alpha60-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-full1-r-alpha90-dark.png",
+        "mean_luminance": 1.33
+      },
+      {
+        "file": "lab-rectifier-full1-r-alpha90-light.png",
+        "mean_luminance": 1.42
+      },
+      {
+        "file": "lab-rectifier-full1-rl-alpha0-dark.png",
+        "mean_luminance": 1.32
+      },
+      {
+        "file": "lab-rectifier-full1-rl-alpha0-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-full1-rl-alpha120-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-full1-rl-alpha120-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-full1-rl-alpha30-dark.png",
+        "mean_luminance": 1.33
+      },
+      {
+        "file": "lab-rectifier-full1-rl-alpha30-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-full1-rl-alpha60-dark.png",
+        "mean_luminance": 1.32
+      },
+      {
+        "file": "lab-rectifier-full1-rl-alpha60-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-full1-rl-alpha90-dark.png",
+        "mean_luminance": 1.32
+      },
+      {
+        "file": "lab-rectifier-full1-rl-alpha90-light.png",
+        "mean_luminance": 1.4
+      },
+      {
+        "file": "lab-rectifier-full3-r-alpha0-dark.png",
+        "mean_luminance": 1.32
+      },
+      {
+        "file": "lab-rectifier-full3-r-alpha0-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-full3-r-alpha120-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-full3-r-alpha120-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-full3-r-alpha30-dark.png",
+        "mean_luminance": 1.32
+      },
+      {
+        "file": "lab-rectifier-full3-r-alpha30-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "lab-rectifier-full3-r-alpha60-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-full3-r-alpha60-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "lab-rectifier-full3-r-alpha75-dark.png",
+        "mean_luminance": 1.32
+      },
+      {
+        "file": "lab-rectifier-full3-r-alpha75-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-full3-r-alpha90-dark.png",
+        "mean_luminance": 1.32
+      },
+      {
+        "file": "lab-rectifier-full3-r-alpha90-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "lab-rectifier-full3-rl-alpha0-dark.png",
+        "mean_luminance": 1.33
+      },
+      {
+        "file": "lab-rectifier-full3-rl-alpha0-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-full3-rl-alpha120-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-full3-rl-alpha120-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "lab-rectifier-full3-rl-alpha30-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-full3-rl-alpha30-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-full3-rl-alpha60-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-full3-rl-alpha60-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-full3-rl-alpha75-dark.png",
+        "mean_luminance": 1.25
+      },
+      {
+        "file": "lab-rectifier-full3-rl-alpha75-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "lab-rectifier-full3-rl-alpha90-dark.png",
+        "mean_luminance": 1.32
+      },
+      {
+        "file": "lab-rectifier-full3-rl-alpha90-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-hw1-r-alpha0-dark.png",
+        "mean_luminance": 1.3
+      },
+      {
+        "file": "lab-rectifier-hw1-r-alpha0-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-hw1-r-alpha120-dark.png",
+        "mean_luminance": 1.3
+      },
+      {
+        "file": "lab-rectifier-hw1-r-alpha120-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-hw1-r-alpha30-dark.png",
+        "mean_luminance": 1.32
+      },
+      {
+        "file": "lab-rectifier-hw1-r-alpha30-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-hw1-r-alpha60-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-hw1-r-alpha60-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "lab-rectifier-hw1-r-alpha90-dark.png",
+        "mean_luminance": 1.32
+      },
+      {
+        "file": "lab-rectifier-hw1-r-alpha90-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-hw1-rl-alpha0-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-hw1-rl-alpha0-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "lab-rectifier-hw1-rl-alpha120-dark.png",
+        "mean_luminance": 1.32
+      },
+      {
+        "file": "lab-rectifier-hw1-rl-alpha120-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "lab-rectifier-hw1-rl-alpha30-dark.png",
+        "mean_luminance": 1.33
+      },
+      {
+        "file": "lab-rectifier-hw1-rl-alpha30-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "lab-rectifier-hw1-rl-alpha60-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-hw1-rl-alpha60-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "lab-rectifier-hw1-rl-alpha90-dark.png",
+        "mean_luminance": 1.29
+      },
+      {
+        "file": "lab-rectifier-hw1-rl-alpha90-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-hw3-r-alpha0-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-hw3-r-alpha0-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-hw3-r-alpha120-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-hw3-r-alpha120-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-hw3-r-alpha30-dark.png",
+        "mean_luminance": 1.33
+      },
+      {
+        "file": "lab-rectifier-hw3-r-alpha30-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-hw3-r-alpha60-dark.png",
+        "mean_luminance": 1.3
+      },
+      {
+        "file": "lab-rectifier-hw3-r-alpha60-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "lab-rectifier-hw3-r-alpha75-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-hw3-r-alpha75-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-hw3-r-alpha90-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-hw3-r-alpha90-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-hw3-rl-alpha0-dark.png",
+        "mean_luminance": 1.32
+      },
+      {
+        "file": "lab-rectifier-hw3-rl-alpha0-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "lab-rectifier-hw3-rl-alpha120-dark.png",
+        "mean_luminance": 1.32
+      },
+      {
+        "file": "lab-rectifier-hw3-rl-alpha120-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "lab-rectifier-hw3-rl-alpha30-dark.png",
+        "mean_luminance": 1.32
+      },
+      {
+        "file": "lab-rectifier-hw3-rl-alpha30-light.png",
+        "mean_luminance": 1.45
+      },
+      {
+        "file": "lab-rectifier-hw3-rl-alpha60-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-hw3-rl-alpha60-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-hw3-rl-alpha75-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-hw3-rl-alpha75-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-hw3-rl-alpha90-dark.png",
+        "mean_luminance": 1.32
+      },
+      {
+        "file": "lab-rectifier-hw3-rl-alpha90-light.png",
+        "mean_luminance": 1.42
+      },
+      {
+        "file": "lab-rectifier-light.png",
+        "mean_luminance": 2.66
+      },
+      {
+        "file": "lab-rectifier-semi1-r-alpha0-dark.png",
+        "mean_luminance": 1.3
+      },
+      {
+        "file": "lab-rectifier-semi1-r-alpha0-light.png",
+        "mean_luminance": 1.42
+      },
+      {
+        "file": "lab-rectifier-semi1-r-alpha120-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-semi1-r-alpha120-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-semi1-r-alpha30-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-semi1-r-alpha30-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-semi1-r-alpha60-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-semi1-r-alpha60-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-semi1-r-alpha90-dark.png",
+        "mean_luminance": 1.3
+      },
+      {
+        "file": "lab-rectifier-semi1-r-alpha90-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-semi1-rl-alpha0-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-semi1-rl-alpha0-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-semi1-rl-alpha120-dark.png",
+        "mean_luminance": 1.32
+      },
+      {
+        "file": "lab-rectifier-semi1-rl-alpha120-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-semi1-rl-alpha30-dark.png",
+        "mean_luminance": 1.29
+      },
+      {
+        "file": "lab-rectifier-semi1-rl-alpha30-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-semi1-rl-alpha60-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-semi1-rl-alpha60-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-semi1-rl-alpha90-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-semi1-rl-alpha90-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "lab-rectifier-semi3-r-alpha0-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-semi3-r-alpha0-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-semi3-r-alpha120-dark.png",
+        "mean_luminance": 1.32
+      },
+      {
+        "file": "lab-rectifier-semi3-r-alpha120-light.png",
+        "mean_luminance": 1.42
+      },
+      {
+        "file": "lab-rectifier-semi3-r-alpha30-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-semi3-r-alpha30-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-semi3-r-alpha60-dark.png",
+        "mean_luminance": 1.32
+      },
+      {
+        "file": "lab-rectifier-semi3-r-alpha60-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "lab-rectifier-semi3-r-alpha75-dark.png",
+        "mean_luminance": 1.3
+      },
+      {
+        "file": "lab-rectifier-semi3-r-alpha75-light.png",
+        "mean_luminance": 1.45
+      },
+      {
+        "file": "lab-rectifier-semi3-r-alpha90-dark.png",
+        "mean_luminance": 1.3
+      },
+      {
+        "file": "lab-rectifier-semi3-r-alpha90-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "lab-rectifier-semi3-rl-alpha0-dark.png",
+        "mean_luminance": 1.33
+      },
+      {
+        "file": "lab-rectifier-semi3-rl-alpha0-light.png",
+        "mean_luminance": 1.41
+      },
+      {
+        "file": "lab-rectifier-semi3-rl-alpha120-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-semi3-rl-alpha120-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "lab-rectifier-semi3-rl-alpha30-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-semi3-rl-alpha30-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "lab-rectifier-semi3-rl-alpha60-dark.png",
+        "mean_luminance": 1.3
+      },
+      {
+        "file": "lab-rectifier-semi3-rl-alpha60-light.png",
+        "mean_luminance": 1.42
+      },
+      {
+        "file": "lab-rectifier-semi3-rl-alpha75-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-semi3-rl-alpha75-light.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "lab-rectifier-semi3-rl-alpha90-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "lab-rectifier-semi3-rl-alpha90-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "learn-achievements-dark.png",
+        "mean_luminance": 2.96
+      },
+      {
+        "file": "learn-achievements-light.png",
+        "mean_luminance": 2.88
+      },
+      {
+        "file": "learn-landing-1024-dark.png",
+        "mean_luminance": 1.2
+      },
+      {
+        "file": "learn-landing-1024-light.png",
+        "mean_luminance": 1.26
+      },
+      {
+        "file": "learn-landing-dark.png",
+        "mean_luminance": 1.95
+      },
+      {
+        "file": "learn-landing-light.png",
+        "mean_luminance": 1.98
+      },
+      {
+        "file": "learn-subject-power-electronics-dark.png",
+        "mean_luminance": 2.34
+      },
+      {
+        "file": "learn-subject-power-electronics-light.png",
+        "mean_luminance": 2.28
+      },
+      {
+        "file": "library-1024-dark.png",
+        "mean_luminance": 1.06
+      },
+      {
+        "file": "library-1024-light.png",
+        "mean_luminance": 1.03
+      },
+      {
+        "file": "library-dark.png",
+        "mean_luminance": 2.14
+      },
+      {
+        "file": "library-light.png",
+        "mean_luminance": 2.07
+      },
+      {
+        "file": "problem-answer-dark.png",
+        "mean_luminance": 4.9
+      },
+      {
+        "file": "problem-answer-light.png",
+        "mean_luminance": 4.55
+      },
+      {
+        "file": "problem-circuit-checked-diagram-light.png",
+        "mean_luminance": 4.74
+      },
+      {
+        "file": "problem-circuit-checked-light.png",
+        "mean_luminance": 4.75
+      },
+      {
+        "file": "problem-circuit-checked-work-light.png",
+        "mean_luminance": 4.75
+      },
+      {
+        "file": "problem-control-checked-dark.png",
+        "mean_luminance": 3.29
+      },
+      {
+        "file": "problem-control-checked-lab-agreement-dark.png",
+        "mean_luminance": 1.27
+      },
+      {
+        "file": "problem-control-checked-lab-agreement-light.png",
+        "mean_luminance": 1.42
+      },
+      {
+        "file": "problem-control-checked-light.png",
+        "mean_luminance": 3.12
+      },
+      {
+        "file": "problem-control-checked-work-dark.png",
+        "mean_luminance": 3.29
+      },
+      {
+        "file": "problem-control-checked-work-light.png",
+        "mean_luminance": 3.12
+      },
+      {
+        "file": "problem-dark.png",
+        "mean_luminance": 4.9
+      },
+      {
+        "file": "problem-divider-run-1024-dark.png",
+        "mean_luminance": 5.51
+      },
+      {
+        "file": "problem-divider-run-1024-light.png",
+        "mean_luminance": 5.26
+      },
+      {
+        "file": "problem-parameters-drawer-light.png",
+        "mean_luminance": 4.58
+      },
+      {
+        "file": "problem-parameters-stale-light.png",
+        "mean_luminance": 4.73
+      },
+      {
+        "file": "problem-stale-dark.png",
+        "mean_luminance": 5.07
+      },
+      {
+        "file": "problem-work-dark.png",
+        "mean_luminance": 4.89
+      },
+      {
+        "file": "problem-work-tab-light.png",
+        "mean_luminance": 4.56
+      },
+      {
+        "file": "problems-empty-dark.png",
+        "mean_luminance": 2.66
+      },
+      {
+        "file": "problems-empty-light.png",
+        "mean_luminance": 2.6
+      },
+      {
+        "file": "problems-error-dark.png",
+        "mean_luminance": 2.65
+      },
+      {
+        "file": "problems-error-light.png",
+        "mean_luminance": 2.6
+      },
+      {
+        "file": "problems-list-1024-dark.png",
+        "mean_luminance": 2.25
+      },
+      {
+        "file": "problems-list-1024-light.png",
+        "mean_luminance": 2.15
+      },
+      {
+        "file": "problems-list-dark.png",
+        "mean_luminance": 3.04
+      },
+      {
+        "file": "problems-list-light.png",
+        "mean_luminance": 2.95
+      },
+      {
+        "file": "problems-loading-light.png",
+        "mean_luminance": 1.71
+      },
+      {
+        "file": "problems-row-hover-dark.png",
+        "mean_luminance": 3.05
+      },
+      {
+        "file": "problems-row-hover-light.png",
+        "mean_luminance": 2.99
+      },
+      {
+        "file": "run-idmt-dark.png",
+        "mean_luminance": 3.52
+      },
+      {
+        "file": "run-idmt-light.png",
+        "mean_luminance": 3.24
+      },
+      {
+        "file": "run-rectifier-dark.png",
+        "mean_luminance": 3.86
+      },
+      {
+        "file": "run-rectifier-light.png",
+        "mean_luminance": 3.55
+      },
+      {
+        "file": "settings-about-dark.png",
+        "mean_luminance": 2.38
+      },
+      {
+        "file": "settings-about-light.png",
+        "mean_luminance": 2.38
+      },
+      {
+        "file": "settings-agents-1024-dark.png",
+        "mean_luminance": 1.97
+      },
+      {
+        "file": "settings-agents-1024-light.png",
+        "mean_luminance": 1.9
+      },
+      {
+        "file": "settings-agents-dark.png",
+        "mean_luminance": 2.43
+      },
+      {
+        "file": "settings-agents-light.png",
+        "mean_luminance": 2.35
+      },
+      {
+        "file": "settings-appearance-dark.png",
+        "mean_luminance": 2.38
+      },
+      {
+        "file": "settings-appearance-light.png",
+        "mean_luminance": 2.37
+      },
+      {
+        "file": "settings-data-dark.png",
+        "mean_luminance": 2.39
+      },
+      {
+        "file": "settings-data-light.png",
+        "mean_luminance": 2.38
+      },
+      {
+        "file": "settings-engines-dark.png",
+        "mean_luminance": 2.39
+      },
+      {
+        "file": "settings-engines-light.png",
+        "mean_luminance": 2.35
+      },
+      {
+        "file": "sidebar-collapsed-dark.png",
+        "mean_luminance": 3.4
+      },
+      {
+        "file": "sidebar-collapsed-light.png",
+        "mean_luminance": 1.64
+      },
+      {
+        "file": "studio-after-resize-light.png",
+        "mean_luminance": 2.7
+      },
+      {
+        "file": "studio-after-simulate-dark.png",
+        "mean_luminance": 2.62
+      },
+      {
+        "file": "studio-before-simulate-dark.png",
+        "mean_luminance": 2.62
+      },
+      {
+        "file": "studio-block-selected-after-simulate-light.png",
+        "mean_luminance": 2.66
+      },
+      {
+        "file": "studio-block-selected-dark.png",
+        "mean_luminance": 2.62
+      },
+      {
+        "file": "studio-block-selected-light.png",
+        "mean_luminance": 2.66
+      },
+      {
+        "file": "studio-circuit-sandbox-1024-dark.png",
+        "mean_luminance": 1.43
+      },
+      {
+        "file": "studio-circuit-sandbox-1024-light.png",
+        "mean_luminance": 1.58
+      },
+      {
+        "file": "studio-circuit-series-rlc-dark.png",
+        "mean_luminance": 2.63
+      },
+      {
+        "file": "studio-circuit-series-rlc-light.png",
+        "mean_luminance": 2.66
+      },
+      {
+        "file": "studio-control-1024-dark.png",
+        "mean_luminance": 1.75
+      },
+      {
+        "file": "studio-control-1024-light.png",
+        "mean_luminance": 1.91
+      },
+      {
+        "file": "studio-landing-dark.png",
+        "mean_luminance": 2.35
+      },
+      {
+        "file": "studio-landing-light.png",
+        "mean_luminance": 2.26
+      },
+      {
+        "file": "studio-layout-after-simulate-1440-dark.png",
+        "mean_luminance": 1.31
+      },
+      {
+        "file": "studio-layout-after-simulate-1440-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "studio-layout-after-simulate-light.png",
+        "mean_luminance": 2.65
+      },
+      {
+        "file": "studio-layout-before-simulate-1440-dark.png",
+        "mean_luminance": 1.32
+      },
+      {
+        "file": "studio-layout-before-simulate-1440-light.png",
+        "mean_luminance": 1.44
+      },
+      {
+        "file": "studio-layout-before-simulate-light.png",
+        "mean_luminance": 2.59
+      },
+      {
+        "file": "studio-margins-finite-dark.png",
+        "mean_luminance": 2.63
+      },
+      {
+        "file": "studio-margins-finite-light.png",
+        "mean_luminance": 2.65
+      },
+      {
+        "file": "studio-margins-no-crossover-dark.png",
+        "mean_luminance": 2.65
+      },
+      {
+        "file": "studio-margins-no-crossover-light.png",
+        "mean_luminance": 2.65
+      },
+      {
+        "file": "studio-step-extended-dark.png",
+        "mean_luminance": 2.6
+      },
+      {
+        "file": "studio-step-extended-light.png",
+        "mean_luminance": 2.63
+      },
+      {
+        "file": "studio-step-offtarget-light.png",
+        "mean_luminance": 2.66
+      },
+      {
+        "file": "studio-step-settled-dark.png",
+        "mean_luminance": 2.64
+      },
+      {
+        "file": "studio-step-settled-light.png",
+        "mean_luminance": 2.65
+      },
+      {
+        "file": "studio-step-unsettled-dark.png",
+        "mean_luminance": 2.6
+      },
+      {
+        "file": "studio-step-unsettled-light.png",
+        "mean_luminance": 2.63
+      }
+    ],
+    "dark_integrity_failures": [
+      {
+        "dark": "cmdk-open-dark.png",
+        "light": "cmdk-open-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "collab-01-run-sim-vs-derived-agrees-dark.png",
+        "light": "collab-01-run-sim-vs-derived-agrees-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "collab-02-lab-provenance-vc-activity-dark.png",
+        "light": "collab-02-lab-provenance-vc-activity-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "collab-03-out-of-date-ask-rederive-dark.png",
+        "light": "collab-03-out-of-date-ask-rederive-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "collab-03b-after-rederive-agrees-dark.png",
+        "light": "collab-03b-after-rederive-agrees-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "collab-04-changes-r1-chip-dark.png",
+        "light": "collab-04-changes-r1-chip-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "collab-04b-after-restore-dark.png",
+        "light": "collab-04b-after-restore-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "collab-05-forward-euler-mismatch-dark.png",
+        "light": "collab-05-forward-euler-mismatch-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "collab-06-control-unity-lab-agreement-dark.png",
+        "light": "collab-06-control-unity-lab-agreement-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "collab-06-control-unity-run-agrees-dark.png",
+        "light": "collab-06-control-unity-run-agrees-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "focus-button-dark.png",
+        "light": "focus-button-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "focus-composer-dark.png",
+        "light": "focus-composer-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "focus-tab-dark.png",
+        "light": "focus-tab-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "focus-table-row-dark.png",
+        "light": "focus-table-row-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "focus-tile-dark.png",
+        "light": "focus-tile-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "gallery-1024-dark.png",
+        "light": "gallery-1024-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "gallery-dark.png",
+        "light": "gallery-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "home-empty-1024-dark.png",
+        "light": "home-empty-1024-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "home-scrolled-1280-dark.png",
+        "light": "home-scrolled-1280-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-converter-dark.png",
+        "light": "lab-converter-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-idmt-dark.png",
+        "light": "lab-idmt-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-lead-dark.png",
+        "light": "lab-lead-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-dark.png",
+        "light": "lab-rectifier-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-full1-r-alpha0-dark.png",
+        "light": "lab-rectifier-full1-r-alpha0-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-full1-r-alpha120-dark.png",
+        "light": "lab-rectifier-full1-r-alpha120-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-full1-r-alpha30-dark.png",
+        "light": "lab-rectifier-full1-r-alpha30-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-full1-r-alpha60-dark.png",
+        "light": "lab-rectifier-full1-r-alpha60-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-full1-r-alpha90-dark.png",
+        "light": "lab-rectifier-full1-r-alpha90-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-full1-rl-alpha0-dark.png",
+        "light": "lab-rectifier-full1-rl-alpha0-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-full1-rl-alpha120-dark.png",
+        "light": "lab-rectifier-full1-rl-alpha120-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-full1-rl-alpha30-dark.png",
+        "light": "lab-rectifier-full1-rl-alpha30-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-full1-rl-alpha60-dark.png",
+        "light": "lab-rectifier-full1-rl-alpha60-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-full1-rl-alpha90-dark.png",
+        "light": "lab-rectifier-full1-rl-alpha90-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-full3-r-alpha0-dark.png",
+        "light": "lab-rectifier-full3-r-alpha0-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-full3-r-alpha120-dark.png",
+        "light": "lab-rectifier-full3-r-alpha120-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-full3-r-alpha30-dark.png",
+        "light": "lab-rectifier-full3-r-alpha30-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-full3-r-alpha60-dark.png",
+        "light": "lab-rectifier-full3-r-alpha60-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-full3-r-alpha75-dark.png",
+        "light": "lab-rectifier-full3-r-alpha75-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-full3-r-alpha90-dark.png",
+        "light": "lab-rectifier-full3-r-alpha90-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-full3-rl-alpha0-dark.png",
+        "light": "lab-rectifier-full3-rl-alpha0-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-full3-rl-alpha120-dark.png",
+        "light": "lab-rectifier-full3-rl-alpha120-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-full3-rl-alpha30-dark.png",
+        "light": "lab-rectifier-full3-rl-alpha30-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-full3-rl-alpha60-dark.png",
+        "light": "lab-rectifier-full3-rl-alpha60-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-full3-rl-alpha75-dark.png",
+        "light": "lab-rectifier-full3-rl-alpha75-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-full3-rl-alpha90-dark.png",
+        "light": "lab-rectifier-full3-rl-alpha90-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-hw1-r-alpha0-dark.png",
+        "light": "lab-rectifier-hw1-r-alpha0-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-hw1-r-alpha120-dark.png",
+        "light": "lab-rectifier-hw1-r-alpha120-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-hw1-r-alpha30-dark.png",
+        "light": "lab-rectifier-hw1-r-alpha30-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-hw1-r-alpha60-dark.png",
+        "light": "lab-rectifier-hw1-r-alpha60-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-hw1-r-alpha90-dark.png",
+        "light": "lab-rectifier-hw1-r-alpha90-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-hw1-rl-alpha0-dark.png",
+        "light": "lab-rectifier-hw1-rl-alpha0-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-hw1-rl-alpha120-dark.png",
+        "light": "lab-rectifier-hw1-rl-alpha120-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-hw1-rl-alpha30-dark.png",
+        "light": "lab-rectifier-hw1-rl-alpha30-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-hw1-rl-alpha60-dark.png",
+        "light": "lab-rectifier-hw1-rl-alpha60-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-hw1-rl-alpha90-dark.png",
+        "light": "lab-rectifier-hw1-rl-alpha90-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-hw3-r-alpha0-dark.png",
+        "light": "lab-rectifier-hw3-r-alpha0-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-hw3-r-alpha120-dark.png",
+        "light": "lab-rectifier-hw3-r-alpha120-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-hw3-r-alpha30-dark.png",
+        "light": "lab-rectifier-hw3-r-alpha30-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-hw3-r-alpha60-dark.png",
+        "light": "lab-rectifier-hw3-r-alpha60-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-hw3-r-alpha75-dark.png",
+        "light": "lab-rectifier-hw3-r-alpha75-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-hw3-r-alpha90-dark.png",
+        "light": "lab-rectifier-hw3-r-alpha90-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-hw3-rl-alpha0-dark.png",
+        "light": "lab-rectifier-hw3-rl-alpha0-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-hw3-rl-alpha120-dark.png",
+        "light": "lab-rectifier-hw3-rl-alpha120-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-hw3-rl-alpha30-dark.png",
+        "light": "lab-rectifier-hw3-rl-alpha30-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-hw3-rl-alpha60-dark.png",
+        "light": "lab-rectifier-hw3-rl-alpha60-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-hw3-rl-alpha75-dark.png",
+        "light": "lab-rectifier-hw3-rl-alpha75-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-hw3-rl-alpha90-dark.png",
+        "light": "lab-rectifier-hw3-rl-alpha90-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-semi1-r-alpha0-dark.png",
+        "light": "lab-rectifier-semi1-r-alpha0-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-semi1-r-alpha120-dark.png",
+        "light": "lab-rectifier-semi1-r-alpha120-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-semi1-r-alpha30-dark.png",
+        "light": "lab-rectifier-semi1-r-alpha30-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-semi1-r-alpha60-dark.png",
+        "light": "lab-rectifier-semi1-r-alpha60-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-semi1-r-alpha90-dark.png",
+        "light": "lab-rectifier-semi1-r-alpha90-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-semi1-rl-alpha0-dark.png",
+        "light": "lab-rectifier-semi1-rl-alpha0-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-semi1-rl-alpha120-dark.png",
+        "light": "lab-rectifier-semi1-rl-alpha120-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-semi1-rl-alpha30-dark.png",
+        "light": "lab-rectifier-semi1-rl-alpha30-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-semi1-rl-alpha60-dark.png",
+        "light": "lab-rectifier-semi1-rl-alpha60-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-semi1-rl-alpha90-dark.png",
+        "light": "lab-rectifier-semi1-rl-alpha90-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-semi3-r-alpha0-dark.png",
+        "light": "lab-rectifier-semi3-r-alpha0-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-semi3-r-alpha120-dark.png",
+        "light": "lab-rectifier-semi3-r-alpha120-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-semi3-r-alpha30-dark.png",
+        "light": "lab-rectifier-semi3-r-alpha30-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-semi3-r-alpha60-dark.png",
+        "light": "lab-rectifier-semi3-r-alpha60-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-semi3-r-alpha75-dark.png",
+        "light": "lab-rectifier-semi3-r-alpha75-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-semi3-r-alpha90-dark.png",
+        "light": "lab-rectifier-semi3-r-alpha90-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-semi3-rl-alpha0-dark.png",
+        "light": "lab-rectifier-semi3-rl-alpha0-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-semi3-rl-alpha120-dark.png",
+        "light": "lab-rectifier-semi3-rl-alpha120-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-semi3-rl-alpha30-dark.png",
+        "light": "lab-rectifier-semi3-rl-alpha30-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-semi3-rl-alpha60-dark.png",
+        "light": "lab-rectifier-semi3-rl-alpha60-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-semi3-rl-alpha75-dark.png",
+        "light": "lab-rectifier-semi3-rl-alpha75-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "lab-rectifier-semi3-rl-alpha90-dark.png",
+        "light": "lab-rectifier-semi3-rl-alpha90-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "learn-achievements-dark.png",
+        "light": "learn-achievements-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "learn-landing-1024-dark.png",
+        "light": "learn-landing-1024-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "learn-landing-dark.png",
+        "light": "learn-landing-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "learn-subject-power-electronics-dark.png",
+        "light": "learn-subject-power-electronics-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "library-1024-dark.png",
+        "light": "library-1024-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "library-dark.png",
+        "light": "library-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "problem-answer-dark.png",
+        "light": "problem-answer-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "problem-control-checked-dark.png",
+        "light": "problem-control-checked-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "problem-control-checked-lab-agreement-dark.png",
+        "light": "problem-control-checked-lab-agreement-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "problem-control-checked-work-dark.png",
+        "light": "problem-control-checked-work-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "problem-divider-run-1024-dark.png",
+        "light": "problem-divider-run-1024-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "problems-empty-dark.png",
+        "light": "problems-empty-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "problems-error-dark.png",
+        "light": "problems-error-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "problems-list-1024-dark.png",
+        "light": "problems-list-1024-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "problems-list-dark.png",
+        "light": "problems-list-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "problems-row-hover-dark.png",
+        "light": "problems-row-hover-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "run-idmt-dark.png",
+        "light": "run-idmt-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "run-rectifier-dark.png",
+        "light": "run-rectifier-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "settings-about-dark.png",
+        "light": "settings-about-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "settings-agents-1024-dark.png",
+        "light": "settings-agents-1024-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "settings-agents-dark.png",
+        "light": "settings-agents-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "settings-appearance-dark.png",
+        "light": "settings-appearance-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "settings-data-dark.png",
+        "light": "settings-data-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "settings-engines-dark.png",
+        "light": "settings-engines-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "sidebar-collapsed-dark.png",
+        "light": "sidebar-collapsed-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "studio-block-selected-dark.png",
+        "light": "studio-block-selected-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "studio-circuit-sandbox-1024-dark.png",
+        "light": "studio-circuit-sandbox-1024-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "studio-circuit-series-rlc-dark.png",
+        "light": "studio-circuit-series-rlc-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "studio-control-1024-dark.png",
+        "light": "studio-control-1024-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "studio-landing-dark.png",
+        "light": "studio-landing-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "studio-layout-after-simulate-1440-dark.png",
+        "light": "studio-layout-after-simulate-1440-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "studio-layout-before-simulate-1440-dark.png",
+        "light": "studio-layout-before-simulate-1440-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "studio-margins-finite-dark.png",
+        "light": "studio-margins-finite-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "studio-margins-no-crossover-dark.png",
+        "light": "studio-margins-no-crossover-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "studio-step-extended-dark.png",
+        "light": "studio-step-extended-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "studio-step-settled-dark.png",
+        "light": "studio-step-settled-light.png",
+        "reason": "mean luminance too close to light"
+      },
+      {
+        "dark": "studio-step-unsettled-dark.png",
+        "light": "studio-step-unsettled-light.png",
+        "reason": "mean luminance too close to light"
+      }
+    ],
+    "nan_text_hits": []
+  },
+  "ci_status_rollup": {
+    "checks": [],
+    "note": "CI status unavailable from gh"
+  },
+  "ci_workflow_run_id": "44025468905",
+  "ci_workflow_status": "success",
+  "png_count": 276,
+  "capture_product_git_sha": "3b59db3e04e9d6d19e90bc57d2045b685b211d44"
+}
