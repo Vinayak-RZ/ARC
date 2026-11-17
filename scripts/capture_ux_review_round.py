@@ -140,12 +140,11 @@ def _preflight(out_dir: Path) -> dict:
         "git_sha": sha,
         "git_sha_short": sha_short,
         "ngspice_version": ngspice_version,
-        "merged_collab_pr62_head": "73420104379c93b767aa4f04854525839e3524a4",
+        # CI facts come from the caller; never assume a green run.
         "ci_reference": {
-            "pr": 62,
-            "head_sha_short": "7342010",
-            "workflow_run_id": "43926478759",
-            "status": "success",
+            "head_sha_short": sha_short,
+            "workflow_run_id": os.environ.get("ROUND12_CI_RUN_ID", ""),
+            "status": os.environ.get("ROUND12_CI_STATUS", "not_reported"),
         },
         "git_dirty_lines": len(dirty_lines),
         "git_untracked_lines": len(untracked_src),

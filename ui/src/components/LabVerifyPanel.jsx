@@ -99,19 +99,19 @@ export function LabVerifyPanel({
         {onReRun ? (
           <button
             type="button"
-            className={derivedStale ? "button-primary" : "text-button"}
+            className={derivedStale ? "button-primary" : "button-secondary"}
             onClick={onReRun}
           >
             {derivedStale ? "Re-simulate in lab" : "Re-run"}
           </button>
         ) : null}
         {(derivedStale || sameRevMismatch) && onAskAgent ? (
-          <button type="button" className="text-button" onClick={onAskAgent}>
+          <button type="button" className="button-secondary" onClick={onAskAgent}>
             Ask agent to re-derive
           </button>
         ) : null}
         {sameRevMismatch && onAcceptSimulated ? (
-          <button type="button" className="text-button" onClick={onAcceptSimulated}>
+          <button type="button" className="button-secondary" onClick={onAcceptSimulated}>
             Accept simulated value
           </button>
         ) : null}

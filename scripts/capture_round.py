@@ -146,7 +146,7 @@ def main() -> int:
     env_pf = {
         **capture_env,
         "ROUND12_CI_RUN_ID": os.environ.get("ROUND12_CI_RUN_ID", ""),
-        "ROUND12_CI_STATUS": os.environ.get("ROUND12_CI_STATUS", "success"),
+        "ROUND12_CI_STATUS": os.environ.get("ROUND12_CI_STATUS", "not_reported"),
         "ROUND13_CAPTURE_SHA": sha,
     }
     _run_fail_fast([sys.executable, str(ROOT / "scripts" / "round_12_postflight.py")], env=env_pf)
