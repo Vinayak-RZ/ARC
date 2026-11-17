@@ -9,6 +9,7 @@ test.describe("Learn page", () => {
     const s5 = page.getByRole("tab", { name: /S5/ });
     await expect(s5).toHaveAttribute("aria-selected", "true");
     await page.getByRole("button", { name: /Power Electronics/i }).click();
+    await page.waitForURL(/\?.*subject=eec-303/, { timeout: 20000 });
     await expect(page.locator(".learn-subject-header h1")).toHaveText("Power Electronics", { timeout: 20000 });
     const frame = page.locator("iframe.learn-notes-frame");
     await expect(frame).toBeVisible();
