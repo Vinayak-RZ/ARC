@@ -89,10 +89,9 @@ def _ensure_control_block(
         cmd = f"run\nprint {probe_inner}\n"
     elif analysis == "tran":
         metric = str(derive_metric or "").lower()
-        if metric in {"vc_peak", "peak", "max"}:
-            text += f"\n.measure tran _arc_out max {probe}\n"
-            cmd = f"run\nprint all {probe}\nprint _arc_out\n"
-        elif metric in {"vc_final", "final"} and t_s is not None:
+        if metric in {"vc_peak", "peak", "max"} or (
+            metric in {"vc_final", "final"} and t_s is not None
+        ):
             text += f"\n.measure tran _arc_out max {probe}\n"
             cmd = f"run\nprint all {probe}\nprint _arc_out\n"
         elif t_s is not None:
