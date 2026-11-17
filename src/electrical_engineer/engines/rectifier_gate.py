@@ -6,7 +6,7 @@ import math
 from dataclasses import dataclass
 from typing import Any
 
-from electrical_engineer.engines.rectifier_steady import vo_full3_analytic, line_peak_from_line_vll
+from electrical_engineer.engines.rectifier_steady import line_peak_from_line_vll, vo_full3_analytic
 
 _PI = math.pi
 _DEG = _PI / 180.0

@@ -6,11 +6,14 @@ import math
 
 import pytest
 
-from electrical_engineer.engines.rectifier_steady import firing_angles_deg, vo_full3_analytic
 from electrical_engineer.engines.rectifier_gate import gate_sample_vo, line_peak_from_line_vll
-from electrical_engineer.engines.rectifier_waveforms import mean_waveform, sample_waveform
+from electrical_engineer.engines.rectifier_steady import firing_angles_deg, vo_full3_analytic
+from electrical_engineer.engines.rectifier_waveforms import (
+    _vo_closed_form,
+    mean_waveform,
+    sample_waveform,
+)
 from electrical_engineer.engines.solvers.power_electronics import rectifier_1ph, rectifier_3ph
-from electrical_engineer.engines.rectifier_waveforms import _vo_closed_form
 
 _SQRT2 = math.sqrt(2.0)
 
