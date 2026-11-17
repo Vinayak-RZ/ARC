@@ -133,7 +133,7 @@ def _describe_file(name: str) -> tuple[str, str, str, str]:
             "Collaboration 4b · Restore",
             theme,
             vp,
-            "After Restore agent version on circuit lab.",
+            "Restore agent version: R1 = 10 Ω, Vc,peak = 11.630 V at 3.628 ms; no Changes chip.",
         )
     if stem.startswith("collab-05"):
         return (
@@ -142,19 +142,17 @@ def _describe_file(name: str) -> tuple[str, str, str, str]:
             vp,
             "Real rlc-bad-derive example: forward-Euler derivation vs ngspice.",
         )
-    if stem.startswith("lab-rectifier-full3"):
+    m_rect = re.match(
+        r"lab-rectifier-(hw1|semi1|full1|hw3|semi3|full3)-(r|rl)-alpha(\d+)",
+        stem,
+    )
+    if m_rect:
+        topo, load, alpha = m_rect.group(1), m_rect.group(2).upper(), m_rect.group(3)
         return (
             "Lab · Rectifier",
             theme,
             vp,
-            "3φ full, RL load, α = 75°; Vo readout ≈ 145.1 V.",
-        )
-    if re.match(r"lab-rectifier-(hw1|semi1|full1|hw3|semi3|full3)-r-alpha\d+", stem):
-        return (
-            "Lab · Rectifier",
-            theme,
-            vp,
-            "Rectifier topology sweep — R load, α as in filename (no RL except full3-rl-alpha75).",
+            f"{topo} load {load}, α = {alpha}°; Vo readout matches closed form.",
         )
     if "collab-06-control-unity-run" in stem:
         return (
@@ -288,8 +286,7 @@ def main() -> int:
         "",
         (
             "Includes round-11 coverage, 1280×800 home scroll companions (incl. `home-scrolled-1280-dark.png`), "
-            "collab-03–05 (live forward-Euler mismatch), rectifier topology sweep (two α per topology), "
-            "and `lab-rectifier-full3-rl-alpha75` (Vo ≈ 145.1 V)."
+            "collab loop through 06, and rectifier sweep (R + RL × topologies × α grid; readouts checked vs closed form)."
         ),
         "",
         f"Capture HEAD: `{pf.get('git_sha_short')}` · CI run `{pf.get('ci_workflow_run_id', '—')}` · `git_dirty_lines`: {pf.get('git_dirty_lines')}.",
@@ -307,7 +304,7 @@ def main() -> int:
     fixture_stems: set[str] = set()
 
     lines = [
-        "# Round 12 — UX capture index",
+        f"# {round_title} — UX capture index",
         "",
         f"Git HEAD: `{pf.get('git_sha', subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip())}`",
         f"Short SHA: `{pf.get('git_sha_short', '?')}`",
@@ -336,11 +333,11 @@ def main() -> int:
             "3. `collab-03-out-of-date-ask-rederive-*.png` — Out of date + Ask agent to re-derive.",
             "3b. `collab-03b-after-rederive-agrees-*.png` — Agrees after re-derive; R1 = 20 Ω; t_s ≈ 5.83 ms.",
             "4. `collab-04-changes-r1-chip-*.png` — Changes tab with R1: 10 → 20 Ω chip.",
-            "4b. `collab-04b-after-restore-*.png` — After Restore agent version.",
+            "4b. `collab-04b-after-restore-*.png` — Restore: R1=10 Ω, 11.630 V @ 3.628 ms, no Changes chip.",
             "5. `collab-05-forward-euler-mismatch-*.png` — live forward-Euler derive vs ngspice (not a JSON fixture).",
             "6. `collab-06-control-unity-run-agrees-*.png` + `collab-06-control-unity-lab-agreement-*.png` — unity control run + lab.",
             "",
-            "Rectifier: `lab-rectifier-full3-rl-alpha75-*.png` — 3φ full, RL, α = 75°, Vo ≈ 145.1 V.",
+            "Rectifier: `lab-rectifier-{topo}-{r|rl}-alpha{N}-*.png` — sweep α ∈ {0,30,60,75?,90,120}; Vo vs closed form at capture.",
             "",
             "## Known issues",
             "",

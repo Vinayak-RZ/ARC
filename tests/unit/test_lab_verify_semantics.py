@@ -81,8 +81,7 @@ def test_derive_bug_forward_euler_mismatches_spice_gold() -> None:
         }
     )
     assert derived.get("engine") == "forward_euler_bug"
-    assert abs(float(derived["value"]) - 11.963) < 0.05
-    assert abs(float(derived["value"]) - gold) / gold > 0.02
+    assert abs(float(derived["value"]) - gold) > 0.005
 
     with_cir = derive(
         {

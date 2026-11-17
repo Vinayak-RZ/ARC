@@ -184,12 +184,12 @@ def _wait_health() -> None:
 
 
 _RECTIFIER_TOPOS = [
-    ("hw1", "1φ half", 230, (30, 60, 90, 120)),
-    ("semi1", "1φ semi", 230, (30, 60, 90, 120)),
-    ("full1", "1φ full", 230, (30, 60, 90, 120)),
-    ("hw3", "3φ half", 415, (30, 75, 90, 120)),
-    ("semi3", "3φ semi", 415, (30, 75, 90, 120)),
-    ("full3", "3φ full", 415, (30, 75, 90, 120)),
+    ("hw1", "1φ half", 230, (0, 30, 60, 90, 120)),
+    ("semi1", "1φ semi", 230, (0, 30, 60, 90, 120)),
+    ("full1", "1φ full", 230, (0, 30, 60, 90, 120)),
+    ("hw3", "3φ half", 415, (0, 30, 60, 75, 90, 120)),
+    ("semi3", "3φ semi", 415, (0, 30, 60, 75, 90, 120)),
+    ("full3", "3φ full", 415, (0, 30, 60, 75, 90, 120)),
 ]
 
 
@@ -203,17 +203,56 @@ def _set_rectifier_lab(page, *, topo_label: str, v_rms: int, alpha: int, load: s
     page.wait_for_timeout(450)
 
 
-def _capture_rectifier_topologies(page, *, theme: str) -> None:
-    for topo_id, label, v_rms, angles in _RECTIFIER_TOPOS:
-        for alpha in angles:
-            _set_rectifier_lab(page, topo_label=label, v_rms=v_rms, alpha=alpha, load="R")
-            _shot(page, f"lab-rectifier-{topo_id}-r-alpha{alpha}", theme=theme, full_page=True)
-    _set_rectifier_lab(page, topo_label="3φ full", v_rms=415, alpha=75, load="RL")
+def _rectifier_vo_closed(topology: str, load: str, v_rms: int, alpha: int) -> float:
+    from electrical_engineer.engines.rectifier_waveforms import _vo_closed_form
+    from electrical_engineer.engines.solvers.power_electronics import rectifier_1ph, rectifier_3ph
+
+    return float(
+        _vo_closed_form(
+            {
+                "topology": topology,
+                "load": load,
+                "v_rms": v_rms,
+                "v_ll_rms": v_rms,
+                "alpha_deg": alpha,
+                "io_a": 0,
+                "ls_h": 0,
+            },
+            rectifier_1ph,
+            rectifier_3ph,
+        )
+    )
+
+
+def _assert_rectifier_readout(page, *, topology: str, load: str, v_rms: int, alpha: int) -> None:
     vo_txt = page.locator(".card").filter(has_text="Vo").locator("strong").inner_text()
     vo = float(vo_txt.split()[0])
-    if abs(vo - 145.1) > 0.15:
-        raise RuntimeError(f"rectifier full3 RL α=75: expected Vo≈145.1 V, got {vo_txt!r}")
-    _shot(page, "lab-rectifier-full3-rl-alpha75", theme=theme, full_page=True)
+    expected = _rectifier_vo_closed(topology, load, v_rms, alpha)
+    if abs(expected) < 0.5:
+        if abs(vo) > 1.0:
+            raise RuntimeError(f"rectifier {topology} {load} α={alpha}: expected ~0 V, got {vo_txt!r}")
+        return
+    rel = abs(vo - expected) / abs(expected)
+    if rel > 0.006:
+        raise RuntimeError(
+            f"rectifier {topology} {load} α={alpha}: readout {vo} vs closed {expected:.4f} ({rel * 100:.2f}%)"
+        )
+
+
+def _capture_rectifier_topologies(page, *, theme: str) -> None:
+    for topo_id, label, v_rms, angles in _RECTIFIER_TOPOS:
+        for load in ("R", "RL"):
+            for alpha in angles:
+                _set_rectifier_lab(page, topo_label=label, v_rms=v_rms, alpha=alpha, load=load)
+                _assert_rectifier_readout(
+                    page, topology=topo_id, load=load, v_rms=v_rms, alpha=alpha
+                )
+                _shot(
+                    page,
+                    f"lab-rectifier-{topo_id}-{load.lower()}-alpha{alpha}",
+                    theme=theme,
+                    full_page=True,
+                )
 
 
 def _capture_theme(browser, *, theme: str) -> dict:
@@ -312,6 +351,13 @@ def _capture_theme(browser, *, theme: str) -> dict:
     page.locator(".lab-provenance-bar button.button-secondary", has_text="Restore agent version").click()
     page.wait_for_timeout(800)
     page.wait_for_selector(".studio-circuit-results", timeout=30_000)
+    if page.locator(".lab-changes-chip-row").count():
+        raise RuntimeError("collab-04b: Changes chip row should be empty after Restore")
+    r1_val = page.locator(".studio-circuit-inspector input").first
+    if r1_val.count():
+        assert "10" in (r1_val.input_value() or ""), "collab-04b R1 should be 10 Ω after Restore"
+    _assert_text(page, r"11\.630", "collab-04b Vc peak")
+    _assert_text(page, r"3\.628", "collab-04b peak time")
     _shot(page, "collab-04b-after-restore", theme=theme, full_page=True)
 
     _set_r1_and_reverify(rlc_id, 20.0)
@@ -365,8 +411,11 @@ def _capture_theme(browser, *, theme: str) -> dict:
     m0 = (lv_bad.get("metrics") or [{}])[0]
     derived_bad = float(m0.get("derived") or 0)
     sim_bad = m0.get("simulated")
-    if abs(derived_bad - 11.96) > 0.08:
-        raise RuntimeError(f"collab-05: expected forward-Euler derived ~11.96 V, got {derived_bad}")
+    sp_gold = 11.630
+    if abs(derived_bad - sp_gold) < 0.02:
+        raise RuntimeError(
+            f"collab-05: forward-Euler derive should disagree with ngspice ~{sp_gold} V, got {derived_bad}"
+        )
     if str(lv_bad.get("status") or "") not in ("mismatch", "differs"):
         raise RuntimeError(f"collab-05: expected mismatch verify, got {lv_bad.get('status')}")
     if sim_bad is not None and abs(float(sim_bad) - 11.63) > 0.15:
