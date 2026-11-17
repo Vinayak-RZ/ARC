@@ -334,15 +334,15 @@ def _capture_theme(browser, *, theme: str) -> dict:
     _prepare_rlc_rederive(rlc_id)
     _api("POST", f"/api/runs/{rlc_id}/lab/re-derive", {})
     _api("POST", f"/api/runs/{rlc_id}/lab/verify", {})
-    for _ in range(60):
-        run_payload = _api("GET", f"/api/runs/{rlc_id}")
-        cd = run_payload.get("circuit_derive") or {}
-        tr = run_payload.get("rlc_transient") or {}
-        if cd.get("derive_metric") == "Vc_final" or float(tr.get("overshoot_pct") or 99) < 0.5:
-            break
+    cd_path = RUNS / rlc_id / "circuit_derive.json"
+    for _ in range(80):
+        if cd_path.is_file():
+            cd_disk = json.loads(cd_path.read_text(encoding="utf-8"))
+            if cd_disk.get("derive_metric") == "Vc_final":
+                break
         time.sleep(0.25)
     else:
-        raise RuntimeError("collab-03b: circuit_derive/rlc_transient not ready after re-derive")
+        raise RuntimeError("collab-03b: circuit_derive.json not ready after re-derive")
     page.goto(f"{BASE}/?problem={rlc_id}", wait_until="domcontentloaded")
     page.wait_for_selector("#lab-verify-heading", timeout=60_000)
     page.get_by_text("Agrees", exact=False).first.wait_for(state="visible", timeout=120_000)
