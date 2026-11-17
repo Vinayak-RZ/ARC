@@ -2955,3 +2955,32 @@ a { color: var(--ee-color-primary); }
 .product-workspace .studio-workspace-pane.studio-circuits {
   min-height: min(720px, calc(100vh - 7rem));
 }
+
+/* Selected-part value editor in the circuit lab */
+.studio-circuit-inspector {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 7;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 1px solid var(--ee-color-hairline);
+  border-radius: 8px;
+  background: var(--ee-color-surface-card);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+  font-size: 13px;
+}
+.studio-circuit-inspector label { font-weight: 600; color: var(--ee-color-ink); }
+.studio-circuit-inspector input {
+  width: 96px;
+  padding: 4px 8px;
+  border: 1px solid var(--ee-border-input);
+  border-radius: 6px;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  background: var(--ee-color-canvas);
+  color: var(--ee-color-ink);
+}
+.studio-circuit-inspector-unit { color: var(--text-muted); }

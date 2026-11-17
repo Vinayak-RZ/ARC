@@ -130,6 +130,36 @@ function FitViewOnChange({ signal }) {
   return null;
 }
 
+const UNIT_LABEL = { ohm: "Ω", H: "H", F: "F", V: "V", A: "A" };
+
+/** Inline value editor for the selected part (the human side of the shared lab). */
+function PartValueStrip({ part, onCommit }) {
+  const [text, setText] = useState(String(part.data?.value ?? ""));
+  const unit = UNIT_LABEL[part.data?.unit] ?? part.data?.unit ?? "";
+  const id = `part-value-${part.id}`;
+  return (
+    <form
+      className="studio-circuit-inspector"
+      aria-label={`Edit ${part.data?.refdes || part.id}`}
+      onSubmit={(e) => {
+        e.preventDefault();
+        onCommit(part.id, text);
+      }}
+    >
+      <label htmlFor={id}>{part.data?.refdes || part.id}</label>
+      <input
+        id={id}
+        inputMode="decimal"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        onBlur={() => onCommit(part.id, text)}
+      />
+      <span className="studio-circuit-inspector-unit">{unit}</span>
+      <button type="submit" className="button-secondary">Apply</button>
+    </form>
+  );
+}
+
 /** Human label for the simulator that produced a result (never a raw engine id). */
 function engineLabel(engine) {
   const id = String(engine || "").toLowerCase();
@@ -281,7 +311,18 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
     if (linkedRunId) {
       loadLinkedRun(true);
       const es = new EventSource(`/api/runs/${linkedRunId}/events`);
-      es.onmessage = () => loadLinkedRun(false);
+      es.onmessage = (ev) => {
+        let data = {};
+        try {
+          data = JSON.parse(ev.data || "{}");
+        } catch {
+          data = {};
+        }
+        if (data.type === "hello" || data.type === "heartbeat") return;
+        // Disk events come from an agent in another process (MCP); verify and simulate
+        // results can change without a new revision, so always reload those.
+        loadLinkedRun(data.source === "disk");
+      };
       return () => es.close();
     }
     if (hydrated.current) return;
@@ -430,7 +471,13 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
       });
       const body = await r.json();
       if (!r.ok || !body.ok) {
-        setMsg(body.error || "Simulate failed");
+        if (silent) {
+          // Background auto-run on a circuit someone is still wiring: stay quiet and
+          // try again on the next lab update instead of leaving a stale error.
+          autoSimForRun.current = "";
+        } else {
+          setMsg(body.error || "Simulate failed");
+        }
         setSim(null);
       } else {
         const params = seriesRlcParamsFromFlow(nodes, edges);
@@ -461,6 +508,27 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
       if (!silent && token === simToken.current) setSimBusy(false);
     }
   }
+
+  const selectedPart = nodes.find((n) => n.selected && n.data?.kind && n.data.kind !== "ground" && n.data.kind !== "junction");
+
+  const commitPartValue = useCallback(
+    (nodeId, raw) => {
+      const v = Number(String(raw).trim());
+      if (!Number.isFinite(v) || v <= 0) {
+        setMsg("Enter a positive number.");
+        return;
+      }
+      const cur = nodes.find((n) => n.id === nodeId);
+      if (!cur || Number(cur.data?.value) === v) return;
+      snapshot();
+      userTouched.current = true;
+      const next = nodes.map((n) => (n.id === nodeId ? { ...n, data: { ...n.data, value: v } } : n));
+      setNodes(next);
+      setMsg("");
+      persist(next, edges);
+    },
+    [nodes, edges, persist, setNodes, snapshot],
+  );
 
   const diffChips = useMemo(() => {
     // "Agent's version" everywhere (bar pill, Changes, Agent's, Restore) is the agent's
@@ -624,6 +692,9 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
         </header>
         <Palette onAdd={addPart} disabled={simBusy} />
         <div className="studio-circuit-canvas flow-wrap" ref={wrapRef}>
+          {selectedPart ? (
+            <PartValueStrip key={`${selectedPart.id}:${selectedPart.data?.value}`} part={selectedPart} onCommit={commitPartValue} />
+          ) : null}
           {wireHintOpen && !sim ? (
             <p className="hint studio-circuit-hint studio-canvas-hint">
               Drag ports to wire. Double-click a wire for a junction.
@@ -664,9 +735,11 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
             <p className="hint">Press Simulate to plot capacitor voltage Vc(t).</p>
           ) : (
             <>
-              <div className="studio-circuit-probes studio-circuit-param-strip" aria-label="Probe readouts">
-                {sim.param_strip || "—"}
-              </div>
+              {sim.param_strip ? (
+                <div className="studio-circuit-probes studio-circuit-param-strip" aria-label="Probe readouts">
+                  {sim.param_strip}
+                </div>
+              ) : null}
               <p className="hint">
                 {engineLabel(sim.engine)}
                 {Number.isFinite(sim.result?.zeta) && Number.isFinite(sim.result?.omega_n_rad_s) ? (

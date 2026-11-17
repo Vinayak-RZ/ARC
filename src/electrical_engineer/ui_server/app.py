@@ -646,6 +646,10 @@ def _rag_tags(
 
 
 def create_app(root: Path | None = None) -> FastAPI:
+    from electrical_engineer.visual_kit.mpl_threads import install_matplotlib_lock
+
+    # Seeding renders figures on a background thread while requests render plots.
+    install_matplotlib_lock()
     app = FastAPI()
     runs = (root or Path.cwd()) / "runs"
     cwd = root or Path.cwd()

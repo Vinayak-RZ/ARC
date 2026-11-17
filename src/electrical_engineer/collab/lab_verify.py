@@ -215,19 +215,25 @@ def agent_rederive_circuit_lab(run_dir: Path) -> dict[str, Any]:
             if not evid.get("unchecked"):
                 evid["value"] = float(derived.get("value") if derived.get("value") is not None else rlc["Vc_peak_V"])
                 path.write_text(json.dumps(evid, indent=2), encoding="utf-8")
-    verify = refresh_circuit_lab_verify(run_dir, problem, derived=derived, graph=graph)
-    verify = apply_verify_semantics(verify, meta, graph) or verify
-    (run_dir / "lab_verify.json").write_text(json.dumps(verify, indent=2), encoding="utf-8")
+    # The derivation now belongs to this graph: move the baseline before judging
+    # freshness, or every row is stamped "Out of date" against the old baseline.
     meta = lab_meta.load_lab_meta(run_dir)
     meta["agent_baseline_graph"] = graph
     meta["agent_baseline_rev"] = int(meta.get("revision") or 1)
+    lab_meta.save_lab_meta(run_dir, meta)
+    verify = refresh_circuit_lab_verify(run_dir, problem, derived=derived, graph=graph)
+    meta = lab_meta.load_lab_meta(run_dir)
+    verify = apply_verify_semantics(verify, meta, graph) or verify
+    (run_dir / "lab_verify.json").write_text(json.dumps(verify, indent=2), encoding="utf-8")
     meta["lab_verify"] = {
         "mismatch": verify.get("mismatch"),
         "derived": verify.get("derived"),
         "simulated": verify.get("simulated"),
     }
+    lab_meta.save_lab_meta(run_dir, meta)
     from electrical_engineer.circuit.run_session import append_lab_op
 
+    # After the save, so the op is appended to the updated meta rather than overwritten.
     append_lab_op(
         run_dir,
         author="agent",
@@ -235,7 +241,6 @@ def agent_rederive_circuit_lab(run_dir: Path) -> dict[str, Any]:
         detail={"engine": derived.get("engine"), "value": derived.get("value")},
         electrical=False,
     )
-    lab_meta.save_lab_meta(run_dir, meta)
     return verify
 
 
