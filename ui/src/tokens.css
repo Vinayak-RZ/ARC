@@ -2727,6 +2727,33 @@ a { color: var(--ee-color-primary); }
 .lab-badge-ok { color: var(--ee-semantic-up); }
 .lab-badge-warn { color: var(--ee-semantic-down); }
 .lab-verify-panel { margin: var(--ee-space-m) 0; }
+.lab-verify-body-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(11rem, 13.5rem);
+  gap: var(--ee-space-m);
+  align-items: start;
+}
+.lab-verify-lab-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--ee-color-ink);
+  font-size: 11px;
+  line-height: 1.35;
+  padding: 8px;
+  border: 1px solid var(--ee-color-hairline);
+  border-radius: 6px;
+  background: var(--ee-color-surface-subtle, #f8f9fb);
+}
+.lab-verify-lab-aside:hover { border-color: var(--ee-color-accent, #2563eb); }
+.lab-verify-lab-thumb {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  background: #fff;
+}
+.lab-verify-lab-caption { color: var(--ee-color-muted); }
 .lab-verify-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2809,7 +2836,7 @@ a { color: var(--ee-color-primary); }
 .lab-activity-timeline { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .lab-activity-item {
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr) auto;
+  grid-template-columns: 24px minmax(11rem, 1fr) auto;
   gap: 8px;
   align-items: center;
   min-height: 32px;
@@ -2821,7 +2848,7 @@ a { color: var(--ee-color-primary); }
 .lab-activity-item:hover .lab-activity-actions { opacity: 1; pointer-events: auto; }
 .lab-activity-rev-chip { font-size: 11px; color: var(--ee-color-muted); font-variant-numeric: tabular-nums; }
 .lab-activity-time { color: var(--ee-color-muted); font-size: 12px; }
-.lab-activity-sentence { margin: 0; font-size: 13px; line-height: 1.35; white-space: normal; overflow-wrap: anywhere; }
+.lab-activity-sentence { margin: 0; font-size: 13px; line-height: 1.35; white-space: normal; overflow-wrap: break-word; min-width: 11rem; }
 .lab-activity-avatar.is-human {
   width: 20px; height: 20px; border-radius: 50%; background: var(--ee-color-muted); color: #fff;
   font-size: 9px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;

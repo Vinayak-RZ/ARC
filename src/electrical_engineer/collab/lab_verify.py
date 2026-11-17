@@ -76,6 +76,8 @@ def _decorate_metric_rows(verify: dict[str, Any], meta: dict[str, Any], graph: d
             row["derived_status"] = "out_of_date"
             row["derived_status_label"] = "Out of date"
             row["rel_err_pct"] = None
+            row["status"] = "out_of_date"
+            row["status_label"] = "Out of date"
             if row.get("simulated_out_of_date"):
                 row["status"] = "out_of_date"
                 row["status_label"] = "Out of date"

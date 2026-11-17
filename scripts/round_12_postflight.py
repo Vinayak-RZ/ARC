@@ -320,7 +320,7 @@ def main() -> int:
     for path in pngs:
         screen, theme, vp, look = _describe_file(path.name)
         stem = path.name.replace(".png", "").replace("-light", "").replace("-dark", "")
-        staged = "fixture" if any(stem.startswith(f) for f in fixture_stems) else ""
+        staged = "fixture" if any(stem.startswith(f) for f in fixture_stems) else "capture"
         lines.append(f"| `{path.name}` | {screen} | {theme} | {vp} | {staged} | {look} |")
 
     lines.extend(
@@ -337,7 +337,7 @@ def main() -> int:
             "5. `collab-05-forward-euler-mismatch-*.png` — live forward-Euler derive vs ngspice (not a JSON fixture).",
             "6. `collab-06-control-unity-run-agrees-*.png` + `collab-06-control-unity-lab-agreement-*.png` — unity control run + lab.",
             "",
-            "Rectifier: `lab-rectifier-{topo}-{r|rl}-alpha{N}-*.png` — sweep α ∈ {0,30,60,75?,90,120}; Vo vs closed form at capture.",
+            "Rectifier: `lab-rectifier-{topo}-{r|rl}-alpha{N}-*.png` — sweep α through 150° and 180° where applicable; Vo vs closed form at capture.",
             "",
             "## Known issues",
             "",

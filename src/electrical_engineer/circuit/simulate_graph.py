@@ -38,6 +38,8 @@ def simulate_graph(
             "probe": probe,
             "f_hz": prob.get("f_hz"),
             "t_s": prob.get("t_s") or prob.get("t_stop"),
+            "t_stop": prob.get("t_stop"),
+            "v_step": prob.get("v_step") or prob.get("vin"),
             "kind": prob.get("kind"),
             "derive_metric": prob.get("derive_metric")
             or ("Vc_peak" if str(prob.get("kind") or "") == "series_rlc" else None),
@@ -57,6 +59,8 @@ def simulate_graph(
         out["unit"] = sim_out.get("unit") or problem.get("unit") or "V"
     if sim_out.get("t_peak_s") is not None:
         out["t_peak_s"] = float(sim_out["t_peak_s"])
+    if sim_out.get("settling_2pct_entry_s") is not None:
+        out["settling_2pct_entry_s"] = float(sim_out["settling_2pct_entry_s"])
     if sim_out.get("trace"):
         out["trace"] = sim_out["trace"]
     (run_dir / "lab_simulate.json").write_text(json.dumps(out, indent=2), encoding="utf-8")

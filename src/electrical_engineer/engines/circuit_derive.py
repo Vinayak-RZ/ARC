@@ -130,7 +130,13 @@ def _series_rlc(problem: dict[str, Any]) -> dict[str, Any]:
     meta = series_rlc_step(r_ohm, l_h, c_f, step_v)
     t_peak_s = float(meta["t_Vc_peak_s"])
     t_settle = meta.get("settling_2pct_entry_s") or meta.get("settling_time_2pct_s")
-    t_stop = float(problem.get("t_s") or max(t_peak_s * 1.2, 1e-4))
+    overshoot = float(meta.get("overshoot_pct") or 0.0) < 0.5
+    if problem.get("t_stop") is not None:
+        t_stop = float(problem["t_stop"])
+    elif overshoot and t_settle is not None:
+        t_stop = max(float(t_settle) * 2.5, float(t_peak_s) * 1.2, 0.015)
+    else:
+        t_stop = float(problem.get("t_s") or max(t_peak_s * 2.5, 1e-4))
     probe = str(problem.get("probe") or problem.get("probe_expr") or "v(3)")
     bug = str(problem.get("derive_bug") or "").lower()
     if bug in ("forward_euler", "euler"):
@@ -139,7 +145,6 @@ def _series_rlc(problem: dict[str, Any]) -> dict[str, Any]:
         value, t_peak_s = forward_euler_vc_peak(r_ohm, l_h, c_f, step_v)
         engine = "forward_euler_bug"
     else:
-        overshoot = float(meta.get("overshoot_pct") or 0.0) < 0.5
         value = float(step_v if overshoot else meta["Vc_peak_V"])
         engine = "circuit_derive"
     cir = (

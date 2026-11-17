@@ -33,13 +33,72 @@ describe("rectifier closed form", () => {
     assert.ok(Math.abs(Vo - 164.1) < 0.35, String(Vo));
   });
 
-  it("full3 R alpha 75 PF from P/S not RL cos formula", () => {
-    const p = { topology: "full3", load: "R", v_rms: 415, alpha_deg: 75, r_ohm: 10, io_a: 0, ls_h: 0 };
-    const { PF } = computeRectifier(p);
-    const rlCos = (3 / Math.PI) * Math.cos((75 * Math.PI) / 180);
-    assert.ok(Math.abs(rlCos - 0.247) < 0.01);
-    assert.ok(Math.abs(PF - rlCos) > 0.02, `PF ${PF} should not use RL cos identity`);
-    assert.ok(PF > 0.28 && PF < 0.95, String(PF));
+  it("full1 R Vo at α 90° and 120° (230 V)", () => {
+    const v90 = voClosedForm({ topology: "full1", load: "R", v_rms: 230, alpha_deg: 90, io_a: 0, ls_h: 0 });
+    const v120 = voClosedForm({ topology: "full1", load: "R", v_rms: 230, alpha_deg: 120, io_a: 0, ls_h: 0 });
+    assert.ok(Math.abs(v90 - 103.54) < 0.05, String(v90));
+    assert.ok(Math.abs(v120 - 51.77) < 0.05, String(v120));
+  });
+
+  it("full3 R Vo at α 90° and 120° (415 V)", () => {
+    const v90 = voClosedForm({ topology: "full3", load: "R", v_rms: 415, alpha_deg: 90, io_a: 0, ls_h: 0 });
+    const v120 = voClosedForm({ topology: "full3", load: "R", v_rms: 415, alpha_deg: 120, io_a: 0, ls_h: 0 });
+    assert.ok(Math.abs(v90 - 75.09) < 0.08, String(v90));
+    assert.ok(Math.abs(v120) < 0.5, String(v120));
+  });
+
+  it("full3 R PF golden table (415 V)", () => {
+    const golden = { 0: 0.956, 30: 0.841, 60: 0.542, 75: 0.369, 90: 0.208, 120: 0.0 };
+    for (const [alpha_deg, expect] of Object.entries(golden)) {
+      const p = {
+        topology: "full3",
+        load: "R",
+        v_rms: 415,
+        alpha_deg: Number(alpha_deg),
+        r_ohm: 10,
+        io_a: 0,
+        ls_h: 0,
+      };
+      const { PF } = computeRectifier(p);
+      if (expect === 0) {
+        assert.ok(Math.abs(PF) < 0.02, `α=${alpha_deg} PF ${PF}`);
+      } else {
+        assert.ok(Math.abs(PF - expect) < 0.008, `α=${alpha_deg} PF ${PF} vs ${expect}`);
+      }
+    }
+  });
+
+  it("R-load PF divisors for 1φ and half-wave 3φ", () => {
+    const cases = [
+      ["full1", 230, 60, 0.897],
+      ["hw3", 415, 60, 0.289],
+      ["hw1", 230, 60, 0.448],
+    ];
+    for (const [topology, v_rms, alpha_deg, expect] of cases) {
+      const { PF } = computeRectifier({
+        topology,
+        load: "R",
+        v_rms,
+        alpha_deg,
+        r_ohm: 10,
+        io_a: 0,
+        ls_h: 0,
+      });
+      assert.ok(Math.abs(PF - expect) < 0.015, `${topology} α=${alpha_deg}: ${PF} vs ${expect}`);
+    }
+  });
+
+  it("hw3 R Vo is zero past α limit (179°)", () => {
+    const { Vo } = computeRectifier({
+      topology: "hw3",
+      load: "R",
+      v_rms: 415,
+      alpha_deg: 179,
+      r_ohm: 10,
+      io_a: 0,
+      ls_h: 0,
+    });
+    assert.ok(Math.abs(Vo) < 0.5, String(Vo));
   });
 
   it("full3 R alpha 120 PF is zero", () => {

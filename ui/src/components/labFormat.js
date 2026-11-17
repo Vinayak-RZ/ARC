@@ -18,7 +18,16 @@ export function formatLabValue(n, unit = "") {
 export function formatDiffPct(pct) {
   if (pct == null || Number.isNaN(Number(pct))) return "—";
   const v = Number(pct);
-  if (v < 0.05) return "0.0%";
-  if (v < 0.1) return `${v.toFixed(3)}%`;
+  if (v < 0.0005) return "0.000%";
+  if (v < 0.05) return `${v.toFixed(3)}%`;
+  if (v < 0.15) return `${v.toFixed(2)}%`;
+  return `${v.toFixed(1)}%`;
+}
+
+export function formatRelTolPct(limitPct) {
+  if (limitPct == null || Number.isNaN(Number(limitPct))) return "2%";
+  const v = Number(limitPct);
+  if (v < 0.15) return `${v.toFixed(2)}%`;
+  if (v < 1) return `${v.toFixed(2)}%`;
   return `${v.toFixed(1)}%`;
 }

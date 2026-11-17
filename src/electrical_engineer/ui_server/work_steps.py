@@ -60,6 +60,15 @@ def _divider(problem: dict[str, Any], evid: dict[str, Any]) -> list[dict[str, st
     ]
 
 
+def _damping_label(dtype: str) -> str:
+    labels = {
+        "underdamped": "underdamped",
+        "overdamped": "overdamped",
+        "critically_damped": "critically damped",
+    }
+    return labels.get(dtype, dtype.replace("_", " "))
+
+
 def _rlc(problem: dict[str, Any], evid: dict[str, Any], transient: dict[str, Any]) -> list[dict[str, str]]:
     r = float(problem.get("r_ohm") or problem.get("r") or 0)
     l_h = float(problem.get("l_h") or problem.get("l") or 0)
@@ -91,7 +100,8 @@ def _rlc(problem: dict[str, Any], evid: dict[str, Any], transient: dict[str, Any
         },
         {
             "title": "Natural response",
-            "result": f"ζ = {_num(zeta)}, ωn = {_num(wn)} rad/s" + (f", {damping}" if damping else ""),
+            "result": f"ζ = {_num(zeta)}, ωn = {_num(wn)} rad/s"
+            + (f", {_damping_label(str(damping))}" if damping else ""),
             "author": "Engine",
             "equation": "ζ = (R/2) √(C/L),  ωn = 1/√(LC)",
         },

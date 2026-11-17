@@ -8,7 +8,6 @@ import {
   voHw3RWave,
   voHw3RlWave,
 } from "./rectifier-analytic.js";
-
 const PI = Math.PI;
 const DEG = PI / 180;
 
@@ -80,6 +79,12 @@ function normTopo(t) {
   return m[t] || t || "full3";
 }
 
+function alphaLimitDeg(conv, load) {
+  if (conv === "full3" && load === "R") return 120;
+  if (conv === "hw3" && load === "R") return 150;
+  return 180;
+}
+
 function phaseVoltages(conv, vRms, n) {
   const fam = CFG[conv].fam;
   const vm = fam === 1 ? vRms * SQRT2 : (vRms * SQRT2) / SQRT3;
@@ -101,7 +106,12 @@ function phaseVoltages(conv, vRms, n) {
 export function gateSampleWaveform(p, N = 720) {
   const conv = normTopo(p.topology);
   const load = p.load || "R";
-  const alpha = +p.alpha_deg || 0;
+  const alphaRaw = +p.alpha_deg || 0;
+  const alphaLim = alphaLimitDeg(conv, load);
+  if (load === "R" && (alphaRaw > alphaLim || alphaRaw < 0)) {
+    return Array.from({ length: N }, (_, i) => [(360 * i) / N, 0]);
+  }
+  const alpha = alphaRaw;
   const vRms = p.v_rms ?? (conv.endsWith("3") ? 415 : 230);
   const rOhm = p.r_ohm ?? 10;
   const eV = p.e_v ?? 0;
@@ -153,12 +163,11 @@ export function gateSampleWaveform(p, N = 720) {
       } else if (conv === "semi1") {
         const cycle = ((wt % PI) + PI) % PI;
         if (cycle >= a) vo = Math.abs(Vm * Math.sin(wt));
+      } else if (alpha >= 180) {
+        vo = 0;
       } else {
-        if (alpha >= 90) vo = 0;
-        else {
-          const cycle = ((wt % PI) + PI) % PI;
-          if (cycle >= a) vo = Math.abs(Vm * Math.sin(wt));
-        }
+        const cycle = ((wt % PI) + PI) % PI;
+        if (cycle >= a) vo = Math.abs(Vm * Math.sin(wt));
       }
       return [(360 * i) / N, vo];
     });
@@ -166,7 +175,7 @@ export function gateSampleWaveform(p, N = 720) {
 
   if (conv === "full3" && lsSource <= 0 && !cc) {
     const vll = linePeakFromLineVll(vRms);
-    const rectifierOff = load === "R" && alpha >= 90;
+    const rectifierOff = load === "R" && alpha > 120;
     const rlRectifierOnly = load !== "R" && load !== "CC" && alpha > 90 && !(+eV > 0);
     return Array.from({ length: N }, (_, i) => {
       const wt = (2 * PI * i) / N;

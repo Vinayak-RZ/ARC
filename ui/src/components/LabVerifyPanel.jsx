@@ -1,6 +1,7 @@
 /** Derived vs lab simulation agreement (Problem + lab results strip). */
 
 import { formatDiffPct, formatLabValue } from "./labFormat.js";
+import { openRunLab } from "../studio-engine/labs/openExample.js";
 
 function badgeClass(status) {
   switch (status) {
@@ -28,6 +29,8 @@ function labEditCount(n) {
 }
 
 export function LabVerifyPanel({
+  runId,
+  runData,
   labVerify,
   labMeta,
   compact = false,
@@ -90,8 +93,12 @@ export function LabVerifyPanel({
     <div className="lab-verify-stale-banner is-review" role="group" aria-label="Review actions">
       <div className="lab-verify-cta-row">
         {onReRun ? (
-          <button type="button" className="text-button" onClick={onReRun}>
-            Re-run
+          <button
+            type="button"
+            className={derivedStale ? "button-primary" : "text-button"}
+            onClick={onReRun}
+          >
+            {derivedStale ? "Re-simulate in lab" : "Re-run"}
           </button>
         ) : null}
         {(derivedStale || sameRevMismatch) && onAskAgent ? (
@@ -109,13 +116,9 @@ export function LabVerifyPanel({
   ) : null;
 
   function rowStatus(row) {
-    if (row.derived_out_of_date && !row.simulated_out_of_date) {
-      return {
-        status: row.status === "out_of_date" ? "agrees" : row.status,
-        label: row.status_label && row.status_label !== "Out of date" ? row.status_label : "—",
-      };
+    if (row.derived_out_of_date) {
+      return { status: "out_of_date", label: "Out of date" };
     }
-    if (row.derived_out_of_date) return { status: "out_of_date", label: "Out of date" };
     return { status: row.status, label: row.status_label };
   }
 
@@ -182,6 +185,30 @@ export function LabVerifyPanel({
     );
   }
 
+  const labRev = labVerify?.graph_revision ?? labMeta?.revision ?? runData?.lab?.revision;
+  const labOpenAside =
+    runId && runData?.lab ? (
+      <a
+        className="lab-verify-lab-aside"
+        href={runData.lab?.ui_url || "#"}
+        onClick={(e) => {
+          e.preventDefault();
+          openRunLab(runData);
+        }}
+      >
+        <img
+          className="lab-verify-lab-thumb"
+          src={`/api/runs/${runId}/artifact.svg`}
+          alt=""
+          width={160}
+          height={72}
+        />
+        <span className="lab-verify-lab-caption">
+          Agent&apos;s circuit · r{labRev ?? "—"} · {engine} · Open in lab →
+        </span>
+      </a>
+    ) : null;
+
   return (
     <section className="lab-verify-panel card-surface" aria-labelledby="lab-verify-heading">
       <header className="lab-verify-head">
@@ -190,6 +217,7 @@ export function LabVerifyPanel({
       {globalStaleBanner}
       {contextBanner}
       {actionCta}
+      <div className="lab-verify-body-grid">
       <table className="lab-verify-table">
         <thead>
           <tr>
@@ -226,6 +254,8 @@ export function LabVerifyPanel({
           })}
         </tbody>
       </table>
+      {labOpenAside}
+      </div>
       {labMeta?.op_log?.length ? (
         <p className="hint">{labEditCount(labMeta.op_log.length)} recorded (see Activity).</p>
       ) : null}

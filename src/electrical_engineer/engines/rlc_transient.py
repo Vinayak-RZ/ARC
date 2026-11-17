@@ -106,7 +106,7 @@ def _rk4_integrate_vc(
 
 
 def forward_euler_vc_peak(
-    r_ohm: float, l_h: float, c_f: float, v_step: float, *, steps_per_wn: float = 200.0
+    r_ohm: float, l_h: float, c_f: float, v_step: float, *, steps_per_wn: float = 10.0
 ) -> tuple[float, float]:
     """Intentionally coarse forward Euler peak (demo bad-derive path)."""
     wn = 1.0 / math.sqrt(l_h * c_f)
@@ -182,10 +182,19 @@ def series_rlc_step(
     else:
         settling_entry_s = None
         band = 0.02 * v_step
+        in_band = False
+        last_entry_s: float | None = None
         for t_ms, vc in vc_trace_ms:
-            if vc >= v_step - band:
-                settling_entry_s = float(t_ms) / 1000.0
-                break
+            t_s = float(t_ms) / 1000.0
+            if t_s < float(t_peak) - 1e-9:
+                continue
+            if abs(vc - v_step) <= band:
+                if not in_band:
+                    last_entry_s = t_s
+                in_band = True
+            else:
+                in_band = False
+        settling_entry_s = last_entry_s
 
     return {
         "damping_type": damping,

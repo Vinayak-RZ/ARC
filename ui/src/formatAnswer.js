@@ -70,16 +70,19 @@ function rlcPeakTimeMs(derive, tr, problem) {
 }
 
 function rlcAnswerDisplay(data, evid) {
-  const tr = data?.rlc_transient;
+  const stale = staleDerivedRevision(data) != null;
+  const tr = stale ? null : data?.rlc_transient;
   const derive = data?.circuit_derive;
   const lv = data?.lab_verify;
   if (!isSeriesRlc(data, evid) || (!tr && !derive && !lv)) return null;
   if (lv?.needs_review && lv?.derivation_matches_graph !== false) return null;
+  const deriveMetric = String(derive?.derive_metric || "").toLowerCase();
   const noOvershoot =
-    tr?.damping_type === "critically_damped" ||
-    tr?.damping_type === "overdamped" ||
-    String(derive?.derive_metric || "") === "Vc_final" ||
-    Number(tr?.overshoot_pct ?? derive?.overshoot_pct ?? 99) < 0.5;
+    !stale &&
+    (tr?.damping_type === "critically_damped" ||
+      tr?.damping_type === "overdamped" ||
+      deriveMetric === "vc_final" ||
+      Number(tr?.overshoot_pct ?? derive?.overshoot_pct ?? 99) < 0.5);
   const vStep = Number(data?.problem?.v_step ?? data?.problem?.vin ?? evid?.vin ?? 10);
   if (noOvershoot) {
     const finalV = Number(derive?.value ?? lv?.derived ?? tr?.Vc_peak_V ?? vStep);
@@ -91,7 +94,9 @@ function rlcAnswerDisplay(data, evid) {
     return `No overshoot · Final value ${finalV.toFixed(2)} V · Settling (2%) ${tMs.toFixed(2)} ms`;
   }
   const peak = Number(derive?.value ?? lv?.derived ?? evid?.value);
-  const tMs = rlcPeakTimeMs(derive, tr, data?.problem);
+  const tMs = stale
+    ? rlcPeakTimeMs(derive, null, data?.problem)
+    : rlcPeakTimeMs(derive, tr, data?.problem);
   const tFmt = tMs.toFixed(3);
   return `Vc,peak = ${peak.toFixed(3)} V at ${tFmt} ms`;
 }

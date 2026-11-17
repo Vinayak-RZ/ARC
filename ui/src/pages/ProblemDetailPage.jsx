@@ -7,7 +7,7 @@ import { ParametersPanel } from "../components/ParametersPanel.jsx";
 import { ProblemHeader } from "../components/ProblemHeader.jsx";
 import { LabVerifyPanel } from "../components/LabVerifyPanel.jsx";
 import { LabActivityPanel } from "../components/LabActivityPanel.jsx";
-import { labForRecipe, openLab, openRunLab } from "../studio-engine/labs/openExample.js";
+import { labForRecipe, openLab } from "../studio-engine/labs/openExample.js";
 
 const TABS = [
   { id: "work", label: "Work" },
@@ -57,18 +57,10 @@ export function ProblemDetailPage({ id, data: initialData, runMeta }) {
   return (
     <div className="page-column problem-detail">
       <ProblemHeader runMeta={runMeta} data={data} />
-      {data?.lab ? (
-        <button type="button" className="button-primary" onClick={() => openRunLab(data)}>
-          Open in lab
-        </button>
-      ) : null}
-      {!data?.lab && labForRecipe(recipeId) ? (
-        <button type="button" className="button-secondary" onClick={() => openLab(labForRecipe(recipeId))}>
-          Open simulation lab
-        </button>
-      ) : null}
       {renderSlot("run.result", { id, runMeta })}
       <LabVerifyPanel
+        runId={id}
+        runData={data}
         labVerify={data?.lab_verify}
         labMeta={data?.lab}
         onAskAgent={() => labPost("re-derive")}
