@@ -20,7 +20,7 @@ with sync_playwright() as p:
     ctx.add_init_script(f'localStorage.setItem("arc-theme", "{THEME}")')
     page = ctx.new_page()
     t0 = time.time()
-    page.goto(f"{BASE}/?view=studio&tab=labs&lab=rectifier", wait_until="networkidle")
+    page.goto(f"{BASE}/?view=studio&tab=labs&lab=rectifier&ymax=600", wait_until="networkidle")
     page.wait_for_selector(".lab-shell")
     page.get_by_role("radio", name="3φ full").check()
     page.get_by_role("radio", name="R", exact=True).check()

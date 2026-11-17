@@ -75,7 +75,7 @@ The last panel is the point of Arc: an agent that integrates the same circuit wi
   <img src="docs/assets/readme/rectifier-sweep.gif" width="960" alt="Three-phase full-bridge rectifier, R load, 415 V line: the firing angle sweeps from 0 to 120 degrees, the output waveform chops and the average output voltage falls to 0 V">
 </p>
 
-Three-phase full bridge, R load, 415 V line to line. Sweeping α from 0° to 120° moves the output from continuous six-pulse conduction into discontinuous pulses and down to 0 V. The capture script checks the lab's Vo readout against the Python closed-form references for each converter and load across a grid of firing angles.
+Three-phase full bridge, R load, 415 V line to line. The y axis is held at 0 to 600 V (`?ymax=600`) so you can watch the waveform shrink: sweeping α from 0° to 120° moves the output from continuous six-pulse conduction (560.11 V at 2°) through 280.22 V at 60° into discontinuous pulses and down to 0 V. The capture script checks the lab's Vo readout against the Python closed-form references for each converter and load across a grid of firing angles.
 
 ### More of the app
 
@@ -295,28 +295,6 @@ One-command frontier validation:
 ```bash
 ./scripts/validate_frontier.sh
 ```
-
-### Product UI (localhost shell)
-
-**2× device captures** at **1440×900** (`deviceScaleFactor: 2`) from `127.0.0.1:8765`. Regenerate after `npm run build` in `ui/`:
-
-```bash
-pip install playwright pngquant-bin
-playwright install chromium
-EE_NO_BROWSER=1 electrical-engineer ui &
-python scripts/capture_readme_showcase.py
-```
-
-| View | Screenshot |
-|------|------------|
-| Home (recipes + recent runs) | ![Arc home](docs/assets/readme/home-light.png) |
-| Control Studio (block diagram + step) | ![Control Studio](docs/assets/readme/studio-hero-light.png) |
-| Checked divider problem | ![Circuit problem](docs/assets/readme/problem-checked-light.png) |
-| Visual kit gallery | ![Gallery](docs/assets/readme/gallery-light.png) |
-| Reference library | ![Library](docs/assets/readme/library-light.png) |
-| Studio (dark) | ![Studio dark](docs/assets/readme/studio-dark.png) |
-
-Legacy domain window shots (1280×900) remain under [`docs/media/`](docs/media/).
 
 ## How it works
 
