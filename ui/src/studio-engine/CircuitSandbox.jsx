@@ -157,6 +157,7 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
   const autoSimForRun = useRef("");
   const simToken = useRef(0);
   const userTouched = useRef(false);
+  const [wireHintOpen, setWireHintOpen] = useState(true);
   const wrapRef = useRef(null);
   const { screenToFlowPosition } = useReactFlow();
 
@@ -229,8 +230,6 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
           const tracePts = body?.lab_simulate?.trace?.vc_trace_ms || body?.lab_simulate?.vc_trace_ms;
           if (tracePts?.length && !verifyStale) {
             applyLabSimulate(body.lab_simulate, body.lab_verify);
-          } else if (verifyStale) {
-            setSim(null);
           } else if (graph?.nodes?.length && autoSimForRun.current !== linkedRunId) {
             autoSimForRun.current = linkedRunId;
             void runSimulate(graph, { silent: true });
@@ -538,6 +537,14 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
             <span className="breadcrumb-current">Circuit sandbox</span>
           </div>
           <div className="studio-bar-actions">
+            {wireHintOpen && !sim ? (
+              <p className="studio-circuit-hint studio-bar-hint">
+                Drag ports to wire. Double-click a wire for a junction. Results stay until you Simulate again.
+                <button type="button" className="text-link" onClick={() => setWireHintOpen(false)}>
+                  Dismiss
+                </button>
+              </p>
+            ) : null}
             {linkedRunId ? (
               <button
                 type="button"
@@ -559,12 +566,6 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
         </header>
         <Palette onAdd={addPart} disabled={simBusy} />
         <div className="studio-circuit-canvas flow-wrap" ref={wrapRef}>
-          {!sim ? (
-            <p className="canvas-wire-hint studio-circuit-hint">
-              Drag a port onto another port. Double-click a wire to add a junction. Click a wire, then Delete, to
-              remove it.
-            </p>
-          ) : null}
           {msg ? <p className="hint studio-circuit-msg">{msg}</p> : null}
           <ReactFlow
             nodes={nodes}

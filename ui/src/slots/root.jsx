@@ -56,7 +56,8 @@ function Result({ id }) {
         : state === "Working"
           ? "Working"
           : "";
-  const needsReview = Boolean(data?.lab_verify?.needs_review);
+  const derivedStale = data?.lab_verify?.derivation_matches_graph === false;
+  const needsReview = Boolean(data?.lab_verify?.needs_review) && !derivedStale;
   const { rows } = buildAnswerRows(evid, data);
   const verifierRaw = evid.verifier ? String(evid.verifier) : "";
   const note = verificationNote({ unchecked: error ? false : unchecked, error, verifierRaw, evid });
@@ -83,6 +84,8 @@ function Result({ id }) {
             <AnswerLine key={row.name} parts={row} checked={!unchecked} />
           ))}
         </div>
+      ) : rows.length === 1 && rows[0].plain ? (
+        <p className="answer-line tabular-nums">{rows[0].display}</p>
       ) : rows.length === 1 ? (
         <AnswerLine parts={rows[0]} checked={!unchecked && !error} />
       ) : needsReview ? null : (

@@ -56,7 +56,11 @@ def test_human_r1_edit_reverify_disagrees_at_current_revision(tmp_path: Path, mo
     assert not verify.get("stale")
     sim_v = float(verify["simulated"])
     assert abs(sim_v - 10.0) < 0.15
-    assert verify.get("mismatch") or verify.get("needs_review")
+    assert verify.get("mismatch") is not True
+    assert verify.get("needs_review") is not True
+    assert verify.get("derivation_matches_graph") is False
+    row = verify["metrics"][0]
+    assert row.get("status") == "out_of_date"
     client = TestClient(create_app(tmp_path))
     lab = client.get(f"/api/runs/{rid}/lab").json()
     assert lab["lab_verify"]["graph_revision"] == meta_lab["revision"]

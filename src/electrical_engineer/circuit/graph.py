@@ -28,7 +28,7 @@ def series_rlc_graph(
             {"id": "r1", "type": "resistor", "refdes": "R1", "value": r_ohm, "unit": "ohm", "x": 176, "y": 56, "rot": 0},
             {"id": "l1", "type": "inductor", "refdes": "L1", "value": l_h, "unit": "H", "x": 296, "y": 56, "rot": 0},
             {"id": "c1", "type": "capacitor", "refdes": "C1", "value": c_f, "unit": "F", "x": 416, "y": 56, "rot": 0},
-            {"id": "gnd", "type": "ground", "refdes": "GND", "value": 0, "unit": "", "x": 416, "y": 176, "rot": 0},
+            {"id": "gnd", "type": "ground", "refdes": "GND", "value": 0, "unit": "", "x": 56, "y": 176, "rot": 0},
         ],
         "edges": [
             {"id": "e1", "from": "vin.n1", "to": "r1.n1"},

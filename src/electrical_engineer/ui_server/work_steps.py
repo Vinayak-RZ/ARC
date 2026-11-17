@@ -62,7 +62,18 @@ def _rlc(problem: dict[str, Any], evid: dict[str, Any], transient: dict[str, Any
         zeta = (r / 2.0) * math.sqrt(c_f / l_h)
         wn = 1.0 / math.sqrt(l_h * c_f)
     peak = transient.get("Vc_peak_V", evid.get("value"))
+    overshoot = float(transient.get("overshoot_pct") or 0.0) < 0.5
     damping = transient.get("damping_type") or ""
+    t_settle = transient.get("settling_2pct_entry_s") or transient.get("settling_time_2pct_s")
+    cap_row = (
+        {
+            "title": "Capacitor final value",
+            "result": f"Vc final = {_num(peak)} V, settling (2%) = {_num(float(t_settle or 0) * 1000, None, 2)} ms",
+            "author": "Engine",
+        }
+        if overshoot
+        else {"title": "Capacitor peak", "result": f"Vc peak = {_num(peak)} V", "author": "Engine"}
+    )
     return [
         {
             "title": "Read the branch",
@@ -75,7 +86,7 @@ def _rlc(problem: dict[str, Any], evid: dict[str, Any], transient: dict[str, Any
             "author": "Engine",
             "equation": "ζ = (R/2) √(C/L),  ωn = 1/√(LC)",
         },
-        {"title": "Capacitor peak", "result": f"Vc peak = {_num(peak)} V", "author": "Engine"},
+        cap_row,
         _check_step(evid, "Series RLC step integrated and checked."),
     ]
 

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import json
+from pathlib import Path
 
 import pytest
 
@@ -116,5 +117,44 @@ def test_human_resistor_edit_flags_derivation_mismatch(tmp_path) -> None:
     from electrical_engineer.collab.lab_verify import reverify_circuit_lab
 
     verify = reverify_circuit_lab(run_dir)
+    from electrical_engineer.collab.lab_verify import apply_verify_semantics
+
+    verify = apply_verify_semantics(verify, meta, load_graph(run_dir)) or verify
     assert verify.get("verdict_current") is True
     assert verify.get("derivation_matches_graph") is False
+    assert verify.get("needs_review") is not True
+    assert verify.get("mismatch") is not True
+    row = verify["metrics"][0]
+    assert row.get("status") == "out_of_date"
+    assert row.get("rel_err_pct") is None
+    assert row.get("status_label") == "Out of date"
+
+
+def test_rederive_after_r20_updates_transient_and_value(tmp_path: Path) -> None:
+    problem = {"kind": "series_rlc", "vin": 10, "r_ohm": 10, "l_h": 0.01, "c_f": 100e-6, "tol": 0.15}
+    run_dir = tmp_path / "run-r20"
+    run_dir.mkdir(parents=True)
+    (run_dir / "problem.json").write_text(json.dumps(problem), encoding="utf-8")
+    (run_dir / "evidentiary.json").write_text(
+        json.dumps({"recipe_id": "simulate-circuit", "value": 11.63, "unchecked": False}),
+        encoding="utf-8",
+    )
+    (run_dir / "summary.json").write_text(
+        json.dumps({"recipe_id": "simulate-circuit", "value": 11.63, "unchecked": False}),
+        encoding="utf-8",
+    )
+    finish_circuit_lab(run_dir, problem)
+    graph = load_graph(run_dir)
+    edited = copy.deepcopy(graph)
+    for node in edited["nodes"]:
+        if node.get("id") == "r1":
+            node["value"] = 20
+    apply_graph(run_dir, edited, author="human", op="set", target="r1")
+    from electrical_engineer.collab.lab_verify import agent_rederive_circuit_lab
+
+    verify = agent_rederive_circuit_lab(run_dir)
+    assert float(verify.get("derived") or 0) == pytest.approx(10.0, abs=0.02)
+    tr = json.loads((run_dir / "rlc_transient.json").read_text(encoding="utf-8"))
+    assert float(tr.get("overshoot_pct", 99)) < 0.5
+    evid = json.loads((run_dir / "evidentiary.json").read_text(encoding="utf-8"))
+    assert float(evid["value"]) == pytest.approx(10.0, abs=0.02)
