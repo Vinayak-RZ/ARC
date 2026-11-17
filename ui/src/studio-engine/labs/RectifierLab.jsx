@@ -1,10 +1,17 @@
 import { useMemo, useState } from "react";
 import { LabShell } from "./LabShell.jsx";
 import { Waveform } from "../renderers/Waveform.jsx";
-import { computeRectifier } from "./rectifier.js";
+import { computeRectifier, firingAnglesDeg } from "./rectifier.js";
 import { registerLab } from "./registry.js";
 import { postProgress } from "../../hooks/useLearn.js";
 import { openMatchingProblem } from "./openExample.js";
+
+function firingMarkers(topology, alphaDeg) {
+  return firingAnglesDeg(topology, alphaDeg).map((x, i) => ({
+    x,
+    label: i === 0 ? `α = ${alphaDeg}° after natural commutation` : undefined,
+  }));
+}
 
 const TOPOS = [
   { id: "hw1", label: "1φ half" },
@@ -66,12 +73,14 @@ export function RectifierLab() {
         ))}
       </fieldset>
       <label>
-        V rms
+        Line voltage (V rms, line-to-line)
         <div className="lab-slider-row">
           <input type="range" min={50} max={500} step={5} value={vRms} onChange={(e) => setVRms(+e.target.value)} />
           <input type="number" value={vRms} onChange={(e) => setVRms(+e.target.value)} />
+          <span className="lab-field-unit">V</span>
         </div>
       </label>
+      <p className="hint">Phase peak Vm = {result.phasePeakVm.toFixed(1)} V</p>
       <label>
         α (deg)
         <div className="lab-slider-row">
@@ -86,19 +95,23 @@ export function RectifierLab() {
           <input type="number" value={rOhm} onChange={(e) => setROhm(+e.target.value)} />
         </div>
       </label>
-      <label>
-        Io (A)
-        <div className="lab-slider-row">
-          <input type="range" min={1} max={100} value={io} onChange={(e) => setIo(+e.target.value)} />
-          <input type="number" value={io} onChange={(e) => setIo(+e.target.value)} />
-        </div>
-      </label>
-      <label>
-        <input type="checkbox" checked={useLs} onChange={(e) => setUseLs(e.target.checked)} /> Source Ls
+      {load === "CC" ? (
+        <label>
+          Io (A)
+          <div className="lab-slider-row">
+            <input type="range" min={1} max={100} value={io} onChange={(e) => setIo(+e.target.value)} />
+            <input type="number" value={io} onChange={(e) => setIo(+e.target.value)} />
+            <span className="lab-field-unit">A</span>
+          </div>
+        </label>
+      ) : null}
+      <label className="lab-checkbox-row">
+        <input type="checkbox" checked={useLs} onChange={(e) => setUseLs(e.target.checked)} />
+        Source inductance Ls (mH)
       </label>
       {useLs ? (
         <label>
-          Ls (mH)
+          <span className="visually-hidden">Source inductance Ls (mH)</span>
           <div className="lab-slider-row">
             <input type="range" min={0.1} max={10} step={0.1} value={ls} onChange={(e) => setLs(+e.target.value)} />
             <input type="number" value={ls} onChange={(e) => setLs(+e.target.value)} />
@@ -116,16 +129,25 @@ export function RectifierLab() {
         <>
           <div className="card">
             <div className="learn-code-label">Vo</div>
-            <strong>{result.Vo.toFixed(2)} V</strong>
+            <strong>{result.VoFinite ? `${result.Vo.toFixed(2)} V` : "—"}</strong>
           </div>
           <div className="card">
             <div className="learn-code-label">Io</div>
-            <strong>{result.Io.toFixed(2)} A</strong>
+            <strong>{result.VoFinite ? `${result.Io.toFixed(2)} A` : "—"}</strong>
           </div>
           {result.PF != null ? (
             <div className="card">
               <div className="learn-code-label">PF</div>
               <strong>{result.PF.toFixed(3)}</strong>
+            </div>
+          ) : null}
+          {result.rlConduction ? (
+            <div className="card">
+              <div className="learn-code-label">Conduction</div>
+              <strong>{result.rlConduction.label}</strong>
+              {result.rlConduction.mode === "Discontinuous" && result.rlConduction.beta_deg != null ? (
+                <p className="hint">β = {result.rlConduction.beta_deg.toFixed(1)}°</p>
+              ) : null}
             </div>
           ) : null}
         </>
@@ -134,19 +156,19 @@ export function RectifierLab() {
       onOpenExample={openMatchingProblem}
       check={
         <p className="hint">
-          Closed-form Vo from the EEC-303 formula sheet. The trace is the gated sine envelope for that firing angle.
+          Vo is the time-average of the plotted v_o waveform; RL mode follows the gate ODE steady state.
         </p>
       }
     >
       <Waveform
         panel={{
-          title: "vo",
           kind: "waveform",
-          x: { label: "ωt", unit: "deg", scale: "linear" },
-          y: { label: "vo", unit: "V", scale: "linear" },
+          title: "Rectifier output",
+          x: { label: "ωt", unit: "°", scale: "linear" },
+          y: { label: "v", sub: "o", unit: "V", scale: "linear" },
           series: [{ id: "vo", label: "vo", points: result.points, style: "primary" }],
           hlines: [{ y: result.Vo, label: "Vo avg" }],
-          markers: [{ x: alpha, label: "α" }],
+          markers: firingMarkers(topology, alpha),
         }}
       />
     </LabShell>

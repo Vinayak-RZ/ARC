@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from electrical_engineer.control_studio.goldens import pid_dc_motor
-from electrical_engineer.control_studio.layout import BLOCK_H, layout_chain
+from electrical_engineer.control_studio.layout import BLOCK_H, PID_W, layout_chain
 
 
 def _port_center_y(block: dict) -> float:
@@ -29,3 +29,12 @@ def test_forward_wires_share_port_center_y() -> None:
         sy = _port_center_y(by_id[src_id])
         ty = _port_center_y(by_id[tgt_id])
         assert abs(sy - ty) < 1e-6, f"forward wire {wire['id']} source y {sy} != target y {ty}"
+
+
+def test_pid_to_motor_horizontal_gap() -> None:
+    diagram = layout_chain(pid_dc_motor())
+    by_id = {b["id"]: b for b in diagram["blocks"]}
+    pid = by_id["pid1"]
+    motor = by_id["motor"]
+    gap = float(motor["x"]) - float(pid["x"]) - PID_W
+    assert gap >= 40, f"PID→motor gap {gap} px < 40"

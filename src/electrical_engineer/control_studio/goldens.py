@@ -13,7 +13,7 @@ def unity_first_order() -> dict[str, Any]:
         "blocks": [
             {"id": "r", "type": "step", "x": 40, "y": 120, "params": {"amplitude": 1.0}},
             {"id": "sum1", "type": "sum", "x": 200, "y": 120, "params": {"signs": "+-"}},
-            {"id": "G", "type": "plant_first_order", "x": 360, "y": 120, "params": {"k": 10.0, "tau": 1.0}},
+            {"id": "G", "type": "plant_first_order", "x": 360, "y": 120, "params": {"k": 10.0, "tau": 1.0}, "label": "Plant"},
             {"id": "y", "type": "scope", "x": 540, "y": 120, "params": {}},
         ],
         "wires": [
@@ -40,8 +40,8 @@ def pid_dc_motor() -> dict[str, Any]:
             {"id": "r", "type": "step", "x": 24, "y": 80, "params": {}, "label": "Step"},
             {"id": "sum1", "type": "sum", "x": 168, "y": 72, "params": {"signs": "+-"}},
             {"id": "pid1", "type": "pid", "x": 312, "y": 64, "params": {"kp": 50.0, "ki": 100.0, "kd": 5.0}},
-            {"id": "motor", "type": "plant_dc_motor", "x": 528, "y": 64, "params": {}, "label": "DC motor"},
-            {"id": "y", "type": "scope", "x": 672, "y": 72, "params": {}},
+            {"id": "motor", "type": "plant_dc_motor", "x": 552, "y": 64, "params": {}, "label": "DC motor"},
+            {"id": "y", "type": "scope", "x": 688, "y": 72, "params": {}},
         ],
         "wires": [
             {"id": "w1", "from": "r:out", "to": "sum1:in1"},

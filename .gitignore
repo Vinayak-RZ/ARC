@@ -17,3 +17,8 @@ dist/
 
 # Kernel-harden raw run dirs (traces are bulky); CORPUS_INDEX.jsonl is committed
 artifacts/kernel-harden/raw/
+ui/test-results/
+.electrical-engineer/learn/
+
+# capture scratch (run backups and local round output before review)
+artifacts/ux-review/_runs_backup/

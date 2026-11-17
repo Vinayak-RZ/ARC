@@ -160,7 +160,15 @@ def register_studio_routes(app: FastAPI, *, root: Path) -> None:
 
     @app.get("/api/control-studio/sessions/{session_id}/events")
     async def studio_events(session_id: str) -> StreamingResponse:
-        return StreamingResponse(sse_stream(session_id), media_type="text/event-stream")
+        return StreamingResponse(
+            sse_stream(session_id),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache, no-transform",
+                "Connection": "keep-alive",
+                "X-Accel-Buffering": "no",
+            },
+        )
 
     @app.post("/api/control-studio/sessions/{session_id}/notes")
     async def studio_note(session_id: str, request: Request) -> dict:
@@ -192,3 +200,107 @@ def register_studio_routes(app: FastAPI, *, root: Path) -> None:
             media_type="image/png",
             headers={"Cache-Control": "no-store"},
         )
+
+    def _graph_series_rlc(graph: dict) -> dict | None:
+        by_type: dict[str, list] = {}
+        for node in graph.get("nodes") or []:
+            t = str(node.get("type") or "")
+            by_type.setdefault(t, []).append(node)
+        need = {"source_v", "resistor", "inductor", "capacitor"}
+        if not need <= set(by_type):
+            return None
+        try:
+            return {
+                "kind": "series_rlc",
+                "v_step": float(by_type["source_v"][0].get("value") or 10),
+                "r_ohm": float(by_type["resistor"][0].get("value") or 10),
+                "l_h": float(by_type["inductor"][0].get("value") or 0.01),
+                "c_f": float(by_type["capacitor"][0].get("value") or 1e-6),
+            }
+        except (TypeError, ValueError):
+            return None
+
+    @app.post("/api/circuit-sandbox/simulate")
+    async def circuit_sandbox_simulate(request: Request) -> dict:
+        import tempfile
+
+        from electrical_engineer.circuit.graph import (
+            GraphError,
+            format_series_rlc_param_strip,
+            graph_port_errors,
+            parse_graph,
+            probe_for_capacitor,
+        )
+        from electrical_engineer.circuit.simulate_graph import simulate_graph
+        from electrical_engineer.engines.rlc_transient import solve_from_problem
+
+        body = await request.json()
+        graph = body.get("graph") if isinstance(body, dict) else {}
+        if not graph:
+            return JSONResponse({"ok": False, "error": "Missing circuit graph"}, status_code=400)
+        try:
+            parsed = parse_graph(graph if isinstance(graph, dict) else {})
+        except GraphError as exc:
+            return JSONResponse({"ok": False, "error": str(exc)}, status_code=400)
+        port_errs = graph_port_errors(parsed)
+        if port_errs:
+            return JSONResponse({"ok": False, "error": "; ".join(port_errs[:3])}, status_code=400)
+        problem = _graph_series_rlc(parsed)
+        if problem is None:
+            return JSONResponse(
+                {"ok": False, "error": "Sandbox simulate needs a series R–L–C graph (V, R, L, C, GND)."},
+                status_code=400,
+            )
+        problem |= {
+            "analysis": "tran",
+            "t_s": body.get("t_s") if isinstance(body, dict) else None,
+            "derive_metric": "Vc_peak",
+            "probe": probe_for_capacitor(parsed) or "v(3)",
+            "tol": 0.02,
+        }
+        if not problem.get("t_s"):
+            try:
+                meta = solve_from_problem({**problem, "v_step": problem["v_step"]})
+                problem["t_s"] = float(meta.get("t_Vc_peak_s") or 0.003628)
+            except (TypeError, ValueError):
+                problem["t_s"] = 0.003628
+        with tempfile.TemporaryDirectory() as tmp:
+            sim = simulate_graph(parsed, problem, run_dir=Path(tmp))
+        if not sim.get("ok") and sim.get("skipped"):
+            return JSONResponse(
+                {"ok": False, "error": sim.get("reason") or "ngspice not available", "skipped": True},
+                status_code=503,
+            )
+        if not sim.get("ok"):
+            return JSONResponse({"ok": False, "error": sim.get("error") or "simulate failed"}, status_code=400)
+        try:
+            trace = solve_from_problem({**problem, "v_step": problem["v_step"]})
+        except ValueError:
+            trace = {"Vc_peak_V": sim.get("simulated"), "t_Vc_peak_s": problem.get("t_s")}
+        peak = float(sim.get("simulated") if sim.get("simulated") is not None else trace.get("Vc_peak_V"))
+        trace = {**trace, "Vc_peak_V": peak}
+        backend = (sim.get("simulator") or {}).get("backend") or sim.get("engine") or "ngspice"
+        param_strip = format_series_rlc_param_strip(parsed)
+        final_v = float(
+            sim.get("simulated")
+            if sim.get("simulated") is not None
+            else (trace.get("Vc_peak_V") or peak)
+        )
+        trace = {**trace, "Vc_peak_V": final_v}
+        overshoot_pct = float(trace.get("overshoot_pct") or 0.0)
+        headline = None
+        if overshoot_pct < 0.5:
+            t_set_ms = float(trace.get("settling_2pct_entry_s") or trace.get("settling_time_2pct_s") or 0) * 1000
+            headline = f"No overshoot · Final value {final_v:.2f} V · Settling (2%) {t_set_ms:.2f} ms"
+        else:
+            t_pk_ms = float(trace.get("t_Vc_peak_s") or 0) * 1000
+            headline = f"Vc,peak = {final_v:.3f} V at {t_pk_ms:.2f} ms"
+        return {
+            "ok": True,
+            "engine": backend,
+            "problem": problem,
+            "result": {**trace, "Vc_peak_V": final_v, "simulated_Vc_peak_V": final_v},
+            "sim": sim,
+            "param_strip": param_strip,
+            "headline": headline,
+        }

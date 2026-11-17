@@ -5,9 +5,12 @@ nodes:
   spice:
     activity: verify-circuit-spice
     needs: [derive]
+  lab:
+    activity: seed-circuit-lab
+    needs: [spice]
   label:
     activity: label-unverified
-    needs: [spice]
+    needs: [lab]
   summary:
     activity: write-run-summary
     needs: [label]

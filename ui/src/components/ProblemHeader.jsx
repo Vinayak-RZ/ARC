@@ -3,7 +3,7 @@ import { relativeTime } from "../units/format.js";
 
 export function ProblemHeader({ runMeta, data }) {
   const subject = runMeta?.subject || subjectTag(runMeta || {});
-  const title = displayTitle(runMeta || { title: data?.title });
+  const title = displayTitle({ ...runMeta, title: data?.title, recipe_id: runMeta?.recipe_id });
   const updated = relativeTime(runMeta?.modified_at);
   return (
     <header className="problem-header">

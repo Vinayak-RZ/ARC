@@ -40,7 +40,9 @@ export function useAchievements() {
         setData(d);
         setError("");
         if (d.newly_unlocked?.length) {
-          window.dispatchEvent(new CustomEvent("arc:achievements", { detail: d.newly_unlocked }));
+          const byId = Object.fromEntries((d.achievements || []).map((a) => [a.id, a.title || a.id]));
+          const titles = d.newly_unlocked.map((id) => byId[id] || String(id).replace(/-/g, " "));
+          window.dispatchEvent(new CustomEvent("arc:achievements", { detail: titles }));
         }
       })
       .catch(() => {

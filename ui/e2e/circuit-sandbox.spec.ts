@@ -1,0 +1,35 @@
+import { test, expect } from "@playwright/test";
+import { circuitLayoutProblem, prepareTheme, reinforceTheme, svgAxisOverlapProblem } from "./layout-helpers.js";
+
+const BASE = process.env.ARC_UI_URL || "http://127.0.0.1:8765";
+
+test.describe("Circuit sandbox", () => {
+  test("Series RLC simulate reports Vc,peak near 11.630 V with unit", async ({ page }) => {
+    test.setTimeout(90_000);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await prepareTheme(page, "light");
+    await page.goto(`${BASE}/?view=studio&tab=circuits`);
+    await reinforceTheme(page, "light");
+    await page.evaluate(() => localStorage.removeItem("arc-circuit-sandbox-v1"));
+    await page.getByRole("button", { name: "Series RLC" }).click();
+    await page.locator(".part-ref", { hasText: "V1" }).waitFor();
+    const simBtn = page.locator(".studio-circuit-app .cs-simulate-btn");
+    await Promise.all([
+      page.waitForResponse((r) => r.url().includes("/api/circuit-sandbox/simulate") && r.status() === 200),
+      simBtn.click(),
+    ]);
+    await expect(page.locator(".studio-circuit-results .se-waveform")).toBeVisible({ timeout: 30000 });
+    const line = page.locator(".studio-circuit-results .answer-line");
+    await expect(line).toBeVisible();
+    const headline = await line.innerText();
+    const m = headline.match(/([\d.]+)\s*V/);
+    expect(m).toBeTruthy();
+    const v = parseFloat(m[1]);
+    expect(Number.isFinite(v)).toBeTruthy();
+    expect(Math.abs(v - 11.63) / 11.63).toBeLessThan(0.005);
+    await expect(page.locator(".studio-circuit-param-strip")).toContainText("V 10 V");
+    await expect(page.locator(".studio-circuit-param-strip")).toContainText("100 µF");
+    expect(await circuitLayoutProblem(page)).toBeNull();
+    expect(await svgAxisOverlapProblem(page, ".studio-circuit-results .se-waveform")).toBeNull();
+  });
+});

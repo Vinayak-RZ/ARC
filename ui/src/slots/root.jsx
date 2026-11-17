@@ -45,7 +45,7 @@ function Result({ id }) {
     id,
     recipe_id: evid.recipe_id,
   });
-  const state = error ? "failed" : data?.state || "Working";
+  const state = error ? "failed" : data?.state || (data ? "done" : "Working");
   const loading = !data && !error;
   const live =
     state === "waiting-human"
@@ -55,6 +55,8 @@ function Result({ id }) {
         : state === "Working"
           ? "Working"
           : "";
+  const derivedStale = data?.lab_verify?.derivation_matches_graph === false;
+  const needsReview = Boolean(data?.lab_verify?.needs_review) && !derivedStale;
   const { rows } = buildAnswerRows(evid, data);
   const verifierRaw = evid.verifier ? String(evid.verifier) : "";
   const note = verificationNote({ unchecked: error ? false : unchecked, error, verifierRaw, evid });
@@ -69,23 +71,45 @@ function Result({ id }) {
         <p className="answer-value">Run unavailable</p>
       ) : unchecked && rows.length === 0 ? (
         <p className="answer-value">Pending verification</p>
-      ) : rows.length > 1 ? (
+      ) : needsReview ? null : rows.length > 1 ? (
         <div className="answer-lines">
           {rows.map((row) => (
             <AnswerLine key={row.name} parts={row} checked={!unchecked} />
           ))}
         </div>
+      ) : rows.length === 1 && rows[0].plain ? (
+        <p
+          className={`answer-line tabular-nums${rows[0].derivedStale ? " is-derived-stale" : ""}`}
+        >
+          <span className={rows[0].derivedStale ? "answer-stale-value" : undefined}>
+            {rows[0].display}
+          </span>
+          {rows[0].derivedStale ? (
+            <span className="answer-stale-rev"> · Out of date for r{rows[0].staleRev}</span>
+          ) : null}
+        </p>
       ) : rows.length === 1 ? (
         <AnswerLine parts={rows[0]} checked={!unchecked && !error} />
-      ) : (
+      ) : derivedStale && evid?.value != null ? (
+        <p className="answer-line tabular-nums is-derived-stale">
+          <span className="answer-stale-value">{String(evid.value)}</span>
+          <span className="answer-stale-rev">
+            {" "}
+            · Out of date for r{data?.lab?.revision ?? data?.lab_verify?.graph_revision ?? "?"}
+          </span>
+        </p>
+      ) : needsReview ? null : (
         <p className="answer-line">Working…</p>
       )}
       {!error ? (
         <VerificationStrip
-          checked={!unchecked}
+          checked={!unchecked && !data?.lab_verify?.needs_review && !derivedStale}
           unchecked={unchecked}
           modifiedAt={data?.modified_at}
           stale={stale}
+          needsReview={needsReview}
+          derivedStale={derivedStale}
+          reviewNote={data?.lab_verify?.status_label || data?.lab_verify?.disagreement_banner}
           note={(data?.work_steps || []).find((step) => step.title === "Check")?.result}
         />
       ) : (

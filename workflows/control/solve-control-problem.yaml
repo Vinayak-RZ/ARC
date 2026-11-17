@@ -13,9 +13,12 @@ nodes:
   trap:
     activity: trap-verify
     needs: [exam, ctrl, web]
+  lab:
+    activity: seed-control-lab
+    needs: [ctrl]
   label:
     activity: label-unchecked
-    needs: [trap, check, ctrl, web]
+    needs: [trap, check, ctrl, web, lab]
   summary:
     activity: write-run-summary
     needs: [label]

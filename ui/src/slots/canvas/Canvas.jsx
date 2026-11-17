@@ -60,10 +60,39 @@ function CircuitCanvas({ id, data }) {
   const capMessage = useLayout((s) => s.capMessage);
   const inspectorEpoch = useLayout((s) => s.inspectorEpoch);
   const loaded = useRef("");
+  const revision = useRef(0);
 
   useEffect(() => {
     loaded.current = "";
+    revision.current = 0;
   }, [id]);
+
+  useEffect(() => {
+    if (!id) return undefined;
+    const es = new EventSource(`/api/runs/${id}/events`);
+    es.onmessage = (ev) => {
+      try {
+        const body = JSON.parse(ev.data);
+        if (body.type === "graph" && (body.revision || 0) > revision.current) {
+          fetch(`/api/runs/${id}`)
+            .then((r) => (r.ok ? r.json() : null))
+            .then((payload) => {
+              if (!payload?.graph) return;
+              revision.current = body.revision || revision.current;
+              const { nodes: n, edges: e } = toFlow(payload.graph);
+              setNodes(n);
+              setEdges(e);
+              setFlow(n, e);
+              loaded.current = id;
+            })
+            .catch(() => {});
+        }
+      } catch {
+        /* ignore */
+      }
+    };
+    return () => es.close();
+  }, [id, setEdges, setFlow, setNodes]);
 
   useEffect(() => {
     if (!data || loaded.current === id) return;

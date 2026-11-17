@@ -1,0 +1,16 @@
+id: series-rlc-transient
+nodes:
+  derive:
+    activity: run-circuit-derive
+  spice:
+    activity: verify-circuit-spice
+    needs: [derive]
+  lab:
+    activity: seed-circuit-lab
+    needs: [spice]
+  label:
+    activity: label-unchecked
+    needs: [lab]
+  summary:
+    activity: write-run-summary
+    needs: [label]

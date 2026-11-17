@@ -1,0 +1,353 @@
+{
+  "circuit_run": {
+    "run_id": "0wrr-20261116T144830Z",
+    "run_dir": "/agent/repos/ARC/runs/0wrr-20261116T144830Z",
+    "summary": {
+      "recipe_id": "derive-circuit",
+      "run_id": "0wrr-20261116T144830Z",
+      "title": "Voltage divider \u00b7 Vout",
+      "unchecked": false,
+      "token": null,
+      "value": 5.0,
+      "paths": [
+        "/agent/repos/ARC/runs/0wrr-20261116T144830Z/summary.json"
+      ],
+      "citations": [],
+      "web_verification": null,
+      "answer_markdown": null,
+      "similar_problems": null,
+      "recomputed": null,
+      "nodes": {
+        "derive": {
+          "unchecked": false,
+          "ok": true
+        },
+        "spice": {
+          "unchecked": false,
+          "ok": true
+        },
+        "lab": {
+          "unchecked": false,
+          "ok": true
+        },
+        "label": {
+          "unchecked": false,
+          "ok": null
+        },
+        "summary": {
+          "unchecked": false,
+          "ok": null
+        }
+      },
+      "verifier": "algebraic-check via label-unchecked",
+      "values": {
+        "value": 5.0
+      },
+      "artifact_paths": [
+        "/agent/repos/ARC/runs/0wrr-20261116T144830Z/summary.json"
+      ]
+    },
+    "observation": {
+      "run_id": "0wrr-20261116T144830Z",
+      "capabilities": [
+        "algebraic-check",
+        "label-unverified",
+        "lumped-circuit-sim"
+      ],
+      "providers": [
+        "label-unchecked",
+        "run-circuit-derive",
+        "seed-circuit-lab",
+        "verify-circuit-spice",
+        "write-run-summary"
+      ],
+      "nodes": {
+        "derive": {
+          "unchecked": false,
+          "ok": true
+        },
+        "spice": {
+          "unchecked": false,
+          "ok": true
+        },
+        "lab": {
+          "unchecked": false,
+          "ok": true
+        },
+        "label": {
+          "unchecked": false,
+          "ok": null
+        },
+        "summary": {
+          "unchecked": false,
+          "ok": null
+        }
+      },
+      "unchecked_reason": null,
+      "retrieve": {
+        "empty": true,
+        "filters": {},
+        "citations": []
+      }
+    }
+  },
+  "rlc_run": {
+    "run_id": "706b-20261116T144830Z",
+    "run_dir": "/agent/repos/ARC/runs/706b-20261116T144830Z",
+    "summary": {
+      "recipe_id": "series-rlc-transient",
+      "run_id": "706b-20261116T144830Z",
+      "title": "Series RLC \u00b7 Vc,peak",
+      "unchecked": false,
+      "token": null,
+      "value": 11.630335348215805,
+      "paths": [
+        "/agent/repos/ARC/runs/706b-20261116T144830Z/summary.json"
+      ],
+      "citations": [],
+      "web_verification": null,
+      "answer_markdown": null,
+      "similar_problems": null,
+      "recomputed": null,
+      "nodes": {
+        "derive": {
+          "unchecked": false,
+          "ok": true
+        },
+        "spice": {
+          "unchecked": true,
+          "ok": false
+        },
+        "lab": {
+          "unchecked": false,
+          "ok": true
+        },
+        "label": {
+          "unchecked": false,
+          "ok": null
+        },
+        "summary": {
+          "unchecked": false,
+          "ok": null
+        }
+      },
+      "verifier": "algebraic-check via label-unchecked",
+      "values": {
+        "value": 11.630335348215805
+      },
+      "artifact_paths": [
+        "/agent/repos/ARC/runs/706b-20261116T144830Z/summary.json"
+      ]
+    },
+    "observation": {
+      "run_id": "706b-20261116T144830Z",
+      "capabilities": [
+        "algebraic-check",
+        "label-unverified",
+        "lumped-circuit-sim"
+      ],
+      "providers": [
+        "label-unchecked",
+        "run-circuit-derive",
+        "seed-circuit-lab",
+        "verify-circuit-spice",
+        "write-run-summary"
+      ],
+      "nodes": {
+        "derive": {
+          "unchecked": false,
+          "ok": true
+        },
+        "spice": {
+          "unchecked": true,
+          "ok": false
+        },
+        "lab": {
+          "unchecked": false,
+          "ok": true
+        },
+        "label": {
+          "unchecked": false,
+          "ok": null
+        },
+        "summary": {
+          "unchecked": false,
+          "ok": null
+        }
+      },
+      "unchecked_reason": null,
+      "retrieve": {
+        "empty": true,
+        "filters": {},
+        "citations": []
+      }
+    }
+  },
+  "control_run": {
+    "run_id": "60vv-20261116T144831Z",
+    "run_dir": "/agent/repos/ARC/runs/60vv-20261116T144831Z",
+    "summary": {
+      "recipe_id": "solve-control-problem",
+      "run_id": "60vv-20261116T144831Z",
+      "title": "Control step",
+      "unchecked": false,
+      "token": null,
+      "value": 0.9090909090909091,
+      "paths": [
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/bode.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/step.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/artifact.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/artifact.svg",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/bode.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/step.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/artifact.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/artifact.svg",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/evidence/trap_prm.json",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/bode.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/step.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/artifact.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/artifact.svg",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/bode.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/step.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/artifact.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/artifact.svg",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/summary.json"
+      ],
+      "citations": [],
+      "web_verification": {
+        "status": "pass",
+        "provider": "offline",
+        "needs_review": false,
+        "offline_unverified": false,
+        "verified_values": {},
+        "disagreement_banner": null
+      },
+      "answer_markdown": null,
+      "similar_problems": {
+        "provider": "offline",
+        "topic": "",
+        "matches": []
+      },
+      "recomputed": null,
+      "nodes": {
+        "exam": {
+          "unchecked": true,
+          "ok": true
+        },
+        "ctrl": {
+          "unchecked": false,
+          "ok": true
+        },
+        "web": {
+          "unchecked": false,
+          "ok": true
+        },
+        "lab": {
+          "unchecked": false,
+          "ok": true
+        },
+        "check": {
+          "unchecked": false,
+          "ok": true
+        },
+        "trap": {
+          "unchecked": false,
+          "ok": true
+        },
+        "label": {
+          "unchecked": false,
+          "ok": null
+        },
+        "summary": {
+          "unchecked": false,
+          "ok": null
+        }
+      },
+      "verifier": "algebraic-check via check-numeric",
+      "values": {
+        "value": 0.9090909090909091
+      },
+      "artifact_paths": [
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/bode.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/step.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/artifact.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/artifact.svg",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/bode.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/step.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/artifact.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/artifact.svg",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/evidence/trap_prm.json",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/bode.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/step.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/artifact.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/artifact.svg",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/bode.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/step.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/artifact.png",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/artifact.svg",
+        "/agent/repos/ARC/runs/60vv-20261116T144831Z/summary.json"
+      ]
+    },
+    "observation": {
+      "run_id": "60vv-20261116T144831Z",
+      "capabilities": [
+        "algebraic-check",
+        "label-unverified",
+        "lti-analysis",
+        "lumped-control-sim",
+        "measurement-model"
+      ],
+      "providers": [
+        "check-numeric",
+        "label-unchecked",
+        "run-ee-v2-solver",
+        "run-python-control",
+        "seed-control-lab",
+        "trap-verify",
+        "web-verify",
+        "write-run-summary"
+      ],
+      "nodes": {
+        "exam": {
+          "unchecked": true,
+          "ok": true
+        },
+        "ctrl": {
+          "unchecked": false,
+          "ok": true
+        },
+        "web": {
+          "unchecked": false,
+          "ok": true
+        },
+        "lab": {
+          "unchecked": false,
+          "ok": true
+        },
+        "check": {
+          "unchecked": false,
+          "ok": true
+        },
+        "trap": {
+          "unchecked": false,
+          "ok": true
+        },
+        "label": {
+          "unchecked": false,
+          "ok": null
+        },
+        "summary": {
+          "unchecked": false,
+          "ok": null
+        }
+      },
+      "unchecked_reason": null,
+      "retrieve": {
+        "empty": true,
+        "filters": {},
+        "citations": []
+      }
+    }
+  },
+  "control_session_id": "cs-12d3a302146c"
+}

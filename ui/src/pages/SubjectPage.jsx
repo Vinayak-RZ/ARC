@@ -117,7 +117,9 @@ export function SubjectPage({ subjectId, onBack, onNavigate }) {
         <p className="hint">
           {subject.source === "provided" ? "Your notes" : "Inferred syllabus"}
           {" · "}
-          {subject.progress?.done || 0} / {subject.progress?.total || 0} topics
+          {subject.progress?.total
+            ? `${subject.progress?.done || 0} / ${subject.progress.total} topics`
+            : "Not started"}
         </p>
       </header>
 
@@ -126,17 +128,19 @@ export function SubjectPage({ subjectId, onBack, onNavigate }) {
           <ol>
             {(subject.topics || []).map((t) => (
               <li key={t.id} className={t.id === topicId ? "is-active" : undefined}>
-                <button type="button" className="learn-outline-topic" onClick={() => setTopicId(t.id)}>
-                  {t.title}
-                </button>
-                <label className="learn-done">
-                  <input
-                    type="checkbox"
-                    checked={!!t.done}
-                    onChange={(e) => toggleDone(t, e.target.checked)}
-                  />
-                  Done
-                </label>
+                <div className="learn-topic-row">
+                  <label className="learn-topic-check">
+                    <input
+                      type="checkbox"
+                      checked={!!t.done}
+                      onChange={(e) => toggleDone(t, e.target.checked)}
+                    />
+                    <span className="visually-hidden">Done</span>
+                  </label>
+                  <button type="button" className="learn-outline-topic" onClick={() => setTopicId(t.id)}>
+                    {t.title}
+                  </button>
+                </div>
               </li>
             ))}
           </ol>

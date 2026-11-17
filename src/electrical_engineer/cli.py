@@ -17,6 +17,7 @@ COMMANDS = (
     "memory",
     "hosts",
     "control-studio",
+    "lab",
     "reference",
 )
 
@@ -80,6 +81,15 @@ def build_parser() -> argparse.ArgumentParser:
     cs.add_argument("--session", dest="session_id")
     cs.add_argument("--title", default="Control Studio")
     cs.add_argument("--out")
+    lab = sub.add_parser("lab", help="Shared lab artifacts on runs (circuit)")
+    lab.add_argument(
+        "action",
+        nargs="?",
+        default="get",
+        choices=("get", "finish", "simulate", "open"),
+    )
+    lab.add_argument("--run", dest="run_id", required=False)
+    lab.add_argument("--problem", default=None, help="JSON problem payload for finish")
     return p
 
 
@@ -235,6 +245,47 @@ def main(argv: list[str] | None = None) -> int:
             dest = Path(args.out) if args.out else Path(f"{sid}.diagram.json")
             dest.write_text(json.dumps(diagram, indent=2), encoding="utf-8")
             print(dest)
+            return 0
+        return 2
+    if args.cmd == "lab":
+        import json
+        from pathlib import Path
+
+        from electrical_engineer.circuit import mcp_lab
+        from electrical_engineer.collab.workflow import finish_circuit_lab
+        from electrical_engineer.runner.runs import create_run_dir, new_run_id, project_root
+
+        root = project_root()
+        rid = args.run_id or new_run_id()
+        run_dir = root / "runs" / rid
+        if not run_dir.is_dir():
+            create_run_dir(root, rid)
+        if args.action == "get":
+            out = mcp_lab.handle_tool("arc_circuit_lab_get", {"run_id": rid})
+            print(json.dumps(out, indent=2))
+            return 0 if "error" not in out else 1
+        if args.action == "finish":
+            prob = json.loads(args.problem) if args.problem else {}
+            if not prob and (run_dir / "problem.json").is_file():
+                prob = json.loads((run_dir / "problem.json").read_text(encoding="utf-8"))
+            if not prob:
+                print("lab finish needs --problem or runs/<id>/problem.json", file=sys.stderr)
+                return 2
+            verify = finish_circuit_lab(run_dir, prob)
+            print(json.dumps({"run_id": rid, "verify": verify}, indent=2))
+            return 0 if verify.get("ok") else 1
+        if args.action == "simulate":
+            prob = json.loads(args.problem) if args.problem else {}
+            out = mcp_lab.handle_tool("arc_circuit_lab_simulate", {"run_id": rid, "problem": prob})
+            print(json.dumps(out, indent=2))
+            return 0 if out.get("ok") else 1
+        if args.action == "open":
+            from electrical_engineer.collab.lab_meta import load_lab_meta, ui_lab_url
+
+            meta = load_lab_meta(run_dir)
+            if not meta:
+                meta = {"kind": "circuit"}
+            print(ui_lab_url(rid, meta))
             return 0
         return 2
     if args.cmd == "provenance":

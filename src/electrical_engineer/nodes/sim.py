@@ -114,7 +114,12 @@ def run_circuit_derive(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str
     for v in inputs.values():
         if isinstance(v, dict) and v.get("cir"):
             problem.setdefault("cir", v["cir"])
-    if problem.get("kind") and not problem.get("cir") and not problem.get("netlist_path"):
+    kind = str(problem.get("kind") or "").lower()
+    if kind == "series_rlc":
+        # UI example netlist is a static DC deck; peak must come from analytic step response.
+        problem.pop("cir", None)
+        problem["allow_template_fallback"] = True
+    elif problem.get("kind") and not problem.get("cir") and not problem.get("netlist_path"):
         problem["allow_template_fallback"] = True
     try:
         out = derive(problem)
@@ -125,6 +130,16 @@ def run_circuit_derive(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str
         _write_run_json(Path(run_dir_s), "circuit_derive.json", out)
         net = Path(run_dir_s) / "netlist.cir"
         net.write_text(str(out.get("cir") or ""), encoding="utf-8")
+        if kind == "series_rlc":
+            from electrical_engineer.engines.rlc_transient import series_rlc_step
+
+            rlc = series_rlc_step(
+                float(problem.get("r_ohm") or problem.get("r") or 10),
+                float(problem.get("l_h") or problem.get("l") or 0.01),
+                float(problem.get("c_f") or problem.get("c") or 100e-6),
+                float(problem.get("v_step") or problem.get("vin") or 10),
+            )
+            _write_run_json(Path(run_dir_s), "rlc_transient.json", rlc)
     return {
         "ok": True,
         "unchecked": False,
@@ -158,6 +173,136 @@ def verify_circuit_spice(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[s
     if out.get("ok") and not out.get("unchecked"):
         out["unchecked"] = False
     return {**out, "capability": "lumped-circuit-sim", "tool": "circuit_verify"}
+
+
+@register("seed-control-lab")
+def seed_control_lab(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
+    from electrical_engineer.collab.control_derive import derive_control_metrics
+    from electrical_engineer.collab.workflow import finish_control_lab
+
+    problem = dict(_problem(spec))
+    derived_value: float | None = None
+    derived_t: float | None = None
+    hand = derive_control_metrics(problem)
+    if hand:
+        derived_value = float(hand["y_ss"])
+        derived_t = float(hand["t_settle_s"])
+    golden = str(problem.get("golden") or "")
+    ctrl_ok = any(
+        isinstance(v, dict) and v.get("tool") == "python-control" and v.get("ok") for v in inputs.values()
+    )
+    for v in inputs.values():
+        if not isinstance(v, dict):
+            continue
+        if isinstance(v.get("derived"), dict) and hand is None:
+            d = v["derived"]
+            if d.get("y_ss") is not None:
+                try:
+                    derived_value = float(d["y_ss"])
+                except (TypeError, ValueError):
+                    pass
+            if d.get("t_settle_s") is not None:
+                try:
+                    derived_t = float(d["t_settle_s"])
+                except (TypeError, ValueError):
+                    pass
+        if not golden and v.get("golden"):
+            golden = str(v["golden"])
+    if derived_t is not None:
+        problem["t_settle_s"] = derived_t
+    run_dir_s = spec.get("run_dir")
+    if not run_dir_s:
+        return {"ok": False, "unchecked": True, "error": "missing run_dir"}
+    run_dir = Path(run_dir_s)
+    if golden:
+        problem["golden"] = golden
+    if not ctrl_ok:
+        from electrical_engineer.engines.control_runner import control_available
+
+        if not control_available():
+            return {
+                "ok": False,
+                "unchecked": True,
+                "error": "python-control missing",
+                "tool": "control_lab",
+                "capability": "lumped-control-sim",
+            }
+    out = finish_control_lab(
+        run_dir,
+        problem,
+        golden=golden or None,
+        derived_value=derived_value,
+    )
+    ok = "error" not in out and not out.get("mismatch")
+    return {
+        **out,
+        "ok": ok,
+        "unchecked": False,
+        "value": derived_value if derived_value is not None else out.get("simulated"),
+        "capability": "lumped-control-sim",
+        "tool": "control_lab",
+    }
+
+
+@register("seed-circuit-lab")
+def seed_circuit_lab(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
+    from electrical_engineer.collab.workflow import finish_circuit_lab
+
+    problem = dict(_problem(spec))
+    run_dir_s = spec.get("run_dir")
+    run_dir = Path(run_dir_s) if run_dir_s else None
+    if run_dir and not problem.get("cir"):
+        net = run_dir / "netlist.cir"
+        if net.is_file() and net.read_text(encoding="utf-8").strip():
+            problem["cir"] = net.read_text(encoding="utf-8")
+    derived: dict[str, Any] | None = None
+    if run_dir:
+        derive_file = run_dir / "circuit_derive.json"
+        if derive_file.is_file():
+            try:
+                import json
+
+                derived = json.loads(derive_file.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError):
+                derived = None
+    for v in inputs.values():
+        if isinstance(v, dict) and v.get("derived"):
+            derived = v["derived"] if isinstance(v["derived"], dict) else v
+            break
+        if isinstance(v, dict) and v.get("tool") == "circuit_derive":
+            derived = v
+    if derived:
+        problem = {
+            **problem,
+            **{
+                k: derived[k]
+                for k in ("value", "cir", "probe", "analysis", "unit", "t_s", "t_stop", "derive_metric")
+                if k in derived
+            },
+        }
+    if not run_dir_s:
+        return {"ok": False, "unchecked": True, "error": "missing run_dir"}
+    out = finish_circuit_lab(run_dir, problem, derived=derived)
+    if out.get("mismatch"):
+        out["disagreement_banner"] = out.get("disagreement_banner") or "derive vs lab simulation mismatch"
+    sim_skipped = bool(out.get("sim_skipped"))
+    needs_review = bool(out.get("needs_review"))
+    mismatch = bool(out.get("mismatch"))
+    ok = (
+        "error" not in out
+        and out.get("derived") is not None
+        and not mismatch
+        and not needs_review
+        and not sim_skipped
+    )
+    return {
+        **out,
+        "ok": ok,
+        "unchecked": not ok,
+        "value": out.get("derived"),
+        "capability": "lumped-circuit-sim",
+        "tool": "circuit_lab",
+    }
 
 
 @register("run-spice")

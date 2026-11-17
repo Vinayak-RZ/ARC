@@ -304,7 +304,9 @@ export function HomePage({
                   <span className="learn-code-label">{subj.code || subj.id}</span>
                   <span className="example-card-title">{subj.title}</span>
                   <span className="hint">
-                    {subj.progress?.done || 0} / {subj.progress?.total || 0} topics
+                    {subj.progress?.total
+                      ? `${subj.progress?.done || 0} / ${subj.progress.total} topics`
+                      : "Not started"}
                   </span>
                 </button>
               </li>
@@ -339,10 +341,8 @@ export function HomePage({
       ) : null}
       <section className="home-section agent-card">
         <h2>Agent</h2>
-        <p className="hint">Connect your coding agent.</p>
-        <p className="hint">
-          <kbd className="home-agent-cmd">electrical-engineer mcp</kbd> — then connect Cursor or Claude Code.
-        </p>
+        <p className="hint">Agent connected · builds the same circuits and control graphs you edit here.</p>
+        <p className="hint">Last activity appears in Continue when a run finishes.</p>
       </section>
     </div>
   );

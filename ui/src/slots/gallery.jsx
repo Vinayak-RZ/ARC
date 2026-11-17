@@ -153,7 +153,7 @@ export function VisualGallery() {
             <figure key={c.id} className="gallery-card">
               <button type="button" className="gallery-card-open" onClick={() => setActive(c)}>
                 <div className="gallery-card-media">
-                  <img src={`${data.goldens_base}${rel}`} alt={CAPTIONS[c.id] || c.id} loading="lazy" />
+                  <img src={`${data.goldens_base}${rel}`} alt={CAPTIONS[c.id] || c.title || "Gallery figure"} loading="lazy" />
                   {isGif ? <span className="gallery-gif-badge">GIF</span> : null}
                 </div>
                 <figcaption>
@@ -165,15 +165,20 @@ export function VisualGallery() {
         })}
       </div>
       {active ? (
-        <div className="gallery-lightbox" role="dialog" aria-modal="true" aria-label={CAPTIONS[active.id] || active.id}>
+        <div
+          className="gallery-lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label={CAPTIONS[active.id] || active.title || "Gallery figure"}
+        >
           <button type="button" className="gallery-lightbox-backdrop" aria-label="Close" onClick={() => setActive(null)} />
           <div className="gallery-lightbox-panel">
             <img
               src={`${data.goldens_base}${POSTER[active.id] || active.golden}`}
-              alt={CAPTIONS[active.id] || active.id}
+              alt={CAPTIONS[active.id] || active.title || "Gallery figure"}
             />
-            <h2>{CAPTIONS[active.id] || active.title || active.id}</h2>
-            <p className="hint">Engine-bound figure · {active.id}</p>
+            <h2>{CAPTIONS[active.id] || active.title || "Figure"}</h2>
+            <p className="hint">Engine-bound figure</p>
             <div className="gallery-lightbox-actions">
               {EXAMPLE_FOR[active.id] ? (
                 <button type="button" className="button-primary button-compact" disabled={busy} onClick={() => tryAsProblem(active.id)}>

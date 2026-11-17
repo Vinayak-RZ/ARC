@@ -9,7 +9,7 @@ class CompileError(ValueError):
     pass
 
 
-def compile_netlist(graph: dict[str, Any]) -> str:
+def compile_netlist(graph: dict[str, Any], *, step_sources: bool = False) -> str:
     nodes = list(graph.get("nodes") or [])
     edges = list(graph.get("edges") or [])
     if not any(n.get("type") == "ground" for n in nodes):
@@ -29,6 +29,12 @@ def compile_netlist(graph: dict[str, Any]) -> str:
 
     for edge in edges:
         union(str(edge["from"]), str(edge["to"]))
+    for node in nodes:
+        if node.get("type") == "junction":
+            jid = str(node["id"])
+            ports = [f"{jid}.{p}" for p in ("n", "e", "s", "w")]
+            for other in ports[1:]:
+                union(ports[0], other)
 
     ground_roots = set()
     for node in nodes:
@@ -51,7 +57,7 @@ def compile_netlist(graph: dict[str, Any]) -> str:
     lines = ["* arc.circuit.v1"]
     for node in nodes:
         kind = node.get("type")
-        if kind == "ground":
+        if kind in {"ground", "junction"}:
             continue
         n1 = spice(f"{node['id']}.n1")
         n2 = spice(f"{node['id']}.n2")
@@ -59,7 +65,13 @@ def compile_netlist(graph: dict[str, Any]) -> str:
         val = node.get("value")
         if val is None:
             raise CompileError(f"missing value for {ref}")
-        if kind in {"source_v", "source_i"}:
+        if kind == "source_v":
+            if step_sources:
+                v = float(val)
+                lines.append(f"{ref} {n1} {n2} PULSE(0 {v} 0 1p 1p)")
+            else:
+                lines.append(f"{ref} {n1} {n2} DC {val}")
+        elif kind == "source_i":
             lines.append(f"{ref} {n1} {n2} DC {val}")
         elif kind in {"resistor", "capacitor", "inductor"}:
             lines.append(f"{ref} {n1} {n2} {val}")

@@ -1,0 +1,34 @@
+"""Lab verify tolerance (single policy for derive vs simulate)."""
+
+from __future__ import annotations
+
+DEFAULT_REL_TOL = 0.02  # 2% relative on |derived|
+
+DOCS = (
+    "Arc compares |derived − simulated| / max(|derived|, ε) to a fixed relative limit "
+    f"(default {DEFAULT_REL_TOL * 100:.0f}%). Difference column shows the measured relative error; "
+    "status badges state Agrees or Differs against that same limit."
+)
+
+
+def _format_limit_pct(limit_pct: float) -> str:
+    if limit_pct < 0.15:
+        return f"{limit_pct:.2f}%"
+    return f"{limit_pct:.0f}%"
+
+
+def status_label(*, agrees: bool, rel_err_pct: float, limit_pct: float = DEFAULT_REL_TOL * 100) -> str:
+    lim = _format_limit_pct(limit_pct)
+    if agrees or rel_err_pct < limit_pct:
+        return f"Agrees (limit {lim})"
+    shown = format_rel_err_pct(rel_err_pct)
+    if shown < 0.05:
+        return f"Differs by {shown:.3f}% (limit {lim})"
+    return f"Differs by {shown:.1f}% (limit {lim})"
+
+
+def format_rel_err_pct(rel_err_pct: float) -> float:
+    """Round for display without hiding small nonzero errors."""
+    if rel_err_pct < 0.05:
+        return rel_err_pct
+    return round(rel_err_pct, 1)

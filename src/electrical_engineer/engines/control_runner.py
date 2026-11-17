@@ -86,13 +86,14 @@ def run_control_plots(run_dir: Path, problem: dict[str, Any]) -> dict[str, Any]:
         "tool": "python-control",
         "unchecked": False,
         "value": y_ss,
+        "y_ss": y_ss,
         "paths": [str(bode_png), str(step_png), str(artifact_png), str(artifact_svg)],
         "bode_png": str(bode_png),
         "step_png": str(step_png),
     }
     if margins:
         out["margins"] = margins
-        out.update(margins)
+        out.update({k: v for k, v in margins.items() if k != "phase_margin_deg"})
         if problem.get("margins"):
             out["value"] = margins["phase_margin_deg"]
     return out

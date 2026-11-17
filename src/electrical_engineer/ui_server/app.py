@@ -10,13 +10,13 @@ import threading
 from pathlib import Path
 
 from fastapi import FastAPI, Request
-from fastapi.responses import FileResponse, JSONResponse, Response
+from fastapi.responses import FileResponse, JSONResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 _LOG = logging.getLogger(__name__)
 
 BIND_HOST = "127.0.0.1"
-BIND_PORT = 8765
+BIND_PORT = int(os.environ.get("EE_UI_PORT", os.environ.get("ARC_CAPTURE_PORT", "8765")))
 _UPLOAD_MAX = 20 * 1024 * 1024
 _UPLOAD_SUFFIX = {".md", ".txt", ".pdf"}
 
@@ -67,6 +67,16 @@ def _read_json(path: Path) -> dict:
     return data if isinstance(data, dict) else {}
 
 
+def _read_json_file(path: Path) -> dict | None:
+    if not path.is_file():
+        return None
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return None
+    return data if isinstance(data, dict) else None
+
+
 def _opaque_title(title: str, folder_name: str) -> bool:
     text = (title or "").strip()
     if not text or text == folder_name:
@@ -77,13 +87,24 @@ def _opaque_title(title: str, folder_name: str) -> bool:
 
 
 def _human_run_title(folder: Path, evid: dict) -> str:
-    from electrical_engineer.circuit.title import run_title, title_with_value
+    from electrical_engineer.circuit.title import run_headline, run_title, title_with_value
 
+    problem = _read_json(folder / "problem.json")
+    recipe_id = str(evid.get("recipe_id") or problem.get("recipe_id") or "")
+
+    if problem:
+        stable = run_title(recipe_id or "solve-circuit-problem", problem)
+        if stable and not _opaque_title(stable, folder.name):
+            return stable
+    if (folder / "lab_meta.json").is_file() or str(problem.get("kind") or "") == "series_rlc":
+        label = run_title(recipe_id or "simulate-circuit", problem)
+        return label or "Series RLC step"
+    headline = run_headline(recipe_id, problem, evid.get("value"), bool(evid.get("unchecked")))
+    if headline:
+        return headline
     title = str(evid.get("title") or "").strip()
     if title and not _opaque_title(title, folder.name):
         return title
-    problem = _read_json(folder / "problem.json")
-    recipe_id = str(evid.get("recipe_id") or problem.get("recipe_id") or "")
     if problem:
         derived = run_title(recipe_id or "solve-circuit-problem", problem)
         if derived and not _opaque_title(derived, folder.name):
@@ -271,7 +292,7 @@ _UI_EXAMPLES = (
         "caption": "Underdamped capacitor voltage after a 10 V step",
         "subject": "Circuits",
         "thumbnail": _golden_thumb("circuits/schematic.rlc_series.png"),
-        "recipe_id": "simulate-circuit",
+        "recipe_id": "series-rlc-transient",
         "problem": {
             "kind": "series_rlc",
             "vin": 10,
@@ -281,7 +302,35 @@ _UI_EXAMPLES = (
             "c_f": 100e-6,
             "probe_node": 3,
             "analysis": "tran",
+            "t_s": 0.003628,
+            "probe": "v(3)",
+            "tol": 0.15,
             "prompt": "Series RLC step",
+            "cir": _RLC_CIR,
+        },
+    },
+    {
+        "id": "rlc-bad-derive",
+        "title": "Series RLC (bad derive)",
+        "caption": "Agent uses forward Euler — lab ngspice disagrees",
+        "subject": "Circuits",
+        "thumbnail": _golden_thumb("circuits/schematic.rlc_series.png"),
+        "recipe_id": "series-rlc-transient",
+        "problem": {
+            "kind": "series_rlc",
+            "vin": 10,
+            "v_step": 10,
+            "r_ohm": 10,
+            "l_h": 0.01,
+            "c_f": 100e-6,
+            "probe_node": 3,
+            "analysis": "tran",
+            "t_s": 0.003628,
+            "probe": "v(3)",
+            "tol": 0.02,
+            "derive_bug": "forward_euler",
+            "allow_template_fallback": True,
+            "prompt": "Series RLC step (bad derive demo)",
             "cir": _RLC_CIR,
         },
     },
@@ -597,6 +646,10 @@ def _rag_tags(
 
 
 def create_app(root: Path | None = None) -> FastAPI:
+    from electrical_engineer.visual_kit.mpl_threads import install_matplotlib_lock
+
+    # Seeding renders figures on a background thread while requests render plots.
+    install_matplotlib_lock()
     app = FastAPI()
     runs = (root or Path.cwd()) / "runs"
     cwd = root or Path.cwd()
@@ -848,6 +901,24 @@ def create_app(root: Path | None = None) -> FastAPI:
                 }
             )
         disagreement = wv.get("disagreement_banner") or evid_obj.get("disagreement_banner")
+        lab_meta_obj = _read_json(d / "lab_meta.json")
+        lab_verify = _read_json(d / "lab_verify.json")
+        if lab_verify and lab_meta_obj:
+            from electrical_engineer.collab.lab_verify import attach_verify_freshness
+
+            lab_verify = attach_verify_freshness(lab_verify, lab_meta_obj, run_dir=d) or lab_verify
+        if lab_verify.get("disagreement_banner") and not disagreement:
+            disagreement = lab_verify.get("disagreement_banner")
+        if lab_verify and not lab_verify.get("simulate"):
+            sim_nest = _read_json_file(d / "lab_simulate.json")
+            if sim_nest:
+                lab_verify = {**lab_verify, "simulate": sim_nest}
+        lab = None
+        if lab_meta_obj:
+            lab = {
+                **lab_meta_obj,
+                "ui_url": lab_meta_obj.get("ui_url"),
+            }
         return {
             "id": run_id,
             "title": _human_run_title(d, evid_obj),
@@ -862,6 +933,8 @@ def create_app(root: Path | None = None) -> FastAPI:
             "similar_problems": similar_probs or None,
             "source_chips": source_chips,
             "disagreement_banner": disagreement,
+            "lab": lab,
+            "lab_verify": lab_verify or None,
             "plan": plan,
             "observation": observation,
             "observation_excerpt": observation_excerpt,
@@ -870,6 +943,9 @@ def create_app(root: Path | None = None) -> FastAPI:
             "control_diagram": control_diagram,
             "diagram": diagram,
             "work_steps": _work_steps(d),
+            "circuit_derive": _read_json_file(d / "circuit_derive.json"),
+            "rlc_transient": _read_json_file(d / "rlc_transient.json"),
+            "lab_simulate": _read_json_file(d / "lab_simulate.json"),
             "activity_feed": activity_feed,
             "state": state,
         }
@@ -906,16 +982,110 @@ def create_app(root: Path | None = None) -> FastAPI:
 
     @app.put("/api/runs/{run_id}/graph", response_model=None)
     async def put_graph(run_id: str, request: Request):
-        from electrical_engineer.circuit.graph import GraphError, write_graph
+        from electrical_engineer.circuit.graph import GraphError
+        from electrical_engineer.circuit.run_session import apply_graph
+        from electrical_engineer.collab import lab_meta as lab_meta_mod
 
         d = runs / run_id
         d.mkdir(parents=True, exist_ok=True)
+        lab_meta_mod.ensure_lab_meta(d, kind="circuit")
         try:
             body = await request.json()
-            out = write_graph(d, body if isinstance(body, dict) else {})
+            out = apply_graph(d, body if isinstance(body, dict) else {}, author="human", op="ui_save")
         except GraphError as exc:
             return JSONResponse({"error": str(exc)}, status_code=400)
         return {"id": run_id, **out}
+
+    @app.get("/api/runs/{run_id}/lab")
+    def run_lab_meta(run_id: str) -> dict:
+        from electrical_engineer.circuit.run_session import load_graph
+        from electrical_engineer.collab.lab_meta import load_lab_meta
+
+        d = runs / run_id
+        if not d.is_dir():
+            return JSONResponse({"error": "missing"}, status_code=404)
+        meta = load_lab_meta(d)
+        graph = load_graph(d)
+        payload = {"run_id": run_id, "lab_meta": meta, "graph": graph}
+        sim_path = d / "lab_simulate.json"
+        if sim_path.is_file():
+            payload["lab_simulate"] = _read_json(sim_path)
+        verify_path = d / "lab_verify.json"
+        if verify_path.is_file():
+            lab_verify = _read_json(verify_path)
+            from electrical_engineer.collab.lab_verify import attach_verify_freshness
+
+            payload["lab_verify"] = attach_verify_freshness(lab_verify, meta, run_dir=d) or lab_verify
+        return payload
+
+    @app.post("/api/runs/{run_id}/lab/re-derive")
+    def post_lab_re_derive(run_id: str) -> dict:
+        from electrical_engineer.collab.lab_verify import agent_rederive_circuit_lab
+
+        d = runs / run_id
+        if not d.is_dir():
+            return JSONResponse({"error": "missing"}, status_code=404)
+        try:
+            verify = agent_rederive_circuit_lab(d)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=400)
+        return {"ok": True, "lab_verify": verify}
+
+    @app.post("/api/runs/{run_id}/lab/accept-simulated")
+    def post_lab_accept_simulated(run_id: str) -> dict:
+        from electrical_engineer.collab.lab_verify import accept_simulated_lab
+
+        d = runs / run_id
+        if not d.is_dir():
+            return JSONResponse({"error": "missing"}, status_code=404)
+        try:
+            verify = accept_simulated_lab(d)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=400)
+        return {"ok": True, "lab_verify": verify}
+
+    @app.post("/api/runs/{run_id}/lab/verify")
+    def post_lab_verify(run_id: str) -> dict:
+        from electrical_engineer.collab.lab_meta import load_lab_meta
+        from electrical_engineer.collab.lab_verify import reverify_circuit_lab
+
+        d = runs / run_id
+        if not d.is_dir():
+            return JSONResponse({"error": "missing"}, status_code=404)
+        try:
+            verify = reverify_circuit_lab(d)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=400)
+        return {"ok": True, "lab_verify": verify, "revision": load_lab_meta(d).get("revision")}
+
+    @app.post("/api/runs/{run_id}/lab/restore")
+    async def restore_lab(run_id: str) -> dict:
+        from electrical_engineer.collab.lab_meta import load_lab_meta
+        from electrical_engineer.collab.lab_verify import restore_agent_circuit_lab
+
+        d = runs / run_id
+        if not d.is_dir():
+            return JSONResponse({"error": "missing"}, status_code=404)
+        try:
+            verify = restore_agent_circuit_lab(d)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=400)
+        meta = load_lab_meta(d)
+        return {"ok": True, "lab_verify": verify, "revision": meta.get("revision")}
+
+    @app.get("/api/runs/{run_id}/events")
+    async def run_events(run_id: str):
+        from electrical_engineer.collab.run_events import sse_stream
+
+        return StreamingResponse(
+            sse_stream(run_id),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache, no-transform",
+                "Connection": "keep-alive",
+                "X-Accel-Buffering": "no",
+            },
+        )
 
     @app.post("/api/runs/{run_id}/confirm")
     async def confirm(run_id: str, request: Request) -> dict:

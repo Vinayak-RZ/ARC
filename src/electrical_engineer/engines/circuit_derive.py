@@ -38,7 +38,7 @@ def derive(problem: dict[str, Any], *, item_root: Path | None = None) -> dict[st
         if allow and kind and kind in _KINDS:
             out = _KINDS[kind](problem)
             out["kind"] = kind
-            out["engine"] = "circuit_derive"
+            out.setdefault("engine", "circuit_derive")
             out["derived_via"] = "template_fallback"
             return out
         raise
@@ -59,7 +59,7 @@ def derive(problem: dict[str, Any], *, item_root: Path | None = None) -> dict[st
         if allow and kind and kind in _KINDS:
             out = _KINDS[kind](problem)
             out["kind"] = kind
-            out["engine"] = "circuit_derive"
+            out.setdefault("engine", "circuit_derive")
             out["derived_via"] = "template_fallback"
             return out
         raise DeriveError(str(exc)) from exc
@@ -119,7 +119,62 @@ def _dc_divider(problem: dict[str, Any]) -> dict[str, Any]:
     return {"value": vout, "unit": "V", "cir": cir, "probe_node": "2", "probe": probe}
 
 
+def _series_rlc(problem: dict[str, Any]) -> dict[str, Any]:
+    from electrical_engineer.engines.rlc_transient import series_rlc_step
+
+    vin = float(problem.get("vin") or problem.get("v_step") or 10)
+    r_ohm = float(problem.get("r_ohm") or problem.get("r") or 10)
+    l_h = float(problem.get("l_h") or problem.get("l") or 1e-3)
+    c_f = float(problem.get("c_f") or problem.get("c") or 1e-6)
+    step_v = float(problem.get("v_step") or vin)
+    meta = series_rlc_step(r_ohm, l_h, c_f, step_v)
+    t_peak_s = float(meta["t_Vc_peak_s"])
+    t_settle = meta.get("settling_2pct_entry_s") or meta.get("settling_time_2pct_s")
+    overshoot = float(meta.get("overshoot_pct") or 0.0) < 0.5
+    if problem.get("t_stop") is not None:
+        t_stop = float(problem["t_stop"])
+    elif overshoot and t_settle is not None:
+        t_stop = max(float(t_settle) * 2.5, float(t_peak_s) * 1.2, 0.015)
+    else:
+        # The simulator must find the peak itself, so the window runs well past it
+        # (same window as lab re-verify), never stopping at the analytic peak time.
+        t_stop = max(float(problem.get("t_s") or 0.0), t_peak_s * 2.5, 1e-3)
+    probe = str(problem.get("probe") or problem.get("probe_expr") or "v(3)")
+    bug = str(problem.get("derive_bug") or "").lower()
+    if bug in ("forward_euler", "euler"):
+        from electrical_engineer.engines.rlc_transient import forward_euler_vc_peak
+
+        value, t_peak_s = forward_euler_vc_peak(r_ohm, l_h, c_f, step_v)
+        engine = "forward_euler_bug"
+    else:
+        value = float(step_v if overshoot else meta["Vc_peak_V"])
+        engine = "circuit_derive"
+    cir = (
+        "* arc series rlc\n"
+        f"V1 1 0 DC {step_v}\n"
+        f"R1 1 2 {r_ohm}\nL1 2 3 {l_h}\nC1 3 0 {c_f}\n"
+        f".ic v(3)=0\n"
+        f".tran {max(t_stop / 500, 1e-7):g} {t_stop:g} uic\n.end\n"
+    )
+    return {
+        "value": value,
+        "unit": "V",
+        "cir": cir,
+        "probe": probe,
+        "probe_node": str(problem.get("probe_node") or "3"),
+        "analysis": "tran",
+        "t_s": t_peak_s,
+        "t_stop": t_stop,
+        "derive_metric": "Vc_final" if float(meta.get("overshoot_pct") or 0.0) < 0.5 else "Vc_peak",
+        "settling_2pct_entry_s": t_settle,
+        "settling_time_2pct_s": meta.get("settling_time_2pct_s"),
+        "engine": engine,
+    }
+
+
 _KINDS = {
     "dc_divider": _dc_divider,
     "voltage_divider": _dc_divider,
+    "series_rlc": _series_rlc,
+    "rlc": _series_rlc,
 }

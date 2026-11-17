@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from electrical_engineer.circuit import mcp_lab
 from electrical_engineer.engines.circuit_multimodal import (
     confirm_and_write,
     propose_netlist_from_component,
@@ -16,6 +17,7 @@ from electrical_engineer.runner.execute import execute
 from electrical_engineer.runner.runs import create_run_dir, new_run_id, project_root
 
 TOOL_DEFS: list[dict[str, Any]] = [
+    *mcp_lab.TOOL_DEFS,
     {
         "name": "arc_circuit_derive_verify",
         "description": "Run derive-circuit workflow on a problem.json-shaped payload.",
@@ -47,6 +49,8 @@ TOOL_DEFS: list[dict[str, Any]] = [
 
 
 def handle_tool(name: str, args: dict[str, Any]) -> dict[str, Any]:
+    if name.startswith("arc_circuit_lab_"):
+        return mcp_lab.handle_tool(name, args)
     if name == "arc_circuit_derive_verify":
         problem = dict(args.get("problem") or {})
         root = project_root()

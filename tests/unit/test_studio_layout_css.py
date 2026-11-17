@@ -14,7 +14,7 @@ CSS = (ROOT / "ui" / "src" / "control-studio" / "studio.css").read_text(encoding
 def _width(selector: str) -> int:
     m = re.search(rf"{re.escape(selector)}\s*\{{(.*?)}}", CSS, re.DOTALL)
     assert m, f"missing rule for {selector}"
-    wm = re.search(r"^\s*width:\s*(\d+)px", m.group(1), re.MULTILINE)
+    wm = re.search(r"(?<!-)width:\s*(\d+)px", m.group(1), re.MULTILINE)
     assert wm, f"missing width for {selector}"
     return int(wm.group(1))
 
@@ -22,6 +22,6 @@ def _width(selector: str) -> int:
 def test_python_layout_matches_css() -> None:
     assert _width(".studio-pid.studio-block") == PID_W
     assert _width(".studio-sum.studio-block") == SUM_W
-    m = re.search(r"\.studio-block\s*\{[^}]*width:\s*(\d+)px", CSS)
+    m = re.search(r"\.studio-block\s*\{[^}]*(?<!-)width:\s*(\d+)px", CSS)
     assert m and int(m.group(1)) == BLOCK_W
     assert GAP >= 48

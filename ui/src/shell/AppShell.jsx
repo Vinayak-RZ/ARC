@@ -20,11 +20,13 @@ import { renderSlot } from "../slots/registry.js";
 function readUrlState() {
   const q = new URLSearchParams(window.location.search);
   const view = q.get("view");
-  const problem = q.get("problem") || q.get("run");
+  const runParam = q.get("run");
+  const problem = q.get("problem") || (view === "studio" ? null : runParam);
   const subject = q.get("subject");
   const tab = q.get("tab");
   const lab = q.get("lab");
-  return { view, problem, subject, tab, lab };
+  const studioRun = view === "studio" ? runParam : null;
+  return { view, problem, subject, tab, lab, studioRun };
 }
 
 export function AppShell() {
@@ -36,6 +38,7 @@ export function AppShell() {
   const clearRun = useLayout((s) => s.clearRun);
   const setLearnSubject = useLayout((s) => s.setLearnSubject);
   const setStudio = useLayout((s) => s.setStudio);
+  const setStudioRunId = useLayout((s) => s.setStudioRunId);
   const setThemeMode = useLayout((s) => s.setThemeMode);
   const collapsed = useLayout((s) => s.sidebarCollapsed);
   const { runs, loading: runsLoading, error: runsError, reload, seeding } = useRunsList();
@@ -73,12 +76,14 @@ export function AppShell() {
           setLearnSubject(null);
           url.searchParams.delete("subject");
         }
-        url.searchParams.delete("session");
         if (v === "studio") {
-          const nextTab = tab || "home";
+          const sessionParam = url.searchParams.get("session");
+          const nextTab = tab || (sessionParam ? "control" : "home");
           const nextLab = lab || null;
-          setStudio({ tab: nextTab, lab: nextLab });
-          if (nextTab === "home") {
+          const linkedRun = url.searchParams.get("run");
+          setStudio({ tab: nextTab, lab: nextLab, runId: linkedRun });
+          setStudioRunId(linkedRun);
+          if (nextTab === "home" && !sessionParam) {
             url.searchParams.delete("tab");
             url.searchParams.delete("session");
           } else {
@@ -87,6 +92,7 @@ export function AppShell() {
           if (nextLab) url.searchParams.set("lab", nextLab);
           else url.searchParams.delete("lab");
         } else {
+          url.searchParams.delete("session");
           url.searchParams.delete("tab");
           url.searchParams.delete("lab");
         }
@@ -94,7 +100,7 @@ export function AppShell() {
       if (push) window.history.pushState({}, "", url);
       else window.history.replaceState({}, "", url);
     },
-    [clearRun, setLearnSubject, setRun, setStudio, setView],
+    [clearRun, setLearnSubject, setRun, setStudio, setStudioRunId, setView],
   );
 
   const navigate = useCallback((opts) => applyRoute(opts, { push: true }), [applyRoute]);
@@ -103,21 +109,22 @@ export function AppShell() {
     const mode = getStoredTheme();
     setThemeMode(mode);
     applyTheme(mode);
-    const { view: v, problem, subject, tab, lab } = readUrlState();
+    const { view: v, problem, subject, tab, lab, studioRun } = readUrlState();
     if (problem) setRun(problem);
     else if (v) {
       setView(v);
       if (v === "learn" && subject) setLearnSubject(subject);
       if (v === "studio") {
         const session = new URLSearchParams(window.location.search).get("session");
-        setStudio({ tab: tab || "home", lab: lab || null });
+        setStudio({ tab: tab || (session ? "control" : "home"), lab: lab || null, runId: studioRun });
+        setStudioRunId(studioRun);
       }
     }
-  }, [setLearnSubject, setRun, setStudio, setThemeMode, setView]);
+  }, [setLearnSubject, setRun, setStudio, setStudioRunId, setThemeMode, setView]);
 
   useEffect(() => {
     function onPop() {
-      const { view: v, problem, subject, tab, lab } = readUrlState();
+      const { view: v, problem, subject, tab, lab, studioRun } = readUrlState();
       if (problem) {
         setRun(problem);
       } else {
@@ -125,13 +132,17 @@ export function AppShell() {
         setView(v || "home");
         setLearnSubject(v === "learn" ? subject || null : null);
         if (v === "studio") {
-          setStudio({ tab: tab || "home", lab: lab || null });
+          const session = new URLSearchParams(window.location.search).get("session");
+          setStudio({ tab: tab || (session ? "control" : "home"), lab: lab || null, runId: studioRun });
+          setStudioRunId(studioRun);
+        } else {
+          setStudioRunId(null);
         }
       }
     }
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
-  }, [clearRun, setLearnSubject, setRun, setStudio, setView]);
+  }, [clearRun, setLearnSubject, setRun, setStudio, setStudioRunId, setView]);
 
   const openProblem = (runId) => navigate({ view: "problems", runId });
   const stale = useLayout((s) => s.parametersStale);
@@ -196,6 +207,7 @@ export function AppShell() {
       <div className="product-main">
         <TopBar
           runMeta={runMeta}
+          runTitle={data?.title}
           primaryLabel={primaryLabel}
           onPrimaryAction={onPrimary}
           runAgainPrimary={view === "problems" && id && stale}

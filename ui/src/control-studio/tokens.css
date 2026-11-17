@@ -1,12 +1,12 @@
 /* Cobalt UI tokens scoped to Control Studio — swap-friendly when shell tokens land. */
 .cs-app {
-  --cs-canvas: #fafaf9;
-  --cs-surface: #ffffff;
-  --cs-surface-subtle: #f5f5f4;
-  --cs-surface-sunken: #efefed;
-  --cs-border: #e4e4e2;
-  --cs-border-strong: #d4d4d1;
-  --cs-text: #202020;
+  --cs-canvas: var(--ee-color-canvas, #fafaf9);
+  --cs-surface: var(--ee-color-surface-card, #ffffff);
+  --cs-surface-subtle: var(--ee-color-surface-soft, #f5f5f4);
+  --cs-surface-sunken: var(--ee-color-surface-strong, #efefed);
+  --cs-border: var(--ee-color-hairline, #e4e4e2);
+  --cs-border-strong: var(--ee-color-hairline-strong, #d4d4d1);
+  --cs-text: var(--ee-color-ink, #202020);
   --cs-wire: #1a1a18;
   --cs-text-secondary: #5f5f5c;
   --cs-text-muted: #70706c;

@@ -10,6 +10,15 @@ from typing import Any
 
 def work_steps(run_dir: Path) -> list[dict[str, str]]:
     problem = _load(run_dir / "problem.json")
+    try:
+        from electrical_engineer.circuit.graph import series_rlc_params_from_graph
+        from electrical_engineer.circuit.run_session import load_graph
+
+        params = series_rlc_params_from_graph(load_graph(run_dir))
+        if params:
+            problem = {**problem, **params}
+    except ImportError:
+        pass
     evid = _load(run_dir / "evidentiary.json") or _load(run_dir / "summary.json")
     recipe = str(evid.get("recipe_id") or "")
     kind = str(problem.get("kind") or "")
@@ -51,6 +60,15 @@ def _divider(problem: dict[str, Any], evid: dict[str, Any]) -> list[dict[str, st
     ]
 
 
+def _damping_label(dtype: str) -> str:
+    labels = {
+        "underdamped": "underdamped",
+        "overdamped": "overdamped",
+        "critically_damped": "critically damped",
+    }
+    return labels.get(dtype, dtype.replace("_", " "))
+
+
 def _rlc(problem: dict[str, Any], evid: dict[str, Any], transient: dict[str, Any]) -> list[dict[str, str]]:
     r = float(problem.get("r_ohm") or problem.get("r") or 0)
     l_h = float(problem.get("l_h") or problem.get("l") or 0)
@@ -62,7 +80,18 @@ def _rlc(problem: dict[str, Any], evid: dict[str, Any], transient: dict[str, Any
         zeta = (r / 2.0) * math.sqrt(c_f / l_h)
         wn = 1.0 / math.sqrt(l_h * c_f)
     peak = transient.get("Vc_peak_V", evid.get("value"))
+    overshoot = float(transient.get("overshoot_pct") or 0.0) < 0.5
     damping = transient.get("damping_type") or ""
+    t_settle = transient.get("settling_2pct_entry_s") or transient.get("settling_time_2pct_s")
+    cap_row = (
+        {"title": "Capacitor peak", "result": f"Vc peak = {_num(peak)} V", "author": "Engine"}
+        if overshoot
+        else {
+            "title": "Capacitor final value",
+            "result": f"Vc final = {_num(peak)} V, settling (2%) = {_num(float(t_settle or 0) * 1000, None, 2)} ms",
+            "author": "Engine",
+        }
+    )
     return [
         {
             "title": "Read the branch",
@@ -71,17 +100,27 @@ def _rlc(problem: dict[str, Any], evid: dict[str, Any], transient: dict[str, Any
         },
         {
             "title": "Natural response",
-            "result": f"ζ = {_num(zeta)}, ωn = {_num(wn)} rad/s" + (f", {damping}" if damping else ""),
+            "result": f"ζ = {_num(zeta)}, ωn = {_num(wn)} rad/s"
+            + (f", {_damping_label(str(damping))}" if damping else ""),
             "author": "Engine",
             "equation": "ζ = (R/2) √(C/L),  ωn = 1/√(LC)",
         },
-        {"title": "Capacitor peak", "result": f"Vc peak = {_num(peak)} V", "author": "Engine"},
+        cap_row,
         _check_step(evid, "Series RLC step integrated and checked."),
     ]
 
 
 def _control(problem: dict[str, Any], evid: dict[str, Any]) -> list[dict[str, str]]:
     tf = str(problem.get("tf") or "G(s)")
+    num, den = problem.get("num"), problem.get("den")
+    if (
+        isinstance(num, list)
+        and isinstance(den, list)
+        and len(num) == 1
+        and len(den) == 2
+        and abs(float(den[1]) - 1.0) < 1e-9
+    ):
+        tf = f"{num[0]}/(s+{int(den[0]) if float(den[0]).is_integer() else den[0]})"
     return [
         {"title": "Read the plant", "result": f"G(s) = {tf}", "author": "Agent"},
         {

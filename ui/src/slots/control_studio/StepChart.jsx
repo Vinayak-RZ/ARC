@@ -35,7 +35,9 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
   const { t, y, setpoint = 1, unit = "", metrics = {} } = data || {};
   const status = metrics.status || (metrics.settled ? "settled" : "not_settled");
   const yLabel = unit ? `Speed (${unit})` : "Output";
-  const win = metrics.window_s || 10;
+  const picked =
+    windowS === "auto" || windowS == null ? null : Number(windowS);
+  const win = (Number.isFinite(picked) && picked > 0 ? picked : null) ?? metrics.window_s ?? 10;
   const xLabel = win !== 10 ? `Time (s), ${fmt(win, 0)} s window` : "Time (s)";
 
   useEffect(() => {
@@ -45,9 +47,18 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
       const r = el.getBoundingClientRect();
       const rh = Math.floor(r.height);
       const rw = Math.floor(r.width);
+      const ch = Math.floor(el.clientHeight);
+      const stage = el.closest(".studio-results-stage");
+      const chart = el.closest(".studio-step-chart");
+      const head = chart?.querySelector(".studio-step-chart-head-unified");
+      const stageH = stage ? Math.floor(stage.clientHeight) : 0;
+      const headH = head ? Math.ceil(head.getBoundingClientRect().height) : 32;
+      const cap = stageH > headH ? stageH - headH - 12 : 0;
+      let maxH = ch > 0 ? Math.max(160, ch) : rh > 0 ? Math.max(160, Math.min(rh, 200)) : 160;
+      if (cap > 0) maxH = Math.min(maxH, Math.max(120, cap));
       setSize({
         w: rw > 0 ? rw : 560,
-        h: rh > 0 ? rh : 160,
+        h: maxH,
       });
     });
     ro.observe(el);
@@ -69,7 +80,7 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
   const w = size.w;
   const h = size.h;
   // Bottom band: tick numbers (16 px under the plot) plus the axis title with room for descenders.
-  const m = { l: 56, r: 16, t: 24, b: 56 };
+  const m = { l: 56, r: 16, t: 24, b: 48 };
   const plotW = w - m.l - m.r;
   const plotH = h - m.t - m.b;
   const x = (time) => m.l + ((time - series.t0) / (series.t1 - series.t0 || 1)) * plotW;
@@ -96,7 +107,8 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
         : `Settling time ${fmtTime(metrics.t_settle_s)} s` +
           (offTarget
             ? ` · Final value ${finalText} · ${fmt(metrics.steady_state_error_pct, 1)}% ${metrics.direction || "below"} setpoint`
-            : metrics.overshoot_pct != null
+            : metrics.overshoot_pct != null &&
+                !(metrics.overshoot_pct > 0.5 && metrics.peak_t_s != null)
               ? ` · Overshoot ${fmt(metrics.overshoot_pct, 1)}%`
               : "")
       : "";
@@ -104,6 +116,8 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
     flat && metrics.overshoot_pct > 0.5 && metrics.peak_t_s != null
       ? { px: x(metrics.peak_t_s), py: ypx(metrics.peak_value) }
       : null;
+  const peakLabelAbove =
+    peak && Math.abs(peak.py - spY) > 18 ? peak.py - 10 : peak ? peak.py + 14 : 0;
   const ts = metrics.t_settle_s;
   const settleX =
     flat && ts != null && ts >= series.t0 && ts <= series.t1 ? x(ts) : null;
@@ -143,8 +157,10 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
       <div className="studio-step-plot" ref={plotRef}>
       <svg
         className="studio-step-svg"
-        width={w}
+        viewBox={`0 0 ${w} ${h}`}
+        preserveAspectRatio="xMidYMid meet"
         height={h}
+        style={{ width: "100%", maxHeight: "100%", display: "block" }}
         role="img"
         aria-label={aria}
         onMouseLeave={() => setCursor(null)}
@@ -231,7 +247,7 @@ export function StepChart({ data, margins, onWindowChange, windowS, tabBar = nul
         {peak ? (
           <>
             <circle cx={peak.px} cy={peak.py} r={3.5} className="studio-step-peak" />
-            <text x={peak.px + 8} y={peak.py - 10} className="studio-step-peak-label">
+            <text x={peak.px + 8} y={peakLabelAbove} className="studio-step-peak-label">
               {fmt(metrics.overshoot_pct, 1)}%
             </text>
           </>
