@@ -49,6 +49,9 @@ def _api(method: str, path: str, data: dict | None = None) -> dict:
 
 
 def _set_theme(page, mode: str) -> None:
+    url = page.url or ""
+    if not url.startswith("http"):
+        raise RuntimeError(f"_set_theme before navigation ({url!r}); call goto then set theme")
     page.evaluate(
         """(mode) => {
         document.documentElement.setAttribute('data-theme', mode);
@@ -188,8 +191,8 @@ def _assert_rlc_peak_headline(page, label: str) -> None:
     text = _wait_rlc_peak_headline(page)
     if not re.search(r"11\.630", text):
         raise RuntimeError(f"{label}: expected Vc peak 11.630 V in headline, got {text!r}")
-    if not re.search(r"at\s+3\.63", text):
-        raise RuntimeError(f"{label}: expected peak time ~3.63 ms in headline, got {text!r}")
+    if not re.search(r"at\s+3\.628\s+ms", text):
+        raise RuntimeError(f"{label}: expected peak time 3.628 ms in headline, got {text!r}")
 
 
 
@@ -205,12 +208,12 @@ def _wait_health() -> None:
 
 
 _RECTIFIER_TOPOS = [
-    ("hw1", "1φ half", 230, (0, 30, 60, 90, 120)),
-    ("semi1", "1φ semi", 230, (0, 30, 60, 90, 120)),
-    ("full1", "1φ full", 230, (0, 30, 60, 90, 120)),
-    ("hw3", "3φ half", 415, (0, 30, 60, 75, 90, 120)),
-    ("semi3", "3φ semi", 415, (0, 30, 60, 75, 90, 120)),
-    ("full3", "3φ full", 415, (0, 30, 60, 75, 90, 120)),
+    ("hw1", "1φ half", 230, (0, 30, 60, 90, 120, 150, 180)),
+    ("semi1", "1φ semi", 230, (0, 30, 60, 90, 120, 150, 180)),
+    ("full1", "1φ full", 230, (0, 30, 60, 90, 120, 150, 180)),
+    ("hw3", "3φ half", 415, (0, 30, 60, 75, 90, 120, 150, 180)),
+    ("semi3", "3φ semi", 415, (0, 30, 60, 75, 90, 120, 150, 180)),
+    ("full3", "3φ full", 415, (0, 30, 60, 75, 90, 120, 150, 180)),
 ]
 
 
@@ -225,6 +228,21 @@ def _set_rectifier_lab(page, *, topo_label: str, v_rms: int, alpha: int, load: s
 
 
 def _rectifier_vo_closed(topology: str, load: str, v_rms: int, alpha: int) -> float:
+    if load in {"RL", "RLE"}:
+        # Finite RL (lab default 10 ohm, 10 mH): conduction mode and beta come from the
+        # closed-form RL current, so discontinuous points use Vm/pi (cos a - cos beta).
+        from electrical_engineer.engines.rectifier_rl_steady import (
+            rl_reference_slice,
+            rl_vo_mean_closed_form,
+        )
+
+        return float(
+            rl_vo_mean_closed_form(
+                rl_reference_slice(
+                    {"topology": topology, "load": load, "v_rms": v_rms, "alpha_deg": alpha, "r_ohm": 10, "l_h": 0.01}
+                )
+            )
+        )
     from electrical_engineer.engines.rectifier_waveforms import _vo_closed_form
     from electrical_engineer.engines.solvers.power_electronics import rectifier_1ph, rectifier_3ph
 
@@ -358,50 +376,6 @@ def _capture_theme(browser, *, theme: str) -> dict:
         raise RuntimeError(f"collab-03: expected Ask agent to re-derive CTA, got {rederive_ctas.count()}")
     _shot(page, "collab-03-out-of-date-ask-rederive", theme=theme)
 
-    page.goto(f"{BASE}/?view=studio&tab=circuits&run={rlc_id}", wait_until="domcontentloaded")
-    page.wait_for_selector(".lab-provenance-bar", timeout=30_000)
-    page.get_by_role("tab", name="Changes").click()
-    page.wait_for_selector(".lab-changes-chip", timeout=30_000)
-    page.wait_for_selector(".studio-circuit-results", timeout=30_000)
-    _assert_text(page, r"R1:\s*10.*20|R1.*10.*Ω.*20", "collab-04 R1 chip")
-    _shot(page, "collab-04-changes-r1-chip", theme=theme, full_page=True)
-
-    _api("POST", f"/api/runs/{rlc_id}/lab/restore", {})
-    for _ in range(60):
-        lab = _api("GET", f"/api/runs/{rlc_id}/lab")
-        r1n = next((n for n in (lab.get("graph") or {}).get("nodes") or [] if n.get("id") == "r1"), None)
-        rev = int((lab.get("lab_meta") or {}).get("revision") or 0)
-        if r1n and abs(float(r1n.get("value") or 0) - 10.0) < 0.01 and rev >= 3:
-            break
-        time.sleep(0.5)
-    else:
-        raise RuntimeError("collab-04b: restore did not return R1=10 Ω at r≥3")
-    page.goto(
-        f"{BASE}/?view=studio&tab=circuits&run={rlc_id}&view=changes",
-        wait_until="domcontentloaded",
-    )
-    page.wait_for_selector(".lab-provenance-bar", timeout=30_000)
-    page.wait_for_timeout(500)
-    if page.locator(".lab-changes-chip").count():
-        raise RuntimeError("collab-04b: Changes chips should be empty after Restore")
-    page.get_by_role("tab", name="Yours").click()
-    page.locator(".studio-circuit-app .cs-simulate-btn").click()
-    _wait_sim_idle(page)
-    page.wait_for_selector(".studio-circuit-results .answer-line", timeout=120_000)
-    r1_val = page.locator(".studio-circuit-inspector input").first
-    if r1_val.count():
-        assert "10" in (r1_val.input_value() or ""), "collab-04b R1 should be 10 Ω after Restore"
-    results = page.locator(".studio-circuit-results .answer-line").first
-    results.wait_for(state="visible", timeout=60_000)
-    head = results.inner_text()
-    if not re.search(r"11\.630", head) or not re.search(r"at\s+3\.63", head):
-        raise RuntimeError(f"collab-04b: expected restored peak headline, got {head!r}")
-    _shot(page, "collab-04b-after-restore", theme=theme, full_page=True)
-
-    _set_r1_and_reverify(rlc_id, 20.0)
-    graph_now = _api("GET", f"/api/runs/{rlc_id}/lab").get("graph") or {}
-    _api("POST", "/api/circuit-sandbox/simulate", {"graph": graph_now})
-    _api("POST", f"/api/runs/{rlc_id}/lab/verify", {})
     _api("POST", f"/api/runs/{rlc_id}/lab/re-derive", {})
     _api("POST", f"/api/runs/{rlc_id}/lab/verify", {})
     cd_path = RUNS / rlc_id / "circuit_derive.json"
@@ -416,25 +390,57 @@ def _capture_theme(browser, *, theme: str) -> dict:
     else:
         raise RuntimeError("collab-03b: circuit_derive.json / agrees verify not ready after re-derive")
     page.goto(f"{BASE}/?problem={rlc_id}", wait_until="domcontentloaded")
+    page.wait_for_selector(".problem-display-title", timeout=60_000)
     page.wait_for_selector("#lab-verify-heading", timeout=60_000)
     page.get_by_text("Agrees", exact=False).first.wait_for(state="visible", timeout=120_000)
-    al = page.locator(".answer-card .answer-line, .answer-card").first
+    _assert_text(page, r"Series RLC step", "collab-03b title")
+    al = page.locator(".answer-card .answer-line").first
     answer = al.inner_text(timeout=60_000)
-    if "No overshoot" in answer:
-        if "10.00" not in answer or not re.search(r"Settling \(2%\) 5\.8\d ms", answer):
-            raise RuntimeError(f"collab-03b: unexpected settling headline, got {answer!r}")
-    elif not re.search(r"10\.000\s+V at 5\.8\d ms", answer):
-        raise RuntimeError(f"collab-03b: expected 10 V / ~5.8 ms headline, got {answer!r}")
-    _assert_text(page, r"Series RLC step", "collab-03b breadcrumb")
-    _assert_text(page, r"\b20\b", "collab-03b R1 = 20 Ω")
-    lv = _api("GET", f"/api/runs/{rlc_id}/lab")["lab_verify"]
-    prob = json.loads((RUNS / rlc_id / "problem.json").read_text(encoding="utf-8"))
-    t_s = float(prob.get("t_s") or 0)
-    if not (0.0057 < t_s < 0.0059):
-        raise RuntimeError(f"collab-03b: expected problem t_s≈5.83 ms, got {t_s*1000:.3f} ms")
-    if str(lv.get("status") or "") != "agrees":
-        raise RuntimeError(f"collab-03b: expected agrees verify, got {lv.get('status')}")
+    if "10.00" not in answer or not re.search(r"Settling \(2%\) 5\.8[23] ms", answer):
+        raise RuntimeError(f"collab-03b: expected no-overshoot 5.83 ms headline, got {answer!r}")
+    page.get_by_role("tab", name="Work").click()
+    page.wait_for_selector(".step-timeline-row", timeout=60_000)
+    work = page.locator(".step-timeline-row").first.locator("..").inner_text()
+    if "1.000" not in work or "critically" not in work.lower():
+        raise RuntimeError(f"collab-03b: work steps should show ζ=1 critically damped, got {work[:200]!r}")
     _shot(page, "collab-03b-after-rederive-agrees", theme=theme)
+
+    page.goto(f"{BASE}/?view=studio&tab=circuits&run={rlc_id}", wait_until="domcontentloaded")
+    page.wait_for_selector(".lab-provenance-bar", timeout=30_000)
+    # The bar mounts before the run detail loads; wait for the real title, never the raw run id.
+    page.locator(".lab-provenance-bar").get_by_text("Series RLC step").first.wait_for(state="visible", timeout=30_000)
+    if rlc_id in page.locator(".lab-provenance-bar").inner_text():
+        raise RuntimeError("collab-04: provenance bar shows the raw run id")
+    page.get_by_role("tab", name="Changes").click()
+    page.wait_for_selector(".lab-changes-chip", timeout=30_000)
+    _assert_text(page, r"R1:\s*10.*20|R1.*10.*Ω.*20", "collab-04 R1 chip")
+    _shot(page, "collab-04-changes-r1-chip", theme=theme, full_page=True)
+
+    _api("POST", f"/api/runs/{rlc_id}/lab/restore", {})
+    for _ in range(60):
+        lab = _api("GET", f"/api/runs/{rlc_id}/lab")
+        r1n = next((n for n in (lab.get("graph") or {}).get("nodes") or [] if n.get("id") == "r1"), None)
+        rev = int((lab.get("lab_meta") or {}).get("revision") or 0)
+        if r1n and abs(float(r1n.get("value") or 0) - 10.0) < 0.01 and rev >= 3:
+            break
+        time.sleep(0.5)
+    else:
+        raise RuntimeError("collab-04b: restore did not return R1=10 Ω at r≥3")
+    page.goto(f"{BASE}/?view=studio&tab=circuits&run={rlc_id}&view=changes", wait_until="domcontentloaded")
+    page.wait_for_selector(".lab-provenance-bar", timeout=30_000)
+    if page.locator(".lab-changes-chip-row .lab-changes-chip").count():
+        raise RuntimeError("collab-04b: Changes chips should be empty after Restore")
+    if page.get_by_text("Edited by you", exact=False).count():
+        raise RuntimeError("collab-04b: provenance should not show human edit chip after Restore")
+    page.get_by_role("tab", name="Yours").click()
+    page.locator(".studio-circuit-app .cs-simulate-btn").click()
+    _wait_sim_idle(page)
+    results = page.locator(".studio-circuit-results .answer-line").first
+    results.wait_for(state="visible", timeout=120_000)
+    head = results.inner_text()
+    if not re.search(r"11\.630", head) or not re.search(r"3\.628", head):
+        raise RuntimeError(f"collab-04b: expected restored peak headline, got {head!r}")
+    _shot(page, "collab-04b-after-restore", theme=theme, full_page=True)
 
     bad_id = _run_example("rlc-bad-derive")
     meta["bad_derive_run_id"] = bad_id
@@ -545,6 +551,9 @@ def _capture_theme(browser, *, theme: str) -> dict:
 
 
 def main() -> int:
+    global PORT, BASE
+    PORT = int(os.environ.get("ARC_CAPTURE_PORT", PORT))
+    BASE = f"http://{HOST}:{PORT}"
     ngspice_version = _require_ngspice()
     print("ngspice:", ngspice_version)
     OUT.mkdir(parents=True, exist_ok=True)
@@ -560,8 +569,23 @@ def main() -> int:
         return 1
 
     if os.environ.get("ROUND12_START_UI") == "1":
+        sys.path.insert(0, str(ROOT / "scripts"))
+        from capture_port import kill_port, reserve_capture_port
+
+        if os.environ.get("ARC_CAPTURE_PORT"):
+            PORT = int(os.environ["ARC_CAPTURE_PORT"])
+            kill_port(PORT)
+        else:
+            PORT = reserve_capture_port(PORT)
+            os.environ["ARC_CAPTURE_PORT"] = str(PORT)
+        BASE = f"http://{HOST}:{PORT}"
         subprocess.check_call(["npm", "run", "build"], cwd=ROOT / "ui")
-        env = {**os.environ, "EE_NO_BROWSER": "1"}
+        env = {
+            **os.environ,
+            "EE_NO_BROWSER": "1",
+            "EE_UI_PORT": str(PORT),
+            "ARC_CAPTURE_PORT": str(PORT),
+        }
         server = subprocess.Popen(
             [sys.executable, "-m", "electrical_engineer", "ui"],
             cwd=ROOT,

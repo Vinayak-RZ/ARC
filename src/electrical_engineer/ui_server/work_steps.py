@@ -10,6 +10,15 @@ from typing import Any
 
 def work_steps(run_dir: Path) -> list[dict[str, str]]:
     problem = _load(run_dir / "problem.json")
+    try:
+        from electrical_engineer.circuit.graph import series_rlc_params_from_graph
+        from electrical_engineer.circuit.run_session import load_graph
+
+        params = series_rlc_params_from_graph(load_graph(run_dir))
+        if params:
+            problem = {**problem, **params}
+    except ImportError:
+        pass
     evid = _load(run_dir / "evidentiary.json") or _load(run_dir / "summary.json")
     recipe = str(evid.get("recipe_id") or "")
     kind = str(problem.get("kind") or "")
@@ -51,6 +60,15 @@ def _divider(problem: dict[str, Any], evid: dict[str, Any]) -> list[dict[str, st
     ]
 
 
+def _damping_label(dtype: str) -> str:
+    labels = {
+        "underdamped": "underdamped",
+        "overdamped": "overdamped",
+        "critically_damped": "critically damped",
+    }
+    return labels.get(dtype, dtype.replace("_", " "))
+
+
 def _rlc(problem: dict[str, Any], evid: dict[str, Any], transient: dict[str, Any]) -> list[dict[str, str]]:
     r = float(problem.get("r_ohm") or problem.get("r") or 0)
     l_h = float(problem.get("l_h") or problem.get("l") or 0)
@@ -82,7 +100,8 @@ def _rlc(problem: dict[str, Any], evid: dict[str, Any], transient: dict[str, Any
         },
         {
             "title": "Natural response",
-            "result": f"ζ = {_num(zeta)}, ωn = {_num(wn)} rad/s" + (f", {damping}" if damping else ""),
+            "result": f"ζ = {_num(zeta)}, ωn = {_num(wn)} rad/s"
+            + (f", {_damping_label(str(damping))}" if damping else ""),
             "author": "Engine",
             "equation": "ζ = (R/2) √(C/L),  ωn = 1/√(LC)",
         },

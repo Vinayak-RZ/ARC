@@ -33,6 +33,12 @@ def test_settling_2pct_r20_ms() -> None:
     assert t_ms == pytest.approx(5.83, abs=0.05)
 
 
+def test_settling_2pct_r10_underdamped_ms() -> None:
+    meta = series_rlc_step(10, 0.01, 100e-6, 10.0)
+    t_ms = float(meta["settling_2pct_entry_s"] or 0) * 1000
+    assert t_ms == pytest.approx(8.08, rel=0.04)
+
+
 def test_series_rlc_params_from_graph() -> None:
     problem = {"kind": "series_rlc", "vin": 10, "r_ohm": 10, "l_h": 0.01, "c_f": 100e-6}
     graph = default_graph_for(problem)
@@ -64,6 +70,52 @@ def test_layout_only_save_does_not_bump_revision(tmp_path) -> None:
     assert last.get("electrical") is False
 
 
+def test_rlc_bad_derive_example_over_default_tol() -> None:
+    from fastapi.testclient import TestClient
+
+    from electrical_engineer.ui_server.app import create_app
+
+    client = TestClient(create_app())
+    rid = client.post("/api/examples/rlc-bad-derive/run").json()["run_id"]
+    lv = client.get(f"/api/runs/{rid}").json().get("lab_verify") or {}
+    gold = 11.630
+    derived = float(lv.get("derived") or 0)
+    sim = lv.get("simulated")
+    assert abs(derived - gold) / gold > 0.02
+    assert lv.get("mismatch") is True or lv.get("needs_review") is True
+    if sim is not None:
+        assert abs(float(sim) - gold) / gold < 0.02
+
+
+@pytest.mark.skipif(not __import__("shutil").which("ngspice"), reason="ngspice required")
+def test_ngspice_settling_tracks_analytic_for_critical_rlc(tmp_path: Path) -> None:
+    from electrical_engineer.collab.workflow import finish_circuit_lab
+
+    r, l, c, v = 20.0, 0.01, 100e-6, 10.0
+    meta = series_rlc_step(r, l, c, v)
+    t_set_d = float(meta["settling_2pct_entry_s"])
+    assert abs(t_set_d * 1000 - 5.834) < 0.05
+    run_dir = tmp_path / "crit"
+    run_dir.mkdir()
+    problem = {
+        "kind": "series_rlc",
+        "vin": v,
+        "v_step": v,
+        "r_ohm": r,
+        "l_h": l,
+        "c_f": c,
+        "tol": 0.02,
+        "allow_template_fallback": True,
+    }
+    (run_dir / "problem.json").write_text(json.dumps(problem), encoding="utf-8")
+    verify = finish_circuit_lab(run_dir, problem)
+    rows = {m["id"]: m for m in verify.get("metrics") or [] if isinstance(m, dict)}
+    t_row = rows.get("t_settle")
+    assert t_row is not None, verify.get("metrics")
+    assert t_row.get("simulated") is not None
+    assert abs(float(t_row["simulated"]) - t_set_d) / t_set_d < 0.03
+
+
 def test_derive_bug_forward_euler_mismatches_spice_gold() -> None:
     meta = series_rlc_step(10, 0.01, 100e-6, 10.0)
     gold = float(meta["Vc_peak_V"])
@@ -81,7 +133,10 @@ def test_derive_bug_forward_euler_mismatches_spice_gold() -> None:
         }
     )
     assert derived.get("engine") == "forward_euler_bug"
-    assert abs(float(derived["value"]) - gold) > 0.005
+    dval = float(derived["value"])
+    assert abs(dval - 11.963) < 0.05
+    rel_err = abs(dval - gold) / gold
+    assert rel_err > 0.02
 
 
 def test_human_resistor_edit_flags_derivation_mismatch(tmp_path) -> None:
@@ -112,6 +167,9 @@ def test_human_resistor_edit_flags_derivation_mismatch(tmp_path) -> None:
     assert row.get("derived_out_of_date")
     assert row.get("rel_err_pct") is None
     assert not row.get("simulated_out_of_date")
+    assert row.get("label") == "Capacitor peak"
+    assert row.get("status") == "out_of_date"
+    assert row.get("status_label") == "Out of date"
 
 
 def test_rederive_after_r20_updates_transient_and_value(tmp_path: Path) -> None:

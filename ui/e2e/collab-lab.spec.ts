@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 
-const BASE = process.env.STUDIO_URL || "http://127.0.0.1:8765";
+// STUDIO_URL may carry a path and query (?view=studio); API calls need the bare origin.
+const BASE = new URL(process.env.STUDIO_URL || "http://127.0.0.1:8765").origin;
 
 test("agent-built circuit opens in Studio circuits lab", async ({ page, request }) => {
   const seed = await request.post(`${BASE}/api/examples/divider/run`);

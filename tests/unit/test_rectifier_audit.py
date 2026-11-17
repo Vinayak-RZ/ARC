@@ -1,9 +1,13 @@
-"""Rectifier readout vs waveform mean (no rescaling); from first principles."""
+"""Rectifier waveform mean vs Vo readout; RL uses independent β formulas."""
 
 from __future__ import annotations
 
 import pytest
 
+from electrical_engineer.engines.rectifier_rl_steady import (
+    rl_reference_slice,
+    rl_vo_mean_closed_form,
+)
 from electrical_engineer.engines.rectifier_waveforms import (
     _vo_closed_form,
     mean_waveform,
@@ -31,15 +35,19 @@ def test_rectifier_readout_mean_and_peak(topology: str, load: str, alpha_deg: fl
         "io_a": 0,
         "ls_h": 0,
         "r_ohm": 10,
+        "l_h": 0.01 if load in {"RL", "RLE"} else 0,
+        "f_hz": 50,
     }
-    vo = _vo_closed_form(problem, rectifier_1ph, rectifier_3ph)
+    if load in {"RL", "RLE"}:
+        vo = rl_vo_mean_closed_form(rl_reference_slice(problem))
+    else:
+        vo = _vo_closed_form(problem, rectifier_1ph, rectifier_3ph)
     pts = sample_waveform(problem, n=7200)
     mean = mean_waveform(pts)
     peak = source_peak_v(problem)
     max_abs = max(abs(y) for _, y in pts)
     assert max_abs <= peak + 2.0, f"{topology} {load} α={alpha_deg}: max |v|={max_abs} > peak {peak}"
-    if abs(vo) < 1.0:
-        assert abs(mean) < 2.0
+    if abs(vo) < 1e-6:
         return
     rel = abs(mean - vo) / abs(vo)
     assert rel < 0.005, f"{topology} {load} α={alpha_deg}: mean {mean} vs Vo {vo}"

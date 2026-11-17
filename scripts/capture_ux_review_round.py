@@ -10,7 +10,9 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
+import traceback
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -85,9 +87,7 @@ def _preflight(out_dir: Path) -> dict:
             continue
         if path.startswith(("src/", "ui/src/")):
             untracked_src.append(path)
-    diff = subprocess.check_output(["git", "diff", "HEAD"], cwd=ROOT, text=True)
-    ci_run = os.environ.get("ROUND12_CI_RUN_ID", "")
-    ci_status = os.environ.get("ROUND12_CI_STATUS", "success" if ci_run else "")
+    diff = subprocess.check_output(["git", "diff", "HEAD"], cwd=ROOT)
     req_low = urllib.request.Request(
         f"http://{HOST}:{PORT}/api/control-studio/sessions",
         method="POST",
@@ -140,16 +140,15 @@ def _preflight(out_dir: Path) -> dict:
         "git_sha": sha,
         "git_sha_short": sha_short,
         "ngspice_version": ngspice_version,
-        "merged_collab_head": "a5d1fc11fd392663bffc0f221eb05d0424c07124",
+        # CI facts come from the caller; never assume a green run.
         "ci_reference": {
-            "head_sha": sha,
             "head_sha_short": sha_short,
-            "workflow_run_id": ci_run,
-            "status": ci_status,
+            "workflow_run_id": os.environ.get("ROUND12_CI_RUN_ID", ""),
+            "status": os.environ.get("ROUND12_CI_STATUS", "not_reported"),
         },
         "git_dirty_lines": len(dirty_lines),
         "git_untracked_lines": len(untracked_src),
-        "git_diff_sha256": hashlib.sha256(diff.encode()).hexdigest()[:16] if diff.strip() else None,
+        "git_diff_sha256": hashlib.sha256(diff).hexdigest()[:16] if diff else None,
         "package_path": pkg_path,
         "dist_index_mtime": dist_mtime,
         "kp": kp,
@@ -365,6 +364,9 @@ def _assert_still_active(page, name: str, match_js: str) -> None:
 
 
 def _set_theme(page, mode: str) -> None:
+    url = page.url or ""
+    if not url.startswith("http"):
+        raise RuntimeError(f"_set_theme before navigation ({url!r}); call goto then set theme")
     page.evaluate(
         """(mode) => {
         document.documentElement.dataset.theme = mode;
@@ -378,20 +380,11 @@ def _set_theme(page, mode: str) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--round", type=int, default=1)
-    parser.add_argument(
-        "--subdir",
-        default=os.environ.get("ARC_UX_CAPTURE_DIR", ""),
-        help="Output folder under artifacts/ux-review/ (e.g. round-12b)",
-    )
     args = parser.parse_args()
-    out_dir = (
-        ROOT / "artifacts" / "ux-review" / args.subdir
-        if args.subdir
-        else ROOT / "artifacts" / "ux-review" / f"round-{args.round}"
-    )
+    out_dir = ROOT / "artifacts" / "ux-review" / f"round-{args.round}"
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    global W, H
+    global W, H, PORT
     if args.round >= 10:
         W, H = 1440, 900
 
@@ -401,16 +394,27 @@ def main() -> int:
         print("pip install playwright && playwright install chromium", file=sys.stderr)
         return 1
 
-    _kill_port(PORT)
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from capture_port import kill_port, reserve_capture_port
+
+    if os.environ.get("ARC_CAPTURE_PORT"):
+        PORT = int(os.environ["ARC_CAPTURE_PORT"])
+        kill_port(PORT)
+    else:
+        PORT = reserve_capture_port(PORT)
+        os.environ["ARC_CAPTURE_PORT"] = str(PORT)
     _prepare_capture_env()
 
-    env = {**os.environ, "EE_NO_BROWSER": "1"}
+    env = {**os.environ, "EE_NO_BROWSER": "1", "EE_UI_PORT": str(PORT), "ARC_CAPTURE_PORT": str(PORT)}
+    # Keep the UI server log so a 500 during capture shows its traceback instead of vanishing.
+    server_log_path = Path(tempfile.gettempdir()) / f"arc-capture-ui-{PORT}.log"
+    server_log = server_log_path.open("w", encoding="utf-8")
     server = subprocess.Popen(
         [sys.executable, "-m", "electrical_engineer", "ui"],
         cwd=ROOT,
         env=env,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        stdout=server_log,
+        stderr=subprocess.STDOUT,
     )
     hashes: dict[str, str] = {}
     index_notes: list[str] = []
@@ -635,9 +639,11 @@ def main() -> int:
                 snap("studio-step-offtarget.png")
                 page.set_viewport_size({"width": 1280, "height": 680})
                 studio_go(pid_sess)
-                page.wait_for_timeout(800)
+                _studio_wires_ready(page, timeout_s=90.0)
+                page.wait_for_timeout(400)
                 snap("studio-after-resize.png")
                 page.set_viewport_size({"width": W, "height": H})
+                _studio_wires_ready(page, timeout_s=90.0)
             if args.round >= 7:
                 studio_go(pid_sess)
                 page.locator(".cs-simulate-btn").click()
@@ -919,6 +925,15 @@ def main() -> int:
                     mid.wait_for_timeout(300)
                     snap("home-scrolled-1280.png", mid)
                     mid.close()
+                    mid_dark = browser.new_page(viewport={"width": 1280, "height": 800})
+                    mid_dark.goto(f"http://{HOST}:{PORT}/?view=home", wait_until="domcontentloaded")
+                    _set_theme(mid_dark, "dark")
+                    mid_dark.reload(wait_until="domcontentloaded")
+                    mid_dark.wait_for_selector(".example-grid-six", timeout=15000)
+                    mid_dark.evaluate("() => document.querySelector('.agent-card')?.scrollIntoView({block: 'end'})")
+                    mid_dark.wait_for_timeout(300)
+                    snap("home-scrolled-1280-dark.png", mid_dark)
+                    mid_dark.close()
 
                 go("?view=problems")
                 page.wait_for_selector(".problems-row", timeout=15000)
@@ -1022,17 +1037,6 @@ def main() -> int:
                 page.evaluate("() => document.querySelector('.agent-card')?.scrollIntoView({block: 'end'})")
                 page.wait_for_timeout(300)
                 snap("home-scrolled-dark.png")
-                if args.round >= 11:
-                    mid_dark = browser.new_page(viewport={"width": 1280, "height": 800})
-                    mid_dark.goto(f"http://{HOST}:{PORT}/?view=home", wait_until="domcontentloaded")
-                    _set_theme(mid_dark, "dark")
-                    mid_dark.wait_for_selector(".example-grid-six", timeout=15000)
-                    mid_dark.evaluate(
-                        "() => document.querySelector('.agent-card')?.scrollIntoView({block: 'end'})"
-                    )
-                    mid_dark.wait_for_timeout(300)
-                    snap("home-scrolled-1280-dark.png", mid_dark)
-                    mid_dark.close()
                 _clear_runs()
                 go("?view=problems")
                 page.wait_for_selector(".problems-empty", timeout=10000)
@@ -1244,6 +1248,13 @@ def main() -> int:
             (out_dir / "INDEX.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
         print("md5.txt written", out_dir / "md5.txt")
         return 0
+    except Exception:  # noqa: BLE001 - report any capture failure with the server log
+        traceback.print_exc()
+        server_log.flush()
+        tail = server_log_path.read_text(encoding="utf-8", errors="replace").splitlines()[-40:]
+        print(f"--- UI server log tail ({server_log_path}) ---", file=sys.stderr)
+        print("\n".join(tail), file=sys.stderr)
+        return 1
     finally:
         if backup is not None:
             _restore_runs(backup)
@@ -1252,6 +1263,7 @@ def main() -> int:
             server.wait(timeout=5)
         except subprocess.TimeoutExpired:
             server.kill()
+        server_log.close()
 
 
 if __name__ == "__main__":

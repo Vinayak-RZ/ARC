@@ -25,7 +25,6 @@ import { MascotState } from "../components/MascotState.jsx";
 import { displayTitle } from "../runDisplay.js";
 import { useRun } from "../hooks/useRun.js";
 import { useLayout } from "../store.js";
-import { labForRecipe, openLab, openRunLab } from "../studio-engine/labs/openExample.js";
 
 function parseEvid(summary) {
   if (!summary) return {};
@@ -61,12 +60,6 @@ function Result({ id }) {
   const { rows } = buildAnswerRows(evid, data);
   const verifierRaw = evid.verifier ? String(evid.verifier) : "";
   const note = verificationNote({ unchecked: error ? false : unchecked, error, verifierRaw, evid });
-  const recipeId = evid.recipe_id || "";
-  const linkedLab = Boolean(data?.lab);
-  const recipeLab = labForRecipe(recipeId);
-  const showLab = !error && !unchecked && (linkedLab || recipeLab);
-  const onOpenLab = showLab ? () => (linkedLab ? openRunLab({ ...data, id }) : openLab(recipeLab)) : undefined;
-  const openLabLabel = "Open in lab";
   if (loading) {
     return (
       <MascotState kind="loading" title="Loading run…" message="Pulling evidence for this problem." size={56} />
@@ -118,8 +111,6 @@ function Result({ id }) {
           derivedStale={derivedStale}
           reviewNote={data?.lab_verify?.status_label || data?.lab_verify?.disagreement_banner}
           note={(data?.work_steps || []).find((step) => step.title === "Check")?.result}
-          onOpenLab={onOpenLab}
-          openLabLabel={openLabLabel}
         />
       ) : (
         <p className="status-hint">{note}</p>

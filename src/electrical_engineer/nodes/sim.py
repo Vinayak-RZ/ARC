@@ -114,7 +114,12 @@ def run_circuit_derive(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str
     for v in inputs.values():
         if isinstance(v, dict) and v.get("cir"):
             problem.setdefault("cir", v["cir"])
-    if problem.get("kind") and not problem.get("cir") and not problem.get("netlist_path"):
+    kind = str(problem.get("kind") or "").lower()
+    if kind == "series_rlc":
+        # UI example netlist is a static DC deck; peak must come from analytic step response.
+        problem.pop("cir", None)
+        problem["allow_template_fallback"] = True
+    elif problem.get("kind") and not problem.get("cir") and not problem.get("netlist_path"):
         problem["allow_template_fallback"] = True
     try:
         out = derive(problem)
@@ -125,6 +130,16 @@ def run_circuit_derive(spec: dict[str, Any], inputs: dict[str, Any]) -> dict[str
         _write_run_json(Path(run_dir_s), "circuit_derive.json", out)
         net = Path(run_dir_s) / "netlist.cir"
         net.write_text(str(out.get("cir") or ""), encoding="utf-8")
+        if kind == "series_rlc":
+            from electrical_engineer.engines.rlc_transient import series_rlc_step
+
+            rlc = series_rlc_step(
+                float(problem.get("r_ohm") or problem.get("r") or 10),
+                float(problem.get("l_h") or problem.get("l") or 0.01),
+                float(problem.get("c_f") or problem.get("c") or 100e-6),
+                float(problem.get("v_step") or problem.get("vin") or 10),
+            )
+            _write_run_json(Path(run_dir_s), "rlc_transient.json", rlc)
     return {
         "ok": True,
         "unchecked": False,

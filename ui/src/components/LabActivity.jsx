@@ -38,8 +38,12 @@ function sentenceFor(entry) {
       return `${who} re-ran the simulation`;
     case "restore":
       return `${who} restored ${entry.target || (entry.detail?.rev ? `r${entry.detail.rev}` : "agent version")}`;
+    case "set_graph":
+    case "open":
+      return `${who} updated the circuit`;
     default:
-      return `${who} ${entry.op || "edited"}${target}`;
+      // Never surface a raw op id; unknown ops read as a generic edit.
+      return `${who} edited the circuit${target}`;
   }
 }
 

@@ -19,3 +19,6 @@ dist/
 artifacts/kernel-harden/raw/
 ui/test-results/
 .electrical-engineer/learn/
+
+# capture scratch (run backups and local round output before review)
+artifacts/ux-review/_runs_backup/

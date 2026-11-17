@@ -38,6 +38,8 @@ def simulate_graph(
             "probe": probe,
             "f_hz": prob.get("f_hz"),
             "t_s": prob.get("t_s") or prob.get("t_stop"),
+            "t_stop": prob.get("t_stop"),
+            "v_step": prob.get("v_step") or prob.get("vin"),
             "kind": prob.get("kind"),
             "derive_metric": prob.get("derive_metric")
             or ("Vc_peak" if str(prob.get("kind") or "") == "series_rlc" else None),
@@ -57,10 +59,30 @@ def simulate_graph(
         out["unit"] = sim_out.get("unit") or problem.get("unit") or "V"
     if sim_out.get("t_peak_s") is not None:
         out["t_peak_s"] = float(sim_out["t_peak_s"])
+    if sim_out.get("settling_2pct_entry_s") is not None:
+        out["settling_2pct_entry_s"] = float(sim_out["settling_2pct_entry_s"])
     if sim_out.get("trace"):
-        out["trace"] = sim_out["trace"]
+        out["trace"] = {**sim_out["trace"], **_series_rlc_constants(graph)}
     (run_dir / "lab_simulate.json").write_text(json.dumps(out, indent=2), encoding="utf-8")
     return out
+
+
+def _series_rlc_constants(graph: dict[str, Any]) -> dict[str, float]:
+    """zeta and omega_n from the drawn R, L, C values (circuit constants, not simulated)."""
+    import math
+
+    from electrical_engineer.circuit.graph import series_rlc_params_from_graph
+
+    try:
+        params = series_rlc_params_from_graph(graph)
+    except Exception:  # noqa: BLE001 - non-RLC graphs simply carry no constants
+        return {}
+    if not params:
+        return {}
+    r, l, c = params["r_ohm"], params["l_h"], params["c_f"]
+    if l <= 0 or c <= 0:
+        return {}
+    return {"zeta": r / 2.0 * math.sqrt(c / l), "omega_n_rad_s": 1.0 / math.sqrt(l * c)}
 
 
 def compare_derived(

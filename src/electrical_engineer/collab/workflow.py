@@ -16,7 +16,11 @@ from electrical_engineer.circuit.graph import (
 from electrical_engineer.circuit.run_session import apply_graph, load_graph
 from electrical_engineer.circuit.simulate_graph import compare_derived, simulate_graph
 from electrical_engineer.collab import lab_meta
-from electrical_engineer.collab.lab_verify import apply_verify_semantics, rlc_compare_metric_label
+from electrical_engineer.collab.lab_verify import (
+    apply_verify_semantics,
+    derivation_matches_graph,
+    rlc_compare_metric_label,
+)
 from electrical_engineer.collab.verify_policy import DEFAULT_REL_TOL
 from electrical_engineer.collab.verify_policy import status_label as verify_status_label
 from electrical_engineer.engines.circuit_derive import DeriveError, derive
@@ -88,6 +92,27 @@ def refresh_circuit_lab_verify(
     sim_prob.update(
         {k: derived[k] for k in ("analysis", "t_s", "t_stop", "f_hz", "derive_metric") if k in derived}
     )
+    if str(problem.get("kind") or "") == "series_rlc":
+        from electrical_engineer.circuit.graph import series_rlc_params_from_graph
+        from electrical_engineer.engines.rlc_transient import series_rlc_step
+
+        params = series_rlc_params_from_graph(graph) or {}
+        if params:
+            rlc = series_rlc_step(
+                float(params.get("r_ohm") or 10),
+                float(params.get("l_h") or 0.01),
+                float(params.get("c_f") or 100e-6),
+                float(params.get("v_step") or params.get("vin") or 10),
+            )
+            no_ov = float(rlc.get("overshoot_pct") or 0.0) < 0.5
+            sim_prob["derive_metric"] = "Vc_final" if no_ov else "Vc_peak"
+            t_pk = float(rlc["t_Vc_peak_s"])
+            sim_prob["t_s"] = t_pk
+            t_set = rlc.get("settling_2pct_entry_s")
+            if no_ov and t_set is not None:
+                sim_prob["t_stop"] = max(float(t_set) * 2.5, 0.015)
+            else:
+                sim_prob["t_stop"] = max(t_pk * 2.5, 1e-3)
     sim = simulate_graph(graph, sim_prob, run_dir=run_dir)
     simulated = sim.get("simulated") if isinstance(sim.get("simulated"), (int, float)) else sim.get("value")
     if simulated is not None:
@@ -106,8 +131,13 @@ def refresh_circuit_lab_verify(
     rel_lim = float(check.get("rel_tol_pct") or rel_tol * 100)
     status, status_lbl = _metric_status(check, sim_skipped=sim_skipped, limit_pct=limit_pct, rel_err=rel_err)
     no_overshoot = _primary_metric_label(problem, sim if isinstance(sim, dict) else {}, derived).startswith("Final")
+    derive_metric = str((derived or {}).get("derive_metric") or "").lower()
+    matches_derivation = derivation_matches_graph(meta, graph)
     if str(problem.get("kind") or "") == "series_rlc":
-        metric_label = rlc_compare_metric_label(meta, graph, no_overshoot=no_overshoot)
+        if not matches_derivation and derive_metric:
+            metric_label = "Final value" if derive_metric == "vc_final" else "Capacitor peak"
+        else:
+            metric_label = rlc_compare_metric_label(meta, graph, no_overshoot=no_overshoot)
     else:
         metric_label = _primary_metric_label(problem, sim if isinstance(sim, dict) else {}, derived)
     metrics = [
@@ -297,8 +327,13 @@ def finish_circuit_lab(
     meta = lab_meta.load_lab_meta(run_dir)
     status, status_lbl = _metric_status(check, sim_skipped=sim_skipped, limit_pct=limit_pct, rel_err=rel_err)
     no_overshoot = _primary_metric_label(problem, sim if isinstance(sim, dict) else {}, derived).startswith("Final")
+    derive_metric = str((derived or {}).get("derive_metric") or "").lower()
+    matches_derivation = derivation_matches_graph(meta, graph)
     if str(problem.get("kind") or "") == "series_rlc":
-        metric_label = rlc_compare_metric_label(meta, graph, no_overshoot=no_overshoot)
+        if not matches_derivation and derive_metric:
+            metric_label = "Final value" if derive_metric == "vc_final" else "Capacitor peak"
+        else:
+            metric_label = rlc_compare_metric_label(meta, graph, no_overshoot=no_overshoot)
     else:
         metric_label = _primary_metric_label(problem, sim if isinstance(sim, dict) else {}, derived)
     metrics = [

@@ -85,13 +85,33 @@ def hw3_rl_pulse_width_deg(alpha_deg: float) -> float:
 
 
 def vo_full1_rl_wave(wt: float, vm: float, alpha_deg: float) -> float:
-    if alpha_deg >= 90:
-        return 0.0
     alpha = math.radians(alpha_deg)
-    cycle = ((wt % _PI) + _PI) % _PI
-    if cycle >= alpha and cycle <= _PI - alpha:
-        return abs(vm * math.sin(wt))
+    beta = _PI + alpha
+    w = ((wt % _TWO_PI) + _TWO_PI) % _TWO_PI
+    if alpha <= w < beta:
+        return vm * math.sin(wt)
     return 0.0
+
+
+def vo_hw3_rl_continuous(wt: float, vm_ph: float, alpha_deg: float) -> float:
+    alpha = math.radians(alpha_deg)
+    w = ((wt % _TWO_PI) + _TWO_PI) % _TWO_PI
+    vo = 0.0
+    for k in range(3):
+        fire = _PI / 6.0 + alpha + k * _TWO_PI / 3.0
+        vf = ((fire % _TWO_PI) + _TWO_PI) % _TWO_PI
+        phase_shift = k * _TWO_PI / 3.0
+        next_fire = _PI / 6.0 + alpha + ((k + 1) % 3) * _TWO_PI / 3.0
+        end = ((next_fire % _TWO_PI) + _TWO_PI) % _TWO_PI
+        if vf <= end:
+            in_cond = vf <= w < end
+        else:
+            in_cond = w >= vf or w < end
+        if not in_cond:
+            continue
+        v = vm_ph * math.sin(w - phase_shift)
+        vo = max(vo, v)
+    return vo
 
 
 def vo_hw3_r_wave(wt: float, vm_ph: float, alpha_deg: float) -> float:

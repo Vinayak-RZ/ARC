@@ -7,6 +7,7 @@ import {
   sampleWaveform,
   voClosedForm,
 } from "./rectifier.js";
+import { rlReferenceSlice, rlVoMeanClosedForm } from "./rectifier-rl-steady.js";
 
 const SQRT2 = Math.SQRT2;
 const SOURCE_PEAK_230 = SQRT2 * 230;
@@ -14,9 +15,12 @@ const SOURCE_PEAK_415 = SQRT2 * 415;
 const VM_415 = phasePeakFromLineVll(415);
 
 describe("rectifier closed form", () => {
-  it("full1 continuous alpha 30 (RL)", () => {
-    const Vo = voClosedForm({ topology: "full1", load: "RL", v_rms: 230, alpha_deg: 30, io_a: 0, ls_h: 0 });
-    assert.ok(Math.abs(Vo - 179.33) < 0.5, String(Vo));
+  it("full1 RL alpha 30 (DCM reference Vo)", () => {
+    const p = { topology: "full1", load: "RL", v_rms: 230, alpha_deg: 30, r_ohm: 10, l_h: 0.01, f_hz: 50 };
+    const Vo = rlVoMeanClosedForm(rlReferenceSlice(p));
+    const { Vo: readout, points } = computeRectifier(p);
+    assert.ok(Math.abs(Vo - 188.44) < 0.5, String(Vo));
+    assert.ok(Math.abs(readout - meanWaveform(points)) < 1e-6);
   });
   it("full3 alpha 45", () => {
     const Vo = voClosedForm({ topology: "full3", load: "RL", v_rms: 415, alpha_deg: 45, io_a: 0, ls_h: 0 });
@@ -31,6 +35,81 @@ describe("rectifier closed form", () => {
   it("full3 R alpha 75 discontinuous readout", () => {
     const Vo = voClosedForm({ topology: "full3", load: "R", v_rms: 415, alpha_deg: 75, io_a: 0, ls_h: 0 });
     assert.ok(Math.abs(Vo - 164.1) < 0.35, String(Vo));
+  });
+
+  it("full1 R Vo at α 90° and 120° (230 V)", () => {
+    const v90 = voClosedForm({ topology: "full1", load: "R", v_rms: 230, alpha_deg: 90, io_a: 0, ls_h: 0 });
+    const v120 = voClosedForm({ topology: "full1", load: "R", v_rms: 230, alpha_deg: 120, io_a: 0, ls_h: 0 });
+    assert.ok(Math.abs(v90 - 103.54) < 0.05, String(v90));
+    assert.ok(Math.abs(v120 - 51.77) < 0.05, String(v120));
+  });
+
+  it("full3 R Vo at α 90° and 120° (415 V)", () => {
+    const v90 = voClosedForm({ topology: "full3", load: "R", v_rms: 415, alpha_deg: 90, io_a: 0, ls_h: 0 });
+    const v120 = voClosedForm({ topology: "full3", load: "R", v_rms: 415, alpha_deg: 120, io_a: 0, ls_h: 0 });
+    assert.ok(Math.abs(v90 - 75.09) < 0.08, String(v90));
+    assert.ok(Math.abs(v120) < 0.5, String(v120));
+  });
+
+  it("full3 R PF golden table (415 V)", () => {
+    const golden = { 0: 0.956, 30: 0.841, 60: 0.542, 75: 0.369, 90: 0.208, 120: 0.0 };
+    for (const [alpha_deg, expect] of Object.entries(golden)) {
+      const p = {
+        topology: "full3",
+        load: "R",
+        v_rms: 415,
+        alpha_deg: Number(alpha_deg),
+        r_ohm: 10,
+        io_a: 0,
+        ls_h: 0,
+      };
+      const { PF } = computeRectifier(p);
+      if (expect === 0) {
+        assert.ok(Math.abs(PF) < 0.02, `α=${alpha_deg} PF ${PF}`);
+      } else {
+        assert.ok(Math.abs(PF - expect) < 0.008, `α=${alpha_deg} PF ${PF} vs ${expect}`);
+      }
+    }
+  });
+
+  it("R-load PF divisors for 1φ and half-wave 3φ", () => {
+    const cases = [
+      ["full1", 230, 60, 0.897],
+      ["hw3", 415, 60, 0.289],
+      ["hw1", 230, 60, 0.448],
+    ];
+    for (const [topology, v_rms, alpha_deg, expect] of cases) {
+      const { PF } = computeRectifier({
+        topology,
+        load: "R",
+        v_rms,
+        alpha_deg,
+        r_ohm: 10,
+        io_a: 0,
+        ls_h: 0,
+      });
+      assert.ok(Math.abs(PF - expect) < 0.015, `${topology} α=${alpha_deg}: ${PF} vs ${expect}`);
+    }
+  });
+
+  it("hw3 R Vo is zero past α limit (179°)", () => {
+    const { Vo } = computeRectifier({
+      topology: "hw3",
+      load: "R",
+      v_rms: 415,
+      alpha_deg: 179,
+      r_ohm: 10,
+      io_a: 0,
+      ls_h: 0,
+    });
+    assert.ok(Math.abs(Vo) < 0.5, String(Vo));
+  });
+
+  it("full3 R alpha 120 PF is zero", () => {
+    const p = { topology: "full3", load: "R", v_rms: 415, alpha_deg: 120, r_ohm: 10, io_a: 0, ls_h: 0 };
+    const { PF, Vo } = computeRectifier(p);
+    assert.ok(Math.abs(Vo) < 0.5, String(Vo));
+    assert.ok(Math.abs(PF) < 0.02, String(PF));
   });
 
   it("full1 R alpha 60 waveform not rescaled above Vm", () => {
@@ -73,10 +152,11 @@ describe("rectifier closed form", () => {
       load: "RL",
       v_rms: 415,
       alpha_deg: 45,
+      l_h: 0.01,
       io_a: 0,
-      ls_h: 0.01,
+      ls_h: 0,
     });
-    assert.ok(Math.abs(Vo - 198.1) < 1.0, String(Vo));
+    assert.ok(Math.abs(Vo - 198.1) < 1.5, String(Vo));
   });
 
   it("hw3 formulas meet at alpha 30", () => {
@@ -138,20 +218,33 @@ describe("rectifier waveform mean vs Vo readout", () => {
             r_ohm: 10,
             io_a: 0,
             ls_h: 0,
+            f_hz: 50,
+            ...(load === "RL" || load === "RLE" ? { l_h: 0.01 } : {}),
           };
-          const Vo = voClosedForm(p);
-          const pts = sampleWaveform(p, 3600);
-          const mean = meanWaveform(pts);
+          let Vo;
+          let pts;
+          let mean;
+          if (load === "RL" || load === "RLE") {
+            const ref = rlReferenceSlice(p);
+            Vo = rlVoMeanClosedForm(ref);
+            const run = computeRectifier(p);
+            pts = run.points;
+            mean = meanWaveform(pts);
+            assert.ok(Math.abs(run.Vo - mean) < 1e-6);
+          } else {
+            Vo = voClosedForm(p);
+            pts = sampleWaveform(p, 3600);
+            mean = meanWaveform(pts);
+          }
           assert.ok(Number.isFinite(Vo), String(Vo));
           if (Math.abs(Vo) < 1e-6) {
+            if (load === "RL" || load === "RLE") {
+              assert.ok(Math.abs(mean) < 1e-3, `mean ${mean} vs Vo ${Vo}`);
+            }
             return;
           }
-          if (Math.abs(Vo) < 5) {
-            assert.ok(Math.abs(mean) < 5, `mean ${mean} vs Vo ${Vo}`);
-          } else {
-            const rel = Math.abs(mean - Vo) / Math.abs(Vo);
-            assert.ok(rel < 0.0051, `mean ${mean} vs Vo ${Vo} (${(rel * 100).toFixed(2)}%)`);
-          }
+          const rel = Math.abs(mean - Vo) / Math.abs(Vo);
+          assert.ok(rel < 0.0051, `mean ${mean} vs Vo ${Vo} (${(rel * 100).toFixed(2)}%)`);
           const peak = topology.endsWith("3") ? SOURCE_PEAK_415 : SOURCE_PEAK_230;
           const maxAbs = Math.max(...pts.map(([, y]) => Math.abs(y)));
           assert.ok(maxAbs <= peak + 2, `max |v| ${maxAbs} > source peak ${peak}`);

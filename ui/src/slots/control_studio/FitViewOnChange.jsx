@@ -57,20 +57,51 @@ export function FitViewOnChange({ revision, nodeCount, agentBump = 0, nodesEpoch
     };
   }, [revision, nodeCount, agentBump, nodesReady, fit, getEdges]);
 
+  const remeasureAndFit = useCallback(() => {
+    const ids = getNodes().map((n) => n.id);
+    if (ids.length) updateNodeInternals(ids);
+    let cancelled = false;
+    let tries = 0;
+    const pump = () => {
+      if (cancelled) return;
+      const want = getEdges().length;
+      const got = document.querySelectorAll(".studio-canvas .react-flow__edge-path").length;
+      if (want > 0 && got >= want) {
+        fit(0);
+        return;
+      }
+      tries += 1;
+      if (tries < 120) requestAnimationFrame(pump);
+      else if (want > 0) fit(0);
+    };
+    requestAnimationFrame(pump);
+    return () => {
+      cancelled = true;
+    };
+  }, [fit, getEdges, getNodes, updateNodeInternals]);
+
   useEffect(() => {
     const pane = document.querySelector(".studio-canvas");
     if (!pane) return undefined;
     let t;
-    const ro = new ResizeObserver(() => {
+    let cancelPump = () => {};
+    const schedule = () => {
       clearTimeout(t);
-      t = setTimeout(() => fit(0), 200);
-    });
+      cancelPump();
+      t = setTimeout(() => {
+        cancelPump = remeasureAndFit() || (() => {});
+      }, 80);
+    };
+    const ro = new ResizeObserver(schedule);
     ro.observe(pane);
+    window.addEventListener("resize", schedule);
     return () => {
       ro.disconnect();
+      window.removeEventListener("resize", schedule);
       clearTimeout(t);
+      cancelPump();
     };
-  }, [fit]);
+  }, [remeasureAndFit]);
 
   return null;
 }

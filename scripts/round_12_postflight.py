@@ -85,6 +85,59 @@ def _git_ci_status() -> dict:
         return {"checks": [], "note": "CI status unavailable from gh"}
 
 
+def _capture_meta() -> dict:
+    meta_path = OUT / "collab_capture_meta.json"
+    if meta_path.is_file():
+        try:
+            return json.loads(meta_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            return {}
+    return {}
+
+
+def _staged_for_file(stem: str, meta: dict) -> tuple[str, str]:
+    """Return (yes|no, short staging note) per PNG."""
+    cm = (meta.get("light") or meta.get("dark") or {}) if meta else {}
+    if stem.startswith("collab-01"):
+        return ("yes", f"Staged RLC agree run {cm.get('rlc_run_id', '—')}")
+    if stem.startswith("collab-02"):
+        return ("yes", "Staged: open circuit lab, Simulate, Vc waveform + Activity drawer")
+    if stem.startswith("collab-03-out-of-date"):
+        return ("yes", "Staged: POST graph R1→20 Ω + verify (out-of-date)")
+    if stem.startswith("collab-03b"):
+        return ("yes", "Staged: agent re-derive + verify agrees at R=20 Ω")
+    if stem.startswith("collab-04-changes"):
+        return ("yes", "Staged: Changes tab after R1 edit")
+    if stem.startswith("collab-04b"):
+        return ("yes", "Staged: POST lab/restore + simulate peak headline")
+    if stem.startswith("collab-05"):
+        return ("yes", f"Staged: rlc-bad-derive run {cm.get('bad_derive_run_id', '—')} + ngspice")
+    if stem.startswith("collab-06-control-unity-run"):
+        return ("yes", f"Staged: unity feedback run {cm.get('control_run_id', '—')}")
+    if stem.startswith("collab-06-control-unity-lab"):
+        return ("yes", "Staged: control studio simulate + agreement card")
+    if stem.startswith("lab-rectifier-"):
+        return ("yes", "Staged: rectifier lab topology/α/load + Vo assert vs closed form")
+    if stem.startswith("problem-control-checked-lab-agreement"):
+        return ("yes", f"Staged: control-step run {cm.get('control_step_run_id', '—')} + studio simulate")
+    if stem.startswith("problem-control-checked"):
+        return ("yes", f"Staged: example control-step run {cm.get('control_step_run_id', '—')}")
+    if stem.startswith(("run-rectifier", "run-idmt")):
+        return ("yes", f"Staged: example API run ({stem.replace('run-', '')})")
+    # Passive surfaces from same capture pass — only navigation, no data mutation
+    passive = (
+        "home-",
+        "problems-list",
+        "gallery",
+        "library",
+        "learn-landing",
+        "settings-agents",
+    )
+    if any(stem.startswith(p) for p in passive):
+        return ("no", "Screenshot only; no dedicated lab/run staging")
+    return ("no", "Screenshot only; content is whatever was already on disk from capture pass")
+
+
 def _describe_file(name: str) -> tuple[str, str, str, str]:
     """screen, theme, viewport, look_at"""
     theme = "dark" if "-dark.png" in name or name.endswith("-dark.png") else "light"
@@ -301,7 +354,7 @@ def main() -> int:
         md5_lines.append(f"{path.name}  {hashlib.md5(path.read_bytes()).hexdigest()}")
     (OUT / "md5.txt").write_text("\n".join(md5_lines) + "\n", encoding="utf-8")
 
-    fixture_stems: set[str] = set()
+    cap_meta = _capture_meta()
 
     lines = [
         f"# {round_title} — UX capture index",
@@ -320,8 +373,9 @@ def main() -> int:
     for path in pngs:
         screen, theme, vp, look = _describe_file(path.name)
         stem = path.name.replace(".png", "").replace("-light", "").replace("-dark", "")
-        staged = "fixture" if any(stem.startswith(f) for f in fixture_stems) else ""
-        lines.append(f"| `{path.name}` | {screen} | {theme} | {vp} | {staged} | {look} |")
+        staged_flag, staged_note = _staged_for_file(stem, cap_meta)
+        staged_col = f"{staged_flag} — {staged_note}"
+        lines.append(f"| `{path.name}` | {screen} | {theme} | {vp} | {staged_col} | {look} |")
 
     lines.extend(
         [
@@ -333,11 +387,11 @@ def main() -> int:
             "3. `collab-03-out-of-date-ask-rederive-*.png` — Out of date + Ask agent to re-derive.",
             "3b. `collab-03b-after-rederive-agrees-*.png` — Agrees after re-derive; R1 = 20 Ω; t_s ≈ 5.83 ms.",
             "4. `collab-04-changes-r1-chip-*.png` — Changes tab with R1: 10 → 20 Ω chip.",
-            "4b. `collab-04b-after-restore-*.png` — Restore: R1=10 Ω, 11.630 V @ 3.63 ms headline (ngspice 3.628 ms), no Changes chip.",
+            "4b. `collab-04b-after-restore-*.png` — Restore: R1=10 Ω, 11.630 V @ 3.628 ms, no Changes chip.",
             "5. `collab-05-forward-euler-mismatch-*.png` — live forward-Euler derive vs ngspice (not a JSON fixture).",
             "6. `collab-06-control-unity-run-agrees-*.png` + `collab-06-control-unity-lab-agreement-*.png` — unity control run + lab.",
             "",
-            "Rectifier: `lab-rectifier-{topo}-{r|rl}-alpha{N}-*.png` — sweep α ∈ {0,30,60,75?,90,120}; Vo vs closed form at capture.",
+            "Rectifier: `lab-rectifier-{topo}-{r|rl}-alpha{N}-*.png` — sweep α through 150° and 180° where applicable; Vo vs closed form at capture.",
             "",
             "## Known issues",
             "",

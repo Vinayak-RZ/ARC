@@ -1,7 +1,8 @@
 /** Closed-form rectifier Vo and waveforms (EEC-303 style). V rms is line-to-line for 3φ. */
 
 import { firingAnglesDeg, linePeakFromLineVll, phasePeakFromLineVll, voFull3Analytic } from "./rectifier-analytic.js";
-import { gateSampleWaveform } from "./rectifier-gate.js";
+import { gateSampleState, gateSampleWaveform } from "./rectifier-gate.js";
+import { rlConductionReadout } from "./rectifier-rl-steady.js";
 
 export { phasePeakFromLineVll, firingAnglesDeg };
 
@@ -31,7 +32,32 @@ function sourcePeakV(p) {
   return SQRT2 * v_rms;
 }
 
+function normTopoEarly(t) {
+  const m = { half1: "hw1", half3: "hw3", half: "hw3", full: "full3", semi: "semi3" };
+  return m[t] || t || "full3";
+}
+
+/** Valid firing-angle range per topology/load (degrees, inclusive). */
+export function alphaLimitDeg(p) {
+  const topo = normTopoEarly(p.topology);
+  const load = p.load || "R";
+  if (topo === "full3" && load === "R") return 120;
+  if (topo === "hw3" && load === "R") return 150;
+  if ((topo === "hw3" || topo === "half3") && load !== "R") return 90;
+  return 180;
+}
+
+export function clampRectifierAlpha(p) {
+  const lim = alphaLimitDeg(p);
+  const raw = Number(p.alpha_deg);
+  const alpha = Number.isFinite(raw) ? raw : 0;
+  const past = alpha > lim || alpha < 0;
+  return { alpha_deg: past ? Math.min(Math.max(alpha, 0), lim) : alpha, past_limit: past, limit_deg: lim };
+}
+
 export function voClosedForm(p) {
+  const clamp = clampRectifierAlpha({ topology: p.topology, load: p.load, alpha_deg: p.alpha_deg });
+  if (clamp.past_limit && (p.load || "R") === "R" && (p.ls_h ?? 0) <= 0) return 0;
   const { topology, load = "R", v_rms, alpha_deg, io_a = 0, ls_h = 0, f_hz = 50 } = p;
   const alpha = rad(alpha_deg);
   const w = 2 * PI * f_hz;
@@ -49,7 +75,7 @@ export function voClosedForm(p) {
   if (topology === "full1") {
     const Vm = SQRT2 * v_rms;
     if (ls_h <= 0 && load === "R") {
-      if (alpha_deg >= 90) return 0;
+      if (alpha_deg >= 180) return 0;
       return (Vm / PI) * (1 + cosA);
     }
     if (alpha_deg >= 90 && !(p.e_v > 0)) return 0;
@@ -74,7 +100,7 @@ export function voClosedForm(p) {
     return ((3 * VllPk) / (2 * PI)) * (1 + cosA) - (3 * w * ls_h * io_a) / (2 * PI);
   }
   if (load === "R" && ls_h <= 0) {
-    if (alpha_deg >= 90) return 0;
+    if (alpha_deg > 120) return 0;
     if (alpha_deg > 60) return ((3 * VllPk) / PI) * (1 + Math.cos(alpha + PI / 3));
     return ((3 * VllPk) / PI) * cosA;
   }
@@ -114,7 +140,7 @@ function voSemiFreewheel1(wt, Vm, alphaRad) {
 }
 
 function voFull1RWave(wt, Vm, alphaDeg) {
-  if (alphaDeg >= 90) return 0;
+  if (alphaDeg >= 180) return 0;
   const alphaRad = rad(alphaDeg);
   const cycle = ((wt % PI) + PI) % PI;
   if (cycle < alphaRad) return 0;
@@ -149,19 +175,82 @@ export function meanWaveform(points) {
   return sum / points.length;
 }
 
+function rmsFromPoints(points) {
+  if (!points.length) return 0;
+  let sum = 0;
+  for (const [, y] of points) sum += y * y;
+  return Math.sqrt(sum / points.length);
+}
+
+function normTopo(t) {
+  const m = { half1: "hw1", half3: "hw3", half: "hw3", full: "full3", semi: "semi3" };
+  return m[t] || t || "full3";
+}
+
+const SQRT3 = Math.sqrt(3);
+
+/** R load: PF = P/S with IL,rms from topology (3φ full: Io,rms·√(2/3)). */
+export function powerFactorFromWaveform(p, points, Vo) {
+  if (p.load !== "R") {
+    return p.topology === "full3" ? (3 / PI) * Math.cos(rad(p.alpha_deg)) : null;
+  }
+  if (!points.length || !Number.isFinite(Vo) || Math.abs(Vo) < 1e-6) return 0;
+  const vrmsO = rmsFromPoints(points);
+  if (vrmsO < 1e-9) return 0;
+  const r = Math.max(p.r_ohm || 1, 1e-9);
+  const pW = (vrmsO * vrmsO) / r;
+  const ioRms = vrmsO / r;
+  const topo = normTopo(p.topology);
+  const vLine = p.v_rms ?? (topo.endsWith("3") ? 415 : 230);
+  let sVa;
+  if (topo === "hw3") {
+    return vrmsO / (SQRT3 * vLine);
+  }
+  if (topo === "full3" || topo === "semi3") {
+    const ilRms = ioRms * Math.sqrt(2 / 3);
+    sVa = SQRT3 * vLine * ilRms;
+  } else if (topo === "hw1") {
+    sVa = SQRT2 * vLine * ioRms;
+  } else {
+    sVa = vLine * ioRms;
+  }
+  if (sVa < 1e-12) return 0;
+  const pf = pW / sVa;
+  return Number.isFinite(pf) ? pf : 0;
+}
+
 export function computeRectifier(p) {
-  const VoRaw = voClosedForm(p);
-  const Vo = Number.isFinite(VoRaw) ? VoRaw : NaN;
-  const Io = p.load === "CC" ? p.io_a : Vo / Math.max(p.r_ohm || 1, 1e-9);
-  const points = Number.isFinite(Vo) ? sampleWaveform(p) : [];
+  const clamp = clampRectifierAlpha(p);
+  const rlLoad = p.load === "RL" || p.load === "RLE";
+  const work =
+    clamp.past_limit && !rlLoad ? { ...p, alpha_deg: clamp.limit_deg, _past_alpha_limit: true } : p;
+  let points = [];
+  let trace = [];
+  if (!clamp.past_limit || rlLoad) {
+    const st = gateSampleState(work, 3600);
+    points = st.points;
+    trace = st.trace;
+  }
   const mean = meanWaveform(points);
-  const PF = p.topology === "full3" ? (3 / PI) * Math.cos(rad(p.alpha_deg)) : null;
+  let Vo;
+  if (clamp.past_limit && !rlLoad) Vo = 0;
+  else if (rlLoad) Vo = mean;
+  else {
+    const VoRaw = voClosedForm(work);
+    Vo = Number.isFinite(VoRaw) ? VoRaw : NaN;
+  }
+  const Io = p.load === "CC" ? p.io_a : Vo / Math.max(p.r_ohm || 1, 1e-9);
+  const rlConduction = rlLoad ? rlConductionReadout(work, trace) : null;
+  const PF = powerFactorFromWaveform(work, points, Vo);
   return {
     Vo,
     Io: Number.isFinite(Io) ? Io : NaN,
     points,
     waveformMean: mean,
     PF,
+    alpha_past_limit: clamp.past_limit,
+    alpha_limit_deg: clamp.limit_deg,
+    rlConduction,
     phasePeakVm: p.topology.endsWith("3") ? phasePeakFromLineVll(p.v_rms) : SQRT2 * p.v_rms,
     VoFinite: Number.isFinite(Vo),
   };

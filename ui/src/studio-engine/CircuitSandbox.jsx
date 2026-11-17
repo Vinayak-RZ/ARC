@@ -88,12 +88,6 @@ const PARALLEL_RC = {
   ],
 };
 
-function simulateEmptyHint(presetId) {
-  if (presetId === "divider") return "Press Simulate to plot Vout.";
-  if (presetId === "rlc") return "Press Simulate to plot capacitor voltage Vc(t) from this netlist.";
-  return "Press Simulate to plot the circuit response from this netlist.";
-}
-
 const EXAMPLES = [
   ["divider", "Load divider", null],
   ["rlc", "Series RLC", SERIES_RLC],
@@ -136,6 +130,44 @@ function FitViewOnChange({ signal }) {
   return null;
 }
 
+const UNIT_LABEL = { ohm: "Ω", H: "H", F: "F", V: "V", A: "A" };
+
+/** Inline value editor for the selected part (the human side of the shared lab). */
+function PartValueStrip({ part, onCommit }) {
+  const [text, setText] = useState(String(part.data?.value ?? ""));
+  const unit = UNIT_LABEL[part.data?.unit] ?? part.data?.unit ?? "";
+  const id = `part-value-${part.id}`;
+  return (
+    <form
+      className="studio-circuit-inspector"
+      aria-label={`Edit ${part.data?.refdes || part.id}`}
+      onSubmit={(e) => {
+        e.preventDefault();
+        onCommit(part.id, text);
+      }}
+    >
+      <label htmlFor={id}>{part.data?.refdes || part.id}</label>
+      <input
+        id={id}
+        inputMode="decimal"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        onBlur={() => onCommit(part.id, text)}
+      />
+      <span className="studio-circuit-inspector-unit">{unit}</span>
+      <button type="submit" className="button-secondary">Apply</button>
+    </form>
+  );
+}
+
+/** Human label for the simulator that produced a result (never a raw engine id). */
+function engineLabel(engine) {
+  const id = String(engine || "").toLowerCase();
+  if (id === "ngspice" || id === "circuit_graph_sim") return "Simulated with ngspice";
+  if (id.includes("rk4") || id.includes("analytic") || id.includes("rlc")) return "Analytic step response";
+  return "Simulated";
+}
+
 function CircuitSandboxInner({ linkedRunId = "" }) {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -145,10 +177,10 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
   const [simBusy, setSimBusy] = useState(false);
   const [labMeta, setLabMeta] = useState(null);
   const [labVerify, setLabVerify] = useState(null);
+  const [linkedRunData, setLinkedRunData] = useState(null);
   const [runTitle, setRunTitle] = useState("");
   const [viewMode, setViewMode] = useState("yours");
   const [showAuthorship, setShowAuthorship] = useState(false);
-  const [sandboxPreset, setSandboxPreset] = useState("divider");
   const past = useRef([]);
   const future = useRef([]);
   const hydrated = useRef(false);
@@ -172,16 +204,15 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
       return `No overshoot · Final value ${peakV.toFixed(2)} V · Settling (2%) ${tSetMs.toFixed(2)} ms`;
     }
     const tPkMs = 1000 * Number(result?.t_Vc_peak_s ?? problem?.t_s ?? 0);
-    return `Vc,peak = ${peakV.toFixed(3)} V at ${tPkMs.toFixed(2)} ms`;
+    const tFmt = tPkMs.toFixed(3);
+    return `Vc,peak = ${peakV.toFixed(3)} V at ${tFmt} ms`;
   }
 
   function applyLabSimulate(labSimulate, labVerify) {
     if (!labSimulate?.ok && !labSimulate?.simulated) return;
     const trace = labSimulate.trace || labSimulate.spice || labSimulate;
     const peakV = Number(labSimulate.simulated ?? trace?.Vc_peak_V ?? labVerify?.simulated);
-    const tPeak = Number(
-      trace?.t_Vc_peak_s ?? labSimulate.t_peak_s ?? labVerify?.derive?.t_s ?? labSimulate.problem?.t_s ?? 0,
-    );
+    const tPeak = Number(trace?.t_Vc_peak_s ?? labSimulate.t_peak_s ?? 0);
     const vcMs = trace?.vc_trace_ms;
     const result = {
       Vc_peak_V: peakV,
@@ -225,7 +256,9 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
           const rev = body?.lab_meta?.revision ?? 0;
           if (!force && rev <= revision.current && hydrated.current) return;
           revision.current = rev;
-          const baseline = body?.lab_meta?.agent_baseline_graph;
+          const baseline = body?.lab_meta?.agent_seed_graph?.nodes?.length
+            ? body.lab_meta.agent_seed_graph
+            : body?.lab_meta?.agent_baseline_graph;
           const currentGraph = body?.graph || {};
           const graph =
             viewMode === "agent" && baseline
@@ -244,7 +277,16 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
           setEdges(e);
           setLabMeta(body?.lab_meta || null);
           setLabVerify(body?.lab_verify || null);
-          setRunTitle(detail?.title || linkedRunId);
+          setLinkedRunData(
+            detail
+              ? {
+                  ...detail,
+                  lab: detail.lab || body?.lab_meta,
+                  lab_simulate: detail.lab_simulate || body?.lab_simulate,
+                }
+              : null,
+          );
+          setRunTitle(detail?.title || "");
           hydrated.current = true;
           userTouched.current = false;
           setFitKey((k) => k + 1);
@@ -269,7 +311,18 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
     if (linkedRunId) {
       loadLinkedRun(true);
       const es = new EventSource(`/api/runs/${linkedRunId}/events`);
-      es.onmessage = () => loadLinkedRun(false);
+      es.onmessage = (ev) => {
+        let data = {};
+        try {
+          data = JSON.parse(ev.data || "{}");
+        } catch {
+          data = {};
+        }
+        if (data.type === "hello" || data.type === "heartbeat") return;
+        // Disk events come from an agent in another process (MCP); verify and simulate
+        // results can change without a new revision, so always reload those.
+        loadLinkedRun(data.source === "disk");
+      };
       return () => es.close();
     }
     if (hydrated.current) return;
@@ -277,8 +330,6 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
     const { nodes: n, edges: e } = toFlow(graph);
     setNodes(n);
     setEdges(e);
-    const types = new Set((graph.nodes || []).map((node) => node.type));
-    setSandboxPreset(types.has("inductor") && types.has("capacitor") ? "rlc" : "divider");
     hydrated.current = true;
     return undefined;
   }, [linkedRunId, loadLinkedRun, setEdges, setNodes]);
@@ -398,7 +449,6 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
     const { nodes: n, edges: e } = toFlow(seed);
     setNodes(n);
     setEdges(e);
-    setSandboxPreset(id);
     setSim(null);
     setMsg("");
     setFitKey((k) => k + 1);
@@ -421,7 +471,13 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
       });
       const body = await r.json();
       if (!r.ok || !body.ok) {
-        setMsg(body.error || "Simulate failed");
+        if (silent) {
+          // Background auto-run on a circuit someone is still wiring: stay quiet and
+          // try again on the next lab update instead of leaving a stale error.
+          autoSimForRun.current = "";
+        } else {
+          setMsg(body.error || "Simulate failed");
+        }
         setSim(null);
       } else {
         const params = seriesRlcParamsFromFlow(nodes, edges);
@@ -437,10 +493,10 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
           if (vr.ok) {
             const payload = await vr.json();
             setLabVerify(payload.lab_verify || null);
-            if (payload.lab_verify?.simulate?.trace?.vc_trace_ms?.length) {
-              applyLabSimulate(payload.lab_verify.simulate, payload.lab_verify);
-            } else if (body.result?.vc_trace_ms?.length) {
-              applyLabSimulate({ ok: true, simulated: body.result?.Vc_peak_V, trace: body.result }, payload.lab_verify);
+            const labSim = payload.lab_verify?.simulate;
+            const labTrace = labSim?.trace || labSim;
+            if (labTrace?.vc_trace_ms?.length) {
+              applyLabSimulate(labSim, payload.lab_verify);
             }
           }
         }
@@ -453,9 +509,35 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
     }
   }
 
+  const selectedPart = nodes.find((n) => n.selected && n.data?.kind && n.data.kind !== "ground" && n.data.kind !== "junction");
+
+  const commitPartValue = useCallback(
+    (nodeId, raw) => {
+      const v = Number(String(raw).trim());
+      if (!Number.isFinite(v) || v <= 0) {
+        setMsg("Enter a positive number.");
+        return;
+      }
+      const cur = nodes.find((n) => n.id === nodeId);
+      if (!cur || Number(cur.data?.value) === v) return;
+      snapshot();
+      userTouched.current = true;
+      const next = nodes.map((n) => (n.id === nodeId ? { ...n, data: { ...n.data, value: v } } : n));
+      setNodes(next);
+      setMsg("");
+      persist(next, edges);
+    },
+    [nodes, edges, persist, setNodes, snapshot],
+  );
+
   const diffChips = useMemo(() => {
-    if (viewMode !== "changes" || !labMeta?.agent_baseline_graph) return [];
-    const diff = diffCircuitGraphs(labMeta.agent_baseline_graph, fromFlow(nodes, edges));
+    // "Agent's version" everywhere (bar pill, Changes, Agent's, Restore) is the agent's
+    // original build; a re-derive on the human's edit must not erase the edit from Changes.
+    const agentVersion = labMeta?.agent_seed_graph?.nodes?.length
+      ? labMeta.agent_seed_graph
+      : labMeta?.agent_baseline_graph;
+    if (viewMode !== "changes" || !agentVersion) return [];
+    const diff = diffCircuitGraphs(agentVersion, fromFlow(nodes, edges));
     return (diff.changed || []).map(formatValueChip);
   }, [viewMode, labMeta, nodes, edges]);
 
@@ -475,7 +557,9 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
       1000 *
       Number(sim.result.settling_2pct_entry_s ?? sim.result.settling_time_2pct_s ?? sim.result.t_Vc_peak_s ?? 0);
     const tMax = Math.min(Math.max(5 * settleMs, peakMs * 1.2, 8), 80);
-    const points = sim.result.vc_trace_ms.filter(([t]) => t <= tMax);
+    const raw = sim.result.vc_trace_ms.filter(([t]) => t <= tMax);
+    const step = Math.max(1, Math.ceil(raw.length / 3500));
+    const points = step > 1 ? raw.filter((_, i) => i % step === 0) : raw;
     return {
       title: "Capacitor voltage",
       x: { label: "t", unit: "ms", scale: "linear" },
@@ -486,9 +570,17 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
     };
   }, [sim, probeParams]);
 
-  const humanEdits = (labMeta?.op_log || []).filter(
-    (e) => e.author === "human" && e.op !== "restore" && e.electrical !== false,
-  ).length;
+  const humanEdits = useMemo(() => {
+    const seed = labMeta?.agent_seed_graph;
+    if (seed?.nodes?.length) {
+      const cur = fromFlow(nodes, edges);
+      const diff = diffCircuitGraphs(seed, cur);
+      if (!(diff.changed || []).length) return 0;
+    }
+    return (labMeta?.op_log || []).filter(
+      (e) => e.author === "human" && e.op !== "restore" && e.electrical !== false,
+    ).length;
+  }, [labMeta, nodes, edges]);
 
   async function askAgentReDerive() {
     if (!linkedRunId) return;
@@ -600,6 +692,9 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
         </header>
         <Palette onAdd={addPart} disabled={simBusy} />
         <div className="studio-circuit-canvas flow-wrap" ref={wrapRef}>
+          {selectedPart ? (
+            <PartValueStrip key={`${selectedPart.id}:${selectedPart.data?.value}`} part={selectedPart} onCommit={commitPartValue} />
+          ) : null}
           {wireHintOpen && !sim ? (
             <p className="hint studio-circuit-hint studio-canvas-hint">
               Drag ports to wire. Double-click a wire for a junction.
@@ -637,15 +732,21 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
         </div>
         <section className="studio-results studio-circuit-results card-surface" aria-live="polite">
           {!sim ? (
-            <p className="hint">{simulateEmptyHint(sandboxPreset)}</p>
+            <p className="hint">Press Simulate to plot capacitor voltage Vc(t).</p>
           ) : (
             <>
-              <div className="studio-circuit-probes studio-circuit-param-strip" aria-label="Probe readouts">
-                {sim.param_strip || "—"}
-              </div>
+              {sim.param_strip ? (
+                <div className="studio-circuit-probes studio-circuit-param-strip" aria-label="Probe readouts">
+                  {sim.param_strip}
+                </div>
+              ) : null}
               <p className="hint">
-                Engine: {sim.engine}. ζ = {sim.result?.zeta?.toFixed(2)}, ω<sub>n</sub> ={" "}
-                {sim.result?.omega_n_rad_s?.toFixed(0)} rad/s
+                {engineLabel(sim.engine)}
+                {Number.isFinite(sim.result?.zeta) && Number.isFinite(sim.result?.omega_n_rad_s) ? (
+                  <>
+                    {" "}· ζ = {sim.result.zeta.toFixed(2)}, ω<sub>n</sub> = {sim.result.omega_n_rad_s.toFixed(0)} rad/s
+                  </>
+                ) : null}
               </p>
               <p className="answer-line tabular-nums">
                 {sim.headline || rlcResultHeadline(sim.result, sim.problem)}
@@ -668,6 +769,8 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
       {linkedRunId ? (
         <aside className="studio-lab-drawer card-surface" aria-label="Lab collaboration">
           <LabVerifyPanel
+            runId={linkedRunId}
+            runData={linkedRunData}
             labVerify={labVerify}
             labMeta={labMeta}
             compact

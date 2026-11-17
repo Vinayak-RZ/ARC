@@ -9,10 +9,8 @@ from typing import Any
 from electrical_engineer.engines.rectifier_steady import (
     line_peak_from_line_vll,
     phase_peak_from_line_vll,
-    vo_full1_rl_wave,
     vo_full3_analytic,
     vo_hw3_r_wave,
-    vo_hw3_rl_wave,
 )
 
 _PI = math.pi
@@ -109,10 +107,10 @@ def _sample_one_ph_r(conv: str, v_rms: float, alpha_deg: float, n: int) -> list[
             if cycle >= alpha:
                 vo = abs(vm * math.sin(wt))
         elif conv == "full1":
-            if alpha_deg < 90:
-                cycle = ((wt % _PI) + _PI) % _PI
-                if cycle >= alpha:
-                    vo = abs(vm * math.sin(wt))
+            # R load: current dies with the voltage at pi, so firing is valid to 180 deg.
+            cycle = ((wt % _PI) + _PI) % _PI
+            if cycle >= alpha:
+                vo = abs(vm * math.sin(wt))
         out.append([360.0 * i / n, vo])
     return out
 
@@ -131,15 +129,14 @@ def gate_sample_vo(problem: dict[str, Any], n: int = 720) -> list[list[float]]:
         lh = 0.0
     io_a = float(problem.get("io_a") or 15.0)
     cc = load == "CC"
+    rl_load = load in {"RL", "RLE"}
     f_hz = float(problem.get("f_hz") or 50.0)
 
     e_v = float(problem.get("e_v") or 0.0)
 
-    if ls_source <= 0 and not cc and load in {"RL", "RLE"} and conv == "full1":
-        vm = _SQRT2 * v_rms
-        off = alpha >= 90 and e_v <= 0
+    if rl_load and conv == "hw3" and alpha > 90 and e_v <= 0:
         return [
-            [360.0 * i / n, 0.0 if off else vo_full1_rl_wave(2.0 * _PI * i / n, vm, alpha)]
+            [360.0 * i / n, 0.0]
             for i in range(n)
         ]
 
@@ -150,24 +147,15 @@ def gate_sample_vo(problem: dict[str, Any], n: int = 720) -> list[list[float]]:
             for i in range(n)
         ]
 
-    if ls_source <= 0 and not cc and load in {"RL", "RLE"} and conv == "hw3":
-        vm_ph = phase_peak_from_line_vll(v_rms)
-        off = alpha > 90 and e_v <= 0
-        return [
-            [360.0 * i / n, 0.0 if off else vo_hw3_rl_wave(2.0 * _PI * i / n, vm_ph, alpha)]
-            for i in range(n)
-        ]
-
     if ls_source <= 0 and not cc and load == "R" and conv in {"hw1", "semi1", "full1"}:
         return _sample_one_ph_r(conv, v_rms, alpha, n)
 
-    if conv == "full3" and ls_source <= 0 and not cc:
+    if conv == "full3" and ls_source <= 0 and not cc and not rl_load:
         vll = line_peak_from_line_vll(v_rms)
-        rectifier_off = load == "R" and alpha >= 90
-        rl_rectifier_only = load not in {"R", "CC"} and alpha > 90 and e_v <= 0
+        rectifier_off = load == "R" and alpha > 120
         out: list[list[float]] = []
         for i in range(n):
-            if rectifier_off or rl_rectifier_only:
+            if rectifier_off:
                 out.append([360.0 * i / n, 0.0])
                 continue
             wt = 2.0 * _PI * i / n
@@ -176,6 +164,19 @@ def gate_sample_vo(problem: dict[str, Any], n: int = 720) -> list[list[float]]:
                 vo = max(0.0, vo)
             out.append([360.0 * i / n, vo])
         return out
+
+    if conv == "full3" and ls_source <= 0 and rl_load:
+        vll = line_peak_from_line_vll(v_rms)
+        rl_rectifier_only = alpha >= 90 and e_v <= 0
+        return [
+            [
+                360.0 * i / n,
+                0.0
+                if rl_rectifier_only
+                else vo_full3_analytic(2.0 * _PI * i / n, vll, alpha),
+            ]
+            for i in range(n)
+        ]
 
     cfg = _CFG[conv]
     vt = _phase_voltages(conv, v_rms, n)
@@ -226,6 +227,12 @@ def gate_sample_vo(problem: dict[str, Any], n: int = 720) -> list[list[float]]:
         i_prev = i_
         for s in range(n):
             v = vt[s]
+            wt = 2.0 * _PI * s / n
+            if conv == "hw1" and lh > 0:
+                cycle = ((wt % (2.0 * _PI)) + 2.0 * _PI) % (2.0 * _PI)
+                a_rad = math.radians(alpha)
+                if on and (cycle < a_rad or cycle >= _PI):
+                    kill()
             if not on and not fwd and not cc:
                 kp, kn = best_pos(s, v), best_neg(s, v) if neg else -1
                 if kp >= 0 and (not neg or kn >= 0):
@@ -256,7 +263,7 @@ def gate_sample_vo(problem: dict[str, Any], n: int = 720) -> list[list[float]]:
                 rp = v[pos[p_i].ph]
                 rn = v[neg[n_i].ph] if neg and n_i >= 0 else 0.0
                 vpath = rp - rn
-                if cfg.fwd and vpath < 0:
+                if cfg.fwd and vpath < 0 and lh <= 0:
                     on, fwd, p_i, n_i = False, True, -1, -1
                     vpath = 0.0
             if cc:
@@ -279,11 +286,85 @@ def gate_sample_vo(problem: dict[str, Any], n: int = 720) -> list[list[float]]:
         if abs(i_ - i_prev) < 1e-8 * (1.0 + abs(i_)):
             break
 
-    kill()
-    i_ = max(i_, 1e-6)
+    if cc:
+        i_ = max(i_, io_a)
+    else:
+        kill()
+        i_ = max(i_, 1e-6)
+
+    def _advance_one_period() -> None:
+        nonlocal on, fwd, p_i, n_i, i_
+        for s in range(n):
+            v = vt[s]
+            wt = 2.0 * _PI * s / n
+            if conv == "hw1" and lh > 0:
+                cycle = ((wt % (2.0 * _PI)) + 2.0 * _PI) % (2.0 * _PI)
+                a_rad = math.radians(alpha)
+                if on and (cycle < a_rad or cycle >= _PI):
+                    kill()
+            if not on and not fwd and not cc:
+                kp, kn = best_pos(s, v), best_neg(s, v) if neg else -1
+                if kp >= 0 and (not neg or kn >= 0):
+                    vp = v[pos[kp].ph]
+                    vn = v[neg[kn].ph] if neg and kn >= 0 else 0.0
+                    if vp - vn > e_v + 1e-9:
+                        on, p_i, n_i = True, kp, kn
+            if fwd:
+                kp, kn = best_pos(s, v), best_neg(s, v) if neg else -1
+                if kp >= 0 and (not neg or kn >= 0):
+                    vp = v[pos[kp].ph]
+                    vn = v[neg[kn].ph] if neg and kn >= 0 else 0.0
+                    if vp - vn > 1e-9:
+                        fwd, on, p_i, n_i = False, True, kp, kn
+            vpath = 0.0
+            if on:
+                cur = v[pos[p_i].ph]
+                for j in range(np_):
+                    if j != p_i and gp[j][s] and v[pos[j].ph] > cur + 1e-9:
+                        p_i = j
+                        cur = v[pos[p_i].ph]
+                if neg and n_i >= 0:
+                    curn = v[neg[n_i].ph]
+                    for j in range(nn):
+                        if j != n_i and gn[j][s] and v[neg[j].ph] < curn - 1e-9:
+                            n_i = j
+                            curn = v[neg[n_i].ph]
+                rp = v[pos[p_i].ph]
+                rn = v[neg[n_i].ph] if neg and n_i >= 0 else 0.0
+                vpath = rp - rn
+                if cfg.fwd and vpath < 0 and lh <= 0:
+                    on, fwd, p_i, n_i = False, True, -1, -1
+                    vpath = 0.0
+            if cc:
+                i_ = io_a
+            elif on or fwd:
+                if lh <= 0:
+                    i_ = (vpath - e_v) / r_ohm
+                    if i_ <= 0:
+                        i_ = 0.0
+                        kill()
+                else:
+                    iss = (vpath - e_v) / r_ohm
+                    ex = math.exp(-r_ohm * hr / (w0 * lh))
+                    i_ = iss + (i_ - iss) * ex
+                    if i_ <= 0:
+                        i_ = 0.0
+                        kill()
+            else:
+                i_ = 0.0
+
+    if rl_load:
+        _advance_one_period()
+
     vo_out: list[float] = []
     for s in range(n):
         v = vt[s]
+        wt = 2.0 * _PI * s / n
+        if conv == "hw1" and lh > 0:
+            cycle = ((wt % (2.0 * _PI)) + 2.0 * _PI) % (2.0 * _PI)
+            a_rad = math.radians(alpha)
+            if on and (cycle < a_rad or cycle >= _PI):
+                kill()
         if not on and not fwd and not cc:
             kp, kn = best_pos(s, v), best_neg(s, v) if neg else -1
             if kp >= 0 and (not neg or kn >= 0):
@@ -314,7 +395,7 @@ def gate_sample_vo(problem: dict[str, Any], n: int = 720) -> list[list[float]]:
             rp = v[pos[p_i].ph]
             rn = v[neg[n_i].ph] if neg and n_i >= 0 else 0.0
             vpath = rp - rn
-            if cfg.fwd and vpath < 0:
+            if cfg.fwd and vpath < 0 and lh <= 0:
                 on, fwd, p_i, n_i = False, True, -1, -1
                 vpath = 0.0
         if cc:

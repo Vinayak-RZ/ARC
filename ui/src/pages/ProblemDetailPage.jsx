@@ -7,6 +7,7 @@ import { ParametersPanel } from "../components/ParametersPanel.jsx";
 import { ProblemHeader } from "../components/ProblemHeader.jsx";
 import { LabVerifyPanel } from "../components/LabVerifyPanel.jsx";
 import { LabActivityPanel } from "../components/LabActivityPanel.jsx";
+import { labForRecipe, openLab } from "../studio-engine/labs/openExample.js";
 
 const TABS = [
   { id: "work", label: "Work" },
@@ -47,7 +48,8 @@ export function ProblemDetailPage({ id, data: initialData, runMeta }) {
   const setStale = useLayout((s) => s.setParametersStale);
   let recipeId = "";
   try {
-    recipeId = JSON.parse(data?.summary || "{}").recipe_id || "";
+    const evid = JSON.parse(data?.summary || "{}");
+    recipeId = evid.recipe_id || "";
   } catch {
     recipeId = "";
   }
@@ -55,13 +57,10 @@ export function ProblemDetailPage({ id, data: initialData, runMeta }) {
   return (
     <div className="page-column problem-detail">
       <ProblemHeader runMeta={runMeta} data={data} />
-      {data?.lab_verify?.needs_review ? (
-        <p className="lab-needs-review-banner" role="status">
-          Needs review — derived and simulated values disagree beyond tolerance.
-        </p>
-      ) : null}
       {renderSlot("run.result", { id, runMeta })}
       <LabVerifyPanel
+        runId={id}
+        runData={data}
         labVerify={data?.lab_verify}
         labMeta={data?.lab}
         onAskAgent={() => labPost("re-derive")}

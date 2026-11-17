@@ -15,6 +15,8 @@ export function LabProvenanceBar({
   restoreDisabled,
 }) {
   if (!problemId && !runTitle) return null;
+  // Never show the raw run id as a title while the run detail is still loading.
+  const titleLabel = runTitle || "this problem";
   const modes = [
     ["yours", "Yours"],
     ["agent", "Agent's"],
@@ -28,7 +30,7 @@ export function LabProvenanceBar({
           Built by <strong>Agent</strong> for{" "}
           {problemId ? (
             <button type="button" className="text-link" onClick={onBackToProblem}>
-              {runTitle || problemId}
+              {titleLabel}
             </button>
           ) : (
             runTitle

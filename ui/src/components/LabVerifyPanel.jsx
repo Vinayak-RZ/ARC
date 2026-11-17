@@ -1,6 +1,10 @@
 /** Derived vs lab simulation agreement (Problem + lab results strip). */
 
+import { useMemo } from "react";
 import { formatDiffPct, formatLabValue } from "./labFormat.js";
+import { openRunLab } from "../studio-engine/labs/openExample.js";
+import { LabVerifySparkline } from "./LabVerifySparkline.jsx";
+import { sparklineFromLabVerify } from "./labVerifySparklineData.js";
 
 function badgeClass(status) {
   switch (status) {
@@ -28,6 +32,8 @@ function labEditCount(n) {
 }
 
 export function LabVerifyPanel({
+  runId,
+  runData,
   labVerify,
   labMeta,
   compact = false,
@@ -64,6 +70,7 @@ export function LabVerifyPanel({
       ];
   const engine = labVerify.sim_engine || (skipped ? "ngspice not available" : "ngspice");
   const allRowsStale = Boolean(labVerify.all_rows_out_of_date);
+  const sparkSpec = useMemo(() => sparklineFromLabVerify(runData, labVerify), [runData, labVerify]);
 
   const globalStaleBanner =
     allRowsStale && !derivedStale ? (
@@ -90,17 +97,21 @@ export function LabVerifyPanel({
     <div className="lab-verify-stale-banner is-review" role="group" aria-label="Review actions">
       <div className="lab-verify-cta-row">
         {onReRun ? (
-          <button type="button" className="text-button" onClick={onReRun}>
-            Re-run
+          <button
+            type="button"
+            className={derivedStale ? "button-primary" : "button-secondary"}
+            onClick={onReRun}
+          >
+            {derivedStale ? "Re-simulate in lab" : "Re-run"}
           </button>
         ) : null}
         {(derivedStale || sameRevMismatch) && onAskAgent ? (
-          <button type="button" className="text-button" onClick={onAskAgent}>
+          <button type="button" className="button-secondary" onClick={onAskAgent}>
             Ask agent to re-derive
           </button>
         ) : null}
         {sameRevMismatch && onAcceptSimulated ? (
-          <button type="button" className="text-button" onClick={onAcceptSimulated}>
+          <button type="button" className="button-secondary" onClick={onAcceptSimulated}>
             Accept simulated value
           </button>
         ) : null}
@@ -109,13 +120,9 @@ export function LabVerifyPanel({
   ) : null;
 
   function rowStatus(row) {
-    if (row.derived_out_of_date && !row.simulated_out_of_date) {
-      return {
-        status: row.status === "out_of_date" ? "agrees" : row.status,
-        label: row.status_label && row.status_label !== "Out of date" ? row.status_label : "—",
-      };
+    if (row.derived_out_of_date) {
+      return { status: "out_of_date", label: "Out of date" };
     }
-    if (row.derived_out_of_date) return { status: "out_of_date", label: "Out of date" };
     return { status: row.status, label: row.status_label };
   }
 
@@ -141,6 +148,9 @@ export function LabVerifyPanel({
         {globalStaleBanner}
         {contextBanner}
         {actionCta}
+        {runId && runData?.lab && sparkSpec ? (
+          <LabVerifySparkline spec={sparkSpec} width={180} height={44} />
+        ) : null}
         <p className="lab-verify-engine-line">
           Simulated with {engine}
           {labVerify.graph_revision != null ? (
@@ -182,6 +192,31 @@ export function LabVerifyPanel({
     );
   }
 
+  const labRev = labVerify?.graph_revision ?? labMeta?.revision ?? runData?.lab?.revision;
+  const labOpenAside =
+    runId && runData?.lab ? (
+      <a
+        className="lab-verify-lab-aside"
+        href={runData.lab?.ui_url || "#"}
+        onClick={(e) => {
+          e.preventDefault();
+          openRunLab(runData);
+        }}
+      >
+        <img
+          className="lab-verify-lab-thumb"
+          src={`/api/runs/${runId}/artifact.svg`}
+          alt=""
+          width={160}
+          height={72}
+        />
+        {sparkSpec ? <LabVerifySparkline spec={sparkSpec} /> : null}
+        <span className="lab-verify-lab-caption">
+          Agent&apos;s circuit · r{labRev ?? "—"} · {engine} · Open in lab →
+        </span>
+      </a>
+    ) : null;
+
   return (
     <section className="lab-verify-panel card-surface" aria-labelledby="lab-verify-heading">
       <header className="lab-verify-head">
@@ -190,6 +225,7 @@ export function LabVerifyPanel({
       {globalStaleBanner}
       {contextBanner}
       {actionCta}
+      <div className="lab-verify-body-grid">
       <table className="lab-verify-table">
         <thead>
           <tr>
@@ -226,6 +262,8 @@ export function LabVerifyPanel({
           })}
         </tbody>
       </table>
+      {labOpenAside}
+      </div>
       {labMeta?.op_log?.length ? (
         <p className="hint">{labEditCount(labMeta.op_log.length)} recorded (see Activity).</p>
       ) : null}

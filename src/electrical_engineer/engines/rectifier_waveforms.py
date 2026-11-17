@@ -102,7 +102,14 @@ def _vo_single_phase_half(wt: float, vm: float, alpha_rad: float, full_wave: boo
 def sample_waveform(problem: dict, n: int = 720) -> list[list[float]]:
     from electrical_engineer.engines.rectifier_gate import gate_sample_vo
 
-    return gate_sample_vo(problem, n)
+    prob = dict(problem)
+    load = str(prob.get("load") or "R")
+    if load in {"RL", "RLE"} and float(prob.get("io_a") or 0) <= 0:
+        vo = _vo_closed_form(problem, None, None)
+        r_ohm = float(prob.get("r_ohm") or 10.0)
+        if vo and r_ohm > 0:
+            prob["io_a"] = max(1e-3, abs(vo) / r_ohm)
+    return gate_sample_vo(prob, n)
 
 
 def _vo_closed_form(problem: dict, rectifier_1ph, rectifier_3ph) -> float:
@@ -126,8 +133,7 @@ def _vo_closed_form(problem: dict, rectifier_1ph, rectifier_3ph) -> float:
         vm = _SQRT2 * v_rms
         e_v = float(problem.get("e_v") or 0.0)
         if ls <= 0 and load == "R":
-            if alpha_deg >= 90:
-                return 0.0
+            # R load: each SCR conducts alpha..pi, so Vo = Vm/pi (1 + cos alpha) for 0..180 deg.
             return (vm / _PI) * (1.0 + cos_a)
         if alpha_deg >= 90 and e_v <= 0:
             return 0.0
@@ -140,13 +146,16 @@ def _vo_closed_form(problem: dict, rectifier_1ph, rectifier_3ph) -> float:
         e_v = float(problem.get("e_v") or 0.0)
         if load != "R" and alpha_deg > 90 and e_v <= 0:
             return 0.0
+        if load == "R" and ls <= 0 and alpha_deg >= 150:
+            # Firing at 30 + alpha lands at or past the phase zero crossing: no conduction.
+            return 0.0
         if cc:
             return (3.0 * _SQRT3 * vm_ph / (2.0 * _PI)) * cos_a - (3.0 * w * ls * io) / (2.0 * _PI)
         return (3.0 / (2.0 * _PI)) * vm_ph * (1.0 + math.cos(alpha + _PI / 6.0))
     if topology == "semi3":
         return (3.0 * vll_pk / (2.0 * _PI)) * (1.0 + cos_a) - (3.0 * w * ls * io) / (2.0 * _PI)
     if load == "R" and ls <= 0:
-        if alpha_deg >= 90:
+        if alpha_deg > 120:
             return 0.0
         if alpha_deg > 60:
             return (3.0 * vll_pk / _PI) * (1.0 + math.cos(alpha + _PI / 3.0))

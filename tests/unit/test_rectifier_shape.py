@@ -7,6 +7,10 @@ import math
 import pytest
 
 from electrical_engineer.engines.rectifier_gate import line_peak_from_line_vll
+from electrical_engineer.engines.rectifier_rl_steady import (
+    rl_reference_slice,
+    rl_vo_mean_closed_form,
+)
 from electrical_engineer.engines.rectifier_steady import firing_angles_deg, vo_full3_analytic
 from electrical_engineer.engines.rectifier_waveforms import (
     _vo_closed_form,
@@ -36,20 +40,27 @@ def _expected_full3(wt_deg: float, alpha_deg: float, v_ll_rms: float = 415.0) ->
 @pytest.mark.parametrize("alpha_deg", (0, 30, 45, 60, 75, 90))
 def test_waveform_mean_tracks_vo(topology: str, load: str, alpha_deg: float) -> None:
     v = 415 if topology.endswith("3") else 230
-    vo = _vo_closed_form(
-        {"topology": topology, "load": load, "v_rms": v, "v_ll_rms": v, "alpha_deg": alpha_deg, "io_a": 0, "ls_h": 0},
-        rectifier_1ph,
-        rectifier_3ph,
-    )
-    pts = sample_waveform(
-        {"topology": topology, "load": load, "v_rms": v, "v_ll_rms": v, "alpha_deg": alpha_deg},
-        n=3600,
-    )
+    problem = {
+        "topology": topology,
+        "load": load,
+        "v_rms": v,
+        "v_ll_rms": v,
+        "alpha_deg": alpha_deg,
+        "r_ohm": 10,
+        "io_a": 0,
+        "ls_h": 0,
+        "l_h": 0.01 if load == "RL" else 0,
+        "f_hz": 50,
+    }
+    if load == "RL":
+        vo = rl_vo_mean_closed_form(rl_reference_slice(problem))
+    else:
+        vo = _vo_closed_form(problem, rectifier_1ph, rectifier_3ph)
+    pts = sample_waveform(problem, n=3600)
     mean = mean_waveform(pts)
-    if abs(vo) < 1.0:
-        assert abs(mean) < 1.0
+    if abs(vo) < 1e-6:
         return
-    assert abs(mean - vo) / abs(vo) < 0.006
+    assert abs(mean - vo) / abs(vo) < 0.005
 
 
 def test_full3_phase_a_firing_marks_and_falling_arcs() -> None:

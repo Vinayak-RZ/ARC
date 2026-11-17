@@ -2,7 +2,8 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { circuitLayoutProblem, prepareTheme, reinforceTheme } from "./layout-helpers.js";
 
-const BASE = process.env.STUDIO_URL || process.env.ARC_UI_URL || "http://127.0.0.1:8765";
+// STUDIO_URL may carry a path and query (?view=studio); API calls need the bare origin.
+const BASE = new URL(process.env.STUDIO_URL || process.env.ARC_UI_URL || "http://127.0.0.1:8765").origin;
 
 const BAD_TEXT = /(\bNaN\b|undefined|\[object Object\])/i;
 
@@ -43,7 +44,7 @@ test.describe("Full collab loop (independent TE)", () => {
       await page.goto(`${BASE}/?view=studio&tab=circuits&run=${runId}`);
       await reinforceTheme(page, vp.theme);
       await page.locator(".studio-circuit-app .cs-simulate-btn").click();
-      await expect(page.locator(".studio-circuit-results .answer-num")).toBeVisible({ timeout: 45000 });
+      await expect(page.locator(".studio-circuit-results .answer-line").first()).toBeVisible({ timeout: 45000 });
 
       const r1 = page.locator(".studio-circuit-inspector input").first();
       if (await r1.isVisible()) {

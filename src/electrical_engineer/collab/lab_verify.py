@@ -76,6 +76,8 @@ def _decorate_metric_rows(verify: dict[str, Any], meta: dict[str, Any], graph: d
             row["derived_status"] = "out_of_date"
             row["derived_status_label"] = "Out of date"
             row["rel_err_pct"] = None
+            row["status"] = "out_of_date"
+            row["status_label"] = "Out of date"
             if row.get("simulated_out_of_date"):
                 row["status"] = "out_of_date"
                 row["status_label"] = "Out of date"
@@ -188,25 +190,12 @@ def agent_rederive_circuit_lab(run_dir: Path) -> dict[str, Any]:
         problem.update(params)
         problem.setdefault("kind", "series_rlc")
         problem.setdefault("analysis", "tran")
-        if str(problem.get("kind") or "") == "series_rlc":
-            from electrical_engineer.engines.rlc_transient import series_rlc_step
-
-            m = series_rlc_step(
-                float(params.get("r_ohm") or 10),
-                float(params.get("l_h") or 0.01),
-                float(params.get("c_f") or 100e-6),
-                float(params.get("vin") or params.get("v_step") or 10),
-            )
-            if float(m.get("overshoot_pct") or 0) < 0.5:
-                problem["t_s"] = float(
-                    m.get("settling_2pct_entry_s") or m.get("settling_time_2pct_s") or problem.get("t_s", 0)
-                )
-            problem.pop("cir", None)
-            problem.pop("netlist", None)
-            problem["allow_template_fallback"] = True
+        problem.setdefault("allow_template_fallback", True)
+        problem.pop("cir", None)
     derived = derive(problem)
-    (run_dir / "problem.json").write_text(json.dumps(problem, indent=2) + "\n", encoding="utf-8")
     (run_dir / "circuit_derive.json").write_text(json.dumps(derived, indent=2), encoding="utf-8")
+    if params:
+        (run_dir / "problem.json").write_text(json.dumps(problem, indent=2), encoding="utf-8")
     params = series_rlc_params_from_graph(graph) or problem
     if str(problem.get("kind") or "") == "series_rlc" or params.get("r_ohm") is not None:
         from electrical_engineer.engines.rlc_transient import series_rlc_step
@@ -226,19 +215,25 @@ def agent_rederive_circuit_lab(run_dir: Path) -> dict[str, Any]:
             if not evid.get("unchecked"):
                 evid["value"] = float(derived.get("value") if derived.get("value") is not None else rlc["Vc_peak_V"])
                 path.write_text(json.dumps(evid, indent=2), encoding="utf-8")
-    verify = refresh_circuit_lab_verify(run_dir, problem, derived=derived, graph=graph)
-    verify = apply_verify_semantics(verify, meta, graph) or verify
-    (run_dir / "lab_verify.json").write_text(json.dumps(verify, indent=2), encoding="utf-8")
+    # The derivation now belongs to this graph: move the baseline before judging
+    # freshness, or every row is stamped "Out of date" against the old baseline.
     meta = lab_meta.load_lab_meta(run_dir)
     meta["agent_baseline_graph"] = graph
     meta["agent_baseline_rev"] = int(meta.get("revision") or 1)
+    lab_meta.save_lab_meta(run_dir, meta)
+    verify = refresh_circuit_lab_verify(run_dir, problem, derived=derived, graph=graph)
+    meta = lab_meta.load_lab_meta(run_dir)
+    verify = apply_verify_semantics(verify, meta, graph) or verify
+    (run_dir / "lab_verify.json").write_text(json.dumps(verify, indent=2), encoding="utf-8")
     meta["lab_verify"] = {
         "mismatch": verify.get("mismatch"),
         "derived": verify.get("derived"),
         "simulated": verify.get("simulated"),
     }
+    lab_meta.save_lab_meta(run_dir, meta)
     from electrical_engineer.circuit.run_session import append_lab_op
 
+    # After the save, so the op is appended to the updated meta rather than overwritten.
     append_lab_op(
         run_dir,
         author="agent",
@@ -246,7 +241,6 @@ def agent_rederive_circuit_lab(run_dir: Path) -> dict[str, Any]:
         detail={"engine": derived.get("engine"), "value": derived.get("value")},
         electrical=False,
     )
-    lab_meta.save_lab_meta(run_dir, meta)
     return verify
 
 
@@ -301,6 +295,12 @@ def restore_agent_circuit_lab(run_dir: Path) -> dict[str, Any]:
         target="circuit",
         detail={"source": "agent_seed", "seed_rev": meta.get("agent_seed_rev")},
     )
+    graph_live = load_graph(run_dir)
+    params_restore = series_rlc_params_from_graph(graph_live) or {}
+    if params_restore:
+        problem0 = {**problem0, **params_restore}
+        problem0.setdefault("prompt", "Series RLC step")
+        (run_dir / "problem.json").write_text(json.dumps(problem0, indent=2), encoding="utf-8")
     meta = lab_meta.load_lab_meta(run_dir)
     meta["agent_baseline_graph"] = load_graph(run_dir)
     meta["agent_baseline_rev"] = int(meta.get("revision") or 1)

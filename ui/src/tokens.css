@@ -1309,12 +1309,6 @@ a { color: var(--ee-color-primary); }
   margin-left: auto;
 }
 .verification-link:hover { text-decoration: underline; }
-.verification-lab-btn {
-  margin-left: 2px;
-  min-height: 28px;
-  padding: 4px 10px;
-  font-size: 12px;
-}
 .answer-card.is-stale .answer-line,
 .answer-card.is-stale .answer-lines { opacity: 0.6; }
 .status-tag { font-size: 12px; font-weight: 500; }
@@ -2286,6 +2280,8 @@ a { color: var(--ee-color-primary); }
   --ee-color-body: #a3a39e;
   --ee-color-muted: #a3a39e;
   --ee-color-faint: #8a8a86;
+  --text-muted: #a3a39e;
+  --text-faint: #8a8a86;
   --ee-border-input: #757570;
   --ee-border-input-hover: #8a8a85;
   --ee-color-on-primary: #0b1222;
@@ -2733,6 +2729,37 @@ a { color: var(--ee-color-primary); }
 .lab-badge-ok { color: var(--ee-semantic-up); }
 .lab-badge-warn { color: var(--ee-semantic-down); }
 .lab-verify-panel { margin: var(--ee-space-m) 0; }
+.lab-verify-body-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(11rem, 13.5rem);
+  gap: var(--ee-space-m);
+  align-items: start;
+}
+.lab-verify-lab-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--ee-color-ink);
+  font-size: 11px;
+  line-height: 1.35;
+  padding: 8px;
+  border: 1px solid var(--ee-color-hairline);
+  border-radius: 6px;
+  background: var(--ee-color-surface-subtle, #f8f9fb);
+}
+.lab-verify-lab-aside:hover { border-color: var(--ee-color-accent, #2563eb); }
+.lab-verify-lab-thumb {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  background: #fff;
+}
+.lab-verify-lab-caption { color: var(--ee-color-muted); }
+.lab-verify-sparkline { width: 100%; display: block; margin: 4px 0; }
+.lab-verify-spark-path { stroke: var(--ee-color-accent, #2563eb); stroke-width: 1.25; }
+.lab-verify-spark-hline { stroke: var(--ee-color-muted); stroke-width: 1; opacity: 0.7; }
+.lab-verify-spark-marker { fill: var(--ee-semantic-down, #c2410c); }
 .lab-verify-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2815,7 +2842,7 @@ a { color: var(--ee-color-primary); }
 .lab-activity-timeline { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .lab-activity-item {
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr) auto;
+  grid-template-columns: 24px minmax(11rem, 1fr) auto;
   gap: 8px;
   align-items: center;
   min-height: 32px;
@@ -2827,7 +2854,7 @@ a { color: var(--ee-color-primary); }
 .lab-activity-item:hover .lab-activity-actions { opacity: 1; pointer-events: auto; }
 .lab-activity-rev-chip { font-size: 11px; color: var(--ee-color-muted); font-variant-numeric: tabular-nums; }
 .lab-activity-time { color: var(--ee-color-muted); font-size: 12px; }
-.lab-activity-sentence { margin: 0; font-size: 13px; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lab-activity-sentence { margin: 0; font-size: 13px; line-height: 1.35; white-space: normal; overflow-wrap: break-word; min-width: 11rem; }
 .lab-activity-avatar.is-human {
   width: 20px; height: 20px; border-radius: 50%; background: var(--ee-color-muted); color: #fff;
   font-size: 9px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
@@ -2928,3 +2955,32 @@ a { color: var(--ee-color-primary); }
 .product-workspace .studio-workspace-pane.studio-circuits {
   min-height: min(720px, calc(100vh - 7rem));
 }
+
+/* Selected-part value editor in the circuit lab */
+.studio-circuit-inspector {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 7;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 1px solid var(--ee-color-hairline);
+  border-radius: 8px;
+  background: var(--ee-color-surface-card);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+  font-size: 13px;
+}
+.studio-circuit-inspector label { font-weight: 600; color: var(--ee-color-ink); }
+.studio-circuit-inspector input {
+  width: 96px;
+  padding: 4px 8px;
+  border: 1px solid var(--ee-border-input);
+  border-radius: 6px;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  background: var(--ee-color-canvas);
+  color: var(--ee-color-ink);
+}
+.studio-circuit-inspector-unit { color: var(--text-muted); }
