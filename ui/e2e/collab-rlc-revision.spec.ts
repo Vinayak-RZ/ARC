@@ -4,8 +4,8 @@ import { prepareTheme } from "./layout-helpers.js";
 const BASE = process.env.STUDIO_URL || process.env.ARC_UI_URL || "http://127.0.0.1:8765";
 
 test.describe("Collab RLC revision loop", () => {
-  test("titles, stale answer, R20 settling, re-derive", async ({ page, request }) => {
-    test.setTimeout(180_000);
+  test("derive r1 → edit r2 → re-derive → restore r3", async ({ page, request }) => {
+    test.setTimeout(240_000);
     await page.setViewportSize({ width: 1440, height: 900 });
     await prepareTheme(page, "dark");
 
@@ -26,16 +26,19 @@ test.describe("Collab RLC revision loop", () => {
       )
       .toBe("ready");
 
+    // r1 — agent derive
     await page.goto(`${BASE}/?problem=${runId}`);
     await expect(page.locator(".problem-display-title")).toHaveText("Series RLC step");
     await expect(page.getByRole("navigation").getByText("Series RLC step").first()).toBeVisible();
-    await expect(page.locator(".answer-card .answer-line, .answer-card .answer-lines")).toContainText(
-      /Vc,peak|No overshoot|11\.6/i,
-      { timeout: 30000 },
-    );
+    await expect(page.locator(".answer-card")).toContainText("3.628", { timeout: 30000 });
+    await expect(page.locator(".answer-card")).toContainText("11.630");
 
     const lab0 = await request.get(`${BASE}/api/runs/${runId}/lab`);
     expect(lab0.ok()).toBeTruthy();
+    const rev1 = (await lab0.json()).lab_meta?.revision;
+    expect(rev1).toBeGreaterThanOrEqual(1);
+
+    // r2 — human R1 edit
     const labBody = await lab0.json();
     const graph = structuredClone(labBody.graph);
     for (const node of graph.nodes || []) {
@@ -43,33 +46,59 @@ test.describe("Collab RLC revision loop", () => {
     }
     const put = await request.put(`${BASE}/api/runs/${runId}/graph`, { data: graph });
     expect(put.ok()).toBeTruthy();
-    const verify = await request.post(`${BASE}/api/runs/${runId}/lab/verify`);
-    expect(verify.ok()).toBeTruthy();
+    const verifyR2 = await request.post(`${BASE}/api/runs/${runId}/lab/verify`);
+    expect(verifyR2.ok()).toBeTruthy();
+    const lab2 = await request.get(`${BASE}/api/runs/${runId}/lab`);
+    const rev2 = (await lab2.json()).lab_meta?.revision;
+    expect(rev2).toBeGreaterThan(rev1);
 
     await page.goto(`${BASE}/?problem=${runId}`);
     await expect(page.locator(".problem-display-title")).toHaveText("Series RLC step");
-    await expect(page.locator(".is-derived-stale, .verification-strip.verification-stale")).toBeVisible({
-      timeout: 20000,
-    });
-    await expect(page.locator(".answer-stale-rev, .verification-strip")).toContainText(/Out of date/i);
+    await expect(page.locator(".is-derived-stale, .verification-strip.verification-stale")).toBeVisible();
+    await expect(page.locator(".answer-card, .verification-strip")).toContainText(/Out of date/i);
     await expect(page.getByText(/Needs review/i)).toHaveCount(0);
 
     await page.goto(`${BASE}/?view=studio&tab=circuits&run=${runId}`);
     await page.waitForSelector(".react-flow", { timeout: 45000 });
     await expect(page.locator(".lab-provenance-bar")).toContainText("Series RLC step");
-    await expect(page.locator(".lab-verify-stack-metric")).toContainText("Final value");
+    await expect(page.locator(".lab-provenance-rev")).toContainText(`r${rev2}`);
 
+    // re-derive — agrees, no overshoot headline
     const rederive = await request.post(`${BASE}/api/runs/${runId}/lab/re-derive`);
     expect(rederive.ok()).toBeTruthy();
-    const detail = await request.get(`${BASE}/api/runs/${runId}`);
-    expect(detail.ok()).toBeTruthy();
-    const body = await detail.json();
-    expect(body.title).toBe("Series RLC step");
-    expect(body.circuit_derive).toBeTruthy();
-    expect(body.rlc_transient).toBeTruthy();
 
     await page.goto(`${BASE}/?problem=${runId}`);
-    await expect(page.locator(".answer-line")).toContainText("5.83", { timeout: 15000 });
-    await expect(page.locator(".answer-line")).toContainText(/Settling \(2%\)/i);
+    await expect(page.locator(".answer-card .answer-line")).toContainText("5.83", { timeout: 20000 });
+    await expect(page.locator(".answer-card")).toContainText(/Settling \(2%\)/i);
+    await expect(page.locator(".answer-card")).toContainText("10.00");
+
+    await page.goto(`${BASE}/?view=studio&tab=circuits&run=${runId}&view=changes`);
+    await page.waitForSelector(".react-flow", { timeout: 45000 });
+
+    // restore — r3, original peak, no Changes chip
+    const restore = await request.post(`${BASE}/api/runs/${runId}/lab/restore`);
+    expect(restore.ok()).toBeTruthy();
+    const lab3 = await request.get(`${BASE}/api/runs/${runId}/lab`);
+    const rev3 = (await lab3.json()).lab_meta?.revision;
+    expect(rev3).toBeGreaterThan(rev2);
+    const r1node = (await lab3.json()).graph?.nodes?.find((n: { id: string }) => n.id === "r1");
+    expect(Number(r1node?.value)).toBe(10);
+
+    await page.goto(`${BASE}/?view=studio&tab=circuits&run=${runId}&view=changes`);
+    await page.waitForSelector(".react-flow", { timeout: 45000 });
+    await expect(page.locator(".lab-changes-chip-row")).toHaveCount(0);
+    await expect(page.locator(".lab-provenance-rev")).toContainText(`r${rev3}`);
+    await expect(page.locator(".studio-circuit-results .answer-line")).toContainText("11.630", {
+      timeout: 60000,
+    });
+    await expect(page.locator(".studio-circuit-results .answer-line")).toContainText("3.628");
+    await expect(page.locator(".lab-verify-badge.is-agrees")).toBeVisible();
+
+    await page.goto(`${BASE}/?problem=${runId}`);
+    await expect(page.locator(".problem-display-title")).toHaveText("Series RLC step");
+    await expect(page.getByRole("navigation").getByText("Series RLC step").first()).toBeVisible();
+    await expect(page.locator(".answer-card")).toContainText("3.628");
+    await expect(page.locator(".answer-card")).toContainText("11.630");
+    await expect(page.locator(".is-derived-stale")).toHaveCount(0);
   });
 });

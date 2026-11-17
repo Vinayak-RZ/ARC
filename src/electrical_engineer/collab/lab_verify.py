@@ -235,6 +235,81 @@ def agent_rederive_circuit_lab(run_dir: Path) -> dict[str, Any]:
     return verify
 
 
+def restore_agent_circuit_lab(run_dir: Path) -> dict[str, Any]:
+    """Restore the original agent seed graph+derivation as a new lab revision and re-verify."""
+    from electrical_engineer.circuit.run_session import apply_graph, load_graph
+    from electrical_engineer.collab import lab_meta
+    from electrical_engineer.collab.workflow import refresh_circuit_lab_verify
+
+    meta = lab_meta.load_lab_meta(run_dir)
+    graph = meta.get("agent_seed_graph") or meta.get("agent_baseline_graph")
+    if not isinstance(graph, dict) or not graph.get("nodes"):
+        raise ValueError("no agent seed graph to restore")
+    seed_derive = meta.get("agent_seed_derive")
+    problem0 = _read_json(run_dir / "problem.json")
+    if not isinstance(seed_derive, dict):
+        params_seed = series_rlc_params_from_graph(graph) or {}
+        if str(problem0.get("kind") or "") == "series_rlc" and params_seed:
+            from electrical_engineer.engines.circuit_derive import derive
+
+            seed_derive = derive(
+                {
+                    **problem0,
+                    **params_seed,
+                    "allow_template_fallback": True,
+                }
+            )
+    if isinstance(seed_derive, dict):
+        (run_dir / "circuit_derive.json").write_text(json.dumps(seed_derive, indent=2), encoding="utf-8")
+        params = series_rlc_params_from_graph(graph) or {}
+        if str(_read_json(run_dir / "problem.json").get("kind") or "") == "series_rlc" and params:
+            from electrical_engineer.engines.rlc_transient import series_rlc_step
+
+            rlc = series_rlc_step(
+                float(params.get("r_ohm") or 10),
+                float(params.get("l_h") or 0.01),
+                float(params.get("c_f") or 100e-6),
+                float(params.get("v_step") or params.get("vin") or 10),
+            )
+            (run_dir / "rlc_transient.json").write_text(json.dumps(rlc, indent=2), encoding="utf-8")
+            for name in ("evidentiary.json", "summary.json"):
+                path = run_dir / name
+                if path.is_file():
+                    evid = _read_json(path)
+                    evid["value"] = float(seed_derive.get("value") if seed_derive.get("value") is not None else rlc["Vc_peak_V"])
+                    path.write_text(json.dumps(evid, indent=2), encoding="utf-8")
+    apply_graph(
+        run_dir,
+        graph,
+        author="human",
+        op="restore",
+        target="circuit",
+        detail={"source": "agent_seed", "seed_rev": meta.get("agent_seed_rev")},
+    )
+    meta = lab_meta.load_lab_meta(run_dir)
+    meta["agent_baseline_graph"] = load_graph(run_dir)
+    meta["agent_baseline_rev"] = int(meta.get("revision") or 1)
+    lab_meta.save_lab_meta(run_dir, meta)
+    problem = _read_json(run_dir / "problem.json")
+    derived = _read_json(run_dir / "circuit_derive.json")
+    graph_live = load_graph(run_dir)
+    params = series_rlc_params_from_graph(graph_live)
+    if params:
+        problem = {**problem, **params}
+    verify = refresh_circuit_lab_verify(run_dir, problem, derived=derived or None, graph=graph_live)
+    verify = apply_verify_semantics(verify, meta, graph_live) or verify
+    verify["graph_revision"] = int(meta.get("revision") or 0)
+    verify["computed_at_revision"] = verify["graph_revision"]
+    (run_dir / "lab_verify.json").write_text(json.dumps(verify, indent=2), encoding="utf-8")
+    meta["lab_verify"] = {
+        "mismatch": verify.get("mismatch"),
+        "derived": verify.get("derived"),
+        "simulated": verify.get("simulated"),
+    }
+    lab_meta.save_lab_meta(run_dir, meta)
+    return verify
+
+
 def reverify_circuit_lab(run_dir: Path) -> dict[str, Any]:
     """Re-simulate current graph; keep agent derivation snapshot."""
     from electrical_engineer.circuit.run_session import load_graph

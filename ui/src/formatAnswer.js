@@ -61,15 +61,23 @@ function isSeriesRlc(data, evid) {
   return kind === "series_rlc" || recipe === "simulate-circuit" || recipe === "series-rlc-transient";
 }
 
+function rlcPeakTimeMs(derive, tr, problem) {
+  for (const v of [derive?.t_s, tr?.t_Vc_peak_s, problem?.t_s]) {
+    const n = Number(v);
+    if (Number.isFinite(n) && n > 0) return n * 1000;
+  }
+  return 0;
+}
+
 function rlcAnswerDisplay(data, evid) {
   const tr = data?.rlc_transient;
   const derive = data?.circuit_derive;
   const lv = data?.lab_verify;
   if (!isSeriesRlc(data, evid) || (!tr && !derive && !lv)) return null;
   if (lv?.needs_review && lv?.derivation_matches_graph !== false) return null;
-  const overshoot = Number(tr?.overshoot_pct ?? (derive?.overshoot_pct ?? 99)) < 0.5;
+  const noOvershoot = Number(tr?.overshoot_pct ?? derive?.overshoot_pct ?? 99) < 0.5;
   const vStep = Number(data?.problem?.v_step ?? data?.problem?.vin ?? evid?.vin ?? 10);
-  if (overshoot) {
+  if (noOvershoot) {
     const finalV = Number(derive?.value ?? lv?.derived ?? tr?.Vc_peak_V ?? vStep);
     const tMs =
       1000 *
@@ -79,7 +87,7 @@ function rlcAnswerDisplay(data, evid) {
     return `No overshoot · Final value ${finalV.toFixed(2)} V · Settling (2%) ${tMs.toFixed(2)} ms`;
   }
   const peak = Number(derive?.value ?? lv?.derived ?? evid?.value);
-  const tMs = 1000 * Number(derive?.t_s ?? tr?.t_Vc_peak_s ?? 0);
+  const tMs = rlcPeakTimeMs(derive, tr, data?.problem);
   return `Vc,peak = ${peak.toFixed(3)} V at ${tMs.toFixed(2)} ms`;
 }
 

@@ -239,8 +239,11 @@ def finish_circuit_lab(
         seed_out = {"graph": graph}
     meta_seed = lab_meta.load_lab_meta(run_dir)
     if "agent_baseline_graph" not in meta_seed:
-        meta_seed["agent_baseline_graph"] = seed_out.get("graph") or graph
+        seed_graph = seed_out.get("graph") or graph
+        meta_seed["agent_baseline_graph"] = seed_graph
         meta_seed["agent_baseline_rev"] = int(meta_seed.get("revision") or 1)
+        meta_seed.setdefault("agent_seed_graph", seed_graph)
+        meta_seed.setdefault("agent_seed_rev", meta_seed["agent_baseline_rev"])
         lab_meta.save_lab_meta(run_dir, meta_seed)
     if derived is None:
         dprob = dict(problem)
@@ -402,6 +405,24 @@ def finish_circuit_lab(
         "derived": dval,
         "simulated": simulated,
     }
+    if derived and "agent_seed_derive" not in meta:
+        meta["agent_seed_derive"] = derived
+        meta.setdefault("agent_seed_graph", load_graph(run_dir))
+        meta.setdefault("agent_seed_rev", int(meta.get("revision") or 1))
+    if str(problem.get("kind") or "") == "series_rlc":
+        from electrical_engineer.circuit.graph import series_rlc_params_from_graph
+        from electrical_engineer.engines.rlc_transient import series_rlc_step
+
+        params = series_rlc_params_from_graph(graph) or {}
+        rlc_path = run_dir / "rlc_transient.json"
+        if not rlc_path.is_file() and params:
+            rlc = series_rlc_step(
+                float(params.get("r_ohm") or 10),
+                float(params.get("l_h") or 0.01),
+                float(params.get("c_f") or 100e-6),
+                float(params.get("v_step") or params.get("vin") or 10),
+            )
+            rlc_path.write_text(json.dumps(rlc, indent=2), encoding="utf-8")
     meta["ui_url"] = lab_meta.ui_lab_url(run_dir.name, meta, _ui_base())
     lab_meta.save_lab_meta(run_dir, meta)
     return verify

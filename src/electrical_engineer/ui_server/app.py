@@ -1051,25 +1051,18 @@ def create_app(root: Path | None = None) -> FastAPI:
 
     @app.post("/api/runs/{run_id}/lab/restore")
     async def restore_lab(run_id: str) -> dict:
-        from electrical_engineer.circuit.run_session import apply_graph
         from electrical_engineer.collab.lab_meta import load_lab_meta
+        from electrical_engineer.collab.lab_verify import restore_agent_circuit_lab
 
         d = runs / run_id
         if not d.is_dir():
             return JSONResponse({"error": "missing"}, status_code=404)
+        try:
+            verify = restore_agent_circuit_lab(d)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=400)
         meta = load_lab_meta(d)
-        graph = meta.get("agent_baseline_graph")
-        if not isinstance(graph, dict) or not graph.get("nodes"):
-            return JSONResponse({"error": "no agent baseline"}, status_code=400)
-        out = apply_graph(
-            d,
-            graph,
-            author="human",
-            op="restore",
-            target="r1",
-            detail={"rev": meta.get("agent_baseline_rev"), "source": "agent_baseline"},
-        )
-        return {"ok": True, **out}
+        return {"ok": True, "lab_verify": verify, "revision": meta.get("revision")}
 
     @app.get("/api/runs/{run_id}/events")
     async def run_events(run_id: str):

@@ -70,6 +70,37 @@ def test_human_r1_edit_reverify_disagrees_at_current_revision(tmp_path: Path, mo
     assert lab["lab_verify"].get("needs_review") is not True
 
 
+def test_restore_after_r20_rederive_returns_r10_agrees(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.chdir(tmp_path)
+    from electrical_engineer.collab.workflow import finish_circuit_lab
+    from electrical_engineer.engines.rlc_transient import series_rlc_step
+    from electrical_engineer.collab.lab_verify import restore_agent_circuit_lab, agent_rederive_circuit_lab
+
+    meta = series_rlc_step(10, 0.01, 100e-6, 10.0)
+    problem = {"kind": "series_rlc", "vin": 10, "r_ohm": 10, "l_h": 0.01, "c_f": 100e-6, "tol": 0.15}
+    run_dir = tmp_path / "runs" / "rlc-restore"
+    run_dir.mkdir(parents=True)
+    (run_dir / "problem.json").write_text(json.dumps(problem), encoding="utf-8")
+    (run_dir / "evidentiary.json").write_text(
+        json.dumps({"recipe_id": "simulate-circuit", "value": meta["Vc_peak_V"], "unchecked": False}),
+        encoding="utf-8",
+    )
+    finish_circuit_lab(run_dir, problem)
+    graph = load_graph(run_dir)
+    edited = copy.deepcopy(graph)
+    for node in edited["nodes"]:
+        if node.get("id") == "r1":
+            node["value"] = 20
+    apply_graph(run_dir, edited, author="human", op="set", target="r1")
+    agent_rederive_circuit_lab(run_dir)
+    verify = restore_agent_circuit_lab(run_dir)
+    assert verify.get("derivation_matches_graph") is True
+    assert abs(float(verify["derived"]) - 11.63) < 0.02
+    g = load_graph(run_dir)
+    r1 = next(n for n in g["nodes"] if n["id"] == "r1")
+    assert float(r1["value"]) == 10
+
+
 def test_two_control_runs_use_distinct_sessions(tmp_path: Path, monkeypatch) -> None:
     monkeypatch.chdir(tmp_path)
     a = execute(
