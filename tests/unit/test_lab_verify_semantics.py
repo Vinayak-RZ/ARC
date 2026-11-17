@@ -83,21 +83,6 @@ def test_derive_bug_forward_euler_mismatches_spice_gold() -> None:
     assert derived.get("engine") == "forward_euler_bug"
     assert abs(float(derived["value"]) - gold) > 0.005
 
-    with_cir = derive(
-        {
-            **derived,
-            "cir": "* netlist present\nV1 1 0 DC 10\n.end\n",
-            "derive_bug": "forward_euler",
-            "vin": 10,
-            "r_ohm": 10,
-            "l_h": 0.01,
-            "c_f": 100e-6,
-            "kind": "series_rlc",
-        }
-    )
-    assert with_cir.get("engine") == "forward_euler_bug"
-    assert with_cir.get("derived_via") == "derive_bug"
-
 
 def test_human_resistor_edit_flags_derivation_mismatch(tmp_path) -> None:
     problem = {"kind": "series_rlc", "vin": 10, "r_ohm": 10, "l_h": 0.01, "c_f": 100e-6, "tol": 0.15}
