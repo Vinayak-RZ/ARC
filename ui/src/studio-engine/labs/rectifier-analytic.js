@@ -36,6 +36,7 @@ export function voFull3Analytic(wt, vllPk, alphaDeg) {
   return phase(ia) - phase(ib);
 }
 
+/** ωt commutation angles (phase-a frame; matches lab plot x-axis). */
 export function firingAnglesDeg(topology, alphaDeg) {
   const alpha = +alphaDeg;
   if (topology === "full3") {

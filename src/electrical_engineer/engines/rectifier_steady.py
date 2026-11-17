@@ -33,6 +33,7 @@ def _norm_topology(topology: str) -> str:
 
 
 def firing_angles_deg(topology: str, alpha_deg: float) -> list[float]:
+    """Commutation instants on ωt (phase-a / v_an zero-crossing axis used by the lab x-axis)."""
     topo = _norm_topology(topology)
     alpha = float(alpha_deg)
     if topo == "full3":
