@@ -188,8 +188,8 @@ def _assert_rlc_peak_headline(page, label: str) -> None:
     text = _wait_rlc_peak_headline(page)
     if not re.search(r"11\.630", text):
         raise RuntimeError(f"{label}: expected Vc peak 11.630 V in headline, got {text!r}")
-    if not re.search(r"at\s+3\.63", text):
-        raise RuntimeError(f"{label}: expected peak time ~3.63 ms in headline, got {text!r}")
+    if not re.search(r"at\s+3\.628\s+ms", text):
+        raise RuntimeError(f"{label}: expected peak time 3.628 ms in headline, got {text!r}")
 
 
 

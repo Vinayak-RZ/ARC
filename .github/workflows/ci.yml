@@ -35,3 +35,8 @@ jobs:
           EE_NO_BROWSER=1 uv run electrical-engineer ui &
           for i in $(seq 1 60); do curl -sf http://127.0.0.1:8765/api/health && break; sleep 1; done
           cd ui && STUDIO_URL=http://127.0.0.1:8765/?view=studio npm run test:e2e
+      - name: Capture round smoke (collab-01, rectifier, studio resize)
+        run: |
+          fuser -k 8765/tcp 2>/dev/null || true
+          sleep 1
+          uv run python scripts/capture_round.py --round 0 --smoke
