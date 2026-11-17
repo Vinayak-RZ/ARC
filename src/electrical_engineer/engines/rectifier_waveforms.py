@@ -133,8 +133,7 @@ def _vo_closed_form(problem: dict, rectifier_1ph, rectifier_3ph) -> float:
         vm = _SQRT2 * v_rms
         e_v = float(problem.get("e_v") or 0.0)
         if ls <= 0 and load == "R":
-            if alpha_deg >= 90:
-                return 0.0
+            # R load: each SCR conducts alpha..pi, so Vo = Vm/pi (1 + cos alpha) for 0..180 deg.
             return (vm / _PI) * (1.0 + cos_a)
         if alpha_deg >= 90 and e_v <= 0:
             return 0.0

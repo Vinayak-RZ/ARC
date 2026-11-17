@@ -107,10 +107,10 @@ def _sample_one_ph_r(conv: str, v_rms: float, alpha_deg: float, n: int) -> list[
             if cycle >= alpha:
                 vo = abs(vm * math.sin(wt))
         elif conv == "full1":
-            if alpha_deg < 90:
-                cycle = ((wt % _PI) + _PI) % _PI
-                if cycle >= alpha:
-                    vo = abs(vm * math.sin(wt))
+            # R load: current dies with the voltage at pi, so firing is valid to 180 deg.
+            cycle = ((wt % _PI) + _PI) % _PI
+            if cycle >= alpha:
+                vo = abs(vm * math.sin(wt))
         out.append([360.0 * i / n, vo])
     return out
 

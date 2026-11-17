@@ -71,3 +71,18 @@ def test_rectifier_3ph_mean_matches_vo(topology: str, load: str, alpha_deg: floa
     if abs(vo) < 1e-6:
         return
     assert abs(mean - vo) / abs(vo) < 0.005
+
+def test_full1_r_load_vo_past_90_degrees() -> None:
+    # 230 V, R load: Vo = Vm/pi (1 + cos a) holds to 180 deg (103.54 V at 90, 51.77 V at 120).
+    from electrical_engineer.engines.rectifier_waveforms import _vo_closed_form
+    from electrical_engineer.engines.solvers.power_electronics import rectifier_1ph, rectifier_3ph
+
+    def vo(a: float) -> float:
+        return _vo_closed_form(
+            {"topology": "full1", "load": "R", "v_rms": 230, "alpha_deg": a}, rectifier_1ph, rectifier_3ph
+        )
+
+    assert round(vo(60), 2) == 155.30
+    assert round(vo(90), 2) == 103.54
+    assert round(vo(120), 2) == 51.77
+    assert abs(vo(180)) < 1e-9
