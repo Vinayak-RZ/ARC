@@ -174,9 +174,7 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
     if (!labSimulate?.ok && !labSimulate?.simulated) return;
     const trace = labSimulate.trace || labSimulate.spice || labSimulate;
     const peakV = Number(labSimulate.simulated ?? trace?.Vc_peak_V ?? labVerify?.simulated);
-    const tPeak = Number(
-      trace?.t_Vc_peak_s ?? labSimulate.t_peak_s ?? labVerify?.derive?.t_s ?? labSimulate.problem?.t_s ?? 0,
-    );
+    const tPeak = Number(trace?.t_Vc_peak_s ?? labSimulate.t_peak_s ?? 0);
     const vcMs = trace?.vc_trace_ms;
     const result = {
       Vc_peak_V: peakV,
@@ -438,10 +436,10 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
           if (vr.ok) {
             const payload = await vr.json();
             setLabVerify(payload.lab_verify || null);
-            if (payload.lab_verify?.simulate?.trace?.vc_trace_ms?.length) {
-              applyLabSimulate(payload.lab_verify.simulate, payload.lab_verify);
-            } else if (body.result?.vc_trace_ms?.length) {
-              applyLabSimulate({ ok: true, simulated: body.result?.Vc_peak_V, trace: body.result }, payload.lab_verify);
+            const labSim = payload.lab_verify?.simulate;
+            const labTrace = labSim?.trace || labSim;
+            if (labTrace?.vc_trace_ms?.length) {
+              applyLabSimulate(labSim, payload.lab_verify);
             }
           }
         }
@@ -476,7 +474,9 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
       1000 *
       Number(sim.result.settling_2pct_entry_s ?? sim.result.settling_time_2pct_s ?? sim.result.t_Vc_peak_s ?? 0);
     const tMax = Math.min(Math.max(5 * settleMs, peakMs * 1.2, 8), 80);
-    const points = sim.result.vc_trace_ms.filter(([t]) => t <= tMax);
+    const raw = sim.result.vc_trace_ms.filter(([t]) => t <= tMax);
+    const step = Math.max(1, Math.ceil(raw.length / 3500));
+    const points = step > 1 ? raw.filter((_, i) => i % step === 0) : raw;
     return {
       title: "Capacitor voltage",
       x: { label: "t", unit: "ms", scale: "linear" },
