@@ -1,6 +1,8 @@
 {
   "git_sha": "a50a39f26b0fa66289b3d484d63cdc16f786b602",
   "git_sha_short": "a50a39f",
+  "merged_collab_head": "a5d1fc11fd392663bffc0f221eb05d0424c07124",
+  "capture_bundle_commit": "4dc3666",
   "ngspice_version": "ngspice-42 : Circuit level simulation program",
   "merged_collab_pr62_head": "73420104379c93b767aa4f04854525839e3524a4",
   "ci_reference": {
@@ -9,7 +11,7 @@
     "workflow_run_id": "43926478759",
     "status": "success"
   },
-  "git_dirty_lines": 33,
+  "git_dirty_lines": 0,
   "git_untracked_lines": 0,
   "git_diff_sha256": "02946be23ca38395",
   "package_path": "/agent/repos/ARC/src/electrical_engineer/__init__.py",
