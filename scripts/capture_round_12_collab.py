@@ -364,11 +364,28 @@ def _capture_theme(browser, *, theme: str) -> dict:
     _assert_text(page, r"R1:\s*10.*20|R1.*10.*Ω.*20", "collab-04 R1 chip")
     _shot(page, "collab-04-changes-r1-chip", theme=theme, full_page=True)
 
-    page.locator(".lab-provenance-bar button.button-secondary", has_text="Restore agent version").click()
-    page.wait_for_timeout(800)
-    page.wait_for_selector(".studio-circuit-results", timeout=30_000)
-    if page.locator(".lab-changes-chip-row").count():
-        raise RuntimeError("collab-04b: Changes chip row should be empty after Restore")
+    _api("POST", f"/api/runs/{rlc_id}/lab/restore", {})
+    for _ in range(60):
+        lab = _api("GET", f"/api/runs/{rlc_id}/lab")
+        r1n = next((n for n in (lab.get("graph") or {}).get("nodes") or [] if n.get("id") == "r1"), None)
+        rev = int((lab.get("lab_meta") or {}).get("revision") or 0)
+        if r1n and abs(float(r1n.get("value") or 0) - 10.0) < 0.01 and rev >= 3:
+            break
+        time.sleep(0.5)
+    else:
+        raise RuntimeError("collab-04b: restore did not return R1=10 Ω at r≥3")
+    page.goto(
+        f"{BASE}/?view=studio&tab=circuits&run={rlc_id}&view=changes",
+        wait_until="domcontentloaded",
+    )
+    page.wait_for_selector(".lab-provenance-bar", timeout=30_000)
+    page.wait_for_timeout(500)
+    if page.locator(".lab-changes-chip").count():
+        raise RuntimeError("collab-04b: Changes chips should be empty after Restore")
+    page.get_by_role("tab", name="Yours").click()
+    page.locator(".studio-circuit-app .cs-simulate-btn").click()
+    _wait_sim_idle(page)
+    page.wait_for_selector(".studio-circuit-results .answer-line", timeout=120_000)
     r1_val = page.locator(".studio-circuit-inspector input").first
     if r1_val.count():
         assert "10" in (r1_val.input_value() or ""), "collab-04b R1 should be 10 Ω after Restore"
