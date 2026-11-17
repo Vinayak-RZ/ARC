@@ -552,10 +552,14 @@ def main() -> int:
 
     if os.environ.get("ROUND12_START_UI") == "1":
         sys.path.insert(0, str(ROOT / "scripts"))
-        from capture_port import reserve_capture_port
+        from capture_port import kill_port, reserve_capture_port
 
-        PORT = reserve_capture_port(PORT)
-        os.environ["ARC_CAPTURE_PORT"] = str(PORT)
+        if os.environ.get("ARC_CAPTURE_PORT"):
+            PORT = int(os.environ["ARC_CAPTURE_PORT"])
+            kill_port(PORT)
+        else:
+            PORT = reserve_capture_port(PORT)
+            os.environ["ARC_CAPTURE_PORT"] = str(PORT)
         BASE = f"http://{HOST}:{PORT}"
         subprocess.check_call(["npm", "run", "build"], cwd=ROOT / "ui")
         env = {

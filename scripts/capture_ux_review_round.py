@@ -394,10 +394,14 @@ def main() -> int:
         return 1
 
     sys.path.insert(0, str(ROOT / "scripts"))
-    from capture_port import reserve_capture_port
+    from capture_port import kill_port, reserve_capture_port
 
-    PORT = reserve_capture_port(PORT)
-    os.environ["ARC_CAPTURE_PORT"] = str(PORT)
+    if os.environ.get("ARC_CAPTURE_PORT"):
+        PORT = int(os.environ["ARC_CAPTURE_PORT"])
+        kill_port(PORT)
+    else:
+        PORT = reserve_capture_port(PORT)
+        os.environ["ARC_CAPTURE_PORT"] = str(PORT)
     _prepare_capture_env()
 
     env = {**os.environ, "EE_NO_BROWSER": "1", "EE_UI_PORT": str(PORT), "ARC_CAPTURE_PORT": str(PORT)}
