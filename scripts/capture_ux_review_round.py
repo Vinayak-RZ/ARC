@@ -376,8 +376,17 @@ def _set_theme(page, mode: str) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--round", type=int, default=1)
+    parser.add_argument(
+        "--subdir",
+        default=os.environ.get("ARC_UX_CAPTURE_DIR", ""),
+        help="Output folder under artifacts/ux-review/ (e.g. round-12b)",
+    )
     args = parser.parse_args()
-    out_dir = ROOT / "artifacts" / "ux-review" / f"round-{args.round}"
+    out_dir = (
+        ROOT / "artifacts" / "ux-review" / args.subdir
+        if args.subdir
+        else ROOT / "artifacts" / "ux-review" / f"round-{args.round}"
+    )
     out_dir.mkdir(parents=True, exist_ok=True)
 
     global W, H
@@ -1011,6 +1020,17 @@ def main() -> int:
                 page.evaluate("() => document.querySelector('.agent-card')?.scrollIntoView({block: 'end'})")
                 page.wait_for_timeout(300)
                 snap("home-scrolled-dark.png")
+                if args.round >= 11:
+                    mid_dark = browser.new_page(viewport={"width": 1280, "height": 800})
+                    mid_dark.goto(f"http://{HOST}:{PORT}/?view=home", wait_until="domcontentloaded")
+                    _set_theme(mid_dark, "dark")
+                    mid_dark.wait_for_selector(".example-grid-six", timeout=15000)
+                    mid_dark.evaluate(
+                        "() => document.querySelector('.agent-card')?.scrollIntoView({block: 'end'})"
+                    )
+                    mid_dark.wait_for_timeout(300)
+                    snap("home-scrolled-1280-dark.png", mid_dark)
+                    mid_dark.close()
                 _clear_runs()
                 go("?view=problems")
                 page.wait_for_selector(".problems-empty", timeout=10000)

@@ -15,7 +15,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RUNS = ROOT / "runs"
-OUT = ROOT / "artifacts" / "ux-review" / "round-12"
+_CAPTURE_SUBDIR = os.environ.get("ARC_UX_CAPTURE_DIR", "round-12")
+OUT = ROOT / "artifacts" / "ux-review" / _CAPTURE_SUBDIR
 CONTROL_STUDIO = ROOT / ".electrical-engineer" / "control_studio"
 HOST = "127.0.0.1"
 PORT = 8765
@@ -195,13 +196,32 @@ def _wait_health() -> None:
     raise RuntimeError("UI not healthy")
 
 
-def _capture_rectifier_full3(page, *, theme: str) -> None:
+_RECTIFIER_TOPOS = [
+    ("hw1", "1φ half", 230, (30, 60)),
+    ("semi1", "1φ semi", 230, (30, 60)),
+    ("full1", "1φ full", 230, (30, 60)),
+    ("hw3", "3φ half", 415, (30, 75)),
+    ("semi3", "3φ semi", 415, (30, 75)),
+    ("full3", "3φ full", 415, (30, 75)),
+]
+
+
+def _set_rectifier_lab(page, *, topo_label: str, v_rms: int, alpha: int, load: str = "R") -> None:
     page.goto(f"{BASE}/?view=studio&tab=labs&lab=rectifier", wait_until="domcontentloaded")
     page.wait_for_selector(".lab-shell", timeout=30_000)
-    page.get_by_role("radio", name="3φ full").check()
-    page.get_by_role("radio", name="RL", exact=True).check()
-    page.locator('label:has-text("α (deg)")').locator('input[type="number"]').fill("75")
-    page.wait_for_timeout(400)
+    page.get_by_role("radio", name=topo_label).check()
+    page.get_by_role("radio", name=load, exact=True).check()
+    page.locator('label:has-text("Line voltage")').locator('input[type="number"]').first.fill(str(v_rms))
+    page.locator('label:has-text("α (deg)")').locator('input[type="number"]').fill(str(alpha))
+    page.wait_for_timeout(450)
+
+
+def _capture_rectifier_topologies(page, *, theme: str) -> None:
+    for topo_id, label, v_rms, angles in _RECTIFIER_TOPOS:
+        for alpha in angles:
+            _set_rectifier_lab(page, topo_label=label, v_rms=v_rms, alpha=alpha, load="R")
+            _shot(page, f"lab-rectifier-{topo_id}-r-alpha{alpha}", theme=theme, full_page=True)
+    _set_rectifier_lab(page, topo_label="3φ full", v_rms=415, alpha=75, load="RL")
     vo_txt = page.locator(".card").filter(has_text="Vo").locator("strong").inner_text()
     vo = float(vo_txt.split()[0])
     if abs(vo - 145.1) > 0.15:
@@ -284,19 +304,27 @@ def _capture_theme(browser, *, theme: str) -> dict:
     _api("POST", f"/api/runs/{rlc_id}/lab/verify", {})
     page.goto(f"{BASE}/?problem={rlc_id}", wait_until="networkidle")
     page.wait_for_selector("#lab-verify-heading", timeout=60_000)
-    page.get_by_role("button", name="Ask agent to re-derive").first.wait_for(state="visible", timeout=120_000)
-    _assert_text(page, r"Out of date|20\s*Ω|re-derive", "collab-03 out-of-date or R1 edit cue")
+    page.get_by_text("Out of date", exact=False).first.wait_for(state="visible", timeout=120_000)
+    if page.locator(".lab-verify-badge.is-mismatch").count():
+        raise RuntimeError("collab-03: unexpected Mismatch badge")
+    rederive_ctas = page.get_by_role("button", name="Ask agent to re-derive")
+    if rederive_ctas.count() != 1:
+        raise RuntimeError(f"collab-03: expected one Ask agent to re-derive CTA, got {rederive_ctas.count()}")
+    if page.locator(".lab-verify-stale-banner.is-review").count() != 1:
+        raise RuntimeError("collab-03: expected exactly one review CTA panel")
     _shot(page, "collab-03-out-of-date-ask-rederive", theme=theme)
 
     page.goto(f"{BASE}/?view=studio&tab=circuits&run={rlc_id}", wait_until="domcontentloaded")
     page.wait_for_selector(".lab-provenance-bar", timeout=30_000)
     page.get_by_role("tab", name="Changes").click()
     page.wait_for_selector(".lab-changes-chip", timeout=30_000)
+    page.wait_for_selector(".studio-circuit-results", timeout=30_000)
     _assert_text(page, r"R1:\s*10.*20|R1.*10.*Ω.*20", "collab-04 R1 chip")
     _shot(page, "collab-04-changes-r1-chip", theme=theme, full_page=True)
 
     page.locator(".lab-provenance-bar button.button-secondary", has_text="Restore agent version").click()
     page.wait_for_timeout(800)
+    page.wait_for_selector(".studio-circuit-results", timeout=30_000)
     _shot(page, "collab-04b-after-restore", theme=theme, full_page=True)
 
     _set_r1_and_reverify(rlc_id, 20.0)
@@ -309,6 +337,12 @@ def _capture_theme(browser, *, theme: str) -> dict:
     page.goto(f"{BASE}/?problem={rlc_id}", wait_until="domcontentloaded")
     page.wait_for_selector("#lab-verify-heading", timeout=60_000)
     page.get_by_text("Agrees", exact=False).first.wait_for(state="visible", timeout=120_000)
+    _assert_text(
+        page,
+        r"No overshoot · Final value 10\.00 V · Settling \(2%\) 5\.83 ms",
+        "collab-03b overshoot headline",
+    )
+    _assert_text(page, r"Series RLC step", "collab-03b breadcrumb")
     _assert_text(page, r"\b20\b", "collab-03b R1 = 20 Ω")
     lv = _api("GET", f"/api/runs/{rlc_id}/lab")["lab_verify"]
     prob = json.loads((RUNS / rlc_id / "problem.json").read_text(encoding="utf-8"))
@@ -376,7 +410,7 @@ def _capture_theme(browser, *, theme: str) -> dict:
         _wait_sim_idle(page)
         _shot(page, "collab-06-control-unity-lab-agreement", theme=theme, full_page=True)
 
-    _capture_rectifier_full3(page, theme=theme)
+    _capture_rectifier_topologies(page, theme=theme)
 
     narrow_ctx = browser.new_context(viewport={"width": 1024, "height": H})
     if theme == "dark":
