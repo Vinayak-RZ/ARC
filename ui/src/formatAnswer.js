@@ -66,7 +66,7 @@ function rlcAnswerDisplay(data, evid) {
   const derive = data?.circuit_derive;
   const lv = data?.lab_verify;
   if (!isSeriesRlc(data, evid) || (!tr && !derive && !lv)) return null;
-  if (lv?.needs_review) return null;
+  if (lv?.needs_review && lv?.derivation_matches_graph !== false) return null;
   const overshoot = Number(tr?.overshoot_pct ?? (derive?.overshoot_pct ?? 99)) < 0.5;
   const vStep = Number(data?.problem?.v_step ?? data?.problem?.vin ?? evid?.vin ?? 10);
   if (overshoot) {
@@ -93,13 +93,28 @@ export function runHeadline(evid, data) {
   return "";
 }
 
+export function staleDerivedRevision(data) {
+  const lv = data?.lab_verify;
+  if (!lv || lv.derivation_matches_graph !== false) return null;
+  return data?.lab?.revision ?? lv?.graph_revision ?? null;
+}
+
 export function buildAnswerRows(evid, data) {
   const title = data?.title || evid?.title || "";
   const { head, quantity } = parseTitleParts(title);
   const rows = [];
+  const staleRev = staleDerivedRevision(data);
   const rlcLine = rlcAnswerDisplay(data, evid);
   if (rlcLine) {
-    rows.push({ name: "Result", value: rlcLine, unit: "", display: rlcLine, plain: true });
+    rows.push({
+      name: "Result",
+      value: rlcLine,
+      unit: "",
+      display: rlcLine,
+      plain: true,
+      derivedStale: staleRev != null,
+      staleRev,
+    });
     return { head, rows };
   }
   const rawValues = evid?.values && typeof evid.values === "object" ? evid.values : {};
@@ -114,7 +129,7 @@ export function buildAnswerRows(evid, data) {
     return { head, rows };
   }
   const lv = data?.lab_verify;
-  if (lv?.needs_review) {
+  if (lv?.needs_review && lv?.derivation_matches_graph !== false) {
     return { head, rows: [] };
   }
   const scalar =

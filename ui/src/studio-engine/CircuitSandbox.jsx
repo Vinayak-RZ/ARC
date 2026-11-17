@@ -44,7 +44,7 @@ const SERIES_RLC = {
     { id: "r1", type: "resistor", refdes: "R1", value: 10, unit: "ohm", x: 176, y: 56, rot: 0 },
     { id: "l1", type: "inductor", refdes: "L1", value: 0.01, unit: "H", x: 296, y: 56, rot: 0 },
     { id: "c1", type: "capacitor", refdes: "C1", value: 0.0001, unit: "F", x: 416, y: 56, rot: 0 },
-    { id: "gnd", type: "ground", refdes: "GND", value: 0, unit: "", x: 56, y: 176, rot: 0 },
+    { id: "gnd", type: "ground", refdes: "GND", value: 0, unit: "", x: 56, y: 220, rot: 0 },
   ],
   edges: [
     { id: "e1", from: "vin.n1", to: "r1.n1" },
@@ -217,11 +217,8 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
           hydrated.current = true;
           userTouched.current = false;
           setFitKey((k) => k + 1);
-          const verifyStale =
-            body?.lab_verify?.verdict_current === false ||
-            Boolean(body?.lab_verify?.stale);
           const tracePts = body?.lab_simulate?.trace?.vc_trace_ms || body?.lab_simulate?.vc_trace_ms;
-          if (tracePts?.length && !verifyStale) {
+          if (tracePts?.length) {
             applyLabSimulate(body.lab_simulate, body.lab_verify);
           } else if (graph?.nodes?.length && autoSimForRun.current !== linkedRunId) {
             autoSimForRun.current = linkedRunId;
@@ -527,14 +524,6 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
             <span className="breadcrumb-current">Circuit sandbox</span>
           </div>
           <div className="studio-bar-actions">
-            {wireHintOpen && !sim ? (
-              <p className="studio-circuit-hint studio-bar-hint">
-                Drag ports to wire. Double-click a wire for a junction. Results stay until you Simulate again.
-                <button type="button" className="text-link" onClick={() => setWireHintOpen(false)}>
-                  Dismiss
-                </button>
-              </p>
-            ) : null}
             {linkedRunId ? (
               <button
                 type="button"
@@ -556,6 +545,14 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
         </header>
         <Palette onAdd={addPart} disabled={simBusy} />
         <div className="studio-circuit-canvas flow-wrap" ref={wrapRef}>
+          {wireHintOpen && !sim ? (
+            <p className="hint studio-circuit-hint studio-canvas-hint">
+              Drag ports to wire. Double-click a wire for a junction.
+              <button type="button" className="text-link" onClick={() => setWireHintOpen(false)}>
+                Dismiss
+              </button>
+            </p>
+          ) : null}
           {msg ? <p className="hint studio-circuit-msg">{msg}</p> : null}
           <ReactFlow
             nodes={nodes}

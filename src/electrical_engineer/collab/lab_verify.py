@@ -75,9 +75,10 @@ def _decorate_metric_rows(verify: dict[str, Any], meta: dict[str, Any], graph: d
             row["derived_note"] = derived_label
             row["derived_status"] = "out_of_date"
             row["derived_status_label"] = "Out of date"
-            row["status"] = "out_of_date"
-            row["status_label"] = "Out of date"
             row["rel_err_pct"] = None
+            if row.get("simulated_out_of_date"):
+                row["status"] = "out_of_date"
+                row["status_label"] = "Out of date"
         if row.get("simulated_out_of_date"):
             row["simulated_status"] = "out_of_date"
             row["simulated_status_label"] = "Out of date"
@@ -96,14 +97,9 @@ def rlc_compare_metric_label(
     *,
     no_overshoot: bool,
 ) -> str:
-    if not no_overshoot:
-        return "Capacitor peak"
-    base = meta.get("agent_baseline_graph") if isinstance(meta.get("agent_baseline_graph"), dict) else {}
-    params_b = series_rlc_params_from_graph(base) or {}
-    params_c = series_rlc_params_from_graph(graph) or {}
-    r_base = params_b.get("r_ohm", 10)
-    r_cur = params_c.get("r_ohm", r_base)
-    return f"Agent's Vc,peak (R={r_base:g} Ω) vs lab Vc max (R={r_cur:g} Ω)"
+    if no_overshoot:
+        return "Final value"
+    return "Capacitor peak"
 
 
 def apply_verify_semantics(

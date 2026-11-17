@@ -66,13 +66,13 @@ def _rlc(problem: dict[str, Any], evid: dict[str, Any], transient: dict[str, Any
     damping = transient.get("damping_type") or ""
     t_settle = transient.get("settling_2pct_entry_s") or transient.get("settling_time_2pct_s")
     cap_row = (
-        {
+        {"title": "Capacitor peak", "result": f"Vc peak = {_num(peak)} V", "author": "Engine"}
+        if overshoot
+        else {
             "title": "Capacitor final value",
             "result": f"Vc final = {_num(peak)} V, settling (2%) = {_num(float(t_settle or 0) * 1000, None, 2)} ms",
             "author": "Engine",
         }
-        if overshoot
-        else {"title": "Capacitor peak", "result": f"Vc peak = {_num(peak)} V", "author": "Engine"}
     )
     return [
         {

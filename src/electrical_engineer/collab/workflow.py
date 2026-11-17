@@ -124,21 +124,40 @@ def refresh_circuit_lab_verify(
         }
     ]
     t_derived = (derived or {}).get("t_s")
-    if t_derived is not None and str((derived or {}).get("derive_metric") or "") == "Vc_peak":
+    derive_metric = str((derived or {}).get("derive_metric") or "")
+    if t_derived is not None and derive_metric in ("Vc_peak", "Vc_final"):
         t_derived_f = float(t_derived)
         t_sim = (sim or {}).get("t_peak_s") if isinstance(sim, dict) else None
         if no_overshoot:
+            t_settle_d = float(
+                (derived or {}).get("settling_2pct_entry_s")
+                or (derived or {}).get("settling_time_2pct_s")
+                or t_derived_f
+            )
+            t_settle_s = None
+            if isinstance(sim, dict):
+                trace = sim.get("trace") if isinstance(sim.get("trace"), dict) else {}
+                t_settle_s = sim.get("settling_2pct_entry_s") or trace.get("settling_2pct_entry_s")
+            t_chk = (
+                compare_derived(t_settle_d, float(t_settle_s), tol=problem.get("t_tol") or 5e-5, rel_tol=rel_tol)
+                if t_settle_s is not None
+                else {"mismatch": False, "rel_err_pct": None, "match": True}
+            )
+            t_rel = float(t_chk.get("rel_err_pct") or 0.0) if t_settle_s is not None else None
+            t_status, t_label = _metric_status(
+                t_chk, sim_skipped=sim_skipped or t_settle_s is None, limit_pct=limit_pct, rel_err=t_rel or 0.0
+            )
             metrics.append(
                 {
-                    "id": "t_peak",
-                    "label": "Peak time",
-                    "derived": t_derived_f,
-                    "simulated": None,
+                    "id": "t_settle",
+                    "label": "Settling (2%)",
+                    "derived": t_settle_d,
+                    "simulated": float(t_settle_s) if t_settle_s is not None else None,
                     "unit": "s",
-                    "rel_err_pct": None,
+                    "rel_err_pct": None if sim_skipped or t_settle_s is None else t_rel,
                     "rel_tol_pct": limit_pct,
-                    "status": "not_simulated",
-                    "status_label": "No peak (no overshoot)",
+                    "status": t_status if t_settle_s is not None else "not_simulated",
+                    "status_label": t_label if t_settle_s is not None else "Not simulated",
                 }
             )
         elif t_sim is not None:
@@ -293,21 +312,40 @@ def finish_circuit_lab(
         }
     ]
     t_derived = (derived or {}).get("t_s")
-    if t_derived is not None and str((derived or {}).get("derive_metric") or "") == "Vc_peak":
+    derive_metric = str((derived or {}).get("derive_metric") or "")
+    if t_derived is not None and derive_metric in ("Vc_peak", "Vc_final"):
         t_derived_f = float(t_derived)
         t_sim = (sim or {}).get("t_peak_s") if isinstance(sim, dict) else None
         if no_overshoot:
+            t_settle_d = float(
+                (derived or {}).get("settling_2pct_entry_s")
+                or (derived or {}).get("settling_time_2pct_s")
+                or t_derived_f
+            )
+            t_settle_s = None
+            if isinstance(sim, dict):
+                trace = sim.get("trace") if isinstance(sim.get("trace"), dict) else {}
+                t_settle_s = sim.get("settling_2pct_entry_s") or trace.get("settling_2pct_entry_s")
+            t_chk = (
+                compare_derived(t_settle_d, float(t_settle_s), tol=problem.get("t_tol") or 5e-5, rel_tol=rel_tol)
+                if t_settle_s is not None
+                else {"mismatch": False, "rel_err_pct": None, "match": True}
+            )
+            t_rel = float(t_chk.get("rel_err_pct") or 0.0) if t_settle_s is not None else None
+            t_status, t_label = _metric_status(
+                t_chk, sim_skipped=sim_skipped or t_settle_s is None, limit_pct=limit_pct, rel_err=t_rel or 0.0
+            )
             metrics.append(
                 {
-                    "id": "t_peak",
-                    "label": "Peak time",
-                    "derived": t_derived_f,
-                    "simulated": None,
+                    "id": "t_settle",
+                    "label": "Settling (2%)",
+                    "derived": t_settle_d,
+                    "simulated": float(t_settle_s) if t_settle_s is not None else None,
                     "unit": "s",
-                    "rel_err_pct": None,
+                    "rel_err_pct": None if sim_skipped or t_settle_s is None else t_rel,
                     "rel_tol_pct": limit_pct,
-                    "status": "not_simulated",
-                    "status_label": "No peak (no overshoot)",
+                    "status": t_status if t_settle_s is not None else "not_simulated",
+                    "status_label": t_label if t_settle_s is not None else "Not simulated",
                 }
             )
         elif t_sim is not None:

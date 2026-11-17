@@ -67,6 +67,16 @@ def _read_json(path: Path) -> dict:
     return data if isinstance(data, dict) else {}
 
 
+def _read_json_file(path: Path) -> dict | None:
+    if not path.is_file():
+        return None
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return None
+    return data if isinstance(data, dict) else None
+
+
 def _opaque_title(title: str, folder_name: str) -> bool:
     text = (title or "").strip()
     if not text or text == folder_name:
@@ -86,6 +96,9 @@ def _human_run_title(folder: Path, evid: dict) -> str:
         stable = run_title(recipe_id or "solve-circuit-problem", problem)
         if stable and not _opaque_title(stable, folder.name):
             return stable
+    if (folder / "lab_meta.json").is_file() or str(problem.get("kind") or "") == "series_rlc":
+        label = run_title(recipe_id or "simulate-circuit", problem)
+        return label or "Series RLC step"
     headline = run_headline(recipe_id, problem, evid.get("value"), bool(evid.get("unchecked")))
     if headline:
         return headline
@@ -922,8 +935,8 @@ def create_app(root: Path | None = None) -> FastAPI:
             "control_diagram": control_diagram,
             "diagram": diagram,
             "work_steps": _work_steps(d),
-            "circuit_derive": _read_json(d / "circuit_derive.json") or None,
-            "rlc_transient": _read_json(d / "rlc_transient.json") or None,
+            "circuit_derive": _read_json_file(d / "circuit_derive.json"),
+            "rlc_transient": _read_json_file(d / "rlc_transient.json"),
             "activity_feed": activity_feed,
             "state": state,
         }

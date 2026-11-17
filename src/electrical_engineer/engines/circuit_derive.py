@@ -129,6 +129,7 @@ def _series_rlc(problem: dict[str, Any]) -> dict[str, Any]:
     step_v = float(problem.get("v_step") or vin)
     meta = series_rlc_step(r_ohm, l_h, c_f, step_v)
     t_peak_s = float(meta["t_Vc_peak_s"])
+    t_settle = meta.get("settling_2pct_entry_s") or meta.get("settling_time_2pct_s")
     t_stop = float(problem.get("t_s") or max(t_peak_s * 1.2, 1e-4))
     probe = str(problem.get("probe") or problem.get("probe_expr") or "v(3)")
     bug = str(problem.get("derive_bug") or "").lower()
@@ -138,7 +139,8 @@ def _series_rlc(problem: dict[str, Any]) -> dict[str, Any]:
         value, t_peak_s = forward_euler_vc_peak(r_ohm, l_h, c_f, step_v)
         engine = "forward_euler_bug"
     else:
-        value = float(meta["Vc_peak_V"])
+        overshoot = float(meta.get("overshoot_pct") or 0.0) < 0.5
+        value = float(step_v if overshoot else meta["Vc_peak_V"])
         engine = "circuit_derive"
     cir = (
         "* arc series rlc\n"
@@ -156,7 +158,9 @@ def _series_rlc(problem: dict[str, Any]) -> dict[str, Any]:
         "analysis": "tran",
         "t_s": t_peak_s,
         "t_stop": t_stop,
-        "derive_metric": "Vc_peak",
+        "derive_metric": "Vc_final" if float(meta.get("overshoot_pct") or 0.0) < 0.5 else "Vc_peak",
+        "settling_2pct_entry_s": t_settle,
+        "settling_time_2pct_s": meta.get("settling_time_2pct_s"),
         "engine": engine,
     }
 

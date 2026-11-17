@@ -60,13 +60,14 @@ def test_human_r1_edit_reverify_disagrees_at_current_revision(tmp_path: Path, mo
     assert verify.get("needs_review") is not True
     assert verify.get("derivation_matches_graph") is False
     row = verify["metrics"][0]
-    assert row.get("status") == "out_of_date"
+    assert row.get("derived_out_of_date")
     client = TestClient(create_app(tmp_path))
     lab = client.get(f"/api/runs/{rid}/lab").json()
     assert lab["lab_verify"]["graph_revision"] == meta_lab["revision"]
     assert not lab["lab_verify"].get("stale")
     assert lab["lab_verify"].get("verdict_current") is not False
     assert lab["lab_verify"].get("derivation_matches_graph") is False
+    assert lab["lab_verify"].get("needs_review") is not True
 
 
 def test_two_control_runs_use_distinct_sessions(tmp_path: Path, monkeypatch) -> None:
