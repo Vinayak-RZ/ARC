@@ -72,9 +72,12 @@ def test_human_r1_edit_reverify_disagrees_at_current_revision(tmp_path: Path, mo
 
 def test_restore_after_r20_rederive_returns_r10_agrees(tmp_path: Path, monkeypatch) -> None:
     monkeypatch.chdir(tmp_path)
+    from electrical_engineer.collab.lab_verify import (
+        agent_rederive_circuit_lab,
+        restore_agent_circuit_lab,
+    )
     from electrical_engineer.collab.workflow import finish_circuit_lab
     from electrical_engineer.engines.rlc_transient import series_rlc_step
-    from electrical_engineer.collab.lab_verify import restore_agent_circuit_lab, agent_rederive_circuit_lab
 
     meta = series_rlc_step(10, 0.01, 100e-6, 10.0)
     problem = {"kind": "series_rlc", "vin": 10, "r_ohm": 10, "l_h": 0.01, "c_f": 100e-6, "tol": 0.15}
