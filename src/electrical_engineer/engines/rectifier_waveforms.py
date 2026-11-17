@@ -146,6 +146,9 @@ def _vo_closed_form(problem: dict, rectifier_1ph, rectifier_3ph) -> float:
         e_v = float(problem.get("e_v") or 0.0)
         if load != "R" and alpha_deg > 90 and e_v <= 0:
             return 0.0
+        if load == "R" and ls <= 0 and alpha_deg >= 150:
+            # Firing at 30 + alpha lands at or past the phase zero crossing: no conduction.
+            return 0.0
         if cc:
             return (3.0 * _SQRT3 * vm_ph / (2.0 * _PI)) * cos_a - (3.0 * w * ls * io) / (2.0 * _PI)
         return (3.0 / (2.0 * _PI)) * vm_ph * (1.0 + math.cos(alpha + _PI / 6.0))

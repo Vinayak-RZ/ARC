@@ -79,7 +79,9 @@ def rl_reference_slice(problem: dict) -> dict:
     if topo in {"hw3", "half3"}:
         alpha_deg = float(problem.get("alpha_deg") or 0)
         e_v = float(problem.get("e_v") or 0)
-        if alpha_deg >= 90 and e_v <= 0:
+        # alpha = 90 (the RL limit, inclusive) fires at 120 deg on a still-positive phase:
+        # finite RL conducts discontinuously, Vo > 0. Past the limit the lab does not fire.
+        if alpha_deg > 90 and e_v <= 0:
             return {
                 "topo": topo,
                 "mode": "Discontinuous",

@@ -228,6 +228,21 @@ def _set_rectifier_lab(page, *, topo_label: str, v_rms: int, alpha: int, load: s
 
 
 def _rectifier_vo_closed(topology: str, load: str, v_rms: int, alpha: int) -> float:
+    if load in {"RL", "RLE"}:
+        # Finite RL (lab default 10 ohm, 10 mH): conduction mode and beta come from the
+        # closed-form RL current, so discontinuous points use Vm/pi (cos a - cos beta).
+        from electrical_engineer.engines.rectifier_rl_steady import (
+            rl_reference_slice,
+            rl_vo_mean_closed_form,
+        )
+
+        return float(
+            rl_vo_mean_closed_form(
+                rl_reference_slice(
+                    {"topology": topology, "load": load, "v_rms": v_rms, "alpha_deg": alpha, "r_ohm": 10, "l_h": 0.01}
+                )
+            )
+        )
     from electrical_engineer.engines.rectifier_waveforms import _vo_closed_form
     from electrical_engineer.engines.solvers.power_electronics import rectifier_1ph, rectifier_3ph
 

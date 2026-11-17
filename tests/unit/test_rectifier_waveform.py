@@ -86,3 +86,18 @@ def test_full1_r_load_vo_past_90_degrees() -> None:
     assert round(vo(90), 2) == 103.54
     assert round(vo(120), 2) == 51.77
     assert abs(vo(180)) < 1e-9
+
+
+def test_hw3_r_load_off_past_150_and_rl_conducts_at_90() -> None:
+    from electrical_engineer.engines.rectifier_rl_steady import rl_reference_slice, rl_vo_mean_closed_form
+    from electrical_engineer.engines.rectifier_waveforms import _vo_closed_form
+    from electrical_engineer.engines.solvers.power_electronics import rectifier_1ph, rectifier_3ph
+
+    p = {"topology": "hw3", "load": "R", "v_rms": 415, "v_ll_rms": 415, "alpha_deg": 180}
+    assert _vo_closed_form(p, rectifier_1ph, rectifier_3ph) == 0.0
+    # alpha 90 with 10 ohm, 10 mH: firing at 120 deg on a positive phase, discontinuous, Vo > 0.
+    rl = rl_reference_slice({"topology": "hw3", "load": "RL", "v_rms": 415, "alpha_deg": 90, "r_ohm": 10, "l_h": 0.01})
+    assert rl["mode"] == "Discontinuous"
+    assert rl_vo_mean_closed_form(rl) > 50
+    off = rl_reference_slice({"topology": "hw3", "load": "RL", "v_rms": 415, "alpha_deg": 120, "r_ohm": 10, "l_h": 0.01})
+    assert rl_vo_mean_closed_form(off) == 0.0
