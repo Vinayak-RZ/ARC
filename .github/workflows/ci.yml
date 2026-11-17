@@ -39,6 +39,5 @@ jobs:
         run: |
           fuser -k 8765/tcp 2>/dev/null || true
           sleep 1
-          cd ui && npx playwright install chromium
-          cd ..
+          uv run playwright install chromium
           uv run python scripts/capture_round.py --round 0 --smoke
