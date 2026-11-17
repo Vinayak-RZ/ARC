@@ -1032,7 +1032,8 @@
   font-size: 13px;
   font-weight: 700;
   color: var(--cs-text);
-  line-height: 1;
+  /* Geist's bold +/− ascend past a 1.0 line box; give the glyph room so it never clips. */
+  line-height: 1.25;
   pointer-events: none;
 }
 

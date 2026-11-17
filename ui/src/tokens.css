@@ -2280,6 +2280,8 @@ a { color: var(--ee-color-primary); }
   --ee-color-body: #a3a39e;
   --ee-color-muted: #a3a39e;
   --ee-color-faint: #8a8a86;
+  --text-muted: #a3a39e;
+  --text-faint: #8a8a86;
   --ee-border-input: #757570;
   --ee-border-input-hover: #8a8a85;
   --ee-color-on-primary: #0b1222;

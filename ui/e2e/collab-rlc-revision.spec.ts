@@ -1,7 +1,8 @@
 import { test, expect } from "@playwright/test";
 import { prepareTheme } from "./layout-helpers.js";
 
-const BASE = process.env.STUDIO_URL || process.env.ARC_UI_URL || "http://127.0.0.1:8765";
+// STUDIO_URL may carry a path and query (?view=studio); API calls need the bare origin.
+const BASE = new URL(process.env.STUDIO_URL || process.env.ARC_UI_URL || "http://127.0.0.1:8765").origin;
 
 test.describe("Collab RLC revision loop", () => {
   test("derive r1 → edit r2 → re-derive → restore r3", async ({ page, request }) => {
@@ -92,7 +93,7 @@ test.describe("Collab RLC revision loop", () => {
       timeout: 60000,
     });
     await expect(page.locator(".studio-circuit-results .answer-line")).toContainText("3.628");
-    await expect(page.locator(".lab-verify-badge.is-agrees")).toBeVisible();
+    await expect(page.locator(".lab-verify-badge.is-agrees").first()).toBeVisible();
 
     await page.goto(`${BASE}/?problem=${runId}`);
     await expect(page.locator(".problem-display-title")).toHaveText("Series RLC step");
@@ -101,4 +102,31 @@ test.describe("Collab RLC revision loop", () => {
     await expect(page.locator(".answer-card")).toContainText("11.630");
     await expect(page.locator(".is-derived-stale")).toHaveCount(0);
   });
+});
+test("lab provenance bar never shows the raw run id while the run loads", async ({ page, request }) => {
+  test.setTimeout(180_000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const seed = await request.post(`${BASE}/api/examples/rlc-step/run`);
+  test.skip(!seed.ok(), "series-rlc example API unavailable");
+  const { run_id: runId } = await seed.json();
+  await expect
+    .poll(async () => ((await request.get(`${BASE}/api/runs/${runId}/lab`)).ok() ? "ready" : ""), {
+      timeout: 120_000,
+    })
+    .toBe("ready");
+
+  // Hold the run detail so the bar renders before the title is known.
+  let release: () => void = () => {};
+  const held = new Promise<void>((r) => (release = r));
+  await page.route(new RegExp(`/api/runs/${runId}$`), async (route) => {
+    await held;
+    await route.continue();
+  });
+  await page.goto(`${BASE}/?view=studio&tab=circuits&run=${runId}`);
+  const bar = page.locator(".lab-provenance-bar");
+  await expect(bar).toBeVisible({ timeout: 30_000 });
+  await expect(bar).not.toContainText(runId);
+  release();
+  await expect(bar).toContainText("Series RLC step", { timeout: 30_000 });
+  await expect(bar).not.toContainText(runId);
 });

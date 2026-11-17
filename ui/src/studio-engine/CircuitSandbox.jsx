@@ -130,6 +130,14 @@ function FitViewOnChange({ signal }) {
   return null;
 }
 
+/** Human label for the simulator that produced a result (never a raw engine id). */
+function engineLabel(engine) {
+  const id = String(engine || "").toLowerCase();
+  if (id === "ngspice" || id === "circuit_graph_sim") return "Simulated with ngspice";
+  if (id.includes("rk4") || id.includes("analytic") || id.includes("rlc")) return "Analytic step response";
+  return "Simulated";
+}
+
 function CircuitSandboxInner({ linkedRunId = "" }) {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -246,7 +254,7 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
                 }
               : null,
           );
-          setRunTitle(detail?.title || linkedRunId);
+          setRunTitle(detail?.title || "");
           hydrated.current = true;
           userTouched.current = false;
           setFitKey((k) => k + 1);
@@ -653,8 +661,12 @@ function CircuitSandboxInner({ linkedRunId = "" }) {
                 {sim.param_strip || "—"}
               </div>
               <p className="hint">
-                Engine: {sim.engine}. ζ = {sim.result?.zeta?.toFixed(2)}, ω<sub>n</sub> ={" "}
-                {sim.result?.omega_n_rad_s?.toFixed(0)} rad/s
+                {engineLabel(sim.engine)}
+                {Number.isFinite(sim.result?.zeta) && Number.isFinite(sim.result?.omega_n_rad_s) ? (
+                  <>
+                    {" "}· ζ = {sim.result.zeta.toFixed(2)}, ω<sub>n</sub> = {sim.result.omega_n_rad_s.toFixed(0)} rad/s
+                  </>
+                ) : null}
               </p>
               <p className="answer-line tabular-nums">
                 {sim.headline || rlcResultHeadline(sim.result, sim.problem)}

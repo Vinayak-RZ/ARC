@@ -75,7 +75,10 @@ export function rlReferenceSlice(p) {
   if (topo === "hw3" || topo === "half3") {
     const alphaDeg = +p.alpha_deg || 0;
     const eV = +(p.e_v ?? 0);
-    if (alphaDeg >= 90 && eV <= 0) {
+    // At α = 90° (the RL limit, inclusive) firing lands at 120° on the phase voltage,
+    // which is still positive, so a finite RL load conducts discontinuously and Vo > 0.
+    // Past the limit the lab does not fire (flagged past-limit), so Vo = 0.
+    if (alphaDeg > 90 && eV <= 0) {
       return {
         topo,
         mode: "Discontinuous",
