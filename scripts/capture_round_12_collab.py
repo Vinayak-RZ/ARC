@@ -173,6 +173,25 @@ def _assert_text(page, pattern: str, label: str) -> None:
         raise RuntimeError(f"{label}: pattern {pattern!r} not found in page text")
 
 
+def _wait_rlc_peak_headline(page, *, timeout: float = 120_000) -> str:
+    loc = page.locator(".answer-card .answer-line, .answer-card").first
+    loc.wait_for(state="visible", timeout=timeout)
+    for _ in range(int(timeout / 500)):
+        text = loc.inner_text()
+        if re.search(r"Vc,peak\s*=\s*11\.630\s+V\s+at\s+\d+\.\d+\s+ms", text):
+            return text
+        page.wait_for_timeout(500)
+    raise RuntimeError(f"RLC peak headline not ready; got {loc.inner_text()!r}")
+
+
+def _assert_rlc_peak_headline(page, label: str) -> None:
+    text = _wait_rlc_peak_headline(page)
+    if not re.search(r"11\.630", text):
+        raise RuntimeError(f"{label}: expected Vc peak 11.630 V in headline, got {text!r}")
+    if not re.search(r"at\s+3\.63", text):
+        raise RuntimeError(f"{label}: expected peak time ~3.63 ms in headline, got {text!r}")
+
+
 def _wait_health() -> None:
     for _ in range(80):
         try:
@@ -305,8 +324,7 @@ def _capture_theme(browser, *, theme: str) -> dict:
     page.goto(f"{BASE}/?problem={rlc_id}", wait_until="domcontentloaded")
     page.wait_for_selector("#lab-verify-heading", timeout=60_000)
     page.get_by_text("Agrees (limit", exact=False).first.wait_for(state="visible", timeout=120_000)
-    _assert_text(page, r"11\.630", "collab-01 Vc peak")
-    _assert_text(page, r"3\.63", "collab-01 peak time (2 dp headline)")
+    _assert_rlc_peak_headline(page, "collab-01")
     _shot(page, "collab-01-run-sim-vs-derived-agrees", theme=theme)
 
     page.goto(f"{BASE}/?view=studio&tab=circuits&run={rlc_id}", wait_until="domcontentloaded")
@@ -354,8 +372,11 @@ def _capture_theme(browser, *, theme: str) -> dict:
     r1_val = page.locator(".studio-circuit-inspector input").first
     if r1_val.count():
         assert "10" in (r1_val.input_value() or ""), "collab-04b R1 should be 10 Ω after Restore"
-    _assert_text(page, r"11\.630", "collab-04b Vc peak")
-    _assert_text(page, r"3\.63", "collab-04b peak time (2 dp headline)")
+    results = page.locator(".studio-circuit-results .answer-line").first
+    results.wait_for(state="visible", timeout=60_000)
+    head = results.inner_text()
+    if not re.search(r"11\.630", head) or not re.search(r"at\s+3\.63", head):
+        raise RuntimeError(f"collab-04b: expected restored peak headline, got {head!r}")
     _shot(page, "collab-04b-after-restore", theme=theme, full_page=True)
 
     _set_r1_and_reverify(rlc_id, 20.0)
