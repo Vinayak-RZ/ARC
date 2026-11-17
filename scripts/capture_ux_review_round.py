@@ -10,7 +10,9 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
+import traceback
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -405,12 +407,15 @@ def main() -> int:
     _prepare_capture_env()
 
     env = {**os.environ, "EE_NO_BROWSER": "1", "EE_UI_PORT": str(PORT), "ARC_CAPTURE_PORT": str(PORT)}
+    # Keep the UI server log so a 500 during capture shows its traceback instead of vanishing.
+    server_log_path = Path(tempfile.gettempdir()) / f"arc-capture-ui-{PORT}.log"
+    server_log = server_log_path.open("w", encoding="utf-8")
     server = subprocess.Popen(
         [sys.executable, "-m", "electrical_engineer", "ui"],
         cwd=ROOT,
         env=env,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        stdout=server_log,
+        stderr=subprocess.STDOUT,
     )
     hashes: dict[str, str] = {}
     index_notes: list[str] = []
@@ -1244,6 +1249,13 @@ def main() -> int:
             (out_dir / "INDEX.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
         print("md5.txt written", out_dir / "md5.txt")
         return 0
+    except Exception:  # noqa: BLE001 - report any capture failure with the server log
+        traceback.print_exc()
+        server_log.flush()
+        tail = server_log_path.read_text(encoding="utf-8", errors="replace").splitlines()[-40:]
+        print(f"--- UI server log tail ({server_log_path}) ---", file=sys.stderr)
+        print("\n".join(tail), file=sys.stderr)
+        return 1
     finally:
         if backup is not None:
             _restore_runs(backup)
@@ -1252,6 +1264,7 @@ def main() -> int:
             server.wait(timeout=5)
         except subprocess.TimeoutExpired:
             server.kill()
+        server_log.close()
 
 
 if __name__ == "__main__":
