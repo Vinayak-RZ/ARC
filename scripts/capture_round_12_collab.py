@@ -305,6 +305,8 @@ def _capture_theme(browser, *, theme: str) -> dict:
     page.goto(f"{BASE}/?problem={rlc_id}", wait_until="domcontentloaded")
     page.wait_for_selector("#lab-verify-heading", timeout=60_000)
     page.get_by_text("Agrees (limit", exact=False).first.wait_for(state="visible", timeout=120_000)
+    _assert_text(page, r"11\.630", "collab-01 Vc peak")
+    _assert_text(page, r"3\.63", "collab-01 peak time (2 dp headline)")
     _shot(page, "collab-01-run-sim-vs-derived-agrees", theme=theme)
 
     page.goto(f"{BASE}/?view=studio&tab=circuits&run={rlc_id}", wait_until="domcontentloaded")
@@ -353,7 +355,7 @@ def _capture_theme(browser, *, theme: str) -> dict:
     if r1_val.count():
         assert "10" in (r1_val.input_value() or ""), "collab-04b R1 should be 10 Ω after Restore"
     _assert_text(page, r"11\.630", "collab-04b Vc peak")
-    _assert_text(page, r"3\.628", "collab-04b peak time")
+    _assert_text(page, r"3\.63", "collab-04b peak time (2 dp headline)")
     _shot(page, "collab-04b-after-restore", theme=theme, full_page=True)
 
     _set_r1_and_reverify(rlc_id, 20.0)
